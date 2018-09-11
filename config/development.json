@@ -1,0 +1,10 @@
+{
+  "db": {
+    "user": "jumbosmash-admin",
+    "password": "js",
+    "host": "localhost",
+    "port": 5432,
+    "database": "jumbosmash"
+  },
+  "secret": "shhhhhhhhhh"
+}
