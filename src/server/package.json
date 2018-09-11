@@ -1,0 +1,46 @@
+{
+  "name": "JumboSmash",
+  "version": "2019.0.0-alpha-1",
+  "description": "JumboSmash 2019",
+  "scripts": {
+    "start": "node index.js",
+    "server": "export NODE_ENV=development;nodemon index.js --exec babel-node",
+    "migrate": "export NODE_ENV=development;node-pg-migrate --migrations-dir .db/migrations",
+    "eslint": "eslint ./src",
+    "flow": "flow check ./src",
+    "dev": "./scripts/runDev.sh"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "config": "^1.30.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.10",
+    "pg": "^7.4.3",
+    "socket.io": "^2.1.1",
+    "sql-template-strings": "^2.2.2",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-flowtype": "^2.50.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-react": "^7.10.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "flow-bin": "^0.77.0",
+    "node-pg-migrate": "^3.8.0",
+    "nodemon": "^1.18.3",
+    "prettier": "1.13.7"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run eslint && npm run flow",
+      "pre-push": "npm run eslint && npm run flow"
+    }
+  }
+}
