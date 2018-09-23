@@ -1,27 +1,50 @@
 // @flow
-
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  createStackNavigator,
+  createSwitchNavigator,
+  createBottomTabNavigator,
+} from 'react-navigation';
 
-// Type definitions
-type Props = {};
-type State = {};
+// These are the screens we want to navigate between!
+// Group screens together in file structure when appropriate!
 
-export default class App extends React.Component<Props, State> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Hello World</Text>
-      </View>
-    );
+import FooScreen from './pages/FooScreen';
+import BarScreen from './pages/BarScreen'
+
+import LoginScreen from './pages/LoginStack/LoginScreen'
+import SplashScreen from './pages/LoginStack/SplashScreen'
+import SignupScreen from './pages/LoginStack/SignupScreen'
+
+// This file should just set up navigation, so all actual content is in pages/
+// Define what views / tabs / stacks the navigator will use
+
+const _AppTabs = createBottomTabNavigator(
+  {
+    Foo : { screen: FooScreen },
+    Bar : { screen: BarScreen },
   }
-}
+)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+// this probably won't need to be a full stack
+const _LoginStack = createStackNavigator(
+  {
+    Splash: { screen: SplashScreen },
+    Login: { screen: LoginScreen },
+    Signup: { screen: SignupScreen },
   },
-});
+  {
+    initialRouteName: 'Splash',
+  }
+)
+
+export default createSwitchNavigator(
+  {
+    AppSwitch: _AppTabs,
+    LoginSwitch: _LoginStack,
+  },
+  {
+    initialRouteName: 'LoginSwitch',
+  },
+
+)
