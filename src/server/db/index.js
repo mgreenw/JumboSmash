@@ -1,7 +1,7 @@
 // @flow
-import pool from './pool';
+const pool = require('./pool');
 
-export default {
+module.exports = {
   query: pool.query,
   connect: pool.connect,
   pool,
