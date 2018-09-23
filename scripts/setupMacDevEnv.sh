@@ -1,0 +1,34 @@
+# Install NVM
+echo "Updating NVM"
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+
+# Load NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# Install and use Node v.8.12.0
+echo "Installing Node v.8.12.0"
+
+nvm install 8.12.0
+nvm use 8.12.0
+
+# Install/Update homebrew
+if [[ $(command -v brew) == "" ]]; then
+    echo "Installing Hombrew"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+else
+    echo "Updating Homebrew"
+    brew update
+fi
+
+brew install postgresql@10
+brew services start postgres
+
+echo "Creating Postgres User and DB"
+createuser jumbosmashdev
+createdb jumbosmash
+
+echo "Setting up Database"
+psql -U postgres -c "alter user jumbosmashdev with encrypted password 'tonysmash2019';"
+psql -U postgres -c "grant all privileges on database jumbosmash to jumbosmashdev;"
+

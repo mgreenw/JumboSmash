@@ -1,6 +1,8 @@
 [ignore]
 
 [include]
+./src/mobile/
+./src/server/
 
 [libs]
 
@@ -8,4 +10,13 @@
 
 [options]
 
+[untyped]
+.*/node_modules/.*
+
 [strict]
+nonstrict-import
+unclear-type
+unsafe-getters-setters
+untyped-import
+untyped-type-import
+sketchy-null

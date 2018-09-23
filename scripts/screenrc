@@ -41,10 +41,16 @@ bind F eval "hardstatus alwayslastline"
 screen -t "Welcome" bash --noprofile --norc
 stuff "./welcome-page.sh\n"
 
-screen -t "Client" bash --noprofile --norc
-stuff "npm run client\n"
-
 screen -t "Server" bash --noprofile --norc
-stuff "npm run server\n"
+stuff "cd ../src/server && npm run start-dev\n"
+
+screen -t "iOS" bash --noprofile --norc
+stuff "cd ../src/mobile && npm run ios\n"
+
+screen -t "Android" bash --noprofile --norc
+stuff "cd ../src/mobile && npm run android\n"
+
+screen -t "Postgres" bash --noprofile --norc
+stuff "psql -d jumbosmash -U jumbosmashdev\n"
 
 select Welcome
