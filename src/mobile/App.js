@@ -4,14 +4,14 @@ import {  createStackNavigator, createSwitchNavigator, createBottomTabNavigator 
 // These are the screens we want to navigate between!
 // Group screens together in file structure when appropriate!
 
-import FooScreen from './src/FooScreen';
-import BarScreen from './src/BarScreen'
+import FooScreen from './pages/FooScreen';
+import BarScreen from './pages/BarScreen'
 
-import LoginScreen from './src/LoginStack/LoginScreen'
-import SplashScreen from './src/LoginStack/SplashScreen'
-import SignupScreen from './src/LoginStack/SignupScreen'
+import LoginScreen from './pages/LoginStack/LoginScreen'
+import SplashScreen from './pages/LoginStack/SplashScreen'
+import SignupScreen from './pages/LoginStack/SignupScreen'
 
-// This file should just set up navigation, so all actual content is in src/
+// This file should just set up navigation, so all actual content is in pages/
 // Define what views / tabs / stacks the navigator will use
 
 const _AppTabs = createBottomTabNavigator(
