@@ -1,9 +1,8 @@
 // @flow
-import config from 'config';
+let config = require('config');
 const { Pool } = require('pg');
 
-const dbConfig = config.get('db');
-const pool = new Pool(dbConfig);
+const pool = new Pool(config.get('db'));
 
 export default {
   query: (text: string, params: ?(any[])) => pool.query(text, params),
