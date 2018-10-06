@@ -11,17 +11,80 @@ type Props = {
   navigation: any,
 };
 
-export default class SignupScreen extends React.Component<Props> {
+type State = {
+  utln: string,
+  password: string,
+  passwordConfirm: string,
+  valid: {
+    utln: boolean,
+    password: boolean,
+    passwordConfirm: boolean,
+  }
+}
+
+export default class SignupScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+      this.state = {
+        utln: '',
+        password: '',
+        passwordConfirm: '',
+
+        // all valid so that we don't shake the first time.
+        valid: {
+          utln: true,
+          password: true,
+          passwordConfirm: true,
+        }
+      }
+    }
+
+    // for refs
+    utlnInput: Input;
+    passwordInput: Input;
+    passwordConfirmInput: Input;
 
     // These are for react navigation, like header bar and such
     static navigationOptions = {
         title: 'Sign Up',
     };
 
-    _navigateToSplash = () => {
+    _onSignUp = () => {
         const { navigate } = this.props.navigation;
-        navigate('Splash', {})
-    }
+        let valid = this._validateFields();
+        // navigate('Splash', {})
+    };
+
+    _validateFields = () => {
+      let _valid = {
+          utln: true,
+          password: true,
+          passwordConfirm: true,
+        }
+
+        // TODO: parse valid utln here also?
+        if (this.state.utln == '') {
+          this.utlnInput.shake();
+          _valid.utln = false;
+        }
+
+        // for no password
+        if (this.state.password == '') {
+          this.passwordInput.shake();
+          _valid.password = false;
+        }
+
+        // for non matching confirmation
+        if ((this.state.passwordConfirm == '')
+          || (this.state.password != this.state.passwordConfirm)) {
+          this.passwordConfirmInput.shake();
+          this.passwordInput.shake();
+          _valid.passwordConfirm = false;
+        }
+
+        this.setState({valid: _valid});
+        return (_valid.utln && _valid.password && _valid.passwordConfirm);
+    };
 
     render() {
     // this is the navigator we passed in from App.js
@@ -34,22 +97,52 @@ export default class SignupScreen extends React.Component<Props> {
                 </View>
                 <View style={styles.buttonContainer}>
                     <Input
-                            containerStyle={{flex: 1, marginLeft:5}}
-                            placeholderTextColor={'#EFEFF3'}
-                            inputStyle={{color:'#FFFFFF'}}
-                            labelStyle={styles.labelStyle}
-                            inputContainerStyle={styles.inputContainerStyle}
-                            label='Last Name'
-                            placeholder='Bar'
-                            onChangeText={(text) => this.setState({lastName: text})}
-                            ref = {input=>this.lastNameInput = input }
-                            errorMessage = {true ? " " : "Required"}
+                      containerStyle={{flex: 1, marginLeft:5}}
+                      placeholderTextColor={'#DDDDDD'}
+                      inputStyle={{color:'#222222'}}
+                      labelStyle={styles.labelStyle}
+                      inputContainerStyle={styles.inputContainerStyle}
+                      label='Tufts UTLN'
+                      placeholder='jjaffe01'
+                      onChangeText={(text) => this.setState({utln: text})}
+                      ref = {input=>this.utlnInput = input }
+                      errorMessage = {this.state.valid.utln ? " " : "Required"}
+                    />
+                    <Input
+                      secureTextEntry={true} // For Password
+                      containerStyle={{flex: 1, marginLeft:5}}
+                      placeholderTextColor={'#DDDDDD'}
+                      inputStyle={{color:'#222222'}}
+                      labelStyle={styles.labelStyle}
+                      inputContainerStyle={styles.inputContainerStyle}
+                      label='Password'
+                      placeholder='foobar'
+                      onChangeText={(text) => this.setState({password: text})}
+                      ref = {input=>this.passwordInput = input }
+                      errorMessage = {this.state.valid.password ? " " : "Required"}
+                    />
+                    <Input
+                      secureTextEntry={true} // For Password
+                      containerStyle={{flex: 1, marginLeft:5}}
+                      placeholderTextColor={'#DDDDDD'}
+                      inputStyle={{color:'#222222'}}
+                      labelStyle={styles.labelStyle}
+                      inputContainerStyle={styles.inputContainerStyle}
+                      label='Confirm Password'
+                      placeholder='foobittydoobity'
+                      onChangeText={(text) => this.setState({passwordConfirm: text})}
+                      ref = {input=>this.passwordConfirmInput = input }
+                      errorMessage = {this.state.valid.passwordConfirm
+                        ? " "
+                        : this.state.passwordConfirm == ''
+                          ? "Required"
+                          : "Passwords do not match!"}
                     />
                     <Button
-                        containerStyle={{flex: 1, justifyContent: 'center'}}
-                        buttonStyle={styles.button}
-                        onPress = {() => {this._navigateToSplash()}}
-                        title="Return to Splash">
+                      containerStyle={{flex: 1, justifyContent: 'center'}}
+                      buttonStyle={styles.button}
+                      onPress = {() => {this._onSignUp()}}
+                      title="Submit">
                     </Button>
                 </View>
             </View>
