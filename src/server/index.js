@@ -1,14 +1,24 @@
 // @flow
 
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require('express');
+const bodyParser = require('body-parser');
 
 const apiRouter = require('./api');
 
-const app = express()
-app.use(bodyParser.json())
+if (process.env.NODE_ENV === undefined) {
+  // TODO: Log failure
+  process.exit(1);
+}
 
-app.listen(3000, () => console.log('JumboSmash Server listening on port 3000!'));
+const app = express();
+app.use(bodyParser.json());
+
+app.listen(3000, () => {
+  // TODO: Log success that app is listening
+  /* eslint-disable no-console */
+  console.log('JumboSmash Server listening on port 3000!');
+  /* eslint-enable */
+});
 
 
 app.get('/verified', async (req, res) => {
