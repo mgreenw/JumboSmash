@@ -9,12 +9,12 @@ import {
 // These are the screens we want to navigate between!
 // Group screens together in file structure when appropriate!
 
-import FooScreen from '../pages/FooScreen';
-import BarScreen from '../pages/BarScreen'
+import FooScreen from './FooScreen';
+import BarScreen from './BarScreen'
 
-import LoginScreen from '../pages/LoginStack/LoginScreen'
-import SplashScreen from '../pages/LoginStack/SplashScreen'
-import SignupScreen from '../pages/LoginStack/SignupScreen'
+import LoginScreen from './LoginStack/LoginScreen'
+import SplashScreen from './LoginStack/SplashScreen'
+import SignupScreen from './LoginStack/SignupScreen'
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
