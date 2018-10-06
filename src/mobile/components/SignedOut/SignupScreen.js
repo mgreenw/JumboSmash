@@ -15,7 +15,7 @@ export default class SignupScreen extends React.Component<Props> {
 
     // These are for react navigation, like header bar and such
     static navigationOptions = {
-        title: 'Log in',
+        title: 'Sign Up',
     };
 
     _navigateToSplash = () => {
@@ -33,6 +33,18 @@ export default class SignupScreen extends React.Component<Props> {
                     <Text style={styles.title}>PROJECT GEM</Text>
                 </View>
                 <View style={styles.buttonContainer}>
+                    <Input
+                            containerStyle={{flex: 1, marginLeft:5}}
+                            placeholderTextColor={'#EFEFF3'}
+                            inputStyle={{color:'#FFFFFF'}}
+                            labelStyle={styles.labelStyle}
+                            inputContainerStyle={styles.inputContainerStyle}
+                            label='Last Name'
+                            placeholder='Bar'
+                            onChangeText={(text) => this.setState({lastName: text})}
+                            ref = {input=>this.lastNameInput = input }
+                            errorMessage = {true ? " " : "Required"}
+                    />
                     <Button
                         containerStyle={{flex: 1, justifyContent: 'center'}}
                         buttonStyle={styles.button}
