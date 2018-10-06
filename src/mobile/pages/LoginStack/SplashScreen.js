@@ -4,12 +4,22 @@ import React from 'react';
 import { Alert, Linking, StyleSheet, TextInput, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button } from 'react-native-elements';
+import {connect} from 'react-redux';
 
 type Props = {
   navigation: any,
 };
 
-export default class SplashScreen extends React.Component<Props> {
+function mapStateToProps(state, ownProps) {
+  console.log(state);
+    return {};
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+    return {};
+}
+
+class SplashScreen extends React.Component<Props> {
 
     // These are for react navigation, like header bar and such
     static navigationOptions = {
@@ -83,3 +93,5 @@ const styles = StyleSheet.create({
       marginBottom: 10,
     }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen);
