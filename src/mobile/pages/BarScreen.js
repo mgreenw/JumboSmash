@@ -1,9 +1,15 @@
+// @flow
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button } from 'react-native-elements';
 
-export default class BarScreen extends React.Component {
+type Props = {
+  navigation: any,
+};
+
+export default class BarScreen extends React.Component<Props> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
