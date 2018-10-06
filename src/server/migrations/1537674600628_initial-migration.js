@@ -13,7 +13,21 @@ exports.up = (pgm) => {
       notNull: true,
     },
     created_at: {
-      type: 'timestamp',
+      type: 'timestamptz',
+      notNull: true,
+      default: pgm.func('current_timestamp'),
+    },
+    verified: {
+      type: 'boolean',
+      notNull: true,
+      default: false,
+    },
+    verification_hash: {
+      type: 'varchar(40)',
+      notNull: true,
+    },
+    verification_expire_date: {
+      type: 'timestamptz',
       notNull: true,
       default: pgm.func('current_timestamp'),
     },
@@ -23,26 +37,32 @@ exports.up = (pgm) => {
     wants_he: {
       type: 'boolean',
       notNull: true,
+      default: true,
     },
     wants_she: {
       type: 'boolean',
       notNull: true,
+      default: true,
     },
     wants_they: {
       type: 'boolean',
       notNull: true,
+      default: true,
     },
     is_he: {
       type: 'boolean',
       notNull: true,
+      default: false,
     },
     is_she: {
       type: 'boolean',
       notNull: true,
+      default: false,
     },
     is_they: {
       type: 'boolean',
       notNull: true,
+      default: false,
     },
   });
 
