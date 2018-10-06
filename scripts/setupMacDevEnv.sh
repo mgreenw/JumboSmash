@@ -31,4 +31,3 @@ createdb jumbosmash
 echo "Setting up Database"
 psql -U postgres -c "alter user jumbosmashdev with encrypted password 'tonysmash2019';"
 psql -U postgres -c "grant all privileges on database jumbosmash to jumbosmashdev;"
-
