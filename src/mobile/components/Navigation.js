@@ -9,12 +9,12 @@ import {
 // These are the screens we want to navigate between!
 // Group screens together in file structure when appropriate!
 
-import FooScreen from './FooScreen';
-import BarScreen from './BarScreen'
+import FooScreen from './SignedIn/FooScreen';
+import BarScreen from './SignedIn/BarScreen';
 
-import LoginScreen from './LoginStack/LoginScreen'
-import SplashScreen from './LoginStack/SplashScreen'
-import SignupScreen from './LoginStack/SignupScreen'
+import LoginScreen from './SignedOut/LoginScreen';
+import SplashScreen from './SignedOut/SplashScreen';
+import SignupScreen from './SignedOut/SignupScreen';
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -27,7 +27,7 @@ const _AppTabs = createBottomTabNavigator(
 )
 
 // this probably won't need to be a full stack
-const _LoginStack = createStackNavigator(
+const _SignedOut = createStackNavigator(
   {
     Splash: { screen: SplashScreen },
     Login: { screen: LoginScreen },
@@ -41,7 +41,7 @@ const _LoginStack = createStackNavigator(
 export default createSwitchNavigator(
   {
     AppSwitch: _AppTabs,
-    LoginSwitch: _LoginStack,
+    LoginSwitch: _SignedOut,
   },
   {
     initialRouteName: 'LoginSwitch',
