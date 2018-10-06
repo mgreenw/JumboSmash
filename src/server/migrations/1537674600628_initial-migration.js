@@ -4,7 +4,7 @@ exports.up = (pgm) => {
   // Create the users table!
   pgm.createTable('users', {
     id: 'id',
-    email: {
+    utln: {
       type: 'varchar(100)',
       notNull: true,
     },
