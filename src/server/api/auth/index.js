@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const request = require('request');
 const db = require('../../db');
 
 const authRouter = express.Router();
@@ -34,19 +35,46 @@ authRouter.post('/login', async (req, res) => {
   }
 });
 
+const post = (urlFormData) => {
+  return new Promise((resolve, reject) => {
+    request.post(urlFormData, (err, httpResponse, body) => {
+      if (err) reject();
+      resolve({ body, httpResponse });
+    });
+  });
+};
+
+const get = (url) => {
+  return new Promise((resolve, reject) => {
+    request(url, (err, _, body) => {
+      if (err) reject();
+      resolve(body);
+    });
+  });
+};
+
 authRouter.post('/register', async (req, res) => {
   const hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
   try {
-    const result = await db.query(
-      'INSERT INTO users(first_name, last_name, email, password) VALUES($1, $2, $3, $4) RETURNING id',
-      [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]
-    );
+    // Check Tufts website for proper email
+    console.log(req.body.utln);
+    const { httpResponse } = await post({ url: 'https://whitepages.tufts.edu/searchresults.cgi', form: { type: 'Students', search: req.body.utln } });
+    const response = await get(`https://whitepages.tufts.edu/${httpResponse.headers.location}`);
+    const year = response.split('<b>Class Year: </b>')[1].split('</td></div><td>')[1].split('</td></tr><tr><td>')[0].trim();
+    console.log(year);
+    if (year !== '19') {
+      throw new Error('Could not register user: not in class of 2019');
+    }
+    // const result = await db.query(
+    //   'INSERT INTO users(first_name, last_name, email, password) VALUES($1, $2, $3, $4) RETURNING id',
+    //   [req.body.firstName, req.body.lastName, req.body.email, hashedPassword]
+    // );
 
-    const token = jwt.sign({ id: result.rows[0].id }, config.get('secret'), {
+    const token = 'test';/* jwt.sign({ id: result.rows[0].id }, config.get('secret'), {
       expiresIn: 86400, // expires in 24 hours
-    });
-    res.status(200).send({ auth: true, token });
+    });*/
+    return res.status(200).send({ auth: true, token });
   } catch (err) {
     console.log(err);
     return res.status(500).send('There was a problem registering the user.');

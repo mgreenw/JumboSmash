@@ -19,7 +19,6 @@ exports.up = (pgm) => {
     },
     display_name: {
       type: 'string',
-      notNull: true,
     },
     wants_he: {
       type: 'boolean',
