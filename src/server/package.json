@@ -15,6 +15,7 @@
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
     "pg": "^7.4.3",
+    "request": "^2.88.0",
     "sql-template-strings": "^2.2.2"
   },
   "devDependencies": {
