@@ -1,12 +1,17 @@
+// @flow
+
 import React from 'react';
 import { Alert, Linking, StyleSheet, TextInput, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button, Input } from 'react-native-elements';
-// import { Base64 } from 'js-base64';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default class SignupScreen extends React.Component {
+type Props = {
+  navigation: any,
+};
+
+export default class SignupScreen extends React.Component<Props> {
 
     // These are for react navigation, like header bar and such
     static navigationOptions = {
@@ -39,7 +44,6 @@ export default class SignupScreen extends React.Component {
         );
     }
 }
-
 
 const styles = StyleSheet.create({
   container : {
