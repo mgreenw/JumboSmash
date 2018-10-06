@@ -3,16 +3,35 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import Navigator from './components/Navigation';
+import { createRootNavigator } from './components/Navigation';
 import rootReducer from './reducers'
 
 const store = createStore( rootReducer );
 
-type Props= {}
+type Props = {}
+type State = {
+  signedIn: boolean,
+}
 
-export default class App extends React.Component<Props> {
+const DefaultState = {
+  signedIn: false,
+}
+
+export default class App extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = DefaultState;
+  }
 
   render() {
+    // TODO: render loading screen
+    if (!true) {
+      return null;
+    }
+
+    const Navigator = createRootNavigator(false);
+
     return (
       <Provider store={ store }>
         <Navigator />
