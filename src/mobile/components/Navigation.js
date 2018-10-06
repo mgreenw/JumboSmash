@@ -19,7 +19,7 @@ import SignupScreen from './SignedOut/SignupScreen';
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
-const _AppTabs = createBottomTabNavigator(
+const SignedIn = createBottomTabNavigator(
   {
     Foo : { screen: FooScreen },
     Bar : { screen: BarScreen },
@@ -27,7 +27,7 @@ const _AppTabs = createBottomTabNavigator(
 )
 
 // this probably won't need to be a full stack
-const _SignedOut = createStackNavigator(
+const SignedOut = createStackNavigator(
   {
     Splash: { screen: SplashScreen },
     Login: { screen: LoginScreen },
@@ -38,12 +38,14 @@ const _SignedOut = createStackNavigator(
   }
 )
 
-export default createSwitchNavigator(
-  {
-    AppSwitch: _AppTabs,
-    LoginSwitch: _SignedOut,
-  },
-  {
-    initialRouteName: 'LoginSwitch',
-  },
-)
+export const createRootNavigator = (loggedIn: boolean = false) => {
+  return createSwitchNavigator(
+    {
+      SignedIn: SignedIn,
+      SignedOut: SignedOut,
+    },
+    {
+      initialRouteName: loggedIn ? 'SignedIn' : 'SignedOut',
+    },
+  );
+}
