@@ -66,7 +66,7 @@ authRouter.post('/login', async (req, res) => {
 
     // Sign a login token with the user's id and the config secret
     const token = jwt.sign({ id: user.id }, config.secret, {
-      expiresIn: 31540000, // expires in 24 hours
+      expiresIn: 31540000, // expires in 365 days
     });
 
     // Send the response back!
