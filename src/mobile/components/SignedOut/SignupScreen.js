@@ -4,11 +4,15 @@ import React from 'react';
 import { Alert, Linking, StyleSheet, TextInput, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button, Input } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { register } from '../../actions/auth';
+
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type Props = {
   navigation: any,
+  register: (utln: string, password: string) => void,
 };
 
 type State = {
@@ -22,7 +26,7 @@ type State = {
   }
 }
 
-export default class SignupScreen extends React.Component<Props, State> {
+class SignupScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
       this.state = {
@@ -52,6 +56,10 @@ export default class SignupScreen extends React.Component<Props, State> {
     _onSignUp = () => {
         const { navigate } = this.props.navigation;
         let valid = this._validateFields();
+
+        if (valid) {
+          this.props.register(this.state.utln, this.state.password);
+        }
         // navigate('Splash', {})
     };
 
@@ -142,7 +150,9 @@ export default class SignupScreen extends React.Component<Props, State> {
                       containerStyle={{flex: 1, justifyContent: 'center'}}
                       buttonStyle={styles.button}
                       onPress = {() => {this._onSignUp()}}
-                      title="Submit">
+                      title="Submit"
+                      loading= {false}
+                      >
                     </Button>
                 </View>
             </View>
@@ -178,3 +188,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   }
 });
+
+function mapStateToProps(state, ownProps) {
+    return {};
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+      register: (utln: string, password: string) => {dispatch(register(utln, password))},
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupScreen);
