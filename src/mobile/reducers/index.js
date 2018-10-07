@@ -1,18 +1,25 @@
 // @flow
 
-import { INITIATE_REGISTRATION, SUCCEED_REGISTRATION } from '../actions/auth';
+import {
+    INITIATE_REGISTRATION,
+    SUCCEED_REGISTRATION,
+    FAIL_REGISTRATION,
+    ERROR_REGISTRATION
+  } from '../actions/auth';
 import _ from 'lodash';
 
 type State = {
   userName: string,
   loggedIn: boolean,
   registerInProgress: boolean,
+  errorMessage: ?string,
 }
 
 const defaultState: State = {
   userName: 'jjaffe01',
   loggedIn: false,
   registerInProgress: false,
+  errorMessage: null,
 }
 
 
@@ -32,7 +39,25 @@ export default function rootReducer(state: State = defaultState, action: any) {
 
       return _.assign({}, state, {
         registerInProgress: false,
-      })
+      });
+    }
+
+    case FAIL_REGISTRATION: {
+      console.log('Reducer for FAIL_REGISTRATION');
+
+      return _.assign({}, state, {
+        registerInProgress: false,
+        errorMessage: action.errorMessage,
+      });
+    }
+
+    case ERROR_REGISTRATION: {
+      console.log('Reducer for ERROR_REGISTRATION');
+
+      return _.assign({}, state, {
+        registerInProgress: false,
+        errorMessage: action.errorMessage,
+      });
     }
 
     default: {

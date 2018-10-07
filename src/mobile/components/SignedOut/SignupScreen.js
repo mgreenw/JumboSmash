@@ -24,6 +24,11 @@ type State = {
     utln: boolean,
     password: boolean,
     passwordConfirm: boolean,
+  },
+  errorMessage: {
+    utln: string,
+    password: string,
+    passwordConfirm: string,
   }
 }
 
@@ -40,6 +45,11 @@ class SignupScreen extends React.Component<Props, State> {
           utln: true,
           password: true,
           passwordConfirm: true,
+        },
+        errorMessage: {
+          utln: '',
+          password: '',
+          passwordConfirm: '',
         }
       }
     }
@@ -79,16 +89,24 @@ class SignupScreen extends React.Component<Props, State> {
           passwordConfirm: true,
         }
 
+      let _errorMessage = {
+        utln: '',
+        password: '',
+        passwordConfirm: '',
+      }
+
         // TODO: parse valid utln here also?
         if (this.state.utln == '') {
           this.utlnInput.shake();
           _valid.utln = false;
+          _errorMessage.utln = 'Required'
         }
 
         // for no password
         if (this.state.password == '') {
           this.passwordInput.shake();
           _valid.password = false;
+          _errorMessage.password = 'Required'
         }
 
         // for non matching confirmation
@@ -97,9 +115,10 @@ class SignupScreen extends React.Component<Props, State> {
           this.passwordConfirmInput.shake();
           this.passwordInput.shake();
           _valid.passwordConfirm = false;
+          _errorMessage.passwordConfirm = this.state.passwordConfirm == '' ? 'Required' : 'Passwords Must Match!'
         }
 
-        this.setState({valid: _valid});
+        this.setState({valid: _valid, errorMessage: _errorMessage});
         return (_valid.utln && _valid.password && _valid.passwordConfirm);
     };
 
@@ -123,7 +142,7 @@ class SignupScreen extends React.Component<Props, State> {
                       placeholder='jjaffe01'
                       onChangeText={(text) => this.setState({utln: text})}
                       ref = {input=>this.utlnInput = input }
-                      errorMessage = {this.state.valid.utln ? " " : "Required"}
+                      errorMessage = {this.state.valid.utln ? '' : this.state.errorMessage.utln}
                     />
                     <Input
                       secureTextEntry={true} // For Password
@@ -136,7 +155,7 @@ class SignupScreen extends React.Component<Props, State> {
                       placeholder='foobar'
                       onChangeText={(text) => this.setState({password: text})}
                       ref = {input=>this.passwordInput = input }
-                      errorMessage = {this.state.valid.password ? " " : "Required"}
+                      errorMessage = {this.state.valid.password ? '' : this.state.errorMessage.password}
                     />
                     <Input
                       secureTextEntry={true} // For Password
@@ -149,11 +168,7 @@ class SignupScreen extends React.Component<Props, State> {
                       placeholder='foobittydoobity'
                       onChangeText={(text) => this.setState({passwordConfirm: text})}
                       ref = {input=>this.passwordConfirmInput = input }
-                      errorMessage = {this.state.valid.passwordConfirm
-                        ? " "
-                        : this.state.passwordConfirm == ''
-                          ? "Required"
-                          : "Passwords do not match!"}
+                      errorMessage = {this.state.valid.passwordConfirm ? '' : this.state.errorMessage.passwordConfirm}
                     />
                     <Button
                       containerStyle={{flex: 1, justifyContent: 'center'}}
