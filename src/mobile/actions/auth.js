@@ -14,7 +14,8 @@ export const succeedRegistration = () => ({
 export const register = (utln: string, password: string) => {
   return async (dispatch: Dispatch) => {
     dispatch(initiateRegistration());
-    setTimeout(()=>{dispatch(succeedRegistration())}, 1000)
+
+    setTimeout(()=>{dispatch(succeedRegistration())}, 1000);
     // Dispatch action for initiating signUp
 
     // Make API Call
