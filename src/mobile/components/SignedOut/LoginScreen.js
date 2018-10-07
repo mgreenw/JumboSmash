@@ -20,7 +20,7 @@ export default class SignupScreen extends React.Component<Props> {
 
     _enterApp = () => {
         const { navigate } = this.props.navigation;
-        navigate('AppSwitch', {})
+        navigate('SignedIn', {})
     }
 
     render() {
