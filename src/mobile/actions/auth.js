@@ -11,6 +11,18 @@ export const succeedRegistration = () => ({
   type: SUCCEED_REGISTRATION,
 });
 
+export const FAIL_REGISTRATION = 'FAIL_REGISTRATION';
+export const failRegistration = (message: string) => ({
+  type: FAIL_REGISTRATION,
+  message: message,
+});
+
+export const ERROR_REGISTRATION = 'ERROR_REGISTRATION';
+export const errorRegistration = (message: string) => ({
+  type: ERROR_REGISTRATION,
+  message: message,
+});
+
 export const register = (utln: string, password: string) => {
   return async (dispatch: Dispatch) => {
     dispatch(initiateRegistration());
