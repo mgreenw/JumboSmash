@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { createRootNavigator } from './components/Navigation';
 import rootReducer from './reducers'
 
-const store = createStore( rootReducer );
+const store = createStore( rootReducer, applyMiddleware(thunk));
 
 type Props = {}
 type State = {
