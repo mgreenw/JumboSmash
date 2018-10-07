@@ -1,6 +1,6 @@
 // @flow
 
-import { INITIATE_REGISTRATION } from '../actions/auth';
+import { INITIATE_REGISTRATION, SUCCEED_REGISTRATION } from '../actions/auth';
 import _ from 'lodash';
 
 type State = {
@@ -9,9 +9,8 @@ type State = {
   registerInProgress: boolean,
 }
 
-const defaultState = {
+const defaultState: State = {
   userName: 'jjaffe01',
-  checkingAuth: true,
   loggedIn: false,
   registerInProgress: false,
 }
@@ -22,11 +21,20 @@ export default function rootReducer(state: State = defaultState, action: any) {
   switch(action.type) {
     case INITIATE_REGISTRATION: {
       console.log('Reducer for INITIATE_REGISTRATION');
-      _.assign(state, {
+
+      return _.assign({}, state, {
         registerInProgress: true,
       });
-      return state;
     }
+
+    case SUCCEED_REGISTRATION: {
+      console.log('Reducer for SUCCEED_REGISTRATION');
+
+      return _.assign({}, state, {
+        registerInProgress: false,
+      })
+    }
+
     default: {
       return state
     }

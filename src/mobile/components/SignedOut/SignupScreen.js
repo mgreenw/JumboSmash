@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 type Props = {
   navigation: any,
   register: (utln: string, password: string) => void,
+  registerInProgress: boolean,
 };
 
 type State = {
@@ -43,15 +44,23 @@ class SignupScreen extends React.Component<Props, State> {
       }
     }
 
+    componentDidUpdate(prevProps) {
+      if (prevProps.registerInProgress != this.props.registerInProgress) {
+        this.props.navigation.setParams({
+          headerLeft: this.props.registerInProgress ? null : ''});
+      }
+    }
+
     // for refs
     utlnInput: Input;
     passwordInput: Input;
     passwordConfirmInput: Input;
 
     // These are for react navigation, like header bar and such
-    static navigationOptions = {
+    static navigationOptions = ({navigation}) => ({
+        headerLeft: navigation.state.params.headerLeft,
         title: 'Sign Up',
-    };
+    });
 
     _onSignUp = () => {
         const { navigate } = this.props.navigation;
@@ -151,7 +160,8 @@ class SignupScreen extends React.Component<Props, State> {
                       buttonStyle={styles.button}
                       onPress = {() => {this._onSignUp()}}
                       title="Submit"
-                      loading= {false}
+                      disabled = {this.props.registerInProgress}
+                      loading= {this.props.registerInProgress}
                       >
                     </Button>
                 </View>
@@ -186,11 +196,14 @@ const styles = StyleSheet.create({
   },
   button: {
     marginBottom: 10,
+    height: 40,
   }
 });
 
 function mapStateToProps(state, ownProps) {
-    return {};
+    return {
+      registerInProgress: state.registerInProgress,
+    };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
