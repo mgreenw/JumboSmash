@@ -3,7 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const apiRouter = require('./api');
+const index = require('./routes/index');
+const api = require('./routes/api');
 
 if (process.env.NODE_ENV === undefined) {
   // TODO: Log failure
@@ -13,19 +14,14 @@ if (process.env.NODE_ENV === undefined) {
 const app = express();
 app.use(bodyParser.json());
 
+// Define all routes here.
+app.use('/', index);
+app.use('/api', api);
+
+// Listen!
 app.listen(3000, () => {
   // TODO: Log success that app is listening
   /* eslint-disable no-console */
   console.log('JumboSmash Server listening on port 3000!');
   /* eslint-enable */
 });
-
-
-app.get('/verified', async (req, res) => {
-  res.send('You have been verified! Return to the app and login.');
-});
-app.get('/not-verified', async (req, res) => {
-  res.send('Verification failed. Try again.');
-});
-
-app.use('/api', apiRouter);

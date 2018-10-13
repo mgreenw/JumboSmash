@@ -1,15 +1,10 @@
 // @flow
 
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const db = require('../db');
-const authRouter = require('./auth');
-
-const apiRouter = express.Router();
-
+const db = require('../../../db');
 // Middleware to check if the user is authenticated
-const isAuthenticated = (req, res, next) => {
+const authenticated = (req, res, next) => {
   const { token } = req.body;
   jwt.verify(token, config.get('secret'), async (err, decoded) => {
     if (err) return res.status(401).send({ error: 'Auth failure. Not logged in.' });
@@ -19,7 +14,7 @@ const isAuthenticated = (req, res, next) => {
         [decoded.id],
       );
 
-      // No user. Fail.
+      // No user. Fail.2
       if (result.rows.length === 0) {
         return res.status(401).send({ error: 'Auth failure. Not logged in' });
       }
@@ -32,10 +27,4 @@ const isAuthenticated = (req, res, next) => {
   });
 };
 
-// The order here is important
-apiRouter.use('/auth', authRouter);
-
-// All authenticated endpoints must come after this next line
-apiRouter.use(isAuthenticated);
-
-module.exports = apiRouter;
+module.exports = authenticated;
