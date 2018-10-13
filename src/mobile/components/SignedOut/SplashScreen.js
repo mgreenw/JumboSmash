@@ -23,6 +23,7 @@ class SplashScreen extends React.Component<Props> {
 
     // These are for react navigation, like header bar and such
     static navigationOptions = {
+      header: null,
     };
 
     _goToLogIn = () => {
