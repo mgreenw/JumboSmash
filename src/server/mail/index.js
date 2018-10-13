@@ -3,15 +3,13 @@
 const config = require('config');
 const sgMail = require('@sendgrid/mail');
 
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'development') {
 /* eslint-disable no-console */
-  module.exports = {
-    send: console.log,
-  };
+  exports.send = console.log;
 /* eslint-enable */
+} else if (process.env.NODE_ENV === 'test') {
+  exports.send = (message) => {};
 } else {
   sgMail.setApiKey(config.get('sendgrid_api_key'));
-  module.exports = {
-    send: sgMail.send,
-  };
+  exports.send = sgMail.send;
 }

@@ -6,5 +6,8 @@ module.exports = {
     ],
     "env": {
         "jest": true
+    },
+    "rules": {
+        "arrow-body-style": "as-needed"
     }
 };

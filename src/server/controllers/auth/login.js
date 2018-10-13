@@ -26,7 +26,7 @@ const login = async (req: $Request, res: $Response) => {
 
     // If there are no results, respond with an error.
     if (result.rows.length < 1) {
-      return res.status(401).send({ error: 'Incorrect username or password' });
+      return res.status(401).json({ error: 'Incorrect username or password' });
     }
 
     // Get the user from the query results
@@ -35,7 +35,7 @@ const login = async (req: $Request, res: $Response) => {
     // Check if the password is valid. If invalid, respond with an error.
     const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
     if (!passwordIsValid) {
-      return res.status(401).send({ error: 'Incorrect username or password' });
+      return res.status(401).json({ error: 'Incorrect username or password' });
     }
 
     // Sign a login token with the user's id and the config secret
@@ -44,12 +44,12 @@ const login = async (req: $Request, res: $Response) => {
     });
 
     // Send the response back!
-    return res.status(200).send({ auth: true, token });
+    return res.status(200).json({ auth: true, token });
 
   // In the case of an unknown error, respond with a generic error.
   } catch (err) {
     // TODO: Add logging of a problem
-    return res.status(500).send({ error: 'There was a problem logging in' });
+    return res.status(500).json({ error: 'There was a problem logging in' });
   }
 };
 
