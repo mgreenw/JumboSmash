@@ -3,9 +3,12 @@
   "version": "0.0.1",
   "description": "JumboSmash 2019",
   "scripts": {
-    "start": "node index.js",
-    "start-dev": "export NODE_ENV=development;nodemon --exec babel-node index.js",
-    "migrate": "node-pg-migrate -m ./db/migrations"
+    "start": "node server.js",
+    "dev": "export NODE_ENV=development;nodemon --exec babel-node server.js",
+    "prod": "export NODE_ENV=production;node server.js",
+    "migrate": "node-pg-migrate -m ./db/migrations",
+    "test": "../../scripts/runServerTests.sh",
+    "jest": "jest --forceExit"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -21,16 +24,21 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
-    "@babel/core": "^7.1.0",
+    "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
     "eslint": "^5.6.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-import": "^2.14.0",
+    "jest": "^23.6.0",
     "node-pg-migrate": "^3.8.0",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "regenerator-runtime": "^0.12.1",
+    "supertest": "^3.3.0"
   }
 }

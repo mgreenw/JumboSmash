@@ -1,10 +1,14 @@
 // @flow
 
+import type { $Request, $Response, $Next } from 'express';
+
 const jwt = require('jsonwebtoken');
 const config = require('config');
+
 const db = require('../../../db');
+
 // Middleware to check if the user is authenticated
-const authenticated = (req, res, next) => {
+const authenticated = (req: $Request, res: $Response, next: $Next) => {
   const { token } = req.body;
   jwt.verify(token, config.get('secret'), async (err, decoded) => {
     if (err) return res.status(401).send({ error: 'Auth failure. Not logged in.' });

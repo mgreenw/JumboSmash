@@ -11,4 +11,4 @@ pwd
 npm install
 npm run migrate up
 
-npm run start-dev
+npm run dev
