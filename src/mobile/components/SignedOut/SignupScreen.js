@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
-import { Alert, Linking, StyleSheet, TextInput, Text, View, KeyboardAvoidingView } from 'react-native';
+import { Alert, Linking, StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { Button, Input } from 'react-native-elements';
+import { Button, Input, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { register } from '../../actions/auth';
 
@@ -19,16 +19,13 @@ type Props = {
 type State = {
   utln: string,
   password: string,
-  passwordConfirm: string,
   valid: {
     utln: boolean,
     password: boolean,
-    passwordConfirm: boolean,
   },
   errorMessage: {
     utln: string,
     password: string,
-    passwordConfirm: string,
   }
 }
 
@@ -38,18 +35,15 @@ class SignupScreen extends React.Component<Props, State> {
       this.state = {
         utln: '',
         password: '',
-        passwordConfirm: '',
 
         // all valid so that we don't shake the first time.
         valid: {
           utln: true,
           password: true,
-          passwordConfirm: true,
         },
         errorMessage: {
           utln: '',
           password: '',
-          passwordConfirm: '',
         }
       }
     }
@@ -86,13 +80,11 @@ class SignupScreen extends React.Component<Props, State> {
       let _valid = {
           utln: true,
           password: true,
-          passwordConfirm: true,
         }
 
       let _errorMessage = {
         utln: '',
         password: '',
-        passwordConfirm: '',
       }
 
         // TODO: parse valid utln here also?
@@ -109,17 +101,8 @@ class SignupScreen extends React.Component<Props, State> {
           _errorMessage.password = 'Required'
         }
 
-        // for non matching confirmation
-        if ((this.state.passwordConfirm == '')
-          || (this.state.password != this.state.passwordConfirm)) {
-          this.passwordConfirmInput.shake();
-          this.passwordInput.shake();
-          _valid.passwordConfirm = false;
-          _errorMessage.passwordConfirm = this.state.passwordConfirm == '' ? 'Required' : 'Passwords Must Match!'
-        }
-
         this.setState({valid: _valid, errorMessage: _errorMessage});
-        return (_valid.utln && _valid.password && _valid.passwordConfirm);
+        return (_valid.utln && _valid.password);
     };
 
     render() {
@@ -133,9 +116,10 @@ class SignupScreen extends React.Component<Props, State> {
         >
                 <View
                   style={styles.formContainer}
-                  behavior="padding">
+                  >
+                  <View style={{flex: 1, justifyContent: 'center'}}>
                     <Input
-                      containerStyle={styles.inputWrapperStyle}
+                      containerStyle={this.state.valid.utln ? styles.inputWrapperStyle : styles.inputWrapperStyleWithError}
                       placeholderTextColor={'#DDDDDD'}
                       inputStyle={{color:'#222222'}}
                       labelStyle={styles.labelStyle}
@@ -147,9 +131,19 @@ class SignupScreen extends React.Component<Props, State> {
                       errorMessage = {this.state.valid.utln ? '' : this.state.errorMessage.utln}
                       autoCorrect={false}
                     />
+                    {
+                      this.state.valid.utln &&
+                      <View style={styles.helpTextContainer}>
+                        <Text style={styles.helpText}>
+                          Ex: jjaffe01
+                        </Text>
+                      </View>
+                    }
+                  </View>
+                  <View style={{flex: 1, justifyContent: 'center'}}>
                     <Input
                       secureTextEntry={true} // For Password
-                      containerStyle={styles.inputWrapperStyle}
+                      containerStyle={this.state.valid.password ? styles.inputWrapperStyle : styles.inputWrapperStyleWithError}
                       placeholderTextColor={'#DDDDDD'}
                       inputStyle={{color:'#222222'}}
                       labelStyle={styles.labelStyle}
@@ -162,15 +156,26 @@ class SignupScreen extends React.Component<Props, State> {
                       errorStyle = {{height: 20}}
                       autoCorrect={false}
                     />
+                    {
+                      this.state.valid.password &&
+                      <View style = {styles.helpTextContainer}>
+                        <Text style={styles.helpText}>
+                          At least 8 letters and nothing obvious (like "password")
+                        </Text>
+                      </View>
+                    }
+                  </View>
+                  <View style={{flex: 1, justifyContent: 'center'}}>
+                    <Button
+                      containerStyle={{justifyContent: 'center'}}
+                      buttonStyle={styles.button}
+                      onPress = {() => {this._onSignUp()}}
+                      title="Sign Up"
+                      disabled = {this.props.registerInProgress}
+                      loading= {this.props.registerInProgress}
+                    />
+                  </View>
                 </View>
-                <Button
-                  containerStyle={{justifyContent: 'center'}}
-                  buttonStyle={styles.button}
-                  onPress = {() => {this._onSignUp()}}
-                  title="Sign Up"
-                  disabled = {this.props.registerInProgress}
-                  loading= {this.props.registerInProgress}
-                />
             </KeyboardAvoidingView>
         );
     }
@@ -180,7 +185,8 @@ const styles = StyleSheet.create({
   container : {
       flex: 1,
       backgroundColor: '#FFF',
-      justifyContent: 'center',
+      flexDirection: 'column',
+      justifyContent: 'space-evenly',
       alignItems: 'center',
       padding: 30,
   },
@@ -202,8 +208,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   inputWrapperStyle: {
+    height: 60,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  inputWrapperStyleWithError: {
     height: 80,
-    marginLeft:5
+    marginLeft: 5,
+    marginRight: 5,
   },
   inputContainerStyle: {
     height: 40,
@@ -213,6 +225,12 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     height: 20,
+  },
+  helpTextContainer: {
+    marginLeft: 5,
+    marginRight: 5,
+    paddingTop: 5,
+    paddingBottom: 10,
   }
 });
 

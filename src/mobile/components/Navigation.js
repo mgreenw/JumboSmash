@@ -16,6 +16,8 @@ import LoginScreen from './SignedOut/LoginScreen';
 import SplashScreen from './SignedOut/SplashScreen';
 import SignupScreen from './SignedOut/SignupScreen';
 
+import ForgotPassword from './SignedOut/ForgotPasswordScreen'
+
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
@@ -32,6 +34,7 @@ const SignedOut = createStackNavigator(
     Splash: { screen: SplashScreen },
     Login: { screen: LoginScreen },
     Signup: { screen: SignupScreen },
+    ForgotPassword: {screen: ForgotPassword}
   },
   {
     initialRouteName: 'Splash',
