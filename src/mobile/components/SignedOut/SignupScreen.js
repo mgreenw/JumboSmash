@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Alert, Linking, StyleSheet, TextInput, Text, View } from 'react-native';
+import { Alert, Linking, StyleSheet, TextInput, Text, View, KeyboardAvoidingView } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -127,13 +127,15 @@ class SignupScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-            <View style={styles.container}>
-                <View style={styles.titleContainer}>
-                    <Text style={styles.title}>PROJECT GEM</Text>
-                </View>
-                <View style={styles.buttonContainer}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        >
+                <View
+                  style={styles.formContainer}
+                  behavior="padding">
                     <Input
-                      containerStyle={{flex: 1, marginLeft:5}}
+                      containerStyle={styles.inputWrapperStyle}
                       placeholderTextColor={'#DDDDDD'}
                       inputStyle={{color:'#222222'}}
                       labelStyle={styles.labelStyle}
@@ -143,10 +145,11 @@ class SignupScreen extends React.Component<Props, State> {
                       onChangeText={(text) => this.setState({utln: text})}
                       ref = {input=>this.utlnInput = input }
                       errorMessage = {this.state.valid.utln ? '' : this.state.errorMessage.utln}
+                      autoCorrect={false}
                     />
                     <Input
                       secureTextEntry={true} // For Password
-                      containerStyle={{flex: 1, marginLeft:5}}
+                      containerStyle={styles.inputWrapperStyle}
                       placeholderTextColor={'#DDDDDD'}
                       inputStyle={{color:'#222222'}}
                       labelStyle={styles.labelStyle}
@@ -156,31 +159,19 @@ class SignupScreen extends React.Component<Props, State> {
                       onChangeText={(text) => this.setState({password: text})}
                       ref = {input=>this.passwordInput = input }
                       errorMessage = {this.state.valid.password ? '' : this.state.errorMessage.password}
+                      errorStyle = {{height: 20}}
+                      autoCorrect={false}
                     />
-                    <Input
-                      secureTextEntry={true} // For Password
-                      containerStyle={{flex: 1, marginLeft:5}}
-                      placeholderTextColor={'#DDDDDD'}
-                      inputStyle={{color:'#222222'}}
-                      labelStyle={styles.labelStyle}
-                      inputContainerStyle={styles.inputContainerStyle}
-                      label='Confirm Password'
-                      placeholder='foobittydoobity'
-                      onChangeText={(text) => this.setState({passwordConfirm: text})}
-                      ref = {input=>this.passwordConfirmInput = input }
-                      errorMessage = {this.state.valid.passwordConfirm ? '' : this.state.errorMessage.passwordConfirm}
-                    />
-                    <Button
-                      containerStyle={{flex: 1, justifyContent: 'center'}}
-                      buttonStyle={styles.button}
-                      onPress = {() => {this._onSignUp()}}
-                      title="Submit"
-                      disabled = {this.props.registerInProgress}
-                      loading= {this.props.registerInProgress}
-                      >
-                    </Button>
                 </View>
-            </View>
+                <Button
+                  containerStyle={{justifyContent: 'center'}}
+                  buttonStyle={styles.button}
+                  onPress = {() => {this._onSignUp()}}
+                  title="Sign Up"
+                  disabled = {this.props.registerInProgress}
+                  loading= {this.props.registerInProgress}
+                />
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -198,20 +189,30 @@ const styles = StyleSheet.create({
       letterSpacing: 3,
       textAlign: 'center',
   },
-  titleContainer: {
-    flex: 2,
+  formContainer: {
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-  },
-  buttonContainer: {
-    flex: 2,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
     width: '100%',
   },
   button: {
-    marginBottom: 10,
+    marginTop: 10,
+    marginBottom: 30,
     height: 40,
+    width: '100%',
+  },
+  inputWrapperStyle: {
+    height: 80,
+    marginLeft:5
+  },
+  inputContainerStyle: {
+    height: 40,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderRadius: 5,
+  },
+  labelStyle: {
+    height: 20,
   }
 });
 
