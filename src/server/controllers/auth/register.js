@@ -2,12 +2,32 @@
 
 import type { $Request, $Response } from 'express';
 
+const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 
 const db = require('../../db');
 const mail = require('../../mail');
-const apiUtils = require('./utils');
+const authUtils = require('./utils');
+const codes = require('../status-codes');
+const utils = require('../utils');
+
+const schema = {
+  "type": "object",
+  "properties": {
+    "utln": {
+      "description": "The user's Tufts UTLN. Must be from the Class of 2019",
+      "type": "string"
+    },
+    "password": {
+      "description": "The user's desired password",
+      "type": "string",
+    }
+  },
+  "required": ["utln", "password"]
+};
 
 /**
  * @api {post} /api/auth/register
@@ -19,18 +39,45 @@ const apiUtils = require('./utils');
  */
 const register = async (req: $Request, res: $Response) => {
   try {
-    const { utln } = req.body;
+
+    const { utln, password } = req.body;
+
+    // Ensure the password is strong
+    if (!utils.password.validate(password)) {
+      return res.status(400).json({
+        status: codes.REGISTER__PASSWORD_WEAK,
+      });
+    }
 
     // Check Tufts website for proper email
-    const { httpResponse } = await apiUtils.postForm({ url: 'https://whitepages.tufts.edu/searchresults.cgi', form: { type: 'Students', search: utln } });
-    const response = await apiUtils.get(`https://whitepages.tufts.edu/${httpResponse.headers.location}`);
-    const year = response.split('<b>Class Year: </b>')[1].split('</td></div><td>')[1].split('</td></tr><tr><td>')[0].trim();
+    const { httpResponse } = await authUtils.postForm({ url: 'https://whitepages.tufts.edu/searchresults.cgi', form: { search: utln } });
+    const response = await authUtils.get(`https://whitepages.tufts.edu/${httpResponse.headers.location}`);
 
-    // Ensure the user's year is 2019.
-    // TODO: offload this to a local database instead of a Tufts server
-    if (year !== '19') {
-      throw new Error('Could not register user: not in class of 2019');
+    if (response.includes('returned no results') || response.includes('match(es)')) {
+      return res.status(400).json({
+        status: codes.REGISTER__UTLN_NOT_FOUND,
+      });
     }
+
+    const dom = new JSDOM(response);
+    const { document } = dom.window;
+
+    const table = document.getElementsByClassName('responsive-table')[0];
+
+    const fields = {};
+    _.map(table.rows, row => {
+      const key = row.cells[0].getElementsByTagName('b')[0].innerHTML.trim().replace(':', '');
+      fields[key] = row.cells[1].innerHTML.trim();
+    });
+
+    // // Ensure the user's year is 2019.
+    // // TODO: offload this to a local database instead of a Tufts server
+    if (fields['Class Year'] !== '19') {
+      return res.status(400).json({
+        status: codes.REGISTER__INVALID_UTLN,
+      });
+    }
+    const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
 
     // Create a random 40 char string to use to verify a user
     const verificationHash = crypto.randomBytes(20).toString('hex');
@@ -57,18 +104,23 @@ const register = async (req: $Request, res: $Response) => {
     // Create the verification url and send the email!
     const verificationURL = `http://${req.get('host')}/api/auth/verify/${verificationHash}`;
     mail.send({
-      to: `${utln}@tufts.edu`,
+      to: email,
       from: 'jumbosmash19@gmail.com',
       subject: 'JumboSmash Email Verification',
       html: `<p>Click here to verify your email! <a href="${verificationURL}"></a></p>`,
     });
 
     // Send a success response to the client
-    return res.status(200).send({ expiration: expirationDate });
+    return res.status(200).json({
+      status: codes.REGISTER__NEED_TO_VERIFY,
+      email,
+    });
   } catch (err) {
     // TODO: Log this to a standard logger
-    return res.status(500).send('There was a problem registering the user.');
+    return utils.error.server(res, err);
   }
 };
 
-module.exports = register;
+// This is the order of "middleware" to run. First, we validate that the
+// incoming request is valid, then we run the register controller.
+module.exports = [utils.validate(schema), register];
