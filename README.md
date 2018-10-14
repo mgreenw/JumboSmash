@@ -1,5 +1,5 @@
 # Project GEM
-Team: Jacob Jaffe, Emily Colwell, Max Greenwald, Bianca Capretta
+Team: Jacob Jaffe, Emily Colwell, Max Greenwald, Bianca Capretta, Jillian Howarth
 
 # Getting Started
 Follow the steps below for the appropriate directory you are trying to develop in.
