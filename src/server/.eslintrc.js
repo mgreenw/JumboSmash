@@ -8,6 +8,6 @@ module.exports = {
         "jest": true
     },
     "rules": {
-        "arrow-body-style": "as-needed"
+        "arrow-body-style": 0
     }
 };
