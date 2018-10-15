@@ -3,7 +3,6 @@
 import type { $Request, $Response } from 'express';
 
 const _ = require('lodash');
-const crypto = require('crypto');
 const jsdom = require('jsdom');
 
 const db = require('../../db');
@@ -58,8 +57,6 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
         new Date().getTime() - ((emailSends - 2) * 60000)
       );
 
-      console.log("EMAIL SENDS", emailSends);
-
       // If the previous send is after the limit, rate limit the request.
       if (lastSend >= lastSendLimit.getTime()) {
         return res.status(429).json({
@@ -112,7 +109,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Upsert the verification code into the database.
     const result = await db.query(
-      'INSERT INTO verification_codes (utln, code, expiration) VALUES($1, $2, $3) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends) = ($4, $5, now(), $6) RETURNING id',
+      'INSERT INTO verification_codes (utln, code, expiration, verification_attempts) VALUES($1, $2, $3, 0) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, verification_attempts) = ($4, $5, now(), $6, 0) RETURNING id',
       [utln, verificationCode, expirationDate, verificationCode, expirationDate, emailSends + 1],
     );
 

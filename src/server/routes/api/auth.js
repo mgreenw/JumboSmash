@@ -7,6 +7,6 @@ const authController = require('../../controllers/auth');
 const authRouter = express.Router();
 
 authRouter.post('/send-verification-email', authController.sendVerificationEmail);
-authRouter.get('/verify/:code', authController.verify);
+authRouter.post('/verify/', authController.verify);
 
 module.exports = authRouter;
