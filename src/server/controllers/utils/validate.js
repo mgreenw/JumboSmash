@@ -25,8 +25,14 @@ const validate = (schema: Object) => {
       status: codes.BAD_REQUEST,
       message: ajv.errorsText(validate.errors),
     });
-
   };
 }
 
 module.exports = validate;
+
+// verification_codes
+//
+// utln (UNIQUE)
+// code varchar(6) NOT NULL
+// expriation_date timestamp NOT NULL
+// verification_attempts int, initially 0, NOT NULL

@@ -1,11 +1,9 @@
 // @flow
 
-const register = require('./register');
+const sendVerificationEmail = require('./send-verification-email');
 const verify = require('./verify');
-const login = require('./login');
 
 module.exports = {
-  register,
+  sendVerificationEmail,
   verify,
-  login,
 };
