@@ -14,7 +14,7 @@ const validate = (schema: Object) => {
   const validate = ajv.compile(schema);
 
   return async (req: $Request, res: $Response, next: NextFunction) => {
-    const body = req.body;
+    const { body } = req;
 
     const valid = validate(body);
     if (valid) {
@@ -29,10 +29,3 @@ const validate = (schema: Object) => {
 }
 
 module.exports = validate;
-
-// verification_codes
-//
-// utln (UNIQUE)
-// code varchar(6) NOT NULL
-// expriation_date timestamp NOT NULL
-// verification_attempts int, initially 0, NOT NULL
