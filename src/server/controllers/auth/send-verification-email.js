@@ -37,6 +37,21 @@ const schema = {
 const sendVerificationEmail = async (req: $Request, res: $Response) => {
   try {
     const { utln } = req.body;
+    console.log("SEND VERIFICATION EMAIL");
+    console.log("UTLN: ", utln);
+    if (utln == 'jjaffe01' || utln == 'Jjaffe01' ) {
+      console.log('Success, sending email');
+      // Send a success response to the client
+      return res.status(200).json({
+        status: codes.SEND_VERIFICATION_EMAIL__SUCESS,
+        email: 'jacob.jaffe@tufts.edu',
+      });
+    } else {
+      return res.status(400).json({
+        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
+      });
+    }
+
 
     const oldCodeResults = await db.query(
       'SELECT email_sends, last_email_send FROM verification_codes WHERE utln = $1',
@@ -131,8 +146,8 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Send a success response to the client
     return res.status(200).json({
-      status: codes.SEND_VERIFICATION_EMAIL__EMAIL_SENT,
-      email,
+      status: codes.SEND_VERIFICATION_EMAIL__SUCESS,
+      email: email,
     });
   } catch (err) {
     // TODO: Log this to a standard logger

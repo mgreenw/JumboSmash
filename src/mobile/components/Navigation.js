@@ -9,32 +9,35 @@ import {
 // These are the screens we want to navigate between!
 // Group screens together in file structure when appropriate!
 
-import FooScreen from './SignedIn/FooScreen';
-import BarScreen from './SignedIn/BarScreen';
+import Foo from './SignedIn/FooScreen';
+import Bar from './SignedIn/BarScreen';
 
-import LoginScreen from './SignedOut/LoginScreen';
-import SplashScreen from './SignedOut/SplashScreen';
-import SignupScreen from './SignedOut/SignupScreen';
 
-import ForgotPassword from './SignedOut/ForgotPasswordScreen'
+// Auth Screens
+import Splash from './SignedOut/Splash_Screen'
+import Not_2019 from './SignedOut/Not2019_Screen'
+import Verify from './SignedOut/Verify/SubmitCode_Screen'
+import Verify__Expired_Code from './SignedOut/Verify/ExpiredCode_Screen'
+import Verify__Invalid_Code from './SignedOut/Verify/InvalidCode_Screen'
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
 const SignedIn = createBottomTabNavigator(
   {
-    Foo : { screen: FooScreen },
-    Bar : { screen: BarScreen },
+    Foo : { screen: Foo },
+    Bar : { screen: Bar },
   }
 )
 
 // this probably won't need to be a full stack
 const SignedOut = createStackNavigator(
   {
-    Splash: { screen: SplashScreen },
-    Login: { screen: LoginScreen },
-    Signup: { screen: SignupScreen },
-    ForgotPassword: {screen: ForgotPassword}
+    Splash: { screen: Splash },
+    Not_2019: { screen: Not_2019 },
+    Verify: { screen: Verify },
+    Verify__Expired_Code: { screen: Verify__Expired_Code },
+    Verify__Invalid_Code: { screen: Verify__Invalid_Code }
   },
   {
     initialRouteName: 'Splash',
