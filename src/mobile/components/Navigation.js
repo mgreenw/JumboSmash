@@ -15,8 +15,8 @@ import Bar from './SignedIn/BarScreen';
 
 // Auth Screens
 import Splash from './SignedOut/Splash_Screen';
-import Not_2019 from './SignedOut/Not2019_Screen';
 import Verify from './SignedOut/Verify_Screen';
+import Verify_Not2019 from './SignedOut/Verify_Not2019_Screen';
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -32,8 +32,8 @@ const SignedIn = createBottomTabNavigator(
 const SignedOut = createStackNavigator(
   {
     Splash: { screen: Splash },
-    Not_2019: { screen: Not_2019 },
     Verify: { screen: Verify },
+    Verify_Not2019: { screen: Verify_Not2019 },
   },
   {
     initialRouteName: 'Splash',

@@ -5,21 +5,21 @@
 
 import { timeout } from './../utils/timeout';
 
-type verify__SUCCESS = {
+type verifyResponse__SUCCESS = {
   status: string,
   token: any,
 }
 
-type verify__BAD_CODE = {
+type verifyResponse__BAD_CODE = {
   status: string,
 }
 
-type verify__NO_EMAIL_SENT = {
+type verifyResponse__NO_EMAIL_SENT = {
   status: string,
   utln: string,
 }
 
-type verify__EXPIRED_CODE = {
+type verifyResponse__EXPIRED_CODE = {
   status: string,
 }
 
@@ -32,10 +32,10 @@ const VERIFY__NO_EMAIL_SENT = 'VERIFY__NO_EMAIL_SENT';
 export default function verify(
   utln: string,
   code: string,
-  callback__SUCCESS: (response: verify__SUCCESS) => void,
-  callback__BAD_CODE: (response: verify__BAD_CODE) => void,
-  callback__EXPIRED_CODE: (response: verify__EXPIRED_CODE) => void,
-  callback__NO_EMAIL_SENT: (response: VERIFY__NO_EMAIL_SENT) => void,
+  callback__SUCCESS: (response: verifyResponse__SUCCESS) => void,
+  callback__BAD_CODE: (response: verifyResponse__BAD_CODE) => void,
+  callback__EXPIRED_CODE: (response: verifyResponse__EXPIRED_CODE) => void,
+  callback__NO_EMAIL_SENT: (response: verifyResponse__NO_EMAIL_SENT) => void,
   callback__ERROR: (response: any) => void,
 ){
   return timeout(30000,

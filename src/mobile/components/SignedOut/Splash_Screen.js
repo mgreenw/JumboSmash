@@ -48,71 +48,64 @@ class SplashScreen extends React.Component<Props, State> {
     // for refs
     utlnInput: Input;
 
+    // utln and email should be params, not from state, to ensure it's the
+    // same that were submitted!
+    _onSuccess = (utln: string, email: string) => {
+      const { navigate } = this.props.navigation;
+      navigate('Verify', {
+        utln: utln,
+        email: email,
+      });
+    }
+
+    _onNot2019 = () => {
+      this._utlnInputError('Sorry, this is only for Seniors!');
+    }
+
+    _onNotFound = () => {
+      this._utlnInputError('Could not find UTLN');
+    }
+
+    // TODO: use nextDate
+    _onTooManyRequests = (nextDate: string) => {
+      this._utlnInputError('Too many email requests! Please try again later');
+    }
+
+    _onError = (error: any) => {
+      console.log(error);
+      this._onNotFound();
+    }
+
     _onSubmit = () => {
         // First, we validate the UTLN to preliminarily shake it / display errors
         if (this._validateUtln()) {
-          const { navigate } = this.props.navigation;
           this.setState({
             isSubmitting: true,
             validUtln: true,
             errorMessageUtln: '',
           });
-          const stopSubmitting = (callBack: () => void) => {
+
+          const stopSubmitting = (callBack: (any) => void) => {
             this.setState({
               isSubmitting: false,
             }, callBack());
           }
 
-          // TODO: consider refactoring into own functions; however, we lose
-          // this easy type inference...
-          // Could do be having it be the callbacks to stopSubmitting, so they
-          // take direct args, not the full repsonse?
+          // Not the best way to do this for the callbacks with parameters, but
+          // marignally better than before. Need to find a better way to do this
+          // with keeping response types.
           sendVerificationEmail(
             this.state.utln,
-
-            // SUCCESS
-            // Stop submitting (incase goes back), then navigate.
-            (response) => {
-              stopSubmitting(() => {
-                navigate('Verify', {
-                  utln: this.state.utln,
-                  email: response.email,
-                });
-              })},
-
-              // NOT_2019
-              (response) => {
-                stopSubmitting(() => {
-                  this._utlnInputError('Sorry, this is only for Seniors!');
-                });
-              },
-
-              // NOT_FOUND
-              (response) => {
-                stopSubmitting(() => {
-                  this._utlnInputError('Could not find UTLN');
-                });
-              },
-
-              // TOO_MANY_REQUESTS
-              (response) => {
-                stopSubmitting(() => {
-                  const diffMins = -1;
-                  this._utlnInputError(
-                    "Sorry, you've sent too many requests. \
-                    Please check your email or try again in "
-                    + diffMins + " minutes.");
-                });
-              },
-
-              // UNCAUGHT (Includes Timemouts, Server errors, Network errors...)
-              (error) => {
-                stopSubmitting(() => {
-                  console.log('uncaught error:', error);
-                  this._utlnInputError('Could not find UTLN');
-                });
-              }
-            );
+            response => stopSubmitting( () => {
+              this._onSuccess(this.state.utln, response.email)
+            }),
+            response => stopSubmitting(this._onNot2019),
+            response => stopSubmitting(this._onNotFound),
+            response => stopSubmitting( () => {
+              this._onTooManyRequests(response.nextDate)
+            }),
+            error => stopSubmitting(this._onError),
+          );
         }
     }
 

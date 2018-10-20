@@ -7,6 +7,7 @@ import { Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { styles } from '../../styles/auth';
 import verify from '../../api/auth/verify';
+import { login } from '../../actions/auth/login';
 
 type State = {
   code: string,
@@ -18,14 +19,23 @@ type Props = {
   navigation: any,
   utln: string,
   email: string,
+  loggedIn: boolean,
+
+  // dispatch function with token
+  login: (utln: string, token: string) => void,
 };
 
 function mapStateToProps(state, ownProps) {
-    return {};
+  console.log(state);
+    return {
+      loggedIn: state.loggedIn,
+    };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-    return {};
+    return {
+      login: (utln: string, token: string) => {dispatch(login(utln, token))},
+    };
 }
 
 class SplashScreen extends React.Component<Props, State> {
@@ -49,6 +59,11 @@ class SplashScreen extends React.Component<Props, State> {
       if (prevState.isSubmitting != this.state.isSubmitting) {
         this.props.navigation.setParams({
           headerLeft: this.state.isSubmitting ? null : ''});
+      }
+
+      if (this.props.loggedIn) {
+        const { navigate } = this.props.navigation;
+        navigate('SignedIn', {});
       }
     }
 
@@ -74,38 +89,34 @@ class SplashScreen extends React.Component<Props, State> {
         return;
       }
       const { navigation } = this.props;
-      const utln = navigation.getParam('utln', '')
+      const utln = navigation.getParam('utln', '');
+      const stopSubmitting = (callBack: () => void) => {
+        this.setState({
+          isSubmitting: false,
+        }, callBack);
+      }
       this.setState({
         isSubmitting: true,
         validCode: true,
         errorMessageCode: '',
-      });
-
-      const stopSubmitting = (callBack: () => void) => {
-        this.setState({
-          isSubmitting: false,
-        }, callBack());
-      }
-
-      setTimeout(() => {
-      verify(
-        utln,
-        this.state.code,
-        (response) => { stopSubmitting(() => {}) }, // TODO
-        (response) => { stopSubmitting(() => this._codeInputError('Incorrect verification code')) },
-        (response) => { stopSubmitting(() => this._codeInputError('Expired code')) },
-        (response) => { stopSubmitting(() => this._codeInputError('No email sent for UTLN: ' + response.utln)) },
-        (response) => { stopSubmitting(() => this._codeInputError('Could not verify')) },
-      )
-    },
-    3000);
-  }
+      }, () => {
+          verify(
+            utln,
+            this.state.code,
+            response => { stopSubmitting(() => {
+              this.props.login(utln, response.token);
+            }) },
+            response => { stopSubmitting(() => this._codeInputError('Incorrect verification code')) },
+            response => { stopSubmitting(() => this._codeInputError('Expired code')) },
+            response => { stopSubmitting(() => this._codeInputError('No email sent for UTLN: ' + response.utln)) },
+            response => { stopSubmitting(() => this._codeInputError('Could not verify')) },
+          );
+        });
+    }
 
     codeInput: Input;
 
     render() {
-    // this is the navigator we passed in from App.js
-    const { navigate } = this.props.navigation;
     const { navigation } = this.props;
     const email = navigation.getParam('email', '')
 
@@ -156,14 +167,6 @@ class SplashScreen extends React.Component<Props, State> {
     </KeyboardAvoidingView>
         );
     }
-}
-
-function mapStateToProps(state, ownProps) {
-    return {};
-}
-
-function mapDispatchToProps(dispatch, ownProps) {
-    return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen);
