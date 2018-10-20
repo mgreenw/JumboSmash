@@ -5,7 +5,6 @@ import { Alert, Linking, StyleSheet, TextInput, View, KeyboardAvoidingView } fro
 import { StackNavigator } from 'react-navigation';
 import { Button, Input, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { register } from '../../actions/auth';
 
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -242,7 +241,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-      register: (utln: string, password: string) => {dispatch(register(utln, password))},
+      //register: (utln: string, password: string) => {dispatch(register(utln, password))},
     };
 }
 

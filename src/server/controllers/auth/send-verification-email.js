@@ -37,22 +37,6 @@ const schema = {
 const sendVerificationEmail = async (req: $Request, res: $Response) => {
   try {
     const { utln } = req.body;
-    console.log("SEND VERIFICATION EMAIL");
-    console.log("UTLN: ", utln);
-    if (utln == 'jjaffe01' || utln == 'Jjaffe01' ) {
-      console.log('Success, sending email');
-      // Send a success response to the client
-      return res.status(200).json({
-        status: codes.SEND_VERIFICATION_EMAIL__SUCESS,
-        email: 'jacob.jaffe@tufts.edu',
-      });
-    } else {
-      return res.status(400).json({
-        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
-      });
-    }
-
-
     const oldCodeResults = await db.query(
       'SELECT email_sends, last_email_send FROM verification_codes WHERE utln = $1',
       [utln],
@@ -60,26 +44,27 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     let emailSends = 0;
 
-    if (oldCodeResults.rowCount > 0) {
-      const code = oldCodeResults.rows[0];
-      emailSends = code.email_sends;
-      const lastSend = new Date(code.last_email_send).getTime();
-
-      // ten minutes * 60000 milliseconsd per minute
-      // For each email sent over 3, ensure that there is an additional minute
-      // wait between subsequent email sends
-      const lastSendLimit = new Date(
-        new Date().getTime() - ((emailSends - 2) * 60000)
-      );
-
-      // If the previous send is after the limit, rate limit the request.
-      if (lastSend >= lastSendLimit.getTime()) {
-        return res.status(429).json({
-          status: codes.TOO_MANY_REQUESTS,
-          message: `Too many requests to send email. Please wait until ${lastSendLimit.toJSON()} to try again.`
-        });
-      }
-    }
+    // if (oldCodeResults.rowCount > 0) {
+    //   const code = oldCodeResults.rows[0];
+    //   emailSends = code.email_sends;
+    //   const lastSend = new Date(code.last_email_send).getTime();
+    //
+    //   // ten minutes * 60000 milliseconsd per minute
+    //   // For each email sent over 3, ensure that there is an additional minute
+    //   // wait between subsequent email sends
+    //   const lastSendLimit = new Date(
+    //     new Date().getTime() - ((emailSends - 2) * 60000)
+    //   );
+    //
+    //   // If the previous send is after the limit, rate limit the request.
+    //   if (lastSend >= lastSendLimit.getTime()) {
+    //     return res.status(429).json({
+    //       status: codes.TOO_MANY_REQUESTS,
+    //       message: `Too many requests to send email. Please wait until ${lastSendLimit.toJSON()} to try again.`,
+    //       nextDate: lastSendLimit.toJSON(),
+    //     });
+    //   }
+    // }
 
     // Check Tufts website for proper email. We need to follow redirects
     const { body } = await authUtils.postForm({
@@ -107,9 +92,11 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // // Ensure the user's year is 2019.
     // // TODO: offload this to a local database instead of a Tufts server
-    if (fields['Class Year'] !== '19') {
+    const classYear = fields['Class Year'];
+    if (classYear !== '19') {
       return res.status(400).json({
         status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019,
+        classYear: classYear,
       });
     }
 
@@ -146,7 +133,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Send a success response to the client
     return res.status(200).json({
-      status: codes.SEND_VERIFICATION_EMAIL__SUCESS,
+      status: codes.SEND_VERIFICATION_EMAIL__SUCCESS,
       email: email,
     });
   } catch (err) {
