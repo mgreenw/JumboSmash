@@ -31,10 +31,7 @@ export default function verify(
   callback__ERROR: (response: any) => void,
 ){
   return timeout(30000,
-    // Send a request to the server to check if UTLN is valid. If it is, send
-    // a verification email, and return that email address.
-    // TODO: on dev mode hit local, on prod hit prod.
-    fetch('http://127.0.0.1:3000/api/auth/verify/', {
+    fetch('http://127.0.0.1:3000/api/auth/verifyToken/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
