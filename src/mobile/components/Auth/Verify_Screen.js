@@ -34,7 +34,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
     return {
-      login: (utln: string, token: string) => {dispatch(login(utln, token))},
+      login: (utln: string, token: string) => { dispatch(login(utln, token)) },
     };
 }
 
@@ -63,7 +63,7 @@ class SplashScreen extends React.Component<Props, State> {
 
       if (this.props.loggedIn) {
         const { navigate } = this.props.navigation;
-        navigate('SignedIn', {});
+        navigate('App', {});
       }
     }
 
@@ -83,7 +83,6 @@ class SplashScreen extends React.Component<Props, State> {
       });
     }
 
-    // TODO: verify request
     _onSubmit = () => {
       if (!this._validateUtln()) {
         return;

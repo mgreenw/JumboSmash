@@ -72,6 +72,7 @@ class SplashScreen extends React.Component<Props, State> {
     }
 
     _onError = (error: any) => {
+      console.log("Uncaught Send Verification Email Error Response:");
       console.log(error);
       this._onNotFound();
     }
@@ -104,7 +105,9 @@ class SplashScreen extends React.Component<Props, State> {
             response => stopSubmitting( () => {
               this._onTooManyRequests(response.nextDate)
             }),
-            error => stopSubmitting(this._onError),
+            error => stopSubmitting(() => {
+              this._onError(error)
+            }),
           );
         }
     }
@@ -123,7 +126,7 @@ class SplashScreen extends React.Component<Props, State> {
         this._utlnInputError('Required');
         return false;
       }
-      return (true);
+      return true;
     };
 
     render() {

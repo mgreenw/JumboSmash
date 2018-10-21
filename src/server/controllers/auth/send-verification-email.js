@@ -67,6 +67,11 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // }
 
     // Check Tufts website for proper email. We need to follow redirects
+
+    // *************************************************************************
+    // XXX : OFFLINE DEV TESTING:
+    // *************************************************************************
+
     const { body } = await authUtils.postForm({
       followAllRedirects: true,
       url: 'https://whitepages.tufts.edu/searchresults.cgi',
@@ -101,6 +106,18 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     }
 
     const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
+    //
+    // if (utln != 'foo' && utln != 'Foo') {
+    //     return res.status(400).json({
+    //       status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
+    //     });
+    // }
+    // const email = "foo@tufts.edu";
+
+    // *************************************************************************
+    // XXX: END OFFLINE DEV TESTING
+    // *************************************************************************
+
 
     // Code range is 000000 to 999999
     const verificationCode = Math.floor(Math.random() * (999999 + 1)).toString().padStart(6, '000000');
