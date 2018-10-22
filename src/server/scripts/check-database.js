@@ -16,13 +16,6 @@ const { Pool } = require('pg');
 
 const { engines } = require('../package.json');
 
-/*
-1) check that postgres is installed
-2) check correct postgres version
-3) check connection to database
-4) check if migrations are complete
-*/
-
 function checkPostgresInstallation() {
   return new Promise((resolve, reject) => {
     exec('psql --version', (_, stdout) => {
