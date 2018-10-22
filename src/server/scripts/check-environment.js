@@ -10,17 +10,23 @@
 
 /* eslint-disable no-console */
 
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
-function runCheck(check) {
+function runCheck(checkScript) {
   return new Promise((resolve, reject) => {
-    exec(check, (err, stdout) => {
+    // An overcomplicated to run 'npm run SCRIPT_NAME --silent'
+    // Useful to get the stdout and stderr as it comes
+    const check = spawn('npm', ['run', ...checkScript, '--silent']);
 
-      // Write the output to the console.
-      process.stdout.write(stdout);
+    check.stdout.on('data', (data) => {
+      process.stdout.write(data.toString());
+    });
+    check.stderr.on('data', (data) => {
+      process.stdout.write(data.toString());
+    });
 
-      // If there was an error, don't go on. Throw an error
-      if (err) {
+    check.on('close', (code) => {
+      if (code !== 0) {
         return reject();
       }
       return resolve();
@@ -37,9 +43,9 @@ async function main() {
   console.log(`Using NODE_ENV: ${process.env.NODE_ENV}`);
 
   try {
-    await runCheck('npm run check-node-version --silent');
-    await runCheck('npm run check-database --silent');
-    await runCheck('npm run check-dependencies --silent');
+    await runCheck(['check-dependencies']);
+    await runCheck(['check-node-version']);
+    await runCheck(['check-database']);
     process.exit(0);
   } catch (error) {
     process.exit(1);

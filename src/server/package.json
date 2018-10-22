@@ -10,12 +10,10 @@
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
-
     "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
     "migrate": "node-pg-migrate -m ./db/migrations",
     "test": "./scripts/run-tests",
     "jest": "jest --forceExit",
-
     "check-env": "node ./scripts/check-environment",
     "check-node-version": "node ./scripts/check-node-version.js",
     "check-dependencies": "node ./scripts/check-dependencies.js",
@@ -30,10 +28,10 @@
     "jsdom": "^12.2.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "node-pg-migrate": "^3.8.0",
     "pg": "^7.4.3",
     "request": "^2.88.0",
-    "semver": "^5.6.0",
-    "node-pg-migrate": "^3.8.0"
+    "semver": "^5.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

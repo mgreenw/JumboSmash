@@ -63,13 +63,19 @@ async function main() {
     }
 
     // If no error was throw, exit with status 0
-    console.log('✓ Dependencies up to date.');
+    console.log('\n✓ Dependencies up to date.');
     process.exit(0);
   } catch (error) {
     // Given an error was throw, exit with status 1
     process.exit(1);
   }
 }
+
+// This check is a little slow, so lets print out some elephants
+// to show our progress.
+setInterval(() => {
+  process.stdout.write('🐘');
+}, 250);
 
 // Because main is async, we need to define it as a function
 // and then run it here.
