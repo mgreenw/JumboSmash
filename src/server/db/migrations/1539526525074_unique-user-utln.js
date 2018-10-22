@@ -1,4 +1,4 @@
-exports.shorthands = 'unique-user-utln';
+exports.shorthands = undefined;
 
 exports.up = (pgm) => {
   pgm.addConstraint('users', 'unique_user_utln', 'UNIQUE(utln)');
@@ -6,6 +6,7 @@ exports.up = (pgm) => {
     email: {
       type: 'varchar(100)',
       notNull: true,
+      default: '',
     },
   });
 };

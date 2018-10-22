@@ -2,13 +2,22 @@
   "name": "jumbosmash-server",
   "version": "0.0.1",
   "description": "JumboSmash 2019",
+  "engines": {
+    "node": "^8.12.0",
+    "postgres": "10.5.x"
+  },
   "scripts": {
-    "start": "node server.js",
-    "dev": "export NODE_ENV=development;nodemon --exec babel-node server.js",
-    "prod": "export NODE_ENV=production;node server.js",
+    "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
+    "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
+    "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
+    "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
     "migrate": "node-pg-migrate -m ./db/migrations",
-    "test": "../../scripts/runServerTests.sh",
-    "jest": "jest --forceExit"
+    "test": "./scripts/run-tests",
+    "jest": "jest --forceExit",
+    "check-env": "node ./scripts/check-environment",
+    "check-node-version": "node ./scripts/check-node-version.js",
+    "check-dependencies": "node ./scripts/check-dependencies.js",
+    "check-database": "node ./scripts/check-database.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -19,9 +28,10 @@
     "jsdom": "^12.2.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "node-pg-migrate": "^3.8.0",
     "pg": "^7.4.3",
     "request": "^2.88.0",
-    "sql-template-strings": "^2.2.2"
+    "semver": "^5.6.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -37,7 +47,6 @@
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
-    "node-pg-migrate": "^3.8.0",
     "nodemon": "^1.18.4",
     "regenerator-runtime": "^0.12.1",
     "supertest": "^3.3.0"
