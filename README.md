@@ -19,3 +19,7 @@ Follow the steps below for the appropriate directory you are trying to develop i
 To edit you can directly change the file. Upon saving, you will see immediate changes on the iOS Emulator.
 
 ### Android
+Coming soon...
+
+## Server
+Go to `./src/server` and check out the README there for more instructions!
