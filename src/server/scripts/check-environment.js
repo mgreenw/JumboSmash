@@ -3,8 +3,7 @@
  *  Author: Max Greenwald
  *  Date: 10/20/18
  *
- *  Ensure the dependencies of the server are up to date. Print errors to
- *  stdout, and exit with code 1 if errors, and 0 if no errors.
+ *  Ensure the runtime envioronment is properly configured.
  *
  */
 

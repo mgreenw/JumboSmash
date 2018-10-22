@@ -1,10 +1,10 @@
 /*
- *  check-dependencies.js
+ *  check-node-verson.js
  *  Author: Max Greenwald
  *  Date: 10/20/18
  *
- *  Ensure the dependencies of the server are up to date. Print errors to
- *  stdout, and exit with code 1 if errors, and 0 if no errors.
+ *  Ensure the Node version being used is consistent with the Node version
+ *  required in the package.json
  *
  */
 

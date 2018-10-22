@@ -1,9 +1,9 @@
 /*
- *  check-postgres.js
+ *  check-database.js
  *  Author: Max Greenwald
  *  Date: 10/20/18
  *
- *  Ensure postgres is installed and has the correct version
+ *  Ensure database (postgres) is installed and has the correct version
  *
  */
 
