@@ -2,33 +2,20 @@
 
 import type { $Request, $Response, $Next } from 'express';
 
-const jwt = require('jsonwebtoken');
-const config = require('config');
-
-const db = require('../../../db');
+const authUtils = require('../utils');
+const codes = require('../../status-codes');
 
 // Middleware to check if the user is authenticated
-const authenticated = (req: $Request, res: $Response, next: $Next) => {
+const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   const { token } = req.body;
-  jwt.verify(token, config.get('secret'), async (err, decoded) => {
-    if (err) return res.status(401).send({ error: 'Auth failure. Not logged in.' });
-    try {
-      const result = await db.query(
-        'SELECT id from users where id = $1 LIMIT 1',
-        [decoded.id],
-      );
-
-      // No user. Fail.2
-      if (result.rows.length === 0) {
-        return res.status(401).send({ error: 'Auth failure. Not logged in' });
-      }
-    } catch (_) {
-      return res.status(401).send({ error: 'Auth failure. Not logged in' });
-    }
-
-    // Successful Auth!
+  try {
+    await authUtils.checkAuthenticated(token);
     return next();
-  });
+  } catch (error) {
+    return res.status(401).json({
+      status: codes.UNAUTHORIZED,
+    });
+  }
 };
 
 module.exports = authenticated;
