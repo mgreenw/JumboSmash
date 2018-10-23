@@ -6,7 +6,7 @@
 // we let them silently complete in the background, and throw away any results.
 //
 
-import { TIMEOUT } from '../errorResponseCodes'
+import { TIMEOUT } from '../sharedResponseCodes';
 
 // TODO: test this!
 export function timeout(ms: number, promise: Promise<Response>): Promise<Response> {

@@ -3,6 +3,10 @@
 // Self contained API file for validateToken
 
 import { timeout } from './../utils/timeout';
+import {
+  AUTHORIZED,
+  UNAUTHORIZED
+} from '../sharedResponseCodes';
 
 // TODO: We're not looking for server or timeout errors here.
 // For now, consider ANYTHING that causes an error as a token invalidation.
@@ -12,22 +16,17 @@ import { timeout } from './../utils/timeout';
 
 type validateTokenResponse__VALID = {
   status: string,
-  token: string,
 }
 
 type verifyTokenResponse__INVALID = {
   status: string,
-  token: string,
 }
 
-const VALIDATE_TOKEN__VALID = 'VALIDATE_TOKEN__VALID';
-const VALIDATE_TOKEN__INVALID = 'VALIDATE_TOKEN__INVALID';
-
-export default function verify(
+export default function checkTokenValid(
   utln: string,
   token: string,
-  callback__VALID: (response: validateTokenResponse__VALID) => void,
-  callback__INVALID: (response: verifyTokenResponse__INVALID) => void,
+  callback__AUTHORIZED: (response: validateTokenResponse__VALID) => void,
+  callback__UNAUTHORIZED: (response: verifyTokenResponse__INVALID) => void,
   callback__ERROR: (response: any) => void,
 ){
   return timeout(30000,
@@ -48,11 +47,11 @@ export default function verify(
     console.log(response);
     // We use this to ASSERT what the type of the response is.
     switch (response.status) {
-      case VALIDATE_TOKEN__VALID:
-        callback__VALID(response);
+      case AUTHORIZED:
+        callback__AUTHORIZED(response);
         break;
-      case VALIDATE_TOKEN__INVALID:
-        callback__INVALID(response);
+      case UNAUTHORIZED:
+        callback__UNAUTHORIZED(response);
         break;
       default:
         callback__ERROR(response);
