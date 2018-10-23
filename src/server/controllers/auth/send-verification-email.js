@@ -21,6 +21,10 @@ const schema = {
       "description": "The user's Tufts UTLN. Must be from the Class of 2019",
       "type": "string"
     },
+    "forceResend": {
+      "description": "If true, then asks the server to resend the verification email, even if a code is still valid.",
+      "type": "boolean"
+    }
   },
   "required": ["utln"]
 };
@@ -31,40 +35,39 @@ const schema = {
  * Register a user. Send a verification email to the user
  *
  * @apiParam (Request body) {string} utln The user's Tufts UTLN
- * @apiParam (Request body) {string} password The user's desired password
+ * @apiParam (Request body) {boolean} forceResend If the email should be resent
+ *  if a code has already be sent
  *
  */
 const sendVerificationEmail = async (req: $Request, res: $Response) => {
   try {
-    const { utln } = req.body;
+    const { utln, forceResend } = req.body;
+
     const oldCodeResults = await db.query(
-      'SELECT email_sends, last_email_send FROM verification_codes WHERE utln = $1',
+      'SELECT code, email_sends, last_email_send, expiration, verification_attempts FROM verification_codes WHERE utln = $1',
       [utln],
     );
 
+    // Get the number of email sends if an email has already been sent.
     let emailSends = 0;
+    if (oldCodeResults.rowCount > 0) {
+      const code = oldCodeResults.rows[0];
+      emailSends = code.email_sends;
 
-    // if (oldCodeResults.rowCount > 0) {
-    //   const code = oldCodeResults.rows[0];
-    //   emailSends = code.email_sends;
-    //   const lastSend = new Date(code.last_email_send).getTime();
-    //
-    //   // ten minutes * 60000 milliseconsd per minute
-    //   // For each email sent over 3, ensure that there is an additional minute
-    //   // wait between subsequent email sends
-    //   const lastSendLimit = new Date(
-    //     new Date().getTime() - ((emailSends - 2) * 60000)
-    //   );
-    //
-    //   // If the previous send is after the limit, rate limit the request.
-    //   if (lastSend >= lastSendLimit.getTime()) {
-    //     return res.status(429).json({
-    //       status: codes.TOO_MANY_REQUESTS,
-    //       message: `Too many requests to send email. Please wait until ${lastSendLimit.toJSON()} to try again.`,
-    //       nextDate: lastSendLimit.toJSON(),
-    //     });
-    //   }
-    // }
+      // Check if the old code that was sent is expired
+      const oldCodeExpired = authUtils.verificationCodeExpired(code.expiration, code.verification_attempts);
+
+      // If it has not expired AND we are not forcing a resend,
+      // respond that the email has already been sent
+      if (forceResend !== true && !oldCodeExpired) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Already sent code: ${code.code}`);
+        }
+        return res.status(200).json({
+          status: codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT,
+        });
+      }
+    }
 
     // Check Tufts website for proper email. We need to follow redirects
 
@@ -78,17 +81,17 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       form: { search: utln }
     });
 
+    // If no results were found for that UTLN, send an error.
     if (body.includes('returned no results') || body.includes('match(es)')) {
       return res.status(400).json({
         status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
       });
     }
 
+    // Parse the user's data from the White Pages
     const dom = new JSDOM(body);
     const { document } = dom.window;
-
     const table = document.getElementsByClassName('responsive-table')[0];
-
     const fields = {};
     _.map(table.rows, row => {
       const key = row.cells[0].getElementsByTagName('b')[0].innerHTML.trim().replace(':', '');
@@ -105,6 +108,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       });
     }
 
+    // Regex for the user's email from the White Pages.
     const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
     //
     // if (utln != 'foo' && utln != 'Foo') {
