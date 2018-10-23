@@ -25,20 +25,6 @@ function checkPostgresInstallation() {
         return reject();
       }
 
-      // Ensure that Postgres version can be parsed.
-      const version = semver.coerce(stdout);
-      if (!semver.valid(version)) {
-        console.log('✗ Could not find Postgres version.');
-        return reject();
-      }
-
-      // Check that the postgres version is in the correct range.
-      if (!semver.satisfies(version, engines.postgres)) {
-        console.log(`✗ Postgres version ${version} not in ${engines.postgres}. Check Postgres installation".`);
-        return reject();
-      }
-
-      console.log(`✓ Using Postgres ${version}.`);
       return resolve();
     });
   });
@@ -51,12 +37,29 @@ function checkDatabaseConnection() {
     const pool = new Pool(db);
 
     // Check if db connection successful.
-    pool.query('SELECT NOW()', (err) => {
+    pool.query('SELECT version()', (err, res) => {
       if (err) {
         console.log(`✗ Database connection to '${db.database}' failed. Check /config/${process.env.NODE_ENV}.json`);
         pool.end();
         return reject();
       }
+
+      // Ensure that Postgres version can be parsed.
+      const version = semver.coerce(res.rows[0].version.substring(0, 20));
+      if (!semver.valid(version)) {
+        console.log('✗ Could not find Postgres version.');
+        return reject();
+      }
+
+      // Check that the postgres version is in the correct range.
+      if (!semver.satisfies(version, engines.postgres)) {
+        console.log(`✗ Postgres version ${version} not in ${engines.postgres}. Check Postgres installation".`);
+        return reject();
+      }
+
+      console.log(`✓ Using Postgres ${version}.`);
+
+
       console.log('✓ Database connection successful.');
       pool.end();
       return resolve();
@@ -91,7 +94,9 @@ function checkMigrationsComplete() {
 async function main() {
   try {
     // Perform database checks
-    await checkPostgresInstallation();
+    if (process.env.NODE_ENV === 'development') {
+      await checkPostgresInstallation();
+    }
     await checkDatabaseConnection();
     await checkMigrationsComplete();
 
