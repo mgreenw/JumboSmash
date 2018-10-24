@@ -25,9 +25,7 @@ function mapStateToProps(state: State, ownProps: Props) {
 }
 
 function mapDispatchToProps(dispatch, ownProps: Props) {
-    return {
-      // checkTokenValid: (token: string) => { dispatch(checkTokenValid(token)) }
-    };
+    return {};
 }
 
 class AuthLoadingScreen extends React.Component<Props, State> {
