@@ -10,9 +10,9 @@ Check if an authentication token is valid. Additionally, check that the supplied
 
 **Permissions required** : None
 
-**Data constraints**
+**Request body fields**
 
-Provide the token string as well as the utln of the account associed with that token. Required: `token` and `utln`
+Provide the token string as well as the utln of the account associed with that token.
 
 * `utln`
   * Type: `string`
@@ -21,9 +21,9 @@ Provide the token string as well as the utln of the account associed with that t
 * `token`
   * Type: `string`
   * Description: Auth token from `/api/auth/verify`
-  * Required: `false`
+  * Required: `true`
 
-**Data example** All fields must be sent.
+**Request body example** All fields must be sent.
 
 ```json
 {
