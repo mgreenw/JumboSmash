@@ -19,8 +19,8 @@ Provide the user's Tufts utln and the 6 digit numeric code that was sent to thei
   * Description: 8 character Tufts UTLN
   * Required: `true`
 * `code`
-  * Type: `number`
-  * Description: 6 digit numeric code sent to the user's email
+  * Type: `string`
+  * Description: 6 digit numeric code sent to the user's email.
   * Required: `true`
 
 **Request body example**
