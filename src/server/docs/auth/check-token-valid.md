@@ -12,12 +12,12 @@ Check if an authentication token is valid. Additionally, check that the supplied
 
 **Data constraints**
 
-Provide the token string as well as the utln of the account associed with that token.
+Provide the token string as well as the utln of the account associed with that token. Required: `token` and `utln`
 
 ```json
 {
-    "token": "[token string from /api/auth/verify]",
-    "utln": "[8 character utln]"
+    "token": "[token string from /api/auth/verify, required]",
+    "utln": "[8 character utln, required]"
 }
 ```
 
@@ -36,7 +36,7 @@ Provide the token string as well as the utln of the account associed with that t
 
 **Code** : `200 OK`
 
-**Content example**
+**Content**
 
 ```json
 {
