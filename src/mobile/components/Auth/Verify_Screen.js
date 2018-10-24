@@ -82,6 +82,17 @@ class SplashScreen extends React.Component<Props, State> {
       });
     }
 
+    // When we submit, a few things happen.
+    // First, we set the state of this component to have isSubmitting = true,
+    // so that we lock the UI to disable going back, editting the fields,
+    // clicking more things, etc. Essentially, causing a syncronous behavoir.
+    //
+    // Because we want to ensure the request completes before continuing, we
+    // assign a callback for EACH CASE of the possible responses (as defined
+    // by the contract of the 'verify' function.)
+    //
+    // E.g. On success, we login to the app with credentials, or on failure 
+    // we display an appropriate message.
     _onSubmit = () => {
       if (!this._validateUtln()) {
         return;
