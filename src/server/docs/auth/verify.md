@@ -10,14 +10,20 @@ Verify/login a user given their utln and the code sent to their emil
 
 **Permissions required** : None
 
-**Data constraints**
+**Request body fields**
 
-Provide the user's Tufts utln and the 6 digit numeric code that was sent to their email. Required: `utln` and `code`
+Provide the user's Tufts utln and the 6 digit numeric code that was sent to their email.
 
-* `utln` : `[string, 8 character Tufts UTLN, required]`
-* `code` : `[number, 6 digit numeric code, required]`
+* `utln`
+  * Type: `string`
+  * Description: 8 character Tufts UTLN
+  * Required: `true`
+* `code`
+  * Type: `number`
+  * Description: 6 digit numeric code sent to the user's email
+  * Required: `true`
 
-**Data example**
+**Request body example**
 
 ```json
 {

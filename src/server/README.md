@@ -12,6 +12,8 @@ Here are setup instructions for MacOS and Ubuntu. We have had no success as of y
 
 If you have any questions or get stuck, post in `#server`!
 
+Check out the [API Documentation](docs)!
+
 ### MacOS
 In `src/server`...
 1. Run `./scrips/setup-mac`. This script runs best on Bash.

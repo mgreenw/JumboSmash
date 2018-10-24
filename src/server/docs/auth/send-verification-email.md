@@ -10,14 +10,20 @@ Send a verification email to the user with the given UTLN.
 
 **Permissions required** : None
 
-**Data constraints**
+**Request body fields**
 
-Provide the user's Tufts utln. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`. Required: `utln`
+Provide the user's Tufts utln. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`.
 
-* `utln` : `[string, 8 character Tufts UTLN, required]`
-* `forceResend` : `[boolean, force email resend if possible, optional]`
+* `utln`
+  * Type: `string`
+  * Description: 8 character Tufts UTLN
+  * Required: `true`
+* `forceResend`
+  * Type: `boolean`
+  * Description: Force email resend if possible
+  * Required: `false`
 
-**Data examples** Only UTLN
+**Request body example** Only UTLN
 
 ```json
 {
@@ -27,7 +33,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Data example** UTLN and forceResend
+**Request body example** UTLN and forceResend
 
 ```json
 {
