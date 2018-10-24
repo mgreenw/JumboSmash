@@ -21,7 +21,6 @@ type State = {
 }
 
 function mapStateToProps(state: State, ownProps: Props) {
-  console.log('AuthLoading Redux State:', state);
     return {};
 }
 
@@ -47,13 +46,11 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     _bootstrapAsync = async () => {
       const utln = await AsyncStorage.getItem('utln');
       const token = await AsyncStorage.getItem('token');
-      console.log(utln, token);
 
       // If we have retrieved both utln and token from the phone's store,
       // then we check that the token is still valid -- if so, we navigate to
       // the app. Otherwise, we navigate to the auth flow.
       if (utln && token) {
-        console.log('AUTH LOADING utln + token: ', utln, token);
         checkTokenValid(
           { utln: utln,
             token: token},
@@ -62,7 +59,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
            // Treat any errors as an invalid token, make them log in
           (response, request) => {this._onInvalidToken()});
       } else {
-        console.log('AUTH LOADING utln + token: ', utln, token, 'NOT FOUND');
         this._onInvalidToken();
       }
     }
@@ -73,7 +69,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     }
 
     _onInvalidToken = () => {
-      console.log('onInvalidToken');
       const { navigate } = this.props.navigation;
       navigate('Auth');
     }

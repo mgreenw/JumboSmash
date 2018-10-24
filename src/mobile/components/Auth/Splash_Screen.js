@@ -67,8 +67,6 @@ class SplashScreen extends React.Component<Props, State> {
     }
 
     _onError = (error: any) => {
-      console.log("Uncaught Send Verification Email Error Response:");
-      console.log(error);
       this._onNotFound();
     }
 
@@ -146,7 +144,7 @@ class SplashScreen extends React.Component<Props, State> {
                       labelStyle={styles.labelStyle}
                       inputContainerStyle={styles.inputContainerStyle}
                       label='Tufts UTLN'
-                      placeholder='jjaffe01'
+                      placeholder='amonac01'
                       onChangeText={(text) => this.setState({utln: text})}
                       ref = {input=>this.utlnInput = input }
                       errorMessage = {this.state.validUtln ? '' : this.state.errorMessageUtln}

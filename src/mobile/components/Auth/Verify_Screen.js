@@ -26,7 +26,6 @@ type Props = {
 };
 
 function mapStateToProps(state, ownProps) {
-  console.log(state);
     return {
       loggedIn: state.loggedIn,
     };

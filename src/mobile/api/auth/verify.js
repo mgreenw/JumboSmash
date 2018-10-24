@@ -1,13 +1,7 @@
 // @flow
 
-// Self contained API file for sendVerificationEmail.
-// NOTE: must be kept in sync with send-verifcation-email.js
-
 import { timeout } from './../utils/timeout';
 
-// NOTE: all of these have field 'utln', which is NOT part of the actual server
-// response, but we add it locally to ensure that the callbacks can know what
-// utln was responsible (incase state changes in the callee).
 type verifyResponse__SUCCESS = {
   status: string,
   token: any,
