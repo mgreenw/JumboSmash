@@ -1,0 +1,85 @@
+# Verify
+
+Verify/login a user given their utln and the code sent to their emil
+
+**URL** : `/api/auth/verify`
+
+**Method** : `POST`
+
+**Auth required** : NO
+
+**Permissions required** : None
+
+**Data constraints**
+
+Provide the user's Tufts utln and the 6 digit numeric code that was sent to their email. Required: `utln` and `code`
+
+* `utln` : `[string, 8 character Tufts UTLN, required]`
+* `code` : `[number, 6 digit numeric code, required]`
+
+**Data example**
+
+```json
+{
+    "utln": "mgreen14",
+    "code": 26405
+}
+```
+
+## Success Response
+
+**Condition** : If the utln is valid and the code matches the code that was sent to the user's email.
+
+**Code** : `200 OK`
+
+**Content Example**
+
+```json
+{
+    "status": "VERIFY__SUCCESS",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNTQwNDA0MDU2LCJleHAiOjE1NzE5NDQwNTZ9.3ae7z225ariCP1yItpiY-IxuFkEiFFOmdPlHn9y5AFM"
+}
+```
+
+## Error Responses
+
+**Condition** : The code is expired (after 10 minutes of email send) or too many attempts have been made on the code (more than 3).
+
+**Code** : `400 BAD REQUEST`
+
+**Content Example**
+
+```json
+{
+    "status": "VERIFY__EXPIRED_CODE"
+}
+```
+
+### OR
+
+**Condition** : A valid code exists for the supplied utln but the code given is incorrect.
+
+**Code** : `400 BAD REQUEST`
+
+**Content Example**
+
+```json
+{
+    "status": "VERIFY__BAD_CODE"
+}
+```
+
+### OR
+
+**Condition** : If the required fields are not supplied.
+
+**Code** : `400 BAD REQUEST`
+
+**Content example**
+
+```json
+{
+    "status": "BAD_REQUEST",
+    "message": "data should have required property 'code'"
+}
+```
