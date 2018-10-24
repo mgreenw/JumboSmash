@@ -45,7 +45,6 @@ try {
     if (result.rowCount === 0) {
       return res.status(401).json({
         status: codes.VERIFY__NO_EMAIL_SENT,
-        utln: utln,
       });
     }
 

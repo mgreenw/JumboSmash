@@ -93,8 +93,8 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       fields[key] = row.cells[1].innerHTML.trim();
     });
 
-    // // Ensure the user's year is 2019.
-    // // TODO: offload this to a local database instead of a Tufts server
+    // Ensure the user's year is 2019.
+    // TODO: offload this to a local database instead of a Tufts server
     const classYear = fields['Class Year'];
     if (classYear !== '19') {
       return res.status(400).json({
@@ -105,19 +105,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Regex for the user's email from the White Pages.
     const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
-    //
-    // if (utln != 'foo' && utln != 'Foo') {
-    //     return res.status(400).json({
-    //       status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
-    //     });
-    // }
-    // const email = "foo@tufts.edu";
-
-    // *************************************************************************
-    // XXX: END OFFLINE DEV TESTING
-    // *************************************************************************
-
-
+    
     // Code range is 000000 to 999999
     const verificationCode = Math.floor(Math.random() * (999999 + 1)).toString().padStart(6, '000000');
 
