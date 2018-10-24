@@ -57,7 +57,6 @@ export default function sendVerificationEmail(
   )
   .then(response => response.json())
   .then(response => {
-    console.log(response);
     // We use this to ASSERT what the type of the response is.
     switch (response.status) {
       case SEND_VERIFICATION_EMAIL__SUCCESS:

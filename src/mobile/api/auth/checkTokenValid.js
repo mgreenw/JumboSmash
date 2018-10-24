@@ -33,7 +33,6 @@ export default function checkTokenValid(
   callback__UNAUTHORIZED: (response: verifyTokenResponse__INVALID, request: request) => void,
   callback__ERROR: (response: any, request: request) => void,
 ){
-  console.log("CHECK TOKEN VALID START", request)
   return timeout(30000,
     fetch('http://127.0.0.1:3000/api/auth/check-token-valid/', {
       method: 'POST',
@@ -46,7 +45,6 @@ export default function checkTokenValid(
   )
   .then(response => response.json())
   .then(response => {
-    console.log("CHECK TOKEN VALID API RESPONSE", response);
     // We use this to ASSERT what the type of the response is.
     switch (response.status) {
       case AUTHORIZED:
@@ -60,7 +58,6 @@ export default function checkTokenValid(
       }
     })
   .catch(error => {
-    console.log('error');
     callback__ERROR(error, request)
   });
 }
