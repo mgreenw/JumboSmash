@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run the tests!
-echo "Setting up test database jumbosmash_test..."
+printf "Setting up test database jumbosmash_test..."
 
 nvm use 8 > /dev/null 2>&1
 dropdb jumbosmash_test > /dev/null 2>&1
@@ -12,6 +12,6 @@ npm run migrate up > /dev/null 2>&1
 
 npm run jest
 
-echo "\nCleaning up..."
+printf "cleaning up"
 
 dropdb jumbosmash_test

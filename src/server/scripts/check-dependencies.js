@@ -13,15 +13,17 @@
 
 const { exec } = require('child_process');
 
-function checkDependencies(environment = 'prod') {
+function checkDependencies(environments = ['prod']) {
   return new Promise((resolve, reject) => {
-    exec(`npm ls --depth 0 --${environment} --json`, (_, stdout) => {
+    environments.map(env => `--${env}`);
+    const envOptions = environments.join(' ');
+    exec(`npm ls --depth 0 ${envOptions} --json`, (_, stdout) => {
       // Get the response as a JS object
       const dependencies = JSON.parse(stdout);
 
       // If there are problems, print them out and reject.
       if ('problems' in dependencies) {
-        console.log(`✗ There are problems with your ${environment} dependencies.`);
+        console.log('✗ There are problems with your dependencies.');
         dependencies.problems.forEach((problem, index) => {
           console.log(`${index + 1}) ${problem}`);
         });
@@ -48,19 +50,18 @@ async function main() {
   // Ensure the environment is valid
   const env = process.env.NODE_ENV;
   if (!(env in envDeps)) {
-    console.log(`✗ Invalid environment ${env}.`);
+    console.log(`✗ Invalid environment: ${env}.`);
     console.log(`Options: ${Object.keys(envDeps)}`);
     process.exit(1);
   }
 
   // Get the dependencies to check for the given enviorment
-  const deps = envDeps[env];
-
   try {
+    const deps = envDeps[env];
+    console.log(`Checking ${env} dependencies…`);
+
     // Check all the specificed dependencies!
-    for (let i = 0; i < deps.length; i += 1) {
-      await checkDependencies(deps[i]);
-    }
+    await checkDependencies(deps);
 
     // If no error was throw, exit with status 0
     console.log('\n✓ Dependencies up to date.');
