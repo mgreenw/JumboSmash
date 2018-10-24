@@ -1,63 +1,36 @@
 // @flow
-
-import {
-    INITIATE_REGISTRATION,
-    SUCCEED_REGISTRATION,
-    FAIL_REGISTRATION,
-    ERROR_REGISTRATION
-  } from '../actions/auth';
+import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 
+// Types:
+import {
+  LOGIN_WITH_NEW_TOKEN,
+} from '../actions/auth/login.js';
+
+// TODO: seperate state into profile, meta, API responses, etc.
 type State = {
-  userName: string,
+  utln: string,
   loggedIn: boolean,
-  registerInProgress: boolean,
-  errorMessage: ?string,
+  token: ?string
 }
 
 const defaultState: State = {
-  userName: 'jjaffe01',
+  utln: '',
+  token: null,
   loggedIn: false,
-  registerInProgress: false,
-  errorMessage: null,
 }
 
-
-// TODO: look into the type for action
 export default function rootReducer(state: State = defaultState, action: any) {
   switch(action.type) {
-    case INITIATE_REGISTRATION: {
-      console.log('Reducer for INITIATE_REGISTRATION');
+    case LOGIN_WITH_NEW_TOKEN: {
+      AsyncStorage.setItem('token', action.token);
+      AsyncStorage.setItem('utln', action.utln);
 
       return _.assign({}, state, {
-        registerInProgress: true,
-      });
-    }
-
-    case SUCCEED_REGISTRATION: {
-      console.log('Reducer for SUCCEED_REGISTRATION');
-
-      return _.assign({}, state, {
-        registerInProgress: false,
-      });
-    }
-
-    case FAIL_REGISTRATION: {
-      console.log('Reducer for FAIL_REGISTRATION');
-
-      return _.assign({}, state, {
-        registerInProgress: false,
-        errorMessage: action.errorMessage,
-      });
-    }
-
-    case ERROR_REGISTRATION: {
-      console.log('Reducer for ERROR_REGISTRATION');
-
-      return _.assign({}, state, {
-        registerInProgress: false,
-        errorMessage: action.errorMessage,
-      });
+        utln: action.utln,
+        token: action.token,
+        loggedIn: true,
+      })
     }
 
     default: {

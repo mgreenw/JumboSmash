@@ -6,49 +6,47 @@ import {
   createBottomTabNavigator,
 } from 'react-navigation';
 
-// These are the screens we want to navigate between!
-// Group screens together in file structure when appropriate!
+// Entry point; used to load from phone storage & determine route
+import AuthLoading from './AuthLoading_Screen'
 
-import FooScreen from './SignedIn/FooScreen';
-import BarScreen from './SignedIn/BarScreen';
+// App Screens
+import Foo from './App/FooScreen';
+import Bar from './App/BarScreen';
 
-import LoginScreen from './SignedOut/LoginScreen';
-import SplashScreen from './SignedOut/SplashScreen';
-import SignupScreen from './SignedOut/SignupScreen';
-
-import ForgotPassword from './SignedOut/ForgotPasswordScreen'
+// Auth Screens
+import Splash from './Auth/Splash_Screen';
+import Verify from './Auth/Verify_Screen';
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
-const SignedIn = createBottomTabNavigator(
+const AppTabs = createBottomTabNavigator(
   {
-    Foo : { screen: FooScreen },
-    Bar : { screen: BarScreen },
+    Foo : { screen: Foo },
+    Bar : { screen: Bar },
   }
 )
 
 // this probably won't need to be a full stack
-const SignedOut = createStackNavigator(
+const AuthStack = createStackNavigator(
   {
-    Splash: { screen: SplashScreen },
-    Login: { screen: LoginScreen },
-    Signup: { screen: SignupScreen },
-    ForgotPassword: {screen: ForgotPassword}
+    Splash: { screen: Splash },
+    Verify: { screen: Verify },
   },
   {
     initialRouteName: 'Splash',
   }
 )
 
-export const createRootNavigator = (loggedIn: boolean = false) => {
+export const createRootNavigator = () => {
   return createSwitchNavigator(
     {
-      SignedIn: SignedIn,
-      SignedOut: SignedOut,
+      App: AppTabs,
+      Auth: AuthStack,
+      AuthLoading: AuthLoading,
     },
     {
-      initialRouteName: loggedIn ? 'SignedIn' : 'SignedOut',
+      initialRouteName: 'AuthLoading',
     },
   );
 }

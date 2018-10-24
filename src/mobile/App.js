@@ -10,29 +10,16 @@ import rootReducer from './reducers'
 const store = createStore( rootReducer, applyMiddleware(thunk));
 
 type Props = {}
-type State = {
-  signedIn: boolean,
-}
-
-const DefaultState = {
-  signedIn: false,
-}
+type State = {}
 
 export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
-    this.state = DefaultState;
+    this.state = {};
   }
 
   render() {
-    // TODO: render loading screen
-    if (!true) {
-      return null;
-    }
-
-    const Navigator = createRootNavigator(false);
-
+    const Navigator = createRootNavigator();
     return (
       <Provider store={ store }>
         <Navigator />

@@ -96,9 +96,11 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Ensure the user's year is 2019.
     // TODO: offload this to a local database instead of a Tufts server
-    if (fields['Class Year'] !== '19') {
+    const classYear = fields['Class Year'];
+    if (classYear !== '19') {
       return res.status(400).json({
         status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019,
+        classYear: classYear,
       });
     }
 
@@ -137,7 +139,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // Send a success response to the client
     return res.status(200).json({
       status: codes.SEND_VERIFICATION_EMAIL__SUCCESS,
-      email,
+      email: email,
     });
   } catch (err) {
     // TODO: Log this to a standard logger
