@@ -9,3 +9,4 @@
 * [Verify](auth/verify.md) : `POST /api/auth/verify`
 
 ## Private Endpoints
+Coming soon...
