@@ -28,6 +28,9 @@ function mapDispatchToProps(dispatch, ownProps: Props) {
     return {};
 }
 
+// This component is the screen we see on initial app startup, as we are
+// loading the state of the app / determining if the user is already logged in.
+// If the user is logged in, we then navigate to App, otherwise to Auth.
 class AuthLoadingScreen extends React.Component<Props, State> {
     constructor(props: Props) {
       super(props);
