@@ -14,14 +14,10 @@ Send a verification email to the user with the given UTLN.
 
 Provide the user's Tufts utln. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`. Required: `utln`
 
-```json
-{
-    "utln": "[8 character utln, required]",
-    "forceResend" [boolean, optional]
-}
-```
+* `utln` : `[string, 8 character Tufts UTLN, required]`
+* `forceResend` : `[boolean, force email resend if possible, optional]`
 
-**Data example** Only UTLN
+**Data examples** Only UTLN
 
 ```json
 {
@@ -29,7 +25,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 }
 ```
 
-### Or
+### OR
 
 **Data example** UTLN and forceResend
 
@@ -55,7 +51,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 }
 ```
 
-### Or
+### OR
 
 **Condition** : If the utln is a valid Tufts UTLN and an email has already been sent to the user. No `forceResend` was found in the request body.
 
@@ -86,7 +82,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 }
 ```
 
-### Or
+### OR
 
 **Condition** : The UTLN is invalid (not found in the White Pages)
 
@@ -101,7 +97,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 }
 ```
 
-### Or
+### OR
 
 **Condition** : If the required fields are not supplied.
 
