@@ -10,6 +10,11 @@ type verificationEmailResponse__SUCCESS = {
   email: string,
 }
 
+type verificationEmailResponse__EMAIL_ALREADY_SENT = {
+  status: string,
+  email: string,
+}
+
 type verificationEmailResponse__NOT_2019 = {
   status: string,
   classYear: string,
@@ -19,25 +24,23 @@ type verificationEmailResponse__NOT_FOUND = {
   status: string,
 }
 
-type verificationEmailResponse__TOO_MANY_REQUESTS = {
-  status: string,
-  message: string,
-  nextDate: string,
+type request = {
+  utln: string,
+  forceResend?: boolean,
 }
 
-
-const TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS';
 const SEND_VERIFICATION_EMAIL__SUCCESS = 'SEND_VERIFICATION_EMAIL__SUCCESS';
+const SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT = 'SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT';
 const SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND = 'SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND';
 const SEND_VERIFICATION_EMAIL__UTLN_NOT_2019 = 'SEND_VERIFICATION_EMAIL__UTLN_NOT_2019';
 
 export default function sendVerificationEmail(
-  utln: string,
-  callback__SUCCESS: (response: verificationEmailResponse__SUCCESS) => void,
-  callback__NOT_2019: (response: verificationEmailResponse__NOT_2019) => void,
-  callback__NOT_FOUND: (response: verificationEmailResponse__NOT_FOUND) => void,
-  callback__TOO_MANY_REQUESTS: (response: verificationEmailResponse__TOO_MANY_REQUESTS) => void,
-  callback__ERROR: (response: any) => void,
+  request: request,
+  callback__SUCCESS: (response: verificationEmailResponse__SUCCESS, request: request) => void,
+  callback__NOT_2019: (response: verificationEmailResponse__NOT_2019, request: request) => void,
+  callback__NOT_FOUND: (response: verificationEmailResponse__NOT_FOUND, request: request) => void,
+  callback__EMAIL_ALREADY_SENT: (response: verificationEmailResponse__EMAIL_ALREADY_SENT, request: request) => void,
+  callback__ERROR: (response: any, request: request) => void,
 ){
   return timeout(30000,
     // Send a request to the server to check if UTLN is valid. If it is, send
@@ -49,9 +52,7 @@ export default function sendVerificationEmail(
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        utln: utln,
-      }),
+      body: JSON.stringify(request),
     })
   )
   .then(response => response.json())
@@ -60,22 +61,22 @@ export default function sendVerificationEmail(
     // We use this to ASSERT what the type of the response is.
     switch (response.status) {
       case SEND_VERIFICATION_EMAIL__SUCCESS:
-        callback__SUCCESS(response);
+        callback__SUCCESS(response, request);
         break;
-      case TOO_MANY_REQUESTS:
-        callback__TOO_MANY_REQUESTS(response);
+      case SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT:
+        callback__EMAIL_ALREADY_SENT(response, request);
         break;
       case SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND:
-        callback__NOT_FOUND(response);
+        callback__NOT_FOUND(response, request);
         break;
       case SEND_VERIFICATION_EMAIL__UTLN_NOT_2019:
-        callback__NOT_2019(response);
+        callback__NOT_2019(response, request);
         break;
       default:
-        callback__ERROR(response);
+        callback__ERROR(response, request);
       }
     })
   .catch(error => {
-    callback__ERROR(error)
+    callback__ERROR(error, request)
   });
 }

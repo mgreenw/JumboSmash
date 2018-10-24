@@ -23,10 +23,8 @@ const defaultState: State = {
 export default function rootReducer(state: State = defaultState, action: any) {
   switch(action.type) {
     case LOGIN_WITH_NEW_TOKEN: {
-
-      // TODO: store to async
-      // https://reactnavigation.org/docs/en/auth-flow.html
-      // https://medium.com/building-with-react-native/what-is-asyncstorage-in-react-native-and-how-you-to-use-it-with-app-state-manager-1x09-b8c636ce5f6e
+      AsyncStorage.setItem('token', action.token);
+      AsyncStorage.setItem('utln', action.utln);
 
       return _.assign({}, state, {
         utln: action.utln,

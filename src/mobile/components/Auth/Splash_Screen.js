@@ -66,11 +66,6 @@ class SplashScreen extends React.Component<Props, State> {
       this._utlnInputError('Could not find UTLN');
     }
 
-    // TODO: use nextDate
-    _onTooManyRequests = (nextDate: string) => {
-      this._utlnInputError('Too many email requests! Please try again later');
-    }
-
     _onError = (error: any) => {
       console.log("Uncaught Send Verification Email Error Response:");
       console.log(error);
@@ -96,16 +91,16 @@ class SplashScreen extends React.Component<Props, State> {
           // marignally better than before. Need to find a better way to do this
           // with keeping response types.
           sendVerificationEmail(
-            this.state.utln,
-            response => stopSubmitting( () => {
-              this._onSuccess(this.state.utln, response.email)
+            {utln: this.state.utln},
+            (response, request) => stopSubmitting( () => {
+              this._onSuccess(request.utln, response.email)
             }),
-            response => stopSubmitting(this._onNot2019),
-            response => stopSubmitting(this._onNotFound),
-            response => stopSubmitting( () => {
-              this._onTooManyRequests(response.nextDate)
+            (response, request) => stopSubmitting(this._onNot2019),
+            (response, request) => stopSubmitting(this._onNotFound),
+            (response, request) => stopSubmitting( () => {
+              this._onSuccess(request.utln, response.email)
             }),
-            error => stopSubmitting(() => {
+            (error, request) => stopSubmitting(() => {
               this._onError(error)
             }),
           );

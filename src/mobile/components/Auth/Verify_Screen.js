@@ -100,15 +100,15 @@ class SplashScreen extends React.Component<Props, State> {
         errorMessageCode: '',
       }, () => {
           verify(
-            utln,
-            this.state.code,
-            response => { stopSubmitting(() => {
+            { utln: utln,
+              code: this.state.code},
+            (response, request) => { stopSubmitting(() => {
               this.props.login(utln, response.token);
             }) },
-            response => { stopSubmitting(() => this._codeInputError('Incorrect verification code')) },
-            response => { stopSubmitting(() => this._codeInputError('Expired code')) },
-            response => { stopSubmitting(() => this._codeInputError('No email sent for UTLN: ' + response.utln)) },
-            response => { stopSubmitting(() => this._codeInputError('Could not verify')) },
+            (response, request) => { stopSubmitting(() => this._codeInputError('Incorrect verification code')) },
+            (response, request) => { stopSubmitting(() => this._codeInputError('Expired code')) },
+            (response, request) => { stopSubmitting(() => this._codeInputError('No email sent for UTLN: ' + request.utln)) },
+            (error, request) => { stopSubmitting(() => this._codeInputError('Could not verify')) },
           );
         });
     }

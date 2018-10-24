@@ -70,11 +70,6 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     }
 
     // Check Tufts website for proper email. We need to follow redirects
-
-    // *************************************************************************
-    // XXX : OFFLINE DEV TESTING:
-    // *************************************************************************
-
     const { body } = await authUtils.postForm({
       followAllRedirects: true,
       url: 'https://whitepages.tufts.edu/searchresults.cgi',
