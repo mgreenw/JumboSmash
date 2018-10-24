@@ -14,8 +14,14 @@ Check if an authentication token is valid. Additionally, check that the supplied
 
 Provide the token string as well as the utln of the account associed with that token. Required: `token` and `utln`
 
-* `utln` : `[string, 8 character Tufts UTLN, required]`
-* `token` : `[string, auth token from api/auth/verify, required]`
+* `utln`
+  * Type: `string`
+  * Description: 8 character Tufts UTLN
+  * Required: `true`
+* `token`
+  * Type: `string`
+  * Description: Auth token from `/api/auth/verify`
+  * Required: `false`
 
 **Data example** All fields must be sent.
 
