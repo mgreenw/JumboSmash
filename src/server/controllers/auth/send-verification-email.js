@@ -44,7 +44,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     const { utln, forceResend } = req.body;
 
     const oldCodeResults = await db.query(
-      'SELECT code, email_sends, last_email_send, expiration, verification_attempts FROM verification_codes WHERE utln = $1',
+      'SELECT code, email, email_sends, last_email_send, expiration, verification_attempts FROM verification_codes WHERE utln = $1',
       [utln],
     );
 
@@ -65,6 +65,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
         }
         return res.status(200).json({
           status: codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT,
+          email: code.email,
         });
       }
     }
@@ -105,7 +106,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Regex for the user's email from the White Pages.
     const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
-    
+
     // Code range is 000000 to 999999
     const verificationCode = Math.floor(Math.random() * (999999 + 1)).toString().padStart(6, '000000');
 
@@ -115,8 +116,8 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Upsert the verification code into the database.
     const result = await db.query(
-      'INSERT INTO verification_codes (utln, code, expiration, verification_attempts) VALUES($1, $2, $3, 0) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, verification_attempts) = ($4, $5, now(), $6, 0) RETURNING id',
-      [utln, verificationCode, expirationDate, verificationCode, expirationDate, emailSends + 1],
+      'INSERT INTO verification_codes (utln, code, expiration, verification_attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, verification_attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
+      [utln, verificationCode, expirationDate, email, verificationCode, expirationDate, emailSends + 1, email],
     );
 
     // If the insert did not return any rows, the user has already registered.
