@@ -22,12 +22,12 @@ const schema = {
       "type": "string"
     }
   },
-  "required": ["utln"]
+  "required": ["utln", "code"]
 };
 /* eslint-enable /*
 
 /**
- * @api {post} /api/auth/verify/:code
+ * @api {post} /api/auth/verify/
  * Verify a user with their verification hacodesh
  */
 const verify = async (req: $Request, res: $Response) => {
