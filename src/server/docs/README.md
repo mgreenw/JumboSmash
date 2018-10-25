@@ -10,4 +10,4 @@
 ## Private Endpoints
 
 ### Authentication
-* [Get Token UTLN](auth/get-token-utln.md) : `POST /api/auth/get-token-utln`
+* [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
