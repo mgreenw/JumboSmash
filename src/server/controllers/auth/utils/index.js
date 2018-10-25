@@ -12,7 +12,7 @@ function checkAuthenticated(token: string): Promise<any> {
       if (err) return reject();
       try {
         const result = await db.query(
-          'SELECT utln FROM users WHERE id = $1 LIMIT 1',
+          'SELECT id, utln FROM users WHERE id = $1 LIMIT 1',
           [decoded.id],
         );
 
@@ -21,8 +21,8 @@ function checkAuthenticated(token: string): Promise<any> {
           return reject();
         }
 
-        // Resolve with the user's utln!
-        return resolve(result.rows[0].utln);
+        // Resolve with the user's id and utln!
+        return resolve(result.rows[0]);
       } catch (_) {
         return reject();
       }
