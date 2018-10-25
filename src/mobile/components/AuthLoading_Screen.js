@@ -11,7 +11,7 @@ import {
 import { StackNavigator } from 'react-navigation';
 import { Button, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
-import checkTokenValid from '../api/auth/checkTokenValid';
+import getTokenUtln from '../api/auth/getTokenUtln';
 
 type Props = {
   navigation: any,
@@ -52,10 +52,21 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       // then we check that the token is still valid -- if so, we navigate to
       // the app. Otherwise, we navigate to the auth flow.
       if (utln && token) {
-        checkTokenValid(
-          { utln: utln,
-            token: token},
-          (response, request) => {this._onValidToken()},
+        getTokenUtln(
+          {
+            token,
+          },
+          (response, request) => {
+            // Check if the server's utln is the same as one we have stored on device.
+            // If not, invalidate the token (navigate to the auth screen).
+            // This will fail if the stored UTLN is not exactly equal to the
+            // server's utln
+            if (utln !== response.utln) {
+              this._onInvalidToken();
+            } else {
+              this._onValidToken()
+            }
+          },
           (response, request) => {this._onInvalidToken()},
            // Treat any errors as an invalid token, make them log in
           (response, request) => {this._onInvalidToken()});

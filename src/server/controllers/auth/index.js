@@ -1,11 +1,11 @@
 // @flow
 
-const checkTokenValid = require('./check-token-valid');
+const getTokenUtln = require('./get-token-utln');
 const sendVerificationEmail = require('./send-verification-email');
 const verify = require('./verify');
 
 module.exports = {
-  checkTokenValid,
+  getTokenUtln,
   sendVerificationEmail,
   verify,
 };

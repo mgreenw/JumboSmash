@@ -16,7 +16,7 @@ authRouter.use(authenticated);
 
 // PRIVATE METHODS
 
-authRouter.get('/check-token-valid', authController.checkTokenValid);
+authRouter.get('/get-token-utln', authController.getTokenUtln);
 
 
 module.exports = authRouter;
