@@ -1,48 +1,36 @@
 # Check Token Valid
 
-Check if an authentication token is valid. Additionally, check that the supplied utln that corresponds to that token matches.
+Check if an authentication token corresponds to a valid user.
 
 **URL** : `/api/auth/check-token-valid`
 
-**Method** : `POST`
+**Method** : `GET`
 
-**Auth required** : NO
+**Auth required** : YES
 
-**Permissions required** : None
+**Permissions required** : Any user
 
-**Request body fields**
+**Request Headers**
 
-Provide the token string as well as the utln of the account associed with that token.
+Provide the normal `Authorization` token in the request header.
 
-* `utln`
-  * Type: `string`
-  * Description: 8 character Tufts UTLN
-  * Required: `true`
-* `token`
+* `Authorization`
   * Type: `string`
   * Description: Auth token from `/api/auth/verify`
   * Required: `true`
 
-**Request body example** All fields must be sent.
-
-```json
-{
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjopNTQwNDAyNDA0LCJleHAiOjE1NzE5NDI0MDR9.fjEgYTiGlnAEDYUlSR6SPgKWT1f3d2JfJ4Cjjyt-KkI",
-    "utln": "mgreen14"
-}
-```
-
 ## Success Response
 
-**Condition** : If the token is valid and the user account matches the supplied UTLN.
+**Condition** : If the token is valid.
 
 **Code** : `200 OK`
 
-**Content**
+**Content example**
 
 ```json
 {
-    "status": "AUTHORIZED"
+    "status": "AUTHORIZED",
+    "utln": "mgreen14"
 }
 ```
 
@@ -58,20 +46,5 @@ Provide the token string as well as the utln of the account associed with that t
 ```json
 {
     "status": "UNAUTHORIZED"
-}
-```
-
-### Or
-
-**Condition** : If the required fields are not supplied.
-
-**Code** : `400 BAD REQUEST`
-
-**Content example**
-
-```json
-{
-    "status": "BAD_REQUEST",
-    "message": "data should have required property 'utln'"
 }
 ```
