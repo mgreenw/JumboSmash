@@ -16,6 +16,7 @@ import {
 
 type validateTokenResponse__VALID = {
   status: string,
+  utln: string,
 }
 
 type verifyTokenResponse__INVALID = {
@@ -23,24 +24,23 @@ type verifyTokenResponse__INVALID = {
 }
 
 type request = {
-  utln: string,
   token: string,
 }
 
-export default function checkTokenValid(
+export default function getTokenUtln(
   request: request,
   callback__AUTHORIZED: (response: validateTokenResponse__VALID, request: request) => void,
   callback__UNAUTHORIZED: (response: verifyTokenResponse__INVALID, request: request) => void,
   callback__ERROR: (response: any, request: request) => void,
 ){
   return timeout(30000,
-    fetch('http://127.0.0.1:3000/api/auth/check-token-valid/', {
-      method: 'POST',
+    fetch('http://127.0.0.1:3000/api/auth/get-token-utln/', {
+      method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: request.token
       },
-      body: JSON.stringify(request),
     })
   )
   .then(response => response.json())

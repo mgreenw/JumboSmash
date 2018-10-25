@@ -1,8 +1,8 @@
-# Check Token Valid
+# Get Token UTLN
 
-Check if an authentication token corresponds to a valid user.
+Get the
 
-**URL** : `/api/auth/check-token-valid`
+**URL** : `/api/auth/get-token-utln`
 
 **Method** : `GET`
 
