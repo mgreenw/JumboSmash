@@ -35,9 +35,12 @@ try {
 
     const { utln, code } = req.body;
 
-    // Get the user's id and hashed password
-    let result = await db.query(
-      'SELECT code, expiration, verification_attempts FROM verification_codes WHERE utln = $1 LIMIT 1',
+    // Get the user's id and hashed password. Return
+    let result = await db.query(`
+      UPDATE verification_codes
+      SET verification_attempts = verification_attempts + 1
+      WHERE utln = $1
+      RETURNING code, expiration, verification_attempts`,
       [utln],
     );
 
@@ -47,12 +50,6 @@ try {
         status: codes.VERIFY__NO_EMAIL_SENT,
       });
     }
-
-    // Update the number of attempts
-    await db.query(
-      'UPDATE verification_codes SET verification_attempts = verification_attempts + 1 WHERE utln = $1',
-      [utln]
-    );
 
     const verification = result.rows[0];
     const expired = new Date(verification.expiration).getTime() < new Date().getTime();
