@@ -48,3 +48,19 @@ Provide the normal `Authorization` token in the request header.
     "status": "UNAUTHORIZED"
 }
 ```
+
+### OR
+
+**Condition** : If the request does not include an "Authorization" header
+
+**Code** : `400 BAD REQUEST`
+
+**Headers** : None.
+
+**Content** :
+```json
+{
+    "status": "BAD_REQUEST",
+    "message": "Missing Authorization header."
+}
+```
