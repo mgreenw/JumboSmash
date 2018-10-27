@@ -22,7 +22,7 @@ const validate = (schema: Object) => {
 
     return res.status(400).json({
       status: codes.BAD_REQUEST,
-      message: ajv.errorsText(validate.errors),
+      message: ajv.errorsText(validateSchema.errors),
     });
   };
 };
