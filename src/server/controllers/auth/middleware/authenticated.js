@@ -10,7 +10,7 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   const token = req.get('Authorization');
   try {
     // Set the request's "user" property to be the user's id and utln
-    req.user = await authUtils.checkAuthenticated(token);
+    req.user = await authUtils.getUser(token);
 
     // Go to the next middleware
     return next();

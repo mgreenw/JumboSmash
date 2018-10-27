@@ -6,14 +6,14 @@ const utils = require('../../utils');
 const codes = require('../../status-codes');
 
 // Middleware to check if the user is authenticated
-const onboarded = async (req: $Request, res: $Response, next: $Next) => {
+const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
   try {
     // If the request's user id is undefined, the user is not in the users
     // table yet, which implies that they are not onboarded.
-    const { id } = req.user;
-    if (id === undefined) {
+    const { profile } = req.user;
+    if (profile === null) {
       return res.status(403).json({
-        status: codes.ONBOARDING_INCOMPLETE,
+        status: codes.PROFILE_SETUP_INCOMPLETE,
       });
     }
 
@@ -26,4 +26,4 @@ const onboarded = async (req: $Request, res: $Response, next: $Next) => {
   }
 };
 
-module.exports = onboarded;
+module.exports = hasProfile;
