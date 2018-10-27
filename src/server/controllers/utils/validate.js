@@ -10,13 +10,12 @@ const ajv = new AJV();
 
 // Given a JSON schema object, validate an incoming JSON request.
 const validate = (schema: Object) => {
-
-  const validate = ajv.compile(schema);
+  const validateSchema = ajv.compile(schema);
 
   return async (req: $Request, res: $Response, next: NextFunction) => {
     const { body } = req;
 
-    const valid = validate(body);
+    const valid = validateSchema(body);
     if (valid) {
       return next();
     }
@@ -26,6 +25,6 @@ const validate = (schema: Object) => {
       message: ajv.errorsText(validate.errors),
     });
   };
-}
+};
 
 module.exports = validate;
