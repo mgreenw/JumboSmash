@@ -30,32 +30,6 @@ You may need to remove all rows from these tables before running this migration:
     unique: true,
   });
 
-  /*
-    users/utln
-    verification_codes/utln
-    users/email
-    verification_codes/email
-  */
-
-  // pgm.dropConstraint('users', 'unique_user_utln');
-  // pgm.createIndex('users', 'lower(utln)', {
-  //   unique: true,
-  // });
-
-  // pgm.dropConstraint('verification_codes', 'verification_codes_utln_key', {
-  //   cascade: true,
-  // });
-  // pgm.createIndex('verification_codes', 'lower(utln)', {
-  //   unique: true,
-  // });
-
-  // pgm.createIndex('users', 'lower(email)', {
-  //   unique: true,
-  // });
-  // pgm.createIndex('verification_codes', 'lower(email)', {
-  //   unique: true,
-  // });
-
   pgm.renameColumn('verification_codes', 'verification_attempts', 'attempts');
 
   pgm.renameColumn('users', 'is_he', 'use_he');
@@ -96,59 +70,51 @@ You may need to remove all rows from these tables before running this migration:
     type: 'varchar(100)',
   });
 
-  pgm.createTable('onboarding_users', {
+  pgm.renameTable('users', 'profiles');
+
+  pgm.createTable('users', {
     id: 'id',
     utln: {
-      type: 'varchar(100)',
+      type: 'citext',
       notNull: true,
     },
-  });
-
-  pgm.createIndex('onboarding_users', 'lower(utln)', {
-    unique: true,
   });
 };
 
 exports.down = (pgm) => {
-  pgm.dropIndex('users', 'utln', {
-    name: 'users_lower(utln)_unique_index',
-  });
-  pgm.addConstraint('users', 'unique_user_utln', 'UNIQUE(utln)');
-  pgm.dropIndex('verification_codes', 'utln', {
-    name: 'verification_codes_lower(utln)_unique_index',
-  });
-
-  pgm.dropIndex('users', 'email', {
-    name: 'users_lower(email)_unique_index',
-  });
-
-  pgm.dropIndex('verification_codes', 'email', {
-    name: 'verification_codes_lower(email)_unique_index',
-  });
-
-  pgm.addConstraint('verification_codes', 'verification_codes_utln_key', 'UNIQUE(utln)');
-
-  pgm.renameColumn('verification_codes', 'attempts', 'verification_attempts');
-  pgm.renameColumn('users', 'use_he', 'is_he');
-  pgm.renameColumn('users', 'use_she', 'is_she');
-  pgm.renameColumn('users', 'use_they', 'is_they');
-
-  pgm.renameColumn('users', 'want_he', 'wants_he');
-  pgm.renameColumn('users', 'want_she', 'wants_she');
-  pgm.renameColumn('users', 'want_they', 'wants_they');
-
-  pgm.dropColumns('users', ['birthday', 'image1_url', 'image2_url', 'image3_url', 'image4_url', 'bio']);
-
+  pgm.dropTable('users');
+  pgm.renameTable('profiles', 'users');
   pgm.alterColumn('users', 'display_name', {
     notNull: false,
     type: 'text',
   });
+  pgm.dropColumns('users', ['birthday', 'image1_url', 'image2_url', 'image3_url', 'image4_url', 'bio']);
 
-  pgm.dropIndex('onboarding_users', 'utln', {
-    name: 'onboarding_users_lower(utln)_unique_index',
+  pgm.renameColumn('users', 'want_he', 'wants_he');
+  pgm.renameColumn('users', 'want_she', 'wants_she');
+  pgm.renameColumn('users', 'want_they', 'wants_they');
+  pgm.renameColumn('users', 'use_he', 'is_he');
+  pgm.renameColumn('users', 'use_she', 'is_she');
+  pgm.renameColumn('users', 'use_they', 'is_they');
+
+  pgm.renameColumn('verification_codes', 'attempts', 'verification_attempts');
+
+
+  pgm.alterColumn('users', 'utln', {
+    type: 'varchar(100)',
+    unique: true,
   });
 
-  pgm.dropTable('onboarding_users', {
-    cascade: true,
+  pgm.alterColumn('users', 'email', {
+    type: 'varchar(100)',
+  });
+
+  pgm.alterColumn('verification_codes', 'utln', {
+    type: 'varchar(100)',
+    unique: true,
+  });
+
+  pgm.alterColumn('verification_codes', 'email', {
+    type: 'varchar(100)',
   });
 };
