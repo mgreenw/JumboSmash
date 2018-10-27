@@ -38,9 +38,9 @@ try {
     // Get the user's id and hashed password. Return
     let result = await db.query(`
       UPDATE verification_codes
-      SET verification_attempts = verification_attempts + 1
+      SET attempts = attempts + 1
       WHERE utln = $1
-      RETURNING code, expiration, verification_attempts`,
+      RETURNING code, expiration, attempts`,
       [utln],
     );
 
@@ -81,11 +81,12 @@ try {
       [utln],
     );
 
-    // If there are no results, the user does not exist. Create the user
+    // If there are no results, the user does not exist. Ensure the user is
+    // in the onboarding table
     if (result.rowCount === 0) {
       result = await db.query(
-        'INSERT INTO users (utln, email) VALUES ($1, $2) RETURNING id',
-        [utln, `${utln}@tufts.edu`]
+        'INSERT INTO onboarding_users (utln) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id',
+        [utln]
       );
     }
 
@@ -93,7 +94,7 @@ try {
     const user = result.rows[0];
 
     // Sign a login token with the user's id and the config secret
-    const token = jwt.sign({ id: user.id }, config.secret, {
+    const token = jwt.sign({ utln: utln.toLowerCase().trim() }, config.secret, {
       expiresIn: 31540000, // expires in 365 days
     });
 
