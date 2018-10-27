@@ -40,7 +40,7 @@ try {
       UPDATE verification_codes
       SET attempts = attempts + 1
       WHERE utln = $1
-      RETURNING code, expiration, attempts`,
+      RETURNING code, expiration, attempts, email`,
       [utln],
     );
 
@@ -70,31 +70,29 @@ try {
 
     // Success! The code is verified!
     // Update the expiration date to ensure that the code can only be used once
-    await db.query(
+    db.query(
       'UPDATE verification_codes SET expiration = $1',
       [new Date()],
     );
 
     // Check if a user exists for this utln.
-    result = await db.query(
-      'SELECT id FROM users WHERE utln = $1 LIMIT 1',
-      [utln],
+    result = await db.query(`
+      INSERT INTO users
+        (utln, email)
+        VALUES ($1, $2)
+      ON CONFLICT (utln)
+        DO UPDATE
+          SET successful_logins = users.successful_logins + EXCLUDED.successful_logins
+      RETURNING id
+    `,
+      [utln, verification.email]
     );
-
-    // If there are no results, the user does not exist. Ensure the user is
-    // in the onboarding table
-    if (result.rowCount === 0) {
-      result = await db.query(
-        'INSERT INTO onboarding_users (utln) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id',
-        [utln]
-      );
-    }
 
     // Get the user from the query results
     const user = result.rows[0];
 
     // Sign a login token with the user's id and the config secret
-    const token = jwt.sign({ utln: utln.toLowerCase().trim() }, config.secret, {
+    const token = jwt.sign({ id: user.id }, config.secret, {
       expiresIn: 31540000, // expires in 365 days
     });
 
