@@ -44,7 +44,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     const { utln, forceResend } = req.body;
 
     const oldCodeResults = await db.query(
-      'SELECT code, email, email_sends, last_email_send, expiration, verification_attempts FROM verification_codes WHERE utln = $1',
+      'SELECT code, email, email_sends, last_email_send, expiration, attempts FROM verification_codes WHERE utln = $1',
       [utln],
     );
 
@@ -55,7 +55,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       emailSends = code.email_sends;
 
       // Check if the old code that was sent is expired
-      const oldCodeExpired = authUtils.verificationCodeExpired(code.expiration, code.verification_attempts);
+      const oldCodeExpired = authUtils.verificationCodeExpired(code.expiration, code.attempts);
 
       // If it has not expired AND we are not forcing a resend,
       // respond that the email has already been sent
@@ -116,7 +116,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
 
     // Upsert the verification code into the database.
     const result = await db.query(
-      'INSERT INTO verification_codes (utln, code, expiration, verification_attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, verification_attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
+      'INSERT INTO verification_codes (utln, code, expiration, attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
       [utln, verificationCode, expirationDate, email, verificationCode, expirationDate, emailSends + 1, email],
     );
 

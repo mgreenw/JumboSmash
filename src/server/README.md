@@ -6,6 +6,8 @@ We are using NodeJS LTS 8.12.0. This release of Node has the highest compatibili
 
 In addition, the server uses Postgres 10.5. This was the current release of Postgres when the project was started.
 
+NOTE: Your postgres instance must have the `citext` extension installed! See the setup instructions for more info.
+
 ## Developer Setup
 
 Here are setup instructions for MacOS and Ubuntu. We have had no success as of yet setting up a dev env on Windows.
@@ -50,6 +52,7 @@ createuser jumbosmashdev
 createdb jumbosmash
 psql -U <YOUR_USER_NAME> -c "alter user jumbosmashdev with encrypted password 'tonysmash2019';"
 psql -U <YOUR_USER_NAME> -c "grant all privileges on database jumbosmash to jumbosmashdev;"
+psql -U postgres -d jumbosmash -c "CREATE EXTENSION IF NOT EXISTS citext;"
 
 # In /src/server...
 npm install

@@ -10,21 +10,51 @@ You may need to remove all rows from these tables before running this migration:
   `);
   /* eslint-enable */
 
-  pgm.dropConstraint('users', 'unique_user_utln');
-  pgm.createIndex('users', 'lower(utln)', {
-    unique: true,
-  });
-  pgm.dropConstraint('verification_codes', 'verification_codes_utln_key');
-  pgm.createIndex('verification_codes', 'lower(utln)', {
+  pgm.alterColumn('users', 'utln', {
+    type: 'citext',
     unique: true,
   });
 
-  pgm.createIndex('users', 'lower(email)', {
+  pgm.alterColumn('users', 'email', {
+    type: 'citext',
     unique: true,
   });
-  pgm.createIndex('verification_codes', 'lower(email)', {
+
+  pgm.alterColumn('verification_codes', 'utln', {
+    type: 'citext',
     unique: true,
   });
+
+  pgm.alterColumn('verification_codes', 'email', {
+    type: 'citext',
+    unique: true,
+  });
+
+  /*
+    users/utln
+    verification_codes/utln
+    users/email
+    verification_codes/email
+  */
+
+  // pgm.dropConstraint('users', 'unique_user_utln');
+  // pgm.createIndex('users', 'lower(utln)', {
+  //   unique: true,
+  // });
+
+  // pgm.dropConstraint('verification_codes', 'verification_codes_utln_key', {
+  //   cascade: true,
+  // });
+  // pgm.createIndex('verification_codes', 'lower(utln)', {
+  //   unique: true,
+  // });
+
+  // pgm.createIndex('users', 'lower(email)', {
+  //   unique: true,
+  // });
+  // pgm.createIndex('verification_codes', 'lower(email)', {
+  //   unique: true,
+  // });
 
   pgm.renameColumn('verification_codes', 'verification_attempts', 'attempts');
 
@@ -114,11 +144,11 @@ exports.down = (pgm) => {
     type: 'text',
   });
 
-  pgm.dropTable('onboarding_users', {
-    cascade: true,
-  });
-
   pgm.dropIndex('onboarding_users', 'utln', {
     name: 'onboarding_users_lower(utln)_unique_index',
+  });
+
+  pgm.dropTable('onboarding_users', {
+    cascade: true,
   });
 };
