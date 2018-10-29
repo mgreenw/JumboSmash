@@ -2,17 +2,26 @@
 
 import type { $Request, $Response } from 'express';
 
+const utils = require('../utils');
 const codes = require('../status-codes');
 
+/* eslint-disable */
+const schema = {
+  "type": "object",
+  "properties": {},
+  "required": []
+};
+/* eslint-enable */
+
 /**
- * @api {post} /api/users/
+ * @api {post} /api/users/:userId/profile
  *
  */
-const endpoint = async (req: $Request, res: $Response) => {
+const getProfile = async (req: $Request, res: $Response) => {
   return res.status(500).json({
     status: codes.SERVER_ERROR,
     message: 'Not implemented.',
   });
 };
 
-module.exports = [endpoint];
+module.exports = [utils.validate(schema), getProfile];
