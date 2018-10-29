@@ -10,8 +10,8 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
   try {
     // If the request's user id is undefined, the user is not in the users
     // table yet, which implies that they are not onboarded.
-    const { profile } = req.user;
-    if (profile === null) {
+    const { profileId } = req.user;
+    if (profileId === null) {
       return res.status(403).json({
         status: codes.PROFILE_SETUP_INCOMPLETE,
       });
