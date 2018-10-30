@@ -5,7 +5,7 @@ const app = require('../../../app');
 
 const db = require('../../../db');
 const GOOD_UTLN = 'ecolwe02';
-const GOOD_UTLN2 = 'mgreen01';
+const GOOD_UTLN2 = 'mgreen14';
 const GOOD_CODE2 = '123456';
 
 describe('api/auth/verify', () => {  
@@ -22,22 +22,42 @@ describe('api/auth/verify', () => {
       .expect(200)
       .then((res) => {
         expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-	expect(res.body.email).toContain('Emily.Colwell@Tufts.edu');
+	expect(res.body.email).toContain('Emily.Colwell@tufts.edu');
       });
   });
 
-  it('should succeed for 1st attempt utln and correct code', asynch () => {
-    const code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN],);
-  });  
-
-  it('should succeed for 1st attempt utln and correct code', asynch () => {
-    const code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN],);
+  it('should succeed for 1st attempt utln and correct code', async () => {
+    try {
+      const code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
+   } catch (error) {
+	console.log("error:", error);
+   }
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
           utln: GOOD_UTLN,
 	  code: code_for_good_utln,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
+	expect(res.body.code).toExist();
+      });
+  });
+
+
+  it('should succeed for 1st attempt inserted utln and correct code', async () => {
+    con
+    const code_for_good_utln = await db.query('INSERT utln, code, expiration, verification_attempts TO verification_codes', [GOOD_UTLN2, GOOD_CODE2, new Date().getTime(), 0],);
+    return request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+	  code: GOOD_CODE2,
         },
       )
       .set('Accept', 'application/json')
