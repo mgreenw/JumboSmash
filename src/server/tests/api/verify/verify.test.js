@@ -5,10 +5,10 @@ const app = require('../../../app');
 
 const db = require('../../../db');
 const GOOD_UTLN = 'ecolwe02';
-const GOOD_UTLN2 = 'msheld01';
+const GOOD_UTLN2 = 'mgreen01';
 const GOOD_CODE2 = '123456';
 
-describe('api/auth/send-verification-email', () => {  
+describe('api/auth/verify', () => {  
 
   it('should return success for send-verification-email to a user', () => {
     return request(app)
@@ -26,9 +26,12 @@ describe('api/auth/send-verification-email', () => {
       });
   });
 
-  let code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN],);
+  it('should succeed for 1st attempt utln and correct code', asynch () => {
+    const code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN],);
+  });  
 
-  it('should succeed for 1st attempt utln and correct code', () => {
+  it('should succeed for 1st attempt utln and correct code', asynch () => {
+    const code_for_good_utln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN],);
     return request(app)
       .post('/api/auth/verify')
       .send(
