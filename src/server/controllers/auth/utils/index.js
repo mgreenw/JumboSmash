@@ -13,13 +13,15 @@ function getUser(token: string): Promise<any> {
       try {
         // Get the user from the users table. If the user has a profile setup,
         // join with that profile. If not, the 'profile' field will be null
-        const result = await db.query(`
-          SELECT u.id, p.id AS profileId
+        const result = await db.query(
+          `
+          SELECT u.id, p.id AS profileId, u.utln
           FROM users u
-          LEFT JOIN profiles p ON p.user = u.id
+          LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $1
           LIMIT 1`,
-        [decoded.id]);
+          [decoded.id],
+        );
 
         // If no user exists with that id, fail
         if (result.rowCount === 0) {
@@ -29,7 +31,7 @@ function getUser(token: string): Promise<any> {
         // If a user exists, return the user!
         return resolve(result.rows[0]);
 
-      // If there is an unknown error, reject
+        // If there is an unknown error, reject
       } catch (error) {
         return reject();
       }
@@ -62,7 +64,6 @@ function verificationCodeExpired(expiration: Date, attempts: number) {
   const expired = new Date(expiration).getTime() < new Date().getTime();
   return expired || attempts >= 3;
 }
-
 
 module.exports = {
   get,
