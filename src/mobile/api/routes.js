@@ -12,8 +12,6 @@ const SERVER_ROUTE =
         .concat(`:3000`)
     : `jumbosmash.com`;
 
-("http://127.0.0.1:3000/api/auth/send-verification-email/");
-
 ///////////////////////
 // ROUTE CONSTRUCTORS:
 ///////////////////////
