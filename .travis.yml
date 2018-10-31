@@ -19,3 +19,4 @@ before_script:
   - sudo -u postgres psql -c 'create extension if not exists citext;' -U postgres
 script:
   - cd ./src/server
+  - npm test
