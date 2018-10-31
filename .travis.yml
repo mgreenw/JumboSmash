@@ -11,6 +11,9 @@ addons:
     packages:
     - postgresql-10
     - postgresql-client-10
+env:
+  global:
+  - PGPORT=5433
 before_script:
   - psql -c 'create database jumbosmash_test;' -U postgres
   - psql -c 'create extension if not exists citext;' -U postgres
