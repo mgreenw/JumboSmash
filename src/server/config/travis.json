@@ -1,0 +1,10 @@
+{
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "jumbosmash_test",
+    "user": "postgres",
+    "password": ""
+  },
+  "secret": "ohhhhhnoooo!!"
+}
