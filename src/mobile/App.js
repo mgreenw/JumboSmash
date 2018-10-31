@@ -1,16 +1,16 @@
 // @flow
 
-import React from 'react';
-import { Provider } from 'react-redux';
-import { createStore, compose, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import { createRootNavigator } from './components/Navigation';
-import rootReducer from './reducers'
+import React from "react";
+import { Provider } from "react-redux";
+import { createStore, compose, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { createRootNavigator } from "./components/Navigation";
+import rootReducer from "./reducers";
 
-const store = createStore( rootReducer, applyMiddleware(thunk));
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
-type Props = {}
-type State = {}
+type Props = {};
+type State = {};
 
 export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -21,7 +21,7 @@ export default class App extends React.Component<Props, State> {
   render() {
     const Navigator = createRootNavigator();
     return (
-      <Provider store={ store }>
+      <Provider store={store}>
         <Navigator />
       </Provider>
     );
