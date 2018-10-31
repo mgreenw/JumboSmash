@@ -4,7 +4,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "../../../styles/template";
-import { Button } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 
 type Props = {
   navigation: any
@@ -31,9 +31,12 @@ class MessagingScreen extends React.Component<Props, State> {
     return {
       title: "Messaging",
       headerLeft: (
-        <Button
-          title="<- Swiping"
+        <Icon
+          name="diamond"
+          type="font-awesome"
+          size={40}
           onPress={() => navigation.navigate("Swiping")}
+          containerStyle={{ paddingLeft: 10 }}
         />
       )
     };
