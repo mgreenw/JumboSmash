@@ -11,12 +11,10 @@
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
 
+    "migrate": "node-pg-migrate -m ./db/migrations",
     "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
 
-    "migrate": "export NODE_ENV=development;node-pg-migrate -m ./db/migrations",
-    "migrate-test": "export NODE_ENV=testing;node-pg-migrate -m ./db/migrations",
-
-    "test": "export NODE_ENV=testing && npm run migrate-test up && npm run jest",
+    "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
     "jest": "jest --forceExit",
 
     "check-env": "babel-node ./scripts/check-environment",
