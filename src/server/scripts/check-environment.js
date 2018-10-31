@@ -11,6 +11,10 @@
 
 const { spawn } = require('child_process');
 
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
+
 function runCheck(checkScript) {
   return new Promise((resolve, reject) => {
     // An overcomplicated to run 'npm run SCRIPT_NAME --silent'
@@ -34,12 +38,12 @@ function runCheck(checkScript) {
 }
 
 async function main() {
-  if (process.env.NODE_ENV === undefined) {
+  if (NODE_ENV === undefined) {
     console.log('✗ NODE_ENV is undefined');
     process.exit(1);
   }
 
-  console.log(`Using NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`Using NODE_ENV: ${NODE_ENV}`);
 
   try {
     await runCheck(['check-dependencies']);

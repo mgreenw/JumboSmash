@@ -3,13 +3,18 @@
 const config = require('config');
 const sgMail = require('@sendgrid/mail');
 
-if (process.env.NODE_ENV === 'development') {
-/* eslint-disable no-console */
-  exports.send = console.log;
-/* eslint-enable */
-} else if (process.env.NODE_ENV === 'test') {
-  exports.send = (message) => {};
-} else {
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
+
+// If running on production, actually send emails. Otherwise, print to console.
+if (NODE_ENV === 'production') {
   sgMail.setApiKey(config.get('sendgrid_api_key'));
   exports.send = sgMail.send;
+} else if (NODE_ENV === 'development') {
+  /* eslint-disable no-console */
+  exports.send = console.log;
+  /* eslint-enable */
+} else {
+  exports.send = () => {};
 }
