@@ -35,7 +35,6 @@ export default function rootReducer(state: State = defaultState, action: any) {
     }
 
     case LOGOUT: {
-      console.log("logout -- reducer");
       AsyncStorage.removeItem("token");
       AsyncStorage.removeItem("utln");
 
