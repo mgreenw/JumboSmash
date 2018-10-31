@@ -45,7 +45,7 @@ class ProfileScreen extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM</Text>
+          <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
         </View>
       </View>
     );
