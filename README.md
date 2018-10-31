@@ -1,5 +1,5 @@
 # Project GEM [![Build Status](https://travis-ci.com/mgreenw/ProjectGEM.svg?token=Gqw9uK7j5g8prgyHD4xx&branch=master)](https://travis-ci.com/mgreenw/ProjectGEM)
-Team: Jacob Jaffe, Emily Colwell, Max Greenwald, Bianca Capretta, Jillian Howarth
+Team: Jacob Jaffe, Emily Colwell, Max Greenwald, Bianca Capretta, Jillian Howarth, Erin Hsu
 
 # Getting Started
 Follow the steps below for the appropriate directory you are trying to develop in.
