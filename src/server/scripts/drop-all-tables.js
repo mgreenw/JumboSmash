@@ -11,7 +11,11 @@
 /* eslint-disable no-console */
 
 const readline = require('readline');
+
 const db = require('../db');
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
 
 function askQuestion(query) {
   const rl = readline.createInterface({
@@ -26,24 +30,23 @@ function askQuestion(query) {
 }
 
 async function dropOwnedTables() {
-  const env = process.env.NODE_ENV;
-  if (process.env.NODE_ENV === undefined) {
+  if (NODE_ENV === undefined) {
     console.log('Must define NODE_ENV in environment.');
     process.exit(1);
   }
-  if (env === 'development') {
+  if (NODE_ENV === 'development') {
     const ans = await askQuestion('Are you sure you want to drop all of the tables in your development database (y/n)?');
     console.log(ans);
     if (ans.toLowerCase() !== 'y') {
       process.exit(1);
     }
-  } else if (env !== 'test') {
-    console.log(`Careful: do not perform this action outside of your local computer (you just tried on ${process.env.NODE_ENV}).`);
+  } else if (NODE_ENV !== 'testing') {
+    console.log(`Careful: do not perform this action outside of your local computer (you just tried on ${NODE_ENV}).`);
     process.exit(1);
   }
 
   await db.query('DROP OWNED BY CURRENT_USER CASCADE;');
-  console.log(`✓ Dropped all tables in ${process.env.NODE_ENV} database.`);
+  console.log(`✓ Dropped all tables in ${NODE_ENV} database.`);
 }
 
 dropOwnedTables();

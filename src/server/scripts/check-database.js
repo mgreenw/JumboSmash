@@ -15,6 +15,9 @@ const config = require('config');
 const { Pool } = require('pg');
 
 const { engines } = require('../package.json');
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
 
 function checkPostgresInstallation() {
   return new Promise((resolve, reject) => {
@@ -39,7 +42,7 @@ function checkDatabaseConnection() {
     // Check if db connection successful.
     pool.query('SELECT version()', (err, res) => {
       if (err) {
-        console.log(`✗ Database connection to '${db.database}' failed. Check /config/${process.env.NODE_ENV}.json`);
+        console.log(`✗ Database connection to '${db.database}' failed. Check /config/${NODE_ENV}.json`);
         pool.end();
         return reject();
       }
@@ -94,7 +97,7 @@ function checkMigrationsComplete() {
 async function main() {
   try {
     // Perform database checks
-    if (process.env.NODE_ENV === 'development') {
+    if (NODE_ENV === 'development') {
       await checkPostgresInstallation();
     }
     await checkDatabaseConnection();

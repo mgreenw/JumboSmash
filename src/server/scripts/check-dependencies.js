@@ -13,6 +13,10 @@
 
 const { exec } = require('child_process');
 
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
+
 function checkDependencies(environments = ['prod']) {
   return new Promise((resolve, reject) => {
     environments.map(env => `--${env}`);
@@ -42,23 +46,23 @@ const envDeps = {
   production: ['prod'],
   staging: ['prod'],
   development: ['prod', 'dev'],
-  test: ['prod', 'dev'],
+  testing: ['prod', 'dev'],
 };
 
 // Main function!
 async function main() {
   // Ensure the environment is valid
-  const env = process.env.NODE_ENV;
-  if (!(env in envDeps)) {
-    console.log(`✗ Invalid environment: ${env}.`);
+
+  if (!(NODE_ENV in envDeps)) {
+    console.log(`✗ Invalid environment: ${NODE_ENV}.`);
     console.log(`Options: ${Object.keys(envDeps)}`);
     process.exit(1);
   }
 
   // Get the dependencies to check for the given enviorment
   try {
-    const deps = envDeps[env];
-    console.log(`Checking ${env} dependencies…`);
+    const deps = envDeps[NODE_ENV];
+    console.log(`Checking ${NODE_ENV} dependencies…`);
 
     // Check all the specificed dependencies!
     await checkDependencies(deps);
