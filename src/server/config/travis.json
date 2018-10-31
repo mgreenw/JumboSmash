@@ -1,7 +1,7 @@
 {
   "db": {
     "host": "localhost",
-    "port": 5434,
+    "port": 5433,
     "database": "jumbosmash_test",
     "user": "postgres",
     "password": ""
