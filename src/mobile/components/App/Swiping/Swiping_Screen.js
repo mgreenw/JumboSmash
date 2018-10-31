@@ -1,9 +1,10 @@
 // @flow
 
 import React from "react";
-import { Button, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "../../../styles/template";
+import { Button } from "react-native-elements";
 
 type Props = {
   navigation: any

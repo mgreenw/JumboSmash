@@ -1,40 +1,53 @@
 // @flow
-import { AsyncStorage } from 'react-native';
-import _ from 'lodash';
+import { AsyncStorage } from "react-native";
+import _ from "lodash";
 
 // Types:
-import {
-  LOGIN_WITH_NEW_TOKEN,
-} from '../actions/auth/login.js';
+import { LOGIN_WITH_NEW_TOKEN } from "../actions/auth/login.js";
+
+import { LOGOUT } from "../actions/auth/logout.js";
 
 // TODO: seperate state into profile, meta, API responses, etc.
 type State = {
   utln: string,
   loggedIn: boolean,
   token: ?string
-}
+};
 
 const defaultState: State = {
-  utln: '',
+  utln: "",
   token: null,
-  loggedIn: false,
-}
+  loggedIn: false
+};
 
 export default function rootReducer(state: State = defaultState, action: any) {
-  switch(action.type) {
+  switch (action.type) {
+    // TODO: consider doing these AsyncStorage chunks batched, and with callbacks.
     case LOGIN_WITH_NEW_TOKEN: {
-      AsyncStorage.setItem('token', action.token);
-      AsyncStorage.setItem('utln', action.utln);
+      AsyncStorage.setItem("token", action.token);
+      AsyncStorage.setItem("utln", action.utln);
 
       return _.assign({}, state, {
         utln: action.utln,
         token: action.token,
-        loggedIn: true,
-      })
+        loggedIn: true
+      });
+    }
+
+    case LOGOUT: {
+      console.log("logout -- reducer");
+      AsyncStorage.removeItem("token");
+      AsyncStorage.removeItem("utln");
+
+      return _.assign({}, state, {
+        utln: "",
+        token: null,
+        loggedIn: false
+      });
     }
 
     default: {
-      return state
+      return state;
     }
   }
 }
