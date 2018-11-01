@@ -2,6 +2,7 @@
 
 This should be updated whenever a migration is made.
 
+```
 create table users
 (
 	id serial not null constraint users_pkey1 primary key,
@@ -14,9 +15,10 @@ create table users
 	use_he boolean default false not null,
 	use_she boolean default false not null,
 	use_they boolean default false not null
-)
-;
+);
+```
 
+```
 create table profiles
 (
 	id serial not null constraint users_pkey primary key,
@@ -28,9 +30,10 @@ create table profiles
 	image3_url text,
 	image4_url text,
 	bio text default ''::text not null
-)
-;
+);
+```
 
+```
 create table verification_codes
 (
 	id serial not null constraint verification_codes_pkey primary key,
@@ -41,9 +44,10 @@ create table verification_codes
 	email_sends integer default 1 not null,
 	last_email_send timestamp with time zone default CURRENT_TIMESTAMP not null,
 	email citext default ''::character varying not null
-)
-;
+);
+```
 
+```
 create table relationships
 (
 	critic_user_id integer not null constraint relationships_critic_user_id_fkey references profiles 	on delete cascade,
@@ -53,6 +57,6 @@ create table relationships
 	last_swipe_timestamp timestamp with time zone not null,
 	created_at timestamp default CURRENT_TIMESTAMP not null,
 	constraint pk_critic_candidate primary key (critic_user_id, candidate_user_id)
-)
-;
+);
+```
 
