@@ -1,9 +1,10 @@
 // @flow
 
 import React from "react";
-import { Button, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "../../../styles/template";
+import { Button } from "react-native-elements";
 
 type Props = {
   navigation: any
@@ -56,7 +57,7 @@ class SwipingScreen extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM</Text>
+          <Text style={styles.title}>PROJECT GEM: SWIPING</Text>
         </View>
       </View>
     );

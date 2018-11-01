@@ -1,28 +1,58 @@
-import React from 'react';
-import { StackNavigator } from 'react-navigation';
-import { Button } from 'react-native-elements';
-import { styles } from '../../styles/auth';
+import React from "react";
+import {
+  Text,
+  View,
+  KeyboardAvoidingView
+} from "react-native";
+import { Button, Input } from "react-native-elements";
+import { connect } from "react-redux";
+import { styles } from "../../styles/auth";
 
 type Props = {
-    year: any,
+  navigation: any
+};
+
+type State = {};
+
+function mapStateToProps(state: State, ownProps: Props) {
+  return {};
 }
 
-type State = {
-    utln: string,
-    email: string,
+function mapDispatchToProps(dispatch: State, ownProps: Props) {
+  return {};
 }
 
 class Not2019Screen extends React.Component<Props, State> {
-    render() {
-        return (
-            <View style={{flex: 1}}>
-                <Text style={styles.title}>PROJECT GEM</Text>
-            </View>
-            <div>"Suckers! Your year " + this.props.year + 
-                "is not allowed to use Project GEM."</div>
-             
-        );
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
+
+  // These are for react navigation, like header bar and such
+  static navigationOptions = {
+    headerStyle: {
+      borderBottomWidth: 0
     }
+  };
+
+  render() {
+    // this is the navigator we passed in from App.js
+    const { navigate } = this.props.navigation;
+
+    return (
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>PROJECT GEM: WRONG YEAR</Text>
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+          <Text>Sucks to suck! Your year is not allowed to use Project GEM.</Text>
+        </View>
+      </KeyboardAvoidingView>
+    );
+  }
 }
 
-export default Not2019Screen;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Not2019Screen);

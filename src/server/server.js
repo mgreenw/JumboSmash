@@ -2,7 +2,11 @@
 
 const app = require('./app');
 
-if (process.env.NODE_ENV === undefined) {
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
+
+if (NODE_ENV === undefined) {
   // TODO: Log failure
   process.exit(1);
 }

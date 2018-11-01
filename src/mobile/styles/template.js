@@ -14,5 +14,8 @@ export const styles = StyleSheet.create({
     fontSize: 50,
     letterSpacing: 3,
     textAlign: "center"
+  },
+  button: {
+    height: 40
   }
 });
