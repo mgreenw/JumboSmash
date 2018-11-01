@@ -47,6 +47,7 @@ const envDeps = {
   staging: ['prod'],
   development: ['prod', 'dev'],
   testing: ['prod', 'dev'],
+  travis: ['prod', 'dev'],
 };
 
 // Main function!
