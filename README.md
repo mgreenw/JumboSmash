@@ -13,13 +13,21 @@ Follow the steps below for the appropriate directory you are trying to develop i
 4. Ensure that you have npm or yarn.
 5. Ensure that you have node and watchman `brew install node` and `brew install watchman`
 6. In order to test, you need to run the mobile app and server simultaneously
+<<<<<<< HEAD
     
     **In mobile directory**
+=======
+    - In mobile directory
+>>>>>>> 0ae7d7602ee51b78112012fe54148496b785b955
     1. Run `npm install -g react-native-cli` to use the react-native command line interface
     2. Run `react-native run-ios` to run the mobile app and iOS emulator (Xcode)
     3. OR run `npm install` and run the previous command again
     
+<<<<<<< HEAD
     **In server directory**
+=======
+    - In server director
+>>>>>>> 0ae7d7602ee51b78112012fe54148496b785b955
     1. Run `npm install` and then `npm run dev`
     2. You might also need to run `nvm use 8.12.0` and then `npm run dev` again
     3. If migrations are not up-to-date, you may need to remove all the rows from the table (should be documented in the error message - thanks Max!). First try `npm run migrate up`. If not working, you need to add the extension citext by running: `psql -U postgres -d jumbosmash -c "create extension citext;"` and then enter your password. If that doesn't work, run `psql -U postgres -c "alter user jumbosmashdev with encrypted password 'tonysmash2019';"` and then run `psql -U postgres`. In the postgres environment, enter `\c jumbosh create extension citext;` then quit with `\q`. Try running `npm run migrate up` again.
