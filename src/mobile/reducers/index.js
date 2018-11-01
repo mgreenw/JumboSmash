@@ -5,6 +5,8 @@ import _ from "lodash";
 // Types:
 import { LOGIN_WITH_NEW_TOKEN } from "../actions/auth/login.js";
 
+import { LOGOUT } from "../actions/auth/logout.js";
+
 // TODO: seperate state into profile, meta, API responses, etc.
 type State = {
   utln: string,
@@ -20,6 +22,7 @@ const defaultState: State = {
 
 export default function rootReducer(state: State = defaultState, action: any) {
   switch (action.type) {
+    // TODO: consider doing these AsyncStorage chunks batched, and with callbacks.
     case LOGIN_WITH_NEW_TOKEN: {
       AsyncStorage.setItem("token", action.token);
       AsyncStorage.setItem("utln", action.utln);
@@ -28,6 +31,17 @@ export default function rootReducer(state: State = defaultState, action: any) {
         utln: action.utln,
         token: action.token,
         loggedIn: true
+      });
+    }
+
+    case LOGOUT: {
+      AsyncStorage.removeItem("token");
+      AsyncStorage.removeItem("utln");
+
+      return _.assign({}, state, {
+        utln: "",
+        token: null,
+        loggedIn: false
       });
     }
 
