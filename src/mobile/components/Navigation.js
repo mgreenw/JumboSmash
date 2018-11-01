@@ -71,7 +71,7 @@ const AuthStack = createStackNavigator(
     Not2019: { screen: Not2019}
   },
   {
-    initialRouteName: "Not2019"
+    initialRouteName: "Splash"
   }
 );
 
