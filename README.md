@@ -13,8 +13,7 @@ Follow the steps below for the appropriate directory you are trying to develop i
 4. Ensure that you have npm or yarn.
 5. Ensure that you have node and watchman `brew install node` and `brew install watchman`
 6. In order to test, you need to run the mobile app and server simultaneously
-    
-    **In mobile directory**
+   **In mobile directory**
     1. Run `npm install -g react-native-cli` to use the react-native command line interface
     2. Run `react-native run-ios` to run the mobile app and iOS emulator (Xcode)
     3. OR run `npm install` and run the previous command again
