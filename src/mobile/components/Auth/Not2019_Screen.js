@@ -14,11 +14,11 @@ type Props = {
 
 type State = {};
 
-function mapStateToProps(state: State, ownProps: Props) {
+function mapStateToProps(state, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch: State, ownProps: Props) {
+function mapDispatchToProps(dispatch, ownProps: Props) {
   return {};
 }
 
