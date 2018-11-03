@@ -26,7 +26,6 @@ type State = {
 type Props = {
   navigation: any,
   utln: string,
-  email: string,
   loggedIn: boolean,
 
   // dispatch function with token
@@ -93,6 +92,14 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
+  _onExpiredCode = (utln: string, email: string) => {
+    const { navigate } = this.props.navigation;
+    navigate("ExpiredCode", {
+      utln: utln,
+      email: email
+    });
+  };
+
   // When we submit, a few things happen.
   // First, we set the state of this component to have isSubmitting = true,
   // so that we lock the UI to disable going back, editting the fields,
@@ -110,6 +117,7 @@ class SplashScreen extends React.Component<Props, State> {
     }
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
+    const email = navigation.getParam("email", "");
     const stopSubmitting = (callBack: () => void) => {
       this.setState(
         {
@@ -141,7 +149,7 @@ class SplashScreen extends React.Component<Props, State> {
             );
           },
           (response, request) => {
-            stopSubmitting(() => this._codeInputError("Expired code"));
+            stopSubmitting(() => this._onExpiredCode(utln, email));
           },
           (response, request) => {
             stopSubmitting(() =>
