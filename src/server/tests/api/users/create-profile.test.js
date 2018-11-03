@@ -11,6 +11,6 @@ const db = require('../../../db');
   // CREATE_PROFILE__IMAGE_URL_NOT_VALID,
   // CREATE_PROFILE__PROFILE_ALREADY_CREATED,
 
-describe('POST api/users/me/profile', () => {
+// describe('POST api/users/me/profile', () => {
 
-});
+// });
