@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {};

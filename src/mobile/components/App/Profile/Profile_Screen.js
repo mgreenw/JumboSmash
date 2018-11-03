@@ -3,7 +3,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { Button } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 import { styles } from "../../../styles/template";
 
 type Props = {
@@ -31,9 +31,12 @@ class ProfileScreen extends React.Component<Props, State> {
     return {
       title: "Profile",
       headerRight: (
-        <Button
-          title="Swiping ->"
+        <Icon
+          name="diamond"
+          type="font-awesome"
+          size={40}
           onPress={() => navigation.navigate("Swiping")}
+          containerStyle={{ paddingRight: 10 }}
         />
       )
     };
