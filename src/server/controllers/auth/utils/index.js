@@ -13,14 +13,9 @@ function getUser(token: string): Promise<any> {
       try {
         // Get the user from the users table. If the user has a profile setup,
         // join with that profile. If not, the 'profile' field will be null
-<<<<<<< HEAD
         const result = await db.query(
           `
           SELECT u.id, p.id AS profileId, u.utln
-=======
-        const result = await db.query(`
-          SELECT u.id, u.utln, u.email, p.id AS profile
->>>>>>> 4fcd0dc... Server: create profile initial work
           FROM users u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $1
