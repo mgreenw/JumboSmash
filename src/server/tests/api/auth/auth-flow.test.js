@@ -4,8 +4,8 @@ const app = require('../../../app');
 
 const db = require('../../../db');
 
-const GOOD_UTLN = 'ecolwe02';
-const GOOD_UTLN2 = 'mgreen14';
+const GOOD_UTLN = 'jchun03';
+const GOOD_UTLN2 = 'rzampo01';
 const BAD_CODE = '123456';
 describe('api/auth/verify', () => {
   beforeAll(async () => {
@@ -31,7 +31,7 @@ describe('api/auth/verify', () => {
       .expect(200);
 
     expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res.body.email).toContain('Emily.Colwell@tufts.edu');
+    expect(res.body.email).toContain('Jasmin.Chun@tufts.edu');
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
     return request(app)
@@ -144,7 +144,7 @@ describe('api/auth/verify', () => {
       .expect(200);
 
     expect(sendEmailRes.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(sendEmailRes.body.email).toContain('Max.Greenwald@tufts.edu');
+    expect(sendEmailRes.body.email).toContain('Ronald.Zampolin@tufts.edu');
 
     const verifyRes1 = await request(app)
       .post('/api/auth/verify')
@@ -240,7 +240,7 @@ describe('api/auth/verify', () => {
       .expect(200);
 
     expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res1.body.email).toContain('Max.Greenwald@tufts.edu');
+    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
