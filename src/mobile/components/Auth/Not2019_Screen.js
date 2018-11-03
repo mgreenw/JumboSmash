@@ -45,7 +45,7 @@ class Not2019Screen extends React.Component<Props, State> {
           <Text style={styles.title}>PROJECT GEM: WRONG YEAR</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text>Sucks to suck! Your year is not allowed to use Project GEM.</Text>
+          <Text>{"Sucks to suck! Your year is not allowed to use Project GEM."}</Text>
         </View>
       </KeyboardAvoidingView>
     );
