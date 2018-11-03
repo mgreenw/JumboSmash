@@ -10,11 +10,10 @@ import { styles } from "../../styles/auth";
 
 type Props = {
   navigation: any,
-  classYear: integer,
 };
 
 type State = {
-  yearsLeft: integer
+  classYear: number
 };
 
 function mapStateToProps(state, ownProps: Props) {
@@ -31,7 +30,7 @@ class Not2019Screen extends React.Component<Props, State> {
     
     const { navigation } = this.props;
     this.state = {
-      yearsLeft: navigation.getParam("classYear", "") - 19
+      classYear: navigation.getParam("classYear", "")
     };
   }
 
@@ -43,11 +42,11 @@ class Not2019Screen extends React.Component<Props, State> {
   };
 
   render() {
-
+    const yearsLeft = this.state.classYear - 19;
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text style={styles.title}>{"Sucks to suck! Try again in " + this.state.yearsLeft + " year(s)."}</Text>
+          <Text style={styles.title}>{"Sucks to suck! Try again in " + yearsLeft + " year(s)."}</Text>
         </View>
       </KeyboardAvoidingView>
     );
