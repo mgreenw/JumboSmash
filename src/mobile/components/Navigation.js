@@ -69,8 +69,8 @@ const AuthStack = createStackNavigator(
   {
     Splash: { screen: Splash },
     Verify: { screen: Verify },
-    ExpiredCode: { screen: ExpiredCode }
-    Not2019: { screen: Not2019}
+    ExpiredCode: { screen: ExpiredCode },
+    Not2019: { screen: Not2019 }
   },
   {
     initialRouteName: "Splash"

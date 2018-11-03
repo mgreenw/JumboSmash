@@ -32,9 +32,9 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     }
   };
 
-  _onResendPressed = () => {
+  _onResendPressed() {
     console.log("will resend");
-  };
+  }
 
   render() {
     const { navigation } = this.props;
