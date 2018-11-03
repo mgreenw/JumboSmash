@@ -13,12 +13,12 @@ type Props = {
   classYear: integer,
 };
 
-type State = {};
+type State = {
+  yearsLeft: integer
+};
 
 function mapStateToProps(state, ownProps: Props) {
-  return {
-    classYear: state.classYear
-  };
+  return {};
 }
 
 function mapDispatchToProps(dispatch, ownProps: Props) {
@@ -28,7 +28,11 @@ function mapDispatchToProps(dispatch, ownProps: Props) {
 class Not2019Screen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    
+    const { navigation } = this.props;
+    this.state = {
+      yearsLeft: navigation.getParam("classYear", "") - 19
+    };
   }
 
   // These are for react navigation, like header bar and such
@@ -39,19 +43,11 @@ class Not2019Screen extends React.Component<Props, State> {
   };
 
   render() {
-    // this is the navigator we passed in from App.js
-    const { navigation } = this.props;
-    const classYear = navigation.getParam("classYear", "");
-    const yearsLeft = classYear - 19;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM: WRONG YEAR</Text>
-        </View>
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text>{"Sucks to suck! Class of '" + classYear + " is not allowed to use Project GEM."}</Text>
-          <Text>{"You'll have to wait " + yearsLeft + " year(s)."}</Text>
+          <Text style={styles.title}>{"Sucks to suck! Try again in " + this.state.yearsLeft + " year(s)."}</Text>
         </View>
       </KeyboardAvoidingView>
     );
