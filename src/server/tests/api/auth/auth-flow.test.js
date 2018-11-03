@@ -18,9 +18,9 @@ describe('api/auth/verify', () => {
     await db.query('DELETE FROM users');
   });
 
-  // Adding GOOD_UTLN to database (its emily ;))
-  it('should return success for send-verification-email to a user', () => {
-    return request(app)
+  // Normal case: send-verification-email and verify should succeed
+  it('basic success: should succeed for 1st verify attempt', async () => {
+    const res = await request(app)
       .post('/api/auth/send-verification-email')
       .send(
         {
@@ -28,15 +28,11 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(200)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-        expect(res.body.email).toContain('Emily.Colwell@tufts.edu');
-      });
-  });
+      .expect(200);
 
-  // Normal case: should succeed
-  it('basic success: should succeed for 1st attempt good utln and code', async () => {
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
+    expect(res.body.email).toContain('Emily.Colwell@tufts.edu');
+
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
     return request(app)
       .post('/api/auth/verify')
@@ -48,9 +44,9 @@ describe('api/auth/verify', () => {
       )
       .set('Accept', 'application/json')
       .expect(200)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
-        expect(res.body.token).toBeDefined();
+      .then((res2) => {
+        expect(res2.body.status).toBe(codes.VERIFY__SUCCESS);
+        expect(res2.body.token).toBeDefined();
       });
   });
 
@@ -73,30 +69,13 @@ describe('api/auth/verify', () => {
 
   // Expect Failure on good login attempt after 3 fails, tests VERIFY__BAD_CODE
   // and VERIFY__EXPIRED_CODE
-  it('3 bad + 1 good verification attempts: should fail for 1st utln and wrong code', () => {
-    db.query(
+  it('should fail on verify for good fourth attempt', async () => {
+    await db.query(
       'UPDATE verification_codes SET expiration = $1, attempts = $2',
-      [new Date(new Date().getTime() + (10 * 60000)), 0]
-    )
-      .then(() => {
-        return request(app)
-          .post('/api/auth/verify')
-          .send(
-            {
-              utln: GOOD_UTLN,
-              code: BAD_CODE,
-            },
-          )
-          .set('Accept', 'application/json')
-          .expect(400)
-          .then((res) => {
-            expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-          });
-      });
-  });
+      [new Date(new Date().getTime() + (10 * 60000)), 0],
+    );
 
-  it('3 bad + 1 good verification attempts: should fail for 2nd utln and wrong code', () => {
-    return request(app)
+    const req1 = await request(app)
       .post('/api/auth/verify')
       .send(
         {
@@ -105,14 +84,11 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-      });
-  });
+      .expect(400);
 
-  it('3 bad + 1 good verification attempts: should fail for 3rd utln and wrong code', () => {
-    return request(app)
+    expect(req1.body.status).toBe(codes.VERIFY__BAD_CODE);
+
+    const req2 = await request(app)
       .post('/api/auth/verify')
       .send(
         {
@@ -121,13 +97,23 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-      });
-  });
+      .expect(400);
 
-  it('3 bad + 1 good verification attempts: should fail for 4th good utln and code', async () => {
+    expect(req2.body.status).toBe(codes.VERIFY__BAD_CODE);
+
+    const req3 = await request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln: GOOD_UTLN,
+          code: BAD_CODE,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(400);
+
+    expect(req3.body.status).toBe(codes.VERIFY__BAD_CODE);
+
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
     return request(app)
       .post('/api/auth/verify')
@@ -144,9 +130,10 @@ describe('api/auth/verify', () => {
       });
   });
 
-  // Adds second user to database (its max ;))
-  it('should return success for 2nd send-verification-email to a user', () => {
-    return request(app)
+  // Adds second user to database (its max ;) and expect success on good login
+  // after 2 bad logins; tests VERIFY__BAD_CODE and VERIFY__SUCCESS
+  it('should succeed on verify for good third attempt', async () => {
+    const sendEmailRes = await request(app)
       .post('/api/auth/send-verification-email')
       .send(
         {
@@ -154,17 +141,12 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(200)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-        expect(res.body.email).toContain('Max.Greenwald@tufts.edu');
-      });
-  });
+      .expect(200);
 
-  // Expect success on good login after 2 bad logins; tests VERIFY__BAD_CODE and
-  // VERIFY__SUCCESS
-  it('2 bad + 1 good verification attempts: should fail for 1st utln and wrong code', () => {
-    return request(app)
+    expect(sendEmailRes.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
+    expect(sendEmailRes.body.email).toContain('Max.Greenwald@tufts.edu');
+
+    const verifyRes1 = await request(app)
       .post('/api/auth/verify')
       .send(
         {
@@ -173,14 +155,11 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-      });
-  });
+      .expect(400);
 
-  it('2 bad + 1 good verification attempts: should fail for 2nd utln and wrong code', () => {
-    return request(app)
+    expect(verifyRes1.body.status).toBe(codes.VERIFY__BAD_CODE);
+
+    const verifyRes2 = await request(app)
       .post('/api/auth/verify')
       .send(
         {
@@ -189,13 +168,10 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-      });
-  });
+      .expect(400);
 
-  it('2 bad + 1 good verification attempts: should succeed for 3rd utln and good code', async () => {
+    expect(verifyRes2.body.status).toBe(codes.VERIFY__BAD_CODE);
+
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
       .post('/api/auth/verify')
@@ -213,12 +189,13 @@ describe('api/auth/verify', () => {
   });
 
   // Overkill test: Expects success on good login after failed login
-  it('1 bad + 1 good verification attempts: should fail for 1st utln and wrong code', async () => {
+  it('should succeed on verify for good second attempt', async () => {
     await db.query(
       'UPDATE verification_codes SET expiration = $1, attempts = $2',
       [new Date(new Date().getTime() + (10 * 60000)), 0],
     );
-    return request(app)
+
+    const res1 = await request(app)
       .post('/api/auth/verify')
       .send(
         {
@@ -227,13 +204,10 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__BAD_CODE);
-      });
-  });
+      .expect(400);
 
-  it('1 bad + 1 good verification attempts: should succeed for 2nd utln and good code', async () => {
+    expect(res1.body.status).toBe(codes.VERIFY__BAD_CODE);
+
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
       .post('/api/auth/verify')
@@ -251,9 +225,10 @@ describe('api/auth/verify', () => {
       });
   });
 
-  // Max is attempting to log back in
-  it('should return success for 2nd send-verification-email to a user', () => {
-    return request(app)
+  // Max is attempting to log back in; expects success on user exists and
+  // already logged in and out
+  it('should succeed verifying user after "logging back in"', async () => {
+    const res1 = await request(app)
       .post('/api/auth/send-verification-email')
       .send(
         {
@@ -262,15 +237,11 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(200)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-        expect(res.body.email).toContain('Max.Greenwald@tufts.edu');
-      });
-  });
+      .expect(200);
 
-  // Expects success on user exists and already logged in and out
-  it('logged in and out: should succeed for good utln and code', async () => {
+    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
+    expect(res1.body.email).toContain('Max.Greenwald@tufts.edu');
+
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
       .post('/api/auth/verify')
