@@ -66,8 +66,11 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNot2019 = () => {
-    this._utlnInputError("Sorry, this is only for Seniors!");
+  _onNot2019 = (classYear: integer) => {
+    const { navigate } = this.props.navigation;
+    navigate("Not2019", {
+      classYear: classYear
+    });
   };
 
   _onNotFound = () => {
@@ -105,7 +108,10 @@ class SplashScreen extends React.Component<Props, State> {
           stopSubmitting(() => {
             this._onSuccess(request.utln, response.email);
           }),
-        (response, request) => stopSubmitting(this._onNot2019),
+        (response, request) => 
+          stopSubmitting(() => {
+            this._onNot2019(response.classYear);
+          }),
         (response, request) => stopSubmitting(this._onNotFound),
         (response, request) =>
           stopSubmitting(() => {
