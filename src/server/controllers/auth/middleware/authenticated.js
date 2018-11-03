@@ -27,6 +27,7 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   // If there is an error getting the user (like the user does not exist),
   // return with UNAUTHORIZED
   } catch (error) {
+    console.log(error);
     return res.status(401).json({
       status: codes.UNAUTHORIZED,
     });
