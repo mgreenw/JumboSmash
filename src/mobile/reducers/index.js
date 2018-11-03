@@ -2,22 +2,27 @@
 import { AsyncStorage } from "react-native";
 import _ from "lodash";
 
-// Types:
+// Auth:
 import { LOGIN_WITH_NEW_TOKEN } from "../actions/auth/login.js";
-
 import { LOGOUT } from "../actions/auth/logout.js";
+import {
+  LOAD_AUTH__INITIATED,
+  LOAD_AUTH__COMPLETED
+} from "../actions/auth/loadAuth.js";
 
 // TODO: seperate state into profile, meta, API responses, etc.
 type State = {
   utln: string,
+  token: ?string,
   loggedIn: boolean,
-  token: ?string
+  loadingAuth: boolean
 };
 
 const defaultState: State = {
   utln: "",
   token: null,
-  loggedIn: false
+  loggedIn: false,
+  loadingAuth: false
 };
 
 export default function rootReducer(state: State = defaultState, action: any) {
@@ -42,6 +47,20 @@ export default function rootReducer(state: State = defaultState, action: any) {
         utln: "",
         token: null,
         loggedIn: false
+      });
+    }
+
+    case LOAD_AUTH__INITIATED: {
+      return _.assign({}, state, {
+        loadingAuth: true
+      });
+    }
+
+    case LOAD_AUTH__COMPLETED: {
+      return _.assign({}, state, {
+        utln: action.utln,
+        token: action.token,
+        loadingAuth: false
       });
     }
 
