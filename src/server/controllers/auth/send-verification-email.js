@@ -8,8 +8,9 @@ const jsdom = require('jsdom');
 const db = require('../../db');
 const mail = require('../../mail');
 const authUtils = require('./utils');
+const apiUtils = require('../utils');
+const utils = require('../../utils');
 const codes = require('../status-codes');
-const utils = require('../utils');
 
 const { JSDOM } = jsdom;
 
@@ -65,7 +66,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       // If it has not expired AND we are not forcing a resend,
       // respond that the email has already been sent
       if (forceResend !== true && !oldCodeExpired) {
-        if (process.env.NODE_ENV === 'development') {
+        if (utils.getNodeEnv() === 'development') {
           console.log(`Already sent code: ${code.code}`);
         }
         return res.status(200).json({
@@ -148,10 +149,10 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     });
   } catch (err) {
     // TODO: Log this to a standard logger
-    return utils.error.server(res, err);
+    return apiUtils.error.server(res, err);
   }
 };
 
 // This is the order of "middleware" to run. First, we validate that the
 // incoming request is valid, then we run the register controller.
-module.exports = [utils.validate(schema), sendVerificationEmail];
+module.exports = [apiUtils.validate(schema), sendVerificationEmail];

@@ -6,14 +6,17 @@
 // we let them silently complete in the background, and throw away any results.
 //
 
-import { TIMEOUT } from '../sharedResponseCodes';
+import { TIMEOUT } from "../sharedResponseCodes";
 
 // TODO: test this!
-export function timeout(ms: number, promise: Promise<Response>): Promise<Response> {
+export function timeout(
+  ms: number,
+  promise: Promise<Response>
+): Promise<Response> {
   return new Promise(function(resolve, reject) {
     setTimeout(function() {
-      reject(new Error(TIMEOUT))
-    }, ms)
-    promise.then(resolve, reject)
-  })
+      reject(new Error(TIMEOUT));
+    }, ms);
+    promise.then(resolve, reject);
+  });
 }
