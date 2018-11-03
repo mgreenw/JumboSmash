@@ -13,6 +13,7 @@ import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
+import loadAuthFromAsyncStore from "../actions/auth/loadAuthFromAsyncStore";
 
 type Props = {
   navigation: any
@@ -25,7 +26,11 @@ function mapStateToProps(state: State, ownProps: Props) {
 }
 
 function mapDispatchToProps(dispatch, ownProps: Props) {
-  return {};
+  return {
+    loadAuthFromAsyncStore: () => {
+      dispatch(loadAuthFromAsyncStore());
+    }
+  };
 }
 
 // This component is the screen we see on initial app startup, as we are
@@ -37,7 +42,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     this.state = {};
 
     // TODO: remove debugging timeout / make a nice loading screen animation
-    setTimeout(this._bootstrapAsync, 2000);
+    setTimeout(this.props.loadAuthFromAsyncStore, 2000);
   }
 
   // TODO: instead of hardcoding these values, let's give them nice keys somehow
