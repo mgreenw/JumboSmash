@@ -12,11 +12,11 @@ type Props = {
 
 type State = {};
 
-function mapStateToProps(state: State, ownProps: Props) {
+function mapStateToProps(state, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch: State, ownProps: Props) {
+function mapDispatchToProps(dispatch, ownProps: Props) {
   return {};
 }
 
@@ -32,9 +32,9 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     }
   };
 
-  _onResendPressed() {
+  _onResendPressed = () => {
     console.log("will resend");
-  }
+  };
 
   render() {
     const { navigation } = this.props;
@@ -52,7 +52,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
             buttonStyle={styles.button}
-            onPress={() => this._onResendPressed()}
+            onPress={() => this._onResendPressed}
             title="Resend Code"
           />
         </View>
