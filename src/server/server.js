@@ -2,7 +2,7 @@
 
 const app = require('./app');
 
-const utils = require('../utils');
+const utils = require('./utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
