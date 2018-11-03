@@ -41,6 +41,11 @@ const schema = {
  */
 const sendVerificationEmail = async (req: $Request, res: $Response) => {
   try {
+    afterAll(async () => {
+      await db.query('DELETE FROM verification_codes');
+      await db.query('DELETE FROM users');
+    });
+
     const { utln, forceResend } = req.body;
 
     const oldCodeResults = await db.query(
