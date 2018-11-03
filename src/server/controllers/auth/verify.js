@@ -55,7 +55,7 @@ try {
     const expired = new Date(verification.expiration).getTime() < new Date().getTime();
 
     // Check if the code is expired
-    if (verification.attempts >= 3 || expired) {
+    if (verification.attempts > 3 || expired) {
       return res.status(400).json({
         status: codes.VERIFY__EXPIRED_CODE,
       });
