@@ -81,8 +81,8 @@ const createProfile = async (req: $Request, res: $Response) => {
   // Ensure all supplied urls are valid urls
   const urls = [image1Url, image2Url, image3Url, image4Url];
   for (let url of urls) {
+    // If the url is undefined, don't check it - it was not included in the request
     if (url !== undefined && !utils.isValidUrl(url)) {
-      console.log('checking');
       return res.status(400).json({
         status: codes.CREATE_PROFILE__IMAGE_URL_NOT_VALID,
         url,
@@ -91,6 +91,7 @@ const createProfile = async (req: $Request, res: $Response) => {
   }
 
   try {
+    // Insert the profile into the database
     const result = await db.query(`
       INSERT INTO profiles
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
@@ -100,12 +101,14 @@ const createProfile = async (req: $Request, res: $Response) => {
     `,
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
+    // If there is no id returned, the profile has already been created
     if (result.rowCount === 0) {
       return res.status(409).json({
         status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED
       });
     }
 
+    // If there is an id returned, success!
     return res.status(201).json({
       status: codes.CREATE_PROFILE__SUCCESS
     });
