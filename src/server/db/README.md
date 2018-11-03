@@ -23,7 +23,6 @@ Indexes:
 Referenced by:
     TABLE "profiles" CONSTRAINT "profiles_user_fkey" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 
-
 ```
 ```
                                                      Table "public.relationships"
@@ -41,7 +40,6 @@ Foreign-key constraints:
     "relationships_candidate_user_id_fkey" FOREIGN KEY (candidate_user_id) REFERENCES profiles(id) ON DELETE CASCADE
     "relationships_critic_user_id_fkey" FOREIGN KEY (critic_user_id) REFERENCES profiles(id) ON DELETE CASCADE
 
-
 ```
 ```
                                                           Table "public.pgmigrations"
@@ -52,7 +50,6 @@ Foreign-key constraints:
  run_on | timestamp without time zone |           | not null |                                          | plain    |              | 
 Indexes:
     "pgmigrations_pkey" PRIMARY KEY, btree (id)
-
 
 ```
 ```
@@ -70,7 +67,6 @@ Indexes:
 Indexes:
     "verification_codes_pkey" PRIMARY KEY, btree (id)
     "verification_codes_utln_key" UNIQUE CONSTRAINT, btree (utln)
-
 
 ```
 ```
@@ -94,6 +90,5 @@ Foreign-key constraints:
 Referenced by:
     TABLE "relationships" CONSTRAINT "relationships_candidate_user_id_fkey" FOREIGN KEY (candidate_user_id) REFERENCES profiles(id) ON DELETE CASCADE
     TABLE "relationships" CONSTRAINT "relationships_critic_user_id_fkey" FOREIGN KEY (critic_user_id) REFERENCES profiles(id) ON DELETE CASCADE
-
 
 ```
