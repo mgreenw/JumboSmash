@@ -81,7 +81,18 @@ const createProfile = async (req: $Request, res: $Response) => {
     });
   }
 
-  // TODO: Check that the AWS image URL's are valid
+  // Ensure all supplied urls are valid urls
+  const CREATE_PROFILE__IMAGE_URL_NOT_VALID = 'CREATE_PROFILE__IMAGE_URL_NOT_VALID';
+  const urls = [image1Url, image2Url, image3Url, image4Url];
+  urls.forEach((url, index) => {
+    if (url !== undefined && !utils.isValidUrl(url)) {
+      return res.status(400).json({
+        status: CREATE_PROFILE__IMAGE_URL_NOT_VALID,
+        url,
+        image: index + 1
+      });
+    }
+  });
 
   try {
     const result = await db.query(`
