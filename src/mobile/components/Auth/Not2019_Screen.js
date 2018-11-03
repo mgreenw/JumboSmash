@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
@@ -43,10 +43,12 @@ class Not2019Screen extends React.Component<Props, State> {
 
   render() {
     const yearsLeft = this.state.classYear - 19;
+
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text style={styles.title}>{"Sucks to suck! Try again in " + yearsLeft + " year(s)."}</Text>
+          <Text style={styles.title}>{"Sucks to suck! Try again in " + yearsLeft +
+          ((yearsLeft == -1 || yearsLeft == 1) ? ' year.' : ' years.')}</Text>
         </View>
       </KeyboardAvoidingView>
     );
