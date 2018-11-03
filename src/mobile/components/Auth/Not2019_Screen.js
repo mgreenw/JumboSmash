@@ -10,14 +10,14 @@ import { styles } from "../../styles/auth";
 
 type Props = {
   navigation: any,
-  classYear: 'integer',
+  classYear: integer,
 };
 
 type State = {};
 
 function mapStateToProps(state, ownProps: Props) {
   return {
-    classYear: Props.classYear
+    classYear: state.classYear
   };
 }
 
@@ -40,9 +40,9 @@ class Not2019Screen extends React.Component<Props, State> {
 
   render() {
     // this is the navigator we passed in from App.js
-    const { navigate } = this.props.navigation;
+    const { navigation } = this.props;
     const classYear = navigation.getParam("classYear", "");
-    const yearsLeft = classYear - 2019;
+    const yearsLeft = classYear - 19;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -50,8 +50,8 @@ class Not2019Screen extends React.Component<Props, State> {
           <Text style={styles.title}>PROJECT GEM: WRONG YEAR</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text>{"Sucks to suck! Class of " + classYear + " is not allowed to use Project GEM."}</Text>
-          <Text>{"You'll have to wait " + yearsLeft + "year(s)."}</Text>
+          <Text>{"Sucks to suck! Class of '" + classYear + " is not allowed to use Project GEM."}</Text>
+          <Text>{"You'll have to wait " + yearsLeft + " year(s)."}</Text>
         </View>
       </KeyboardAvoidingView>
     );
