@@ -57,42 +57,38 @@ const createProfile = async (req: $Request, res: $Response) => {
   const { displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio } = req.body;
 
   // Check if the user's display name is too long
-  const CREATE_PROFILE__DISPLAY_NAME_TOO_LONG = 'CREATE_PROFILE__DISPLAY_NAME_TOO_LONG';
   if (displayName.length > displayNameMaxLength) {
     return res.status(400).json({
-      status: CREATE_PROFILE__DISPLAY_NAME_TOO_LONG,
+      status: codes.CREATE_PROFILE__DISPLAY_NAME_TOO_LONG,
     });
   }
 
   // Check that the birthday is in a reasonable range
   const birthdayDate = new Date(birthday);
-  const CREATE_PROFILE__BIRTHDAY_NOT_VALID = 'CREATE_PROFILE__BIRTHDAY_NOT_VALID';
   if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
     return res.status(400).json({
-      status: CREATE_PROFILE__BIRTHDAY_NOT_VALID,
+      status: codes.CREATE_PROFILE__BIRTHDAY_NOT_VALID,
     });
   }
 
   // Check if the user's bio is too long
-  const CREATE_PROFILE__BIO_TOO_LONG = 'CREATE_PROFILE__BIO_TOO_LONG';
   if (bio.length > bioMaxLength) {
     return res.status(400).json({
-      status: CREATE_PROFILE__BIO_TOO_LONG,
+      status: codes.CREATE_PROFILE__BIO_TOO_LONG,
     });
   }
 
   // Ensure all supplied urls are valid urls
-  const CREATE_PROFILE__IMAGE_URL_NOT_VALID = 'CREATE_PROFILE__IMAGE_URL_NOT_VALID';
   const urls = [image1Url, image2Url, image3Url, image4Url];
-  urls.forEach((url, index) => {
+  for (let url of urls) {
     if (url !== undefined && !utils.isValidUrl(url)) {
+      console.log('checking');
       return res.status(400).json({
-        status: CREATE_PROFILE__IMAGE_URL_NOT_VALID,
+        status: codes.CREATE_PROFILE__IMAGE_URL_NOT_VALID,
         url,
-        image: index + 1
       });
     }
-  });
+  }
 
   try {
     const result = await db.query(`
@@ -105,15 +101,13 @@ const createProfile = async (req: $Request, res: $Response) => {
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
     if (result.rowCount === 0) {
-      const CREATE_PROFILE__PROFILE_ALREADY_CREATED = 'CREATE_PROFILE__PROFILE_ALREADY_CREATED';
       return res.status(409).json({
-        status: CREATE_PROFILE__PROFILE_ALREADY_CREATED
+        status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED
       });
     }
 
-    const CREATE_PROFILE__SUCCESS = 'CREATE_PROFILE__SUCCESS';
     return res.status(201).json({
-      status: CREATE_PROFILE__SUCCESS
+      status: codes.CREATE_PROFILE__SUCCESS
     });
 
   } catch (error) {
