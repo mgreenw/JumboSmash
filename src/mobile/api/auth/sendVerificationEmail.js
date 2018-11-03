@@ -4,6 +4,7 @@
 // NOTE: must be kept in sync with send-verifcation-email.js
 
 import { timeout } from "./../utils/timeout";
+import { SEND_VERIFCATION_EMAIL__ROUTE } from "../routes";
 
 type verificationEmailResponse__SUCCESS = {
   status: string,
@@ -61,8 +62,7 @@ export default function sendVerificationEmail(
     30000,
     // Send a request to the server to check if UTLN is valid. If it is, send
     // a verification email, and return that email address.
-    // TODO: on dev mode hit local, on prod hit prod.
-    fetch("http://127.0.0.1:3000/api/auth/send-verification-email/", {
+    fetch(SEND_VERIFCATION_EMAIL__ROUTE, {
       method: "POST",
       headers: {
         Accept: "application/json",

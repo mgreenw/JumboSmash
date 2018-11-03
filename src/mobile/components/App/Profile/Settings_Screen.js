@@ -40,7 +40,6 @@ class SettingsScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("Update!");
     if (prevState.isLoggingOut != this.state.isLoggingOut) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({

@@ -2,7 +2,8 @@
 
 // Self contained API file for validateToken
 
-import { timeout } from "./../utils/timeout";
+import { timeout } from "../utils/timeout";
+import { GET_TOKEN_UTLN__ROUTE } from "../routes";
 import { AUTHORIZED, UNAUTHORIZED } from "../sharedResponseCodes";
 
 // TODO: We're not looking for server or timeout errors here.
@@ -38,7 +39,7 @@ export default function getTokenUtln(
 ) {
   return timeout(
     30000,
-    fetch("http://127.0.0.1:3000/api/auth/get-token-utln/", {
+    fetch(GET_TOKEN_UTLN__ROUTE, {
       method: "GET",
       headers: {
         Accept: "application/json",

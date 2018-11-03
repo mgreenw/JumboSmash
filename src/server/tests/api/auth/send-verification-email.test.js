@@ -2,6 +2,7 @@ const request = require('supertest');
 const codes = require('../../../controllers/status-codes');
 
 const app = require('../../../app');
+const db = require('../../../db');
 
 /*
 Cases:
@@ -16,6 +17,11 @@ Cases:
 
 describe('api/auth/send-verification-email', () => {
   const GOOD_UTLN = 'mloh01';
+
+  afterAll(async () => {
+    await db.query('DELETE FROM verification_codes');
+    await db.query('DELETE FROM users');
+  });
 
   it('should require utln field', () => {
     return request(app)

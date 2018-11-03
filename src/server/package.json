@@ -10,14 +10,20 @@
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
-    "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
+
     "migrate": "node-pg-migrate -m ./db/migrations",
-    "test": "./scripts/run-tests",
+    "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
+
+    "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
     "jest": "jest --forceExit",
-    "check-env": "node ./scripts/check-environment",
+
+    "check-env": "babel-node ./scripts/check-environment",
     "check-node-version": "node ./scripts/check-node-version.js",
     "check-dependencies": "node ./scripts/check-dependencies.js",
-    "check-database": "node ./scripts/check-database.js"
+    "check-database": "node ./scripts/check-database.js",
+
+    "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
+    "reset-db": "npm run drop-all-tables && npm run migrate up"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
