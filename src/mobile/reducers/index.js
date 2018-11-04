@@ -3,8 +3,8 @@ import { AsyncStorage } from "react-native";
 import _ from "lodash";
 
 // Auth:
-import { LOGIN_WITH_NEW_TOKEN } from "../actions/auth/login.js";
-import { LOGOUT } from "../actions/auth/logout.js";
+import { LOGIN_INITIATED, LOGIN_COMPLETED } from "../actions/auth/login.js";
+import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "../actions/auth/logout.js";
 import {
   LOAD_AUTH__INITIATED,
   LOAD_AUTH__COMPLETED
@@ -14,45 +14,73 @@ import {
 type State = {
   utln: string,
   token: ?string,
+
+  ///////////////////
+  // action states:
+  ///////////////////
+
+  // login / logout:
   loggedIn: boolean,
-  loadingAuth: boolean
+  logout_inProgress: boolean,
+  login_inProgress: boolean,
+
+  // auth loading
+  authLoaded: boolean,
+  loadAuth_inProgress: boolean
 };
 
 const defaultState: State = {
   utln: "",
   token: null,
   loggedIn: false,
-  loadingAuth: false
+  logout_inProgress: false,
+  login_inProgress: false,
+  authLoaded: false,
+  loadAuth_inProgress: false
 };
 
 export default function rootReducer(state: State = defaultState, action: any) {
+  // $FlowFixMe (__DEV__ will break flow)
+  if (__DEV__) {
+    console.log(action.type);
+  }
   switch (action.type) {
-    // TODO: consider doing these AsyncStorage chunks batched, and with callbacks.
-    case LOGIN_WITH_NEW_TOKEN: {
-      AsyncStorage.setItem("token", action.token);
-      AsyncStorage.setItem("utln", action.utln);
-
+    // LOGIN:
+    case LOGIN_INITIATED: {
       return _.assign({}, state, {
-        utln: action.utln,
-        token: action.token,
-        loggedIn: true
+        login_inProgress: true
       });
     }
 
-    case LOGOUT: {
-      AsyncStorage.removeItem("token");
-      AsyncStorage.removeItem("utln");
+    case LOGIN_COMPLETED: {
+      return _.assign({}, state, {
+        login_inProgress: false,
+        loggedIn: true,
+        utln: action.utln,
+        token: action.token
+      });
+    }
 
+    // LOGOUT:
+    case LOGOUT_INITIATED: {
+      return _.assign({}, state, {
+        logout_inProgress: true
+      });
+    }
+
+    case LOGOUT_COMPLETED: {
       return _.assign({}, state, {
         utln: "",
         token: null,
+        logout_inProgress: false,
         loggedIn: false
       });
     }
 
+    // LOAD AUTH:
     case LOAD_AUTH__INITIATED: {
       return _.assign({}, state, {
-        loadingAuth: true
+        loadAuth_inProgress: true
       });
     }
 
@@ -60,7 +88,8 @@ export default function rootReducer(state: State = defaultState, action: any) {
       return _.assign({}, state, {
         utln: action.utln,
         token: action.token,
-        loadingAuth: false
+        loadAuth_inProgress: false,
+        authLoaded: true
       });
     }
 
