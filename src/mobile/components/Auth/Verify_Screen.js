@@ -21,12 +21,14 @@ type State = {
   code: string,
   validCode: boolean,
   errorMessageCode: string,
-  isSubmitting: boolean
+  verifyUtln_inProgress: boolean
 };
+
 type Props = {
   navigation: any,
   utln: string,
   loggedIn: boolean,
+  login_inProgress: boolean,
 
   // dispatch function with token
   login: (utln: string, token: string) => void
@@ -34,7 +36,8 @@ type Props = {
 
 function mapStateToProps(state, ownProps) {
   return {
-    loggedIn: state.loggedIn
+    loggedIn: state.loggedIn,
+    login_inProgress: state.login_inProgress
   };
 }
 
@@ -53,7 +56,7 @@ class SplashScreen extends React.Component<Props, State> {
       code: "",
       validCode: true,
       errorMessageCode: "",
-      isSubmitting: false
+      verifyUtln_inProgress: false
     };
   }
 
@@ -64,15 +67,20 @@ class SplashScreen extends React.Component<Props, State> {
   });
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.isSubmitting != this.state.isSubmitting) {
+    if (
+      prevState.verifyUtln_inProgress != this.state.verifyUtln_inProgress ||
+      prevProps.login_inProgress != this.props.login_inProgress
+    ) {
+      const isLoading =
+        this.state.verifyUtln_inProgress || this.props.login_inProgress;
       this.props.navigation.setParams({
-        headerLeft: this.state.isSubmitting ? null : ""
+        headerLeft: isLoading ? null : ""
       });
-    }
 
-    if (this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      navigate("App", {});
+      if (this.props.loggedIn) {
+        const { navigate } = this.props.navigation;
+        navigate("App", {});
+      }
     }
   }
 
@@ -121,14 +129,14 @@ class SplashScreen extends React.Component<Props, State> {
     const stopSubmitting = (callBack: () => void) => {
       this.setState(
         {
-          isSubmitting: false
+          verifyUtln_inProgress: false
         },
         callBack
       );
     };
     this.setState(
       {
-        isSubmitting: true,
+        verifyUtln_inProgress: true,
         validCode: true,
         errorMessageCode: ""
       },
@@ -169,6 +177,8 @@ class SplashScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
+    const isLoading =
+      this.state.verifyUtln_inProgress || this.props.login_inProgress;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -208,8 +218,8 @@ class SplashScreen extends React.Component<Props, State> {
               this._onSubmit();
             }}
             title="submit"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
+            disabled={isLoading}
+            loading={isLoading}
           />
         </View>
       </KeyboardAvoidingView>

@@ -8,17 +8,16 @@ import { logout } from "../../../actions/auth/logout";
 
 type Props = {
   navigation: any,
+  logout_inProgress: boolean,
   loggedIn: boolean,
-
   logout: () => void
 };
 
-type State = {
-  isLoggingOut: boolean
-};
+type State = {};
 
 function mapStateToProps(state, ownProps) {
   return {
+    logout_inProgress: state.logout_inProgress,
     loggedIn: state.loggedIn
   };
 }
@@ -34,25 +33,21 @@ function mapDispatchToProps(dispatch, ownProps) {
 class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      isLoggingOut: false
-    };
+    this.state = {};
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.isLoggingOut != this.state.isLoggingOut) {
+    if (prevProps.logout_inProgress != this.props.logout_inProgress) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({
-        headerLeft: this.state.isLoggingOut ? null : ""
+        headerLeft: this.props.logout_inProgress ? null : ""
       });
-    }
 
-    // For recieving the logout completion
-    if (!this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      setTimeout(() => {
+      // For recieving the logout completion
+      if (!this.props.loggedIn) {
+        const { navigate } = this.props.navigation;
         navigate("Splash", {});
-      }, 2000);
+      }
     }
   }
 
@@ -61,15 +56,6 @@ class SettingsScreen extends React.Component<Props, State> {
     headerLeft: navigation.state.params.headerLeft,
     title: "Settings"
   });
-
-  _onLogOutPress = () => {
-    this.setState(
-      {
-        isLoggingOut: true
-      },
-      this.props.logout
-    );
-  };
 
   render() {
     // this is the navigator we passed in from App.js
@@ -84,9 +70,9 @@ class SettingsScreen extends React.Component<Props, State> {
           <Button
             title="Log Out"
             buttonStyle={styles.button}
-            onPress={this._onLogOutPress}
-            disabled={this.state.isLoggingOut}
-            loading={this.state.isLoggingOut}
+            onPress={this.props.logout}
+            disabled={this.props.logout_inProgress}
+            loading={this.props.logout_inProgress}
           />
         </View>
       </View>

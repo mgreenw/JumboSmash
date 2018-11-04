@@ -8,11 +8,21 @@ import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
 import { loadAuth } from "../actions/auth/loadAuth";
+import { login } from "../actions/auth/login";
 
 type Props = {
   navigation: any,
-  loadingAuth: boolean, // redux state for action in progress
+
+  // Redux state
+  loadAuth_inProgress: boolean, // redux state for action in progress
+  authLoaded: boolean,
+  loggedIn: boolean,
+
+  // Actions
   loadAuth: void => void,
+  login: (utln: string, token: string) => void,
+
+  // Async store -> Redux
   utln: string,
   token: string
 };
@@ -23,7 +33,9 @@ function mapStateToProps(state, ownProps: Props) {
   return {
     utln: state.utln,
     token: state.token,
-    loadingAuth: state.loadingAuth
+    loadAuth_inProgress: state.loadAuth_inProgress,
+    loggedIn: state.loggedIn,
+    authLoaded: state.authLoaded
   };
 }
 
@@ -31,6 +43,9 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     loadAuth: () => {
       dispatch(loadAuth());
+    },
+    login: (utln: string, token: string) => {
+      dispatch(login(utln, token));
     }
   };
 }
@@ -42,17 +57,14 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-
-    // TODO: remove debugging timeout / make a nice loading screen animation
-    setTimeout(this.props.loadAuth, 2000);
+    this.props.loadAuth();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // loadingAuth WILL always change, whereas utln / token may be the same (null),
+    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (prevProps.loadingAuth != this.props.loadingAuth) {
-      // If loadingAuth is false, then the async storage load has completed
-      if (!this.props.loadingAuth) {
+    if (prevProps.loadAuth_inProgress != this.props.loadAuth_inProgress) {
+      if (this.props.authLoaded) {
         const { utln, token } = this.props;
         if (utln && token) {
           getTokenUtln(
@@ -67,7 +79,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               if (utln !== response.utln) {
                 this._onInvalidToken();
               } else {
-                this._onValidToken();
+                this._onValidToken(utln, token);
               }
             },
             (response, request) => {
@@ -83,13 +95,22 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         }
       }
     }
+
+    // for receiving completion of login action
+    if (prevProps.loggedIn != this.props.loggedIn && this.props.loggedIn) {
+      const { navigate } = this.props.navigation;
+      navigate("App", {});
+    }
   }
 
-  _onValidToken = () => {
-    const { navigate } = this.props.navigation;
-    navigate("App");
+  // If the token is valid, we want to trigger login logic, so we must dispatch
+  // login first.
+  _onValidToken = (utln: string, token: string) => {
+    this.props.login(utln, token);
   };
 
+  // If the token is invalid, we don't need to set any more state, because
+  // our redux state defaults being logged out, so we go straight to auth.
   _onInvalidToken = () => {
     const { navigate } = this.props.navigation;
     navigate("Auth");

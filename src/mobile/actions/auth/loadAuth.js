@@ -6,13 +6,13 @@ import { AsyncStorage } from "react-native";
 export const LOAD_AUTH__INITIATED = "LOAD_AUTH__INITIATED";
 export const LOAD_AUTH__COMPLETED = "LOAD_AUTH__COMPLETED";
 
-function loadAuthRequest() {
+function loadAuth_initiate() {
   return {
     type: LOAD_AUTH__INITIATED
   };
 }
 
-function loadAuthResponse(utln: string, token: string) {
+function loadAuth_complete(utln: string, token: string) {
   return {
     type: LOAD_AUTH__COMPLETED,
     utln: utln,
@@ -22,11 +22,13 @@ function loadAuthResponse(utln: string, token: string) {
 
 export function loadAuth() {
   return function(dispatch: Dispatch) {
-    dispatch(loadAuthRequest());
-    AsyncStorage.multiGet(["utln", "token"]).then(stores => {
-      const utln = stores[0][1];
-      const token = stores[1][1];
-      dispatch(loadAuthResponse(utln, token));
-    });
+    dispatch(loadAuth_initiate());
+    setTimeout(() => {
+      AsyncStorage.multiGet(["utln", "token"]).then(stores => {
+        const utln = stores[0][1];
+        const token = stores[1][1];
+        dispatch(loadAuth_complete(utln, token));
+      });
+    }, 2000);
   };
 }
