@@ -133,7 +133,7 @@ describe('POST api/users/me/profile', () => {
     expect(res.body.message).toContain('bio');
   });
 
-  it('should error if the display name is too long (>50 characters)', async () => {
+  it('should error if the display name is too long (>500 characters)', async () => {
     const user = await dbUtils.createUser('mgreen19');
     const res = await request(app)
       .post('/api/users/me/profile')

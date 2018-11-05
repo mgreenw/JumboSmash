@@ -27,19 +27,19 @@ Provide the user's initial profile fields.
   * Description: User's profile image 1: Must be a valid URL to an image.
   * Required: `true`
 * `image2Url`
-  * Type: `boolean`
+  * Type: `string`
   * Description: User's profile image 2: Must be a valid URL to an image.
   * Required: `false`
 * `image3Url`
-  * Type: `boolean`
+  * Type: `string`
   * Description: User's profile image 3: Must be a valid URL to an image.
   * Required: `false`
 * `image4Url`
-  * Type: `boolean`
+  * Type: `string`
   * Description: User's profile image 4: Must be a valid URL to an image.
   * Required: `false`
 * `bio`
-  * Type: `boolean`
+  * Type: `string`
   * Description: The user's bio. Max Length: 500 characters
   * Required: `true`
 
@@ -75,8 +75,6 @@ Provide the user's initial profile fields.
 
 **Code** : `400 BAD REQUEST`
 
-**Headers** : None.
-
 **Content** :
 ```json
 {
@@ -89,8 +87,6 @@ Provide the user's initial profile fields.
 **Condition** : The birthday is not in the correct range or is not of a valid format. Correct range means that the user is above 18 years old but not older than 30.
 
 **Code** : `400 BAD REQUEST`
-
-**Headers** : None.
 
 **Content** :
 ```json
@@ -105,8 +101,6 @@ Provide the user's initial profile fields.
 
 **Code** : `400 BAD REQUEST`
 
-**Headers** : None.
-
 **Content** :
 ```json
 {
@@ -119,8 +113,6 @@ Provide the user's initial profile fields.
 **Condition** : A url that the user supplied is invalid (not a valid url, requires HTTPS)
 
 **Code** : `400 BAD REQUEST`
-
-**Headers** : None.
 
 **Content Examle** :
 ```json
@@ -135,8 +127,6 @@ Provide the user's initial profile fields.
 **Condition** : The user's profile has alreday been created. The caller should is PATCH instead to update the profile
 
 **Code** : `400 BAD REQUEST`
-
-**Headers** : None.
 
 **Content** :
 ```json
