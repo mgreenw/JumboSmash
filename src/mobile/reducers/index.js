@@ -11,7 +11,7 @@ import {
 } from "../actions/auth/loadAuth.js";
 
 // TODO: seperate state into profile, meta, API responses, etc.
-type State = {
+export type ReduxState = {
   utln: string,
   token: ?string,
 
@@ -29,7 +29,7 @@ type State = {
   }
 };
 
-const defaultState: State = {
+const defaultState: ReduxState = {
   utln: "",
   token: null,
   loggedIn: false,
@@ -41,7 +41,10 @@ const defaultState: State = {
   }
 };
 
-export default function rootReducer(state: State = defaultState, action: any) {
+export default function rootReducer(
+  state: ReduxState = defaultState,
+  action: any
+) {
   // $FlowFixMe (__DEV__ will break flow)
   if (__DEV__) {
     console.log(action.type);

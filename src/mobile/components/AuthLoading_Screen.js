@@ -9,12 +9,13 @@ import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
 import { loadAuth } from "../actions/auth/loadAuth";
 import { login } from "../actions/auth/login";
+import type { ReduxState } from "../reducers/index";
 
 type Props = {
   navigation: any,
 
   // Redux state
-  loadAuth_inProgress: boolean, // redux state for action in progress
+  loadAuthInProgress: boolean, // redux state for action in progress
   authLoaded: boolean,
   loggedIn: boolean,
 
@@ -29,11 +30,11 @@ type Props = {
 
 type State = {};
 
-function mapStateToProps(state, ownProps: Props) {
+function mapStateToProps(state: ReduxState, ownProps: Props) {
   return {
     utln: state.utln,
     token: state.token,
-    loadAuth_inProgress: state.loadAuth_inProgress,
+    loadAuthInProgress: state.inProgress.loadAuth,
     loggedIn: state.loggedIn,
     authLoaded: state.authLoaded
   };
@@ -63,7 +64,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps, prevState) {
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (prevProps.loadAuth_inProgress != this.props.loadAuth_inProgress) {
+    if (prevProps.loadAuthInProgress != this.props.loadAuthInProgress) {
       if (this.props.authLoaded) {
         const { utln, token } = this.props;
         if (utln && token) {
