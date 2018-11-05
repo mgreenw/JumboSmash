@@ -1,6 +1,7 @@
 // @flow
 import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
+import DevTesting from "../../utils/DevTesting";
 
 export const LOGOUT_INITIATED = "LOGOUT_INITIATED";
 export const LOGOUT_COMPLETED = "LOGOUT_COMPLETED";
@@ -23,10 +24,10 @@ function complete() {
 export function logout() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
-    setTimeout(() => {
+    DevTesting.fakeLatency(() => {
       AsyncStorage.multiRemove(["utln", "token"]).then(stores => {
         dispatch(complete());
       });
-    }, 2000);
+    });
   };
 }
