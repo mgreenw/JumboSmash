@@ -15,6 +15,8 @@ import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 import sendVerificationEmail from "../../api/auth/sendVerificationEmail";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../reducers/index";
 
 type Props = {
   navigation: any
@@ -27,11 +29,11 @@ type State = {
   isSubmitting: boolean
 };
 
-function mapStateToProps(state: State, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch: State, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
@@ -66,7 +68,7 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNot2019 = (classYear: integer) => {
+  _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
     navigate("Not2019", {
       classYear: classYear
@@ -108,7 +110,7 @@ class SplashScreen extends React.Component<Props, State> {
           stopSubmitting(() => {
             this._onSuccess(request.utln, response.email);
           }),
-        (response, request) => 
+        (response, request) =>
           stopSubmitting(() => {
             this._onNot2019(response.classYear);
           }),

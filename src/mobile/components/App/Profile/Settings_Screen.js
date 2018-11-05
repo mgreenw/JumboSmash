@@ -5,25 +5,26 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../../reducers/index";
 
 type Props = {
   navigation: any,
+  logoutInProgress: boolean,
   loggedIn: boolean,
-
   logout: () => void
 };
 
-type State = {
-  isLoggingOut: boolean
-};
+type State = {};
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    loggedIn: state.loggedIn
+    logoutInProgress: reduxState.inProgress.logout,
+    loggedIn: reduxState.loggedIn
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     logout: () => {
       dispatch(logout());
@@ -34,25 +35,21 @@ function mapDispatchToProps(dispatch, ownProps) {
 class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      isLoggingOut: false
-    };
+    this.state = {};
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.isLoggingOut != this.state.isLoggingOut) {
+    if (prevProps.logoutInProgress != this.props.logoutInProgress) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({
-        headerLeft: this.state.isLoggingOut ? null : ""
+        headerLeft: this.props.logoutInProgress ? null : ""
       });
-    }
 
-    // For recieving the logout completion
-    if (!this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      setTimeout(() => {
+      // For recieving the logout completion
+      if (!this.props.loggedIn) {
+        const { navigate } = this.props.navigation;
         navigate("Splash", {});
-      }, 2000);
+      }
     }
   }
 
@@ -61,15 +58,6 @@ class SettingsScreen extends React.Component<Props, State> {
     headerLeft: navigation.state.params.headerLeft,
     title: "Settings"
   });
-
-  _onLogOutPress = () => {
-    this.setState(
-      {
-        isLoggingOut: true
-      },
-      this.props.logout
-    );
-  };
 
   render() {
     // this is the navigator we passed in from App.js
@@ -84,9 +72,9 @@ class SettingsScreen extends React.Component<Props, State> {
           <Button
             title="Log Out"
             buttonStyle={styles.button}
-            onPress={this._onLogOutPress}
-            disabled={this.state.isLoggingOut}
-            loading={this.state.isLoggingOut}
+            onPress={this.props.logout}
+            disabled={this.props.logoutInProgress}
+            loading={this.props.logoutInProgress}
           />
         </View>
       </View>

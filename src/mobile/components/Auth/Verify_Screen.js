@@ -16,30 +16,34 @@ import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 import verify from "../../api/auth/verify";
 import { login } from "../../actions/auth/login";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../reducers/index";
 
 type State = {
   code: string,
   validCode: boolean,
   errorMessageCode: string,
-  isSubmitting: boolean
+  verifyUtlnInProgress: boolean
 };
+
 type Props = {
   navigation: any,
   utln: string,
-  email: string,
   loggedIn: boolean,
+  loginInProgress: boolean,
 
   // dispatch function with token
   login: (utln: string, token: string) => void
 };
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    loggedIn: state.loggedIn
+    loggedIn: reduxState.loggedIn,
+    loginInProgress: reduxState.inProgress.login
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     login: (utln: string, token: string) => {
       dispatch(login(utln, token));
@@ -54,7 +58,7 @@ class SplashScreen extends React.Component<Props, State> {
       code: "",
       validCode: true,
       errorMessageCode: "",
-      isSubmitting: false
+      verifyUtlnInProgress: false
     };
   }
 
@@ -65,15 +69,20 @@ class SplashScreen extends React.Component<Props, State> {
   });
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.isSubmitting != this.state.isSubmitting) {
+    if (
+      prevState.verifyUtlnInProgress != this.state.verifyUtlnInProgress ||
+      prevProps.loginInProgress != this.props.loginInProgress
+    ) {
+      const isLoading =
+        this.state.verifyUtlnInProgress || this.props.loginInProgress;
       this.props.navigation.setParams({
-        headerLeft: this.state.isSubmitting ? null : ""
+        headerLeft: isLoading ? null : ""
       });
-    }
 
-    if (this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      navigate("App", {});
+      if (this.props.loggedIn) {
+        const { navigate } = this.props.navigation;
+        navigate("App", {});
+      }
     }
   }
 
@@ -90,6 +99,14 @@ class SplashScreen extends React.Component<Props, State> {
     this.setState({
       validCode: false,
       errorMessageCode: errorMessage
+    });
+  };
+
+  _onExpiredCode = (utln: string, email: string) => {
+    const { navigate } = this.props.navigation;
+    navigate("ExpiredCode", {
+      utln: utln,
+      email: email
     });
   };
 
@@ -110,17 +127,18 @@ class SplashScreen extends React.Component<Props, State> {
     }
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
+    const email = navigation.getParam("email", "");
     const stopSubmitting = (callBack: () => void) => {
       this.setState(
         {
-          isSubmitting: false
+          verifyUtlnInProgress: false
         },
         callBack
       );
     };
     this.setState(
       {
-        isSubmitting: true,
+        verifyUtlnInProgress: true,
         validCode: true,
         errorMessageCode: ""
       },
@@ -141,7 +159,7 @@ class SplashScreen extends React.Component<Props, State> {
             );
           },
           (response, request) => {
-            stopSubmitting(() => this._codeInputError("Expired code"));
+            stopSubmitting(() => this._onExpiredCode(utln, email));
           },
           (response, request) => {
             stopSubmitting(() =>
@@ -161,6 +179,8 @@ class SplashScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
+    const isLoading =
+      this.state.verifyUtlnInProgress || this.props.loginInProgress;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -200,8 +220,8 @@ class SplashScreen extends React.Component<Props, State> {
               this._onSubmit();
             }}
             title="submit"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
+            disabled={isLoading}
+            loading={isLoading}
           />
         </View>
       </KeyboardAvoidingView>
