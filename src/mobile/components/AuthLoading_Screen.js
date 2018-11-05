@@ -30,13 +30,13 @@ type Props = {
 
 type State = {};
 
-function mapStateToProps(state: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    utln: state.utln,
-    token: state.token,
-    loadAuthInProgress: state.inProgress.loadAuth,
-    loggedIn: state.loggedIn,
-    authLoaded: state.authLoaded
+    utln: reduxState.utln,
+    token: reduxState.token,
+    loadAuthInProgress: reduxState.inProgress.loadAuth,
+    loggedIn: reduxState.loggedIn,
+    authLoaded: reduxState.authLoaded
   };
 }
 
