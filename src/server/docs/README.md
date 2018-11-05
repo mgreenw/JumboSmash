@@ -11,3 +11,6 @@
 
 ### Authentication
 * [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
+
+### Users
+* [Create Profile](users/create-profile.md) : `POST /api/users/me/profile`

@@ -68,7 +68,7 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNot2019 = (classYear: integer) => {
+  _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
     navigate("Not2019", {
       classYear: classYear
