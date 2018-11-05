@@ -12,21 +12,22 @@ function signToken(id) {
 async function createUser(utln, username = null) {
   const email = `${username || utln}@tufts.edu`;
 
-  const result = await db.query(`
+  try {
+    const result = await db.query(`
     INSERT INTO users
       (utln, email)
       VALUES ($1, $2)
-    ON CONFLICT (utln)
-      DO UPDATE
-        SET successful_logins = users.successful_logins + EXCLUDED.successful_logins
     RETURNING id`, [utln, email]);
 
-  const { id } = result.rows[0];
+    const { id } = result.rows[0];
 
-  return {
-    id,
-    token: signToken(id),
-  };
+    return {
+      id,
+      token: signToken(id),
+    };
+  } catch (error) {
+    throw new Error('Failed to insert user');
+  }
 }
 
 async function createProfile(userId, body) {
@@ -39,16 +40,19 @@ async function createProfile(userId, body) {
     throw new Error('Invalid profile supplied to createUser');
   }
 
-  const result = await db.query(`
-    INSERT INTO profiles
-    (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-    ON CONFLICT DO NOTHING
-    RETURNING id
-  `,
-  [userId, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
+  try {
+    const result = await db.query(`
+      INSERT INTO profiles
+      (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id
+    `,
+    [userId, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
-  return result.rows[0].id;
+    return result.rows[0].id;
+  } catch (error) {
+    throw new Error('Failed to insert profile');
+  }
 }
 
 async function deleteProfile(userId) {
