@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
+import { PronounSelector } from "../assets/PronounSelector";
+import type { Pronouns } from "../assets/PronounSelector";
 
 type Props = {
   navigation: any,
@@ -13,7 +15,10 @@ type Props = {
   logout: () => void
 };
 
-type State = {};
+type State = {
+  usePronouns: Pronouns,
+  wantPronouns: Pronouns
+};
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -33,7 +38,20 @@ function mapDispatchToProps(dispatch, ownProps) {
 class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isLoggingOut: false,
+      // TODO: initialize via the redux state.
+      usePronouns: {
+        he: true,
+        she: true,
+        they: true
+      },
+      wantPronouns: {
+        he: true,
+        she: true,
+        they: true
+      }
+    };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -57,6 +75,9 @@ class SettingsScreen extends React.Component<Props, State> {
     title: "Settings"
   });
 
+  _onUsePronounChange = () => {};
+  _onWantPronounChange = () => {};
+
   render() {
     // this is the navigator we passed in from App.js
     const { navigate } = this.props.navigation;
@@ -65,6 +86,13 @@ class SettingsScreen extends React.Component<Props, State> {
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>PROJECT GEM: SETTINGS</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ textAlign: "center" }}>I use:</Text>
+          <PronounSelector
+            defaultPronouns={this.state.usePronouns}
+            onChange={this._onUsePronounChange}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <Button
