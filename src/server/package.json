@@ -13,7 +13,7 @@
     "migrate": "node-pg-migrate -m ./db/migrations",
     "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
     "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
-    "jest": "jest --forceExit",
+    "jest": "jest --runInBand --forceExit",
     "check-env": "babel-node ./scripts/check-environment",
     "check-node-version": "node ./scripts/check-node-version.js",
     "check-dependencies": "node ./scripts/check-dependencies.js",

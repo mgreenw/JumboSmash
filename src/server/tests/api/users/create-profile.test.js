@@ -6,7 +6,6 @@ const db = require('../../../db');
 const dbUtils = require('../../utils/db');
 
 describe('POST api/users/me/profile', () => {
-
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from users');
@@ -38,7 +37,7 @@ describe('POST api/users/me/profile', () => {
   });
 
   it('should succeed if the user has been created and does not yet have a profile', async () => {
-    const user = await dbUtils.createUser('mgreen14');
+    const user = await dbUtils.createUser('mgreen13');
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')
@@ -55,6 +54,12 @@ describe('POST api/users/me/profile', () => {
 
   it('should fail if the user has already created a profile', async () => {
     const user = await dbUtils.createUser('mgreen14');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
+      birthday: '1997-09-09',
+    });
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')

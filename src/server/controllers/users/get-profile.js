@@ -32,7 +32,14 @@ const getProfile = async (req: $Request, res: $Response) => {
   // Try to get the user from the profiles table
   try {
     const result = await db.query(`
-      SELECT display_name, birthday, bio, image1_url, image2_url, image3_url, image4_url
+      SELECT
+        display_name as "displayName",
+        birthday,
+        bio,
+        image1_url as "image1Url",
+        image2_url as "image2Url",
+        image3_url as "image3Url",
+        image4_url as "image4Url"
       FROM profiles
       WHERE user_id = $1`, [userId]);
 
