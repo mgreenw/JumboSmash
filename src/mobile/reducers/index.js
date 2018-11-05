@@ -69,7 +69,7 @@ export default function rootReducer(
         token: action.token,
         inProgress: {
           ...state.inProgress,
-          login: true
+          login: false
         }
       };
     }
