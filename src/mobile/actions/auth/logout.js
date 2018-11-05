@@ -5,13 +5,13 @@ import { AsyncStorage } from "react-native";
 export const LOGOUT_INITIATED = "LOGOUT_INITIATED";
 export const LOGOUT_COMPLETED = "LOGOUT_COMPLETED";
 
-function logout_initiate() {
+function initiate() {
   return {
     type: LOGOUT_INITIATED
   };
 }
 
-function logout_complete() {
+function complete() {
   return {
     type: LOGOUT_COMPLETED
   };
@@ -22,10 +22,10 @@ function logout_complete() {
 // We don't care if a key didn't exist, as this will still be logged out.
 export function logout() {
   return function(dispatch: Dispatch) {
-    dispatch(logout_initiate());
+    dispatch(initiate());
     setTimeout(() => {
       AsyncStorage.multiRemove(["utln", "token"]).then(stores => {
-        dispatch(logout_complete());
+        dispatch(complete());
       });
     }, 2000);
   };
