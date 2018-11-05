@@ -47,14 +47,22 @@ const schema = {
   },
   "required": ["displayName", "birthday", "image1Url", "bio"]
 };
-/* eslint-enable /*
+/* eslint-enable */
 
 /**
  * @api {post} /api/users/me/profile
  *
  */
 const createProfile = async (req: $Request, res: $Response) => {
-  const { displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio } = req.body;
+  const {
+    displayName,
+    birthday,
+    image1Url,
+    image2Url,
+    image3Url,
+    image4Url,
+    bio,
+  } = req.body;
 
   // Check if the user's display name is too long
   if (displayName.length > displayNameMaxLength) {
@@ -80,7 +88,8 @@ const createProfile = async (req: $Request, res: $Response) => {
 
   // Ensure all supplied urls are valid urls
   const urls = [image1Url, image2Url, image3Url, image4Url];
-  for (let url of urls) {
+  for (let i = 0; i < urls.length; i += 1) {
+    const url = urls[i];
     // If the url is undefined, don't check it - it was not included in the request
     if (url !== undefined && !utils.isValidUrl(url)) {
       return res.status(400).json({
@@ -104,15 +113,14 @@ const createProfile = async (req: $Request, res: $Response) => {
     // If there is no id returned, the profile has already been created
     if (result.rowCount === 0) {
       return res.status(409).json({
-        status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED
+        status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
       });
     }
 
     // If there is an id returned, success!
     return res.status(201).json({
-      status: codes.CREATE_PROFILE__SUCCESS
+      status: codes.CREATE_PROFILE__SUCCESS,
     });
-
   } catch (error) {
     return utils.error.server(res, 'Failed to insert user profile.');
   }
