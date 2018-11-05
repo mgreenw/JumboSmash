@@ -15,7 +15,7 @@ type State = {
   classYear: number
 };
 
-function mapStateToProps(state: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
 

@@ -36,10 +36,10 @@ type Props = {
   login: (utln: string, token: string) => void
 };
 
-function mapStateToProps(state: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    loggedIn: state.loggedIn,
-    loginInProgress: state.inProgress.login
+    loggedIn: reduxState.loggedIn,
+    loginInProgress: reduxState.inProgress.login
   };
 }
 

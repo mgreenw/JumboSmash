@@ -29,7 +29,7 @@ type State = {
   isSubmitting: boolean
 };
 
-function mapStateToProps(state: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
 

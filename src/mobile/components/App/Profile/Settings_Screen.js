@@ -5,24 +5,26 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../../reducers/index";
 
 type Props = {
   navigation: any,
-  logout_inProgress: boolean,
+  logoutInProgress: boolean,
   loggedIn: boolean,
   logout: () => void
 };
 
 type State = {};
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    logout_inProgress: state.logout_inProgress,
-    loggedIn: state.loggedIn
+    logoutInProgress: reduxState.inProgress.logout,
+    loggedIn: reduxState.loggedIn
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     logout: () => {
       dispatch(logout());
@@ -37,10 +39,10 @@ class SettingsScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.logout_inProgress != this.props.logout_inProgress) {
+    if (prevProps.logoutInProgress != this.props.logoutInProgress) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({
-        headerLeft: this.props.logout_inProgress ? null : ""
+        headerLeft: this.props.logoutInProgress ? null : ""
       });
 
       // For recieving the logout completion
@@ -71,8 +73,8 @@ class SettingsScreen extends React.Component<Props, State> {
             title="Log Out"
             buttonStyle={styles.button}
             onPress={this.props.logout}
-            disabled={this.props.logout_inProgress}
-            loading={this.props.logout_inProgress}
+            disabled={this.props.logoutInProgress}
+            loading={this.props.logoutInProgress}
           />
         </View>
       </View>
