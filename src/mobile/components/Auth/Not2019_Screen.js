@@ -4,6 +4,8 @@ import { Text, View, KeyboardAvoidingView } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../reducers/index";
 
 type Props = {
   navigation: any
@@ -13,11 +15,11 @@ type State = {
   classYear: number
 };
 
-function mapStateToProps(state, ownProps: Props) {
+function mapStateToProps(state: ReduxState, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
