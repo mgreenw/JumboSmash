@@ -16,32 +16,34 @@ import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 import verify from "../../api/auth/verify";
 import { login } from "../../actions/auth/login";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../reducers/index";
 
 type State = {
   code: string,
   validCode: boolean,
   errorMessageCode: string,
-  verifyUtln_inProgress: boolean
+  verifyUtlnInProgress: boolean
 };
 
 type Props = {
   navigation: any,
   utln: string,
   loggedIn: boolean,
-  login_inProgress: boolean,
+  loginInProgress: boolean,
 
   // dispatch function with token
   login: (utln: string, token: string) => void
 };
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state: ReduxState, ownProps: Props) {
   return {
     loggedIn: state.loggedIn,
-    login_inProgress: state.login_inProgress
+    loginInProgress: state.inProgress.login
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     login: (utln: string, token: string) => {
       dispatch(login(utln, token));
@@ -56,7 +58,7 @@ class SplashScreen extends React.Component<Props, State> {
       code: "",
       validCode: true,
       errorMessageCode: "",
-      verifyUtln_inProgress: false
+      verifyUtlnInProgress: false
     };
   }
 
@@ -68,11 +70,11 @@ class SplashScreen extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevState.verifyUtln_inProgress != this.state.verifyUtln_inProgress ||
-      prevProps.login_inProgress != this.props.login_inProgress
+      prevState.verifyUtlnInProgress != this.state.verifyUtlnInProgress ||
+      prevProps.loginInProgress != this.props.loginInProgress
     ) {
       const isLoading =
-        this.state.verifyUtln_inProgress || this.props.login_inProgress;
+        this.state.verifyUtlnInProgress || this.props.loginInProgress;
       this.props.navigation.setParams({
         headerLeft: isLoading ? null : ""
       });
@@ -129,14 +131,14 @@ class SplashScreen extends React.Component<Props, State> {
     const stopSubmitting = (callBack: () => void) => {
       this.setState(
         {
-          verifyUtln_inProgress: false
+          verifyUtlnInProgress: false
         },
         callBack
       );
     };
     this.setState(
       {
-        verifyUtln_inProgress: true,
+        verifyUtlnInProgress: true,
         validCode: true,
         errorMessageCode: ""
       },
@@ -178,7 +180,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
     const isLoading =
-      this.state.verifyUtln_inProgress || this.props.login_inProgress;
+      this.state.verifyUtlnInProgress || this.props.loginInProgress;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
