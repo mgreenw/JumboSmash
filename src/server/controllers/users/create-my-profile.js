@@ -53,7 +53,7 @@ const schema = {
  * @api {post} /api/users/me/profile
  *
  */
-const createProfile = async (req: $Request, res: $Response) => {
+const createMyProfile = async (req: $Request, res: $Response) => {
   const {
     displayName,
     birthday,
@@ -126,4 +126,4 @@ const createProfile = async (req: $Request, res: $Response) => {
   }
 };
 
-module.exports = [utils.validate(schema), createProfile];
+module.exports = [utils.validate(schema), createMyProfile];

@@ -1,6 +1,6 @@
-# Create Profile
+# Create My Profile
 
-Create my profile. Only allow this if a user has not yet created a profile.
+Create a profile for the current user. Only allow this if a user has not yet created a profile.
 
 **URL** : `/api/users/me/profile`
 
