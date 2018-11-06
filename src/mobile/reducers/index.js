@@ -11,7 +11,7 @@ import {
 } from "../actions/auth/loadAuth.js";
 
 // TODO: seperate state into profile, meta, API responses, etc.
-type State = {
+export type ReduxState = {
   utln: string,
   token: ?string,
 
@@ -19,27 +19,32 @@ type State = {
   // action states:
   ///////////////////
 
-  // login / logout:
   loggedIn: boolean,
-  logout_inProgress: boolean,
-  login_inProgress: boolean,
-
-  // auth loading
   authLoaded: boolean,
-  loadAuth_inProgress: boolean
+
+  inProgress: {
+    loadAuth: boolean,
+    logout: boolean,
+    login: boolean
+  }
 };
 
-const defaultState: State = {
+const defaultState: ReduxState = {
   utln: "",
   token: null,
   loggedIn: false,
-  logout_inProgress: false,
-  login_inProgress: false,
   authLoaded: false,
-  loadAuth_inProgress: false
+  inProgress: {
+    loadAuth: false,
+    logout: false,
+    login: false
+  }
 };
 
-export default function rootReducer(state: State = defaultState, action: any) {
+export default function rootReducer(
+  state: ReduxState = defaultState,
+  action: any
+) {
   // $FlowFixMe (__DEV__ will break flow)
   if (__DEV__) {
     console.log(action.type);
@@ -47,50 +52,74 @@ export default function rootReducer(state: State = defaultState, action: any) {
   switch (action.type) {
     // LOGIN:
     case LOGIN_INITIATED: {
-      return _.assign({}, state, {
-        login_inProgress: true
-      });
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          login: true
+        }
+      };
     }
 
     case LOGIN_COMPLETED: {
-      return _.assign({}, state, {
-        login_inProgress: false,
+      return {
+        ...state,
         loggedIn: true,
         utln: action.utln,
-        token: action.token
-      });
+        token: action.token,
+        inProgress: {
+          ...state.inProgress,
+          login: false
+        }
+      };
     }
 
     // LOGOUT:
     case LOGOUT_INITIATED: {
-      return _.assign({}, state, {
-        logout_inProgress: true
-      });
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          logout: true
+        }
+      };
     }
 
     case LOGOUT_COMPLETED: {
-      return _.assign({}, state, {
+      return {
+        ...state,
         utln: "",
         token: null,
-        logout_inProgress: false,
-        loggedIn: false
-      });
+        loggedIn: false,
+        inProgress: {
+          ...state.inProgress,
+          logout: false
+        }
+      };
     }
 
     // LOAD AUTH:
     case LOAD_AUTH__INITIATED: {
-      return _.assign({}, state, {
-        loadAuth_inProgress: true
-      });
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          loadAuth: true
+        }
+      };
     }
 
     case LOAD_AUTH__COMPLETED: {
-      return _.assign({}, state, {
+      return {
+        ...state,
         utln: action.utln,
         token: action.token,
-        loadAuth_inProgress: false,
-        authLoaded: true
-      });
+        authLoaded: true,
+        inProgress: {
+          ...state.inProgress,
+          loadAuth: false
+        }
+      };
     }
 
     default: {

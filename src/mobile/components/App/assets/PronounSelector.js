@@ -25,6 +25,7 @@ export class PronounSelector extends React.Component<Props, State> {
       pronouns: this.props.defaultPronouns
     };
   }
+
   render() {
     return (
       <View style={{ flexDirection: "row" }}>
@@ -56,19 +57,12 @@ export class PronounSelector extends React.Component<Props, State> {
           checkedColor="black"
           checked={this.state.pronouns.she}
           onPress={() => {
-            this.setState(
-              prevState => (
-                {
-                  pronouns: {
-                    ...prevState.pronouns,
-                    she: !prevState.pronouns.she
-                  }
-                },
-                () => {
-                  this.props.onChange(this.state.pronouns);
-                }
-              )
-            );
+            this.setState(prevState => ({
+              pronouns: {
+                ...prevState.pronouns,
+                she: !prevState.pronouns.she
+              }
+            }));
           }}
         />
         <CheckBox

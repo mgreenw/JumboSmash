@@ -1,17 +1,18 @@
 // @flow
 import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
+import DevTesting from "../../utils/DevTesting";
 
 export const LOGIN_INITIATED = "LOGIN_INITIATED";
 export const LOGIN_COMPLETED = "LOGIN_COMPLETED";
 
-function loginInitiate() {
+function initiate() {
   return {
     type: LOGIN_INITIATED
   };
 }
 
-function loginComplete(utln: string, token: string) {
+function complete(utln: string, token: string) {
   return {
     type: LOGIN_COMPLETED,
     utln: utln,
@@ -22,11 +23,11 @@ function loginComplete(utln: string, token: string) {
 // TODO: consider error handling on the multiSet.
 export function login(utln: string, token: string) {
   return function(dispatch: Dispatch) {
-    dispatch(loginInitiate());
-    setTimeout(() => {
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
       AsyncStorage.multiSet([["utln", utln], ["token", token]]).then(errors => {
-        dispatch(loginComplete(utln, token));
+        dispatch(complete(utln, token));
       });
-    }, 2000);
+    });
   };
 }
