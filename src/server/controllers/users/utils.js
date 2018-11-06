@@ -1,16 +1,12 @@
 // @flow
 
+const codes = require('../status-codes');
 const apiUtils = require('../utils');
 
 const minBirthday = new Date('01/01/1988');
 const maxBirthday = new Date('01/01/2001');
 const displayNameMaxLength = 50;
 const bioMaxLength = 500;
-
-const PROFILE__DISPLAY_NAME_TOO_LONG = 'PROFILE__DISPLAY_NAME_TOO_LONG';
-const PROFILE__BIRTHDAY_NOT_VALID = 'PROFILE__BIRTHDAY_NOT_VALID';
-const PROFILE__BIO_TOO_LONG = 'PROFILE__BIO_TOO_LONG';
-const PROFILE__IMAGE_URL_NOT_VALID = 'PROFILE__IMAGE_URL_NOT_VALID';
 
 type Profile = {
   displayName: ?string,
@@ -37,20 +33,20 @@ function validateProfile(profile: Profile) {
 
   // Check if the user's display name is too long
   if (displayName && displayName.length > displayNameMaxLength) {
-    throw PROFILE__DISPLAY_NAME_TOO_LONG;
+    throw codes.PROFILE__DISPLAY_NAME_TOO_LONG;
   }
 
   // Check that the birthday is in a reasonable range
   if (birthday) {
     const birthdayDate = new Date(birthday);
     if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
-      throw PROFILE__BIRTHDAY_NOT_VALID;
+      throw codes.PROFILE__BIRTHDAY_NOT_VALID;
     }
   }
 
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
-    throw PROFILE__BIO_TOO_LONG;
+    throw codes.PROFILE__BIO_TOO_LONG;
   }
 
   // Ensure all supplied urls are valid urls
@@ -59,7 +55,7 @@ function validateProfile(profile: Profile) {
     const url = urls[i];
     // If the url is undefined, don't check it - it was not included in the request
     if (url && !apiUtils.isValidUrl(url)) {
-      throw PROFILE__IMAGE_URL_NOT_VALID;
+      throw codes.PROFILE__IMAGE_URL_NOT_VALID;
     }
   }
 }

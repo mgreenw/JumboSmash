@@ -52,7 +52,7 @@ const schema = {
 const createMyProfile = async (req: $Request, res: $Response) => {
   // If the request's user property is null or undefined, the user's profile
   // has already been created
-  if (!req.user.profileId) {
+  if (req.user.profileId) {
     return res.status(409).json({
       status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
     });
@@ -81,7 +81,7 @@ const createMyProfile = async (req: $Request, res: $Response) => {
 
   try {
     // Insert the profile into the database
-    await db.query(`
+    const results = await db.query(`
       INSERT INTO profiles
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -89,6 +89,10 @@ const createMyProfile = async (req: $Request, res: $Response) => {
       RETURNING id
     `,
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
+
+    if (results.rowCount === 0) {
+
+    }
 
     // If there is an id returned, success!
     return res.status(201).json({

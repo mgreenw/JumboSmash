@@ -138,7 +138,7 @@ describe('POST api/users/me/profile', () => {
     expect(res.body.message).toContain('bio');
   });
 
-  it('should error if the display name is too long (>500 characters)', async () => {
+  it('should error if the display name is too long (>50 characters)', async () => {
     const user = await dbUtils.createUser('mgreen19');
     const res = await request(app)
       .post('/api/users/me/profile')
@@ -151,10 +151,11 @@ describe('POST api/users/me/profile', () => {
         image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.CREATE_PROFILE__DISPLAY_NAME_TOO_LONG);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.message).toBe(codes.PROFILE__DISPLAY_NAME_TOO_LONG);
   });
 
-  it('should error if the bio is too long (>50 characters)', async () => {
+  it('should error if the bio is too long (>500 characters)', async () => {
     const bioLength = 510;
     let bio = '';
     while (bio.length < bioLength) {
@@ -172,7 +173,8 @@ describe('POST api/users/me/profile', () => {
         image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.CREATE_PROFILE__BIO_TOO_LONG);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.message).toBe(codes.PROFILE__BIO_TOO_LONG);
   });
 
   it('should ensure the date is formatted correctly', async () => {
@@ -205,7 +207,8 @@ describe('POST api/users/me/profile', () => {
         image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.CREATE_PROFILE__BIRTHDAY_NOT_VALID);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.message).toBe(codes.PROFILE__BIRTHDAY_NOT_VALID);
   });
 
   it('should ensure the the image urls use HTTPS', async () => {
@@ -222,7 +225,8 @@ describe('POST api/users/me/profile', () => {
         image1Url: 'http://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.CREATE_PROFILE__IMAGE_URL_NOT_VALID);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.message).toBe(codes.PROFILE__IMAGE_URL_NOT_VALID);
   });
 
   it('should ensure the the image urls are valid URLs', async () => {
@@ -239,7 +243,8 @@ describe('POST api/users/me/profile', () => {
         image2Url: 'https:static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.CREATE_PROFILE__IMAGE_URL_NOT_VALID);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.message).toBe(codes.PROFILE__IMAGE_URL_NOT_VALID);
   });
 
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
