@@ -77,8 +77,17 @@ class SettingsScreen extends React.Component<Props, State> {
     title: "Settings"
   });
 
-  _onUsePronounChange = () => {};
-  _onWantPronounChange = () => {};
+  _onUsePronounChange = (pronouns: Pronouns) => {
+    this.setState({
+      usePronouns: pronouns
+    });
+  };
+
+  _onWantPronounChange = (pronouns: Pronouns) => {
+    this.setState({
+      wantPronouns: pronouns
+    });
+  };
 
   render() {
     // this is the navigator we passed in from App.js
@@ -87,13 +96,22 @@ class SettingsScreen extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM: SETTINGS</Text>
+          <Text style={{ textAlign: "center" }}>Pronoun Preferences</Text>
+          <Text style={{ textAlign: "center" }}>
+            We use Pronouns to help determine who to show in your stack in
+            Project GEM. Your pronouns will not be shown on your profile.
+          </Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ textAlign: "center" }}>I use:</Text>
           <PronounSelector
             defaultPronouns={this.state.usePronouns}
             onChange={this._onUsePronounChange}
+          />
+          <Text style={{ textAlign: "center" }}>I'm looking for:</Text>
+          <PronounSelector
+            defaultPronouns={this.state.wantPronouns}
+            onChange={this._onWantPronounChange}
           />
         </View>
         <View style={{ flex: 1 }}>

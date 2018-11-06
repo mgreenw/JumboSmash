@@ -2,6 +2,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Button, CheckBox } from "react-native-elements";
+import _ from "lodash";
 
 export type Pronouns = {
   he: boolean,
@@ -24,6 +25,14 @@ export class PronounSelector extends React.Component<Props, State> {
     this.state = {
       pronouns: this.props.defaultPronouns
     };
+  }
+
+  // Check via a deep comparison equality check if anything has changed in the
+  // pronouns. If so, call the onChange.
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (_.isEqual(prevState.pronouns, this.state.pronouns)) {
+      this.props.onChange(this.state.pronouns);
+    }
   }
 
   render() {
