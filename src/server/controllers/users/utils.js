@@ -1,6 +1,5 @@
 // @flow
 
-const codes = require('../status-codes');
 const apiUtils = require('../utils');
 
 const minBirthday = new Date('01/01/1988');
@@ -8,6 +7,20 @@ const maxBirthday = new Date('01/01/2001');
 const displayNameMaxLength = 50;
 const bioMaxLength = 500;
 
+// Profile Errors
+const profileErrorMessages = {
+  DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
+  BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
+  BIO_TOO_LONG: 'BIO_TOO_LONG',
+  IMAGE_URL_NOT_VALID: 'IMAGE_URL_NOT_VALID',
+};
+
+// This type here is to ensure that calls to the validateProfile function
+// are of the correct type. That being said, the clients of this function may
+// have different needs. For example, the 'Create My Profile' endpoint requires
+// certain fields such as displayName, and will always include them. However,
+// because 'Update My Profile' does not require any fields, they are all given
+// as optional in this type.
 type Profile = {
   displayName: ?string,
   birthday: ?string,
@@ -33,20 +46,20 @@ function validateProfile(profile: Profile) {
 
   // Check if the user's display name is too long
   if (displayName && displayName.length > displayNameMaxLength) {
-    throw codes.PROFILE__DISPLAY_NAME_TOO_LONG;
+    throw profileErrorMessages.DISPLAY_NAME_TOO_LONG;
   }
 
   // Check that the birthday is in a reasonable range
   if (birthday) {
     const birthdayDate = new Date(birthday);
     if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
-      throw codes.PROFILE__BIRTHDAY_NOT_VALID;
+      throw profileErrorMessages.BIRTHDAY_NOT_VALID;
     }
   }
 
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
-    throw codes.PROFILE__BIO_TOO_LONG;
+    throw profileErrorMessages.BIO_TOO_LONG;
   }
 
   // Ensure all supplied urls are valid urls
@@ -55,11 +68,12 @@ function validateProfile(profile: Profile) {
     const url = urls[i];
     // If the url is undefined, don't check it - it was not included in the request
     if (url && !apiUtils.isValidUrl(url)) {
-      throw codes.PROFILE__IMAGE_URL_NOT_VALID;
+      throw profileErrorMessages.IMAGE_URL_NOT_VALID;
     }
   }
 }
 
 module.exports = {
   validateProfile,
+  profileErrorMessages,
 };

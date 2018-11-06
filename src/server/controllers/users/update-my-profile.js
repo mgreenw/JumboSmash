@@ -58,7 +58,7 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     utils.validateProfile(req.body);
   } catch (error) {
     return res.status(400).send({
-      status: codes.BAD_REQUEST,
+      status: codes.UPDATE_PROFILE__INVALID_REQUEST,
       message: error,
     });
   }
@@ -87,6 +87,7 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     });
   }
 
+  // Todo: Make this into a utility function for reuse
   // Get all the fields with their respective template strings. fieldTemplates
   // is a string like 'display_name = $1, birthday = $2, bio = $3'
   const fieldTemplates = _.join(

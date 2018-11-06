@@ -50,20 +50,13 @@ const schema = {
  *
  */
 const createMyProfile = async (req: $Request, res: $Response) => {
-  // If the request's user property is null or undefined, the user's profile
-  // has already been created
-  if (req.user.profileId) {
-    return res.status(409).json({
-      status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
-    });
-  }
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
     utils.validateProfile(req.body);
   } catch (error) {
     return res.status(400).send({
-      status: codes.BAD_REQUEST,
+      status: codes.CREATE_PROFILE__INVALID_REQUEST,
       message: error,
     });
   }
@@ -90,14 +83,19 @@ const createMyProfile = async (req: $Request, res: $Response) => {
     `,
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
+    // If no rows were returned, then the profile already exists.
     if (results.rowCount === 0) {
-
+      return res.status(409).json({
+        status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
+      });
     }
 
     // If there is an id returned, success!
     return res.status(201).json({
       status: codes.CREATE_PROFILE__SUCCESS,
     });
+
+  // Catch an error as a server error.
   } catch (error) {
     return apiUtils.error.server(res, 'Failed to insert user profile.');
   }

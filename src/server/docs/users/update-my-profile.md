@@ -78,8 +78,8 @@ Provide updated profile fields
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__DISPLAY_NAME_TOO_LONG"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "DISPLAY_NAME_TOO_LONG"
 }
 ```
 
@@ -92,8 +92,8 @@ Provide updated profile fields
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__BIRTHDAY_NOT_VALID"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "BIRTHDAY_NOT_VALID"
 }
 ```
 
@@ -106,8 +106,8 @@ Provide updated profile fields
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__BIO_TOO_LONG"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "BIO_TOO_LONG"
 }
 ```
 
@@ -120,7 +120,7 @@ Provide updated profile fields
 **Content Examle** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__IMAGE_URL_NOT_VALID"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "IMAGE_URL_NOT_VALID"
 }
 ```

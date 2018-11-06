@@ -70,7 +70,7 @@ Provide the user's initial profile fields.
 
 ## Error Responses
 
-**Condition** : The user's profile has alreday been created. The caller should is PATCH instead to update the profile
+**Condition** : The user's profile has alreday been created. The caller should use PATCH instead to update the profile
 
 **Code** : `400 BAD REQUEST`
 
@@ -90,8 +90,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__DISPLAY_NAME_TOO_LONG"
+    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "message": "DISPLAY_NAME_TOO_LONG"
 }
 ```
 
@@ -104,8 +104,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__BIRTHDAY_NOT_VALID"
+    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "message": "BIRTHDAY_NOT_VALID"
 }
 ```
 
@@ -118,8 +118,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__BIO_TOO_LONG"
+    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "message": "BIO_TOO_LONG"
 }
 ```
 
@@ -132,8 +132,8 @@ Provide the user's initial profile fields.
 **Content Examle** :
 ```json
 {
-    "status": "BAD_REQUEST",
-    "message": "PROFILE__IMAGE_URL_NOT_VALID"
+    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "message": "IMAGE_URL_NOT_VALID"
 }
 ```
 
