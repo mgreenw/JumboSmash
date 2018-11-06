@@ -172,6 +172,7 @@ class SplashScreen extends React.Component<Props, State> {
               this.state.validUtln ? "" : this.state.errorMessageUtln
             }
             autoCorrect={false}
+            autoCapitalize="none"
           />
           {this.state.validUtln && (
             <View style={styles.helpTextContainer}>
