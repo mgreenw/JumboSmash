@@ -3,29 +3,31 @@ import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
 import DevTesting from "../../utils/DevTesting";
 
-export const LOGIN_INITIATED = "LOGIN_INITIATED";
-export const LOGIN_COMPLETED = "LOGIN_COMPLETED";
+// Gets auth (token, utln) from async store, saves to redux state.
+export const LOAD_AUTH__INITIATED = "LOAD_AUTH__INITIATED";
+export const LOAD_AUTH__COMPLETED = "LOAD_AUTH__COMPLETED";
 
 function initiate() {
   return {
-    type: LOGIN_INITIATED
+    type: LOAD_AUTH__INITIATED
   };
 }
 
 function complete(utln: string, token: string) {
   return {
-    type: LOGIN_COMPLETED,
+    type: LOAD_AUTH__COMPLETED,
     utln: utln,
     token: token
   };
 }
 
-// TODO: consider error handling on the multiSet.
-export function login(utln: string, token: string) {
+export function loadAuth() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      AsyncStorage.multiSet([["utln", utln], ["token", token]]).then(errors => {
+      AsyncStorage.multiGet(["utln", "token"]).then(stores => {
+        const utln = stores[0][1];
+        const token = stores[1][1];
         dispatch(complete(utln, token));
       });
     });

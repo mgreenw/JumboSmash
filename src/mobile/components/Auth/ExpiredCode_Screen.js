@@ -11,6 +11,8 @@ import {
 } from "react-navigation";
 import { styles } from "../../styles/auth";
 import sendVerificationEmail from "../../api/auth/sendVerificationEmail";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../reducers/index";
 
 type Props = {
   navigation: any
@@ -20,11 +22,11 @@ type State = {
   isSubmitting: boolean
 };
 
-function mapStateToProps(state, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 

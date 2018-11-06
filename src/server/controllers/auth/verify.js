@@ -22,12 +22,12 @@ const schema = {
       "type": "string"
     }
   },
-  "required": ["utln"]
+  "required": ["utln", "code"]
 };
 /* eslint-enable /*
 
 /**
- * @api {post} /api/auth/verify/:code
+ * @api {post} /api/auth/verify/
  * Verify a user with their verification hacodesh
  */
 const verify = async (req: $Request, res: $Response) => {
@@ -55,7 +55,7 @@ try {
     const expired = new Date(verification.expiration).getTime() < new Date().getTime();
 
     // Check if the code is expired
-    if (verification.verification_attempts >= 3 || expired) {
+    if (verification.attempts > 3 || expired) {
       return res.status(400).json({
         status: codes.VERIFY__EXPIRED_CODE,
       });
