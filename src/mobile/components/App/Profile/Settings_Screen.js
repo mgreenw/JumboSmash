@@ -103,12 +103,12 @@ class SettingsScreen extends React.Component<Props, State> {
           </Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>I use:</Text>
+          <Text style={{ textAlign: "center" }}>{"I use:"}</Text>
           <PronounSelector
             defaultPronouns={this.state.usePronouns}
             onChange={this._onUsePronounChange}
           />
-          <Text style={{ textAlign: "center" }}>I'm looking for:</Text>
+          <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
           <PronounSelector
             defaultPronouns={this.state.wantPronouns}
             onChange={this._onWantPronounChange}
