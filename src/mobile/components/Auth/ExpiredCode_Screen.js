@@ -16,7 +16,9 @@ type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  isSubmitting: boolean
+};
 
 function mapStateToProps(state, ownProps: Props) {
   return {};
@@ -29,7 +31,9 @@ function mapDispatchToProps(dispatch, ownProps: Props) {
 class ExpiredCodeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isSubmitting: false
+    };
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -59,84 +63,61 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNot2019 = (classYear: integer) => {
+  _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
     navigate("Not2019", {
       classYear: classYear
     });
   };
 
-  _onNotFound = () => {
-    this._utlnInputError("Could not find UTLN");
-  };
-
   _onError = (error: any) => {
-    this._onNotFound();
+    console.log("error");
   };
 
   _onResend = () => {
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
     // First, we validate the UTLN to preliminarily shake it / display errors
-    if (this._validateUtln(utln)) {
-      this.setState({
-        isSubmitting: true,
-        validUtln: true,
-        errorMessageUtln: ""
-      });
 
-      const stopSubmitting = (callBack: any => void) => {
-        this.setState(
-          {
-            isSubmitting: false
-          },
-          callBack()
-        );
-      };
-
-      // Not the best way to do this for the callbacks with parameters, but
-      // marignally better than before. Need to find a better way to do this
-      // with keeping response types.
-      sendVerificationEmail(
-        {
-          utln,
-          forceResend: true
-        },
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onNot2019(response.classYear);
-          }),
-        (response, request) => stopSubmitting(this._onNotFound),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (error, request) =>
-          stopSubmitting(() => {
-            this._onError(error);
-          })
-      );
-    }
-  };
-
-  _utlnInputError = (errorMessage: string) => {
     this.setState({
-      validUtln: false,
-      errorMessageUtln: errorMessage
+      isSubmitting: true
     });
-  };
 
-  // TODO: more client side validation!
-  _validateUtln = utln => {
-    if (utln == "") {
-      this._utlnInputError("Required");
-      return false;
-    }
-    return true;
+    const stopSubmitting = (callBack: any => void) => {
+      this.setState(
+        {
+          isSubmitting: false
+        },
+        callBack()
+      );
+    };
+
+    // Not the best way to do this for the callbacks with parameters, but
+    // marignally better than before. Need to find a better way to do this
+    // with keeping response types.
+    sendVerificationEmail(
+      {
+        utln,
+        forceResend: true
+      },
+      (response, request) =>
+        stopSubmitting(() => {
+          this._onSuccess(request.utln, response.email);
+        }),
+      (response, request) =>
+        stopSubmitting(() => {
+          this._onNot2019(response.classYear);
+        }),
+      (response, request) => stopSubmitting(this._onError),
+      (response, request) =>
+        stopSubmitting(() => {
+          this._onSuccess(request.utln, response.email);
+        }),
+      (error, request) =>
+        stopSubmitting(() => {
+          this._onError(error);
+        })
+    );
   };
 
   render() {
