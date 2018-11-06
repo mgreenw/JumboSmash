@@ -2,14 +2,10 @@
 
 import type { $Request, $Response } from 'express';
 
-const utils = require('../utils');
+const apiUtils = require('../utils');
+const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
-
-const minBirthday = new Date('01/01/1988');
-const maxBirthday = new Date('01/01/2001');
-const displayNameMaxLength = 50;
-const bioMaxLength = 500;
 
 /* eslint-disable */
 const schema = {
@@ -53,7 +49,18 @@ const schema = {
  * @api {post} /api/users/me/profile
  *
  */
-const createProfile = async (req: $Request, res: $Response) => {
+const createMyProfile = async (req: $Request, res: $Response) => {
+  // Validate the profile. If validate profile throws, there was a problem with
+  // the given profile, which means it was a bad request
+  try {
+    utils.validateProfile(req.body);
+  } catch (error) {
+    return res.status(400).send({
+      status: codes.CREATE_PROFILE__INVALID_REQUEST,
+      message: error,
+    });
+  }
+
   const {
     displayName,
     birthday,
@@ -64,44 +71,10 @@ const createProfile = async (req: $Request, res: $Response) => {
     bio,
   } = req.body;
 
-  // Check if the user's display name is too long
-  if (displayName.length > displayNameMaxLength) {
-    return res.status(400).json({
-      status: codes.CREATE_PROFILE__DISPLAY_NAME_TOO_LONG,
-    });
-  }
-
-  // Check that the birthday is in a reasonable range
-  const birthdayDate = new Date(birthday);
-  if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
-    return res.status(400).json({
-      status: codes.CREATE_PROFILE__BIRTHDAY_NOT_VALID,
-    });
-  }
-
-  // Check if the user's bio is too long
-  if (bio.length > bioMaxLength) {
-    return res.status(400).json({
-      status: codes.CREATE_PROFILE__BIO_TOO_LONG,
-    });
-  }
-
-  // Ensure all supplied urls are valid urls
-  const urls = [image1Url, image2Url, image3Url, image4Url];
-  for (let i = 0; i < urls.length; i += 1) {
-    const url = urls[i];
-    // If the url is undefined, don't check it - it was not included in the request
-    if (url !== undefined && !utils.isValidUrl(url)) {
-      return res.status(400).json({
-        status: codes.CREATE_PROFILE__IMAGE_URL_NOT_VALID,
-        url,
-      });
-    }
-  }
 
   try {
     // Insert the profile into the database
-    const result = await db.query(`
+    const results = await db.query(`
       INSERT INTO profiles
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -110,8 +83,8 @@ const createProfile = async (req: $Request, res: $Response) => {
     `,
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
-    // If there is no id returned, the profile has already been created
-    if (result.rowCount === 0) {
+    // If no rows were returned, then the profile already exists.
+    if (results.rowCount === 0) {
       return res.status(409).json({
         status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
       });
@@ -121,9 +94,11 @@ const createProfile = async (req: $Request, res: $Response) => {
     return res.status(201).json({
       status: codes.CREATE_PROFILE__SUCCESS,
     });
+
+  // Catch an error as a server error.
   } catch (error) {
-    return utils.error.server(res, 'Failed to insert user profile.');
+    return apiUtils.error.server(res, 'Failed to insert user profile.');
   }
 };
 
-module.exports = [utils.validate(schema), createProfile];
+module.exports = [apiUtils.validate(schema), createMyProfile];
