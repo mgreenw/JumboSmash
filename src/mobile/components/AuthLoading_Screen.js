@@ -1,31 +1,54 @@
 // @flow
 
 import React from "react";
-import {
-  Alert,
-  ActivityIndicator,
-  AsyncStorage,
-  StatusBar,
-  Text,
-  View
-} from "react-native";
+import { Alert, ActivityIndicator, StatusBar, Text, View } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
+import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
+import { loadAuth } from "../actions/auth/loadAuth";
+import { login } from "../actions/auth/login";
+import type { ReduxState } from "../reducers/index";
 
 type Props = {
-  navigation: any
+  navigation: any,
+
+  // Redux state
+  loadAuthInProgress: boolean, // redux state for action in progress
+  authLoaded: boolean,
+  loggedIn: boolean,
+
+  // Actions
+  loadAuth: void => void,
+  login: (utln: string, token: string) => void,
+
+  // Async store -> Redux
+  utln: string,
+  token: string
 };
 
 type State = {};
 
-function mapStateToProps(state: State, ownProps: Props) {
-  return {};
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+  return {
+    utln: reduxState.utln,
+    token: reduxState.token,
+    loadAuthInProgress: reduxState.inProgress.loadAuth,
+    loggedIn: reduxState.loggedIn,
+    authLoaded: reduxState.authLoaded
+  };
 }
 
-function mapDispatchToProps(dispatch, ownProps: Props) {
-  return {};
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+  return {
+    loadAuth: () => {
+      dispatch(loadAuth());
+    },
+    login: (utln: string, token: string) => {
+      dispatch(login(utln, token));
+    }
+  };
 }
 
 // This component is the screen we see on initial app startup, as we are
@@ -35,53 +58,60 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-
-    // TODO: remove debugging timeout / make a nice loading screen animation
-    setTimeout(this._bootstrapAsync, 2000);
+    this.props.loadAuth();
   }
 
-  // TODO: instead of hardcoding these values, let's give them nice keys somehow
-  _bootstrapAsync = async () => {
-    const utln = await AsyncStorage.getItem("utln");
-    const token = await AsyncStorage.getItem("token");
-
-    // If we have retrieved both utln and token from the phone's store,
-    // then we check that the token is still valid -- if so, we navigate to
-    // the app. Otherwise, we navigate to the auth flow.
-    if (utln && token) {
-      getTokenUtln(
-        {
-          token
-        },
-        (response, request) => {
-          // Check if the server's utln is the same as one we have stored on device.
-          // If not, invalidate the token (navigate to the auth screen).
-          // This will fail if the stored UTLN is not exactly equal to the
-          // server's utln
-          if (utln !== response.utln) {
-            this._onInvalidToken();
-          } else {
-            this._onValidToken();
-          }
-        },
-        (response, request) => {
-          this._onInvalidToken();
-        },
-        // Treat any errors as an invalid token, make them log in
-        (response, request) => {
+  componentDidUpdate(prevProps, prevState) {
+    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
+    // so we use it for determining if the load occured.
+    if (prevProps.loadAuthInProgress != this.props.loadAuthInProgress) {
+      if (this.props.authLoaded) {
+        const { utln, token } = this.props;
+        if (utln && token) {
+          getTokenUtln(
+            {
+              token
+            },
+            (response, request) => {
+              // Check if the server's utln is the same as one we have stored on device.
+              // If not, invalidate the token (navigate to the auth screen).
+              // This will fail if the stored UTLN is not exactly equal to the
+              // server's utln
+              if (utln !== response.utln) {
+                this._onInvalidToken();
+              } else {
+                this._onValidToken(utln, token);
+              }
+            },
+            (response, request) => {
+              this._onInvalidToken();
+            },
+            // Treat any errors as an invalid token, make them log in
+            (response, request) => {
+              this._onInvalidToken();
+            }
+          );
+        } else {
           this._onInvalidToken();
         }
-      );
-    } else {
-      this._onInvalidToken();
+      }
     }
+
+    // for receiving completion of login action
+    if (prevProps.loggedIn != this.props.loggedIn && this.props.loggedIn) {
+      const { navigate } = this.props.navigation;
+      navigate("App", {});
+    }
+  }
+
+  // If the token is valid, we want to trigger login logic, so we must dispatch
+  // login first.
+  _onValidToken = (utln: string, token: string) => {
+    this.props.login(utln, token);
   };
 
-  _onValidToken = () => {
-    const { navigate } = this.props.navigation;
-    navigate("App");
-  };
-
+  // If the token is invalid, we don't need to set any more state, because
+  // our redux state defaults being logged out, so we go straight to auth.
   _onInvalidToken = () => {
     const { navigate } = this.props.navigation;
     navigate("Auth");

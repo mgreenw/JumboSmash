@@ -5,6 +5,8 @@ import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Button, Icon } from "react-native-elements";
 import { styles } from "../../../styles/template";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "../../../reducers/index";
 
 type Props = {
   navigation: any
@@ -12,11 +14,11 @@ type Props = {
 
 type State = {};
 
-function mapStateToProps(state: State, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
 
-function mapDispatchToProps(dispatch: State, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
