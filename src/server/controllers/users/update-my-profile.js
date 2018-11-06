@@ -98,12 +98,13 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
   const fields = _.map(definedFields, field => _.nth(field, 1));
 
   try {
-    // Update the profile in the database. Utilize fieldTemplates
+    // Update the profile in the database. Utilize fieldTemplates and the field
+    // length as the parameter templates. It is ok to construct the string like
+    // this because none of the values in the construction come from user input
     await db.query(`
       UPDATE profiles
       SET ${fieldTemplates}
-      WHERE user_id = $${fields.length + 1}
-    `,
+      WHERE user_id = $${fields.length + 1}`,
     [...fields, req.user.id]);
 
     // If there is an id returned, success!

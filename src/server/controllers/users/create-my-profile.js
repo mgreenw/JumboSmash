@@ -81,7 +81,7 @@ const createMyProfile = async (req: $Request, res: $Response) => {
 
   try {
     // Insert the profile into the database
-    const result = await db.query(`
+    await db.query(`
       INSERT INTO profiles
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
