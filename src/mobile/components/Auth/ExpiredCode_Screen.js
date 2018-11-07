@@ -39,11 +39,13 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
   }
 
   static navigationOptions = ({ navigation }) => {
+    //if no param value then we just navigated to the page so we should show the back button
+    const shouldShowButton = navigation.getParam("shouldShowButton", true);
     return {
       headerStyle: {
         borderBottomWidth: 0
       },
-      headerLeft: (
+      headerLeft: shouldShowButton ? (
         <HeaderBackButton
           onPress={() => {
             const resetAction = StackActions.reset({
@@ -52,10 +54,19 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
             });
             navigation.dispatch(resetAction);
           }}
+          disabled={true}
         />
-      )
+      ) : null
     };
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.isSubmitting != this.state.isSubmitting) {
+      this.props.navigation.setParams({
+        shouldShowButton: !this.state.isSubmitting
+      });
+    }
+  }
 
   _onSuccess = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
@@ -65,25 +76,14 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNot2019 = (classYear: string) => {
-    const { navigate } = this.props.navigation;
-    navigate("Not2019", {
-      classYear: classYear
-    });
-  };
-
-  _onError = (error: any) => {
+  _onError = () => {
+    //TODO: Navigate to error screen
     console.log("error");
   };
 
   _onResend = () => {
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
-    // First, we validate the UTLN to preliminarily shake it / display errors
-
-    this.setState({
-      isSubmitting: true
-    });
 
     const stopSubmitting = (callBack: any => void) => {
       this.setState(
@@ -94,31 +94,29 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
       );
     };
 
-    // Not the best way to do this for the callbacks with parameters, but
-    // marignally better than before. Need to find a better way to do this
-    // with keeping response types.
-    sendVerificationEmail(
+    this.setState(
       {
-        utln,
-        forceResend: true
+        isSubmitting: true
       },
-      (response, request) =>
-        stopSubmitting(() => {
-          this._onSuccess(request.utln, response.email);
-        }),
-      (response, request) =>
-        stopSubmitting(() => {
-          this._onNot2019(response.classYear);
-        }),
-      (response, request) => stopSubmitting(this._onError),
-      (response, request) =>
-        stopSubmitting(() => {
-          this._onSuccess(request.utln, response.email);
-        }),
-      (error, request) =>
-        stopSubmitting(() => {
-          this._onError(error);
-        })
+      () => {
+        sendVerificationEmail(
+          {
+            utln,
+            forceResend: true
+          },
+          (response, request) =>
+            stopSubmitting(() => {
+              this._onSuccess(request.utln, response.email);
+            }),
+          (response, request) => stopSubmitting(this._onError),
+          (response, request) => stopSubmitting(this._onError),
+          (response, request) =>
+            stopSubmitting(() => {
+              this._onSuccess(request.utln, response.email);
+            }),
+          (error, request) => stopSubmitting(this._onError)
+        );
+      }
     );
   };
 
@@ -132,8 +130,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text style={styles.title}>Expired Verification Code</Text>
         </View>
         <View>
-          <Text
-          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
