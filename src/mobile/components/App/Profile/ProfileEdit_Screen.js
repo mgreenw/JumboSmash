@@ -1,9 +1,8 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
-import { styles } from "../../../styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
 
@@ -40,14 +39,47 @@ class SettingsScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>Edit Profle Screen</Text>
+      <View style={styles.pictureRows}>
+        <View style={styles.pictureRow}>
+          <View style={styles.fixedRatio} />
+          <View style={styles.fixedRatio2} />
+        </View>
+        <View style={styles.pictureRow}>
+          <View style={styles.fixedRatio2} />
+          <View style={styles.fixedRatio3} />
         </View>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  pictureRows: {
+    flex: 1
+  },
+  pictureRow: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white"
+  },
+  fixedRatio: {
+    backgroundColor: "rebeccapurple",
+    flex: 1,
+    aspectRatio: 1
+  },
+  fixedRatio2: {
+    backgroundColor: "red",
+    flex: 1,
+    aspectRatio: 1
+  },
+  fixedRatio3: {
+    backgroundColor: "blue",
+    flex: 1,
+    aspectRatio: 1
+  }
+});
 
 export default connect(
   mapStateToProps,
