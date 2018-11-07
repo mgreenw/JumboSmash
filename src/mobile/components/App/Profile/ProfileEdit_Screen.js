@@ -27,8 +27,6 @@ class SettingsScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
-  componentDidUpdate(prevProps, prevState) {}
-
   // These are for react navigation, like header bar and such
   static navigationOptions = ({ navigation }) => ({
     headerLeft: navigation.state.params.headerLeft,
@@ -36,9 +34,6 @@ class SettingsScreen extends React.Component<Props, State> {
   });
 
   render() {
-    // this is the navigator we passed in from App.js
-    const { navigate } = this.props.navigation;
-
     return (
       <View style={styles.container}>
         // Pictures:
