@@ -46,12 +46,12 @@ class ProfileScreen extends React.Component<Props, State> {
 
   _onSettingsPress = () => {
     const { navigate } = this.props.navigation;
-    navigate("SettingsEdit");
+    navigate("SettingsEdit", {});
   };
 
   _onProfileEditPress = () => {
     const { navigate } = this.props.navigation;
-    navigate("ProfileEdit");
+    navigate("ProfileEdit", {});
   };
 
   render() {
