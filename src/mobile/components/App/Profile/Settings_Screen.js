@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
+import { PronounSelector } from "../assets/PronounSelector";
+import type { Pronouns } from "../assets/PronounSelector";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
 
@@ -15,7 +17,10 @@ type Props = {
   logout: () => void
 };
 
-type State = {};
+type State = {
+  usePronouns: Pronouns,
+  wantPronouns: Pronouns
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
@@ -35,7 +40,20 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isLoggingOut: false,
+      // TODO: initialize via the redux state.
+      usePronouns: {
+        he: true,
+        she: true,
+        they: true
+      },
+      wantPronouns: {
+        he: true,
+        she: true,
+        they: true
+      }
+    };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -59,6 +77,18 @@ class SettingsScreen extends React.Component<Props, State> {
     title: "Settings"
   });
 
+  _onUsePronounChange = (pronouns: Pronouns) => {
+    this.setState({
+      usePronouns: pronouns
+    });
+  };
+
+  _onWantPronounChange = (pronouns: Pronouns) => {
+    this.setState({
+      wantPronouns: pronouns
+    });
+  };
+
   render() {
     // this is the navigator we passed in from App.js
     const { navigate } = this.props.navigation;
@@ -66,7 +96,23 @@ class SettingsScreen extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM: SETTINGS</Text>
+          <Text style={{ textAlign: "center" }}>Pronoun Preferences</Text>
+          <Text style={{ textAlign: "center" }}>
+            We use Pronouns to help determine who to show in your stack in
+            Project GEM. Your pronouns will not be shown on your profile.
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ textAlign: "center" }}>{"I use:"}</Text>
+          <PronounSelector
+            defaultPronouns={this.state.usePronouns}
+            onChange={this._onUsePronounChange}
+          />
+          <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
+          <PronounSelector
+            defaultPronouns={this.state.wantPronouns}
+            onChange={this._onWantPronounChange}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <Button

@@ -194,6 +194,7 @@ class SplashScreen extends React.Component<Props, State> {
                 ? styles.inputWrapperStyle
                 : styles.inputWrapperStyleWithError
             }
+            keyboardType="numeric"
             placeholderTextColor={"#DDDDDD"}
             inputStyle={{ color: "#222222" }}
             labelStyle={styles.labelStyle}

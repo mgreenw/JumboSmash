@@ -86,12 +86,6 @@ class SplashScreen extends React.Component<Props, State> {
   _onSubmit = () => {
     // First, we validate the UTLN to preliminarily shake it / display errors
     if (this._validateUtln()) {
-      this.setState({
-        isSubmitting: true,
-        validUtln: true,
-        errorMessageUtln: ""
-      });
-
       const stopSubmitting = (callBack: any => void) => {
         this.setState(
           {
@@ -101,28 +95,34 @@ class SplashScreen extends React.Component<Props, State> {
         );
       };
 
-      // Not the best way to do this for the callbacks with parameters, but
-      // marignally better than before. Need to find a better way to do this
-      // with keeping response types.
-      sendVerificationEmail(
-        { utln: this.state.utln },
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onNot2019(response.classYear);
-          }),
-        (response, request) => stopSubmitting(this._onNotFound),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (error, request) =>
-          stopSubmitting(() => {
-            this._onError(error);
-          })
+      this.setState(
+        {
+          isSubmitting: true,
+          validUtln: true,
+          errorMessageUtln: ""
+        },
+        () => {
+          sendVerificationEmail(
+            { utln: this.state.utln },
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onSuccess(request.utln, response.email);
+              }),
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onNot2019(response.classYear);
+              }),
+            (response, request) => stopSubmitting(this._onNotFound),
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onSuccess(request.utln, response.email);
+              }),
+            (error, request) =>
+              stopSubmitting(() => {
+                this._onError(error);
+              })
+          );
+        }
       );
     }
   };
@@ -166,12 +166,13 @@ class SplashScreen extends React.Component<Props, State> {
             inputContainerStyle={styles.inputContainerStyle}
             label="Tufts UTLN"
             placeholder="amonac01"
-            onChangeText={text => this.setState({ utln: text })}
+            onChangeText={text => this.setState({ utln: text.toLowerCase() })}
             ref={input => (this.utlnInput = input)}
             errorMessage={
               this.state.validUtln ? "" : this.state.errorMessageUtln
             }
             autoCorrect={false}
+            autoCapitalize="none"
           />
           {this.state.validUtln && (
             <View style={styles.helpTextContainer}>

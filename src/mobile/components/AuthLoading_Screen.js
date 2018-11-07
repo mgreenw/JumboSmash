@@ -77,10 +77,12 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               // If not, invalidate the token (navigate to the auth screen).
               // This will fail if the stored UTLN is not exactly equal to the
               // server's utln
-              if (utln !== response.utln) {
+              const lowercaseUtln = utln.toLowerCase();
+              const lowercaseResponseUtln = response.utln.toLowerCase();
+              if (lowercaseUtln !== lowercaseResponseUtln) {
                 this._onInvalidToken();
               } else {
-                this._onValidToken(utln, token);
+                this._onValidToken(lowercaseUtln, token);
               }
             },
             (response, request) => {

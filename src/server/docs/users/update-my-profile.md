@@ -1,31 +1,32 @@
-# Create Profile
+# Update My Profile
 
-Create my profile. Only allow this if a user has not yet created a profile.
+Update the current user's profile! No fields are required, and fields that
+are omitted will not be updated.
 
 **URL** : `/api/users/me/profile`
 
-**Method** : `POST`
+**Method** : `PATCH`
 
 **Auth required** : YES
 
-**Permissions required** : A user with no profile setup.
+**Permissions required** : A user with a profile already setup.
 
 **Request body fields**
 
-Provide the user's initial profile fields.
+Provide updated profile fields
 
 * `displayName`
   * Type: `string`
   * Description: The user's preferred display name, ideally their first name
-  * Required: `true`
+  * Required: `false`
 * `birthday`
   * Type: `string`
   * Description: The users birthday in the format 'YYYY-MM-DD'
-  * Required: `true`
+  * Required: `false`
 * `image1Url`
   * Type: `string`
   * Description: User's profile image 1: Must be a valid URL to an image.
-  * Required: `true`
+  * Required: `false`
 * `image2Url`
   * Type: `string`
   * Description: User's profile image 2: Must be a valid URL to an image.
@@ -41,7 +42,7 @@ Provide the user's initial profile fields.
 * `bio`
   * Type: `string`
   * Description: The user's bio. Max Length: 500 characters
-  * Required: `true`
+  * Required: `false`
 
 **Request body example**
 
@@ -50,21 +51,20 @@ Provide the user's initial profile fields.
     "displayName": "Max",
     "birthday": "1997-09-30",
     "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
-    "bio": "He's a guy"
 }
 ```
 
 ## Success Response
 
-**Condition** : If the profile was successfully created.
+**Condition** : If the profile was successfully updated.
 
-**Code** : `201 Created`
+**Code** : `201 CREATED`
 
 **Content Example**
 
 ```json
 {
-    "status": "CREATE_PROFILE__SUCCESS",
+    "status": "UPDATE_PROFILE__SUCCESS",
 }
 ```
 
@@ -78,7 +78,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__DISPLAY_NAME_TOO_LONG"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "DISPLAY_NAME_TOO_LONG"
 }
 ```
 
@@ -91,7 +92,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__BIRTHDAY_NOT_VALID"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "BIRTHDAY_NOT_VALID"
 }
 ```
 
@@ -104,7 +106,8 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__BIO_TOO_LONG"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "BIO_TOO_LONG"
 }
 ```
 
@@ -117,35 +120,7 @@ Provide the user's initial profile fields.
 **Content Examle** :
 ```json
 {
-    "status": "CREATE_PROFILE__IMAGE_URL_NOT_VALID",
-    "url": "httpadoeu://www.google.com"
-}
-```
-
-### OR
-
-**Condition** : The user's profile has alreday been created. The caller should is PATCH instead to update the profile
-
-**Code** : `400 BAD REQUEST`
-
-**Content** :
-```json
-{
-    "status": "CREATE_PROFILE__PROFILE_ALREADY_CREATED"
-}
-```
-
-### OR
-
-**Condition**: The required fields were not supplied.
-
-**Code** : `400 BAD REQUEST`
-
-**Content example**
-
-```json
-{
-    "status": "BAD_REQUEST",
-    "message": "data should have required property 'utln'"
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "IMAGE_URL_NOT_VALID"
 }
 ```
