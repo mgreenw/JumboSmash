@@ -166,7 +166,7 @@ class SplashScreen extends React.Component<Props, State> {
             inputContainerStyle={styles.inputContainerStyle}
             label="Tufts UTLN"
             placeholder="amonac01"
-            onChangeText={text => this.setState({ utln: text })}
+            onChangeText={text => this.setState({ utln: text.toLowerCase() })}
             ref={input => (this.utlnInput = input)}
             errorMessage={
               this.state.validUtln ? "" : this.state.errorMessageUtln
