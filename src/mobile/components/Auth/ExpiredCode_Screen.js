@@ -137,6 +137,8 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
             buttonStyle={styles.button}
             onPress={this._onResend}
             title="Resend Code"
+            disabled={this.state.isSubmitting}
+            loading={this.state.isSubmitting}
           />
         </View>
       </KeyboardAvoidingView>
