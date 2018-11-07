@@ -30,7 +30,7 @@ export class PronounSelector extends React.Component<Props, State> {
   // Check via a deep comparison equality check if anything has changed in the
   // pronouns. If so, call the onChange.
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (_.isEqual(prevState.pronouns, this.state.pronouns)) {
+    if (!_.isEqual(prevState.pronouns, this.state.pronouns)) {
       this.props.onChange(this.state.pronouns);
     }
   }
