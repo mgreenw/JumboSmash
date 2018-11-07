@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
+import { styles } from "../../../styles/template";
 
 type Props = {
   navigation: any
@@ -39,47 +40,44 @@ class SettingsScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.pictureRows}>
-        <View style={styles.pictureRow}>
-          <View style={styles.fixedRatio} />
-          <View style={styles.fixedRatio2} />
+      <View style={styles.container}>
+        // Pictures:
+        <View style={{ flex: 1, backgroundColor: "orange", padding: 5 }}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              backgroundColor: "blue",
+              padding: 5
+            }}
+          >
+            <View style={{ flex: 1, backgroundColor: "green" }} />
+            <View style={{ flex: 1, backgroundColor: "purple" }} />
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              backgroundColor: "yellow",
+              padding: 5
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "brown",
+                aspectRatio: 1
+              }}
+            />
+            <View style={{ flex: 1, backgroundColor: "grey" }} />
+          </View>
         </View>
-        <View style={styles.pictureRow}>
-          <View style={styles.fixedRatio2} />
-          <View style={styles.fixedRatio3} />
-        </View>
+        // Bio:
+        <View style={{ flex: 1, backgroundColor: "red" }} />
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  pictureRows: {
-    flex: 1
-  },
-  pictureRow: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white"
-  },
-  fixedRatio: {
-    backgroundColor: "rebeccapurple",
-    flex: 1,
-    aspectRatio: 1
-  },
-  fixedRatio2: {
-    backgroundColor: "red",
-    flex: 1,
-    aspectRatio: 1
-  },
-  fixedRatio3: {
-    backgroundColor: "blue",
-    flex: 1,
-    aspectRatio: 1
-  }
-});
 
 export default connect(
   mapStateToProps,

@@ -1,6 +1,6 @@
 // @flow
 
-const LATENCY_MS = 2000;
+const LATENCY_MS = 500;
 export default {
   // If in dev mode, add a few seconds of latency to requests so that we can
   // ensure proper handling
