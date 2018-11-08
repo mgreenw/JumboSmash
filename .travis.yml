@@ -23,7 +23,9 @@ before_install:
   - sleep 1
 install:
   - npm install
-  - cd ./src/server
+  - cd ./src/mobile
+  - npm install
+  - cd ../../src/server
   - npm install
 before_script:
   - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
