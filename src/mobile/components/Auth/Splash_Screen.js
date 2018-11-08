@@ -83,6 +83,11 @@ class SplashScreen extends React.Component<Props, State> {
     this._onNotFound();
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("Help", {});
+  };
+
   _onSubmit = () => {
     // First, we validate the UTLN to preliminarily shake it / display errors
     if (this._validateUtln()) {
@@ -189,6 +194,15 @@ class SplashScreen extends React.Component<Props, State> {
             title="submit"
             disabled={this.state.isSubmitting}
             loading={this.state.isSubmitting}
+          />
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
+          <Button
+            buttonStyle={styles.button}
+            onPress={() => {
+              this._onHelp();
+            }}
+            title="help"
           />
         </View>
       </KeyboardAvoidingView>
