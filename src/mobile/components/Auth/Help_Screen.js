@@ -1,7 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, KeyboardAvoidingView } from "react-native";
-import { Button, Input } from "react-native-elements";
+import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "../../styles/auth";
 import type { Dispatch } from "redux";
@@ -36,13 +35,11 @@ class HelpScreen extends React.Component<Props, State> {
   render() {
     
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Text style={styles.title}>
-            HELP
-          </Text>
-        </View>
-      </KeyboardAvoidingView>
+      <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+        <Text style={styles.title}>
+          HELP
+        </Text>
+      </View>
     );
   }
 }
