@@ -29,5 +29,8 @@ before_script:
   - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
   - npm run migrate up
 script:
+  - npm run lint
+  - cd ../.. && npm run flow
+  - cd src/server
   - npm run check-env
   - npm run test
