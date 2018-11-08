@@ -14,7 +14,9 @@ app.use(bodyParser.json());
 if (utils.getNodeEnv() === 'development') {
   app.use((req, res, next) => {
     const body = req.body ? JSON.stringify(req.body, null, 2) : '';
+    /* eslint-disable no-console */
     console.log(`${req.method} ${req.url} ${body}`);
+    /* eslint-enable */
     next();
   });
 }

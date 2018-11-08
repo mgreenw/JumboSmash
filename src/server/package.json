@@ -19,7 +19,9 @@
     "check-dependencies": "node ./scripts/check-dependencies.js",
     "check-database": "node ./scripts/check-database.js",
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
-    "reset-db": "npm run drop-all-tables && npm run migrate up"
+    "reset-db": "npm run drop-all-tables && npm run migrate up",
+    "lint": "eslint .",
+    "lint:watch": "nodemon --exec eslint -- ."
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
