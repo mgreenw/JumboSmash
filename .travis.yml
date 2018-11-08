@@ -21,8 +21,9 @@ before_install:
   - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
   - sudo service postgresql restart
   - sleep 1
-  - cd ./src/server
 install:
+  - npm install
+  - cd ./src/server
   - npm install
 before_script:
   - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
@@ -30,7 +31,8 @@ before_script:
   - npm run migrate up
 script:
   - npm run lint
-  - cd ../.. && npm run flow
+  - cd ../..
+  - npm run flow
   - cd src/server
   - npm run check-env
   - npm run test
