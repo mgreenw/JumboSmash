@@ -46,20 +46,26 @@ class ProfileScreen extends React.Component<Props, State> {
 
   _onSettingsPress = () => {
     const { navigate } = this.props.navigation;
-    navigate("Settings", {});
+    navigate("SettingsEdit", {});
+  };
+
+  _onProfileEditPress = () => {
+    const { navigate } = this.props.navigation;
+    navigate("ProfileEdit", {});
   };
 
   render() {
-    // this is the navigator we passed in from App.js
-    const { navigate } = this.props.navigation;
-
     return (
       <View style={styles.container}>
         <View style={{ flex: 1, justifyContent: "space-evenly" }}>
           <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
         </View>
         <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-          <Button title="Edit Profile" buttonStyle={styles.button} />
+          <Button
+            title="Edit Profile"
+            buttonStyle={styles.button}
+            onPress={this._onProfileEditPress}
+          />
           <Button
             title="Settings"
             buttonStyle={styles.button}

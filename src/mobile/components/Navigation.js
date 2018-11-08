@@ -11,7 +11,9 @@ import AuthLoading from "./AuthLoading_Screen";
 
 // App Screens
 import Profile from "./App/Profile/Profile_Screen";
-import Settings from "./App/Profile/Settings_Screen";
+import ProfileEdit from "./App/Profile/ProfileEdit_Screen";
+import SettingsEdit from "./App/Profile/SettingsEdit_Screen";
+
 import Swiping from "./App/Swiping/Swiping_Screen";
 import Messaging from "./App/Messaging/Messaging_Screen";
 
@@ -37,7 +39,8 @@ const SwipingStack = createStackNavigator(
 const ProfileStack = createStackNavigator(
   {
     Profile: { screen: Profile },
-    Settings: { screen: Settings }
+    SettingsEdit: { screen: SettingsEdit },
+    ProfileEdit: { screen: ProfileEdit }
   },
   {
     initialRouteName: "Profile"
