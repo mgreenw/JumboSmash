@@ -85,7 +85,9 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigate } = this.props.navigation;
-    navigate("AuthHelp", {});
+    navigate("AuthHelp", {
+      help: "Splash"
+    });
   };
 
   _onSubmit = () => {
@@ -199,7 +201,9 @@ class SplashScreen extends React.Component<Props, State> {
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
             buttonStyle={styles.button}
-            onPress={this._onHelp}
+            onPress={() => {
+              this._onHelp();
+            }}
             title="help"
           />
         </View>
