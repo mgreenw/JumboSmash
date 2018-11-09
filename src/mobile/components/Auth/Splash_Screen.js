@@ -60,11 +60,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
-  _onSuccess = (utln: string, email: string) => {
+  _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
     navigate("Verify", {
       utln: utln,
-      email: email
+      email: email,
+      alreadySent: alreadySent
     });
   };
 
@@ -113,7 +114,7 @@ class SplashScreen extends React.Component<Props, State> {
             { utln: this.state.utln },
             (response, request) =>
               stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email);
+                this._onSuccess(request.utln, response.email, false);
               }),
             (response, request) =>
               stopSubmitting(() => {
@@ -122,7 +123,7 @@ class SplashScreen extends React.Component<Props, State> {
             (response, request) => stopSubmitting(this._onNotFound),
             (response, request) =>
               stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email);
+                this._onSuccess(request.utln, response.email, true);
               }),
             (error, request) =>
               stopSubmitting(() => {

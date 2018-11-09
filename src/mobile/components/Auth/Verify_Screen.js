@@ -179,13 +179,18 @@ class SplashScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
+    const alreadySent = navigation.getParam("alreadySent", false);
     const isLoading =
       this.state.verifyUtlnInProgress || this.props.loginInProgress;
+
+    const message = alreadySent
+      ? `Looks like you've already been sent an email to ${email}.`
+      : `A verification code has been sent to ${email}.`;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
-          <Text>{"A verification code has been sent to [" + email + "]."}</Text>
+          <Text>{message}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
           <Input
