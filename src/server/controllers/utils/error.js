@@ -1,6 +1,7 @@
 // @flow
 
 import type { $Response } from 'express';
+
 const codes = require('../status-codes');
 
 exports.server = (res: $Response, message: string) => {
@@ -8,6 +9,6 @@ exports.server = (res: $Response, message: string) => {
     {
       status: codes.SERVER_ERROR,
       message,
-    }
+    },
   );
 };
