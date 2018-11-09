@@ -79,7 +79,7 @@ class SettingsScreen extends React.Component<Props, State> {
             backgroundColor: "#f0f3f5"
           }}
         >
-        Name + Bio
+          <Text>Name + Bio</Text>
         </View>
         {spacer}
       </ScrollView>
