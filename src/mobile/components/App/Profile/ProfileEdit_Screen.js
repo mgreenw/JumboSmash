@@ -1,11 +1,11 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Dimensions, Text, View, StyleSheet, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { Button } from "react-native-elements";
-import { styles } from "../../../styles/template";
+import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
+import { styles } from "../../../styles/template";
 
 type Props = {
   navigation: any
@@ -34,12 +34,55 @@ class SettingsScreen extends React.Component<Props, State> {
   });
 
   render() {
+    const spacer = (
+      <View style={{ width: "100%", height: 25, backgroundColor: "#38c7cc" }} />
+    );
+    const picPlaceholder = (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "grey",
+          margin: 5,
+          aspectRatio: 1,
+          borderColor: "#38c7cc",
+          borderWidth: 2,
+          borderStyle: "dashed"
+        }}
+      />
+    );
     return (
-      <View style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>Edit Profle Screen</Text>
+      <ScrollView>
+        {spacer}
+        <View
+          style={{
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").width
+          }}
+        >
+          <View style={{ flex: 1, padding: 10 }}>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              {picPlaceholder}
+              {picPlaceholder}
+            </View>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              {picPlaceholder}
+              {picPlaceholder}
+            </View>
+            />
+          </View>
         </View>
-      </View>
+        {spacer}
+        <View
+          style={{
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").width,
+            backgroundColor: "#f0f3f5"
+          }}
+        >
+        Name + Bio
+        </View>
+        {spacer}
+      </ScrollView>
     );
   }
 }
