@@ -60,11 +60,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
-  _onSuccess = (utln: string, email: string) => {
+  _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
     navigate("Verify", {
       utln: utln,
-      email: email
+      email: email,
+      alreadySent: alreadySent
     });
   };
 
@@ -81,6 +82,11 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onError = (error: any) => {
     this._onNotFound();
+  };
+
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("AuthHelp", {});
   };
 
   _onSubmit = () => {
@@ -106,7 +112,7 @@ class SplashScreen extends React.Component<Props, State> {
             { utln: this.state.utln },
             (response, request) =>
               stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email);
+                this._onSuccess(request.utln, response.email, false);
               }),
             (response, request) =>
               stopSubmitting(() => {
@@ -115,7 +121,7 @@ class SplashScreen extends React.Component<Props, State> {
             (response, request) => stopSubmitting(this._onNotFound),
             (response, request) =>
               stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email);
+                this._onSuccess(request.utln, response.email, true);
               }),
             (error, request) =>
               stopSubmitting(() => {
@@ -189,6 +195,13 @@ class SplashScreen extends React.Component<Props, State> {
             title="submit"
             disabled={this.state.isSubmitting}
             loading={this.state.isSubmitting}
+          />
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
+          <Button
+            buttonStyle={styles.button}
+            onPress={this._onHelp}
+            title="help"
           />
         </View>
       </KeyboardAvoidingView>

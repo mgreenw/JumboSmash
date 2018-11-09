@@ -22,6 +22,7 @@ import Splash from "./Auth/Splash_Screen";
 import Verify from "./Auth/Verify_Screen";
 import ExpiredCode from "./Auth/ExpiredCode_Screen";
 import Not2019 from "./Auth/Not2019_Screen";
+import Help from "./Auth/Help_Screen";
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -73,7 +74,8 @@ const AuthStack = createStackNavigator(
     Splash: { screen: Splash },
     Verify: { screen: Verify },
     ExpiredCode: { screen: ExpiredCode },
-    Not2019: { screen: Not2019 }
+    Not2019: { screen: Not2019 },
+    AuthHelp: { screen: Help }
   },
   {
     initialRouteName: "Splash"
