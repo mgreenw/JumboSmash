@@ -6,8 +6,6 @@ import { styles } from "../../styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../reducers/index";
 
-export 
-
 type Props = {
   navigation: any
 };
@@ -42,7 +40,6 @@ class HelpScreen extends React.Component<Props, State> {
   };
 
   _onHelpMessage = () => {
-    console.log(this.state.help);
     if (this.state.help == "Splash") {
       return "Splash page help message";
     }
