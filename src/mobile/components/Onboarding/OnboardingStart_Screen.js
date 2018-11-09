@@ -26,9 +26,6 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   }
 
   static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    },
     headerLeft: null
   };
 
