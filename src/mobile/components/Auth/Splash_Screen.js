@@ -157,7 +157,20 @@ class SplashScreen extends React.Component<Props, State> {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM</Text>
+          <Text
+            style={
+              (styles.title,
+              {
+                color: "#ff6262",
+                fontFamily: "vegan",
+                fontSize: 44,
+                padding: 15,
+                textAlign: "center"
+              })
+            }
+          >
+            Project Gem
+          </Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
           <Input
