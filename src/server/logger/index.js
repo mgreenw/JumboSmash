@@ -6,7 +6,8 @@ const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
-const myFormat = winston.format.combine(
+// Custom format that puts the timestamp before the message
+const simpleTimestamp = winston.format.combine(
   winston.format.timestamp(),
   winston.format.printf((info) => {
     return `${info.timestamp} ${info.level}: ${info.message}`;
@@ -22,16 +23,16 @@ const logger = winston.createLogger({
     new winston.transports.File({
       filename: 'error.log',
       level: 'error',
-      format: myFormat,
+      format: simpleTimestamp,
     }),
     new winston.transports.File({
       filename: 'combined.log',
-      format: myFormat,
+      format: simpleTimestamp,
     }),
   ],
 });
 
-
+// Don't log to the console in production.
 if (NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
@@ -42,6 +43,3 @@ if (NODE_ENV !== 'production') {
 }
 
 module.exports = logger;
-
-// On Development, we want see all output in the console
-// On Production, we
