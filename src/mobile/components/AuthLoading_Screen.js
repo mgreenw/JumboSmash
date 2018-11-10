@@ -4,6 +4,7 @@ import React from "react";
 import { Image, View } from "react-native";
 import { Font } from "expo";
 import { StackNavigator } from "react-navigation";
+import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
@@ -57,7 +58,8 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = Font.loadAsync({
+    this.state = {};
+    Font.loadAsync({
       vegan: require("../assets/fonts/vegan.ttf")
     }).then(this.props.loadAuth);
   }
