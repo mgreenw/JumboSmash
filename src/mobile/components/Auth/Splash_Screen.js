@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Text,
+  Image,
   View,
   KeyboardAvoidingView
 } from "react-native";
@@ -50,9 +51,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
+    header: null
   };
 
   // for refs
@@ -156,25 +155,33 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1 }}>
-          this.state.fontLoaded ? (
-          <Text
-            style={
-              (styles.title,
-              {
-                color: "#ff6262",
-                fontFamily: "vegan",
-                fontSize: 44,
-                padding: 15,
-                textAlign: "center"
-              })
-            }
-          >
-            Project Gem
-          </Text>
-          ) : null
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <View>
+            <Text
+              style={
+                (styles.title,
+                {
+                  color: "#ff6262",
+                  fontFamily: "vegan",
+                  fontSize: 44,
+                  padding: 15,
+                  textAlign: "center"
+                })
+              }
+            >
+              Project Gem
+            </Text>
+          </View>
+
+          <Image
+            resizeMode="contain"
+            style={{
+              flex: 1,
+              width: 185,
+              height: 153
+            }}
+            source={require("../../assets/mainIcon.png")}
+          />
           <Input
             containerStyle={
               this.state.validUtln
@@ -200,24 +207,24 @@ class SplashScreen extends React.Component<Props, State> {
               <Text style={styles.helpText}>Ex: jjaffe01</Text>
             </View>
           )}
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={() => {
-              this._onSubmit();
-            }}
-            title="submit"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
-          />
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={this._onHelp}
-            title="help"
-          />
+          <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+            <View style={{ flex: 2 }}>
+              <Button
+                buttonStyle={styles.button}
+                onPress={() => {
+                  this._onSubmit();
+                }}
+                title="submit"
+                disabled={this.state.isSubmitting}
+                loading={this.state.isSubmitting}
+              />
+              <Button
+                buttonStyle={styles.button}
+                onPress={this._onHelp}
+                title="help"
+              />
+            </View>
+          </View>
         </View>
       </KeyboardAvoidingView>
     );
