@@ -2,10 +2,10 @@
 import React from "react";
 import { Dimensions, Text, View, StyleSheet, ScrollView } from "react-native";
 import { connect } from "react-redux";
-import { Button, Icon } from "react-native-elements";
+import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
-import { styles } from "../../../styles/template";
+import { styles } from "../../../styles/auth";
 
 type Props = {
   navigation: any
@@ -32,6 +32,9 @@ class SettingsScreen extends React.Component<Props, State> {
     headerLeft: navigation.state.params.headerLeft,
     title: "Edit Profile"
   });
+
+  // for refs
+  nameInput: Input;
 
   render() {
     const spacer = (
@@ -79,7 +82,20 @@ class SettingsScreen extends React.Component<Props, State> {
             backgroundColor: "#f0f3f5"
           }}
         >
-          <Text>Name + Bio</Text>
+          <Input
+            containerStyle={styles.inputWrapperStyle}
+            placeholderTextColor={"#DDDDDD"}
+            inputStyle={{ color: "#222222" }}
+            labelStyle={styles.labelStyle}
+            inputContainerStyle={styles.inputContainerStyle}
+            label="Tufts UTLN"
+            placeholder="amonac01"
+            onChangeText={() => {}}
+            ref={input => (this.nameInput = input)}
+            errorMessage={""}
+            autoCorrect={false}
+            autoCapitalize="none"
+          />
         </View>
         {spacer}
       </ScrollView>
