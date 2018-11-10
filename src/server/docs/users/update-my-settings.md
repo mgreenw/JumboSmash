@@ -8,7 +8,7 @@ Update settings for the current user. No fields are required, and omitted fields
 
 **Auth required** : YES
 
-**Permissions required** : A user with a profile already setup.
+**Permissions required** : A user who has been verified.
 
 **Request body fields**
 
