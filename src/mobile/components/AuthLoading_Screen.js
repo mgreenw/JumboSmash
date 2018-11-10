@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Image, View } from "react-native";
-import { Font } from "expo";
 import { StackNavigator } from "react-navigation";
 import { Font } from "expo";
 import { connect } from "react-redux";
