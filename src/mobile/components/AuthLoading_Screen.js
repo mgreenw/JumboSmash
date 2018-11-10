@@ -123,7 +123,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1, flexDirection: "row" }}>
+      <View style={{ flex: 1 }}>
         <Image
           resizeMode="contain"
           style={{
