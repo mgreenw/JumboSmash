@@ -1,9 +1,8 @@
 // @flow
 
 import React from "react";
-import { Alert, ActivityIndicator, StatusBar, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import { StackNavigator } from "react-navigation";
-import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
@@ -129,9 +128,10 @@ class AuthLoadingScreen extends React.Component<Props, State> {
           alignItems: "center"
         }}
       >
-        <Text>PROJECT GEM</Text>
-        <ActivityIndicator />
-        <StatusBar barStyle="default" />
+        <Image
+          // style={styles.stretch}
+          source={require("../assets/mainIcon.png")}
+        />
       </View>
     );
   }
