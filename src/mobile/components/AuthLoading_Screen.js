@@ -3,6 +3,7 @@
 import React from "react";
 import { Image, View } from "react-native";
 import { StackNavigator } from "react-navigation";
+import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
@@ -57,7 +58,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    this.props.loadAuth();
+    Font.loadAsync({
+      vegan: require("../assets/fonts/vegan.ttf")
+    }).then(this.props.loadAuth);
   }
 
   componentDidUpdate(prevProps, prevState) {
