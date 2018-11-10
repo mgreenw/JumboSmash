@@ -120,16 +120,14 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "stretch",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
+      <View style={{ flex: 1, flexDirection: "row" }}>
         <Image
-          // style={styles.stretch}
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            width: null,
+            height: null
+          }}
           source={require("../assets/mainIcon.png")}
         />
       </View>
