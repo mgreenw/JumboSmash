@@ -1,17 +1,28 @@
 // @flow
 import React from "react";
-import { Dimensions, Text, View, StyleSheet, ScrollView } from "react-native";
+import {
+  Dimensions,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  TextInput
+} from "react-native";
 import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
-import { styles } from "../../../styles/auth";
+import { styles } from "../../../styles/template";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  displayName: string,
+  bio: string
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -24,7 +35,10 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      displayName: "", // TODO: load from redux
+      bio: ""
+    };
   }
 
   // These are for react navigation, like header bar and such
@@ -54,7 +68,7 @@ class SettingsScreen extends React.Component<Props, State> {
       />
     );
     return (
-      <ScrollView>
+      <KeyboardAwareScrollView extraScrollHeight={30}>
         {spacer}
         <View
           style={{
@@ -82,23 +96,41 @@ class SettingsScreen extends React.Component<Props, State> {
             backgroundColor: "#f0f3f5"
           }}
         >
-          <Input
-            containerStyle={styles.inputWrapperStyle}
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Tufts UTLN"
-            placeholder="amonac01"
-            onChangeText={() => {}}
-            ref={input => (this.nameInput = input)}
-            errorMessage={""}
-            autoCorrect={false}
-            autoCapitalize="none"
-          />
+          <View style={{ padding: 20 }}>
+            <Input
+              placeholderTextColor={"#DDDDDD"}
+              inputStyle={{ color: "#222222" }}
+              labelStyle={styles.labelStyle}
+              label="Prefered Name"
+              placeholder="Tony Monaco"
+              onChangeText={name => {
+                this.setState({ displayName: name });
+              }}
+              ref={input => (this.nameInput = input)}
+              errorMessage={""}
+              autoCorrect={false}
+            />
+          </View>
+          <View style={{ flex: 1, padding: 20 }}>
+            <TextInput
+              style={{ flex: 1, borderWidth: 1 }}
+              placeholderTextColor={"#DDDDDD"}
+              inputStyle={{ color: "#222222" }}
+              labelStyle={styles.labelStyle}
+              label="About Me"
+              placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vehicula malesuada augue, pharetra gravida mauris ullamcorper sed. Sed vitae sem pharetra, egestas odio id, dapibus nunc. Nulla in vulputate lorem, vitae porttitor elit. Donec vitae tincidunt urna. Nunc sodales luctus mattis. Suspendisse congue odio sit amet nibh consectetur efficitur in id leo. Donec ut dolor egestas, laoreet nulla a, dapibus metus. "
+              onChangeText={name => {
+                this.setState({ displayName: name });
+              }}
+              ref={input => (this.nameInput = input)}
+              errorMessage={""}
+              autoCorrect={false}
+              multiline={true}
+            />
+          </View>
         </View>
         {spacer}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     );
   }
 }
