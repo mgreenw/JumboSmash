@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Text,
+  Image,
   View,
   KeyboardAvoidingView
 } from "react-native";
@@ -50,9 +51,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
+    header: null
   };
 
   // for refs
@@ -155,69 +154,91 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1 }}>
-          <Text
-            style={
-              (styles.title,
-              {
-                color: "#ff6262",
-                fontFamily: "vegan",
-                fontSize: 44,
-                padding: 15,
-                textAlign: "center"
-              })
-            }
-          >
-            Project Gem
-          </Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Input
-            containerStyle={
-              this.state.validUtln
-                ? styles.inputWrapperStyle
-                : styles.inputWrapperStyleWithError
-            }
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Tufts UTLN"
-            placeholder="amonac01"
-            onChangeText={text => this.setState({ utln: text.toLowerCase() })}
-            ref={input => (this.utlnInput = input)}
-            errorMessage={
-              this.state.validUtln ? "" : this.state.errorMessageUtln
-            }
-            autoCorrect={false}
-            autoCapitalize="none"
-          />
-          {this.state.validUtln && (
-            <View style={styles.helpTextContainer}>
-              <Text style={styles.helpText}>Ex: jjaffe01</Text>
-            </View>
-          )}
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={() => {
-              this._onSubmit();
+      <View style={styles.container}>
+        <Text
+          style={
+            (styles.title,
+            {
+              color: "#ff6262",
+              fontFamily: "vegan",
+              fontSize: 44,
+              padding: 15,
+              textAlign: "center"
+            })
+          }
+        >
+          Project Gem
+        </Text>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            alignSelf: "stretch"
+          }}
+          behavior="padding"
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              paddingRight: 40,
+              paddingLeft: 40
             }}
-            title="submit"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
-          />
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={this._onHelp}
-            title="help"
-          />
-        </View>
-      </KeyboardAvoidingView>
+          >
+            <Image
+              resizeMode="contain"
+              style={{
+                flex: 1,
+                width: 185,
+                height: 153
+              }}
+              source={require("../../assets/mainIcon.png")}
+            />
+            <Input
+              containerStyle={
+                this.state.validUtln
+                  ? styles.inputWrapperStyle
+                  : styles.inputWrapperStyleWithError
+              }
+              placeholderTextColor={"#DDDDDD"}
+              inputStyle={{ color: "#222222" }}
+              labelStyle={styles.labelStyle}
+              inputContainerStyle={styles.inputContainerStyle}
+              label="Tufts UTLN"
+              placeholder="amonac01"
+              onChangeText={text => this.setState({ utln: text.toLowerCase() })}
+              ref={input => (this.utlnInput = input)}
+              errorMessage={
+                this.state.validUtln ? "" : this.state.errorMessageUtln
+              }
+              autoCorrect={false}
+              autoCapitalize="none"
+            />
+            {this.state.validUtln && (
+              <View style={styles.helpTextContainer}>
+                <Text style={styles.helpText}>Ex: jjaffe01</Text>
+              </View>
+            )}
+            <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+              <View style={{ flex: 2 }}>
+                <Button
+                  buttonStyle={styles.button}
+                  onPress={() => {
+                    this._onSubmit();
+                  }}
+                  title="submit"
+                  disabled={this.state.isSubmitting}
+                  loading={this.state.isSubmitting}
+                />
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
+      </View>
     );
   }
 }
