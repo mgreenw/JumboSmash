@@ -32,7 +32,7 @@ const getMySettings = async (req: $Request, res: $Response) => {
       FROM users
       WHERE id = $1`, [req.user.id]);
 
-    // Can assume the user exists and is in db b/c authenticated upstream
+    // Can assume user exists and is in db b/c authenticated upstream
     const settings = result.rows[0];
     return res.status(200).json({
       status: codes.GET_SETTINGS__SUCCESS,
