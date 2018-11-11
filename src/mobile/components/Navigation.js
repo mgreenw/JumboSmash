@@ -26,7 +26,8 @@ import Help from "./Auth/Help_Screen";
 
 // OnBoarding Screens
 import OnboardingStart from "./Onboarding/OnboardingStart_Screen";
-import OnboardingNameAge from "./Onboarding/OnboardingNameAge_Screen.js";
+import OnboardingNameAge from "./Onboarding/OnboardingNameAge_Screen";
+import OnboardingMyPronouns from "./Onboarding/OnboardingMyPronouns_Screen";
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -89,7 +90,8 @@ const AuthStack = createStackNavigator(
 const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
-    OnboardingNameAge: { screen: OnboardingNameAge }
+    OnboardingNameAge: { screen: OnboardingNameAge },
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns }
   },
   {
     initialRouteName: "OnboardingStart",
