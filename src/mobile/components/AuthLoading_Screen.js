@@ -1,9 +1,9 @@
 // @flow
 
 import React from "react";
-import { Alert, ActivityIndicator, StatusBar, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import { StackNavigator } from "react-navigation";
-import { Button, Input } from "react-native-elements";
+import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "../api/auth/getTokenUtln";
@@ -58,7 +58,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    this.props.loadAuth();
+    Font.loadAsync({
+      vegan: require("../assets/fonts/vegan.ttf")
+    }).then(this.props.loadAuth);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -77,10 +79,12 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               // If not, invalidate the token (navigate to the auth screen).
               // This will fail if the stored UTLN is not exactly equal to the
               // server's utln
-              if (utln !== response.utln) {
+              const lowercaseUtln = utln.toLowerCase();
+              const lowercaseResponseUtln = response.utln.toLowerCase();
+              if (lowercaseUtln !== lowercaseResponseUtln) {
                 this._onInvalidToken();
               } else {
-                this._onValidToken(utln, token);
+                this._onValidToken(lowercaseUtln, token);
               }
             },
             (response, request) => {
@@ -119,17 +123,16 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignSelf: "stretch",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <Text>PROJECT GEM</Text>
-        <ActivityIndicator />
-        <StatusBar barStyle="default" />
+      <View style={{ flex: 1 }}>
+        <Image
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            width: null,
+            height: null
+          }}
+          source={require("../assets/arthurIcon.png")}
+        />
       </View>
     );
   }

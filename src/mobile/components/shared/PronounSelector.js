@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { Button, CheckBox } from "react-native-elements";
 import _ from "lodash";
 import { StyleSheet } from "react-native";
+import { Colors, Arthur_Styles } from "../../styles/Arthur_Styles";
 
 export type Pronouns = {
   he: boolean,
@@ -47,18 +48,18 @@ export class PronounSelector extends React.Component<Props, State> {
             iconType="material"
             checkedIcon="check"
             uncheckedIcon="add"
-            checkedColor={IceBlue}
-            uncheckedColor={Black}
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
             checked={this.state.pronouns.she}
             containerStyle={
               this.state.pronouns.she
-                ? styles.checkBoxContainer_checked
-                : styles.checkBoxContainer_unchecked
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
             }
             textStyle={
               this.state.pronouns.she
-                ? styles.checkBoxText_checked
-                : styles.checkBoxText_unchecked
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
             }
             onPress={() => {
               this.setState(prevState => ({
@@ -78,18 +79,18 @@ export class PronounSelector extends React.Component<Props, State> {
             iconType="material"
             checkedIcon="check"
             uncheckedIcon="add"
-            checkedColor={IceBlue}
-            uncheckedColor={Black}
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
             checked={this.state.pronouns.they}
             containerStyle={
               this.state.pronouns.they
-                ? styles.checkBoxContainer_checked
-                : styles.checkBoxContainer_unchecked
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
             }
             textStyle={
               this.state.pronouns.they
-                ? styles.checkBoxText_checked
-                : styles.checkBoxText_unchecked
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
             }
             onPress={() => {
               this.setState(prevState => ({
@@ -109,18 +110,18 @@ export class PronounSelector extends React.Component<Props, State> {
             iconType="material"
             checkedIcon="check"
             uncheckedIcon="add"
-            checkedColor={IceBlue}
-            uncheckedColor={Black}
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
             checked={this.state.pronouns.he}
             containerStyle={
               this.state.pronouns.he
-                ? styles.checkBoxContainer_checked
-                : styles.checkBoxContainer_unchecked
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
             }
             textStyle={
               this.state.pronouns.he
-                ? styles.checkBoxText_checked
-                : styles.checkBoxText_unchecked
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
             }
             onPress={() => {
               this.setState(prevState => ({
@@ -137,9 +138,7 @@ export class PronounSelector extends React.Component<Props, State> {
     );
   }
 }
-const IceBlue = "#f0f3f5";
-const Black = "#363535";
-const AquaMarine = "#38c7cc";
+
 const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: "row"
@@ -147,27 +146,5 @@ const styles = StyleSheet.create({
   checkBoxWrapper: {
     flex: 1,
     alignItems: "center"
-  },
-  checkBoxText_unchecked: {
-    fontSize: 12,
-    marginLeft: 2,
-    color: Black
-  },
-  checkBoxText_checked: {
-    fontSize: 12,
-    marginLeft: 2,
-    color: IceBlue
-  },
-  checkBoxContainer_checked: {
-    width: "100%",
-    borderRadius: 30,
-    margin: 0,
-    backgroundColor: AquaMarine
-  },
-  checkBoxContainer_unchecked: {
-    width: "100%",
-    borderRadius: 30,
-    margin: 0,
-    backgroundColor: IceBlue
   }
 });

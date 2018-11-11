@@ -4,7 +4,7 @@
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.12.0",
-    "postgres": "10.5.x"
+    "postgres": "^10.5.x"
   },
   "scripts": {
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
@@ -19,7 +19,9 @@
     "check-dependencies": "node ./scripts/check-dependencies.js",
     "check-database": "node ./scripts/check-database.js",
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
-    "reset-db": "npm run drop-all-tables && npm run migrate up"
+    "reset-db": "npm run drop-all-tables && npm run migrate up",
+    "lint": "eslint .",
+    "lint:watch": "nodemon --exec eslint -- ."
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -34,7 +36,9 @@
     "node-pg-migrate": "^3.13.0",
     "pg": "^7.6.0",
     "request": "^2.88.0",
-    "semver": "^5.6.0"
+    "semver": "^5.6.0",
+    "winston": "^3.1.0",
+    "winston-transport": "^4.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",

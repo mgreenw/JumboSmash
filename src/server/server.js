@@ -1,6 +1,7 @@
 // @flow
 
 const app = require('./app');
+const logger = require('./logger');
 
 const utils = require('./utils');
 
@@ -13,8 +14,5 @@ if (NODE_ENV === undefined) {
 
 // Listen!
 app.listen(3000, () => {
-  // TODO: Log success that app is listening
-  /* eslint-disable no-console */
-  console.log('Listening on port 3000!');
-  /* eslint-enable */
+  logger.info('Listening on port 3000!');
 });

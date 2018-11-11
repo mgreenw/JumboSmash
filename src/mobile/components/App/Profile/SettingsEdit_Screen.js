@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
-import { PronounSelector } from "../assets/PronounSelector";
-import type { Pronouns } from "../assets/PronounSelector";
+import { PronounSelector } from "../../shared/PronounSelector";
+import type { Pronouns } from "../../shared/PronounSelector";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
 
@@ -103,14 +103,12 @@ class SettingsScreen extends React.Component<Props, State> {
           </Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>I use:</Text>
+          <Text style={{ textAlign: "center" }}>{"I use:"}</Text>
           <PronounSelector
             defaultPronouns={this.state.usePronouns}
             onChange={this._onUsePronounChange}
           />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>I'm looking for:</Text>
+          <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
           <PronounSelector
             defaultPronouns={this.state.wantPronouns}
             onChange={this._onWantPronounChange}

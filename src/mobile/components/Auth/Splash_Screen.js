@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Text,
+  Image,
   View,
   KeyboardAvoidingView
 } from "react-native";
@@ -50,9 +51,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
+    header: null
   };
 
   // for refs
@@ -60,11 +59,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
-  _onSuccess = (utln: string, email: string) => {
+  _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
     navigate("Verify", {
       utln: utln,
-      email: email
+      email: email,
+      alreadySent: alreadySent
     });
   };
 
@@ -83,15 +83,14 @@ class SplashScreen extends React.Component<Props, State> {
     this._onNotFound();
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("AuthHelp", {});
+  };
+
   _onSubmit = () => {
     // First, we validate the UTLN to preliminarily shake it / display errors
     if (this._validateUtln()) {
-      this.setState({
-        isSubmitting: true,
-        validUtln: true,
-        errorMessageUtln: ""
-      });
-
       const stopSubmitting = (callBack: any => void) => {
         this.setState(
           {
@@ -101,28 +100,34 @@ class SplashScreen extends React.Component<Props, State> {
         );
       };
 
-      // Not the best way to do this for the callbacks with parameters, but
-      // marignally better than before. Need to find a better way to do this
-      // with keeping response types.
-      sendVerificationEmail(
-        { utln: this.state.utln },
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onNot2019(response.classYear);
-          }),
-        (response, request) => stopSubmitting(this._onNotFound),
-        (response, request) =>
-          stopSubmitting(() => {
-            this._onSuccess(request.utln, response.email);
-          }),
-        (error, request) =>
-          stopSubmitting(() => {
-            this._onError(error);
-          })
+      this.setState(
+        {
+          isSubmitting: true,
+          validUtln: true,
+          errorMessageUtln: ""
+        },
+        () => {
+          sendVerificationEmail(
+            { utln: this.state.utln },
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onSuccess(request.utln, response.email, false);
+              }),
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onNot2019(response.classYear);
+              }),
+            (response, request) => stopSubmitting(this._onNotFound),
+            (response, request) =>
+              stopSubmitting(() => {
+                this._onSuccess(request.utln, response.email, true);
+              }),
+            (error, request) =>
+              stopSubmitting(() => {
+                this._onError(error);
+              })
+          );
+        }
       );
     }
   };
@@ -149,48 +154,91 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM</Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Input
-            containerStyle={
-              this.state.validUtln
-                ? styles.inputWrapperStyle
-                : styles.inputWrapperStyleWithError
-            }
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Tufts UTLN"
-            placeholder="amonac01"
-            onChangeText={text => this.setState({ utln: text })}
-            ref={input => (this.utlnInput = input)}
-            errorMessage={
-              this.state.validUtln ? "" : this.state.errorMessageUtln
-            }
-            autoCorrect={false}
-          />
-          {this.state.validUtln && (
-            <View style={styles.helpTextContainer}>
-              <Text style={styles.helpText}>Ex: jjaffe01</Text>
-            </View>
-          )}
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={() => {
-              this._onSubmit();
+      <View style={styles.container}>
+        <Text
+          style={
+            (styles.title,
+            {
+              color: "#ff6262",
+              fontFamily: "vegan",
+              fontSize: 44,
+              padding: 15,
+              textAlign: "center"
+            })
+          }
+        >
+          Project Gem
+        </Text>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            alignSelf: "stretch"
+          }}
+          behavior="padding"
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              paddingRight: 40,
+              paddingLeft: 40
             }}
-            title="submit"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
-          />
-        </View>
-      </KeyboardAvoidingView>
+          >
+            <Image
+              resizeMode="contain"
+              style={{
+                flex: 1,
+                width: 185,
+                height: 153
+              }}
+              source={require("../../assets/arthurIcon.png")}
+            />
+            <Input
+              containerStyle={
+                this.state.validUtln
+                  ? styles.inputWrapperStyle
+                  : styles.inputWrapperStyleWithError
+              }
+              placeholderTextColor={"#DDDDDD"}
+              inputStyle={{ color: "#222222" }}
+              labelStyle={styles.labelStyle}
+              inputContainerStyle={styles.inputContainerStyle}
+              label="Tufts UTLN"
+              placeholder="amonac01"
+              onChangeText={text => this.setState({ utln: text.toLowerCase() })}
+              ref={input => (this.utlnInput = input)}
+              errorMessage={
+                this.state.validUtln ? "" : this.state.errorMessageUtln
+              }
+              autoCorrect={false}
+              autoCapitalize="none"
+            />
+            {this.state.validUtln && (
+              <View style={styles.helpTextContainer}>
+                <Text style={styles.helpText}>Ex: jjaffe01</Text>
+              </View>
+            )}
+            <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+              <View style={{ flex: 2 }}>
+                <Button
+                  buttonStyle={styles.button}
+                  onPress={() => {
+                    this._onSubmit();
+                  }}
+                  title="submit"
+                  disabled={this.state.isSubmitting}
+                  loading={this.state.isSubmitting}
+                />
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
+      </View>
     );
   }
 }
