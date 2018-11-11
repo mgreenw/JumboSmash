@@ -131,7 +131,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             width: null,
             height: null
           }}
-          source={require("../assets/mainIcon.png")}
+          source={require("../assets/arthurIcon.png")}
         />
       </View>
     );
