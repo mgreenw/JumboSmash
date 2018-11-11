@@ -26,7 +26,7 @@ import Help from "./Auth/Help_Screen";
 
 // OnBoarding Screens
 import OnboardingStart from "./Onboarding/OnboardingStart_Screen";
-import OnboardingNameAge from "./Onboarding/NameAge_Screen.js";
+import OnboardingNameAge from "./Onboarding/OnboardingNameAge_Screen.js";
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use

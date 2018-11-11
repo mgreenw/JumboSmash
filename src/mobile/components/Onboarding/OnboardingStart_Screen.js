@@ -38,7 +38,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Jumbo Smash</Text>
+        <Text style={styles.title}>Project GEM</Text>
         <Text
           style={{
             fontSize: 34,
@@ -47,8 +47,9 @@ class OnboardingStartScreen extends React.Component<Props, State> {
             textAlign: "center"
           }}
         >
-          Let's take 2 minutes to get your profile setup before you begin
-          swiping
+          {
+            "Let's take 2 minutes to get your profile setup before you begin swiping"
+          }
         </Text>
 
         <Button
