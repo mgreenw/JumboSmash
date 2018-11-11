@@ -49,6 +49,7 @@ class SettingsScreen extends React.Component<Props, State> {
 
   // for refs
   nameInput: Input;
+  bioInput: Input;
 
   render() {
     const spacer = (
@@ -118,11 +119,11 @@ class SettingsScreen extends React.Component<Props, State> {
               inputStyle={{ color: "#222222" }}
               labelStyle={styles.labelStyle}
               label="About Me"
-              placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vehicula malesuada augue, pharetra gravida mauris ullamcorper sed. Sed vitae sem pharetra, egestas odio id, dapibus nunc. Nulla in vulputate lorem, vitae porttitor elit. Donec vitae tincidunt urna. Nunc sodales luctus mattis. Suspendisse congue odio sit amet nibh consectetur efficitur in id leo. Donec ut dolor egestas, laoreet nulla a, dapibus metus. "
-              onChangeText={name => {
-                this.setState({ displayName: name });
+              placeholder="Dan Katz Dan Katz"
+              onChangeText={bio => {
+                this.setState({ bio: bio });
               }}
-              ref={input => (this.nameInput = input)}
+              ref={input => (this.bioInput = input)}
               errorMessage={""}
               autoCorrect={false}
               multiline={true}
