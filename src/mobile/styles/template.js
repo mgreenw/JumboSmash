@@ -16,6 +16,8 @@ export const styles = StyleSheet.create({
     textAlign: "center"
   },
   button: {
-    height: 40
+    height: 40,
+    backgroundColor: "rgba(255, 98, 98, 0.9)",
+    borderRadius: 21
   }
 });
