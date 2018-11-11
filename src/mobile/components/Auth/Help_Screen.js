@@ -11,7 +11,7 @@ type Props = {
 };
 
 type State = {
-  help: String
+  prevRoute: ?string
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -27,12 +27,18 @@ class HelpScreen extends React.Component<Props, State> {
     super(props);
 
     // Get last page we visited
+    let prevRoute = null
     const parent = props.navigation.dangerouslyGetParent();
-    const sizeStack = (parent.state.routes).length;
-    const lastPage = parent.state.routes[sizeStack-2].routeName;
+    
+    if (parent && parent.state.routes) {
+      const sizeStack = (parent.state.routes).length;
+      if (sizeStack >= 2) {
+        prevRoute = parent.state.routes[sizeStack-2].routeName;
+      }
+    }
 
     this.state = {
-      lastPage: lastPage
+      prevRoute: prevRoute
     };
   }
 
@@ -44,7 +50,7 @@ class HelpScreen extends React.Component<Props, State> {
   };
 
   _onHelpMessage = () => {
-    if (this.state.lastPage == "Splash") {
+    if (this.state.prevRoute == "Splash") {
       return "Splash page help message";
     }
     else {
