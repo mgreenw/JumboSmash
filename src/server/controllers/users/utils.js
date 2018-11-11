@@ -1,5 +1,7 @@
 // @flow
 
+const _ = require('lodash');
+
 const apiUtils = require('../utils');
 
 const minBirthday = new Date('01/01/1988');
@@ -73,7 +75,22 @@ function validateProfile(profile: Profile) {
   }
 }
 
+function getFieldTemplates(definedFields: Array<[string, any]>) {
+  // Get all the fields with their respective template strings. fieldTemplates
+  // is a string like 'display_name = $1, birthday = $2, bio = $3'
+  const templateString = _.join(
+    _.map(definedFields, (field, i) => `${_.nth(field, 0)} = $${i + 1}`),
+    ', ',
+  );
+
+  // Get an array of the fields themselves
+  const fields = _.map(definedFields, field => _.nth(field, 1));
+
+  return { templateString, fields };
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
+  getFieldTemplates,
 };
