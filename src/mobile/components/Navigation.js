@@ -24,6 +24,9 @@ import ExpiredCode from "./Auth/ExpiredCode_Screen";
 import Not2019 from "./Auth/Not2019_Screen";
 import Help from "./Auth/Help_Screen";
 
+// OnBoarding Screens
+import OnboardingStart from "./Onboarding/OnboardingStart_Screen";
+
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
@@ -82,12 +85,22 @@ const AuthStack = createStackNavigator(
   }
 );
 
+const OnboardingStack = createStackNavigator(
+  {
+    OnboardingStart: { screen: OnboardingStart }
+  },
+  {
+    initialRouteName: "OnboardingStart"
+  }
+);
+
 export const createRootNavigator = () => {
   return createSwitchNavigator(
     {
       App: AppSwitch,
       Auth: AuthStack,
-      AuthLoading: AuthLoading
+      AuthLoading: AuthLoading,
+      Onboarding: OnboardingStack
     },
     {
       initialRouteName: "AuthLoading"
