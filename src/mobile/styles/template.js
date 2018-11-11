@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF",
+    padding: 30,
     alignSelf: "stretch"
   },
   title: {
