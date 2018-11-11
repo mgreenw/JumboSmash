@@ -26,9 +26,13 @@ class HelpScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    const { navigation } = this.props;
+    // Get last page we visited
+    const parent = props.navigation.dangerouslyGetParent();
+    const sizeStack = (parent.state.routes).length;
+    const lastPage = parent.state.routes[sizeStack-2].routeName;
+
     this.state = {
-      help: navigation.getParam("help", "")
+      lastPage: lastPage
     };
   }
 
@@ -40,11 +44,11 @@ class HelpScreen extends React.Component<Props, State> {
   };
 
   _onHelpMessage = () => {
-    if (this.state.help == "Splash") {
+    if (this.state.lastPage == "Splash") {
       return "Splash page help message";
     }
     else {
-      return "Not on Splash help page";
+      return "Generic Help screen if it doesn't fit any of the auth pages";
     }
   }
 
