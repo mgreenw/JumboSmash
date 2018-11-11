@@ -11,7 +11,9 @@ import AuthLoading from "./AuthLoading_Screen";
 
 // App Screens
 import Profile from "./App/Profile/Profile_Screen";
-import Settings from "./App/Profile/Settings_Screen";
+import ProfileEdit from "./App/Profile/ProfileEdit_Screen";
+import SettingsEdit from "./App/Profile/SettingsEdit_Screen";
+
 import Swiping from "./App/Swiping/Swiping_Screen";
 import Messaging from "./App/Messaging/Messaging_Screen";
 
@@ -20,6 +22,10 @@ import Splash from "./Auth/Splash_Screen";
 import Verify from "./Auth/Verify_Screen";
 import ExpiredCode from "./Auth/ExpiredCode_Screen";
 import Not2019 from "./Auth/Not2019_Screen";
+import Help from "./Auth/Help_Screen";
+
+// OnBoarding Screens
+import OnboardingStart from "./Onboarding/OnboardingStart_Screen";
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -36,7 +42,8 @@ const SwipingStack = createStackNavigator(
 const ProfileStack = createStackNavigator(
   {
     Profile: { screen: Profile },
-    Settings: { screen: Settings }
+    SettingsEdit: { screen: SettingsEdit },
+    ProfileEdit: { screen: ProfileEdit }
   },
   {
     initialRouteName: "Profile"
@@ -70,10 +77,20 @@ const AuthStack = createStackNavigator(
     Splash: { screen: Splash },
     Verify: { screen: Verify },
     ExpiredCode: { screen: ExpiredCode },
-    Not2019: { screen: Not2019 }
+    Not2019: { screen: Not2019 },
+    AuthHelp: { screen: Help }
   },
   {
     initialRouteName: "Splash"
+  }
+);
+
+const OnboardingStack = createStackNavigator(
+  {
+    OnboardingStart: { screen: OnboardingStart }
+  },
+  {
+    initialRouteName: "OnboardingStart"
   }
 );
 
@@ -82,7 +99,8 @@ export const createRootNavigator = () => {
     {
       App: AppSwitch,
       Auth: AuthStack,
-      AuthLoading: AuthLoading
+      AuthLoading: AuthLoading,
+      Onboarding: OnboardingStack
     },
     {
       initialRouteName: "AuthLoading"
