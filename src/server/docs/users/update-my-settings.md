@@ -79,6 +79,6 @@ Provide the user's updated settings fields.
 **Content** :
 ```json
 {
-    "status": "UPDATE_SETTINGS__BAD_FORMAT"
+    "status": "UPDATE_SETTINGS__BAD_REQUEST"
 }
 ```
