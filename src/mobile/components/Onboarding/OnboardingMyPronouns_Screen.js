@@ -30,9 +30,9 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       myPronouns: {
-        he: false,
-        she: false,
-        they: false
+        he: true,
+        she: true,
+        they: true
       }
     };
   }
