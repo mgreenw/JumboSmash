@@ -31,7 +31,7 @@ class NameAgeScreen extends React.Component<Props, State> {
 
   _onPress = () => {
     const { navigation } = this.props;
-    //navigation.navigate("OnboardingNameAge");
+    //TODO: add navigation to next screen
   };
 
   render() {
