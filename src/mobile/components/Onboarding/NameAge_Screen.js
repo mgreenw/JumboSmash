@@ -29,10 +29,6 @@ class NameAgeScreen extends React.Component<Props, State> {
     super(props);
   }
 
-  static navigationOptions = {
-    title: "Profile Setup"
-  };
-
   _onPress = () => {
     const { navigation } = this.props;
     //navigation.navigate("OnboardingNameAge");

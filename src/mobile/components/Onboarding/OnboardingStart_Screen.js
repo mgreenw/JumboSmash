@@ -27,8 +27,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   }
 
   static navigationOptions = {
-    headerLeft: null,
-    title: "Profile Setup"
+    headerLeft: null
   };
 
   _onPress = () => {
