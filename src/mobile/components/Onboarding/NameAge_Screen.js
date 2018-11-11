@@ -12,8 +12,8 @@ type Props = {
 };
 
 type State = {
-  name: String,
-  birthday: Date
+  name: string,
+  birthday: string //TODO: Change to date when we start using a date picker
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -27,6 +27,10 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class NameAgeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      name: "",
+      birthday: ""
+    };
   }
 
   _onPress = () => {
