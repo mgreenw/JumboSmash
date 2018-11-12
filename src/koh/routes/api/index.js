@@ -3,8 +3,8 @@
 const express = require('express');
 
 const apiRouter = express.Router();
-const getUserInfo = require('../../controllers/get-user-info');
+const getMemberInfo = require('../../controllers/get-member-info');
 
 module.exports = apiRouter;
 
-apiRouter.get('/user-info/:utln', getUserInfo);
+apiRouter.get('/member-info/:utln', getMemberInfo);
