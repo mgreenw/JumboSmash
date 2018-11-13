@@ -124,15 +124,19 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <Image
-          resizeMode="contain"
-          style={{
-            flex: 1,
-            width: null,
-            height: null
-          }}
-          source={require("../../assets/arthurIcon.png")} // TODO: investigate why  mobile/ does not work
-        />
+        <View style={{ flex: 1 }} />
+        <View style={{ flex: 1 }}>
+          <Image
+            resizeMode="contain"
+            style={{
+              flex: 1,
+              width: null,
+              height: null
+            }}
+            source={require("../../assets/arthurIcon.png")} // TODO: investigate why  mobile/ does not work
+          />
+        </View>
+        <View style={{ flex: 1 }} />
       </View>
     );
   }

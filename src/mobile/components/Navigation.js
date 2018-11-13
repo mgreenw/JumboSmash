@@ -61,7 +61,7 @@ const ProfileStack = createStackNavigator(
     ProfileEdit: { screen: ProfileEdit }
   },
   {
-    initialRouteName: PROFILE_ROUTE
+    initialRouteName: "PROFILE_ROUTE"
   }
 );
 
@@ -79,7 +79,7 @@ const MatchesStack = createStackNavigator(
 const MainContentSwitch = createSwitchNavigator(
   {
     Cards: CardsStack,
-    PROFILE_ROUTE: ProfileStack,
+    Profile: ProfileStack,
     Matches: MatchesStack
   },
   {
