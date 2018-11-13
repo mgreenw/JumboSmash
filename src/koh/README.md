@@ -4,7 +4,9 @@ Welcome to __Koh__.
 
 ![Koh's Faces](https://vignette.wikia.nocookie.net/avatar/images/9/9c/Koh%27s_faces.png)
 
-Koh uses NodeJS LTS 8.12.0 and Postgres 10.5, similar to the server. See the [Server README](../server/README.md) for more information.
+Koh is used to get member information from the LDAP server and act as a cache for this information so that the LDAP Server can be 1) batch queried and 2) hit as few times as possible.
+
+Koh is based off the server and uses NodeJS LTS 8.12.0 and Postgres 10.5, similar to the server. See the [Server README](../server/README.md) for more information.
 
 ## Developer Setup
 

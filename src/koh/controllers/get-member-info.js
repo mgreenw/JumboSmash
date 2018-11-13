@@ -9,16 +9,17 @@ const codes = require('./status-codes');
 
 // The values to select from the database
 const memberSelect = `
-utln,
-exists,
-email,
-college,
-trunk_id AS "trunkId",
-class_year as "classYear",
-given_name as "givenName",
-last_name as "lastName",
-display_name as "displayName",
-major`;
+  utln,
+  exists,
+  email,
+  college,
+  trunk_id AS "trunkId",
+  class_year as "classYear",
+  given_name as "givenName",
+  last_name as "lastName",
+  display_name as "displayName",
+  major
+`;
 
 /**
  * @api {get} /api/member-info/:utln
@@ -35,10 +36,11 @@ const getUserInfo = async (req: $Request, res: $Response) => {
       WHERE utln = $1
       `, [utln]);
 
-    // Return the user!
+    // Check if the db query returned any results
     if (result.rowCount > 0) {
       const member = result.rows[0];
 
+      // If the member exists, return the memmber
       if (member.exists) {
         return res.status(200).json({
           status: codes.GET_MEMBER_INFO__SUCCESS,
@@ -46,6 +48,8 @@ const getUserInfo = async (req: $Request, res: $Response) => {
         });
       }
 
+      // If the member does not exist (but has been stored in the database),
+      // return NOT FOUND
       return res.status(404).json({
         status: codes.GET_MEMBER_INFO__NOT_FOUND,
       });
@@ -104,6 +108,7 @@ const getUserInfo = async (req: $Request, res: $Response) => {
       RETURNING ${memberSelect}
     `, [member.uid, member.mail, member.givenName, member.tuftsEduCollege, member.tuftsEduTrunk, member.tuftsEduClassYear, member.sn, member.displayName, member.tuftsEduMajor]);
 
+    // Return the new member
     return res.status(200).json({
       status: codes.GET_MEMBER_INFO__SUCCESS,
       member: insertResult.rows[0],
