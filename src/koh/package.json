@@ -23,7 +23,6 @@
     "lint:watch": "nodemon --exec eslint -- ."
   },
   "dependencies": {
-    "ajv": "^6.5.4",
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
     "express": "^4.16.4",

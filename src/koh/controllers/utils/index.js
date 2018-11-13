@@ -1,8 +1,8 @@
 // @flow
 const error = require('./error');
-const validate = require('./validate');
+const ldap = require('./ldap');
 
 module.exports = {
   error,
-  validate,
+  ldap,
 };

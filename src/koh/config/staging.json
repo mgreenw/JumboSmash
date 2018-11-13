@@ -1,9 +1,0 @@
-{
-  "db": {
-    "host": "localhost",
-    "port": 5432,
-    "database": "koh",
-    "user": "jumbosmashdev",
-    "password": "tonysmash2019"
-  }
-}
