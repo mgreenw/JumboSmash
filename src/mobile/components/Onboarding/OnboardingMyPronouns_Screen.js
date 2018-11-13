@@ -1,17 +1,21 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button } from "react-native-elements";
+import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "../../styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../reducers/index";
+import { PronounSelector } from "../shared/PronounSelector";
+import type { Pronouns } from "../shared/PronounSelector";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  myPronouns: Pronouns
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -21,24 +25,32 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingStartScreen extends React.Component<Props, State> {
+class OnboardingMyPronounsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      myPronouns: {
+        he: true,
+        she: true,
+        they: true
+      }
+    };
   }
 
-  static navigationOptions = {
-    headerLeft: null
+  _onMyPronounChange = (pronouns: Pronouns) => {
+    this.setState({
+      myPronouns: pronouns
+    });
   };
 
   _onPress = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingNameAge");
+    //TODO: add navigation to next screen
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Project GEM</Text>
         <Text
           style={{
             fontSize: 34,
@@ -47,14 +59,20 @@ class OnboardingStartScreen extends React.Component<Props, State> {
             textAlign: "center"
           }}
         >
-          {
-            "Let's take 2 minutes to get your profile setup before you begin swiping"
-          }
+          Pronoun Preferences
         </Text>
-
+        <Text>
+          We use pronouns to help determine who to show in your stack in Project
+          GEM. Your pronouns will not be shown on your profile.{" "}
+        </Text>
+        <Text>I use:</Text>
+        <PronounSelector
+          defaultPronouns={this.state.myPronouns}
+          onChange={this._onMyPronounChange}
+        />
         <Button
           onPress={this._onPress}
-          title="Roll 'Bos"
+          title="Continue"
           buttonStyle={styles.button}
         />
       </View>
@@ -65,4 +83,4 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingStartScreen);
+)(OnboardingMyPronounsScreen);

@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button } from "react-native-elements";
+import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "../../styles/template";
 import type { Dispatch } from "redux";
@@ -11,7 +11,10 @@ type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  name: string,
+  birthday: string //TODO: Change to date when we start using a date picker
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -21,24 +24,23 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingStartScreen extends React.Component<Props, State> {
+class NameAgeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      name: "",
+      birthday: ""
+    };
   }
-
-  static navigationOptions = {
-    headerLeft: null
-  };
 
   _onPress = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingNameAge");
+    navigation.navigate("OnboardingMyPronouns");
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Project GEM</Text>
         <Text
           style={{
             fontSize: 34,
@@ -47,14 +49,29 @@ class OnboardingStartScreen extends React.Component<Props, State> {
             textAlign: "center"
           }}
         >
-          {
-            "Let's take 2 minutes to get your profile setup before you begin swiping"
-          }
+          Name & Age
         </Text>
-
+        <Input
+          placeholderTextColor={"#DDDDDD"}
+          inputStyle={{ color: "#222222" }}
+          labelStyle={styles.labelStyle}
+          label="Name"
+          placeholder="Tony Monaco"
+          onChangeText={name => this.setState({ name })}
+          autoCorrect={false}
+        />
+        <Input
+          placeholderTextColor={"#DDDDDD"}
+          inputStyle={{ color: "#222222" }}
+          labelStyle={styles.labelStyle}
+          label="Birthday"
+          placeholder="01/01/97"
+          onChangeText={birthday => this.setState({ birthday })}
+          autoCorrect={false}
+        />
         <Button
           onPress={this._onPress}
-          title="Roll 'Bos"
+          title="Continue"
           buttonStyle={styles.button}
         />
       </View>
@@ -65,4 +82,4 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingStartScreen);
+)(NameAgeScreen);

@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "../../../styles/template";
 import { logout } from "../../../actions/auth/logout";
-import { PronounSelector } from "../assets/PronounSelector";
-import type { Pronouns } from "../assets/PronounSelector";
+import { PronounSelector } from "../../shared/PronounSelector";
+import type { Pronouns } from "../../shared/PronounSelector";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "../../../reducers/index";
 

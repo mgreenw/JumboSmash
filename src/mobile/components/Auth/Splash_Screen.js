@@ -191,7 +191,7 @@ class SplashScreen extends React.Component<Props, State> {
                 width: 185,
                 height: 153
               }}
-              source={require("../../assets/mainIcon.png")}
+              source={require("../../assets/arthurIcon.png")}
             />
             <Input
               containerStyle={

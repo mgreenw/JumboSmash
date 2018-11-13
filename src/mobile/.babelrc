@@ -2,7 +2,18 @@
   "presets": ["babel-preset-expo", "flow"],
   "env": {
     "development": {
-      "plugins": ["transform-react-jsx-source"]
+      "plugins": [
+        "transform-react-jsx-source",
+        [
+          "module-resolver",
+          {
+            "root": ["./"],
+            "alias": {
+              "mobile": "./"
+            }
+          }
+        ]
+      ]
     }
   }
 }
