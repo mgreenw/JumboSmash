@@ -14,7 +14,7 @@ type Props = {
 };
 
 type State = {
-  myPronouns: Pronouns
+  wantPronouns: Pronouns
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -25,11 +25,11 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingMyPronounsScreen extends React.Component<Props, State> {
+class OnboardingWantPronounsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      myPronouns: {
+      wantPronouns: {
         he: true,
         she: true,
         they: true
@@ -37,15 +37,15 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     };
   }
 
-  _onMyPronounChange = (pronouns: Pronouns) => {
+  _onWantPronounChange = (pronouns: Pronouns) => {
     this.setState({
-      myPronouns: pronouns
+      wantPronouns: pronouns
     });
   };
 
   _onPress = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingWantPronouns");
+    //TODO: add navigation to next screen
   };
 
   render() {
@@ -65,10 +65,10 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
           We use pronouns to help determine who to show in your stack in Project
           GEM. Your pronouns will not be shown on your profile.
         </Text>
-        <Text>I use:</Text>
+        <Text>I'm looking for:</Text>
         <PronounSelector
-          defaultPronouns={this.state.myPronouns}
-          onChange={this._onMyPronounChange}
+          defaultPronouns={this.state.wantPronouns}
+          onChange={this._onWantPronounChange}
         />
         <Button
           onPress={this._onPress}
@@ -83,4 +83,4 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingMyPronounsScreen);
+)(OnboardingWantPronounsScreen);
