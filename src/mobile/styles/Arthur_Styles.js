@@ -55,5 +55,12 @@ export const Arthur_Styles = StyleSheet.create({
   checkBoxWrapper: {
     flex: 1,
     backgroundColor: "red"
+  },
+  title: {
+    color: Grapefruit,
+    fontFamily: "vegan",
+    fontSize: 45,
+    padding: 15,
+    textAlign: "center"
   }
 });
