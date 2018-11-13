@@ -56,7 +56,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
             }}
           >
             Project Gem
-          </Text>{" "}
+          </Text>
         </View>
 
         <View style={{ flex: 1 }}>
