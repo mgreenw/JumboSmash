@@ -7,11 +7,12 @@
     "postgres": "^10.5.x"
   },
   "scripts": {
+    "start": "node server.js",
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
     "migrate": "node-pg-migrate -m ./db/migrations",
-    "build": "rm -r dist && babel . --copy-files --ignore node_modules,dist -d dist && rm -r dist/node_modules && cp .npmrc dist/.npmrc",
+    "build": "rm -rf ./dist && babel . --ignore node_modules,dist -d dist && cp .npmrc dist && cp -r config dist && cp *.json dist",
     "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
     "jest": "jest --runInBand --forceExit",
     "check-env": "babel-node ./scripts/check-environment",

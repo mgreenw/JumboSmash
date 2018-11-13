@@ -10,6 +10,7 @@ const codes = require('./status-codes');
 // The values to select from the database
 const memberSelect = `
 utln,
+exists,
 email,
 college,
 trunk_id AS "trunkId",
@@ -75,6 +76,7 @@ const getUserInfo = async (req: $Request, res: $Response) => {
         (utln, exists)
         VALUES ($1, false)
       `, [utln]);
+
       return res.status(404).json({
         status: codes.GET_MEMBER_INFO__NOT_FOUND,
       });
@@ -107,7 +109,6 @@ const getUserInfo = async (req: $Request, res: $Response) => {
       member: insertResult.rows[0],
     });
   } catch (error) {
-    console.log(error);
     return utils.error.server(res, 'Failed to get member over ldap.');
   }
 };
