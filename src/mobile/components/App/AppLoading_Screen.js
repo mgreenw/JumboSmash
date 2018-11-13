@@ -23,13 +23,11 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-// This component is the screen we see on initial app startup, as we are
-// loading the state of the app / determining if the user is already logged in.
-// If the user is logged in, we then navigate to App, otherwise to Auth.
 class AppLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
+    // TODO: load the app here!
     setTimeout(() => {
       const { navigate } = this.props.navigation;
       navigate("Main", {});
