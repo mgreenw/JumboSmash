@@ -10,7 +10,7 @@ import {
 // AUTH:
 //////////
 
-// Etry point; used to load from phone storage & determine route
+// Entry point; used to load from phone storage & determine route
 import AuthLoading from "mobile/components/Auth/AuthLoading_Screen";
 
 // Login Screens
