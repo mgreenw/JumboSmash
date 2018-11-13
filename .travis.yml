@@ -25,7 +25,8 @@ install:
   - npm install
   - cd ./src/mobile
   - npm install
-  - cd ../../src/koh
+  - cd ../..
+  - cd ./src/koh
   - npm install
   - cd ../../src/server
   - npm install
