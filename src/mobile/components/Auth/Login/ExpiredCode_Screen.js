@@ -9,10 +9,10 @@ import {
   NavigationActions,
   HeaderBackButton
 } from "react-navigation";
-import { styles } from "../../styles/auth";
-import sendVerificationEmail from "../../api/auth/sendVerificationEmail";
+import { styles } from "mobile/styles/auth";
+import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -130,7 +130,8 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text style={styles.title}>Expired Verification Code</Text>
         </View>
         <View>
-          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+          <Text
+          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button

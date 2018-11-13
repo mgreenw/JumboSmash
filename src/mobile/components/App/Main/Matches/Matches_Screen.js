@@ -3,10 +3,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { styles } from "../../../styles/template";
+import { styles } from "mobile/styles/template";
 import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -37,7 +37,7 @@ class MessagingScreen extends React.Component<Props, State> {
           name="diamond"
           type="font-awesome"
           size={40}
-          onPress={() => navigation.navigate("Swiping")}
+          onPress={() => navigation.navigate("Cards")}
           containerStyle={{ paddingLeft: 10 }}
         />
       )

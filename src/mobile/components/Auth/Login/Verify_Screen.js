@@ -13,11 +13,11 @@ import {
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/auth";
-import verify from "../../api/auth/verify";
-import { login } from "../../actions/auth/login";
+import { styles } from "mobile/styles/auth";
+import verify from "mobile/api/auth/verify";
+import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type State = {
   code: string,

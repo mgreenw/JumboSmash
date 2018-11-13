@@ -2,9 +2,9 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { styles } from "../../styles/auth";
+import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -27,13 +27,13 @@ class HelpScreen extends React.Component<Props, State> {
     super(props);
 
     // Get last page we visited
-    let prevRoute = null
+    let prevRoute = null;
     const parent = props.navigation.dangerouslyGetParent();
-    
+
     if (parent && parent.state.routes) {
-      const sizeStack = (parent.state.routes).length;
+      const sizeStack = parent.state.routes.length;
       if (sizeStack >= 2) {
-        prevRoute = parent.state.routes[sizeStack-2].routeName;
+        prevRoute = parent.state.routes[sizeStack - 2].routeName;
       }
     }
 
@@ -52,19 +52,15 @@ class HelpScreen extends React.Component<Props, State> {
   _onHelpMessage = () => {
     if (this.state.prevRoute == "Splash") {
       return "Splash page help message";
-    }
-    else {
+    } else {
       return "Generic Help screen if it doesn't fit any of the auth pages";
     }
-  }
+  };
 
   render() {
-    
     return (
       <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-        <Text style={styles.title}>
-          {"HELP: " + this._onHelpMessage()}
-        </Text>
+        <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
       </View>
     );
   }
