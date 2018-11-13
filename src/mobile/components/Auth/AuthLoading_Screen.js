@@ -6,10 +6,10 @@ import { StackNavigator } from "react-navigation";
 import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
-import getTokenUtln from "../api/auth/getTokenUtln";
-import { loadAuth } from "../actions/auth/loadAuth";
-import { login } from "../actions/auth/login";
-import type { ReduxState } from "../reducers/index";
+import getTokenUtln from "mobile/api/auth/getTokenUtln";
+import { loadAuth } from "mobile/actions/auth/loadAuth";
+import { login } from "mobile/actions/auth/login";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any,
@@ -59,7 +59,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     super(props);
     this.state = {};
     Font.loadAsync({
-      vegan: require("../assets/fonts/vegan.ttf")
+      vegan: require("../../assets/fonts/vegan.ttf")
     }).then(this.props.loadAuth);
   }
 
@@ -118,7 +118,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   // our redux state defaults being logged out, so we go straight to auth.
   _onInvalidToken = () => {
     const { navigate } = this.props.navigation;
-    navigate("Auth");
+    navigate("Login");
   };
 
   render() {
@@ -131,7 +131,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             width: null,
             height: null
           }}
-          source={require("../assets/arthurIcon.png")}
+          source={require("../../assets/arthurIcon.png")} // TODO: investigate why  mobile/ does not work
         />
       </View>
     );

@@ -14,10 +14,10 @@ import {
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/auth";
-import sendVerificationEmail from "../../api/auth/sendVerificationEmail";
+import { styles } from "mobile/styles/auth";
+import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -191,7 +191,7 @@ class SplashScreen extends React.Component<Props, State> {
                 width: 185,
                 height: 153
               }}
-              source={require("../../assets/arthurIcon.png")}
+              source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
             />
             <Input
               containerStyle={

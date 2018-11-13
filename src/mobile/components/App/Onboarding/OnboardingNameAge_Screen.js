@@ -3,18 +3,17 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/template";
+import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
-import { PronounSelector } from "../shared/PronounSelector";
-import type { Pronouns } from "../shared/PronounSelector";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
 };
 
 type State = {
-  myPronouns: Pronouns
+  name: string,
+  birthday: string //TODO: Change to date when we start using a date picker
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -25,27 +24,18 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingMyPronounsScreen extends React.Component<Props, State> {
+class NameAgeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      myPronouns: {
-        he: true,
-        she: true,
-        they: true
-      }
+      name: "",
+      birthday: ""
     };
   }
 
-  _onMyPronounChange = (pronouns: Pronouns) => {
-    this.setState({
-      myPronouns: pronouns
-    });
-  };
-
   _onPress = () => {
     const { navigation } = this.props;
-    //TODO: add navigation to next screen
+    navigation.navigate("OnboardingMyPronouns");
   };
 
   render() {
@@ -59,16 +49,25 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
             textAlign: "center"
           }}
         >
-          Pronoun Preferences
+          Name & Age
         </Text>
-        <Text>
-          We use pronouns to help determine who to show in your stack in Project
-          GEM. Your pronouns will not be shown on your profile.{" "}
-        </Text>
-        <Text>I use:</Text>
-        <PronounSelector
-          defaultPronouns={this.state.myPronouns}
-          onChange={this._onMyPronounChange}
+        <Input
+          placeholderTextColor={"#DDDDDD"}
+          inputStyle={{ color: "#222222" }}
+          labelStyle={styles.labelStyle}
+          label="Name"
+          placeholder="Tony Monaco"
+          onChangeText={name => this.setState({ name })}
+          autoCorrect={false}
+        />
+        <Input
+          placeholderTextColor={"#DDDDDD"}
+          inputStyle={{ color: "#222222" }}
+          labelStyle={styles.labelStyle}
+          label="Birthday"
+          placeholder="01/01/97"
+          onChangeText={birthday => this.setState({ birthday })}
+          autoCorrect={false}
         />
         <Button
           onPress={this._onPress}
@@ -83,4 +82,4 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingMyPronounsScreen);
+)(NameAgeScreen);

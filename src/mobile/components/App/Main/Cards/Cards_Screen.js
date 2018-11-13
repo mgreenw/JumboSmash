@@ -3,10 +3,10 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { styles } from "../../../styles/template";
+import { styles } from "mobile/styles/template";
 import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -28,11 +28,6 @@ class SwipingScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
-  _goToMessaging = () => {
-    const { navigate } = this.props.navigation;
-    navigate("messaging");
-  };
-
   // These are for react navigation, like header bar and such
   static navigationOptions = ({ navigation }) => {
     return {
@@ -42,7 +37,7 @@ class SwipingScreen extends React.Component<Props, State> {
           name="send"
           type="font-awesome"
           size={40}
-          onPress={() => navigation.navigate("Messaging")}
+          onPress={() => navigation.navigate("Matches")}
           containerStyle={{ paddingRight: 10 }}
         />
       ),

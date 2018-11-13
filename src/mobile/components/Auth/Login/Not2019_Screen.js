@@ -3,9 +3,9 @@ import React from "react";
 import { Text, View, KeyboardAvoidingView } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/auth";
+import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any

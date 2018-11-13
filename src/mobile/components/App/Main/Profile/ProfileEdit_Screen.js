@@ -11,8 +11,8 @@ import {
 import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../../reducers/index";
-import { styles } from "../../../styles/template";
+import type { ReduxState } from "mobile/reducers/index";
+import { styles } from "mobile/styles/template";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type Props = {
