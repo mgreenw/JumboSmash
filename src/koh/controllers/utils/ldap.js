@@ -4,11 +4,11 @@ const ldap = require('ldapjs');
 
 const base = 'ou=people,dc=tufts,dc=edu';
 
+// Given an ldap client, bind to the client
 async function bind(client) {
   return new Promise((resolve, reject) => {
     client.bind('', '', (err, res) => {
       if (err) {
-        console.log('Error binding to ldap', err);
         reject(err);
       }
       resolve(res);
@@ -16,32 +16,39 @@ async function bind(client) {
   });
 }
 
-
+// Search the base ldap given a filter and attributes to return.
 // Can throw SizeLimitExceededError
-function search(filter, attributes) {
+function search(filter: string, attributes: string[]): Promise<any> {
   return new Promise((resolve, reject) => {
-
+    // Initialize the client
     const client = ldap.createClient({
       url: 'ldap://ldap.tufts.edu',
     });
 
-    bind(client).then((bindResult) => {
+    // Bind to the client, then complete the search
+    // Reject on bind error
+    bind(client).then(() => {
       const opts = {
         filter,
         attributes,
         scope: 'sub',
       };
 
+      // Search the client server.
       client.search(base, opts, (err, res) => {
         if (err) reject(err);
+
+        // Accumulate a list of entries found from the search
         const entries = [];
         res.on('searchEntry', (entry) => {
           entries.push(entry.object);
         });
+
         res.on('error', (error) => {
           client.unbind();
           reject(error);
         });
+
         res.on('end', (status) => {
           client.unbind();
           resolve({
@@ -50,18 +57,11 @@ function search(filter, attributes) {
           });
         });
       });
-      })
-    .catch((err) => {
+    }).catch((err) => {
       reject(err);
     });
   });
 }
-
-// async function runSearch() {
-//   const attributes = ['givenName', 'mail', 'tuftsEduCollege', 'uid', 'tuftsEduTrunk', 'tuftsEduClassYear', 'sn', 'cn', 'displayName', 'tuftsEduMajor'];
-//   const filter = '(&(tuftsEduClassYear=19)(|(tuftsEduCollege=COLLEGE OF LIBERAL ARTS)(tuftsEduCollege=SCHOOL OF ENGINEERING))(sn=A*))';
-//   const result = await search(filter, attributes);
-// }
 
 module.exports = {
   search,
