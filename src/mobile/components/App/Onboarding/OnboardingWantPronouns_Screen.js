@@ -65,7 +65,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
           We use pronouns to help determine who to show in your stack in Project
           GEM. Your pronouns will not be shown on your profile.
         </Text>
-        <Text>I'm looking for:</Text>
+        <Text>{"I'm looking for:"}</Text>
         <PronounSelector
           defaultPronouns={this.state.wantPronouns}
           onChange={this._onWantPronounChange}
