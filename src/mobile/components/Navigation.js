@@ -38,6 +38,8 @@ import Messaging from "mobile/components/App/Main/Matches/Matches_Screen";
 import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
+import OnboardingWantPronouns from "mobile/components/App/Onboarding/OnboardingWantPronouns_Screen";
+import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAddPictures_Screen";
 
 const PROFILE_ROUTE = "Profile";
 
@@ -116,7 +118,9 @@ const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
     OnboardingNameAge: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns }
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+    OnboardingAddPictures: { screen: OnboardingAddPictures }
   },
   {
     initialRouteName: "OnboardingStart",
@@ -133,7 +137,7 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     Main: MainContentSwitch,
-    OnBoarding: OnboardingStack,
+    Onboarding: OnboardingStack,
     AppLoading: { screen: AppLoading }
   },
   {
