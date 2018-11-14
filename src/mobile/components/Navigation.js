@@ -39,6 +39,7 @@ import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Sc
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
 import OnboardingWantPronouns from "mobile/components/App/Onboarding/OnboardingWantPronouns_Screen";
+import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen";
 
 const PROFILE_ROUTE = "Profile";
 
@@ -118,7 +119,8 @@ const OnboardingStack = createStackNavigator(
     OnboardingStart: { screen: OnboardingStart },
     OnboardingNameAge: { screen: OnboardingNameAge },
     OnboardingMyPronouns: { screen: OnboardingMyPronouns },
-    OnboardingWantPronouns: { screen: OnboardingWantPronouns }
+    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+    OnboardingBio: { screen: OnboardingBio }
   },
   {
     initialRouteName: "OnboardingStart",

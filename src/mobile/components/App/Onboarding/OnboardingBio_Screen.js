@@ -1,20 +1,18 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, TextInput } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
-import type { Pronouns } from "mobile/components/shared/PronounSelector";
 
 type Props = {
   navigation: any
 };
 
 type State = {
-  wantPronouns: Pronouns
+  bio: string
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -25,27 +23,17 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingWantPronounsScreen extends React.Component<Props, State> {
+class OnboardingBioScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      wantPronouns: {
-        he: true,
-        she: true,
-        they: true
-      }
+      bio: ""
     };
   }
 
-  _onWantPronounChange = (pronouns: Pronouns) => {
-    this.setState({
-      wantPronouns: pronouns
-    });
-  };
-
   _onPress = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingBio");
+    //TODO Navigate to next page
   };
 
   render() {
@@ -59,16 +47,13 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
             textAlign: "center"
           }}
         >
-          Pronoun Preferences
+          About Me
         </Text>
-        <Text>
-          We use pronouns to help determine who to show in your stack in Project
-          GEM. Your pronouns will not be shown on your profile.
-        </Text>
-        <Text>{"I'm looking for:"}</Text>
-        <PronounSelector
-          defaultPronouns={this.state.wantPronouns}
-          onChange={this._onWantPronounChange}
+        <Input
+          multiline={true}
+          placeholder="The real Tony Monaco"
+          onChangeText={bio => this.setState({ bio })}
+          value={this.state.bio}
         />
         <Button
           onPress={this._onPress}
@@ -83,4 +68,4 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingWantPronounsScreen);
+)(OnboardingBioScreen);
