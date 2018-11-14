@@ -14,16 +14,17 @@ type Props = {
   navigation: any,
   token: string,
   getMySettings: (token: string) => void,
-  appLoaded: boolean
+  appLoaded: boolean,
+  loadAppInProgress: boolean
 };
 
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  console.log(reduxState);
   return {
     token: reduxState.token,
-    appLoaded: reduxState.appLoaded
+    appLoaded: reduxState.appLoaded,
+    loadAppInProgress: reduxState.inProgress.loadApp
   };
 }
 
@@ -39,12 +40,19 @@ class AppLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    // TODO: load the app here!
-    setTimeout(() => {
-      this.props.getMySettings(this.props.token);
+    this.props.getMySettings(this.props.token);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
+    // so we use it for determining if the load occured.
+    if (
+      this.props.appLoaded &&
+      prevProps.loadAppInProgress != this.props.loadAppInProgress
+    ) {
       const { navigate } = this.props.navigation;
       navigate("Main", {});
-    }, 2000);
+    }
   }
 
   render() {
