@@ -231,6 +231,11 @@ class SplashScreen extends React.Component<Props, State> {
           />
         </View>
       </KeyboardAvoidingView>
+      <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
     );
   }
 }

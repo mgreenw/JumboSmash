@@ -81,6 +81,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     console.log("error");
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("AuthHelp", {});
+  };
+
   _onResend = () => {
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
@@ -143,6 +148,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           />
         </View>
       </KeyboardAvoidingView>
+      <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
     );
   }
 }

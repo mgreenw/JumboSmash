@@ -41,6 +41,11 @@ class Not2019Screen extends React.Component<Props, State> {
     }
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("AuthHelp", {});
+  };
+
   render() {
     const yearsLeft = this.state.classYear - 19;
 
@@ -54,6 +59,11 @@ class Not2019Screen extends React.Component<Props, State> {
           </Text>
         </View>
       </KeyboardAvoidingView>
+      <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
     );
   }
 }

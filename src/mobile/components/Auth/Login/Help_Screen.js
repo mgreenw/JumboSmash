@@ -52,6 +52,12 @@ class HelpScreen extends React.Component<Props, State> {
   _onHelpMessage = () => {
     if (this.state.prevRoute == "Splash") {
       return "Splash page help message";
+    } else if (this.state.prevRoute == "Verify") {
+      return "Verify page help message";
+    } else if (this.state.prevRoute == "Not2019") {
+      return "Not2019 page help message";
+    } else if (this.state.prevRoute == "ExpiredCode") {
+      return "Expired code page help message";
     } else {
       return "Generic Help screen if it doesn't fit any of the auth pages";
     }
