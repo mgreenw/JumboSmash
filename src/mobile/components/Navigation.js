@@ -139,7 +139,7 @@ const AppSwitch = createSwitchNavigator(
     AppLoading: { screen: AppLoading }
   },
   {
-    initialRouteName: "Main"
+    initialRouteName: "AppLoading"
   }
 );
 
