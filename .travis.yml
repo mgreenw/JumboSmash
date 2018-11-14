@@ -23,17 +23,13 @@ before_install:
   - sleep 1
 install:
   - npm install
-  - cd ./src/mobile
-  - npm install
-  - cd ../..
-  - cd ./src/koh
-  - npm install
-  - cd ../../src/server
-  - npm install
+  - npm install --prefix ./src/koh
+  - npm install --prefix ./src/mobile
+  - npm install --prefix ./src/server
 before_script:
   - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
   - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
-  - npm run migrate up
+  - cd ./src/server && npm run migrate up
 script:
   - npm run lint
   - cd ../..
