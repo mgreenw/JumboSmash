@@ -1,19 +1,25 @@
 // @flow
 import React from "react";
-import { Text, View, TextInput } from "react-native";
-import { Button, Input } from "react-native-elements";
+import {
+  Dimensions,
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  TextInput
+} from "react-native";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
+import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import AddPhotos from "mobile/components/shared/AddPhotos";
+import { styles } from "mobile/styles/template";
 
 type Props = {
   navigation: any
 };
 
-type State = {
-  bio: string
-};
+type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -23,38 +29,28 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingBioScreen extends React.Component<Props, State> {
+class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      bio: ""
-    };
+    this.state = {};
   }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    //TODO Navigate to next page
+    navigation.navigate("OnboardingBio");
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text
+        <View
           style={{
-            fontSize: 34,
-            marginLeft: 22,
-            marginRight: 22,
-            textAlign: "center"
+            width: "100%",
+            height: Dimensions.get("window").width
           }}
         >
-          About Me
-        </Text>
-        <Input
-          multiline={true}
-          placeholder="The real Tony Monaco"
-          onChangeText={bio => this.setState({ bio })}
-          value={this.state.bio}
-        />
+          <AddPhotos />
+        </View>
         <Button
           onPress={this._goToNextPage}
           title="Continue"
@@ -68,4 +64,4 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingBioScreen);
+)(OnboardingAddPicturesScreen);

@@ -45,7 +45,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
 
   _onPress = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingBio");
+    navigation.navigate("OnboardingAddPictures");
   };
 
   render() {
