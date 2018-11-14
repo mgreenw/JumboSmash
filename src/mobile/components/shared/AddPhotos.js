@@ -1,18 +1,9 @@
 // @flow
 import React from "react";
-import {
-  Dimensions,
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  TextInput
-} from "react-native";
+import { View } from "react-native";
 import { connect } from "react-redux";
-import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { styles } from "mobile/styles/template";
 
 type Props = {};
 

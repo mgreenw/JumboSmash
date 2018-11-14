@@ -35,10 +35,6 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
-  _onAddPhoto = () => {
-    console.log("pressed add photo");
-  };
-
   _onPressContinue = () => {
     //TODO: Navigate to next page
     console.log("pressed continue");
@@ -56,12 +52,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
           <AddPhotos />
         </View>
         <Button
-          onPress={this._onAddPhoto}
-          title="Upload photos"
-          buttonStyle={styles.button}
-        />
-        <Button
-          onPress={this._onAddPhoto}
+          onPress={this._onPressContinue}
           title="Continue"
           buttonStyle={styles.button}
         />
