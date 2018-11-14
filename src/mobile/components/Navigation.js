@@ -24,6 +24,8 @@ import Help from "mobile/components/Auth/Login/Help_Screen";
 // APP:
 /////////
 
+import AppLoading from "mobile/components/App/AppLoading_Screen";
+
 // Main App Screens
 import Profile from "mobile/components/App/Main/Profile/Profile_Screen";
 import ProfileEdit from "mobile/components/App/Main/Profile/ProfileEdit_Screen";
@@ -103,7 +105,7 @@ const LoginStack = createStackNavigator(
 const AuthSwitch = createSwitchNavigator(
   {
     Login: LoginStack,
-    AuthLoading: AuthLoading
+    AuthLoading: { screen: AuthLoading }
   },
   {
     initialRouteName: "AuthLoading"
@@ -131,7 +133,8 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     Main: MainContentSwitch,
-    OnBoarding: OnboardingStack
+    OnBoarding: OnboardingStack,
+    AppLoading: { screen: AppLoading }
   },
   {
     initialRouteName: "Main"
