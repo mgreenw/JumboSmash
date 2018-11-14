@@ -8,19 +8,30 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import ProgressBar from "react-native-progress/Bar";
+import { loadApp } from "mobile/actions/app/loadApp";
 
 type Props = {
-  navigation: any
+  navigation: any,
+  token: string,
+  getMySettings: (token: string) => void
 };
 
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+  console.log(reduxState);
+  return {
+    token: reduxState.token,
+    settingsLoaded: reduxState.settingsLoaded
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+  return {
+    getMySettings: (token: string) => {
+      dispatch(loadApp(token));
+    }
+  };
 }
 
 class AppLoadingScreen extends React.Component<Props, State> {
@@ -29,6 +40,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
     this.state = {};
     // TODO: load the app here!
     setTimeout(() => {
+      this.props.getMySettings(this.props.token);
       const { navigate } = this.props.navigation;
       navigate("Main", {});
     }, 2000);

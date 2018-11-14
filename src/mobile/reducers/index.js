@@ -34,6 +34,7 @@ export type ReduxState = {
 
   loggedIn: boolean,
   authLoaded: boolean,
+  settingsLoaded: boolean,
 
   inProgress: {
     loadAuth: boolean,
@@ -50,6 +51,7 @@ const defaultState: ReduxState = {
   settings: null,
   loggedIn: false,
   authLoaded: false,
+  settingsLoaded: false,
   inProgress: {
     loadAuth: false,
     logout: false,
