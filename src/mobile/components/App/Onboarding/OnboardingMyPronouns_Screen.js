@@ -7,7 +7,7 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PronounSelector } from "mobile/components/shared/PronounSelector";
-import type { Pronouns } from "mobile/components/shared/PronounSelector";
+import type { Pronouns } from "mobile/reducers";
 
 type Props = {
   navigation: any

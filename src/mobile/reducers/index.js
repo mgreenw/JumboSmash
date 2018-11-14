@@ -1,19 +1,32 @@
 // @flow
-import { AsyncStorage } from "react-native";
-import _ from "lodash";
 
 // Auth:
-import { LOGIN_INITIATED, LOGIN_COMPLETED } from "../actions/auth/login.js";
-import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "../actions/auth/logout.js";
+import { LOGIN_INITIATED, LOGIN_COMPLETED } from "mobile/actions/auth/login";
+import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "mobile/actions/auth/logout";
 import {
   LOAD_AUTH__INITIATED,
   LOAD_AUTH__COMPLETED
-} from "../actions/auth/loadAuth.js";
+} from "mobile/actions/auth/loadAuth";
+
+// TODO: make own ReduxState file
+export type Pronouns = {
+  he: boolean,
+  she: boolean,
+  they: boolean
+};
+
+export type AppSettings = {};
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
   utln: string,
   token: ?string,
+
+  ///////////////////
+  // app data:
+  ///////////////////
+
+  settings: ?AppSettings,
 
   ///////////////////
   // action states:
@@ -25,19 +38,23 @@ export type ReduxState = {
   inProgress: {
     loadAuth: boolean,
     logout: boolean,
-    login: boolean
+    login: boolean,
+
+    loadSettings: boolean
   }
 };
 
 const defaultState: ReduxState = {
   utln: "",
   token: null,
+  settings: null,
   loggedIn: false,
   authLoaded: false,
   inProgress: {
     loadAuth: false,
     logout: false,
-    login: false
+    login: false,
+    loadSettings: false
   }
 };
 
