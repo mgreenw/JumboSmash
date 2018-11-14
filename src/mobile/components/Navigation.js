@@ -38,6 +38,7 @@ import Messaging from "mobile/components/App/Main/Matches/Matches_Screen";
 import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
+import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAddPictures_Screen";
 
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -111,7 +112,8 @@ const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
     OnboardingNameAge: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns }
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+    OnboardingAddPictures: { screen: OnboardingAddPictures }
   },
   {
     initialRouteName: "OnboardingStart",
@@ -128,7 +130,7 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     Main: MainContentSwitch,
-    OnBoarding: OnboardingStack,
+    Onboarding: OnboardingStack,
     AppLoading: { screen: AppLoading }
   },
   {
