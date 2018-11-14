@@ -23,6 +23,8 @@ before_install:
   - sleep 1
 install:
   - npm install
+  - ls ./src
+  - ls ./src/koh
   - npm install --prefix ./src/koh
   - npm install --prefix ./src/mobile
   - npm install --prefix ./src/server
