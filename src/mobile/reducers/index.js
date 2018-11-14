@@ -7,6 +7,10 @@ import {
   LOAD_AUTH__INITIATED,
   LOAD_AUTH__COMPLETED
 } from "mobile/actions/auth/loadAuth";
+import {
+  LOAD_APP__INITIATED,
+  LOAD_APP__COMPLETED
+} from "mobile/actions/app/loadApp";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -15,7 +19,13 @@ export type Pronouns = {
   they: boolean
 };
 
-export type AppSettings = {};
+export type UserSettings = {
+  usePronouns: Pronouns,
+  wantPronouns: Pronouns
+};
+
+// TODO:
+export type UserProfile = {};
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
@@ -26,7 +36,8 @@ export type ReduxState = {
   // app data:
   ///////////////////
 
-  settings: ?AppSettings,
+  settings: ?UserSettings,
+  profile: ?UserProfile,
 
   ///////////////////
   // action states:
@@ -34,14 +45,13 @@ export type ReduxState = {
 
   loggedIn: boolean,
   authLoaded: boolean,
-  settingsLoaded: boolean,
+  appLoaded: boolean,
 
   inProgress: {
     loadAuth: boolean,
     logout: boolean,
     login: boolean,
-
-    loadSettings: boolean
+    loadApp: boolean
   }
 };
 
@@ -49,14 +59,15 @@ const defaultState: ReduxState = {
   utln: "",
   token: null,
   settings: null,
+  profile: null,
   loggedIn: false,
   authLoaded: false,
-  settingsLoaded: false,
+  appLoaded: false,
   inProgress: {
     loadAuth: false,
     logout: false,
     login: false,
-    loadSettings: false
+    loadApp: false
   }
 };
 
@@ -137,6 +148,30 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadAuth: false
+        }
+      };
+    }
+
+    // LOAD APP:
+    case LOAD_APP__INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          loadApp: true
+        }
+      };
+    }
+
+    case LOAD_APP__COMPLETED: {
+      return {
+        ...state,
+        appLoaded: true,
+        settings: action.settings,
+        // profile: action.profile,
+        inProgress: {
+          ...state.inProgress,
+          loadApp: false
         }
       };
     }

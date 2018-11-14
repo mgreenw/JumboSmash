@@ -13,7 +13,8 @@ import { loadApp } from "mobile/actions/app/loadApp";
 type Props = {
   navigation: any,
   token: string,
-  getMySettings: (token: string) => void
+  getMySettings: (token: string) => void,
+  appLoaded: boolean
 };
 
 type State = {};
@@ -22,7 +23,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   console.log(reduxState);
   return {
     token: reduxState.token,
-    settingsLoaded: reduxState.settingsLoaded
+    appLoaded: reduxState.appLoaded
   };
 }
 
