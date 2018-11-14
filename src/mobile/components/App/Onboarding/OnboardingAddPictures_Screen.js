@@ -37,7 +37,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   _onPressContinue = () => {
     //TODO: Navigate to next page
-    console.log("pressed continue");
+    this.props.navigation.navigate("OnboardingNotifications");
   };
 
   render() {
