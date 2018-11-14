@@ -7,6 +7,7 @@ import { styles } from "mobile/styles/template";
 import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import {routes} from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -46,7 +47,7 @@ class SwipingScreen extends React.Component<Props, State> {
           name="user"
           type="font-awesome"
           size={40}
-          onPress={() => navigation.navigate("Profile")}
+          onPress={() => navigation.navigate(routes.Profile)}
           containerStyle={{ paddingLeft: 10 }}
         />
       )
