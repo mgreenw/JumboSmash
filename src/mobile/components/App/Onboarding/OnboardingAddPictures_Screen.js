@@ -12,16 +12,14 @@ import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import AddPhotos from "mobile/components/shared/AddPhotos";
 import { styles } from "mobile/styles/template";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type Props = {
   navigation: any
 };
 
-type State = {
-  photos: array
-};
+type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -42,68 +40,26 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   };
 
   _onPressContinue = () => {
+    //TODO: Navigate to next page
     console.log("pressed continue");
   };
 
   render() {
-    const spacer = (
-      <View style={{ width: "100%", height: 25, backgroundColor: "#38c7cc" }} />
-    );
-    const picPlaceholder = (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "grey",
-          margin: 5,
-          aspectRatio: 1,
-          borderColor: "#38c7cc",
-          borderWidth: 2,
-          borderStyle: "dashed"
-        }}
-      />
-    );
-    let renderedPhotos;
-    if (!this.state.photos) {
-      renderedPhotos = (
+    return (
+      <View style={styles.container}>
+        <View
+          style={{
+            width: "100%",
+            height: Dimensions.get("window").width
+          }}
+        >
+          <AddPhotos />
+        </View>
         <Button
           onPress={this._onAddPhoto}
           title="Upload photos"
           buttonStyle={styles.button}
         />
-      )
-    } else {
-      renderedPhotos = (
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").width
-          }}
-        >
-          <View style={{ flex: 1, padding: 10 }}>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              {picPlaceholder}
-              {picPlaceholder}
-            </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              {picPlaceholder}
-              {picPlaceholder}
-            </View>
-          </View>
-        </View>
-        {spacer}
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").width,
-            backgroundColor: "#f0f3f5"
-          }}
-        />
-      )
-    }
-    return (
-      <View style={styles.container}>
-      {renderedPhotos}
-        
         <Button
           onPress={this._onAddPhoto}
           title="Continue"

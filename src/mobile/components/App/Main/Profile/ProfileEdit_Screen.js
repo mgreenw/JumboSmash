@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import AddPhotos from "mobile/components/shared/AddPhotos";
 import { styles } from "mobile/styles/template";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -55,40 +56,11 @@ class SettingsScreen extends React.Component<Props, State> {
     const spacer = (
       <View style={{ width: "100%", height: 25, backgroundColor: "#38c7cc" }} />
     );
-    const picPlaceholder = (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "grey",
-          margin: 5,
-          aspectRatio: 1,
-          borderColor: "#38c7cc",
-          borderWidth: 2,
-          borderStyle: "dashed"
-        }}
-      />
-    );
+
     return (
       <KeyboardAwareScrollView extraScrollHeight={30}>
         {spacer}
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").width
-          }}
-        >
-          <View style={{ flex: 1, padding: 10 }}>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              {picPlaceholder}
-              {picPlaceholder}
-            </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              {picPlaceholder}
-              {picPlaceholder}
-            </View>
-            />
-          </View>
-        </View>
+        <AddPhotos />
         {spacer}
         <View
           style={{
