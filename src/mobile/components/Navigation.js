@@ -39,6 +39,11 @@ import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Sc
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
 
+const PROFILE_ROUTE = "Profile";
+
+export const routes = {
+  Profile: PROFILE_ROUTE
+};
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
@@ -53,12 +58,12 @@ const CardsStack = createStackNavigator(
 
 const ProfileStack = createStackNavigator(
   {
-    Profile: { screen: Profile },
+    PROFILE_ROUTE: { screen: Profile },
     SettingsEdit: { screen: SettingsEdit },
     ProfileEdit: { screen: ProfileEdit }
   },
   {
-    initialRouteName: "Profile"
+    initialRouteName: "PROFILE_ROUTE"
   }
 );
 
@@ -132,7 +137,7 @@ const AppSwitch = createSwitchNavigator(
     AppLoading: { screen: AppLoading }
   },
   {
-    initialRouteName: "AppLoading"
+    initialRouteName: "Main"
   }
 );
 

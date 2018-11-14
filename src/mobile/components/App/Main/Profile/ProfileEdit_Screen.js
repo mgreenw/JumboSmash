@@ -86,7 +86,6 @@ class SettingsScreen extends React.Component<Props, State> {
               {picPlaceholder}
               {picPlaceholder}
             </View>
-            />
           </View>
         </View>
         {spacer}
