@@ -11,6 +11,12 @@ Koh is based off the server and uses NodeJS LTS 8.12.0 and Postgres 10.5, simila
 ## Developer Setup
 
 Setup your develpment environment for the server first. Then, create a new database following the development.config
+Specifically, you need to create a database for koh!
+
+Run:
+1. `createdb koh`
+2. `psql -U postgres -c "grant all privileges on database koh to jumbosmashdev;"`
+3. `psql -U postgres -d koh -c "CREATE EXTENSION IF NOT EXISTS citext;"`
 
 If you have any questions or get stuck, post in `#koh`!
 
