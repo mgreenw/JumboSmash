@@ -76,6 +76,9 @@ function validateProfile(profile: Profile) {
 }
 
 function getFieldTemplates(definedFields: Array<[string, any]>) {
+  // Get an array of the fields themselves
+  const fields = _.map(definedFields, field => _.nth(field, 1));
+
   // Get all the fields with their respective template strings. fieldTemplates
   // is a string like 'display_name = $1, birthday = $2, bio = $3'
   const templateString = _.join(
@@ -83,10 +86,12 @@ function getFieldTemplates(definedFields: Array<[string, any]>) {
     ', ',
   );
 
-  // Get an array of the fields themselves
-  const fields = _.map(definedFields, field => _.nth(field, 1));
+  const fieldTemplate = {
+    templateString: templateString,
+    fields: fields,
+  };
 
-  return { templateString, fields };
+  return fieldTemplate;
 }
 
 module.exports = {

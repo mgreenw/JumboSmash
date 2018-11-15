@@ -87,8 +87,8 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     });
   }
 
-  // Get an object of the template strings and fields
-  const fieldTemplate = utils.getFieldTemplates(definedFields);
+  // Get an array of the fields themselves
+  const template = utils.getFieldTemplates(definedFields);
 
   try {
     // Update the profile in the database. Utilize fieldTemplates and the field
@@ -96,9 +96,9 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     // this because none of the values in the construction come from user input
     await db.query(`
       UPDATE profiles
-      SET ${fieldTemplate.templateString}
-      WHERE id = $${fieldTemplate.fields.length + 1}`,
-    [...fieldTemplate.fields, req.user.id]);
+      SET ${template.templateString}
+      WHERE user_id = $${template.fields.length + 1}`,
+    [...template.fields, req.user.id]);
 
     // If there is an id returned, success!
     return res.status(201).json({

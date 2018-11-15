@@ -30,6 +30,28 @@ async function createUser(utln, username = null) {
   }
 }
 
+async function updateSettings(utln, wantsHe = null, wantsShe = null,
+  wantsThey = null, usesHe = null, usesShe = null, usesThey = null) {
+
+  try {
+    const result = await db.query(`
+    INSERT INTO users
+      (utln, wantsHe, wantsShe, wantsThey, usesHe, usesShe, usesThey)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING id`, [utln, wantsHe, wantsShe, wantsThey, usesHe, usesShe,
+      usesThey]);
+
+    const { id } = result.rows[0];
+
+    return {
+      id,
+      token: signToken(id),
+    };
+  } catch (error) {
+    throw new Error('Failed to insert user');
+  }
+}
+
 async function createProfile(userId, body) {
   const {
     displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio,
