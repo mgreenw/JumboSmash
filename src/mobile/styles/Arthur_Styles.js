@@ -62,5 +62,9 @@ export const Arthur_Styles = StyleSheet.create({
     fontSize: 45,
     padding: 15,
     textAlign: "center"
+  },
+  onboardingHeader: {
+    fontSize: 24,
+    textAlign: "center"
   }
 });
