@@ -74,7 +74,7 @@ const defaultState: ReduxState = {
 export default function rootReducer(
   state: ReduxState = defaultState,
   action: any
-) {
+): ReduxState {
   // $FlowFixMe (__DEV__ will break flow)
   if (__DEV__) {
     console.log(action.type);
@@ -168,7 +168,7 @@ export default function rootReducer(
         ...state,
         appLoaded: true,
         settings: action.settings,
-        // profile: action.profile,
+        profile: action.profile,
         inProgress: {
           ...state.inProgress,
           loadApp: false
