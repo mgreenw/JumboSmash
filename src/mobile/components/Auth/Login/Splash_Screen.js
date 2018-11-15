@@ -14,10 +14,11 @@ import {
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/auth";
-import sendVerificationEmail from "../../api/auth/sendVerificationEmail";
+import { styles } from "mobile/styles/auth";
+import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 
 type Props = {
   navigation: any
@@ -155,20 +156,7 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <View style={styles.container}>
-        <Text
-          style={
-            (styles.title,
-            {
-              color: "#ff6262",
-              fontFamily: "vegan",
-              fontSize: 44,
-              padding: 15,
-              textAlign: "center"
-            })
-          }
-        >
-          Project Gem
-        </Text>
+        <Text style={Arthur_Styles.title}>Project Gem</Text>
         <KeyboardAvoidingView
           style={{
             flex: 1,
@@ -191,7 +179,7 @@ class SplashScreen extends React.Component<Props, State> {
                 width: 185,
                 height: 153
               }}
-              source={require("../../assets/arthurIcon.png")}
+              source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
             />
             <Input
               containerStyle={

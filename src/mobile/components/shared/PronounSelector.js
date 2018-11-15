@@ -3,12 +3,9 @@ import React from "react";
 import { View } from "react-native";
 import { Button, CheckBox } from "react-native-elements";
 import _ from "lodash";
-
-export type Pronouns = {
-  he: boolean,
-  she: boolean,
-  they: boolean
-};
+import { StyleSheet } from "react-native";
+import { Colors, Arthur_Styles } from "../../styles/Arthur_Styles";
+import type { Pronouns } from "mobile/reducers/";
 
 type Props = {
   defaultPronouns: Pronouns,
@@ -37,62 +34,112 @@ export class PronounSelector extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flexDirection: "row" }}>
-        <CheckBox
-          center
-          title="He"
-          iconLeft
-          iconType="material"
-          checkedIcon="check"
-          uncheckedIcon="add"
-          checkedColor="black"
-          checked={this.state.pronouns.he}
-          onPress={() => {
-            this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                he: !prevState.pronouns.he
-              }
-            }));
-          }}
-        />
-        <CheckBox
-          center
-          title="She"
-          iconLeft
-          iconType="material"
-          checkedIcon="check"
-          uncheckedIcon="add"
-          checkedColor="black"
-          checked={this.state.pronouns.she}
-          onPress={() => {
-            this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                she: !prevState.pronouns.she
-              }
-            }));
-          }}
-        />
-        <CheckBox
-          center
-          title="They"
-          iconLeft
-          iconType="material"
-          checkedIcon="check"
-          uncheckedIcon="add"
-          checkedColor="black"
-          checked={this.state.pronouns.they}
-          onPress={() => {
-            this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                they: !prevState.pronouns.they
-              }
-            }));
-          }}
-        />
+      <View style={styles.rowContainer}>
+        <View style={{ flex: 0.05 }} />
+        <View style={styles.checkBoxWrapper}>
+          <CheckBox
+            title="She-series "
+            iconLeft
+            iconType="material"
+            checkedIcon="check"
+            uncheckedIcon="add"
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
+            checked={this.state.pronouns.she}
+            containerStyle={
+              this.state.pronouns.she
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
+            }
+            textStyle={
+              this.state.pronouns.she
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
+            }
+            onPress={() => {
+              this.setState(prevState => ({
+                pronouns: {
+                  ...prevState.pronouns,
+                  she: !prevState.pronouns.she
+                }
+              }));
+            }}
+          />
+        </View>
+        <View style={{ flex: 0.05 }} />
+        <View style={styles.checkBoxWrapper}>
+          <CheckBox
+            title="They-series"
+            iconLeft
+            iconType="material"
+            checkedIcon="check"
+            uncheckedIcon="add"
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
+            checked={this.state.pronouns.they}
+            containerStyle={
+              this.state.pronouns.they
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
+            }
+            textStyle={
+              this.state.pronouns.they
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
+            }
+            onPress={() => {
+              this.setState(prevState => ({
+                pronouns: {
+                  ...prevState.pronouns,
+                  they: !prevState.pronouns.they
+                }
+              }));
+            }}
+          />
+        </View>
+        <View style={{ flex: 0.05 }} />
+        <View style={styles.checkBoxWrapper}>
+          <CheckBox
+            title="He-series "
+            iconLeft
+            iconType="material"
+            checkedIcon="check"
+            uncheckedIcon="add"
+            checkedColor={Colors.IceBlue}
+            uncheckedColor={Colors.Black}
+            checked={this.state.pronouns.he}
+            containerStyle={
+              this.state.pronouns.he
+                ? Arthur_Styles.checkBoxContainer_checked
+                : Arthur_Styles.checkBoxContainer_unchecked
+            }
+            textStyle={
+              this.state.pronouns.he
+                ? Arthur_Styles.checkBoxText_checked
+                : Arthur_Styles.checkBoxText_unchecked
+            }
+            onPress={() => {
+              this.setState(prevState => ({
+                pronouns: {
+                  ...prevState.pronouns,
+                  he: !prevState.pronouns.he
+                }
+              }));
+            }}
+          />
+        </View>
+        <View style={{ flex: 0.05 }} />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  rowContainer: {
+    flexDirection: "row"
+  },
+  checkBoxWrapper: {
+    flex: 1,
+    alignItems: "center"
+  }
+});

@@ -3,9 +3,9 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "../../styles/template";
+import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
@@ -35,7 +35,7 @@ class NameAgeScreen extends React.Component<Props, State> {
 
   _onPress = () => {
     const { navigation } = this.props;
-    //TODO: add navigation to next screen
+    navigation.navigate("OnboardingMyPronouns");
   };
 
   render() {

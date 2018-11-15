@@ -9,6 +9,7 @@
 [lints]
 
 [options]
+module.name_mapper='^mobile/\([-a-zA-Z0-9$_/]+\)$' -> '<PROJECT_ROOT>/src/mobile/\1'
 
 [untyped]
 .*/node_modules/.*

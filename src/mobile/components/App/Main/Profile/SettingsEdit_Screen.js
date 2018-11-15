@@ -3,12 +3,12 @@ import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
-import { styles } from "../../../styles/template";
-import { logout } from "../../../actions/auth/logout";
-import { PronounSelector } from "../../shared/PronounSelector";
-import type { Pronouns } from "../../shared/PronounSelector";
+import { styles } from "mobile/styles/template";
+import { logout } from "mobile/actions/auth/logout";
+import { PronounSelector } from "mobile/components/shared/PronounSelector";
+import type { Pronouns } from "mobile/reducers";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "../../../reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 
 type Props = {
   navigation: any,
