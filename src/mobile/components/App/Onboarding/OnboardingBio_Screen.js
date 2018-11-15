@@ -1,25 +1,21 @@
 // @flow
 import React from "react";
-import {
-  Dimensions,
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  TextInput
-} from "react-native";
+import { Text, View, TextInput } from "react-native";
+import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { Button, Icon, Input } from "react-native-elements";
+import BioInput from "mobile/components/shared/BioInput";
+import { styles } from "mobile/styles/template";
+import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import AddPhotos from "mobile/components/shared/AddPhotos";
-import { styles } from "mobile/styles/template";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  bio: string
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -29,28 +25,28 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingAddPicturesScreen extends React.Component<Props, State> {
+class OnboardingBioScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      bio: ""
+    };
   }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingBio");
+    navigation.navigate("OnboardingNotifications");
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <View
-          style={{
-            width: "100%",
-            height: Dimensions.get("window").width
-          }}
-        >
-          <AddPhotos />
-        </View>
+        <Text style={Arthur_Styles.onboardingHeader}>About Me</Text>
+        <BioInput
+          placeholder="The real Tony Monaco"
+          onChangeText={bio => this.setState({ bio })}
+          value={this.state.bio}
+        />
         <Button
           onPress={this._goToNextPage}
           title="Continue"
@@ -64,4 +60,4 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingAddPicturesScreen);
+)(OnboardingBioScreen);

@@ -5,12 +5,7 @@ import { Button, CheckBox } from "react-native-elements";
 import _ from "lodash";
 import { StyleSheet } from "react-native";
 import { Colors, Arthur_Styles } from "../../styles/Arthur_Styles";
-
-export type Pronouns = {
-  he: boolean,
-  she: boolean,
-  they: boolean
-};
+import type { Pronouns } from "mobile/reducers/";
 
 type Props = {
   defaultPronouns: Pronouns,

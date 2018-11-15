@@ -1,14 +1,31 @@
 // @flow
-import { AsyncStorage } from "react-native";
-import _ from "lodash";
 
 // Auth:
-import { LOGIN_INITIATED, LOGIN_COMPLETED } from "../actions/auth/login.js";
-import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "../actions/auth/logout.js";
+import { LOGIN_INITIATED, LOGIN_COMPLETED } from "mobile/actions/auth/login";
+import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "mobile/actions/auth/logout";
 import {
   LOAD_AUTH__INITIATED,
   LOAD_AUTH__COMPLETED
-} from "../actions/auth/loadAuth.js";
+} from "mobile/actions/auth/loadAuth";
+import {
+  LOAD_APP__INITIATED,
+  LOAD_APP__COMPLETED
+} from "mobile/actions/app/loadApp";
+
+// TODO: make own ReduxState file
+export type Pronouns = {
+  he: boolean,
+  she: boolean,
+  they: boolean
+};
+
+export type UserSettings = {
+  usePronouns: Pronouns,
+  wantPronouns: Pronouns
+};
+
+// TODO:
+export type UserProfile = {};
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
@@ -16,28 +33,41 @@ export type ReduxState = {
   token: ?string,
 
   ///////////////////
+  // app data:
+  ///////////////////
+
+  settings: ?UserSettings,
+  profile: ?UserProfile,
+
+  ///////////////////
   // action states:
   ///////////////////
 
   loggedIn: boolean,
   authLoaded: boolean,
+  appLoaded: boolean,
 
   inProgress: {
     loadAuth: boolean,
     logout: boolean,
-    login: boolean
+    login: boolean,
+    loadApp: boolean
   }
 };
 
 const defaultState: ReduxState = {
   utln: "",
   token: null,
+  settings: null,
+  profile: null,
   loggedIn: false,
   authLoaded: false,
+  appLoaded: false,
   inProgress: {
     loadAuth: false,
     logout: false,
-    login: false
+    login: false,
+    loadApp: false
   }
 };
 
@@ -118,6 +148,30 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadAuth: false
+        }
+      };
+    }
+
+    // LOAD APP:
+    case LOAD_APP__INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          loadApp: true
+        }
+      };
+    }
+
+    case LOAD_APP__COMPLETED: {
+      return {
+        ...state,
+        appLoaded: true,
+        settings: action.settings,
+        // profile: action.profile,
+        inProgress: {
+          ...state.inProgress,
+          loadApp: false
         }
       };
     }
