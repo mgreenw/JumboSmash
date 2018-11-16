@@ -1,5 +1,7 @@
 // @flow
 
+const _ = require('lodash');
+
 const apiUtils = require('../utils');
 
 const minBirthday = new Date('01/01/1988');
@@ -73,7 +75,29 @@ function validateProfile(profile: Profile) {
   }
 }
 
+// Given an array of fields to insert into the database, remove any undefined
+// fields and generate a template string for the fields for a postgres update
+// This is a helper method that can be reused to allow for optional fields
+// to be updated with ease
+function getFieldTemplates(definedFields: Array<[string, any]>) {
+  // Get an array of the fields themselves
+  const fields = _.map(definedFields, field => _.nth(field, 1));
+
+  // Get all the fields with their respective template strings. fieldTemplates
+  // is a string like 'display_name = $1, birthday = $2, bio = $3'
+  const templateString = _.join(
+    _.map(definedFields, (field, i) => `${_.nth(field, 0)} = $${i + 1}`),
+    ', ',
+  );
+
+  return {
+    templateString,
+    fields,
+  };
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
+  getFieldTemplates,
 };

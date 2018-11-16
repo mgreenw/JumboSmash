@@ -87,16 +87,8 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     });
   }
 
-  // Todo: Make this into a utility function for reuse
-  // Get all the fields with their respective template strings. fieldTemplates
-  // is a string like 'display_name = $1, birthday = $2, bio = $3'
-  const fieldTemplates = _.join(
-    _.map(definedFields, (field, i) => `${_.nth(field, 0)} = $${i + 1}`),
-    ', ',
-  );
-
-  // Get an array of the fields themselves
-  const fields = _.map(definedFields, field => _.nth(field, 1));
+  // Generates a template and fields for a postgres query
+  const template = utils.getFieldTemplates(definedFields);
 
   try {
     // Update the profile in the database. Utilize fieldTemplates and the field
@@ -104,9 +96,9 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     // this because none of the values in the construction come from user input
     await db.query(`
       UPDATE profiles
-      SET ${fieldTemplates}
-      WHERE user_id = $${fields.length + 1}`,
-    [...fields, req.user.id]);
+      SET ${template.templateString}
+      WHERE user_id = $${template.fields.length + 1}`,
+    [...template.fields, req.user.id]);
 
     // If there is an id returned, success!
     return res.status(201).json({
