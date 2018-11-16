@@ -35,7 +35,7 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    //TODO Navigate to next page
+    navigation.navigate("OnboardingNotifications");
   };
 
   render() {

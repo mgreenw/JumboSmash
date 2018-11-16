@@ -79,12 +79,39 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 **Code** : `400 BAD REQUEST`
 
-**Headers** : None.
-
-**Content** :
+**Content Example** :
 ```json
 {
-    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_2019"
+    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_2019",
+    "classYear": "20"
+}
+```
+
+### OR
+
+**Condition** : The UTLN is valid but the member is not a student
+
+**Code** : `400 BAD REQUEST`
+
+**Content Example** :
+```json
+{
+    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT"
+}
+```
+
+### OR
+
+**Condition** : The UTLN is valid but the member is not an undergraduate
+
+**Code** : `400 BAD REQUEST`
+
+**Content Example** :
+```json
+{
+    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD",
+    "classYear": "19",
+    "college": "THE FLETCHER SCHOOL"
 }
 ```
 
@@ -93,8 +120,6 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 **Condition** : The UTLN is invalid (not found in the White Pages)
 
 **Code** : `400 BAD REQUEST`
-
-**Headers** : None.
 
 **Content** :
 ```json
