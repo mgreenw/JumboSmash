@@ -6,14 +6,6 @@ const utils = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
-/* eslint-disable */
-const schema = {
-  "type": "object",
-  "properties": {},
-  "required": []
-};
-/* eslint-enable */
-
 /**
  * @api {get} /api/users/me/settings
  *
@@ -54,4 +46,4 @@ const getMySettings = async (req: $Request, res: $Response) => {
   }
 };
 
-module.exports = [utils.validate(schema), getMySettings];
+module.exports = getMySettings;
