@@ -23,12 +23,12 @@ const getMySettings = async (req: $Request, res: $Response) => {
   try {
     const result = await db.query(`
       SELECT
-        wants_he as "wantsHe",
-        wants_she as "wantsShe",
-        wants_they as "wantsThey",
-        uses_he as "usesHe",
-        uses_she as "usesShe",
-        uses_they as "usesThey"
+        want_he as "wantHe",
+        want_she as "wantShe",
+        want_they as "wantThey",
+        use_he as "useHe",
+        use_she as "useShe",
+        use_they as "useThey"
       FROM users
       WHERE id = $1`, [req.user.id]);
 
@@ -38,14 +38,14 @@ const getMySettings = async (req: $Request, res: $Response) => {
       status: codes.GET_SETTINGS__SUCCESS,
       settings: {
         usesPronouns: {
-          he: settings.usesHe,
-          she: settings.usesShe,
-          they: settings.usesThey,
+          he: settings.useHe,
+          she: settings.useShe,
+          they: settings.useThey,
         },
         wantsPronouns: {
-          he: settings.wantsHe,
-          she: settings.wantsShe,
-          they: settings.wantsThey,
+          he: settings.wantHe,
+          she: settings.wantShe,
+          they: settings.wantThey,
         },
       },
     });
