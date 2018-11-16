@@ -30,8 +30,15 @@ async function createUser(utln, username = null) {
   }
 }
 
-async function updateSettings(utln, wantsHe = null, wantsShe = null,
-  wantsThey = null, usesHe = null, usesShe = null, usesThey = null) {
+async function updateSettings(utln, settings) {
+  const {
+    wantsHe,
+    wantsShe,
+    wantsThey,
+    usesHe,
+    usesShe,
+    usesThey,
+  } = settings;
 
   try {
     const result = await db.query(`
@@ -98,5 +105,6 @@ module.exports = {
   createUser,
   deleteProfile,
   deleteUser,
+  updateSettings,
   signToken,
 };
