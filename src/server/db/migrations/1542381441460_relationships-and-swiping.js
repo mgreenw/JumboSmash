@@ -19,6 +19,24 @@ exports.up = (pgm) => {
     default: pgm.func('current_timestamp'),
   });
 
+  pgm.addColumns('users', {
+    active_smash: {
+      type: 'boolean',
+      notNull: true,
+      default: false,
+    },
+    active_social: {
+      type: 'boolean',
+      notNull: true,
+      default: false,
+    },
+    active_stone: {
+      type: 'boolean',
+      notNull: true,
+      default: false,
+    },
+  });
+
   // This is somewhat dumb - in a previous migration, we decided to rename
   // "users" to "profiles", which switched the foreign keys originally defined
   // for the relationships table. This corrects that error
@@ -51,23 +69,10 @@ exports.down = (pgm) => {
   pgm.dropConstraint('relationships', 'relationships_critic_user_id_fkey', {
     ifExists: true,
   });
-  pgm.addConstraint('relationships', 'relationships_candidate_user_id_fkey', {
-    foreignKeys: {
-      columns: 'candidate_user_id',
-      references: 'profiles',
-      onDelete: 'cascade',
-    },
-  });
-  pgm.addConstraint('relationships', 'relationships_critic_user_id_fkey', {
-    foreignKeys: {
-      columns: 'critic_user_id',
-      references: 'profiles',
-      onDelete: 'cascade',
-    },
-  });
   pgm.alterColumn('relationships', 'last_swipe_timestamp', {
     default: null,
   });
+  pgm.dropColumns('users', ['active_smash', 'active_social', 'active_stone']);
   pgm.dropColumns('relationships', ['liked_social', 'liked_stone']);
   pgm.renameColumn('relationships', 'liked_smash', 'liked');
 };
