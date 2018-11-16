@@ -6,52 +6,72 @@ import {
   createBottomTabNavigator
 } from "react-navigation";
 
+//////////
+// AUTH:
+//////////
+
 // Entry point; used to load from phone storage & determine route
-import AuthLoading from "./AuthLoading_Screen";
+import AuthLoading from "mobile/components/Auth/AuthLoading_Screen";
 
-// App Screens
-import Profile from "./App/Profile/Profile_Screen";
-import ProfileEdit from "./App/Profile/ProfileEdit_Screen";
-import SettingsEdit from "./App/Profile/SettingsEdit_Screen";
+// Login Screens
+import Splash from "mobile/components/Auth/Login/Splash_Screen";
+import Verify from "mobile/components/Auth/Login/Verify_Screen";
+import ExpiredCode from "mobile/components/Auth/Login/ExpiredCode_Screen";
+import Not2019 from "mobile/components/Auth/Login/Not2019_Screen";
+import Help from "mobile/components/Auth/Login/Help_Screen";
 
-import Swiping from "./App/Swiping/Swiping_Screen";
-import Messaging from "./App/Messaging/Messaging_Screen";
+/////////
+// APP:
+/////////
 
-// Auth Screens
-import Splash from "./Auth/Splash_Screen";
-import Verify from "./Auth/Verify_Screen";
-import ExpiredCode from "./Auth/ExpiredCode_Screen";
-import Not2019 from "./Auth/Not2019_Screen";
-import Help from "./Auth/Help_Screen";
+import AppLoading from "mobile/components/App/AppLoading_Screen";
+
+// Main App Screens
+import Profile from "mobile/components/App/Main/Profile/Profile_Screen";
+import ProfileEdit from "mobile/components/App/Main/Profile/ProfileEdit_Screen";
+import SettingsEdit from "mobile/components/App/Main/Profile/SettingsEdit_Screen";
+
+import Cards from "mobile/components/App/Main/Cards/Cards_Screen";
+import Messaging from "mobile/components/App/Main/Matches/Matches_Screen";
 
 // OnBoarding Screens
-import OnboardingStart from "./Onboarding/OnboardingStart_Screen";
-import OnboardingNameAge from "./Onboarding/OnboardingNameAge_Screen.js";
+import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
+import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
+import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
+import OnboardingWantPronouns from "mobile/components/App/Onboarding/OnboardingWantPronouns_Screen";
+import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAddPictures_Screen";
+import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen";
+import OnboardingNotifications from "mobile/components/App/Onboarding/OnboardingNotifications_Screen";
 
+const PROFILE_ROUTE = "Profile";
+
+export const routes = {
+  Profile: PROFILE_ROUTE
+};
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
-const SwipingStack = createStackNavigator(
+const CardsStack = createStackNavigator(
   {
-    Swiping: { screen: Swiping }
+    Cards: { screen: Cards }
   },
   {
-    initialRouteName: "Swiping"
+    initialRouteName: "Cards"
   }
 );
 
 const ProfileStack = createStackNavigator(
   {
-    Profile: { screen: Profile },
+    PROFILE_ROUTE: { screen: Profile },
     SettingsEdit: { screen: SettingsEdit },
     ProfileEdit: { screen: ProfileEdit }
   },
   {
-    initialRouteName: "Profile"
+    initialRouteName: "PROFILE_ROUTE"
   }
 );
 
-const MessagingStack = createStackNavigator(
+const MatchesStack = createStackNavigator(
   {
     Messaging: { screen: Messaging }
   },
@@ -62,18 +82,18 @@ const MessagingStack = createStackNavigator(
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
-const AppSwitch = createSwitchNavigator(
+const MainContentSwitch = createSwitchNavigator(
   {
-    Swiping: SwipingStack,
+    Cards: CardsStack,
     Profile: ProfileStack,
-    Messaging: MessagingStack
+    Matches: MatchesStack
   },
   {
-    initialRouteName: "Swiping"
+    initialRouteName: "Cards"
   }
 );
 
-const AuthStack = createStackNavigator(
+const LoginStack = createStackNavigator(
   {
     Splash: { screen: Splash },
     Verify: { screen: Verify },
@@ -86,10 +106,25 @@ const AuthStack = createStackNavigator(
   }
 );
 
+const AuthSwitch = createSwitchNavigator(
+  {
+    Login: LoginStack,
+    AuthLoading: { screen: AuthLoading }
+  },
+  {
+    initialRouteName: "AuthLoading"
+  }
+);
+
 const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
-    OnboardingNameAge: { screen: OnboardingNameAge }
+    OnboardingNameAge: { screen: OnboardingNameAge },
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+    OnboardingAddPictures: { screen: OnboardingAddPictures },
+    OnboardingBio: { screen: OnboardingBio },
+    OnboardingNotifications: { screen: OnboardingNotifications }
   },
   {
     initialRouteName: "OnboardingStart",
@@ -103,16 +138,25 @@ const OnboardingStack = createStackNavigator(
   }
 );
 
+const AppSwitch = createSwitchNavigator(
+  {
+    Main: MainContentSwitch,
+    Onboarding: OnboardingStack,
+    AppLoading: { screen: AppLoading }
+  },
+  {
+    initialRouteName: "AppLoading"
+  }
+);
+
 export const createRootNavigator = () => {
   return createSwitchNavigator(
     {
       App: AppSwitch,
-      Auth: AuthStack,
-      AuthLoading: AuthLoading,
-      Onboarding: OnboardingStack
+      Auth: AuthSwitch
     },
     {
-      initialRouteName: "AuthLoading"
+      initialRouteName: "Auth"
     }
   );
 };

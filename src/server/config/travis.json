@@ -6,5 +6,6 @@
     "user": "postgres",
     "password": ""
   },
-  "secret": "ohhhhhnoooo!!"
+  "secret": "ohhhhhnoooo!!",
+  "koh_host": "http://koh.jumbosmash.com"
 }

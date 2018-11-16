@@ -3,16 +3,13 @@
 import type { $Request, $Response } from 'express';
 
 const _ = require('lodash');
-const jsdom = require('jsdom');
 
+const logger = require('../../logger');
 const db = require('../../db');
 const mail = require('../../mail');
 const authUtils = require('./utils');
 const apiUtils = require('../utils');
-const utils = require('../../utils');
 const codes = require('../status-codes');
-
-const { JSDOM } = jsdom;
 
 /* eslint-disable */
 const schema = {
@@ -61,9 +58,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       // If it has not expired AND we are not forcing a resend,
       // respond that the email has already been sent
       if (forceResend !== true && !oldCodeExpired) {
-        if (utils.getNodeEnv() === 'development') {
-          console.log(`Already sent code: ${code.code}`);
-        }
+        logger.info(`Already sent code: ${code.code}`);
         return res.status(200).json({
           status: codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT,
           email: code.email,
@@ -71,42 +66,39 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       }
     }
 
-    // Check Tufts website for proper email. We need to follow redirects
-    const { body } = await authUtils.postForm({
-      followAllRedirects: true,
-      url: 'https://whitepages.tufts.edu/searchresults.cgi',
-      form: { search: utln }
-    });
+    // Get the member info for the UTLN from Koh.
+    const memberInfo = await authUtils.getMemberInfo(utln);
 
-    // If no results were found for that UTLN, send an error.
-    if (body.includes('returned no results') || body.includes('match(es)')) {
+    //  If the member info is null (not found), error that it was not found.
+    if (!memberInfo) {
       return res.status(400).json({
         status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
       });
     }
 
-    // Parse the user's data from the White Pages
-    const dom = new JSDOM(body);
-    const { document } = dom.window;
-    const table = document.getElementsByClassName('responsive-table')[0];
-    const fields = {};
-    _.map(table.rows, row => {
-      const key = row.cells[0].getElementsByTagName('b')[0].innerHTML.trim().replace(':', '');
-      fields[key] = row.cells[1].innerHTML.trim();
-    });
-
-    // Ensure the user's year is 2019.
-    // TODO: offload this to a local database instead of a Tufts server
-    const classYear = fields['Class Year'];
-    if (classYear !== '19') {
+    // Ensure the member is a student
+    if (!memberInfo.classYear) {
       return res.status(400).json({
-        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019,
-        classYear: classYear,
+        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT,
       });
     }
 
-    // Regex for the user's email from the White Pages.
-    const email = fields['Email Address'].match(new RegExp('<a href="mailto:' + "(.*)" + '">'))[1].trim();
+    // Check that the student is in A&S or E
+    if (!_.includes(['A&S', 'E'], memberInfo.college)) {
+      return res.status(400).json({
+        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD,
+        college: memberInfo.college,
+        classYear: memberInfo.classYear,
+      });
+    }
+
+    // Ensure user is in the Class of 2019
+    if (memberInfo.classYear !== '19') {
+      return res.status(400).json({
+        status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019,
+        classYear: memberInfo.classYear,
+      });
+    }
 
     // Code range is 000000 to 999999
     const verificationCode = Math.floor(Math.random() * (999999 + 1)).toString().padStart(6, '000000');
@@ -118,7 +110,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // Upsert the verification code into the database.
     const result = await db.query(
       'INSERT INTO verification_codes (utln, code, expiration, attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
-      [utln, verificationCode, expirationDate, email, verificationCode, expirationDate, emailSends + 1, email],
+      [utln, verificationCode, expirationDate, memberInfo.email, verificationCode, expirationDate, emailSends + 1, memberInfo.email],
     );
 
     // If the insert did not return any rows, the user has already registered.
@@ -131,7 +123,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // Create the verification url and send the email!
     // TODO: Ensure that the mail sent.
     mail.send({
-      to: email,
+      to: memberInfo.email,
       from: 'jumbosmash19@gmail.com',
       subject: 'JumboSmash Email Verification',
       html: `<p>Enter this code: ${verificationCode}</p>`,
@@ -140,9 +132,10 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // Send a success response to the client
     return res.status(200).json({
       status: codes.SEND_VERIFICATION_EMAIL__SUCCESS,
-      email: email,
+      email: memberInfo.email,
     });
   } catch (err) {
+    console.log("ERR", err);
     // TODO: Log this to a standard logger
     return apiUtils.error.server(res, err);
   }
