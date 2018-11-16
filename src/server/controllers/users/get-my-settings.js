@@ -36,7 +36,18 @@ const getMySettings = async (req: $Request, res: $Response) => {
     const settings = result.rows[0];
     return res.status(200).json({
       status: codes.GET_SETTINGS__SUCCESS,
-      settings,
+      settings: {
+        usesPronouns: {
+          he: settings.usesHe,
+          she: settings.usesShe,
+          they: settings.usesThey,
+        },
+        wantsPronouns: {
+          he: settings.wantsHe,
+          she: settings.wantsShe,
+          they: settings.wantsThey,
+        },
+      },
     });
   } catch (error) {
     return utils.error.server(res, 'Failed to get user settings.');
