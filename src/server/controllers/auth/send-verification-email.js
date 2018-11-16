@@ -5,11 +5,11 @@ import type { $Request, $Response } from 'express';
 const _ = require('lodash');
 const jsdom = require('jsdom');
 
+const logger = require('../../logger');
 const db = require('../../db');
 const mail = require('../../mail');
 const authUtils = require('./utils');
 const apiUtils = require('../utils');
-const utils = require('../../utils');
 const codes = require('../status-codes');
 
 const { JSDOM } = jsdom;
@@ -61,9 +61,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       // If it has not expired AND we are not forcing a resend,
       // respond that the email has already been sent
       if (forceResend !== true && !oldCodeExpired) {
-        if (utils.getNodeEnv() === 'development') {
-          console.log(`Already sent code: ${code.code}`);
-        }
+        logger.info(`Already sent code: ${code.code}`);
         return res.status(200).json({
           status: codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT,
           email: code.email,
