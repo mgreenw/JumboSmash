@@ -25,7 +25,12 @@ export type UserSettings = {
 };
 
 // TODO:
-export type UserProfile = {};
+export type UserProfile = {
+  displayName: string,
+  birthday: string,
+  bio: string,
+  images: $ReadOnlyArray<?string>
+};
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {

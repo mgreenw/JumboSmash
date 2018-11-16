@@ -7,31 +7,40 @@ import { MY_PROFILE__ROUTE } from "../routes";
 import type { UserProfile } from "mobile/reducers";
 
 const GET_PROFILE__SUCCESS = "GET_PROFILE__SUCCESS";
-const GET_PROFILE__NOT_FOUND = "GET_PROFILE__PROFILE_NOT_FOUND";
+const PROFILE_SETUP_INCOMPLETE = "PROFILE_SETUP_INCOMPLETE";
 
-type getProfileResponse__SUCCESS = {
-  status: string,
-  profile: UserProfile
+// This is how we encode profiles on the server, which is the schema of the
+// profiles database
+type ServerProfile = {
+  display_name: string,
+  birthday: string,
+  bio: string,
+  image1_url: string,
+  image2_url: string,
+  image3_url: string,
+  image4_url: string
 };
-
-type getProfileResponse__NOT_FOUND = {};
 
 type request = {
   token: string
 };
 
-export default function getTokenUtln(
-  request: request,
-  callback__SUCCESS: (
-    response: getProfileResponse__SUCCESS,
-    request: request
-  ) => void,
-  callback__NOT_FOUND: (
-    response: getProfileResponse__NOT_FOUND,
-    request: request
-  ) => void,
-  callback__ERROR: (response: any, request: request) => void
-) {
+function parseProfile(apiResponse: ServerProfile): UserProfile {
+  console.log("parseProfile", apiResponse);
+  return {
+    displayName: "test",
+    birthday: apiResponse.birthday, // TODO: convert
+    bio: apiResponse.bio,
+    images: [
+      apiResponse.image1_url,
+      apiResponse.image2_url,
+      apiResponse.image3_url,
+      apiResponse.image4_url
+    ]
+  };
+}
+
+export default function getMyProfile(request: request): Promise<?UserProfile> {
   return timeout(
     30000,
     fetch(MY_PROFILE__ROUTE, {
@@ -45,19 +54,19 @@ export default function getTokenUtln(
   )
     .then(response => response.json())
     .then(response => {
-      // We use this to ASSERT what the type of the response is.
       switch (response.status) {
         case GET_PROFILE__SUCCESS:
-          callback__SUCCESS(response, request);
-          break;
-        case GET_PROFILE__NOT_FOUND:
-          callback__NOT_FOUND(response, request);
-          break;
+          return parseProfile(response);
+
+        // on an incomplete profile, return a null UserProfile. We use this
+        // to set profile to null in the Redux State
+        case PROFILE_SETUP_INCOMPLETE:
+          return null;
         default:
-          console.log("Profile Error:", response.status, response);
+          throw (response, request);
       }
     })
     .catch(error => {
-      callback__ERROR(error, request);
+      throw (error, request);
     });
 }
