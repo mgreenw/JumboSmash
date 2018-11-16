@@ -17,3 +17,5 @@
 * [Update My Profile](users/update-my-profile.md) : `PATCH /api/users/me/profile`
 * [Get My Profile](users/get-my-profile.md) : `GET /api/users/me/profile`
 * [Get Profile](users/get-profile.md) : `GET /api/users/:userId/profile`
+* [Get My Settings](users/get-my-settings.md) : `GET /api/users/me/settings`
+* [Update My Settings](users/update-my-settings.md) : `PATCH /api/users/me/settings`
