@@ -72,7 +72,6 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
       candidates: result.rows,
     });
   } catch (error) {
-    console.log(error);
     return apiUtils.error.server(res, 'Failed to search for candidates');
   }
 };

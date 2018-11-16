@@ -17,3 +17,6 @@
 * [Update My Profile](users/update-my-profile.md) : `PATCH /api/users/me/profile`
 * [Get My Profile](users/get-my-profile.md) : `GET /api/users/me/profile`
 * [Get Profile](users/get-profile.md) : `GET /api/users/:userId/profile`
+
+### Relationships
+* [Get Scene Candidates](relationships/get-scene-candidates.md) : `GET /api/relationships/candidates/:scene`
