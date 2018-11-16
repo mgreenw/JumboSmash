@@ -8,7 +8,7 @@ Get the current user's settings, based on the user's auth token.
 
 **Auth required** : YES
 
-**Permissions required** : Any user who has been verified.
+**Permissions required** : Any user that has setup their profile.
 **Request Headers**
 
 Provide the normal `Authorization` token in the request header.
@@ -29,13 +29,17 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_SETTINGS__SUCCESS",
-    "profile": {
-        "wants_he": "true",
-        "wants_she": "false",
-        "wants_they": "false",
-        "uses_he": "true",
-        "uses_she": "false",
-        "uses_they": "false
+    "settings": {
+        "usePronouns": {
+            "he": true,
+            "she": true,
+            "they": true
+        },
+        "wantPronouns": {
+            "he": true,
+            "she": true,
+            "they": true
+        }
     }
 }
 ```
