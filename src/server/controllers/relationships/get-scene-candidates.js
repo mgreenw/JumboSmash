@@ -29,11 +29,12 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
   //      we additionally check if the critic and candidates pronouns match up.
   //   2) We ALWAYS check if the candidate is blocked by the critic
   //   3) We ALWAYS check if the critic has already liked the candidate
-  //   4) We limit to 10 results - the results should change as the user
+  //   4) We ALWAYS check if the candidate is active in the scene
+  //   5) We limit to 10 results - the results should change as the user
   //      swipes, so we can always just get the first 10
-  //   5) We order by "last_swipe_timestamp" - we want the user to see people
+  //   6) We order by "last_swipe_timestamp" - we want the user to see people
   //      they haven't seen recently
-  //   6) There is no risk of SQL injection by directly inserting req.user.id:
+  //   7) There is no risk of SQL injection by directly inserting req.user.id:
   //      that value is generated server side and there is no way to get here
   //      without it being a valid user id
 
@@ -54,6 +55,7 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
       ${isSmash ? `JOIN users critic on critic.id = ${req.user.id}` : ''}
       WHERE
         profile.user_id != ${req.user.id} AND
+        candidate.active_${scene} AND
         NOT COALESCE(r.blocked, false) AND
         NOT COALESCE(r.liked_${scene}, false)
         ${isSmash ? `AND (
