@@ -51,19 +51,21 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
         profile.image4_url AS "image4Url"
       FROM profiles profile
       JOIN users candidate on candidate.id = profile.user_id
-      LEFT JOIN relationships r ON r.critic_user_id = ${req.user.id} AND r.candidate_user_id = candidate.id
+      LEFT JOIN relationships r_critic ON r_critic.critic_user_id = ${req.user.id} AND r_critic.candidate_user_id = candidate.id
+      LEFT JOIN relationships r_candidate ON r_candidate.critic_user_id = candidate.id AND r_candidate.candidate_user_id = ${req.user.id}
       ${isSmash ? `JOIN users critic on critic.id = ${req.user.id}` : ''}
       WHERE
         profile.user_id != ${req.user.id} AND
         candidate.active_${scene} AND
-        NOT COALESCE(r.blocked, false) AND
-        NOT COALESCE(r.liked_${scene}, false)
+        NOT COALESCE(r_critic.blocked, false) AND
+        NOT COALESCE(r_candidate.blocked, false) AND
+        NOT COALESCE(r_critic.liked_${scene}, false)
         ${isSmash ? `AND (
           (critic.want_he AND candidate.use_he) OR
           (critic.want_she AND candidate.use_she) OR
           (critic.want_they AND candidate.use_they)
         )` : ''}
-      ORDER BY r.last_swipe_timestamp DESC NULLS FIRST
+      ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST
       LIMIT 10
     `);
 
