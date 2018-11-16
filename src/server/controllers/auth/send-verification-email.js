@@ -68,9 +68,10 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       }
     }
 
-    // Get the member info for the UTLN from Koh. If the member info is
-    // null (not found), error that it was not found.
+    // Get the member info for the UTLN from Koh.
     const memberInfo = await authUtils.getMemberInfo(utln);
+
+    //  If the member info is null (not found), error that it was not found.
     if (!memberInfo) {
       return res.status(400).json({
         status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
