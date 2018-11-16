@@ -66,12 +66,12 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantsPronouns: {
+        wantPronouns: {
           he: true,
           she: true,
           they: true,
         },
-        usesPronouns: {
+        usePronouns: {
           he: true,
           she: true,
           they: true,
@@ -94,12 +94,12 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantsPronouns: {
+        wantPronouns: {
           he: true,
           she: true,
           they: 'true',
         },
-        usesPronouns: {
+        usePronouns: {
           he: true,
           she: true,
           they: true,
@@ -122,11 +122,11 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantsPronouns: {
+        wantPronouns: {
           he: true,
           they: 'true',
         },
-        usesPronouns: {
+        usePronouns: {
           he: true,
         },
       });

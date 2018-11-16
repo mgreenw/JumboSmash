@@ -13,7 +13,7 @@ const db = require('../../db');
 const schema = {
   "type": "object",
   "properties": {
-    "wantsPronouns": {
+    "wantPronouns": {
       "description": "The set of pronouns the user wants to match with in Smash",
       "type": "object",
       "properties": {
@@ -28,7 +28,7 @@ const schema = {
         }
       }
     },
-    "usesPronouns": {
+    "usePronouns": {
       "description": "The set of pronouns the user uses",
       "type": "object",
       "properties": {
@@ -56,15 +56,15 @@ const updateMySettings = async (req: $Request, res: $Response) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
   // field that relates to this value
-  const wantsPronouns = req.body.wantsPronouns || {};
-  const usesPronouns = req.body.usesPronouns || {};
+  const wantPronouns = req.body.wantPronouns || {};
+  const usePronouns = req.body.usePronouns || {};
   const allFields = {
-    wants_he: wantsPronouns.wantsHe,
-    wants_she: wantsPronouns.wantsShe,
-    wants_they: wantsPronouns.wantsThey,
-    uses_he: usesPronouns.usesHe,
-    uses_she: usesPronouns.usesShe,
-    uses_they: usesPronouns.usesThey,
+    want_he: wantPronouns.he,
+    want_she: wantPronouns.she,
+    want_they: wantPronouns.they,
+    use_he: usePronouns.he,
+    use_she: usePronouns.she,
+    use_they: usePronouns.they,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs

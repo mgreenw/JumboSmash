@@ -15,7 +15,7 @@ are omitted will not be updated.
 
 Provide updated settings fields
 
-* `usesPronouns`
+* `usePronouns`
   * Type: `object`
   * Description: The pronouns that the user uses
   * Required: `false`
@@ -32,7 +32,7 @@ Provide updated settings fields
       * Type: `boolean`
       * Description: If the user uses the they series pronouns
       * Required: `false`
-* `usesPronouns`
+* `wantPronouns`
   * Type: `object`
   * Description: The pronouns that the user wants to match with in Smash
   * Required: `false`
@@ -54,11 +54,11 @@ Provide updated settings fields
 
 ```json
 {
-    "wantsPronouns": {
+    "wantPronouns": {
         "he": false,
         "they": true,
     },
-    "usesPronouns": {
+    "usePronouns": {
         "he": true,
     }
 }
