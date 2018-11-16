@@ -39,25 +39,31 @@ function getUser(token: string): Promise<any> {
   });
 }
 
-/* eslint-disable arrow-body-style */
-function postForm(urlFormData: Object): Promise<any> {
+// Use Koh to get a member's info given a utln.
+function getMemberInfo(utln: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    request.post(urlFormData, (err, httpResponse, body) => {
-      if (err) reject();
-      resolve({ body, httpResponse });
-    });
-  });
-}
+    // Make the request to Koh.
+    request(`${config.get('koh_host')}/api/member-info/${utln}`, (err, res, body) => {
+      // If there is an error or no response, reject
+      if (err) return reject(err);
+      if (!res) return reject(new Error('No response from koh.'));
 
-function get(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    request(url, (err, _, body) => {
-      if (err) reject();
-      resolve(body);
+      // Parse the JSON from the response
+      const bodyJson = JSON.parse(body);
+
+      // Use the response's 'status' key to return the appropriate value. If
+      // status is unexpected, reject.
+      switch (bodyJson.status) {
+        case 'GET_MEMBER_INFO__SUCCESS':
+          return resolve(bodyJson.member);
+        case 'GET_MEMBER_INFO__NOT_FOUND':
+          return resolve(null);
+        default:
+          return reject(new Error('Koh: No status found in result body.'));
+      }
     });
   });
 }
-/* eslint-enable arrow-body-style */
 
 function verificationCodeExpired(expiration: Date, attempts: number) {
   // Check the expiration date and the number of attempts on this code.
@@ -66,8 +72,7 @@ function verificationCodeExpired(expiration: Date, attempts: number) {
 }
 
 module.exports = {
-  get,
-  postForm,
+  getMemberInfo,
   verificationCodeExpired,
   getUser,
 };

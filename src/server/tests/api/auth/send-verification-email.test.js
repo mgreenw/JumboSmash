@@ -17,6 +17,8 @@ Cases:
 
 describe('api/auth/send-verification-email', () => {
   const GOOD_UTLN = 'mloh01';
+  const PROFESSOR_UTLN = 'skhour01';
+  const NON_UNDERGRAD_UTLN = 'aho02';
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
@@ -54,8 +56,8 @@ describe('api/auth/send-verification-email', () => {
       });
   });
 
-  it('should fail given a UTLN that is not valid (not in the class of 2019)', () => {
-    return request(app)
+  it('should fail given a UTLN that is not in the class of 2019', async () => {
+    const res = await request(app)
       .post('/api/auth/send-verification-email')
       .send(
         {
@@ -63,10 +65,37 @@ describe('api/auth/send-verification-email', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(400)
-      .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019);
-      });
+      .expect(400);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019);
+    expect(res.body.classYear).toBe('20');
+  });
+
+  it('should fail given a utln that is not a current student', async () => {
+    const res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          utln: PROFESSOR_UTLN,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(400);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT);
+  });
+
+  it('should fail given a utln that is a current GRADUATE student in the class of 2019', async () => {
+    const res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          utln: NON_UNDERGRAD_UTLN,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(400);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD);
+    expect(res.body.college).toBeDefined();
+    expect(res.body.classYear).toBe('19');
   });
 
   it('should succeed in sending an email with a valid utln', () => {
