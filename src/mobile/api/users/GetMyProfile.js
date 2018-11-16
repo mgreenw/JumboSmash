@@ -26,9 +26,8 @@ type request = {
 };
 
 function parseProfile(apiResponse: ServerProfile): UserProfile {
-  console.log("parseProfile", apiResponse);
   return {
-    displayName: "test",
+    displayName: apiResponse.display_name,
     birthday: apiResponse.birthday, // TODO: convert
     bio: apiResponse.bio,
     images: [
