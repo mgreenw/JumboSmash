@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const logger = require('./logger');
 const index = require('./routes/index');
 const api = require('./routes/api');
-const utils = require('./utils');
 
 const app = express();
 app.use(bodyParser.json());
