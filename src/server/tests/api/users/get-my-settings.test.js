@@ -52,14 +52,14 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.status).toBe(codes.GET_SETTINGS__SUCCESS);
     expect(res.body.settings).toBeDefined();
 
-    expect(res.body.settings.usesPronouns).toBeDefined();
-    expect(res.body.settings.wantsPronouns).toBeDefined();
+    expect(res.body.settings.usePronouns).toBeDefined();
+    expect(res.body.settings.wantPronouns).toBeDefined();
 
-    expect(res.body.settings.usesPronouns.he).toBeDefined();
-    expect(res.body.settings.usesPronouns.she).toBeDefined();
-    expect(res.body.settings.usesPronouns.they).toBeDefined();
-    expect(res.body.settings.wantsPronouns.he).toBeDefined();
-    expect(res.body.settings.wantsPronouns.she).toBeDefined();
-    expect(res.body.settings.wantsPronouns.they).toBeDefined();
+    expect(res.body.settings.usePronouns.he).toBeDefined();
+    expect(res.body.settings.usePronouns.she).toBeDefined();
+    expect(res.body.settings.usePronouns.they).toBeDefined();
+    expect(res.body.settings.wantPronouns.he).toBeDefined();
+    expect(res.body.settings.wantPronouns.she).toBeDefined();
+    expect(res.body.settings.wantPronouns.they).toBeDefined();
   });
 });

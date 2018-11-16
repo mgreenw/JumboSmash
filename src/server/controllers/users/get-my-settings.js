@@ -37,12 +37,12 @@ const getMySettings = async (req: $Request, res: $Response) => {
     return res.status(200).json({
       status: codes.GET_SETTINGS__SUCCESS,
       settings: {
-        usesPronouns: {
+        usePronouns: {
           he: settings.useHe,
           she: settings.useShe,
           they: settings.useThey,
         },
-        wantsPronouns: {
+        wantPronouns: {
           he: settings.wantHe,
           she: settings.wantShe,
           they: settings.wantThey,
