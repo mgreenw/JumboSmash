@@ -39,25 +39,23 @@ function getUser(token: string): Promise<any> {
   });
 }
 
-/* eslint-disable arrow-body-style */
-function postForm(urlFormData: Object): Promise<any> {
+function getMemberInfo(utln: string): Promise<any> {
   return new Promise((resolve, reject) => {
-    request.post(urlFormData, (err, httpResponse, body) => {
-      if (err) reject();
-      resolve({ body, httpResponse });
+    request(`${config.get('koh_host')}/api/member-info/${utln}`, (err, res, body) => {
+      if (err) return reject(err);
+      if (!res) return reject(new Error('No response from koh.'));
+      const bodyJson = JSON.parse(body);
+      switch (bodyJson.status) {
+        case 'GET_MEMBER_INFO__SUCCESS':
+          return resolve(bodyJson.member);
+        case 'GET_MEMBER_INFO__NOT_FOUND':
+          return resolve(null);
+        default:
+          return reject(new Error('Koh: No status found in result body.'));
+      }
     });
   });
 }
-
-function get(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    request(url, (err, _, body) => {
-      if (err) reject();
-      resolve(body);
-    });
-  });
-}
-/* eslint-enable arrow-body-style */
 
 function verificationCodeExpired(expiration: Date, attempts: number) {
   // Check the expiration date and the number of attempts on this code.
@@ -66,8 +64,7 @@ function verificationCodeExpired(expiration: Date, attempts: number) {
 }
 
 module.exports = {
-  get,
-  postForm,
+  getMemberInfo,
   verificationCodeExpired,
   getUser,
 };
