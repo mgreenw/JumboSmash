@@ -87,7 +87,7 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     });
   }
 
-  // Get an array of the fields themselves
+  // Generates a template and fields for a postgres query
   const template = utils.getFieldTemplates(definedFields);
 
   try {
