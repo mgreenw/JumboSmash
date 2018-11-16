@@ -36,7 +36,7 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.status).toBe(codes.UNAUTHORIZED);
   });
 
-  it('should succeed if the user exists', async () => {
+  it('should succeed if there is a empty body', async () => {
     const user = await dbUtils.createUser('ecolwe02');
     await dbUtils.createProfile(user.id, {
       displayName: 'Emily',
@@ -48,9 +48,89 @@ describe('GET api/users/me/settings', () => {
       .patch('/api/users/me/settings')
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
-      .send({})
-      .expect(201);
-    console.log(res.body);
+      .send({});
+    expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS);
+  });
+
+  it('should succeed in updating all of the pronoun preferences', async () => {
+    const user = await dbUtils.createUser('ecolwe03');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Emily',
+      bio: 'Likes dogs and cats',
+      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
+      birthday: '1996-05-14',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/settings')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        wantsPronouns: {
+          he: true,
+          she: true,
+          they: true,
+        },
+        usesPronouns: {
+          he: true,
+          she: true,
+          they: true,
+        },
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS);
+  });
+
+  it('should fail if the the pronoun preferences are not booleans', async () => {
+    const user = await dbUtils.createUser('ecolwe04');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Emily',
+      bio: 'Likes dogs and cats',
+      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
+      birthday: '1996-05-14',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/settings')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        wantsPronouns: {
+          he: true,
+          she: true,
+          they: 'true',
+        },
+        usesPronouns: {
+          he: true,
+          she: true,
+          they: true,
+        },
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
+  });
+
+  it('should succeed in only updating some of the user settings at once', async () => {
+    const user = await dbUtils.createUser('ecolwe05');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Rando',
+      bio: 'Likes green eggs and ham',
+      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
+      birthday: '1996-05-14',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/settings')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        wantsPronouns: {
+          he: true,
+          they: 'true',
+        },
+        usesPronouns: {
+          he: true,
+        },
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST);
   });
 });

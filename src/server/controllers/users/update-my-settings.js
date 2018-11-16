@@ -13,30 +13,36 @@ const db = require('../../db');
 const schema = {
   "type": "object",
   "properties": {
-    "wantsHe": {
-      "description": "The user's interest in he series.",
-      "type": "boolean"
+    "wantsPronouns": {
+      "description": "The set of pronouns the user wants to match with in Smash",
+      "type": "object",
+      "properties": {
+        "she": {
+          "type": "boolean"
+        },
+        "he": {
+           "type": "boolean"
+        },
+        "they": {
+           "type": "boolean"
+        }
+      }
     },
-    "wantsShe": {
-      "description": "The user's interest in she series.",
-      "type": "boolean"
-    },
-    "wantsThey": {
-      "description": "The user's interest in they series.",
-      "type": "boolean"
-    },
-    "usesHe": {
-      "description": "The user identifies as he series.",
-      "type": "boolean"
-    },
-    "usesShe": {
-      "description": "The user identifies as she series.",
-      "type": "boolean"
-    },
-    "usesThey": {
-      "description": "The user identifies as they series.",
-      "type": "boolean"
-    },
+    "usesPronouns": {
+      "description": "The set of pronouns the user uses",
+      "type": "object",
+      "properties": {
+        "she": {
+          "type": "boolean"
+        },
+        "he": {
+           "type": "boolean"
+        },
+        "they": {
+           "type": "boolean"
+        }
+      }
+    }
   },
   "required": []
 };
@@ -50,13 +56,15 @@ const updateMySettings = async (req: $Request, res: $Response) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
   // field that relates to this value
+  const wantsPronouns = req.body.wantsPronouns || {};
+  const usesPronouns = req.body.usesPronouns || {};
   const allFields = {
-    wants_he: req.body.wantsHe,
-    wants_she: req.body.wantsShe,
-    wants_they: req.body.wantsThey,
-    uses_he: req.body.usesHe,
-    uses_she: req.body.usesShe,
-    uses_they: req.body.usesThey,
+    wants_he: wantsPronouns.wantsHe,
+    wants_she: wantsPronouns.wantsShe,
+    wants_they: wantsPronouns.wantsThey,
+    uses_he: usesPronouns.usesHe,
+    uses_she: usesPronouns.usesShe,
+    uses_they: usesPronouns.usesThey,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
