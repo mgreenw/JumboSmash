@@ -75,6 +75,10 @@ function validateProfile(profile: Profile) {
   }
 }
 
+// Given an array of fields to insert into the database, remove any undefined
+// fields and generate a template string for the fields for a postgres update
+// This is a helper method that can be reused to allow for optional fields
+// to be updated with ease
 function getFieldTemplates(definedFields: Array<[string, any]>) {
   // Get an array of the fields themselves
   const fields = _.map(definedFields, field => _.nth(field, 1));
@@ -86,12 +90,10 @@ function getFieldTemplates(definedFields: Array<[string, any]>) {
     ', ',
   );
 
-  const fieldTemplate = {
-    templateString: templateString,
-    fields: fields,
+  return {
+    templateString,
+    fields,
   };
-
-  return fieldTemplate;
 }
 
 module.exports = {
