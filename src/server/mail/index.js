@@ -15,7 +15,7 @@ if (NODE_ENV === 'production') {
   exports.send = sgMail.send;
 } else if (NODE_ENV === 'development') {
   exports.send = (output) => {
-    logger.info(output);
+    logger.info(JSON.stringify(output, null, 2));
   };
 } else {
   exports.send = (output) => {
