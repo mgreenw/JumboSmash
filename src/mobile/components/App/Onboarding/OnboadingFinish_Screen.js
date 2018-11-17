@@ -4,9 +4,9 @@ import { Text, View } from "react-native";
 import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
@@ -23,41 +23,47 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingNotificationsScreen extends React.Component<Props, State> {
+class OnboardingFinishScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
 
-  _enableNotifications = () => {
-    //TODO: enable notifications
+  static navigationOptions = {
+    headerLeft: null
   };
 
-  _goToNextPage = () => {
+  _saveSettingsAndProfile = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingFinish");
+    navigation.navigate("Main");
   };
 
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Push Notifications</Text>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.title}>Project Gem</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={Arthur_Styles.onboardingHeader}>
-            We use push notifications to let you know when you have a new match
-            or message.
+          <Text
+            style={{
+              fontSize: 34,
+              marginLeft: 22,
+              marginRight: 22,
+              textAlign: "center"
+            }}
+          >
+            {"time2swipe!"}
           </Text>
         </View>
-        <View
-          style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
-        >
-          <PrimaryButton
-            onPress={this._enableNotifications}
-            title="Enable Push Notifications"
-          />
-          // TODO: make secondary button
-          <PrimaryButton onPress={this._goToNextPage} title="skip" />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton
+              onPress={this._saveSettingsAndProfile}
+              title="Roll 'Bos"
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </View>
     );
@@ -67,4 +73,4 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingNotificationsScreen);
+)(OnboardingFinishScreen);
