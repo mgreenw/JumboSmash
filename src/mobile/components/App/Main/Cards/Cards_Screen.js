@@ -9,6 +9,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
+import type { CardType } from "./Deck";
 
 type Props = {
   navigation: any
@@ -61,7 +62,7 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   };
 
-  renderCard(card) {
+  renderCard(card: CardType) {
     return (
       <Card
         containerStyle={{
@@ -89,11 +90,11 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   }
 
-  onSwipeRight(card) {
+  onSwipeRight(card: CardType) {
     console.log("Card liked: " + card.name);
   }
 
-  onSwipeLeft(card) {
+  onSwipeLeft(card: CardType) {
     console.log("Card disliked: " + card.name);
   }
 

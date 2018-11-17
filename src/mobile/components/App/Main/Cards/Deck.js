@@ -1,3 +1,5 @@
+// @flow
+
 import React, { Component } from "react";
 import {
   View,
@@ -8,31 +10,52 @@ import {
   LayoutAnimation,
   UIManager
 } from "react-native";
+import type { Node } from "react";
+import type AnimatedValueXY from "react-native/Libraries/Animated/src/nodes/AnimatedValueXY";
+
+export type CardType = {
+  id: number,
+  name: string
+};
+
+const RIGHT = "right";
+const LEFT = "left";
+type direction = "left" | "right";
+
+type Props = {
+  data: Array<CardType>,
+  renderCard: (card: CardType) => Node,
+  renderNoMoreCards: () => Node,
+  onSwipeRight: (card: CardType) => void,
+  onSwipeLeft: (card: CardType) => void,
+  infinite: boolean
+};
+
+type State = {
+  panResponder: any,
+  position: AnimatedValueXY,
+  index: number
+};
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 0.4 * SCREEN_WIDTH;
 
-export default class Deck extends Component {
-  static defaultProps = {
-    onSwipeRight: () => {},
-    onSwipeLeft: () => {}
-  };
-
-  constructor(props) {
+export default class Deck extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     const position = new Animated.ValueXY();
 
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (event, gesture) => {
+      onPanResponderMove: (_, gesture) => {
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
-      onPanResponderRelease: (event, gesture) => {
+      onPanResponderRelease: (_, gesture) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipe("right");
+          this.forceSwipe(RIGHT);
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this.forceSwipe("left");
+          this.forceSwipe(LEFT);
         } else {
           console.log("Swipe dismissed");
           this.resetPosition();
@@ -43,7 +66,7 @@ export default class Deck extends Component {
     this.state = { panResponder, position, index: 0 };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     if (nextProps.data !== this.props.data) {
       this.setState({ index: 0 });
     }
@@ -55,20 +78,20 @@ export default class Deck extends Component {
     LayoutAnimation.spring();
   }
 
-  forceSwipe(direction) {
-    const x = direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH;
+  forceSwipe(direction: direction) {
+    const x = direction === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
     Animated.timing(this.state.position, {
-      toValue: { x: x * 2, y: direction === "right" ? -x : x },
+      toValue: { x: x * 2, y: direction === RIGHT ? -x : x },
       duration: 250
     }).start(() => this.onSwipeComplete(direction));
   }
 
-  onSwipeComplete(direction) {
+  onSwipeComplete(direction: direction) {
     const { onSwipeRight, onSwipeLeft, data } = this.props;
     const item = data[this.state.index];
 
-    direction === "right" ? onSwipeRight(item) : onSwipeLeft(item);
+    direction === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
     this.state.position.setValue({ x: 0, y: 0 });
     this.setState({ index: this.state.index + 1 });
   }
