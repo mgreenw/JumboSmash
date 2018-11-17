@@ -203,7 +203,6 @@ class SplashScreen extends React.Component<Props, State> {
             <View style={{ flex: 1, flexDirection: "row" }}>
               <View style={{ flex: 1 }} />
               <View style={{ flex: 1 }}>
-                {" "}
                 <PrimaryButton
                   onPress={this._onSubmit}
                   title="Roll 'Bos'"
