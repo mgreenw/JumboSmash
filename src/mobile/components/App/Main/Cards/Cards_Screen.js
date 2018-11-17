@@ -62,7 +62,7 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   };
 
-  _renderCard(card: CardType) {
+  _renderCard = (card: CardType) => {
     return (
       <Card
         containerStyle={{
@@ -76,9 +76,9 @@ class SwipingScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
-  _renderEmpty() {
+  _renderEmpty = () => {
     return (
       <Card
         containerStyle={{
@@ -88,15 +88,15 @@ class SwipingScreen extends React.Component<Props, State> {
         title="Too picky"
       />
     );
-  }
+  };
 
-  _onSwipeRight(card: CardType) {
+  _onSwipeRight = (card: CardType) => {
     console.log("Card liked: " + card.name);
-  }
+  };
 
-  _onSwipeLeft(card: CardType) {
+  _onSwipeLeft = (card: CardType) => {
     console.log("Card disliked: " + card.name);
-  }
+  };
 
   render() {
     return (
