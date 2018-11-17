@@ -53,12 +53,12 @@ export default class Deck extends React.Component<Props, State> {
       },
       onPanResponderRelease: (_, gesture) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this.forceSwipe(RIGHT);
+          this._forceSwipe(RIGHT);
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this.forceSwipe(LEFT);
+          this._forceSwipe(LEFT);
         } else {
           console.log("Swipe dismissed");
-          this.resetPosition();
+          this._resetPosition();
         }
       }
     });
@@ -78,16 +78,16 @@ export default class Deck extends React.Component<Props, State> {
     LayoutAnimation.spring();
   }
 
-  forceSwipe(direction: direction) {
+  _forceSwipe(direction: direction) {
     const x = direction === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
     Animated.timing(this.state.position, {
       toValue: { x: x * 2, y: direction === RIGHT ? -x : x },
       duration: 250
-    }).start(() => this.onSwipeComplete(direction));
+    }).start(() => this._onSwipeComplete(direction));
   }
 
-  onSwipeComplete(direction: direction) {
+  _onSwipeComplete(direction: direction) {
     const { onSwipeRight, onSwipeLeft, data } = this.props;
     const item = data[this.state.index];
 
@@ -96,13 +96,13 @@ export default class Deck extends React.Component<Props, State> {
     this.setState({ index: this.state.index + 1 });
   }
 
-  resetPosition() {
+  _resetPosition() {
     Animated.spring(this.state.position, {
       toValue: { x: 0, y: 0 }
     }).start();
   }
 
-  getCardStyle() {
+  _getCardStyle() {
     const { position } = this.state;
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2],
@@ -115,7 +115,7 @@ export default class Deck extends React.Component<Props, State> {
     };
   }
 
-  renderCards() {
+  _renderCards() {
     if (this.state.index >= this.props.data.length) {
       return this.props.renderNoMoreCards();
     }
@@ -128,7 +128,7 @@ export default class Deck extends React.Component<Props, State> {
           return (
             <Animated.View
               key={item.id}
-              style={[this.getCardStyle(), styles.cardStyle]}
+              style={[this._getCardStyle(), styles.cardStyle]}
               {...this.state.panResponder.panHandlers}
             >
               {this.props.renderCard(item)}
@@ -146,7 +146,7 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   render() {
-    return <View>{this.renderCards()}</View>;
+    return <View>{this._renderCards()}</View>;
   }
 }
 

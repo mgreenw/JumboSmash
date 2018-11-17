@@ -62,7 +62,7 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   };
 
-  renderCard(card: CardType) {
+  _renderCard(card: CardType) {
     return (
       <Card
         containerStyle={{
@@ -78,7 +78,7 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   }
 
-  renderNoMoreCards() {
+  _renderNoMoreCards() {
     return (
       <Card
         containerStyle={{
@@ -90,11 +90,11 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   }
 
-  onSwipeRight(card: CardType) {
+  _onSwipeRight(card: CardType) {
     console.log("Card liked: " + card.name);
   }
 
-  onSwipeLeft(card: CardType) {
+  _onSwipeLeft(card: CardType) {
     console.log("Card disliked: " + card.name);
   }
 
@@ -103,10 +103,10 @@ class SwipingScreen extends React.Component<Props, State> {
       <View>
         <Deck
           data={DATA}
-          renderCard={this.renderCard}
-          renderNoMoreCards={this.renderNoMoreCards}
-          onSwipeRight={this.onSwipeRight}
-          onSwipeLeft={this.onSwipeLeft}
+          renderCard={this._renderCard}
+          renderNoMoreCards={this._renderNoMoreCards}
+          onSwipeRight={this._onSwipeRight}
+          onSwipeLeft={this._onSwipeLeft}
           infinite={true}
         />
       </View>
