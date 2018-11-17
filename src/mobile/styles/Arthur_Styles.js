@@ -29,6 +29,17 @@ export const Colors = {
   White
 };
 
+const buttonBase = {
+  height: 40,
+  borderRadius: 20,
+  width: "100%"
+};
+
+const buttonTitleBase = {
+  paddingLeft: 30,
+  paddingRight: 30
+};
+
 export const Arthur_Styles = StyleSheet.create({
   checkBoxContainer_checked: {
     width: "100%",
@@ -68,25 +79,19 @@ export const Arthur_Styles = StyleSheet.create({
     textAlign: "center"
   },
   buttonPrimaryActive: {
-    height: 40,
-    borderRadius: 20,
-    width: "100%",
+    ...buttonBase,
     backgroundColor: Grapefruit
   },
   buttonTitlePrimaryActive: {
-    color: White,
-    paddingLeft: 30,
-    paddingRight: 30
+    ...buttonTitleBase,
+    color: White
   },
   buttonPrimaryDisabled: {
-    height: 40,
-    borderRadius: 20,
-    width: "100%",
+    ...buttonBase,
     backgroundColor: Grey85
   },
   buttonTitlePrimaryDisabled: {
-    color: BlueyGrey,
-    paddingLeft: 30,
-    paddingRight: 30
+    ...buttonTitleBase,
+    color: BlueyGrey
   }
 });
