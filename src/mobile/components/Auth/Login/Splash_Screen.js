@@ -19,6 +19,7 @@ import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -155,7 +156,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
+      <View style={{ flex: 1 }}>
         <Text style={Arthur_Styles.title}>Project Gem</Text>
         <KeyboardAvoidingView
           style={{
@@ -206,26 +207,17 @@ class SplashScreen extends React.Component<Props, State> {
                 <Text style={styles.helpText}>Ex: jjaffe01</Text>
               </View>
             )}
-            <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-              <View style={{ flex: 2 }}>
-                <Button
-                  buttonStyle={styles.button}
-                  onPress={() => {
-                    this._onSubmit();
-                  }}
-                  title="submit"
-                  disabled={this.state.isSubmitting}
-                  loading={this.state.isSubmitting}
-                />
-              </View>
+            <View style={{ flex: 1 }}>
+              <PrimaryButton
+                onPress={this._onSubmit}
+                title="Roll 'Bos'"
+                disabled={this.state.isSubmitting || this.state.utln == ""}
+                loading={this.state.isSubmitting}
+              />
             </View>
           </View>
+          <Button onPress={this._onHelp} title="help" />
         </KeyboardAvoidingView>
-        <Button
-          buttonStyle={styles.button}
-          onPress={this._onHelp}
-          title="help"
-        />
       </View>
     );
   }

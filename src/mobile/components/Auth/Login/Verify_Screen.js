@@ -18,6 +18,8 @@ import verify from "mobile/api/auth/verify";
 import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type State = {
   code: string,
@@ -220,13 +222,10 @@ class SplashScreen extends React.Component<Props, State> {
           )}
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={() => {
-              this._onSubmit();
-            }}
+          <PrimaryButton
+            onPress={this._onSubmit}
             title="submit"
-            disabled={isLoading}
+            disabled={isLoading || this.state.code == ""}
             loading={isLoading}
           />
         </View>

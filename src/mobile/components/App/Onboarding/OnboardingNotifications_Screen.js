@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -32,31 +34,31 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("AppLoading");
+    navigation.navigate("OnboardingFinish");
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Push Notifications</Text>
-        <Text
-          style={{
-            fontSize: 34,
-            marginLeft: 22,
-            marginRight: 22,
-            textAlign: "center"
-          }}
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>Push Notifications</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={Arthur_Styles.onboardingHeader}>
+            We use push notifications to let you know when you have a new match
+            or message.
+          </Text>
+        </View>
+        <View
+          style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
         >
-          We use push notifications to let you know when you have a new match or
-          message.
-        </Text>
-
-        <Button
-          onPress={this._enableNotifications}
-          title="Enable"
-          buttonStyle={styles.button}
-        />
-        <Text onPress={this._goToNextPage}>Skip</Text>
+          <PrimaryButton
+            onPress={this._enableNotifications}
+            title="Enable Push Notifications"
+          />
+          // TODO: make secondary button
+          <PrimaryButton onPress={this._goToNextPage} title="skip" />
+        </View>
       </View>
     );
   }
