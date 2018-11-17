@@ -78,7 +78,7 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   }
 
-  _renderNoMoreCards() {
+  _renderEmpty() {
     return (
       <Card
         containerStyle={{
@@ -104,7 +104,7 @@ class SwipingScreen extends React.Component<Props, State> {
         <Deck
           data={DATA}
           renderCard={this._renderCard}
-          renderNoMoreCards={this._renderNoMoreCards}
+          renderEmpty={this._renderEmpty}
           onSwipeRight={this._onSwipeRight}
           onSwipeLeft={this._onSwipeLeft}
           infinite={true}

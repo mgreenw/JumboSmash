@@ -10,8 +10,7 @@ import {
   LayoutAnimation,
   UIManager
 } from "react-native";
-import type { Node } from "react";
-import type AnimatedValueXY from "react-native/Libraries/Animated/src/nodes/AnimatedValueXY";
+import type { AnimatedValueXY, Node } from "react-native";
 
 export type CardType = {
   id: number,
@@ -23,12 +22,12 @@ const LEFT = "left";
 type direction = "left" | "right";
 
 type Props = {
-  data: Array<CardType>,
+  data: $ReadOnlyArray<CardType>,
   renderCard: (card: CardType) => Node,
-  renderNoMoreCards: () => Node,
+  renderEmpty: () => Node,
   onSwipeRight: (card: CardType) => void,
   onSwipeLeft: (card: CardType) => void,
-  infinite: boolean
+  infinite?: boolean
 };
 
 type State = {
@@ -117,7 +116,7 @@ export default class Deck extends React.Component<Props, State> {
 
   _renderCards() {
     if (this.state.index >= this.props.data.length) {
-      return this.props.renderNoMoreCards();
+      return this.props.renderEmpty();
     }
 
     return this.props.data
