@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 
@@ -37,26 +38,31 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Project GEM</Text>
-        <Text
-          style={{
-            fontSize: 34,
-            marginLeft: 22,
-            marginRight: 22,
-            textAlign: "center"
-          }}
-        >
-          {
-            "Let's take 2 minutes to get your profile setup before you begin swiping"
-          }
-        </Text>
-
-        <Button
-          onPress={this._onPress}
-          title="Roll 'Bos"
-          buttonStyle={styles.button}
-        />
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.title}>Project Gem</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 34,
+              marginLeft: 22,
+              marginRight: 22,
+              textAlign: "center"
+            }}
+          >
+            {
+              "Let's take 2 minutes to get your profile setup before you begin swiping"
+            }
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Button
+            onPress={this._onPress}
+            title="Roll 'Bos"
+            buttonStyle={styles.button}
+          />
+        </View>
       </View>
     );
   }

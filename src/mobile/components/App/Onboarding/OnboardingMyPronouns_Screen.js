@@ -8,6 +8,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PronounSelector } from "mobile/components/shared/PronounSelector";
 import type { Pronouns } from "mobile/reducers";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 
 type Props = {
   navigation: any
@@ -50,31 +51,30 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text
-          style={{
-            fontSize: 34,
-            marginLeft: 22,
-            marginRight: 22,
-            textAlign: "center"
-          }}
-        >
-          Pronoun Preferences
-        </Text>
-        <Text>
-          We use pronouns to help determine who to show in your stack in Project
-          GEM. Your pronouns will not be shown on your profile.
-        </Text>
-        <Text>I use:</Text>
-        <PronounSelector
-          defaultPronouns={this.state.myPronouns}
-          onChange={this._onMyPronounChange}
-        />
-        <Button
-          onPress={this._onPress}
-          title="Continue"
-          buttonStyle={styles.button}
-        />
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.onboardingHeader}>
+            Pronoun Preferences
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text>
+            We use pronouns to help determine who to show in your stack in
+            Project GEM. Your pronouns will not be shown on your profile.
+          </Text>
+          <Text>I use:</Text>
+          <PronounSelector
+            defaultPronouns={this.state.myPronouns}
+            onChange={this._onMyPronounChange}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Button
+            onPress={this._onPress}
+            title="Continue"
+            buttonStyle={styles.button}
+          />
+        </View>
       </View>
     );
   }
