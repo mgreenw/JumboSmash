@@ -48,13 +48,16 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
             or message.
           </Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View
+          style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
+        >
           <Button
             onPress={this._enableNotifications}
-            title="Enable"
-            buttonStyle={styles.button}
+            title="Enable Push Notifications"
+            buttonStyle={Arthur_Styles.buttonPrimaryActive}
+            titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+            disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
           />
-          <Text onPress={this._goToNextPage}>Skip</Text>
         </View>
       </View>
     );

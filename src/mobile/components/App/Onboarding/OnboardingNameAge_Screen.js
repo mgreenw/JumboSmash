@@ -34,7 +34,7 @@ class NameAgeScreen extends React.Component<Props, State> {
     };
   }
 
-  _onPress = () => {
+  _goToNextPage = () => {
     const { navigation } = this.props;
     navigation.navigate("OnboardingMyPronouns");
   };
@@ -65,12 +65,18 @@ class NameAgeScreen extends React.Component<Props, State> {
             autoCorrect={false}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            onPress={this._onPress}
-            title="Continue"
-            buttonStyle={styles.button}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <Button
+              onPress={this._goToNextPage}
+              title="Continue"
+              buttonStyle={Arthur_Styles.buttonPrimaryActive}
+              titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+              disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </View>
     );

@@ -51,12 +51,18 @@ class OnboardingBioScreen extends React.Component<Props, State> {
             value={this.state.bio}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            onPress={this._goToNextPage}
-            title="Continue"
-            buttonStyle={styles.button}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <Button
+              onPress={this._goToNextPage}
+              title="Continue"
+              buttonStyle={Arthur_Styles.buttonPrimaryActive}
+              titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+              disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </View>
     );
