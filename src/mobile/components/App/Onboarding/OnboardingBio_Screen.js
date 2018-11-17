@@ -40,18 +40,24 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={Arthur_Styles.onboardingHeader}>About Me</Text>
-        <BioInput
-          placeholder="The real Tony Monaco"
-          onChangeText={bio => this.setState({ bio })}
-          value={this.state.bio}
-        />
-        <Button
-          onPress={this._goToNextPage}
-          title="Continue"
-          buttonStyle={styles.button}
-        />
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.onboardingHeader}>About Me</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <BioInput
+            placeholder="The real Tony Monaco"
+            onChangeText={bio => this.setState({ bio })}
+            value={this.state.bio}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Button
+            onPress={this._goToNextPage}
+            title="Continue"
+            buttonStyle={styles.button}
+          />
+        </View>
       </View>
     );
   }

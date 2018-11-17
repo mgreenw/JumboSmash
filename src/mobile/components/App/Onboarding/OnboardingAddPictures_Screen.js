@@ -14,7 +14,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import AddPhotos from "mobile/components/shared/AddPhotos";
 import { styles } from "mobile/styles/template";
-
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 type Props = {
   navigation: any
 };
@@ -42,20 +42,20 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View
-          style={{
-            width: "100%",
-            height: Dimensions.get("window").width
-          }}
-        >
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.onboardingHeader}>Upload Photos</Text>
+        </View>
+        <View style={{ flex: 1 }}>
           <AddPhotos />
         </View>
-        <Button
-          onPress={this._goToNextPage}
-          title="Continue"
-          buttonStyle={styles.button}
-        />
+        <View style={{ flex: 1 }}>
+          <Button
+            onPress={this._goToNextPage}
+            title="Continue"
+            buttonStyle={styles.button}
+          />
+        </View>
       </View>
     );
   }
