@@ -38,14 +38,16 @@ class AddPhotos extends React.Component<Props, State> {
       />
     );
     return (
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: "row" }}>
-          {picPlaceholder}
-          {picPlaceholder}
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          {picPlaceholder}
-          {picPlaceholder}
+      <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{ flex: 1, aspectRatio: 1 }}>
+          <View style={{ flexDirection: "row" }}>
+            {picPlaceholder}
+            {picPlaceholder}
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            {picPlaceholder}
+            {picPlaceholder}
+          </View>
         </View>
       </View>
     );
