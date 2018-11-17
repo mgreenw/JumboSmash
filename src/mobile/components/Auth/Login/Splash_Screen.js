@@ -155,7 +155,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
+      <View style={{ flex: 1 }}>
         <Text style={Arthur_Styles.title}>Project Gem</Text>
         <KeyboardAvoidingView
           style={{
@@ -206,26 +206,22 @@ class SplashScreen extends React.Component<Props, State> {
                 <Text style={styles.helpText}>Ex: jjaffe01</Text>
               </View>
             )}
-            <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-              <View style={{ flex: 2 }}>
-                <Button
-                  buttonStyle={styles.button}
-                  onPress={() => {
-                    this._onSubmit();
-                  }}
-                  title="submit"
-                  disabled={this.state.isSubmitting}
-                  loading={this.state.isSubmitting}
-                />
-              </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                onPress={() => {
+                  this._onSubmit();
+                }}
+                title="Roll 'Bos'"
+                buttonStyle={Arthur_Styles.buttonPrimaryActive}
+                titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+                loadingStyle={Arthur_Styles.buttonPrimaryDisabledoading}
+                disabled={this.state.isSubmitting || this.state.utln == ""}
+                loading={this.state.isSubmitting}
+              />
             </View>
           </View>
+          <Button onPress={this._onHelp} title="help" />
         </KeyboardAvoidingView>
-        <Button
-          buttonStyle={styles.button}
-          onPress={this._onHelp}
-          title="help"
-        />
       </View>
     );
   }

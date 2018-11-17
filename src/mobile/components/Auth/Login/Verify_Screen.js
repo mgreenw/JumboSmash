@@ -18,6 +18,7 @@ import verify from "mobile/api/auth/verify";
 import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 
 type State = {
   code: string,
@@ -227,6 +228,11 @@ class SplashScreen extends React.Component<Props, State> {
             }}
             title="submit"
             disabled={isLoading}
+            loading={isLoading}
+            buttonStyle={Arthur_Styles.buttonPrimaryActive}
+            titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+            loadingStyle={Arthur_Styles.buttonPrimaryDisabledoading}
+            disabled={isLoading || this.state.code == ""}
             loading={isLoading}
           />
         </View>

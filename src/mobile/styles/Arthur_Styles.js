@@ -70,23 +70,23 @@ export const Arthur_Styles = StyleSheet.create({
   buttonPrimaryActive: {
     height: 40,
     borderRadius: 20,
+    width: "100%",
     backgroundColor: Grapefruit
   },
   buttonTitlePrimaryActive: {
     color: White,
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: 30,
+    paddingRight: 30
   },
   buttonPrimaryDisabled: {
     height: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
     borderRadius: 20,
+    width: "100%",
     backgroundColor: Grey85
   },
   buttonTitlePrimaryDisabled: {
     color: BlueyGrey,
-    paddingLeft: 20,
-    paddingRight: 20
+    paddingLeft: 30,
+    paddingRight: 30
   }
 });
