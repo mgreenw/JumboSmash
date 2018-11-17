@@ -4,6 +4,7 @@ const express = require('express');
 
 const authRouter = require('./auth');
 const usersRouter = require('./users');
+const photosRouter = require('./photos');
 
 const apiRouter = express.Router();
 const authenticated = require('../../controllers/auth/middleware/authenticated');
@@ -32,5 +33,7 @@ apiRouter.use(hasProfile);
 // hasProfile: the user has gone through the required profile setup.
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
+
+apiRouter.use('/photos', photosRouter);
 
 module.exports = apiRouter;

@@ -3,6 +3,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const aws = require('aws-sdk');
+
 const logger = require('./logger');
 const index = require('./routes/index');
 const api = require('./routes/api');
@@ -19,5 +21,7 @@ app.use((req, res, next) => {
 // Define all routes here.
 app.use('/', index);
 app.use('/api', api);
+
+aws.config.region = 'us-east-2';
 
 module.exports = app;
