@@ -48,7 +48,6 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
             or message.
           </Text>
         </View>
-<<<<<<< HEAD
         <View
           style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
         >
@@ -59,15 +58,6 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
             titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
             disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
           />
-=======
-        <View style={{ flex: 1 }}>
-          <Button
-            onPress={this._enableNotifications}
-            title="Enable"
-            buttonStyle={styles.button}
-          />
-          <Text onPress={this._goToNextPage}>Skip</Text>
->>>>>>> a6a06f8c0083710ce85ef723b4f4454596395919
         </View>
       </View>
     );
