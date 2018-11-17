@@ -9,6 +9,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import { PronounSelector } from "mobile/components/shared/PronounSelector";
 import type { Pronouns } from "mobile/reducers";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -44,7 +45,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     });
   };
 
-  _onPress = () => {
+  _goToNextPage = () => {
     const { navigation } = this.props;
     navigation.navigate("OnboardingWantPronouns");
   };
@@ -68,12 +69,12 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
             onChange={this._onMyPronounChange}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            onPress={this._onPress}
-            title="Continue"
-            buttonStyle={styles.button}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </View>
     );
