@@ -68,6 +68,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
             onChange={this._onWantPronounChange}
           />
         </View>
+<<<<<<< HEAD
         <View style={{ flex: 1, flexDirection: "row" }}>
           <View style={{ flex: 1 }} />
           <View style={{ flex: 1 }}>
@@ -80,6 +81,14 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
             />
           </View>
           <View style={{ flex: 1 }} />
+=======
+        <View style={{ flex: 1 }}>
+          <Button
+            onPress={this._onPress}
+            title="Continue"
+            buttonStyle={styles.button}
+          />
+>>>>>>> a6a06f8c0083710ce85ef723b4f4454596395919
         </View>
       </View>
     );
