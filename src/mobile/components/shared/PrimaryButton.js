@@ -26,6 +26,7 @@ export class PrimaryButton extends React.Component<Props, State> {
         title={this.props.title}
         disabled={this.props.disabled}
         loading={this.props.loading}
+        containerStyle={{ width: "100%" }}
         buttonStyle={Arthur_Styles.buttonPrimaryActive}
         titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
         disabledStyle={Arthur_Styles.buttonPrimaryDisabled}

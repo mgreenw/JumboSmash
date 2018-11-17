@@ -165,14 +165,7 @@ class SplashScreen extends React.Component<Props, State> {
           }}
           behavior="padding"
         >
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              paddingRight: 40,
-              paddingLeft: 40
-            }}
-          >
+          <View style={{ flex: 1, alignItems: "center" }}>
             <Image
               resizeMode="contain"
               style={{
@@ -207,13 +200,17 @@ class SplashScreen extends React.Component<Props, State> {
                 <Text style={styles.helpText}>Ex: jjaffe01</Text>
               </View>
             )}
-            <View style={{ flex: 1 }}>
-              <PrimaryButton
-                onPress={this._onSubmit}
-                title="Roll 'Bos'"
-                disabled={this.state.isSubmitting || this.state.utln == ""}
-                loading={this.state.isSubmitting}
-              />
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1 }}>
+                <PrimaryButton
+                  onPress={this._onSubmit}
+                  title="Roll 'Bos'"
+                  disabled={this.state.isSubmitting || this.state.utln == ""}
+                  loading={this.state.isSubmitting}
+                />
+              </View>
+              <View style={{ flex: 1 }} />
             </View>
           </View>
           <Button onPress={this._onHelp} title="help" />
