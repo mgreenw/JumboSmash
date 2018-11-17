@@ -66,5 +66,27 @@ export const Arthur_Styles = StyleSheet.create({
   onboardingHeader: {
     fontSize: 24,
     textAlign: "center"
+  },
+  buttonPrimaryActive: {
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Grapefruit
+  },
+  buttonTitlePrimaryActive: {
+    color: White,
+    paddingLeft: 20,
+    paddingRight: 20
+  },
+  buttonPrimaryDisabled: {
+    height: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
+    borderRadius: 20,
+    backgroundColor: Grey85
+  },
+  buttonTitlePrimaryDisabled: {
+    color: BlueyGrey,
+    paddingLeft: 20,
+    paddingRight: 20
   }
 });
