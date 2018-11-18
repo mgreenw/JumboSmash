@@ -113,6 +113,11 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate("AuthHelp", {});
+  };
+
   // When we submit, a few things happen.
   // First, we set the state of this component to have isSubmitting = true,
   // so that we lock the UI to disable going back, editting the fields,
@@ -191,51 +196,53 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={{ flex: 1 }}>
-          <Text>{message}</Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-          <Input
-            containerStyle={
-              this.state.validCode
-                ? styles.inputWrapperStyle
-                : styles.inputWrapperStyleWithError
-            }
-            keyboardType="numeric"
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Verification Code"
-            placeholder=""
-            onChangeText={text => this.setState({ code: text })}
-            ref={input => (this.codeInput = input)}
-            errorMessage={
-              this.state.validCode ? "" : this.state.errorMessageCode
-            }
-            autoCorrect={false}
-          />
-          {this.state.validCode && (
-            <View style={styles.helpTextContainer}>
-              <Text style={styles.helpText}>Ex: 123456</Text>
-            </View>
-          )}
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <PrimaryButton
-            onPress={this._onSubmit}
-            title="submit"
-            disabled={isLoading || this.state.code == ""}
-            loading={isLoading}
-          />
-        </View>
-      </KeyboardAvoidingView>
-      <Button
+      <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          <View style={{ flex: 1 }}>
+            <Text>{message}</Text>
+          </View>
+          <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+            <Input
+              containerStyle={
+                this.state.validCode
+                  ? styles.inputWrapperStyle
+                  : styles.inputWrapperStyleWithError
+              }
+              keyboardType="numeric"
+              placeholderTextColor={"#DDDDDD"}
+              inputStyle={{ color: "#222222" }}
+              labelStyle={styles.labelStyle}
+              inputContainerStyle={styles.inputContainerStyle}
+              label="Verification Code"
+              placeholder=""
+              onChangeText={text => this.setState({ code: text })}
+              ref={input => (this.codeInput = input)}
+              errorMessage={
+                this.state.validCode ? "" : this.state.errorMessageCode
+              }
+              autoCorrect={false}
+            />
+            {this.state.validCode && (
+              <View style={styles.helpTextContainer}>
+                <Text style={styles.helpText}>Ex: 123456</Text>
+              </View>
+            )}
+          </View>
+          <View style={{ flex: 1, alignSelf: "stretch" }}>
+            <PrimaryButton
+              onPress={this._onSubmit}
+              title="submit"
+              disabled={isLoading || this.state.code == ""}
+              loading={isLoading}
+            />
+          </View>
+        </KeyboardAvoidingView>
+        <Button
           buttonStyle={styles.button}
           onPress={this._onHelp}
           title="help"
         />
+      </View>
     );
   }
 }
