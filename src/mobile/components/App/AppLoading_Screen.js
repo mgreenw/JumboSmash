@@ -9,6 +9,7 @@ import type { ReduxState, UserProfile } from "mobile/reducers/index";
 import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import ProgressBar from "react-native-progress/Bar";
 import { loadApp } from "mobile/actions/app/loadApp";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   // navigation
@@ -61,7 +62,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
       if (this.props.userProfile === null) {
         navigate("Onboarding", {});
       } else {
-        navigate("Main", {});
+        navigate(routes.MainSwitch, {});
       }
     }
   }
