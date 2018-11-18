@@ -7,6 +7,7 @@ import { styles } from "mobile/styles/template";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -31,7 +32,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     headerLeft: null
   };
 
-  _onPress = () => {
+  _goToNextPage = () => {
     const { navigation } = this.props;
     navigation.navigate("OnboardingNameAge");
   };
@@ -56,12 +57,12 @@ class OnboardingStartScreen extends React.Component<Props, State> {
             }
           </Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            onPress={this._onPress}
-            title="Roll 'Bos"
-            buttonStyle={styles.button}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton onPress={this._goToNextPage} title="Roll 'Bos" />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </View>
     );

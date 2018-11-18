@@ -7,6 +7,7 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -33,7 +34,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("AppLoading");
+    navigation.navigate("OnboardingFinish");
   };
 
   render() {
@@ -48,13 +49,15 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
             or message.
           </Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Button
+        <View
+          style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
+        >
+          <PrimaryButton
             onPress={this._enableNotifications}
-            title="Enable"
-            buttonStyle={styles.button}
+            title="Enable Push Notifications"
           />
-          <Text onPress={this._goToNextPage}>Skip</Text>
+          // TODO: make secondary button
+          <PrimaryButton onPress={this._goToNextPage} title="skip" />
         </View>
       </View>
     );
