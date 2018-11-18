@@ -38,6 +38,11 @@ import Matches from "mobile/components/App/Main/Matches/Matches_Screen";
 import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
+import OnboardingWantPronouns from "mobile/components/App/Onboarding/OnboardingWantPronouns_Screen";
+import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAddPictures_Screen";
+import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen";
+import OnboardingNotifications from "mobile/components/App/Onboarding/OnboardingNotifications_Screen";
+import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_Screen";
 
 const PROFILE_ROUTE = "Profile";
 const MATCHES_ROUTE = "Matches";
@@ -117,7 +122,12 @@ const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
     OnboardingNameAge: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns }
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+    OnboardingAddPictures: { screen: OnboardingAddPictures },
+    OnboardingBio: { screen: OnboardingBio },
+    OnboardingNotifications: { screen: OnboardingNotifications },
+    OnboardingFinish: { screen: OnboardingFinish }
   },
   {
     initialRouteName: "OnboardingStart",
@@ -134,11 +144,11 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     Main: MainContentSwitch,
-    OnBoarding: OnboardingStack,
+    Onboarding: OnboardingStack,
     AppLoading: { screen: AppLoading }
   },
   {
-    initialRouteName: "Main"
+    initialRouteName: "AppLoading"
   }
 );
 

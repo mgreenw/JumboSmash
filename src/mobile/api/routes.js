@@ -1,3 +1,4 @@
+// @flow
 import Expo from "expo";
 const { manifest } = Expo.Constants;
 
@@ -18,10 +19,10 @@ const SERVER_ROUTE =
 
 const API = "/api";
 const AUTH = "/auth";
-const APP = "/app";
+const USERS = "/users";
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
-const APP_ROUTE = SERVER_ROUTE + API + APP;
+const USERS_ROUTE = SERVER_ROUTE + API + USERS;
 
 ////////////////
 // AUTH ROUTES:
@@ -40,3 +41,6 @@ export const VERIFY__ROUTE = AUTH_ROUTE + VERIFY;
 ////////////////
 // APP ROUTES:
 ////////////////
+const MY = "/me";
+const PROFILE = "/profile/";
+export const MY_PROFILE__ROUTE = USERS_ROUTE + API + MY + PROFILE;

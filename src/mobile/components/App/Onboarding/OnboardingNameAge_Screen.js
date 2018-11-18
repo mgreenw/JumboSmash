@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 
 type Props = {
   navigation: any
@@ -33,47 +35,44 @@ class NameAgeScreen extends React.Component<Props, State> {
     };
   }
 
-  _onPress = () => {
+  _goToNextPage = () => {
     const { navigation } = this.props;
     navigation.navigate("OnboardingMyPronouns");
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text
-          style={{
-            fontSize: 34,
-            marginLeft: 22,
-            marginRight: 22,
-            textAlign: "center"
-          }}
-        >
-          Name & Age
-        </Text>
-        <Input
-          placeholderTextColor={"#DDDDDD"}
-          inputStyle={{ color: "#222222" }}
-          labelStyle={styles.labelStyle}
-          label="Name"
-          placeholder="Tony Monaco"
-          onChangeText={name => this.setState({ name })}
-          autoCorrect={false}
-        />
-        <Input
-          placeholderTextColor={"#DDDDDD"}
-          inputStyle={{ color: "#222222" }}
-          labelStyle={styles.labelStyle}
-          label="Birthday"
-          placeholder="01/01/97"
-          onChangeText={birthday => this.setState({ birthday })}
-          autoCorrect={false}
-        />
-        <Button
-          onPress={this._onPress}
-          title="Continue"
-          buttonStyle={styles.button}
-        />
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={Arthur_Styles.onboardingHeader}>Name & Age</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Input
+            placeholderTextColor={"#DDDDDD"}
+            inputStyle={{ color: "#222222" }}
+            labelStyle={styles.labelStyle}
+            label="Name"
+            placeholder="Tony Monaco"
+            onChangeText={name => this.setState({ name })}
+            autoCorrect={false}
+          />
+          <Input
+            placeholderTextColor={"#DDDDDD"}
+            inputStyle={{ color: "#222222" }}
+            labelStyle={styles.labelStyle}
+            label="Birthday"
+            placeholder="01/01/97"
+            onChangeText={birthday => this.setState({ birthday })}
+            autoCorrect={false}
+          />
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
+          </View>
+          <View style={{ flex: 1 }} />
+        </View>
       </View>
     );
   }

@@ -1,0 +1,54 @@
+{
+  "name": "projectgem-koh",
+  "version": "0.0.1",
+  "description": "Koh: The Stealer of Faces",
+  "engines": {
+    "node": "^8.12.0",
+    "postgres": "^10.5.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
+    "migrate": "node-pg-migrate -m ./db/migrations",
+    "build": "rm -rf ./dist && babel . --ignore node_modules,dist -d dist && cp .npmrc dist && cp -r config dist && cp *.json dist",
+    "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
+    "jest": "jest --runInBand --forceExit",
+    "check-env": "babel-node ./scripts/check-environment",
+    "check-node-version": "node ./scripts/check-node-version.js",
+    "check-dependencies": "node ./scripts/check-dependencies.js",
+    "check-database": "node ./scripts/check-database.js",
+    "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
+    "reset-db": "npm run drop-all-tables && npm run migrate up",
+    "lint": "eslint .",
+    "lint:watch": "nodemon --exec eslint -- ."
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "config": "^2.0.1",
+    "express": "^4.16.4",
+    "ldapjs": "^1.0.2",
+    "lodash": "^4.17.11",
+    "node-pg-migrate": "^3.13.0",
+    "pg": "^7.6.0",
+    "request": "^2.88.0",
+    "semver": "^5.6.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "eslint": "^5.8.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-import": "^2.14.0",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.5",
+    "regenerator-runtime": "^0.12.1",
+    "supertest": "^3.3.0"
+  }
+}

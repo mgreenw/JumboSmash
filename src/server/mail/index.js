@@ -3,6 +3,7 @@
 const config = require('config');
 const sgMail = require('@sendgrid/mail');
 
+const logger = require('../logger');
 const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
@@ -13,9 +14,9 @@ if (NODE_ENV === 'production') {
   sgMail.setApiKey(config.get('sendgrid_api_key'));
   exports.send = sgMail.send;
 } else if (NODE_ENV === 'development') {
-  /* eslint-disable no-console */
-  exports.send = console.log;
-  /* eslint-enable */
+  exports.send = (output) => {
+    logger.info(JSON.stringify(output, null, 2));
+  };
 } else {
   exports.send = (output) => {
     return output;

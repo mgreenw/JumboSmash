@@ -1,0 +1,38 @@
+// @flow
+import React from "react";
+import { View } from "react-native";
+import { Button } from "react-native-elements";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+
+type Props = {
+  onPress: () => void,
+  title: string,
+  disabled?: boolean,
+  loading?: boolean
+};
+
+type State = {};
+
+export class PrimaryButton extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    return (
+      <Button
+        onPress={this.props.onPress}
+        title={this.props.title}
+        disabled={this.props.disabled}
+        loading={this.props.loading}
+        containerStyle={{ width: "100%" }}
+        buttonStyle={Arthur_Styles.buttonPrimaryActive}
+        titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
+        disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
+        disabledTitleStyle={Arthur_Styles.buttonTitlePrimaryDisabled}
+        loadingStyle={Arthur_Styles.buttonPrimaryDisabled}
+      />
+    );
+  }
+}
