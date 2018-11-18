@@ -2,6 +2,8 @@
 
 import type { $Request, $Response } from 'express';
 
+const _ = require('lodash');
+
 const db = require('../../db');
 const apiUtils = require('../utils');
 const utils = require('./utils');
@@ -13,6 +15,25 @@ const codes = require('../status-codes');
  */
 const getSceneCandidates = async (req: $Request, res: $Response) => {
   const { scene } = req.params;
+  const { exclude } = req.query;
+
+  let excludedUsers = [];
+  if (exclude) {
+    if (Array.isArray(exclude)) {
+      excludedUsers = _.map(exclude, idString => Number.parseInt(idString, 10));
+      if (_.includes(excludedUsers, NaN)) {
+        return res.status(400).json({
+          status: codes.BAD_REQUEST,
+          message: 'Exclude parameters includes a non-integer',
+        });
+      }
+    } else {
+      return res.status(400).json({
+        status: codes.BAD_REQUEST,
+        message: 'Exclude paramaters recieved as a non-array. Use "exclude[]=..."',
+      });
+    }
+  }
 
   // Ensure the scene is valid.
   if (!utils.sceneIsValid(scene)) {
@@ -37,6 +58,8 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
   //   7) There is no risk of SQL injection by directly inserting req.user.id:
   //      that value is generated server side and there is no way to get here
   //      without it being a valid user id
+  //   8) We exclude all users indicated by a 'exclude[]=<user_id>' query
+  //      parameter in the request
 
   try {
     const result = await db.query(`
@@ -55,6 +78,7 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
       LEFT JOIN relationships r_candidate ON r_candidate.critic_user_id = candidate.id AND r_candidate.candidate_user_id = ${req.user.id}
       ${isSmash ? `JOIN users critic on critic.id = ${req.user.id}` : ''}
       WHERE
+        NOT profile.user_id = ANY($1) AND
         profile.user_id != ${req.user.id} AND
         candidate.active_${scene} AND
         NOT COALESCE(r_critic.blocked, false) AND
@@ -67,7 +91,7 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
         )` : ''}
       ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST
       LIMIT 10
-    `);
+    `, [excludedUsers]);
 
     return res.status(200).json({
       status: codes.GET_SCENE_CANDIDATES__SUCCESS,

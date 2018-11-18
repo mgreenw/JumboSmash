@@ -13,6 +13,13 @@ user has already liked in that scene. This endpoint returns at most 10 results.
   * Description: The scene id that the user is requesting. Options: `['smash', 'social', 'stone']`
   * Required: `true`
 
+**Query Paramaters**:
+* `exclude[]`
+  * Type: `number`
+  * Description: A user id to exclude from the candidate list
+  * Required: `false`
+  * Note: Multiple `exclude[]` parameters can be included in one query (it becomes an array). E.g. `?exclude[]=1&exclude[]=2`
+
 **Method** : `GET`
 
 **Auth required** : YES
@@ -74,5 +81,19 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_SCENE_CANDIDATES__INVALID_SCENE"
+}
+```
+
+### OR
+
+**Condition** : The query string contains non-integers or is otherwise invalid.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "BAD_REQUEST",
+    "message": "Exclude parameters includes a non-integer"
 }
 ```
