@@ -100,7 +100,6 @@ async function updateSettings(id, settings) {
 
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 }
@@ -121,7 +120,6 @@ async function createRelationship(
     `, [critic, candidate, likedSmash, likedSocial, likedStone, blocked]);
     return true;
   } catch (error) {
-    console.log(error);
     return false;
   }
 }

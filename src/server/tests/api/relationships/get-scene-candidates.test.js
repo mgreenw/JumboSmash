@@ -243,7 +243,13 @@ describe('GET api/relationships/candidates/:scene', () => {
   it('should not return a blocked user', async () => {
     // block a user
     const nonLikedNotBlocked = activeSmash.slice(-5, -1);
-    await dbUtils.createRelationship(me.id, activeSmash[activeSmash.length - 1].id, false, false, false, true);
+    await dbUtils.createRelationship(
+      me.id, activeSmash[activeSmash.length - 1].id,
+      false,
+      false,
+      false,
+      true,
+    );
     const res = await request(app)
       .get('/api/relationships/candidates/smash')
       .set('Authorization', me.token)
