@@ -32,7 +32,7 @@ import ProfileEdit from "mobile/components/App/Main/Profile/ProfileEdit_Screen";
 import SettingsEdit from "mobile/components/App/Main/Profile/SettingsEdit_Screen";
 
 import Cards from "mobile/components/App/Main/Cards/Cards_Screen";
-import Messaging from "mobile/components/App/Main/Matches/Matches_Screen";
+import Matches from "mobile/components/App/Main/Matches/Matches_Screen";
 
 // OnBoarding Screens
 import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
@@ -40,6 +40,7 @@ import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAg
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
 
 const PROFILE_ROUTE = "Profile";
+const MATCHES_ROUTE = "Matches";
 
 export const routes = {
   Profile: PROFILE_ROUTE
@@ -69,10 +70,10 @@ const ProfileStack = createStackNavigator(
 
 const MatchesStack = createStackNavigator(
   {
-    Messaging: { screen: Messaging }
+    Matches: { screen: Matches }
   },
   {
-    initialRouteName: "Messaging"
+    initialRouteName: "Matches"
   }
 );
 
