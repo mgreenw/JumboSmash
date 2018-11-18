@@ -10,6 +10,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -61,7 +62,7 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingNotifications", {
+    navigation.navigate(routes.OnboardingNotifications, {
       profile: this.state.profile,
       settings: this.state.settings
     });
