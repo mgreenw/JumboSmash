@@ -88,7 +88,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigate } = this.props.navigation;
-    navigate("AuthHelp", {});
+    navigate(routes.AuthHelp, {});
   };
 
   _onSubmit = () => {

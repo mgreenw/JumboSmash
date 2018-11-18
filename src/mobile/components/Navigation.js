@@ -56,6 +56,7 @@ const SPLASH_ROUTE = "SPLASH_ROUTE";
 const VERIFY_ROUTE = "VERIFY_ROUTE";
 const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
 const NOT2019_ROUTE = "NOT2019_ROUTE";
+const AUTH_HELP_ROUTE = "AUTH_HELP_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -69,7 +70,8 @@ export const routes = {
   Splash: SPLASH_ROUTE,
   Verify: VERIFY_ROUTE,
   ExpiredCode: EXPIRED_CODE_ROUTE,
-  Not2019: NOT2019_ROUTE
+  Not2019: NOT2019_ROUTE,
+  AuthHelp: AUTH_HELP_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -122,7 +124,7 @@ const LoginStack = createStackNavigator(
     VERIFY_ROUTE: { screen: Verify },
     EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
     NOT2019_ROUTE: { screen: Not2019 },
-    AuthHelp: { screen: Help }
+    AUTH_HELP_ROUTE: { screen: Help }
   },
   {
     initialRouteName: "SPLASH_ROUTE"
@@ -151,7 +153,7 @@ const OnboardingStack = createStackNavigator(
     OnboardingFinish: { screen: OnboardingFinish }
   },
   {
-    initialRouteName: "OnboardingFinish",
+    initialRouteName: "OnboardingStart",
     navigationOptions: {
       headerBackTitle: null,
       headerStyle: {
