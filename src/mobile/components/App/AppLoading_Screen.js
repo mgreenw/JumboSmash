@@ -60,7 +60,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
     ) {
       const { navigate } = this.props.navigation;
       if (this.props.userProfile === null) {
-        navigate("Onboarding", {});
+        navigate(routes.OnboardingStack, {});
       } else {
         navigate(routes.MainSwitch, {});
       }

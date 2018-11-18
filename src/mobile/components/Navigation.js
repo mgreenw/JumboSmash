@@ -55,6 +55,8 @@ const MATCHES_STACK = "MATCHES_STACK";
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
 const MAIN_SWITCH = "MAIN_SWITCH";
+const ONBOARDING_STACK = "ONBOARDING_STACK";
+const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -67,7 +69,9 @@ export const routes = {
   MatchesStack: MATCHES_STACK,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
-  MainSwitch: MAIN_SWITCH
+  MainSwitch: MAIN_SWITCH,
+  OnboardingStack: ONBOARDING_STACK,
+  AppLoading: APP_LOADING_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -163,11 +167,11 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     MAIN_SWITCH: MainContentSwitch,
-    Onboarding: OnboardingStack,
-    AppLoading: { screen: AppLoading }
+    ONBOARDING_STACK: OnboardingStack,
+    APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
-    initialRouteName: "AppLoading"
+    initialRouteName: "APP_LOADING_ROUTE"
   }
 );
 
