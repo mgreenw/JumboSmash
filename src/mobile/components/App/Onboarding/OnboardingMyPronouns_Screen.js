@@ -7,16 +7,21 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PronounSelector } from "mobile/components/shared/PronounSelector";
-import type { Pronouns } from "mobile/reducers";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import type {
+  UserSettings,
+  UserProfile,
+  Pronouns
+} from "mobile/reducers/index";
 
 type Props = {
   navigation: any
 };
 
 type State = {
-  myPronouns: Pronouns
+  profile: UserProfile,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -30,24 +35,49 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class OnboardingMyPronounsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
     this.state = {
-      myPronouns: {
-        he: true,
-        she: true,
-        they: true
-      }
+      profile: navigation.getParam("profile", null),
+      settings: navigation.getParam("settings", null)
     };
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state != prevState) {
+      const { navigation } = this.props;
+      navigation.state.params.onUpdateProfileSettings(
+        this.state.profile,
+        this.state.settings
+      );
+    }
+  }
+
   _onMyPronounChange = (pronouns: Pronouns) => {
-    this.setState({
-      myPronouns: pronouns
+    this.setState((state, props) => {
+      return {
+        settings: {
+          ...this.state.settings,
+          usePronouns: pronouns
+        }
+      };
     });
   };
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingWantPronouns");
+    navigation.navigate("OnboardingWantPronouns", {
+      profile: this.state.profile,
+      settings: this.state.settings,
+      onUpdateProfileSettings: (
+        profile: UserProfile,
+        settings: UserSettings
+      ) => {
+        this.setState({
+          profile,
+          settings
+        });
+      }
+    });
   };
 
   render() {
@@ -65,7 +95,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
           </Text>
           <Text>I use:</Text>
           <PronounSelector
-            defaultPronouns={this.state.myPronouns}
+            defaultPronouns={this.state.settings.usePronouns}
             onChange={this._onMyPronounChange}
           />
         </View>

@@ -8,12 +8,16 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import type { UserSettings, UserProfile } from "mobile/reducers/index";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  profile: UserProfile,
+  settings: UserSettings
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -26,6 +30,11 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class OnboardingNotificationsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+    this.state = {
+      profile: navigation.getParam("profile", null),
+      settings: navigation.getParam("settings", null)
+    };
   }
 
   _enableNotifications = () => {
@@ -34,7 +43,10 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingFinish");
+    navigation.navigate("OnboardingFinish", {
+      profile: this.state.profile,
+      settings: this.state.settings
+    });
   };
 
   render() {
