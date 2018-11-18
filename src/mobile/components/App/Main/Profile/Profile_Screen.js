@@ -52,7 +52,7 @@ class ProfileScreen extends React.Component<Props, State> {
 
   _onProfileEditPress = () => {
     const { navigate } = this.props.navigation;
-    navigate("ProfileEdit", {});
+    navigate(routes.ProfileEdit, {});
   };
 
   render() {
