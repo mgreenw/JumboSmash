@@ -17,20 +17,26 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
   const { scene } = req.params;
   const { exclude } = req.query;
 
+  // Generate a list of excluded users
+  // If the excluded params are not valid, return an error.
   let excludedUsers = [];
   if (exclude) {
-    if (Array.isArray(exclude)) {
-      excludedUsers = _.map(exclude, idString => Number.parseInt(idString, 10));
-      if (_.includes(excludedUsers, NaN)) {
-        return res.status(400).json({
-          status: codes.BAD_REQUEST,
-          message: 'Exclude parameters includes a non-integer',
-        });
-      }
-    } else {
+    // Ensure the exclude params are an array
+    if (!Array.isArray(exclude)) {
       return res.status(400).json({
         status: codes.BAD_REQUEST,
         message: 'Exclude paramaters recieved as a non-array. Use "exclude[]=..."',
+      });
+    }
+
+    // Parse the input parameters to integers
+    excludedUsers = _.map(exclude, idString => Number.parseInt(idString, 10));
+
+    // Ensure all excluded users are integers. If not, error.
+    if (_.includes(excludedUsers, NaN)) {
+      return res.status(400).json({
+        status: codes.BAD_REQUEST,
+        message: 'Exclude parameters includes a non-integer',
       });
     }
   }
@@ -67,11 +73,7 @@ const getSceneCandidates = async (req: $Request, res: $Response) => {
         profile.user_id as "userId",
         profile.display_name AS "displayName",
         to_char(profile.birthday, 'YYYY-MM-DD') AS birthday,
-        profile.bio,
-        profile.image1_url AS "image1Url",
-        profile.image2_url AS "image2Url",
-        profile.image3_url AS "image3Url",
-        profile.image4_url AS "image4Url"
+        profile.bio
       FROM profiles profile
       JOIN users candidate on candidate.id = profile.user_id
       LEFT JOIN relationships r_critic ON r_critic.critic_user_id = ${req.user.id} AND r_critic.candidate_user_id = candidate.id
