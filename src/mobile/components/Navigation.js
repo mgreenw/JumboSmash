@@ -53,6 +53,21 @@ const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
 
+const SPLASH_ROUTE = "SPLASH_ROUTE";
+const VERIFY_ROUTE = "VERIFY_ROUTE";
+const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
+const NOT2019_ROUTE = "NOT2019_ROUTE";
+const AUTH_HELP_ROUTE = "AUTH_HELP_ROUTE";
+
+const ONBOARDING_START_ROUTE = "ONBOARDING_START_ROUTE";
+const ONBOARDING_NAME_AGE_ROUTE = "ONBOARDING_NAME_AGE_ROUTE";
+const ONBOARDING_MY_PRONOUNS_ROUTE = "ONBOARDING_MY_PRONOUNS_ROUTE";
+const ONBOARDING_WANT_PRONOUNS_ROUTE = "ONBOARDING_WANT_PRONOUNS_ROUTE";
+const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
+const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
+const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
+const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
+
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
 const MAIN_SWITCH = "MAIN_SWITCH";
@@ -60,12 +75,6 @@ const ONBOARDING_STACK = "ONBOARDING_STACK";
 const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
 const APP_SWITCH = "APP_SWITCH";
 const AUTH_SWITCH = "AUTH_SWITCH";
-
-const SPLASH_ROUTE = "SPLASH_ROUTE";
-const VERIFY_ROUTE = "VERIFY_ROUTE";
-const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
-const NOT2019_ROUTE = "NOT2019_ROUTE";
-const AUTH_HELP_ROUTE = "AUTH_HELP_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -76,18 +85,26 @@ export const routes = {
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
+  Splash: SPLASH_ROUTE,
+  Verify: VERIFY_ROUTE,
+  ExpiredCode: EXPIRED_CODE_ROUTE,
+  Not2019: NOT2019_ROUTE,
+  AuthHelp: AUTH_HELP_ROUTE,
+  OnboardingStart: ONBOARDING_START_ROUTE,
+  OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE,
+  OnboardingMyPronouns: ONBOARDING_MY_PRONOUNS_ROUTE,
+  OnboardingWantPronouns: ONBOARDING_WANT_PRONOUNS_ROUTE,
+  OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE,
+  OnboardingBio: ONBOARDING_BIO_ROUTE,
+  OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
+  OnboardingFinish: ONBOARDING_FINISH_ROUTE,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
   MainSwitch: MAIN_SWITCH,
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
   AppSwitch: APP_SWITCH,
-  AuthSwitch: AUTH_SWITCH,
-  Splash: SPLASH_ROUTE,
-  Verify: VERIFY_ROUTE,
-  ExpiredCode: EXPIRED_CODE_ROUTE,
-  Not2019: NOT2019_ROUTE,
-  AuthHelp: AUTH_HELP_ROUTE
+  AuthSwitch: AUTH_SWITCH
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -159,17 +176,17 @@ const AuthSwitch = createSwitchNavigator(
 
 const OnboardingStack = createStackNavigator(
   {
-    OnboardingStart: { screen: OnboardingStart },
-    OnboardingNameAge: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
-    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
-    OnboardingAddPictures: { screen: OnboardingAddPictures },
-    OnboardingBio: { screen: OnboardingBio },
-    OnboardingNotifications: { screen: OnboardingNotifications },
-    OnboardingFinish: { screen: OnboardingFinish }
+    ONBOARDING_START_ROUTE: { screen: OnboardingStart },
+    ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },
+    ONBOARDING_MY_PRONOUNS_ROUTE: { screen: OnboardingMyPronouns },
+    ONBOARDING_WANT_PRONOUNS_ROUTE: { screen: OnboardingWantPronouns },
+    ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
+    ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
+    ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
+    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish }
   },
   {
-    initialRouteName: "OnboardingStart",
+    initialRouteName: ONBOARDING_START_ROUTE,
     navigationOptions: {
       headerBackTitle: null,
       headerStyle: {
