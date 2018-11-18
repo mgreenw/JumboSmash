@@ -53,6 +53,16 @@ const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
 
+const ONBOARDING_START_ROUTE = "ONBOARDING_START_ROUTE";
+const ONBOARDING_NAME_AGE_ROUTE = "ONBOARDING_NAME_AGE_ROUTE";
+// OnboardingNameAge: { screen: OnboardingNameAge },
+// OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+// OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+// OnboardingAddPictures: { screen: OnboardingAddPictures },
+// OnboardingBio: { screen: OnboardingBio },
+// OnboardingNotifications: { screen: OnboardingNotifications },
+// OnboardingFinish: { screen: OnboardingFinish }
+
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
@@ -61,7 +71,9 @@ export const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
-  MatchesStack: MATCHES_STACK
+  MatchesStack: MATCHES_STACK,
+  OnboardingStart: ONBOARDING_START_ROUTE,
+  OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -133,8 +145,8 @@ const AuthSwitch = createSwitchNavigator(
 
 const OnboardingStack = createStackNavigator(
   {
-    OnboardingStart: { screen: OnboardingStart },
-    OnboardingNameAge: { screen: OnboardingNameAge },
+    ONBOARDING_START_ROUTE: { screen: OnboardingStart },
+    ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },
     OnboardingMyPronouns: { screen: OnboardingMyPronouns },
     OnboardingWantPronouns: { screen: OnboardingWantPronouns },
     OnboardingAddPictures: { screen: OnboardingAddPictures },
@@ -143,7 +155,7 @@ const OnboardingStack = createStackNavigator(
     OnboardingFinish: { screen: OnboardingFinish }
   },
   {
-    initialRouteName: "OnboardingStart",
+    initialRouteName: "ONBOARDING_START_ROUTE",
     navigationOptions: {
       headerBackTitle: null,
       headerStyle: {
