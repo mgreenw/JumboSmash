@@ -63,9 +63,14 @@ class HelpScreen extends React.Component<Props, State> {
       <View style={Arthur_Styles.container}>
         <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
         <Image
-          resizeMode="contain"
+          resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
-          style={{ position: "absolute", bottom: 0, right: 0 }}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: "100%"
+          }}
         />
       </View>
     );
