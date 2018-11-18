@@ -45,9 +45,11 @@ import OnboardingNotifications from "mobile/components/App/Onboarding/Onboarding
 import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_Screen";
 
 const PROFILE_ROUTE = "Profile";
+const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 
 export const routes = {
-  Profile: PROFILE_ROUTE
+  Profile: PROFILE_ROUTE,
+  ProfileEdit: PROFILE_EDIT_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
