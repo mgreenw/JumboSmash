@@ -50,6 +50,8 @@ const CARDS_ROUTE = "CARDS_ROUTE";
 const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
 const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 const CARDS_STACK = "CARDS_STACK";
+const PROFILE_STACK = "PROFILE_STACK";
+const MATCHES_STACK = "MATCHES_STACK";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -57,7 +59,9 @@ export const routes = {
   Cards: CARDS_ROUTE,
   SettingsEdit: SETTINGS_EDIT_ROUTE,
   ProfileEdit: PROFILE_EDIT_ROUTE,
-  CardsStack: CARDS_STACK
+  CardsStack: CARDS_STACK,
+  ProfileStack: PROFILE_STACK,
+  MatchesStack: MATCHES_STACK
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -96,8 +100,8 @@ const MatchesStack = createStackNavigator(
 const MainContentSwitch = createSwitchNavigator(
   {
     CARDS_STACK: CardsStack,
-    Profile: ProfileStack,
-    Matches: MatchesStack
+    PROFILE_STACK: ProfileStack,
+    MATCHES_STACK: MatchesStack
   },
   {
     initialRouteName: "CARDS_STACK"
