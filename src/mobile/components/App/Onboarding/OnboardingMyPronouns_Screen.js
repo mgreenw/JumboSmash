@@ -82,7 +82,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={Arthur_Styles.onboardingHeader}>
             Pronoun Preferences

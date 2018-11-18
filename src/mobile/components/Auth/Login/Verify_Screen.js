@@ -67,7 +67,10 @@ class SplashScreen extends React.Component<Props, State> {
   // IMPORTANT: must be like this in order for back button toggling!
   static navigationOptions = ({ navigation }) => ({
     headerLeft: navigation.state.params.headerLeft,
-    title: "Verification"
+    title: "Verification",
+    headerStyle: {
+      borderBottomWidth: 0
+    }
   });
 
   componentDidUpdate(prevProps, prevState) {
@@ -190,7 +193,7 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
           <Text>{message}</Text>
         </View>
@@ -221,13 +224,17 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           )}
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <PrimaryButton
-            onPress={this._onSubmit}
-            title="submit"
-            disabled={isLoading || this.state.code == ""}
-            loading={isLoading}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton
+              onPress={this._onSubmit}
+              title="submit"
+              disabled={isLoading || this.state.code == ""}
+              loading={isLoading}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
       </KeyboardAvoidingView>
     );
