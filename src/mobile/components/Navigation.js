@@ -48,6 +48,10 @@ const PROFILE_ROUTE = "PROFILE_ROUTE";
 const MATCHES_ROUTE = "MATCHES_ROUTE";
 const CARDS_ROUTE = "CARDS_ROUTE";
 const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
+const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
+const CARDS_STACK = "CARDS_STACK";
+const PROFILE_STACK = "PROFILE_STACK";
+const MATCHES_STACK = "MATCHES_STACK";
 const SPLASH_ROUTE = "SPLASH_ROUTE";
 
 export const routes = {
@@ -55,6 +59,10 @@ export const routes = {
   Matches: MATCHES_ROUTE,
   Cards: CARDS_ROUTE,
   SettingsEdit: SETTINGS_EDIT_ROUTE,
+  ProfileEdit: PROFILE_EDIT_ROUTE,
+  CardsStack: CARDS_STACK,
+  ProfileStack: PROFILE_STACK,
+  MatchesStack: MATCHES_STACK,
   Splash: SPLASH_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
@@ -73,7 +81,7 @@ const ProfileStack = createStackNavigator(
   {
     PROFILE_ROUTE: { screen: Profile },
     SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
-    ProfileEdit: { screen: ProfileEdit }
+    PROFILE_EDIT_ROUTE: { screen: ProfileEdit }
   },
   {
     initialRouteName: "PROFILE_ROUTE"
@@ -93,12 +101,12 @@ const MatchesStack = createStackNavigator(
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createSwitchNavigator(
   {
-    Cards: CardsStack,
-    Profile: ProfileStack,
-    Matches: MatchesStack
+    CARDS_STACK: CardsStack,
+    PROFILE_STACK: ProfileStack,
+    MATCHES_STACK: MatchesStack
   },
   {
-    initialRouteName: "Cards"
+    initialRouteName: "CARDS_STACK"
   }
 );
 
