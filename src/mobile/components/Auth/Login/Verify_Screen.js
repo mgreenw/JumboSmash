@@ -8,7 +8,8 @@ import {
   TextInput,
   Text,
   View,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Image
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
@@ -236,6 +237,11 @@ class SplashScreen extends React.Component<Props, State> {
           </View>
           <View style={{ flex: 1 }} />
         </View>
+        <Image
+          resizeMode="contain"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={{ position: "absolute", bottom: 0, right: 0 }}
+        />
       </KeyboardAvoidingView>
     );
   }

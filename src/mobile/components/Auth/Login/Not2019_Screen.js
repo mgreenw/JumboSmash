@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, KeyboardAvoidingView } from "react-native";
+import { Text, View, KeyboardAvoidingView, Image } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
@@ -52,6 +52,11 @@ class Not2019Screen extends React.Component<Props, State> {
             yearsLeft +
             (yearsLeft == -1 || yearsLeft == 1 ? " year." : " years.")}
         </Text>
+        <Image
+          resizeMode="contain"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={{ position: "absolute", bottom: 0, right: 0 }}
+        />
       </View>
     );
   }

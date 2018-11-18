@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
@@ -62,6 +62,11 @@ class HelpScreen extends React.Component<Props, State> {
     return (
       <View style={Arthur_Styles.container}>
         <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
+        <Image
+          resizeMode="contain"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={{ position: "absolute", bottom: 0, right: 0 }}
+        />
       </View>
     );
   }
