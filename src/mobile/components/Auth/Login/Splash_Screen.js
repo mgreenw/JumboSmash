@@ -53,7 +53,9 @@ class SplashScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
-    header: null
+    headerStyle: {
+      borderBottomWidth: 0
+    }
   };
 
   // for refs
@@ -170,8 +172,7 @@ class SplashScreen extends React.Component<Props, State> {
               resizeMode="contain"
               style={{
                 flex: 1,
-                width: 185,
-                height: 153
+                margin: 20
               }}
               source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
             />
@@ -216,9 +217,14 @@ class SplashScreen extends React.Component<Props, State> {
           </View>
         </KeyboardAvoidingView>
         <Image
-          resizeMode="contain"
+          resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
-          style={{ position: "absolute", bottom: 0, right: 0 }}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: "100%"
+          }}
         />
       </View>
     );
