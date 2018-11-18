@@ -32,42 +32,66 @@ import ProfileEdit from "mobile/components/App/Main/Profile/ProfileEdit_Screen";
 import SettingsEdit from "mobile/components/App/Main/Profile/SettingsEdit_Screen";
 
 import Cards from "mobile/components/App/Main/Cards/Cards_Screen";
-import Messaging from "mobile/components/App/Main/Matches/Matches_Screen";
+import Matches from "mobile/components/App/Main/Matches/Matches_Screen";
 
 // OnBoarding Screens
 import OnboardingStart from "mobile/components/App/Onboarding/OnboardingStart_Screen";
 import OnboardingNameAge from "mobile/components/App/Onboarding/OnboardingNameAge_Screen";
 import OnboardingMyPronouns from "mobile/components/App/Onboarding/OnboardingMyPronouns_Screen";
+import OnboardingWantPronouns from "mobile/components/App/Onboarding/OnboardingWantPronouns_Screen";
+import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAddPictures_Screen";
+import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen";
+import OnboardingNotifications from "mobile/components/App/Onboarding/OnboardingNotifications_Screen";
+import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_Screen";
 
+const PROFILE_ROUTE = "PROFILE_ROUTE";
+const MATCHES_ROUTE = "MATCHES_ROUTE";
+const CARDS_ROUTE = "CARDS_ROUTE";
+const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
+const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
+const CARDS_STACK = "CARDS_STACK";
+const PROFILE_STACK = "PROFILE_STACK";
+const MATCHES_STACK = "MATCHES_STACK";
+
+export const routes = {
+  Profile: PROFILE_ROUTE,
+  Matches: MATCHES_ROUTE,
+  Cards: CARDS_ROUTE,
+  SettingsEdit: SETTINGS_EDIT_ROUTE,
+  ProfileEdit: PROFILE_EDIT_ROUTE,
+  CardsStack: CARDS_STACK,
+  ProfileStack: PROFILE_STACK,
+  MatchesStack: MATCHES_STACK
+};
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
 const CardsStack = createStackNavigator(
   {
-    Cards: { screen: Cards }
+    CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: "Cards"
+    initialRouteName: "CARDS_ROUTE"
   }
 );
 
 const ProfileStack = createStackNavigator(
   {
-    Profile: { screen: Profile },
-    SettingsEdit: { screen: SettingsEdit },
-    ProfileEdit: { screen: ProfileEdit }
+    PROFILE_ROUTE: { screen: Profile },
+    SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
+    PROFILE_EDIT_ROUTE: { screen: ProfileEdit }
   },
   {
-    initialRouteName: "Profile"
+    initialRouteName: "PROFILE_ROUTE"
   }
 );
 
 const MatchesStack = createStackNavigator(
   {
-    Messaging: { screen: Messaging }
+    MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: "Messaging"
+    initialRouteName: "MATCHES_ROUTE"
   }
 );
 
@@ -75,12 +99,12 @@ const MatchesStack = createStackNavigator(
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createSwitchNavigator(
   {
-    Cards: CardsStack,
-    Profile: ProfileStack,
-    Matches: MatchesStack
+    CARDS_STACK: CardsStack,
+    PROFILE_STACK: ProfileStack,
+    MATCHES_STACK: MatchesStack
   },
   {
-    initialRouteName: "Cards"
+    initialRouteName: "CARDS_STACK"
   }
 );
 
@@ -111,7 +135,12 @@ const OnboardingStack = createStackNavigator(
   {
     OnboardingStart: { screen: OnboardingStart },
     OnboardingNameAge: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns }
+    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
+    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
+    OnboardingAddPictures: { screen: OnboardingAddPictures },
+    OnboardingBio: { screen: OnboardingBio },
+    OnboardingNotifications: { screen: OnboardingNotifications },
+    OnboardingFinish: { screen: OnboardingFinish }
   },
   {
     initialRouteName: "OnboardingStart",
@@ -128,7 +157,7 @@ const OnboardingStack = createStackNavigator(
 const AppSwitch = createSwitchNavigator(
   {
     Main: MainContentSwitch,
-    OnBoarding: OnboardingStack,
+    Onboarding: OnboardingStack,
     AppLoading: { screen: AppLoading }
   },
   {

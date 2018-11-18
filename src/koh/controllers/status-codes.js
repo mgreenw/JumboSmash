@@ -1,0 +1,19 @@
+// @flow
+
+// SHARED
+const SERVER_ERROR = 'SERVER_ERROR';
+const BAD_REQUEST = 'BAD_REQUEST';
+
+// Get Member info
+const GET_MEMBER_INFO__SUCCESS = 'GET_MEMBER_INFO__SUCCESS';
+const GET_MEMBER_INFO__NOT_FOUND = 'GET_MEMBER_INFO__NOT_FOUND';
+
+module.exports = {
+  // Shared
+  SERVER_ERROR,
+  BAD_REQUEST,
+
+  // Get Member Info
+  GET_MEMBER_INFO__SUCCESS,
+  GET_MEMBER_INFO__NOT_FOUND,
+};

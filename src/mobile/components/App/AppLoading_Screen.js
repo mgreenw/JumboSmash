@@ -5,33 +5,65 @@ import { Image, View, Text } from "react-native";
 import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
+import type { ReduxState, UserProfile } from "mobile/reducers/index";
 import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import ProgressBar from "react-native-progress/Bar";
+import { loadApp } from "mobile/actions/app/loadApp";
 
 type Props = {
-  navigation: any
+  // navigation
+  navigation: any,
+
+  // dispatch
+  loadApp: (token: string) => void,
+
+  // redux state
+  token: string,
+  appLoaded: boolean,
+  loadAppInProgress: boolean,
+  userProfile: UserProfile
 };
 
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+  return {
+    token: reduxState.token,
+    appLoaded: reduxState.appLoaded,
+    loadAppInProgress: reduxState.inProgress.loadApp,
+    userProfile: reduxState.profile
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+  return {
+    loadApp: (token: string) => {
+      dispatch(loadApp(token));
+    }
+  };
 }
 
 class AppLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    // TODO: load the app here!
-    setTimeout(() => {
+    this.props.loadApp(this.props.token);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
+    // so we use it for determining if the load occured.
+    if (
+      this.props.appLoaded &&
+      prevProps.loadAppInProgress != this.props.loadAppInProgress
+    ) {
       const { navigate } = this.props.navigation;
-      navigate("Main", {});
-    }, 2000);
+      if (this.props.userProfile === null) {
+        navigate("Onboarding", {});
+      } else {
+        navigate("Main", {});
+      }
+    }
   }
 
   render() {
