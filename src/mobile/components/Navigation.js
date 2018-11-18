@@ -81,7 +81,7 @@ const CardsStack = createStackNavigator(
     CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: "CARDS_ROUTE"
+    initialRouteName: CARDS_ROUTE
   }
 );
 
@@ -92,7 +92,7 @@ const ProfileStack = createStackNavigator(
     PROFILE_EDIT_ROUTE: { screen: ProfileEdit }
   },
   {
-    initialRouteName: "PROFILE_ROUTE"
+    initialRouteName: PROFILE_ROUTE
   }
 );
 
@@ -101,7 +101,7 @@ const MatchesStack = createStackNavigator(
     MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: "MATCHES_ROUTE"
+    initialRouteName: MATCHES_ROUTE
   }
 );
 
@@ -114,7 +114,7 @@ const MainContentSwitch = createSwitchNavigator(
     MATCHES_STACK: MatchesStack
   },
   {
-    initialRouteName: "CARDS_STACK"
+    initialRouteName: CARDS_STACK
   }
 );
 
@@ -127,7 +127,7 @@ const LoginStack = createStackNavigator(
     AUTH_HELP_ROUTE: { screen: Help }
   },
   {
-    initialRouteName: "SPLASH_ROUTE"
+    initialRouteName: SPLASH_ROUTE
   }
 );
 
