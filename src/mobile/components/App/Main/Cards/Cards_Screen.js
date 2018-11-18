@@ -1,21 +1,29 @@
 // @flow
 
 import React from "react";
-import { Text, View } from "react-native";
+import {
+  Text,
+  View,
+  TouchableWithoutFeeback,
+  TouchableOpacity
+} from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
-import { Button, Card, Icon } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
 import type { CardType } from "./Deck";
+import Card from "./Card";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  isExpanded: boolean
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -35,10 +43,18 @@ const DATA = [
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isExpanded: false
+    };
   }
 
   static navigationOptions = ({ navigation }) => {
+    const isExpanded = navigation.getParam("isExpanded", false);
+    if (isExpanded) {
+      return {
+        header: null
+      };
+    }
     return {
       title: "Swiping",
       headerRight: (
@@ -62,19 +78,21 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   };
 
+  _onCardPress = () => {
+    const { navigation } = this.props;
+    const isExpanded = navigation.getParam("isExpanded", false);
+    navigation.setParams({ isExpanded: !isExpanded });
+  };
+
   _renderCard = (card: CardType) => {
+    const { navigation } = this.props;
     return (
-      <Card
-        containerStyle={{
-          borderRadius: 10,
-          padding: 20
-        }}
-        title={card.name}
-        image={{
-          uri:
-            "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-        }}
-      />
+      <TouchableOpacity onPress={this._onCardPress}>
+        <Card
+          card={card}
+          isExpanded={navigation.getParam("isExpanded", false)}
+        />
+      </TouchableOpacity>
     );
   };
 

@@ -47,6 +47,8 @@ export default class Deck extends React.Component<Props, State> {
 
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
+      //onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetResponderCapture: () => true,
       onPanResponderMove: (_, gesture) => {
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
