@@ -105,7 +105,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     // for receiving completion of login action
     if (prevProps.loggedIn != this.props.loggedIn && this.props.loggedIn) {
       const { navigate } = this.props.navigation;
-      navigate("App", {});
+      navigate(routes.AppSwitch, {});
     }
   }
 
