@@ -107,7 +107,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onExpiredCode = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
-    navigate("ExpiredCode", {
+    navigate(routes.ExpiredCode, {
       utln: utln,
       email: email
     });

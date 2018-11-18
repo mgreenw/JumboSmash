@@ -52,6 +52,7 @@ const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
+
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
 const MAIN_SWITCH = "MAIN_SWITCH";
@@ -59,6 +60,12 @@ const ONBOARDING_STACK = "ONBOARDING_STACK";
 const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
 const APP_SWITCH = "APP_SWITCH";
 const AUTH_SWITCH = "AUTH_SWITCH";
+
+const SPLASH_ROUTE = "SPLASH_ROUTE";
+const VERIFY_ROUTE = "VERIFY_ROUTE";
+const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
+const NOT2019_ROUTE = "NOT2019_ROUTE";
+const AUTH_HELP_ROUTE = "AUTH_HELP_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -75,7 +82,12 @@ export const routes = {
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
   AppSwitch: APP_SWITCH,
-  AuthSwitch: AUTH_SWITCH
+  AuthSwitch: AUTH_SWITCH,
+  Splash: SPLASH_ROUTE,
+  Verify: VERIFY_ROUTE,
+  ExpiredCode: EXPIRED_CODE_ROUTE,
+  Not2019: NOT2019_ROUTE,
+  AuthHelp: AUTH_HELP_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -124,14 +136,14 @@ const MainContentSwitch = createSwitchNavigator(
 
 const LoginStack = createStackNavigator(
   {
-    Splash: { screen: Splash },
-    Verify: { screen: Verify },
-    ExpiredCode: { screen: ExpiredCode },
-    Not2019: { screen: Not2019 },
-    AuthHelp: { screen: Help }
+    SPLASH_ROUTE: { screen: Splash },
+    VERIFY_ROUTE: { screen: Verify },
+    EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
+    NOT2019_ROUTE: { screen: Not2019 },
+    AUTH_HELP_ROUTE: { screen: Help }
   },
   {
-    initialRouteName: "Splash"
+    initialRouteName: SPLASH_ROUTE
   }
 );
 
