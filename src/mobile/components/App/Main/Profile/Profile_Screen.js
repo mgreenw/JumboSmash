@@ -38,7 +38,7 @@ class ProfileScreen extends React.Component<Props, State> {
           name="diamond"
           type="font-awesome"
           size={40}
-          onPress={() => navigation.navigate("Cards")}
+          onPress={() => navigation.navigate(routes.Cards)}
           containerStyle={{ paddingRight: 10 }}
         />
       )
@@ -47,7 +47,7 @@ class ProfileScreen extends React.Component<Props, State> {
 
   _onSettingsPress = () => {
     const { navigate } = this.props.navigation;
-    navigate("SettingsEdit", {});
+    navigate(routes.SettingsEdit, {});
   };
 
   _onProfileEditPress = () => {
