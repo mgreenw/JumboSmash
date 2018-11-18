@@ -58,9 +58,9 @@ const ONBOARDING_NAME_AGE_ROUTE = "ONBOARDING_NAME_AGE_ROUTE";
 const ONBOARDING_MY_PRONOUNS_ROUTE = "ONBOARDING_MY_PRONOUNS_ROUTE";
 const ONBOARDING_WANT_PRONOUNS_ROUTE = "ONBOARDING_WANT_PRONOUNS_ROUTE";
 const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
-// OnboardingBio: { screen: OnboardingBio },
-// OnboardingNotifications: { screen: OnboardingNotifications },
-// OnboardingFinish: { screen: OnboardingFinish }
+const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
+const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
+const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -75,7 +75,10 @@ export const routes = {
   OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE,
   OnboardingMyPronouns: ONBOARDING_MY_PRONOUNS_ROUTE,
   OnboardingWantPronouns: ONBOARDING_WANT_PRONOUNS_ROUTE,
-  OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE
+  OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE,
+  OnboardingBio: ONBOARDING_BIO_ROUTE,
+  OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
+  OnboardingFinish: ONBOARDING_FINISH_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -152,9 +155,9 @@ const OnboardingStack = createStackNavigator(
     ONBOARDING_MY_PRONOUNS_ROUTE: { screen: OnboardingMyPronouns },
     ONBOARDING_WANT_PRONOUNS_ROUTE: { screen: OnboardingWantPronouns },
     ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
-    OnboardingBio: { screen: OnboardingBio },
-    OnboardingNotifications: { screen: OnboardingNotifications },
-    OnboardingFinish: { screen: OnboardingFinish }
+    ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
+    ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
+    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish }
   },
   {
     initialRouteName: "ONBOARDING_START_ROUTE",
