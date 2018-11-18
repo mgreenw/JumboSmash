@@ -44,28 +44,33 @@ import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen
 import OnboardingNotifications from "mobile/components/App/Onboarding/OnboardingNotifications_Screen";
 import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_Screen";
 
-const PROFILE_ROUTE = "Profile";
-const MATCHES_ROUTE = "Matches";
+const PROFILE_ROUTE = "PROFILE_ROUTE";
+const MATCHES_ROUTE = "MATCHES_ROUTE";
+const CARDS_ROUTE = "CARDS_ROUTE";
+const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
 
 export const routes = {
-  Profile: PROFILE_ROUTE
+  Profile: PROFILE_ROUTE,
+  Matches: MATCHES_ROUTE,
+  Cards: CARDS_ROUTE,
+  SettingsEdit: SETTINGS_EDIT_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
 const CardsStack = createStackNavigator(
   {
-    Cards: { screen: Cards }
+    CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: "Cards"
+    initialRouteName: "CARDS_ROUTE"
   }
 );
 
 const ProfileStack = createStackNavigator(
   {
     PROFILE_ROUTE: { screen: Profile },
-    SettingsEdit: { screen: SettingsEdit },
+    SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
     ProfileEdit: { screen: ProfileEdit }
   },
   {
@@ -75,10 +80,10 @@ const ProfileStack = createStackNavigator(
 
 const MatchesStack = createStackNavigator(
   {
-    Matches: { screen: Matches }
+    MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: "Matches"
+    initialRouteName: "MATCHES_ROUTE"
   }
 );
 
