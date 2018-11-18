@@ -55,10 +55,9 @@ const MATCHES_STACK = "MATCHES_STACK";
 
 const ONBOARDING_START_ROUTE = "ONBOARDING_START_ROUTE";
 const ONBOARDING_NAME_AGE_ROUTE = "ONBOARDING_NAME_AGE_ROUTE";
-// OnboardingNameAge: { screen: OnboardingNameAge },
-// OnboardingMyPronouns: { screen: OnboardingMyPronouns },
-// OnboardingWantPronouns: { screen: OnboardingWantPronouns },
-// OnboardingAddPictures: { screen: OnboardingAddPictures },
+const ONBOARDING_MY_PRONOUNS_ROUTE = "ONBOARDING_MY_PRONOUNS_ROUTE";
+const ONBOARDING_WANT_PRONOUNS_ROUTE = "ONBOARDING_WANT_PRONOUNS_ROUTE";
+const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
 // OnboardingBio: { screen: OnboardingBio },
 // OnboardingNotifications: { screen: OnboardingNotifications },
 // OnboardingFinish: { screen: OnboardingFinish }
@@ -73,7 +72,10 @@ export const routes = {
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
   OnboardingStart: ONBOARDING_START_ROUTE,
-  OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE
+  OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE,
+  OnboardingMyPronouns: ONBOARDING_MY_PRONOUNS_ROUTE,
+  OnboardingWantPronouns: ONBOARDING_WANT_PRONOUNS_ROUTE,
+  OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -147,9 +149,9 @@ const OnboardingStack = createStackNavigator(
   {
     ONBOARDING_START_ROUTE: { screen: OnboardingStart },
     ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },
-    OnboardingMyPronouns: { screen: OnboardingMyPronouns },
-    OnboardingWantPronouns: { screen: OnboardingWantPronouns },
-    OnboardingAddPictures: { screen: OnboardingAddPictures },
+    ONBOARDING_MY_PRONOUNS_ROUTE: { screen: OnboardingMyPronouns },
+    ONBOARDING_WANT_PRONOUNS_ROUTE: { screen: OnboardingWantPronouns },
+    ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
     OnboardingBio: { screen: OnboardingBio },
     OnboardingNotifications: { screen: OnboardingNotifications },
     OnboardingFinish: { screen: OnboardingFinish }
