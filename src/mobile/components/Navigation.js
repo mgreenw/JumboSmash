@@ -157,7 +157,7 @@ const OnboardingStack = createStackNavigator(
     OnboardingFinish: { screen: OnboardingFinish }
   },
   {
-    initialRouteName: "OnboardingFinish",
+    initialRouteName: "OnboardingStart",
     navigationOptions: {
       headerBackTitle: null,
       headerStyle: {
