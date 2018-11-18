@@ -53,14 +53,6 @@ const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
 
-const LOGIN_STACK = "LOGIN_STACK";
-const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
-const MAIN_SWITCH = "MAIN_SWITCH";
-const ONBOARDING_STACK = "ONBOARDING_STACK";
-const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
-const APP_SWITCH = "APP_SWITCH";
-const AUTH_SWITCH = "AUTH_SWITCH";
-
 const SPLASH_ROUTE = "SPLASH_ROUTE";
 const VERIFY_ROUTE = "VERIFY_ROUTE";
 const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
@@ -76,6 +68,14 @@ const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
 const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
 const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
 
+const LOGIN_STACK = "LOGIN_STACK";
+const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
+const MAIN_SWITCH = "MAIN_SWITCH";
+const ONBOARDING_STACK = "ONBOARDING_STACK";
+const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
+const APP_SWITCH = "APP_SWITCH";
+const AUTH_SWITCH = "AUTH_SWITCH";
+
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
@@ -85,13 +85,6 @@ export const routes = {
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
-  LoginStack: LOGIN_STACK,
-  AuthLoading: AUTH_LOADING_ROUTE,
-  MainSwitch: MAIN_SWITCH,
-  OnboardingStack: ONBOARDING_STACK,
-  AppLoading: APP_LOADING_ROUTE,
-  AppSwitch: APP_SWITCH,
-  AuthSwitch: AUTH_SWITCH,
   Splash: SPLASH_ROUTE,
   Verify: VERIFY_ROUTE,
   ExpiredCode: EXPIRED_CODE_ROUTE,
@@ -104,7 +97,14 @@ export const routes = {
   OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE,
   OnboardingBio: ONBOARDING_BIO_ROUTE,
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
-  OnboardingFinish: ONBOARDING_FINISH_ROUTE
+  OnboardingFinish: ONBOARDING_FINISH_ROUTE,
+  LoginStack: LOGIN_STACK,
+  AuthLoading: AUTH_LOADING_ROUTE,
+  MainSwitch: MAIN_SWITCH,
+  OnboardingStack: ONBOARDING_STACK,
+  AppLoading: APP_LOADING_ROUTE,
+  AppSwitch: APP_SWITCH,
+  AuthSwitch: AUTH_SWITCH
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
