@@ -9,6 +9,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -39,7 +40,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
 
   _saveSettingsAndProfile = () => {
     const { navigation } = this.props;
-    navigation.navigate("Main");
+    navigation.navigate(routes.MainSwitch);
   };
 
   render() {
