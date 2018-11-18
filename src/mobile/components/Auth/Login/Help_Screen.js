@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -50,7 +51,7 @@ class HelpScreen extends React.Component<Props, State> {
   };
 
   _onHelpMessage = () => {
-    if (this.state.prevRoute == "Splash") {
+    if (this.state.prevRoute == routes.Splash) {
       return "Splash page help message";
     } else if (this.state.prevRoute == "Verify") {
       return "Verify page help message";

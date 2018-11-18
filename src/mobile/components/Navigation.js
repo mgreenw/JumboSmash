@@ -53,6 +53,20 @@ const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
 
+const LOGIN_STACK = "LOGIN_STACK";
+const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
+const MAIN_SWITCH = "MAIN_SWITCH";
+const ONBOARDING_STACK = "ONBOARDING_STACK";
+const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
+const APP_SWITCH = "APP_SWITCH";
+const AUTH_SWITCH = "AUTH_SWITCH";
+
+const SPLASH_ROUTE = "SPLASH_ROUTE";
+const VERIFY_ROUTE = "VERIFY_ROUTE";
+const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
+const NOT2019_ROUTE = "NOT2019_ROUTE";
+const AUTH_HELP_ROUTE = "AUTH_HELP_ROUTE";
+
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
@@ -61,7 +75,19 @@ export const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
-  MatchesStack: MATCHES_STACK
+  MatchesStack: MATCHES_STACK,
+  LoginStack: LOGIN_STACK,
+  AuthLoading: AUTH_LOADING_ROUTE,
+  MainSwitch: MAIN_SWITCH,
+  OnboardingStack: ONBOARDING_STACK,
+  AppLoading: APP_LOADING_ROUTE,
+  AppSwitch: APP_SWITCH,
+  AuthSwitch: AUTH_SWITCH,
+  Splash: SPLASH_ROUTE,
+  Verify: VERIFY_ROUTE,
+  ExpiredCode: EXPIRED_CODE_ROUTE,
+  Not2019: NOT2019_ROUTE,
+  AuthHelp: AUTH_HELP_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -71,7 +97,7 @@ const CardsStack = createStackNavigator(
     CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: "CARDS_ROUTE"
+    initialRouteName: CARDS_ROUTE
   }
 );
 
@@ -82,7 +108,7 @@ const ProfileStack = createStackNavigator(
     PROFILE_EDIT_ROUTE: { screen: ProfileEdit }
   },
   {
-    initialRouteName: "PROFILE_ROUTE"
+    initialRouteName: PROFILE_ROUTE
   }
 );
 
@@ -91,7 +117,7 @@ const MatchesStack = createStackNavigator(
     MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: "MATCHES_ROUTE"
+    initialRouteName: MATCHES_ROUTE
   }
 );
 
@@ -104,30 +130,30 @@ const MainContentSwitch = createSwitchNavigator(
     MATCHES_STACK: MatchesStack
   },
   {
-    initialRouteName: "CARDS_STACK"
+    initialRouteName: CARDS_STACK
   }
 );
 
 const LoginStack = createStackNavigator(
   {
-    Splash: { screen: Splash },
-    Verify: { screen: Verify },
-    ExpiredCode: { screen: ExpiredCode },
-    Not2019: { screen: Not2019 },
-    AuthHelp: { screen: Help }
+    SPLASH_ROUTE: { screen: Splash },
+    VERIFY_ROUTE: { screen: Verify },
+    EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
+    NOT2019_ROUTE: { screen: Not2019 },
+    AUTH_HELP_ROUTE: { screen: Help }
   },
   {
-    initialRouteName: "Splash"
+    initialRouteName: SPLASH_ROUTE
   }
 );
 
 const AuthSwitch = createSwitchNavigator(
   {
-    Login: LoginStack,
-    AuthLoading: { screen: AuthLoading }
+    LOGIN_STACK: LoginStack,
+    AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
-    initialRouteName: "AuthLoading"
+    initialRouteName: AUTH_LOADING_ROUTE
   }
 );
 
@@ -156,23 +182,23 @@ const OnboardingStack = createStackNavigator(
 
 const AppSwitch = createSwitchNavigator(
   {
-    Main: MainContentSwitch,
-    Onboarding: OnboardingStack,
-    AppLoading: { screen: AppLoading }
+    MAIN_SWITCH: MainContentSwitch,
+    ONBOARDING_STACK: OnboardingStack,
+    APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
-    initialRouteName: "AppLoading"
+    initialRouteName: APP_LOADING_ROUTE
   }
 );
 
 export const createRootNavigator = () => {
   return createSwitchNavigator(
     {
-      App: AppSwitch,
-      Auth: AuthSwitch
+      APP_SWITCH: AppSwitch,
+      AUTH_SWITCH: AuthSwitch
     },
     {
-      initialRouteName: "Auth"
+      initialRouteName: AUTH_SWITCH
     }
   );
 };

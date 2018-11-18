@@ -20,6 +20,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { routes } from "mobile/components/Navigation";
 
 type State = {
   code: string,
@@ -83,7 +84,7 @@ class SplashScreen extends React.Component<Props, State> {
 
       if (this.props.loggedIn) {
         const { navigate } = this.props.navigation;
-        navigate("App", {});
+        navigate(routes.AppSwitch, {});
       }
     }
   }
@@ -106,7 +107,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onExpiredCode = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
-    navigate("ExpiredCode", {
+    navigate(routes.ExpiredCode, {
       utln: utln,
       email: email
     });
