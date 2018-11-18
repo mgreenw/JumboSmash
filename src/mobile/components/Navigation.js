@@ -53,6 +53,7 @@ const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
 const SPLASH_ROUTE = "SPLASH_ROUTE";
+const VERIFY_ROUTE = "VERIFY_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -63,7 +64,8 @@ export const routes = {
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
-  Splash: SPLASH_ROUTE
+  Splash: SPLASH_ROUTE,
+  Verify: VERIFY_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -113,7 +115,7 @@ const MainContentSwitch = createSwitchNavigator(
 const LoginStack = createStackNavigator(
   {
     SPLASH_ROUTE: { screen: Splash },
-    Verify: { screen: Verify },
+    VERIFY_ROUTE: { screen: Verify },
     ExpiredCode: { screen: ExpiredCode },
     Not2019: { screen: Not2019 },
     AuthHelp: { screen: Help }

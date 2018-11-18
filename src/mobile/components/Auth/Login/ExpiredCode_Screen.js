@@ -73,7 +73,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
 
   _onSuccess = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
-    navigate("Verify", {
+    navigate(routes.Verify, {
       utln: utln,
       email: email
     });
