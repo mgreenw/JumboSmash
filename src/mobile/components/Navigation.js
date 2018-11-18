@@ -52,6 +52,8 @@ const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
+const LOGIN_STACK = "LOGIN_STACK";
+const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
@@ -61,7 +63,9 @@ export const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
-  MatchesStack: MATCHES_STACK
+  MatchesStack: MATCHES_STACK,
+  LoginStack: LOGIN_STACK,
+  AuthLoading: AUTH_LOADING_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -123,11 +127,11 @@ const LoginStack = createStackNavigator(
 
 const AuthSwitch = createSwitchNavigator(
   {
-    Login: LoginStack,
-    AuthLoading: { screen: AuthLoading }
+    LOGIN_STACK: LoginStack,
+    AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
-    initialRouteName: "AuthLoading"
+    initialRouteName: "AUTH_LOADING_ROUTE"
   }
 );
 
