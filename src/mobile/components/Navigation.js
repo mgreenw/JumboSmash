@@ -48,12 +48,14 @@ const PROFILE_ROUTE = "PROFILE_ROUTE";
 const MATCHES_ROUTE = "MATCHES_ROUTE";
 const CARDS_ROUTE = "CARDS_ROUTE";
 const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
+const SPLASH_ROUTE = "SPLASH_ROUTE";
 
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
   Cards: CARDS_ROUTE,
-  SettingsEdit: SETTINGS_EDIT_ROUTE
+  SettingsEdit: SETTINGS_EDIT_ROUTE,
+  Splash: SPLASH_ROUTE
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -102,14 +104,14 @@ const MainContentSwitch = createSwitchNavigator(
 
 const LoginStack = createStackNavigator(
   {
-    Splash: { screen: Splash },
+    SPLASH_ROUTE: { screen: Splash },
     Verify: { screen: Verify },
     ExpiredCode: { screen: ExpiredCode },
     Not2019: { screen: Not2019 },
     AuthHelp: { screen: Help }
   },
   {
-    initialRouteName: "Splash"
+    initialRouteName: "SPLASH_ROUTE"
   }
 );
 
@@ -135,7 +137,7 @@ const OnboardingStack = createStackNavigator(
     OnboardingFinish: { screen: OnboardingFinish }
   },
   {
-    initialRouteName: "OnboardingStart",
+    initialRouteName: "OnboardingFinish",
     navigationOptions: {
       headerBackTitle: null,
       headerStyle: {
