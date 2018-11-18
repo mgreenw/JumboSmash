@@ -9,56 +9,6 @@ function signToken(id) {
   });
 }
 
-async function createUser(utln, username = null) {
-  const email = `${username || utln}@tufts.edu`;
-
-  try {
-    const result = await db.query(`
-    INSERT INTO users
-      (utln, email)
-      VALUES ($1, $2)
-    RETURNING id`, [utln, email]);
-
-    const { id } = result.rows[0];
-
-    return {
-      id,
-      token: signToken(id),
-    };
-  } catch (error) {
-    throw new Error('Failed to insert user');
-  }
-}
-
-async function updateSettings(utln, settings) {
-  const {
-    wantsHe,
-    wantsShe,
-    wantsThey,
-    usesHe,
-    usesShe,
-    usesThey,
-  } = settings;
-
-  try {
-    const result = await db.query(`
-    INSERT INTO users
-      (utln, wantsHe, wantsShe, wantsThey, usesHe, usesShe, usesThey)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    RETURNING id`, [utln, wantsHe, wantsShe, wantsThey, usesHe, usesShe,
-      usesThey]);
-
-    const { id } = result.rows[0];
-
-    return {
-      id,
-      token: signToken(id),
-    };
-  } catch (error) {
-    throw new Error('Failed to insert user');
-  }
-}
-
 async function createProfile(userId, body) {
   const {
     displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio,
@@ -81,6 +31,98 @@ async function createProfile(userId, body) {
     return result.rows[0].id;
   } catch (error) {
     throw new Error('Failed to insert profile');
+  }
+}
+
+
+async function createUser(utln, useDefaultProfile = false, profileBody = null) {
+  const email = `${utln}@tufts.edu`;
+
+  try {
+    const result = await db.query(`
+    INSERT INTO users
+      (utln, email)
+      VALUES ($1, $2)
+    RETURNING id`, [utln, email]);
+
+    const { id } = result.rows[0];
+
+    if (useDefaultProfile || profileBody !== null) {
+      const defaultProfile = {
+        displayName: 'test user',
+        bio: 'is a user',
+        birthday: '1997-09-09',
+        image1Url: 'https://www.google.com',
+      };
+
+      const body = useDefaultProfile ? defaultProfile : profileBody;
+      const profile = await createProfile(id, body);
+
+      return {
+        id,
+        token: signToken(id),
+        profile: {
+          id: profile,
+          ...body,
+        },
+      };
+    }
+
+    return {
+      id,
+      token: signToken(id),
+    };
+  } catch (error) {
+    throw new Error('Failed to insert user');
+  }
+}
+
+async function updateSettings(id, settings) {
+  const {
+    wantHe,
+    wantShe,
+    wantThey,
+    useHe,
+    useShe,
+    useThey,
+    activeSmash,
+    activeStone,
+    activeSocial,
+  } = settings;
+
+  try {
+    await db.query(`
+    UPDATE users
+      SET (want_he, want_she, want_they, use_he, use_she, use_they, active_smash, active_social, active_stone)
+      = ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    WHERE id = $10
+    `, [wantHe, wantShe, wantThey, useHe, useShe, useThey, activeSmash, activeSocial, activeStone, id]);
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+async function createRelationship(
+  critic,
+  candidate,
+  likedSmash = false,
+  likedSocial = false,
+  likedStone = false,
+  blocked = false,
+) {
+  try {
+    await db.query(`
+      INSERT INTO relationships
+      (critic_user_id, candidate_user_id, liked_smash, liked_social, liked_stone, blocked)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `, [critic, candidate, likedSmash, likedSocial, likedStone, blocked]);
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 }
 
@@ -107,4 +149,5 @@ module.exports = {
   deleteUser,
   updateSettings,
   signToken,
+  createRelationship,
 };
