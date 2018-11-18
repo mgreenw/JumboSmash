@@ -52,6 +52,15 @@ const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
+
+const LOGIN_STACK = "LOGIN_STACK";
+const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
+const MAIN_SWITCH = "MAIN_SWITCH";
+const ONBOARDING_STACK = "ONBOARDING_STACK";
+const APP_LOADING_ROUTE = "APP_LOADING_ROUTE";
+const APP_SWITCH = "APP_SWITCH";
+const AUTH_SWITCH = "AUTH_SWITCH";
+
 const SPLASH_ROUTE = "SPLASH_ROUTE";
 const VERIFY_ROUTE = "VERIFY_ROUTE";
 const EXPIRED_CODE_ROUTE = "EXPIRED_CODE_ROUTE";
@@ -76,6 +85,13 @@ export const routes = {
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
+  LoginStack: LOGIN_STACK,
+  AuthLoading: AUTH_LOADING_ROUTE,
+  MainSwitch: MAIN_SWITCH,
+  OnboardingStack: ONBOARDING_STACK,
+  AppLoading: APP_LOADING_ROUTE,
+  AppSwitch: APP_SWITCH,
+  AuthSwitch: AUTH_SWITCH,
   Splash: SPLASH_ROUTE,
   Verify: VERIFY_ROUTE,
   ExpiredCode: EXPIRED_CODE_ROUTE,
@@ -150,11 +166,11 @@ const LoginStack = createStackNavigator(
 
 const AuthSwitch = createSwitchNavigator(
   {
-    Login: LoginStack,
-    AuthLoading: { screen: AuthLoading }
+    LOGIN_STACK: LoginStack,
+    AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
-    initialRouteName: "AuthLoading"
+    initialRouteName: AUTH_LOADING_ROUTE
   }
 );
 
@@ -183,23 +199,23 @@ const OnboardingStack = createStackNavigator(
 
 const AppSwitch = createSwitchNavigator(
   {
-    Main: MainContentSwitch,
-    Onboarding: OnboardingStack,
-    AppLoading: { screen: AppLoading }
+    MAIN_SWITCH: MainContentSwitch,
+    ONBOARDING_STACK: OnboardingStack,
+    APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
-    initialRouteName: "AppLoading"
+    initialRouteName: APP_LOADING_ROUTE
   }
 );
 
 export const createRootNavigator = () => {
   return createSwitchNavigator(
     {
-      App: AppSwitch,
-      Auth: AuthSwitch
+      APP_SWITCH: AppSwitch,
+      AUTH_SWITCH: AuthSwitch
     },
     {
-      initialRouteName: "Auth"
+      initialRouteName: AUTH_SWITCH
     }
   );
 };

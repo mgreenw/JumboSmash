@@ -10,6 +10,7 @@ import getTokenUtln from "mobile/api/auth/getTokenUtln";
 import { loadAuth } from "mobile/actions/auth/loadAuth";
 import { login } from "mobile/actions/auth/login";
 import type { ReduxState } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any,
@@ -104,7 +105,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     // for receiving completion of login action
     if (prevProps.loggedIn != this.props.loggedIn && this.props.loggedIn) {
       const { navigate } = this.props.navigation;
-      navigate("App", {});
+      navigate(routes.AppSwitch, {});
     }
   }
 
@@ -118,7 +119,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   // our redux state defaults being logged out, so we go straight to auth.
   _onInvalidToken = () => {
     const { navigate } = this.props.navigation;
-    navigate("Login");
+    navigate(routes.LoginStack);
   };
 
   render() {

@@ -84,7 +84,7 @@ class SplashScreen extends React.Component<Props, State> {
 
       if (this.props.loggedIn) {
         const { navigate } = this.props.navigation;
-        navigate("App", {});
+        navigate(routes.AppSwitch, {});
       }
     }
   }
