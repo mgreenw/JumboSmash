@@ -13,6 +13,7 @@ import { styles } from "mobile/styles/auth";
 import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -50,7 +51,9 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           onPress={() => {
             const resetAction = StackActions.reset({
               index: 0,
-              actions: [NavigationActions.navigate({ routeName: "Splash" })]
+              actions: [
+                NavigationActions.navigate({ routeName: routes.Splash })
+              ]
             });
             navigation.dispatch(resetAction);
           }}
@@ -70,7 +73,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
 
   _onSuccess = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
-    navigate("Verify", {
+    navigate(routes.Verify, {
       utln: utln,
       email: email
     });
@@ -130,8 +133,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text style={styles.title}>Expired Verification Code</Text>
         </View>
         <View>
-          <Text
-          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
