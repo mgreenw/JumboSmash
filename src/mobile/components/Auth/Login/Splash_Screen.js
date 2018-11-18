@@ -167,19 +167,25 @@ class SplashScreen extends React.Component<Props, State> {
           }}
           behavior="padding"
         >
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center"
+            }}
+          >
             <Image
               resizeMode="contain"
               style={{
                 flex: 1,
-                margin: 20
+                margin: 20,
+                maxWidth: "60%"
               }}
               source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
             />
             <Input
               containerStyle={
                 this.state.validUtln
-                  ? styles.inputWrapperStyle
+                  ? styles.inputWrapperStyle && { maxWidth: "60%" }
                   : styles.inputWrapperStyleWithError
               }
               placeholderTextColor={"#DDDDDD"}
