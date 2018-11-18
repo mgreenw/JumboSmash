@@ -209,12 +209,17 @@ class SplashScreen extends React.Component<Props, State> {
                   disabled={this.state.isSubmitting || this.state.utln == ""}
                   loading={this.state.isSubmitting}
                 />
+                <Button onPress={this._onHelp} title="help" />
               </View>
               <View style={{ flex: 1 }} />
             </View>
           </View>
-          <Button onPress={this._onHelp} title="help" />
         </KeyboardAvoidingView>
+        <Image
+          resizeMode="contain"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={{ position: "absolute", bottom: 0, right: 0 }}
+        />
       </View>
     );
   }
