@@ -20,6 +20,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -65,7 +66,7 @@ class SplashScreen extends React.Component<Props, State> {
   // same that were submitted!
   _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
-    navigate("Verify", {
+    navigate(routes.Verify, {
       utln: utln,
       email: email,
       alreadySent: alreadySent
@@ -74,7 +75,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
-    navigate("Not2019", {
+    navigate(routes.Not2019, {
       classYear: classYear
     });
   };
@@ -89,7 +90,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigate } = this.props.navigation;
-    navigate("AuthHelp", {});
+    navigate(routes.AuthHelp, {});
   };
 
   _onSubmit = () => {
