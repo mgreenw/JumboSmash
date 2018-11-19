@@ -25,7 +25,8 @@ type Props = {
 };
 
 type State = {
-  isExpanded: boolean
+  isExpanded: boolean,
+  isSwiping: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -36,20 +37,27 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-const DATA = [
+let DATA = [
   { id: 1, name: "Dan1", age: 21 },
   { id: 2, name: "Dan2", age: 22 },
   { id: 3, name: "Dan3", age: 69 },
   { id: 4, name: "Dan4", age: 47 }
 ];
 
+let count = 5;
+
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    /*setInterval(() => {
+      DATA.push({ id: count, name: `Dan${count}`, age: 21 });
+      count++;
+    }, 2000);*/
     this.state = {
-      isExpanded: false
+      isExpanded: false,
+      isSwiping: false
     };
   }
 
@@ -113,19 +121,29 @@ class SwipingScreen extends React.Component<Props, State> {
     console.log("Card disliked: " + card.name);
   };
 
+  _onSwipeComplete = () => {
+    this.setState({ isSwiping: false });
+  };
+
   _onCardTap = () => {
     console.log("tapped");
     this.setState({ isExpanded: true });
   };
 
   _onPressSwipeButton = (direction: direction) => {
-    const { isExpanded } = this.state;
-    if (isExpanded) {
-      this.setState({ isExpanded: false }, () => {
-        setTimeout(() => this.deck._forceSwipe(direction, 750), 250);
-      });
+    const { isExpanded, isSwiping } = this.state;
+    if (isSwiping) {
+      return;
     } else {
-      this.deck._forceSwipe(direction, 750);
+      this.setState({ isSwiping: true }, () => {
+        if (isExpanded) {
+          this.setState({ isExpanded: false }, () => {
+            setTimeout(() => this.deck._forceSwipe(direction, 750), 250);
+          });
+        } else {
+          this.deck._forceSwipe(direction, 750);
+        }
+      });
     }
   };
 
@@ -141,6 +159,7 @@ class SwipingScreen extends React.Component<Props, State> {
           renderEmpty={this._renderEmpty}
           onSwipeRight={this._onSwipeRight}
           onSwipeLeft={this._onSwipeLeft}
+          onSwipeComplete={this._onSwipeComplete}
           disableSwipe={this.state.isExpanded}
           onTap={this._onCardTap}
           infinite={true}
