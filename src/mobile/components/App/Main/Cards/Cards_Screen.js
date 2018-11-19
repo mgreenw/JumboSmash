@@ -38,10 +38,10 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 }
 
 let DATA = [
-  { id: 1, name: "Dan1", age: 21 },
-  { id: 2, name: "Dan2", age: 22 },
-  { id: 3, name: "Dan3", age: 69 },
-  { id: 4, name: "Dan4", age: 47 }
+  { id: 1, name: "Anthony", age: 21 },
+  { id: 2, name: "Tony", age: 22 },
+  { id: 3, name: "Ant", age: 69 },
+  { id: 4, name: "T-dawg", age: 47 }
 ];
 
 let count = 5;
@@ -51,10 +51,6 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    /*setInterval(() => {
-      DATA.push({ id: count, name: `Dan${count}`, age: 21 });
-      count++;
-    }, 2000);*/
     this.state = {
       isExpanded: false,
       isSwiping: false
