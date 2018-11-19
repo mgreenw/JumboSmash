@@ -178,7 +178,6 @@ class SplashScreen extends React.Component<Props, State> {
               resizeMode="contain"
               style={{
                 flex: 1,
-                margin: 20,
                 maxWidth: "60%"
               }}
               source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
