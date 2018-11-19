@@ -28,6 +28,7 @@ type Props = {
   renderEmpty: () => Node,
   onSwipeRight: (card: CardType) => void,
   onSwipeLeft: (card: CardType) => void,
+  onSwipeComplete: () => void,
   onTap: () => void,
   disableSwipe: boolean,
   infinite?: boolean
@@ -114,9 +115,9 @@ export default class Deck extends React.Component<Props, State> {
   _onSwipeComplete(direction: direction) {
     const { onSwipeRight, onSwipeLeft, data } = this.props;
     const item = data[this.state.index];
-
     direction === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
     this.state.position.setValue({ x: 0, y: 0 });
+    this.props.onSwipeComplete();
     this.setState({ index: this.state.index + 1 });
   }
 
