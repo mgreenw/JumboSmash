@@ -14,6 +14,7 @@ import type {
   UserProfile,
   Pronouns
 } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -65,7 +66,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingWantPronouns", {
+    navigation.navigate(routes.OnboardingWantPronouns, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (

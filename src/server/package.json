@@ -58,5 +58,8 @@
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
     "supertest": "^3.3.0"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./jest.setup.js"
   }
 }

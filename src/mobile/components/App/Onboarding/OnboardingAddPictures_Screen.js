@@ -17,6 +17,7 @@ import { styles } from "mobile/styles/template";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -57,7 +58,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingBio", {
+    navigation.navigate(routes.OnboardingBio, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (

@@ -4,6 +4,7 @@ const express = require('express');
 
 const authRouter = require('./auth');
 const usersRouter = require('./users');
+const relationshipsRouter = require('./relationships');
 
 const apiRouter = express.Router();
 const authenticated = require('../../controllers/auth/middleware/authenticated');
@@ -26,11 +27,11 @@ apiRouter.use(authenticated);
 // authentication or onboarding, they may use the middleware directly.
 apiRouter.use('/users', usersRouter);
 
-
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
 // hasProfile: the user has gone through the required profile setup.
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
+apiRouter.use('/relationships', relationshipsRouter);
 
 module.exports = apiRouter;
