@@ -157,7 +157,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <Text style={Arthur_Styles.title}>Project Gem</Text>
         <KeyboardAvoidingView
           style={{
