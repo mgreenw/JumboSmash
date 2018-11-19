@@ -14,26 +14,30 @@ import type { AnimatedValueXY, Node } from "react-native";
 
 export type CardType = {
   id: number,
-  name: string
+  name: string,
+  age: number
 };
 
 const RIGHT = "right";
 const LEFT = "left";
-type direction = "left" | "right";
+export type direction = "left" | "right";
 
 type Props = {
   data: $ReadOnlyArray<CardType>,
-  renderCard: (card: CardType) => Node,
+  renderCard: (card: CardType, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeRight: (card: CardType) => void,
   onSwipeLeft: (card: CardType) => void,
+  onTap: () => void,
+  disableSwipe: boolean,
   infinite?: boolean
 };
 
 type State = {
   panResponder: any,
   position: AnimatedValueXY,
-  index: number
+  index: number,
+  slideGesture: boolean
 };
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -47,24 +51,49 @@ export default class Deck extends React.Component<Props, State> {
 
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      //onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => false,
       onMoveShouldSetResponderCapture: () => true,
       onPanResponderMove: (_, gesture) => {
+        if (this.props.disableSwipe) {
+          return;
+        }
+        if (
+          gesture.dx < -5 ||
+          gesture.dx > 5 ||
+          gesture.dy < -5 ||
+          gesture.dy > 5
+        ) {
+          this.setState({
+            slideGesture: true
+          });
+        }
+
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
       onPanResponderRelease: (_, gesture) => {
+        if (this.props.disableSwipe) {
+          return;
+        }
         if (gesture.dx > SWIPE_THRESHOLD) {
-          this._forceSwipe(RIGHT);
+          this._forceSwipe(RIGHT, 500);
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
-          this._forceSwipe(LEFT);
+          this._forceSwipe(LEFT, 500);
         } else {
           console.log("Swipe dismissed");
           this._resetPosition();
         }
+        if (!this.state.slideGesture) {
+          debugger;
+          this.props.onTap();
+        }
+
+        this.setState({
+          slideGesture: false
+        });
       }
     });
 
-    this.state = { panResponder, position, index: 0 };
+    this.state = { panResponder, position, index: 0, slideGesture: false };
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -73,18 +102,12 @@ export default class Deck extends React.Component<Props, State> {
     }
   }
 
-  componentWillUpdate() {
-    UIManager.setLayoutAnimationEnabledExperimental &&
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    LayoutAnimation.spring();
-  }
-
-  _forceSwipe(direction: direction) {
+  _forceSwipe(direction: direction, duration: number) {
     const x = direction === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
     Animated.timing(this.state.position, {
       toValue: { x: x * 2, y: direction === RIGHT ? -x : x },
-      duration: 250
+      duration: duration
     }).start(() => this._onSwipeComplete(direction));
   }
 
@@ -125,29 +148,33 @@ export default class Deck extends React.Component<Props, State> {
       .map((item, i) => {
         if (i < this.state.index) {
           return null;
-        } else if (i === this.state.index) {
+        } else if (i === this.state.index && !this.props.disableSwipe) {
           return (
             <Animated.View
               key={item.id}
               style={[this._getCardStyle(), styles.cardStyle]}
               {...this.state.panResponder.panHandlers}
             >
-              {this.props.renderCard(item)}
+              {this.props.renderCard(item, true)}
             </Animated.View>
           );
         }
 
         return (
-          <Animated.View key={item.id} style={styles.cardStyle}>
-            {this.props.renderCard(item)}
-          </Animated.View>
+          <View key={item.id} style={styles.cardStyle}>
+            {this.props.renderCard(item, i === this.state.index)}
+          </View>
         );
       })
       .reverse();
   }
 
   render() {
-    return <View>{this._renderCards()}</View>;
+    return (
+      <View style={{ position: "relative", flex: 1 }}>
+        {this._renderCards()}
+      </View>
+    );
   }
 }
 
