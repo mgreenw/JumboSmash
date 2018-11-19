@@ -47,6 +47,8 @@ const getMatches = async (req: $Request, res: $Response) => {
         they_profile.display_name AS "displayName",
         to_char(they_profile.birthday, 'YYYY-MM-DD') AS birthday,
         they_profile.bio,
+        me_critic.blocked as me_blocked,
+        they_critic.blocked as they_blocked,
         array_remove(ARRAY[
           ${matchedScenesSelect.join(',')}
         ], NULL) AS scenes
@@ -59,9 +61,9 @@ const getMatches = async (req: $Request, res: $Response) => {
       WHERE
         me_critic.critic_user_id = ${req.user.id}
         AND me_critic.candidate_user_id = they_critic.critic_user_id
-        AND NOT (me_critic.blocked OR they_critic.blocked)
+        AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
         AND
-          ${matchedScenesChecks.join(' OR ')}
+          (${matchedScenesChecks.join(' OR ')})
     `);
     return res.status(200).json({
       status: codes.GET_MATCHES__SUCCESS,
