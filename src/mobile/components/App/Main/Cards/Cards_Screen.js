@@ -138,16 +138,19 @@ class SwipingScreen extends React.Component<Props, State> {
       this.setState({ isSwiping: true }, () => {
         if (isExpanded) {
           this.setState({ isExpanded: false }, () => {
-            setTimeout(() => this.deck._forceSwipe(direction, 750), 250);
+            setTimeout(
+              () => this.deck && this.deck._forceSwipe(direction, 750),
+              250
+            );
           });
         } else {
-          this.deck._forceSwipe(direction, 750);
+          this.deck && this.deck._forceSwipe(direction, 750);
         }
       });
     }
   };
 
-  deck: Deck;
+  deck: ?Deck;
 
   render() {
     return (
