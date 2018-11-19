@@ -4,13 +4,42 @@ import type { $Request, $Response } from 'express';
 
 const db = require('../../db');
 const apiUtils = require('../utils');
+const utils = require('./utils');
 const codes = require('../status-codes');
+
+const matchedScenesSelect = utils.scenes.map((scene) => {
+  return `
+    CASE
+      me_critic.liked_${scene} AND they_critic.liked_${scene}
+      WHEN true
+        THEN '${scene}'
+        ELSE NULL
+    END`;
+});
+
+const matchedScenesChecks = utils.scenes.map((scene) => {
+  return `(me_critic.liked_${scene} AND they_critic.liked_${scene})`;
+});
 
 /**
  * @api {get} /api/relationships/matches
  *
  */
 const getMatches = async (req: $Request, res: $Response) => {
+  // NOTES:
+  // 1) We are selecting the user's profile as well as the scenes that the
+  //    requesting user and the other user are matched on. We use a CASE statement
+  //    defined in matchedScenesSelect in order to get the scenes where the match
+  //    occurred. Then, we use array_remove() to remove all 'null' values (where
+  //    the users are not matched)
+  // 2) We do a join on relationships in order to get the inverse relationship.
+  //    In this query, "me" represents the requesting user and "they" represents
+  //    the user's relationships, IE the users that have a relationship with
+  //    the requesting user. If there is no inverse, then there cannot be a match.
+  // 3) We filter out all blocked users (if either person blocked the other)
+  //    and also ensure that there exists at least one scene where both
+  //    users liked the other (which means they have a match).
+
   try {
     const result = await db.query(`
       SELECT
@@ -19,9 +48,7 @@ const getMatches = async (req: $Request, res: $Response) => {
         to_char(they_profile.birthday, 'YYYY-MM-DD') AS birthday,
         they_profile.bio,
         array_remove(ARRAY[
-          CASE (me_critic.liked_smash AND they_critic.liked_smash) WHEN true THEN 'smash' ELSE NULL END,
-          CASE (me_critic.liked_social AND they_critic.liked_social) WHEN true THEN 'social' ELSE NULL END,
-          CASE (me_critic.liked_stone AND they_critic.liked_stone) WHEN true THEN 'stone' ELSE NULL END
+          ${matchedScenesSelect.join(',')}
         ], NULL) AS scenes
       FROM relationships me_critic
       JOIN relationships they_critic
@@ -34,11 +61,9 @@ const getMatches = async (req: $Request, res: $Response) => {
         AND me_critic.candidate_user_id = they_critic.critic_user_id
         AND NOT (me_critic.blocked OR they_critic.blocked)
         AND
-          (me_critic.liked_smash AND they_critic.liked_smash)
-          OR (me_critic.liked_social AND they_critic.liked_social)
-          OR (me_critic.liked_smash AND they_critic.liked_social)
+          ${matchedScenesChecks.join(' OR ')}
     `);
-    return res.send(200).json({
+    return res.status(200).json({
       status: codes.GET_MATCHES__SUCCESS,
       matches: result.rows,
     });
