@@ -113,6 +113,10 @@ class SwipingScreen extends React.Component<Props, State> {
     return <Text>Too picky</Text>;
   };
 
+  _onSwipeStart = () => {
+    console.log("swiping");
+  };
+
   _onSwipeRight = (card: CardType) => {
     console.log("Card liked: " + card.name);
   };
@@ -157,6 +161,7 @@ class SwipingScreen extends React.Component<Props, State> {
           data={DATA}
           renderCard={this._renderCard}
           renderEmpty={this._renderEmpty}
+          onSwipeStart={this._onSwipeStart}
           onSwipeRight={this._onSwipeRight}
           onSwipeLeft={this._onSwipeLeft}
           onSwipeComplete={this._onSwipeComplete}

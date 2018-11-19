@@ -26,6 +26,7 @@ type Props = {
   data: $ReadOnlyArray<CardType>,
   renderCard: (card: CardType, isTop: boolean) => Node,
   renderEmpty: () => Node,
+  onSwipeStart: () => void,
   onSwipeRight: (card: CardType) => void,
   onSwipeLeft: (card: CardType) => void,
   onSwipeComplete: () => void,
@@ -64,9 +65,12 @@ export default class Deck extends React.Component<Props, State> {
           gesture.dy < -5 ||
           gesture.dy > 5
         ) {
-          this.setState({
-            slideGesture: true
-          });
+          this.setState(
+            {
+              slideGesture: true
+            },
+            () => this.props.onSwipeStart()
+          );
         }
 
         position.setValue({ x: gesture.dx, y: gesture.dy });
@@ -84,7 +88,6 @@ export default class Deck extends React.Component<Props, State> {
           this._resetPosition();
         }
         if (!this.state.slideGesture) {
-          debugger;
           this.props.onTap();
         }
 
@@ -182,6 +185,6 @@ export default class Deck extends React.Component<Props, State> {
 const styles = StyleSheet.create({
   cardStyle: {
     position: "absolute",
-    width: SCREEN_WIDTH
+    width: "100%"
   }
 });
