@@ -41,8 +41,6 @@ Provide the normal `Authorization` token in the request header.
             "displayName": "Emily",
             "birthday": "1997-10-10",
             "bio": "Cool",
-            "me_blocked": false,
-            "they_blocked": false,
             "scenes": [
                 "smash"
             ]
@@ -52,8 +50,6 @@ Provide the normal `Authorization` token in the request header.
             "displayName": "Jacob",
             "birthday": "1997-10-10",
             "bio": "Cool",
-            "me_blocked": false,
-            "they_blocked": false,
             "scenes": [
                 "social",
                 "stone"

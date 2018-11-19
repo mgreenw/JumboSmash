@@ -47,8 +47,6 @@ const getMatches = async (req: $Request, res: $Response) => {
         they_profile.display_name AS "displayName",
         to_char(they_profile.birthday, 'YYYY-MM-DD') AS birthday,
         they_profile.bio,
-        me_critic.blocked as me_blocked,
-        they_critic.blocked as they_blocked,
         array_remove(ARRAY[
           ${matchedScenesSelect.join(',')}
         ], NULL) AS scenes
