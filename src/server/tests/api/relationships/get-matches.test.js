@@ -1,5 +1,4 @@
 const request = require('supertest');
-const _ = require('lodash');
 const codes = require('../../../controllers/status-codes');
 
 const app = require('../../../app');
