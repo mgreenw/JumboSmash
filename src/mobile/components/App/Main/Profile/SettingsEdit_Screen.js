@@ -9,6 +9,7 @@ import { PronounSelector } from "mobile/components/shared/PronounSelector";
 import type { Pronouns } from "mobile/reducers";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any,
@@ -66,7 +67,7 @@ class SettingsScreen extends React.Component<Props, State> {
       // For recieving the logout completion
       if (!this.props.loggedIn) {
         const { navigate } = this.props.navigation;
-        navigate("Splash", {});
+        navigate(routes.Splash, {});
       }
     }
   }

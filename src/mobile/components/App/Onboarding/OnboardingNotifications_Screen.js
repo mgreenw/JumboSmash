@@ -9,6 +9,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -43,7 +44,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingFinish", {
+    navigation.navigate(routes.OnboardingFinish, {
       profile: this.state.profile,
       settings: this.state.settings
     });

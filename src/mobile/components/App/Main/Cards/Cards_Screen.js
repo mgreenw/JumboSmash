@@ -46,7 +46,7 @@ class SwipingScreen extends React.Component<Props, State> {
           name="send"
           type="font-awesome"
           size={40}
-          onPress={() => navigation.navigate("Matches")}
+          onPress={() => navigation.navigate(routes.Matches)}
           containerStyle={{ paddingRight: 10 }}
         />
       ),
