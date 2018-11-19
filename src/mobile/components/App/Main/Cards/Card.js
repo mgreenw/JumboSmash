@@ -79,7 +79,7 @@ class Card extends React.Component<Props, State> {
             shadowOpacity: 0.2
           }}
         >
-          <Text style={{ fontSize: 28 }}>Dan, 21</Text>
+          <Text style={{ fontSize: 28 }}>{`${card.name}, ${card.age}`}</Text>
         </View>
       </View>
     );
@@ -125,7 +125,9 @@ class Card extends React.Component<Props, State> {
               marginBottom: 20
             }}
           >
-            <Text style={{ fontSize: 28, textAlign: "center" }}>Dan, 21</Text>
+            <Text style={{ fontSize: 28, textAlign: "center" }}>{`${
+              card.name
+            }, ${card.age}`}</Text>
 
             <TouchableHighlight
               style={{ position: "absolute", right: 20, padding: 5 }}
