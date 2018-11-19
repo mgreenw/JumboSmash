@@ -147,9 +147,14 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           />
         </View>
         <Image
-          resizeMode="contain"
+          resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
-          style={{ position: "absolute", bottom: 0, right: 0 }}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            width: "100%"
+          }}
         />
       </View>
     );
