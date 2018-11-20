@@ -10,9 +10,12 @@ import type { ReduxState } from "mobile/reducers/index";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import { saveSettings } from "mobile/actions/app/saveSettings";
 
 type Props = {
-  navigation: any
+  navigation: any,
+  token: string,
+  saveSettings: (token: string, settings: UserSettings) => void
 };
 
 type State = {
@@ -21,11 +24,17 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+  return {
+    token: reduxState.token
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+  return {
+    saveSettings: (token: string, settings: UserSettings) => {
+      dispatch(saveSettings(token, settings));
+    }
+  };
 }
 
 class OnboardingFinishScreen extends React.Component<Props, State> {
@@ -39,8 +48,10 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   }
 
   _saveSettingsAndProfile = () => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.MainSwitch);
+    // const { navigation } = this.props;
+    // navigation.navigate(routes.MainSwitch);
+    console.log("finish screen settings:", this.state.settings);
+    this.props.saveSettings(this.props.token, this.state.settings);
   };
 
   render() {

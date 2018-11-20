@@ -56,7 +56,8 @@ export type ReduxState = {
     loadAuth: boolean,
     logout: boolean,
     login: boolean,
-    loadApp: boolean
+    loadApp: boolean,
+    updateSettings: boolean
   }
 };
 
@@ -72,7 +73,8 @@ const defaultState: ReduxState = {
     loadAuth: false,
     logout: false,
     login: false,
-    loadApp: false
+    loadApp: false,
+    updateSettings: false
   }
 };
 

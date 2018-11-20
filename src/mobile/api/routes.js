@@ -43,4 +43,7 @@ export const VERIFY__ROUTE = AUTH_ROUTE + VERIFY;
 ////////////////
 const MY = "/me";
 const PROFILE = "/profile/";
-export const MY_PROFILE__ROUTE = USERS_ROUTE + API + MY + PROFILE;
+export const MY_PROFILE__ROUTE = USERS_ROUTE + MY + PROFILE;
+
+const SETTINGS = "/settings/";
+export const MY_SETTINGS__ROUTE = USERS_ROUTE + MY + SETTINGS;
