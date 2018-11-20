@@ -207,12 +207,14 @@ describe('GET api/relationships/candidates/:scene', () => {
   });
 
   // Check that only profiles that have not yet been liked show up
-  it('should onlys how profiles that have not yet been liked by the current user', async () => {
+  it('should only show profiles that have not yet been liked by the current user', async () => {
     // Create relationhips with me and all but the last 5 in each list
-    _.map(activeSmash.slice(0, -5), async (user) => {
+    const relationships = activeSmash.slice(0, -5).map(async (user) => {
       // Create a relationsihp and like them on smash
       await dbUtils.createRelationship(me.id, user.id, true);
     });
+
+    await Promise.all(relationships);
 
     const res = await request(app)
       .get('/api/relationships/candidates/smash')
