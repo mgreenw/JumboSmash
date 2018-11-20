@@ -8,7 +8,7 @@ Get the current user's settings, based on the user's auth token.
 
 **Auth required** : YES
 
-**Permissions required** : Any user that has setup their profile.
+**Permissions required** : Any verified user.
 **Request Headers**
 
 Provide the normal `Authorization` token in the request header.
