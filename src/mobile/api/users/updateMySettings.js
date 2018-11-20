@@ -1,19 +1,14 @@
 // @flow
-
-// Self contained API file for GetMyProfile
-
 import { timeout } from "../utils/timeout";
 import { MY_SETTINGS__ROUTE } from "../routes";
 import type { UserSettings } from "mobile/reducers";
 
-const UPDATE_MY_SETTINGS__SUCCESS = "UPDATE_SETTINGS__SUCCESS";
+const UPDATE_MY_SETTINGS__SUCCESS = "UPDATE_SETTINGS_SUCCESS";
 
-type request = {
+export default function updateMySettings(
   token: string,
-  settings: UserSettings
-};
-
-export function updateMySettings(request: request): Promise<void> {
+  request: UserSettings
+): Promise<void> {
   console.log(MY_SETTINGS__ROUTE);
   return timeout(
     30000,
@@ -22,8 +17,9 @@ export function updateMySettings(request: request): Promise<void> {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: request.token
-      }
+        Authorization: token
+      },
+      body: JSON.stringify(request)
     })
   )
     .then(response => response.json())
@@ -38,6 +34,7 @@ export function updateMySettings(request: request): Promise<void> {
       }
     })
     .catch(error => {
+      console.log("updateMySettings Error:", error);
       throw (error, request);
     });
 }
