@@ -45,7 +45,7 @@ As the critic, judge another user (the candidate) in a specific scene by either 
 
 ```json
 {
-    "status": "JUDGE_SUCCESS",
+    "status": "JUDGE__SUCCESS",
 }
 ```
 
