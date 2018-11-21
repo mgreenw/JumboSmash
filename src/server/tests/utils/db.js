@@ -24,11 +24,11 @@ async function createProfile(userId, body) {
       INSERT INTO profiles
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING id
+      RETURNING user_id AS "userId"
     `,
     [userId, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 
-    return result.rows[0].id;
+    return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');
   }
@@ -62,7 +62,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
         id,
         token: signToken(id),
         profile: {
-          id: profile,
+          userId: profile,
           ...body,
         },
       };

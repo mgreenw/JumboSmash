@@ -1,10 +1,11 @@
 const request = require('supertest');
-const codes = require('../../../controllers/status-codes');
+const db = require('db');
 
-const app = require('../../../app');
-const db = require('../../../db');
-const dbUtils = require('../../utils/db');
-const { profileErrorMessages } = require('../../../controllers/users/utils');
+const codes = require('controllers/status-codes');
+
+const app = require('app');
+const dbUtils = require('tests/utils/db');
+const { profileErrorMessages } = require('controllers/users/utils');
 
 describe('POST api/users/me/profile', () => {
   // Setup

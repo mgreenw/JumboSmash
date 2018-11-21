@@ -9,5 +9,12 @@ module.exports = {
     },
     "rules": {
         "arrow-body-style": 0
-    }
+    },
+    "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["./"]
+      }
+    },
+  },
 };
