@@ -9,4 +9,5 @@ module.exports = {
   getSceneCandidates,
   getMatches,
   judge,
+  block,
 };

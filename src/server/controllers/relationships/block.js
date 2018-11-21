@@ -10,13 +10,13 @@ const db = require('../../db');
 const schema = {
   "type": "object",
   "properties": {
-    "userId": {
-      "description": "The id ofthe user to block",
+    "blockedUserId": {
+      "description": "The id of the user to block",
       "type": "number",
       "multipleOf": 1 // This asserts that the javascript number is an integer
     }
   },
-  "required": ["userId"]
+  "required": ["blockedUserId"]
 };
 /* eslint-enable */
 
@@ -26,14 +26,14 @@ const schema = {
  */
 const block = async (req: $Request, res: $Response) => {
   // NOTES:
-  // 1) This query will fail if the candidate does not have a profile. We handle
+  // 1) This query will fail if the user does not exist. We handle
   //    this specific error in the "catch" block
   // 2) If there is currently no relationship between the two users, a
   //    relationship will be inserted. If there is a relationship, the
   //    relationship will be updated with the desired values
   // 3) The 'last_swipe_timestamp' is always updated to reflect that the
   //    critic has interacted with the candidate
-  const { userId } = req.body;
+  const { blockedUserId } = req.body;
   try {
     await db.query(`
       INSERT INTO relationships
@@ -44,11 +44,11 @@ const block = async (req: $Request, res: $Response) => {
         SET
         blocked = true,
         last_swipe_timestamp = now()
-    `, [req.user.id, userId]);
+    `, [req.user.id, blockedUserId]);
 
     // If the query succeeded, return success
     return res.status(200).json({
-      status: codes.BLOCK_SUCCESS,
+      status: codes.BLOCK__SUCCESS,
     });
   } catch (error) {
     // If the query failed due to a voilation of the candidate_user_id fkey
@@ -56,12 +56,12 @@ const block = async (req: $Request, res: $Response) => {
     // https://www.postgresql.org/docs/10/errcodes-appendix.html
     if (error.code === '23503' && error.constraint === 'relationships_candidate_user_id_fkey') {
       return res.status(400).json({
-        status: codes.JUDGE__CANDIDATE_NOT_FOUND,
+        status: codes.BLOCK__USER_NOT_FOUND,
       });
     }
 
     // If the error was not a known error, return a server error.
-    return apiUtils.error.server(res, 'Failed to judge candidate.');
+    return apiUtils.error.server(res, 'Failed to block user.');
   }
 };
 
