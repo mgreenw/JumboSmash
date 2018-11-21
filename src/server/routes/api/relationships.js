@@ -10,5 +10,6 @@ const relationshipsRouter = express.Router();
 relationshipsRouter.get('/candidates/:scene', relationshipsController.getSceneCandidates);
 relationshipsRouter.get('/matches', relationshipsController.getMatches);
 relationshipsRouter.post('/judge', relationshipsController.judge);
+relationshipsRouter.post('/block', relationshipsController.block);
 
 module.exports = relationshipsRouter;
