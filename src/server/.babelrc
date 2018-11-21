@@ -1,11 +1,3 @@
 {
-  "presets": ["@babel/preset-flow"],
-  "plugins": [
-    ["module-resolver", {
-      "root": ["./"],
-      "alias": {
-        "server": "./"
-      }
-    }]
-  ]
+  "presets": ["@babel/preset-flow"]
 }
