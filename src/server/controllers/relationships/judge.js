@@ -55,7 +55,7 @@ const judge = async (req: $Request, res: $Response) => {
 
     // If the query succeeded, return success
     return res.status(200).json({
-      status: codes.JUDGE_SUCCESS,
+      status: codes.JUDGE__SUCCESS,
     });
   } catch (error) {
     // If the query failed due to a voilation of the candidate_user_id fkey
