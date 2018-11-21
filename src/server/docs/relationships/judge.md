@@ -1,6 +1,6 @@
 # Judge
 
-As the critic, judge another user (the candidate) in a specific scene by either "liking" them or "disliking" them. The candidate user must have a setup profile. If two users are matched, one user disliking the other will unmatch them.
+As the critic, judge another user (the candidate) in a specific scene by either "liking" them or "disliking" them. The candidate user may be any user, even if they do not have a profile setup. If two users are matched, one user disliking the other will unmatch them. NOTE: "matches" can only be between two users with profiles.
 
 **URL** : `/api/relationships/judge`
 
@@ -51,7 +51,7 @@ As the critic, judge another user (the candidate) in a specific scene by either 
 
 ## Error Responses
 
-**Condition** : The candidate user does not exist or does not have a profile setup.
+**Condition** : The candidate user does not exist.
 
 **Code** : `400 BAD REQUEST`
 

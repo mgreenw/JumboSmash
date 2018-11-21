@@ -125,8 +125,8 @@ describe('POST api/relationships/judge', () => {
     expect(res.body.message).toBe('data.scene should be equal to one of the allowed values');
   });
 
-  it('should not allow a non-existent user or a user without a profile to be judged', async () => {
-    let res = await request(app)
+  it('should not allow a non-existent user to be judged', async () => {
+    const res = await request(app)
       .post('/api/relationships/judge')
       .set('Authorization', me.token)
       .set('Accept', 'application/json')
@@ -137,10 +137,12 @@ describe('POST api/relationships/judge', () => {
       });
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.JUDGE__CANDIDATE_NOT_FOUND);
+  });
 
+  it('should allow a user without a profile setup to be judged', async () => {
     // Create a user with no profile
     const user = await dbUtils.createUser('testu01');
-    res = await request(app)
+    const res = await request(app)
       .post('/api/relationships/judge')
       .set('Authorization', me.token)
       .set('Accept', 'application/json')
@@ -149,8 +151,8 @@ describe('POST api/relationships/judge', () => {
         scene: 'smash',
         liked: true,
       });
-    expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.JUDGE__CANDIDATE_NOT_FOUND);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.JUDGE_SUCCESS);
   });
 
   it('should allow a candidate with a profile to be liked on any scene', async () => {
