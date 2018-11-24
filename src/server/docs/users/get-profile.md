@@ -37,13 +37,13 @@ Provide the normal `Authorization` token in the request header.
 {
     "status": "GET_PROFILE__SUCCESS",
     "profile": {
-        "display_name": "Max",
-        "birthday": "1997-10-09",
-        "bio": "I am a dev",
-        "image1_url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
-        "image2_url": null,
-        "image3_url": null,
-        "image4_url": null
+        "displayName": "Max Greenwald",
+        "birthday": "1997-10-10",
+        "bio": "Cool",
+        "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
+        "image2Url": null,
+        "image3Url": null,
+        "image4Url": null
     }
 }
 ```

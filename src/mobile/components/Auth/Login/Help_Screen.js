@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { routes } from "mobile/components/Navigation";
 
 type Props = {
@@ -66,7 +67,7 @@ class HelpScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+      <View style={Arthur_Styles.container}>
         <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
       </View>
     );

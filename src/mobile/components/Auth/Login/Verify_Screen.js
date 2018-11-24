@@ -68,7 +68,10 @@ class SplashScreen extends React.Component<Props, State> {
   // IMPORTANT: must be like this in order for back button toggling!
   static navigationOptions = ({ navigation }) => ({
     headerLeft: navigation.state.params.headerLeft,
-    title: "Verification"
+    title: "Verification",
+    headerStyle: {
+      borderBottomWidth: 0
+    }
   });
 
   componentDidUpdate(prevProps, prevState) {
@@ -196,39 +199,40 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
+        <View style={{ flex: 1 }}>
+          <Text>{message}</Text>
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+          <Input
+            containerStyle={
+              this.state.validCode
+                ? styles.inputWrapperStyle
+                : styles.inputWrapperStyleWithError
+            }
+            keyboardType="numeric"
+            placeholderTextColor={"#DDDDDD"}
+            inputStyle={{ color: "#222222" }}
+            labelStyle={styles.labelStyle}
+            inputContainerStyle={styles.inputContainerStyle}
+            label="Verification Code"
+            placeholder=""
+            onChangeText={text => this.setState({ code: text })}
+            ref={input => (this.codeInput = input)}
+            errorMessage={
+              this.state.validCode ? "" : this.state.errorMessageCode
+            }
+            autoCorrect={false}
+          />
+          {this.state.validCode && (
+            <View style={styles.helpTextContainer}>
+              <Text style={styles.helpText}>Ex: 123456</Text>
+            </View>
+          )}
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
           <View style={{ flex: 1 }}>
-            <Text>{message}</Text>
-          </View>
-          <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-            <Input
-              containerStyle={
-                this.state.validCode
-                  ? styles.inputWrapperStyle
-                  : styles.inputWrapperStyleWithError
-              }
-              keyboardType="numeric"
-              placeholderTextColor={"#DDDDDD"}
-              inputStyle={{ color: "#222222" }}
-              labelStyle={styles.labelStyle}
-              inputContainerStyle={styles.inputContainerStyle}
-              label="Verification Code"
-              placeholder=""
-              onChangeText={text => this.setState({ code: text })}
-              ref={input => (this.codeInput = input)}
-              errorMessage={
-                this.state.validCode ? "" : this.state.errorMessageCode
-              }
-              autoCorrect={false}
-            />
-            {this.state.validCode && (
-              <View style={styles.helpTextContainer}>
-                <Text style={styles.helpText}>Ex: 123456</Text>
-              </View>
-            )}
-          </View>
-          <View style={{ flex: 1, alignSelf: "stretch" }}>
             <PrimaryButton
               onPress={this._onSubmit}
               title="submit"
@@ -236,13 +240,14 @@ class SplashScreen extends React.Component<Props, State> {
               loading={isLoading}
             />
           </View>
-        </KeyboardAvoidingView>
+          <View style={{ flex: 1 }} />
+        </View>
         <Button
           buttonStyle={styles.button}
           onPress={this._onHelp}
           title="help"
         />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

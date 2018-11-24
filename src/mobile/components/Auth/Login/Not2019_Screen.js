@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 
 type Props = {
   navigation: any
@@ -50,16 +51,12 @@ class Not2019Screen extends React.Component<Props, State> {
     const yearsLeft = this.state.classYear - 19;
 
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
-          <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
-            <Text style={styles.title}>
-              {"Sucks to suck! Try again in " +
-                yearsLeft +
-                (yearsLeft == -1 || yearsLeft == 1 ? " year." : " years.")}
-            </Text>
-          </View>
-        </KeyboardAvoidingView>
+      <View style={Arthur_Styles.container}>
+        <Text style={styles.title}>
+          {"Sucks to suck! Try again in " +
+            yearsLeft +
+            (yearsLeft == -1 || yearsLeft == 1 ? " year." : " years.")}
+        </Text>
         <Button
           buttonStyle={styles.button}
           onPress={this._onHelp}

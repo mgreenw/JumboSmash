@@ -93,5 +93,9 @@ export const Arthur_Styles = StyleSheet.create({
   buttonTitlePrimaryDisabled: {
     ...buttonTitleBase,
     color: BlueyGrey
+  },
+  container: {
+    backgroundColor: White,
+    flex: 1
   }
 });

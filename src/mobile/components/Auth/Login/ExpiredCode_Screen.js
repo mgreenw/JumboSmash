@@ -13,6 +13,7 @@ import { styles } from "mobile/styles/auth";
 import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { routes } from "mobile/components/Navigation";
 
 type Props = {
@@ -133,24 +134,22 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     const email = navigation.getParam("email", "");
 
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Expired Verification Code</Text>
-          </View>
-          <View>
-            <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
-          </View>
-          <View style={{ flex: 1, alignSelf: "stretch" }}>
-            <Button
-              buttonStyle={styles.button}
-              onPress={this._onResend}
-              title="Resend Code"
-              disabled={this.state.isSubmitting}
-              loading={this.state.isSubmitting}
-            />
-          </View>
-        </KeyboardAvoidingView>
+      <View style={Arthur_Styles.container}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>Expired Verification Code</Text>
+        </View>
+        <View>
+          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+        </View>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
+          <Button
+            buttonStyle={styles.button}
+            onPress={this._onResend}
+            title="Resend Code"
+            disabled={this.state.isSubmitting}
+            loading={this.state.isSubmitting}
+          />
+        </View>
         <Button
           buttonStyle={styles.button}
           onPress={this._onHelp}
