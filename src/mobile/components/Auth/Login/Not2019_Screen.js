@@ -7,6 +7,7 @@ import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -44,7 +45,7 @@ class Not2019Screen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigate } = this.props.navigation;
-    navigate("AuthHelp", {});
+    navigate(routes.AuthHelp, {});
   };
 
   render() {
