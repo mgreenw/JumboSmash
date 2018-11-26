@@ -85,6 +85,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     console.log("error");
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.AuthHelp, {});
+  };
+
   _onResend = () => {
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
@@ -134,8 +139,7 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text style={styles.title}>Expired Verification Code</Text>
         </View>
         <View>
-          <Text
-          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
@@ -146,6 +150,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
             loading={this.state.isSubmitting}
           />
         </View>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
       </View>
     );
   }
