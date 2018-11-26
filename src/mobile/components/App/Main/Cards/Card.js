@@ -15,11 +15,11 @@ import { styles } from "mobile/styles/template";
 import { Button, Card as RneCard, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type { CardType } from "./Deck";
+import type { UserProfile } from "mobile/reducers";
 
 type Props = {
   navigation: any,
-  card: CardType,
+  user: UserProfile,
   isExpanded: boolean,
   onMinimize: () => void
 };
@@ -44,7 +44,7 @@ class Card extends React.Component<Props, State> {
   }
 
   _renderNotExpanded() {
-    const { card } = this.props;
+    const { user } = this.props;
     return (
       <View
         style={{
@@ -79,14 +79,16 @@ class Card extends React.Component<Props, State> {
             shadowOpacity: 0.2
           }}
         >
-          <Text style={{ fontSize: 28 }}>{`${card.name}, ${card.age}`}</Text>
+          <Text style={{ fontSize: 28 }}>{`${user.displayName}, ${
+            user.birthday
+          }`}</Text>
         </View>
       </View>
     );
   }
 
   _renderExpanded() {
-    const { card } = this.props;
+    const { user } = this.props;
     return (
       <ScrollView
         style={{
@@ -126,8 +128,8 @@ class Card extends React.Component<Props, State> {
             }}
           >
             <Text style={{ fontSize: 28, textAlign: "center" }}>{`${
-              card.name
-            }, ${card.age}`}</Text>
+              user.displayName
+            }, ${user.birthday}`}</Text>
 
             <TouchableHighlight
               style={{ position: "absolute", right: 20, padding: 5 }}
@@ -137,14 +139,9 @@ class Card extends React.Component<Props, State> {
             </TouchableHighlight>
           </View>
           <Text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque sed vehicula urna, in fringilla ipsum. Aenean non lorem
-            quis lorem sollicitudin consequat. Donec tempor erat in ipsum
-            ornare, eu aliquet orci egestas. Vestibulum a convallis metus. Morbi
-            faucibus in orci quis lacinia. Quisque auctor dictum neque, id
-            finibus odio porta in. Suspendisse eget elementum nisl. Vivamus nec
-            massa at dui porta congue. Cras aliquet nunc et elit sodales
-            viverra. Donec elementum semper scelerisque.
+            {
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sed vehicula urna, in fringilla ipsum. Aenean non lorem quis lorem sollicitudin consequat. Donec tempor erat in ipsum ornare, eu aliquet orci egestas. Vestibulum a convallis metus. Morbi faucibus in orci quis lacinia. Quisque auctor dictum neque, id finibus odio porta in. Suspendisse eget elementum nisl. Vivamus nec massa at dui porta congue. Cras aliquet nunc et elit sodales viverra. Donec elementum semper scelerisque."
+            }
           </Text>
         </View>
       </ScrollView>
@@ -152,16 +149,9 @@ class Card extends React.Component<Props, State> {
   }
 
   render() {
-    const { isExpanded } = this.props;
-
-    let renderedCard;
-    if (isExpanded) {
-      renderedCard = this._renderExpanded();
-    } else {
-      renderedCard = this._renderNotExpanded();
-    }
-
-    return renderedCard;
+    return this.props.isExpanded
+      ? this._renderExpanded()
+      : this._renderNotExpanded();
   }
 }
 

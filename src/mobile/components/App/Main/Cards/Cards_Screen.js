@@ -17,7 +17,8 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
-import type { CardType, direction } from "./Deck";
+import type { direction } from "./Deck";
+import type { UserProfile } from "mobile/reducers";
 import Card from "./Card";
 
 type Props = {
@@ -37,16 +38,13 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
+//TODO: remove b/c dummy
 let DATA = [
-  { id: 1, name: "Anthony", age: 21 },
-  { id: 2, name: "Tony", age: 22 },
-  { id: 3, name: "Ant", age: 69 },
-  { id: 4, name: "T-dawg", age: 47 }
+  { id: 1, displayName: "Anthony", birthday: "21", bio: "BIO", images: [] },
+  { id: 2, displayName: "Tony", birthday: "22", bio: "BIO", images: [] },
+  { id: 3, displayName: "Ant", birthday: "69", bio: "BIO", images: [] },
+  { id: 4, displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
 ];
-
-let count = 5;
-
-const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -93,10 +91,10 @@ class SwipingScreen extends React.Component<Props, State> {
     navigation.setParams({ isExpanded: !isExpanded });
   };
 
-  _renderCard = (card: CardType, isTop: boolean) => {
+  _renderCard = (user: UserProfile, isTop: boolean) => {
     return (
       <Card
-        card={card}
+        user={user}
         isExpanded={isTop && this.state.isExpanded}
         onMinimize={() => {
           this.setState({ isExpanded: false });
@@ -113,12 +111,12 @@ class SwipingScreen extends React.Component<Props, State> {
     console.log("swiping");
   };
 
-  _onSwipeRight = (card: CardType) => {
-    console.log("Card liked: " + card.name);
+  _onSwipeRight = (user: UserProfile) => {
+    console.log("Card liked: " + user.displayName);
   };
 
-  _onSwipeLeft = (card: CardType) => {
-    console.log("Card disliked: " + card.name);
+  _onSwipeLeft = (user: UserProfile) => {
+    console.log("Card disliked: " + user.displayName);
   };
 
   _onSwipeComplete = () => {

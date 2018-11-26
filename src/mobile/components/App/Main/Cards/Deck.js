@@ -11,24 +11,19 @@ import {
   UIManager
 } from "react-native";
 import type { AnimatedValueXY, Node } from "react-native";
-
-export type CardType = {
-  id: number,
-  name: string,
-  age: number
-};
+import type { UserProfile } from "mobile/reducers";
 
 const RIGHT = "right";
 const LEFT = "left";
 export type direction = "left" | "right";
 
 type Props = {
-  data: $ReadOnlyArray<CardType>,
-  renderCard: (card: CardType, isTop: boolean) => Node,
+  data: $ReadOnlyArray<UserProfile>,
+  renderCard: (user: UserProfile, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeStart: () => void,
-  onSwipeRight: (card: CardType) => void,
-  onSwipeLeft: (card: CardType) => void,
+  onSwipeRight: (user: UserProfile) => void,
+  onSwipeLeft: (user: UserProfile) => void,
   onSwipeComplete: () => void,
   onTap: () => void,
   disableSwipe: boolean,
@@ -155,7 +150,7 @@ export default class Deck extends React.Component<Props, State> {
         } else if (i === this.state.index && !this.props.disableSwipe) {
           return (
             <Animated.View
-              key={item.id}
+              //key={item.id}
               style={[this._getCardStyle(), styles.cardStyle]}
               {...this.state.panResponder.panHandlers}
             >
@@ -165,7 +160,7 @@ export default class Deck extends React.Component<Props, State> {
         }
 
         return (
-          <View key={item.id} style={styles.cardStyle}>
+          <View /*key={item.id}*/ style={styles.cardStyle}>
             {this.props.renderCard(item, i === this.state.index)}
           </View>
         );
