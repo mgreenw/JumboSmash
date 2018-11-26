@@ -52,9 +52,12 @@ export default class Deck extends React.Component<Props, State> {
       onMoveShouldSetPanResponder: () => false,
       onMoveShouldSetResponderCapture: () => true,
       onPanResponderMove: (_, gesture) => {
+        //If the deck should not be swipeable then return
         if (this.props.disableSwipe) {
           return;
         }
+        //If the magnitude of the distance of the gesture is greater than the tap threshold
+        //then the user is swiping
         if (
           gesture.dx < -TAP_THRESHOLD ||
           gesture.dx > TAP_THRESHOLD ||
@@ -68,13 +71,17 @@ export default class Deck extends React.Component<Props, State> {
             () => this.props.onSwipeStart()
           );
         }
-
+        //set the position of the card to the position of the gesture
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
       onPanResponderRelease: (_, gesture) => {
+        //If the deck should not be swipeable then return
         if (this.props.disableSwipe) {
           return;
         }
+
+        //If the magnitude of the distance of the gesture is greater than trigger the swipe animation
+        //otherwise reset the card to the original position
         if (gesture.dx > SWIPE_THRESHOLD) {
           this._forceSwipe(RIGHT, 500);
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
@@ -83,10 +90,13 @@ export default class Deck extends React.Component<Props, State> {
           console.log("Swipe dismissed");
           this._resetPosition();
         }
+
+        //if the swipeGestureInProgress is false then the user tapped the card
         if (!this.state.swipeGestureInProgress) {
           this.props.onTap();
         }
 
+        //The gesture is over so reset to false
         this.setState({
           swipeGestureInProgress: false
         });
