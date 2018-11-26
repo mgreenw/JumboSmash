@@ -22,7 +22,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class HelpScreen extends React.Component<Props, State> {
+class ProfileHelpScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
   }
@@ -40,8 +40,9 @@ class HelpScreen extends React.Component<Props, State> {
         <Text style={styles.title}>Help & Contact</Text>
         <Text style={{ textAlign: "center" }}>NEED HELP?</Text>
         <Text style={{ textAlign: "center" }}>
-          Send us an email and we'll get back to you the moment our team is
-          sober.
+          {
+            "Send us an email and we'll get back to you the moment our team is sober."
+          }
         </Text>
         <Button title="team@jumbosmash.com" buttonStyle={styles.button} />
       </View>
@@ -52,4 +53,4 @@ class HelpScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HelpScreen);
+)(ProfileHelpScreen);

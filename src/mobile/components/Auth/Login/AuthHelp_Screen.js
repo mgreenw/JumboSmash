@@ -24,7 +24,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class HelpScreen extends React.Component<Props, State> {
+class AuthHelpScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -80,4 +80,4 @@ class HelpScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HelpScreen);
+)(AuthHelpScreen);

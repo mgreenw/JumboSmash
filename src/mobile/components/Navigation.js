@@ -18,7 +18,7 @@ import Splash from "mobile/components/Auth/Login/Splash_Screen";
 import Verify from "mobile/components/Auth/Login/Verify_Screen";
 import ExpiredCode from "mobile/components/Auth/Login/ExpiredCode_Screen";
 import Not2019 from "mobile/components/Auth/Login/Not2019_Screen";
-import Help from "mobile/components/Auth/Login/Help_Screen";
+import AuthHelp from "mobile/components/Auth/Login/AuthHelp_Screen";
 
 /////////
 // APP:
@@ -161,7 +161,7 @@ const LoginStack = createStackNavigator(
     VERIFY_ROUTE: { screen: Verify },
     EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
     NOT2019_ROUTE: { screen: Not2019 },
-    AUTH_HELP_ROUTE: { screen: Help }
+    AUTH_HELP_ROUTE: { screen: AuthHelp }
   },
   {
     initialRouteName: SPLASH_ROUTE
