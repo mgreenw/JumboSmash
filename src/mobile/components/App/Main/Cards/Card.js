@@ -34,9 +34,6 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-
 class Card extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
