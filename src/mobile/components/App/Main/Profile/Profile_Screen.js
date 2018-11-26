@@ -55,6 +55,11 @@ class ProfileScreen extends React.Component<Props, State> {
     navigate(routes.ProfileEdit, {});
   };
 
+  _onSettingsHelpPress = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.SettingsHelp, {});
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -72,7 +77,11 @@ class ProfileScreen extends React.Component<Props, State> {
             buttonStyle={styles.button}
             onPress={this._onSettingsPress}
           />
-          <Button title="Help & Contact" buttonStyle={styles.button} />
+          <Button
+            title="Help & Contact"
+            buttonStyle={styles.button}
+            onPress={this._onSettingsHelpPress}
+          />
         </View>
         <View style={{ flex: 1 }} />
       </View>
