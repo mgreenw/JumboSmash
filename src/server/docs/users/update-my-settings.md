@@ -9,7 +9,7 @@ are omitted will not be updated.
 
 **Auth required** : YES
 
-**Permissions required** : A user with a profile already setup.
+**Permissions required** : Any verified user.
 
 **Request body fields**
 

@@ -85,6 +85,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     console.log("error");
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.AuthHelp, {});
+  };
+
   _onResend = () => {
     const { navigation } = this.props;
     const utln = navigation.getParam("utln", "");
@@ -146,6 +151,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
             loading={this.state.isSubmitting}
           />
         </View>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
         <Image
           resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
