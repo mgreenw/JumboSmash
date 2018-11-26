@@ -27,7 +27,7 @@ type Props = {
 
 type State = {
   isExpanded: boolean,
-  isSwiping: boolean
+  swipeGestureInProgress: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -51,7 +51,7 @@ class SwipingScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       isExpanded: false,
-      isSwiping: false
+      swipeGestureInProgress: false
     };
   }
 
@@ -114,7 +114,7 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeComplete = () => {
-    this.setState({ isSwiping: false });
+    this.setState({ swipeGestureInProgress: false });
   };
 
   _onCardTap = () => {
@@ -123,23 +123,20 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onPressSwipeButton = (swipeDirection: swipeDirection) => {
-    const { isExpanded, isSwiping } = this.state;
-    if (isSwiping) {
-      return;
-    } else {
-      this.setState({ isSwiping: true }, () => {
-        if (isExpanded) {
-          this.setState({ isExpanded: false }, () => {
-            setTimeout(
-              () => this.deck && this.deck._forceSwipe(swipeDirection, 750),
-              250
-            );
-          });
-        } else {
-          this.deck && this.deck._forceSwipe(swipeDirection, 750);
-        }
-      });
-    }
+    const { isExpanded, swipeGestureInProgress } = this.state;
+
+    this.setState({ swipeGestureInProgress: true }, () => {
+      if (isExpanded) {
+        this.setState({ isExpanded: false }, () => {
+          setTimeout(
+            () => this.deck && this.deck._forceSwipe(swipeDirection, 750),
+            250
+          );
+        });
+      } else {
+        this.deck && this.deck._forceSwipe(swipeDirection, 750);
+      }
+    });
   };
 
   deck: ?Deck;
@@ -161,7 +158,10 @@ class SwipingScreen extends React.Component<Props, State> {
           infinite={true}
         />
 
-        <TouchableHighlight onPress={() => this._onPressSwipeButton("left")}>
+        <TouchableHighlight
+          disabled={this.state.swipeGestureInProgress}
+          onPress={() => this._onPressSwipeButton("left")}
+        >
           <Image
             source={{
               uri:

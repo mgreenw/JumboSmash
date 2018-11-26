@@ -34,11 +34,12 @@ type State = {
   panResponder: any,
   position: AnimatedValueXY,
   index: number,
-  slideGesture: boolean
+  swipeGestureInProgress: boolean
 };
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = 0.4 * SCREEN_WIDTH;
+const TAP_THRESHOLD = 5;
 
 export default class Deck extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -55,14 +56,14 @@ export default class Deck extends React.Component<Props, State> {
           return;
         }
         if (
-          gesture.dx < -5 ||
-          gesture.dx > 5 ||
-          gesture.dy < -5 ||
-          gesture.dy > 5
+          gesture.dx < -TAP_THRESHOLD ||
+          gesture.dx > TAP_THRESHOLD ||
+          gesture.dy < -TAP_THRESHOLD ||
+          gesture.dy > TAP_THRESHOLD
         ) {
           this.setState(
             {
-              slideGesture: true
+              swipeGestureInProgress: true
             },
             () => this.props.onSwipeStart()
           );
@@ -82,17 +83,22 @@ export default class Deck extends React.Component<Props, State> {
           console.log("Swipe dismissed");
           this._resetPosition();
         }
-        if (!this.state.slideGesture) {
+        if (!this.state.swipeGestureInProgress) {
           this.props.onTap();
         }
 
         this.setState({
-          slideGesture: false
+          swipeGestureInProgress: false
         });
       }
     });
 
-    this.state = { panResponder, position, index: 0, slideGesture: false };
+    this.state = {
+      panResponder,
+      position,
+      index: 0,
+      swipeGestureInProgress: false
+    };
   }
 
   componentWillReceiveProps(nextProps: Props) {
