@@ -51,6 +51,7 @@ class HelpScreen extends React.Component<Props, State> {
     }
   };
 
+  // @flow
   renderHelpMessage(prevRoute: ?string) {
     if (prevRoute == routes.Splash) {
       return "Splash page help message";
