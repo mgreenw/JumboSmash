@@ -85,12 +85,6 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   };
 
-  _onCardPress = () => {
-    const { navigation } = this.props;
-    const isExpanded = navigation.getParam("isExpanded", false);
-    navigation.setParams({ isExpanded: !isExpanded });
-  };
-
   _renderCard = (user: UserProfile, isTop: boolean) => {
     return (
       <Card
