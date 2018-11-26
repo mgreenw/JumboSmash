@@ -51,25 +51,26 @@ class HelpScreen extends React.Component<Props, State> {
     }
   };
 
-  _onHelpMessage = () => {
-    console.log(this.state.prevRoute);
-    if (this.state.prevRoute == routes.Splash) {
+  renderHelpMessage(prevRoute: ?string) {
+    if (prevRoute == routes.Splash) {
       return "Splash page help message";
-    } else if (this.state.prevRoute == routes.Verify) {
+    } else if (prevRoute == routes.Verify) {
       return "Verify page help message";
-    } else if (this.state.prevRoute == routes.Not2019) {
+    } else if (prevRoute == routes.Not2019) {
       return "Not2019 page help message";
-    } else if (this.state.prevRoute == routes.ExpiredCode) {
+    } else if (prevRoute == routes.ExpiredCode) {
       return "Expired code page help message";
     } else {
       return "Generic Help screen if it doesn't fit any of the auth pages";
     }
-  };
+  }
 
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
+        <Text style={styles.title}>
+          {"HELP: " + this.renderHelpMessage(this.state.prevRoute)}
+        </Text>
       </View>
     );
   }
