@@ -15,7 +15,7 @@ import type { UserProfile } from "mobile/reducers";
 
 const RIGHT = "right";
 const LEFT = "left";
-export type direction = "left" | "right";
+export type swipeDirection = "left" | "right";
 
 type Props = {
   data: $ReadOnlyArray<UserProfile>,
@@ -101,19 +101,19 @@ export default class Deck extends React.Component<Props, State> {
     }
   }
 
-  _forceSwipe(direction: direction, duration: number) {
-    const x = direction === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
+  _forceSwipe(swipeDirection: swipeDirection, duration: number) {
+    const x = swipeDirection === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
     Animated.timing(this.state.position, {
-      toValue: { x: x * 2, y: direction === RIGHT ? -x : x },
+      toValue: { x: x * 2, y: swipeDirection === RIGHT ? -x : x },
       duration: duration
-    }).start(() => this._onSwipeComplete(direction));
+    }).start(() => this._onSwipeComplete(swipeDirection));
   }
 
-  _onSwipeComplete(direction: direction) {
+  _onSwipeComplete(swipeDirection: swipeDirection) {
     const { onSwipeRight, onSwipeLeft, data } = this.props;
     const item = data[this.state.index];
-    direction === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
+    swipeDirection === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
     this.state.position.setValue({ x: 0, y: 0 });
     this.props.onSwipeComplete();
     this.setState({ index: this.state.index + 1 });

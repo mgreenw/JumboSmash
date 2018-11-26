@@ -17,7 +17,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
-import type { direction } from "./Deck";
+import type { swipeDirection } from "./Deck";
 import type { UserProfile } from "mobile/reducers";
 import Card from "./Card";
 
@@ -122,7 +122,7 @@ class SwipingScreen extends React.Component<Props, State> {
     this.setState({ isExpanded: true });
   };
 
-  _onPressSwipeButton = (direction: direction) => {
+  _onPressSwipeButton = (swipeDirection: swipeDirection) => {
     const { isExpanded, isSwiping } = this.state;
     if (isSwiping) {
       return;
@@ -131,12 +131,12 @@ class SwipingScreen extends React.Component<Props, State> {
         if (isExpanded) {
           this.setState({ isExpanded: false }, () => {
             setTimeout(
-              () => this.deck && this.deck._forceSwipe(direction, 750),
+              () => this.deck && this.deck._forceSwipe(swipeDirection, 750),
               250
             );
           });
         } else {
-          this.deck && this.deck._forceSwipe(direction, 750);
+          this.deck && this.deck._forceSwipe(swipeDirection, 750);
         }
       });
     }
