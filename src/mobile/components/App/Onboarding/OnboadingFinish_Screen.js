@@ -8,12 +8,17 @@ import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  profile: UserProfile,
+  settings: UserSettings
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -26,20 +31,21 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class OnboardingFinishScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+    this.state = {
+      profile: navigation.getParam("profile", null),
+      settings: navigation.getParam("settings", null)
+    };
   }
-
-  static navigationOptions = {
-    headerLeft: null
-  };
 
   _saveSettingsAndProfile = () => {
     const { navigation } = this.props;
-    navigation.navigate("Main");
+    navigation.navigate(routes.MainSwitch);
   };
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={Arthur_Styles.title}>Project Gem</Text>
         </View>

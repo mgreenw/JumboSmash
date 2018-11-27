@@ -20,6 +20,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -63,7 +64,7 @@ class SplashScreen extends React.Component<Props, State> {
   // same that were submitted!
   _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
-    navigate("Verify", {
+    navigate(routes.Verify, {
       utln: utln,
       email: email,
       alreadySent: alreadySent
@@ -72,7 +73,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
-    navigate("Not2019", {
+    navigate(routes.Not2019, {
       classYear: classYear
     });
   };
@@ -87,7 +88,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigate } = this.props.navigation;
-    navigate("AuthHelp", {});
+    navigate(routes.AuthHelp, {});
   };
 
   _onSubmit = () => {
@@ -156,7 +157,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <Text style={Arthur_Styles.title}>Project Gem</Text>
         <KeyboardAvoidingView
           style={{
@@ -209,12 +210,17 @@ class SplashScreen extends React.Component<Props, State> {
                   disabled={this.state.isSubmitting || this.state.utln == ""}
                   loading={this.state.isSubmitting}
                 />
+                <Button onPress={this._onHelp} title="help" />
               </View>
               <View style={{ flex: 1 }} />
             </View>
           </View>
-          <Button onPress={this._onHelp} title="help" />
         </KeyboardAvoidingView>
+        <Image
+          resizeMode="contain"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={{ position: "absolute", bottom: 0, right: 0 }}
+        />
       </View>
     );
   }

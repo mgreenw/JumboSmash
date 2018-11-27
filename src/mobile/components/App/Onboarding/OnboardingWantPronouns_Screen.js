@@ -7,16 +7,22 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { PronounSelector } from "mobile/components/shared/PronounSelector";
-import type { Pronouns } from "mobile/reducers/";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import type {
+  UserSettings,
+  UserProfile,
+  Pronouns
+} from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
 };
 
 type State = {
-  wantPronouns: Pronouns
+  profile: UserProfile,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -30,29 +36,54 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class OnboardingWantPronounsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
     this.state = {
-      wantPronouns: {
-        he: true,
-        she: true,
-        they: true
-      }
+      profile: navigation.getParam("profile", null),
+      settings: navigation.getParam("settings", null)
     };
   }
 
-  _onWantPronounChange = (pronouns: Pronouns) => {
-    this.setState({
-      wantPronouns: pronouns
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state != prevState) {
+      const { navigation } = this.props;
+      navigation.state.params.onUpdateProfileSettings(
+        this.state.profile,
+        this.state.settings
+      );
+    }
+  }
+
+  _onMyPronounChange = (pronouns: Pronouns) => {
+    this.setState((state, props) => {
+      return {
+        settings: {
+          ...this.state.settings,
+          wantPronouns: pronouns
+        }
+      };
     });
   };
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingAddPictures");
+    navigation.navigate(routes.OnboardingAddPictures, {
+      profile: this.state.profile,
+      settings: this.state.settings,
+      onUpdateProfileSettings: (
+        profile: UserProfile,
+        settings: UserSettings
+      ) => {
+        this.setState({
+          profile,
+          settings
+        });
+      }
+    });
   };
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={Arthur_Styles.onboardingHeader}>
             Pronoun Preferences
@@ -65,8 +96,8 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
           </Text>
           <Text>{"I'm looking for:"}</Text>
           <PronounSelector
-            defaultPronouns={this.state.wantPronouns}
-            onChange={this._onWantPronounChange}
+            defaultPronouns={this.state.settings.wantPronouns}
+            onChange={this._onMyPronounChange}
           />
         </View>
         <View style={{ flex: 1, flexDirection: "row" }}>

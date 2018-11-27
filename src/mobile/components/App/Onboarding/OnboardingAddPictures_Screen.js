@@ -16,12 +16,17 @@ import AddPhotos from "mobile/components/shared/AddPhotos";
 import { styles } from "mobile/styles/template";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
 };
 
-type State = {};
+type State = {
+  profile: UserProfile,
+  settings: UserSettings
+};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -34,17 +39,43 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    const { navigation } = this.props;
+    this.state = {
+      profile: navigation.getParam("profile", null),
+      settings: navigation.getParam("settings", null)
+    };
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state != prevState) {
+      const { navigation } = this.props;
+      navigation.state.params.onUpdateProfileSettings(
+        this.state.profile,
+        this.state.settings
+      );
+    }
   }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate("OnboardingBio");
+    navigation.navigate(routes.OnboardingBio, {
+      profile: this.state.profile,
+      settings: this.state.settings,
+      onUpdateProfileSettings: (
+        profile: UserProfile,
+        settings: UserSettings
+      ) => {
+        this.setState({
+          profile,
+          settings
+        });
+      }
+    });
   };
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={Arthur_Styles.onboardingHeader}>Upload Photos</Text>
         </View>

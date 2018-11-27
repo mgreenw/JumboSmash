@@ -9,6 +9,7 @@ import type { ReduxState, UserProfile } from "mobile/reducers/index";
 import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import ProgressBar from "react-native-progress/Bar";
 import { loadApp } from "mobile/actions/app/loadApp";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   // navigation
@@ -59,16 +60,16 @@ class AppLoadingScreen extends React.Component<Props, State> {
     ) {
       const { navigate } = this.props.navigation;
       if (this.props.userProfile === null) {
-        navigate("Onboarding", {});
+        navigate(routes.OnboardingStack, {});
       } else {
-        navigate("Main", {});
+        navigate(routes.MainSwitch, {});
       }
     }
   }
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={Arthur_Styles.container}>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text style={Arthur_Styles.title}>Project Gem</Text>
         </View>
