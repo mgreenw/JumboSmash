@@ -160,24 +160,24 @@ export default class Deck extends React.Component<Props, State> {
     }
 
     return this.props.data
-      .map((item, i) => {
+      .map((user, i) => {
         if (i < this.state.index) {
           return null;
         } else if (i === this.state.index && !this.props.disableSwipe) {
           return (
             <Animated.View
-              //key={item.id}
+              key={user.userId}
               style={[this._getCardStyle(), styles.cardStyle]}
               {...this.state.panResponder.panHandlers}
             >
-              {this.props.renderCard(item, true)}
+              {this.props.renderCard(user, true)}
             </Animated.View>
           );
         }
 
         return (
-          <View /*key={item.id}*/ style={styles.cardStyle}>
-            {this.props.renderCard(item, i === this.state.index)}
+          <View key={user.userId} style={styles.cardStyle}>
+            {this.props.renderCard(user, i === this.state.index)}
           </View>
         );
       })

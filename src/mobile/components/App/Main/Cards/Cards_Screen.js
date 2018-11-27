@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Image,
-  Dimensions
+  Dimensions,
+  StyleSheet
 } from "react-native";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
 import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
@@ -39,11 +39,11 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 }
 
 //TODO: remove b/c dummy
-let DATA = [
-  { id: 1, displayName: "Anthony", birthday: "21", bio: "BIO", images: [] },
-  { id: 2, displayName: "Tony", birthday: "22", bio: "BIO", images: [] },
-  { id: 3, displayName: "Ant", birthday: "69", bio: "BIO", images: [] },
-  { id: 4, displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
+let DATA: Array<UserProfile> = [
+  { userId: 1, displayName: "Anthony", birthday: "21", bio: "BIO", images: [] },
+  { userId: 2, displayName: "Tony", birthday: "22", bio: "BIO", images: [] },
+  { userId: 3, displayName: "Ant", birthday: "69", bio: "BIO", images: [] },
+  { userId: 4, displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
 ];
 
 class SwipingScreen extends React.Component<Props, State> {
@@ -57,32 +57,31 @@ class SwipingScreen extends React.Component<Props, State> {
 
   static navigationOptions = ({ navigation }) => {
     const isExpanded = navigation.getParam("isExpanded", false);
-    if (isExpanded) {
-      return {
-        header: null
-      };
-    }
-    return {
-      title: "Swiping",
-      headerRight: (
-        <Icon
-          name="send"
-          type="font-awesome"
-          size={40}
-          onPress={() => navigation.navigate("Matches")}
-          containerStyle={{ paddingRight: 10 }}
-        />
-      ),
-      headerLeft: (
-        <Icon
-          name="user"
-          type="font-awesome"
-          size={40}
-          onPress={() => navigation.navigate(routes.Profile)}
-          containerStyle={{ paddingLeft: 10 }}
-        />
-      )
-    };
+    return isExpanded
+      ? {
+          header: null
+        }
+      : {
+          title: "Swiping",
+          headerRight: (
+            <Icon
+              name="send"
+              type="font-awesome"
+              size={40}
+              onPress={() => navigation.navigate("Matches")}
+              containerStyle={{ paddingRight: 10 }}
+            />
+          ),
+          headerLeft: (
+            <Icon
+              name="user"
+              type="font-awesome"
+              size={40}
+              onPress={() => navigation.navigate(routes.Profile)}
+              containerStyle={{ paddingLeft: 10 }}
+            />
+          )
+        };
   };
 
   _renderCard = (user: UserProfile, isTop: boolean) => {
@@ -139,6 +138,14 @@ class SwipingScreen extends React.Component<Props, State> {
     });
   };
 
+  _onSwipeLike = () => {
+    this._onPressSwipeButton("right");
+  };
+
+  _onSwipeDislike = () => {
+    this._onPressSwipeButton("left");
+  };
+
   deck: ?Deck;
 
   render() {
@@ -160,45 +167,52 @@ class SwipingScreen extends React.Component<Props, State> {
 
         <TouchableHighlight
           disabled={this.state.swipeGestureInProgress}
-          onPress={() => this._onPressSwipeButton("left")}
+          onPress={this._onSwipeDislike}
         >
           <Image
             source={{
               uri:
                 "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
             }}
-            style={{
-              aspectRatio: 1,
-              borderRadius: 30,
-              height: 60,
-              width: 60,
-              position: "absolute",
-              bottom: 20,
-              left: 100
-            }}
+            style={styles.swipeButton_dislike}
           />
         </TouchableHighlight>
-        <TouchableHighlight onPress={() => this._onPressSwipeButton("right")}>
+        <TouchableHighlight
+          disabled={this.state.swipeGestureInProgress}
+          onPress={this._onSwipeLike}
+        >
           <Image
             source={{
               uri:
                 "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
             }}
-            style={{
-              aspectRatio: 1,
-              borderRadius: 30,
-              height: 60,
-              width: 60,
-              position: "absolute",
-              bottom: 20,
-              right: 100
-            }}
+            style={styles.swipeButton_like}
           />
         </TouchableHighlight>
       </View>
     );
   }
 }
+
+const swipeButtonBase = {
+  aspectRatio: 1,
+  borderRadius: 30,
+  height: 60,
+  width: 60,
+  position: "absolute",
+  bottom: 20
+};
+
+const styles = StyleSheet.create({
+  swipeButton_dislike: {
+    ...swipeButtonBase,
+    left: 100
+  },
+  swipeButton_like: {
+    ...swipeButtonBase,
+    right: 100
+  }
+});
 
 export default connect(
   mapStateToProps,

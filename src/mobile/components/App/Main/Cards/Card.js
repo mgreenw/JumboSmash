@@ -118,7 +118,6 @@ class Card extends React.Component<Props, State> {
         >
           <View
             style={{
-              position: "relative",
               width: "100%",
               marginTop: 20,
               marginBottom: 20
