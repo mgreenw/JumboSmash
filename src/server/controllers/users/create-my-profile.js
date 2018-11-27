@@ -79,7 +79,7 @@ const createMyProfile = async (req: $Request, res: $Response) => {
       (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       ON CONFLICT DO NOTHING
-      RETURNING id
+      RETURNING user_id AS "userId"
     `,
     [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
 

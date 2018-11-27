@@ -19,3 +19,8 @@
 * [Get Profile](users/get-profile.md) : `GET /api/users/:userId/profile`
 * [Get My Settings](users/get-my-settings.md) : `GET /api/users/me/settings`
 * [Update My Settings](users/update-my-settings.md) : `PATCH /api/users/me/settings`
+
+### Relationships
+* [Get Scene Candidates](relationships/get-scene-candidates.md) : `GET /api/relationships/candidates/:scene`
+* [Get Matches](relationships/get-matches.md) : `GET /api/relationships/matches`
+* [Judge][relationships/judge.md] : `POST /api/relationships/judge`

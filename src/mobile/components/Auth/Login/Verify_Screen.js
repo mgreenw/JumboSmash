@@ -20,6 +20,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { routes } from "mobile/components/Navigation";
 
 type State = {
   code: string,
@@ -67,7 +68,10 @@ class SplashScreen extends React.Component<Props, State> {
   // IMPORTANT: must be like this in order for back button toggling!
   static navigationOptions = ({ navigation }) => ({
     headerLeft: navigation.state.params.headerLeft,
-    title: "Verification"
+    title: "Verification",
+    headerStyle: {
+      borderBottomWidth: 0
+    }
   });
 
   componentDidUpdate(prevProps, prevState) {
@@ -83,7 +87,7 @@ class SplashScreen extends React.Component<Props, State> {
 
       if (this.props.loggedIn) {
         const { navigate } = this.props.navigation;
-        navigate("App", {});
+        navigate(routes.AppSwitch, {});
       }
     }
   }
@@ -106,10 +110,15 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onExpiredCode = (utln: string, email: string) => {
     const { navigate } = this.props.navigation;
-    navigate("ExpiredCode", {
+    navigate(routes.ExpiredCode, {
       utln: utln,
       email: email
     });
+  };
+
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.AuthHelp, {});
   };
 
   // When we submit, a few things happen.
@@ -190,7 +199,7 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
           <Text>{message}</Text>
         </View>
@@ -221,14 +230,23 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           )}
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <PrimaryButton
-            onPress={this._onSubmit}
-            title="submit"
-            disabled={isLoading || this.state.code == ""}
-            loading={isLoading}
-          />
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton
+              onPress={this._onSubmit}
+              title="submit"
+              disabled={isLoading || this.state.code == ""}
+              loading={isLoading}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
       </KeyboardAvoidingView>
     );
   }
