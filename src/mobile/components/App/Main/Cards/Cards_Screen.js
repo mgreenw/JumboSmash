@@ -113,15 +113,24 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeStart = () => {
-    console.log("swiping");
+    // $FlowFixMe (__DEV__ will break flow)
+    if (__DEV__) {
+      console.log("swiping");
+    }
   };
 
   _onSwipeRight = (user: Candidate) => {
-    console.log("Card liked: " + user.profile.displayName);
+    // $FlowFixMe (__DEV__ will break flow)
+    if (__DEV__) {
+      console.log("Card liked: " + user.profile.displayName);
+    }
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    console.log("Card disliked: " + user.profile.displayName);
+    // $FlowFixMe (__DEV__ will break flow)
+    if (__DEV__) {
+      console.log("Card disliked: " + user.profile.displayName);
+    }
   };
 
   _onSwipeComplete = () => {
@@ -129,7 +138,10 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onCardTap = () => {
-    console.log("tapped");
+    // $FlowFixMe (__DEV__ will break flow)
+    if (__DEV__) {
+      console.log("tapped");
+    }
     this.setState({ isExpanded: true });
   };
 

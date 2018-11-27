@@ -87,7 +87,10 @@ export default class Deck extends React.Component<Props, State> {
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
           this._forceSwipe(LEFT, 500);
         } else {
-          console.log("Swipe dismissed");
+          // $FlowFixMe (__DEV__ will break flow)
+          if (__DEV__) {
+            console.log("Swipe dismissed");
+          }
           this._resetPosition();
         }
 
