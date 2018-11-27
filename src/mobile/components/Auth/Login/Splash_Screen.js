@@ -212,12 +212,7 @@ class SplashScreen extends React.Component<Props, State> {
         <Image
           resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            width: "100%"
-          }}
+          style={Arthur_Styles.waves}
         />
       </KeyboardAvoidingView>
     );
