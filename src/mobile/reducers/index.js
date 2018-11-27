@@ -26,6 +26,7 @@ export type UserSettings = {
 
 // TODO:
 export type UserProfile = {
+  userId: number,
   displayName: string,
   birthday: string,
   bio: string,
