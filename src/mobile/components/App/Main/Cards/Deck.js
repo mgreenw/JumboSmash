@@ -11,19 +11,19 @@ import {
   UIManager
 } from "react-native";
 import type { AnimatedValueXY, Node } from "react-native";
-import type { UserProfile } from "mobile/reducers";
+import type { UserProfile, Candidate } from "mobile/reducers";
 
 const RIGHT = "right";
 const LEFT = "left";
 export type swipeDirection = "left" | "right";
 
 type Props = {
-  data: $ReadOnlyArray<UserProfile>,
-  renderCard: (user: UserProfile, isTop: boolean) => Node,
+  data: $ReadOnlyArray<Candidate>,
+  renderCard: (profile: UserProfile, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeStart: () => void,
-  onSwipeRight: (user: UserProfile) => void,
-  onSwipeLeft: (user: UserProfile) => void,
+  onSwipeRight: (user: Candidate) => void,
+  onSwipeLeft: (user: Candidate) => void,
   onSwipeComplete: () => void,
   onTap: () => void,
   disableSwipe: boolean,
@@ -170,14 +170,14 @@ export default class Deck extends React.Component<Props, State> {
               style={[this._getCardStyle(), styles.cardStyle]}
               {...this.state.panResponder.panHandlers}
             >
-              {this.props.renderCard(user, true)}
+              {this.props.renderCard(user.profile, true)}
             </Animated.View>
           );
         }
 
         return (
           <View key={user.userId} style={styles.cardStyle}>
-            {this.props.renderCard(user, i === this.state.index)}
+            {this.props.renderCard(user.profile, i === this.state.index)}
           </View>
         );
       })

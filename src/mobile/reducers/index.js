@@ -26,11 +26,15 @@ export type UserSettings = {
 
 // TODO:
 export type UserProfile = {
-  userId: number,
   displayName: string,
   birthday: string,
   bio: string,
   images: $ReadOnlyArray<?string>
+};
+
+export type Candidate = {
+  userId: number,
+  profile: UserProfile
 };
 
 // TODO: seperate state into profile, meta, API responses, etc.

@@ -18,7 +18,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
-import type { UserProfile } from "mobile/reducers";
+import type { UserProfile, Candidate } from "mobile/reducers";
 import Card from "./Card";
 
 type Props = {
@@ -39,11 +39,23 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 }
 
 //TODO: remove b/c dummy
-let DATA: Array<UserProfile> = [
-  { userId: 1, displayName: "Anthony", birthday: "21", bio: "BIO", images: [] },
-  { userId: 2, displayName: "Tony", birthday: "22", bio: "BIO", images: [] },
-  { userId: 3, displayName: "Ant", birthday: "69", bio: "BIO", images: [] },
-  { userId: 4, displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
+let DATA: Array<Candidate> = [
+  {
+    userId: 1,
+    profile: { displayName: "Anthony", birthday: "21", bio: "BIO", images: [] }
+  },
+  {
+    userId: 2,
+    profile: { displayName: "Tony", birthday: "22", bio: "BIO", images: [] }
+  },
+  {
+    userId: 3,
+    profile: { displayName: "Ant", birthday: "69", bio: "BIO", images: [] }
+  },
+  {
+    userId: 4,
+    profile: { displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
+  }
 ];
 
 class SwipingScreen extends React.Component<Props, State> {
@@ -104,12 +116,12 @@ class SwipingScreen extends React.Component<Props, State> {
     console.log("swiping");
   };
 
-  _onSwipeRight = (user: UserProfile) => {
-    console.log("Card liked: " + user.displayName);
+  _onSwipeRight = (user: Candidate) => {
+    console.log("Card liked: " + user.profile.displayName);
   };
 
-  _onSwipeLeft = (user: UserProfile) => {
-    console.log("Card disliked: " + user.displayName);
+  _onSwipeLeft = (user: Candidate) => {
+    console.log("Card disliked: " + user.profile.displayName);
   };
 
   _onSwipeComplete = () => {
