@@ -8,7 +8,8 @@ import {
   TextInput,
   Text,
   View,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Image
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
@@ -203,7 +204,7 @@ class SplashScreen extends React.Component<Props, State> {
         <View style={{ flex: 1 }}>
           <Text>{message}</Text>
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Input
             containerStyle={
               this.state.validCode
@@ -239,13 +240,18 @@ class SplashScreen extends React.Component<Props, State> {
               disabled={isLoading || this.state.code == ""}
               loading={isLoading}
             />
+            <Button
+              buttonStyle={styles.button}
+              title="help"
+              onPress={this._onHelp}
+            />
           </View>
           <View style={{ flex: 1 }} />
         </View>
-        <Button
-          buttonStyle={styles.button}
-          onPress={this._onHelp}
-          title="help"
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
         />
       </KeyboardAvoidingView>
     );
