@@ -10,8 +10,8 @@ import getTokenUtln from "mobile/api/auth/getTokenUtln";
 import { loadAuth } from "mobile/actions/auth/loadAuth";
 import { login } from "mobile/actions/auth/login";
 import type { ReduxState } from "mobile/reducers/index";
-import { routes } from "mobile/components/Navigation";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any,

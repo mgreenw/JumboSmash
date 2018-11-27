@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
@@ -72,6 +72,11 @@ class AuthHelpScreen extends React.Component<Props, State> {
         <Text style={styles.title}>
           {"HELP: " + this.renderHelpMessage(this.state.prevRoute)}
         </Text>
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
+        />
       </View>
     );
   }

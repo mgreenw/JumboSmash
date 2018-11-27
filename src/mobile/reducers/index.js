@@ -32,6 +32,11 @@ export type UserProfile = {
   images: $ReadOnlyArray<?string>
 };
 
+export type Candidate = {
+  userId: number,
+  profile: UserProfile
+};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
   utln: string,

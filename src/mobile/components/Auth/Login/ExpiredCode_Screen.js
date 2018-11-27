@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { Text, View, KeyboardAvoidingView } from "react-native";
+import { Text, View, KeyboardAvoidingView, Image } from "react-native";
 import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import {
@@ -139,7 +139,8 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text style={styles.title}>Expired Verification Code</Text>
         </View>
         <View>
-          <Text>{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
+          <Text
+          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Button
@@ -154,6 +155,11 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           buttonStyle={styles.button}
           onPress={this._onHelp}
           title="help"
+        />
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
         />
       </View>
     );
