@@ -11,7 +11,7 @@ type Props = {
 
 type State = {};
 
-export default class OnboardingBioScreen extends React.Component<Props, State> {
+export default class BioInput extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
