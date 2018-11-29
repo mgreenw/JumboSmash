@@ -19,7 +19,8 @@ type Props = {
     token: string,
     profile: UserProfile,
     settings: UserSettings
-  ) => void
+  ) => void,
+  createUserInProgress: boolean
 };
 
 type State = {
@@ -29,7 +30,8 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    token: reduxState.token
+    token: reduxState.token,
+    createUserInProgress: reduxState.inProgress.createUser
   };
 }
 
@@ -55,15 +57,35 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.createUserInProgress != this.props.createUserInProgress) {
+      this.props.navigation.setParams({
+        headerLeft: this.props.createUserInProgress ? null : ""
+      });
+
+      // todo: watch for errors
+      if (!this.props.createUserInProgress) {
+        const { navigate } = this.props.navigation;
+        navigate(routes.OnboardingAppLoad, {});
+      }
+    }
+  }
+
+  // IMPORTANT: must be like this in order for back button toggling!
+  static navigationOptions = ({ navigation }) => ({
+    headerLeft: navigation.state.params.headerLeft,
+    title: "Verification",
+    headerStyle: {
+      borderBottomWidth: 0
+    }
+  });
+
   _saveSettingsAndProfile = () => {
-    // const { navigation } = this.props;
-    // navigation.navigate(routes.MainSwitch);
     this.props.createUser(
       this.props.token,
       this.state.profile,
       this.state.settings
     );
-    //  this.props.saveSettings(this.props.token, this.state.settings);
   };
 
   render() {
@@ -89,6 +111,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
           <View style={{ flex: 1 }}>
             <PrimaryButton
               onPress={this._saveSettingsAndProfile}
+              loading={this.props.createUserInProgress}
               title="Roll 'Bos"
             />
           </View>

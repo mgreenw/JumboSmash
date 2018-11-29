@@ -11,6 +11,10 @@ import {
   LOAD_APP__INITIATED,
   LOAD_APP__COMPLETED
 } from "mobile/actions/app/loadApp";
+import {
+  CREATE_PROFILE_AND_SETTINGS__INITIATED,
+  CREATE_PROFILE_AND_SETTINGS__COMPLETED
+} from "mobile/actions/app/createUser";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -62,7 +66,7 @@ export type ReduxState = {
     logout: boolean,
     login: boolean,
     loadApp: boolean,
-    updateSettings: boolean
+    createUser: boolean
   }
 };
 
@@ -79,7 +83,7 @@ const defaultState: ReduxState = {
     logout: false,
     login: false,
     loadApp: false,
-    updateSettings: false
+    createUser: false
   }
 };
 
@@ -184,6 +188,26 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadApp: false
+        }
+      };
+    }
+
+    case CREATE_PROFILE_AND_SETTINGS__INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: true
+        }
+      };
+    }
+
+    case CREATE_PROFILE_AND_SETTINGS__COMPLETED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
         }
       };
     }

@@ -67,6 +67,10 @@ class AppLoadingScreen extends React.Component<Props, State> {
     }
   }
 
+  static navigationOptions = ({ navigation }) => ({
+    header: null
+  });
+
   render() {
     return (
       <View style={Arthur_Styles.container}>
