@@ -30,7 +30,6 @@ function updateOrCreateMyProfile(
   )
     .then(response => response.json())
     .then(response => {
-      console.log(response);
       switch (response.status) {
         case (UPDATE_PROFILE__SUCCESS, CREATE_PROFILE__SUCCESS):
           return;
@@ -39,7 +38,6 @@ function updateOrCreateMyProfile(
       }
     })
     .catch(error => {
-      console.log("updateOrCreateMyProfile Error:", error);
       throw (error, request);
     });
 }

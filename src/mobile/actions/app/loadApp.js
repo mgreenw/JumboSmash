@@ -2,7 +2,7 @@
 import type { Dispatch } from "redux";
 import DevTesting from "../../utils/DevTesting";
 import type { UserSettings, UserProfile } from "mobile/reducers";
-import getMyProfile from "mobile/api/users/getMyProfile";
+import getMyProfile from "mobile/api/users/GetMyProfile";
 
 // Gets auth (token, utln) from async store, saves to redux state.
 export const LOAD_APP__INITIATED = "LOAD_APP__INITIATED";

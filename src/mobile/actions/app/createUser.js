@@ -43,7 +43,7 @@ export function createUser(
           });
         })
         .catch(error => {
-          console.log("Error in Craeting User: ", error);
+          console.log("Error in Creating User: ", error);
         });
     });
   };
