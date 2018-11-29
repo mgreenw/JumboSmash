@@ -2,7 +2,7 @@
 import { timeout } from "../utils/timeout";
 import { MY_PROFILE__ROUTE } from "../routes";
 import type { UserProfile } from "mobile/reducers";
-import type { ServerProfile } from "./getMyProfile";
+import type { ServerProfile } from "./GetMyProfile";
 
 const UPDATE_PROFILE__SUCCESS = "UPDATE_PROFILE__SUCCESS";
 const CREATE_PROFILE__SUCCESS = "CREATE_PROFILE__SUCCESS";
