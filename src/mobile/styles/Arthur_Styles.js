@@ -97,5 +97,11 @@ export const Arthur_Styles = StyleSheet.create({
   container: {
     backgroundColor: White,
     flex: 1
+  },
+  waves: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: "100%"
   }
 });

@@ -1,12 +1,13 @@
 // @flow
 import React from "react";
-import { Text, View, KeyboardAvoidingView } from "react-native";
+import { Text, View, KeyboardAvoidingView, Image } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { routes } from "mobile/components/Navigation";
 
 type Props = {
   navigation: any
@@ -42,6 +43,11 @@ class Not2019Screen extends React.Component<Props, State> {
     }
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.AuthHelp, {});
+  };
+
   render() {
     const yearsLeft = this.state.classYear - 19;
 
@@ -52,6 +58,16 @@ class Not2019Screen extends React.Component<Props, State> {
             yearsLeft +
             (yearsLeft == -1 || yearsLeft == 1 ? " year." : " years.")}
         </Text>
+        <Button
+          buttonStyle={styles.button}
+          onPress={this._onHelp}
+          title="help"
+        />
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
+        />
       </View>
     );
   }

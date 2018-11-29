@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
@@ -24,7 +24,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class HelpScreen extends React.Component<Props, State> {
+class AuthHelpScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -51,18 +51,32 @@ class HelpScreen extends React.Component<Props, State> {
     }
   };
 
-  _onHelpMessage = () => {
-    if (this.state.prevRoute == routes.Splash) {
+  // @flow
+  renderHelpMessage(prevRoute: ?string) {
+    if (prevRoute == routes.Splash) {
       return "Splash page help message";
+    } else if (prevRoute == routes.Verify) {
+      return "Verify page help message";
+    } else if (prevRoute == routes.Not2019) {
+      return "Not2019 page help message";
+    } else if (prevRoute == routes.ExpiredCode) {
+      return "Expired code page help message";
     } else {
       return "Generic Help screen if it doesn't fit any of the auth pages";
     }
-  };
+  }
 
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <Text style={styles.title}>{"HELP: " + this._onHelpMessage()}</Text>
+        <Text style={styles.title}>
+          {"HELP: " + this.renderHelpMessage(this.state.prevRoute)}
+        </Text>
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
+        />
       </View>
     );
   }
@@ -71,4 +85,4 @@ class HelpScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(HelpScreen);
+)(AuthHelpScreen);
