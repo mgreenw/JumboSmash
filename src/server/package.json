@@ -27,6 +27,7 @@
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
     "ajv": "^6.5.4",
+    "artillery": "^1.6.0-26",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "config": "^2.0.1",

@@ -1,0 +1,16 @@
+# https://artillery.io/docs/getting-started/
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Define First Load Phase Phase
+    - duration: 60  # Last 60 Seconds
+      arrivalRate: 20 #  20 new virtual users
+scenarios:
+  - flow:
+    - post:
+        url: "/api/auth/verify"
+        json:
+            utln: "sperry02"
+            code: "505432"
+
+# To Run: $ artillery run stresstest.yml
