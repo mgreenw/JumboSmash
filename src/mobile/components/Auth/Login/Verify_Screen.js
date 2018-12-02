@@ -20,6 +20,7 @@ import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
 
@@ -202,7 +203,7 @@ class SplashScreen extends React.Component<Props, State> {
     return (
       <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
-          <Text>{message}</Text>
+          <Text style={textStyles.body1Style}>{message}</Text>
         </View>
         <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Input
