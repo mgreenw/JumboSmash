@@ -4,7 +4,6 @@ import DevTesting from "../../utils/DevTesting";
 import type { UserSettings } from "mobile/reducers";
 import updateMySettings from "mobile/api/users/updateMySettings";
 
-// Gets auth (token, utln) from async store, saves to redux state.
 export const SAVE_SETTINGS__INITIATED = "SAVE_SETTINGS__INITIATED";
 export const SAVE_SETTINGS__COMPLETED = "SAVE_SETTINGS__COMPLETED";
 

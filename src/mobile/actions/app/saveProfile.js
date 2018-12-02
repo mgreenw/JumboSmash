@@ -4,7 +4,6 @@ import DevTesting from "../../utils/DevTesting";
 import type { UserProfile } from "mobile/reducers";
 import { updateMyProfile } from "mobile/api/users/updateMyProfile";
 
-// Gets auth (token, utln) from async store, saves to redux state.
 export const SAVE_PROFILE__INITIATED = "SAVE_PROFILE__INITIATED";
 export const SAVE_PROFILE__COMPLETED = "SAVE_PROFILE__COMPLETED";
 

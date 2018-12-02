@@ -5,7 +5,6 @@ import type { UserProfile, UserSettings } from "mobile/reducers";
 import { createMyProfile } from "mobile/api/users/updateMyProfile";
 import updateMySettings from "mobile/api/users/updateMySettings";
 
-// Gets auth (token, utln) from async store, saves to redux state.
 export const CREATE_PROFILE_AND_SETTINGS__INITIATED =
   "CREATE_PROFILE_AND_SETTINGS__INITIATED";
 export const CREATE_PROFILE_AND_SETTINGS__COMPLETED =

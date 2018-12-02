@@ -53,7 +53,6 @@ export default function getMyProfile(request: request): Promise<?UserProfile> {
   )
     .then(response => response.json())
     .then(response => {
-      console.log(response);
       switch (response.status) {
         case GET_PROFILE__SUCCESS:
           return parseProfile(response);
