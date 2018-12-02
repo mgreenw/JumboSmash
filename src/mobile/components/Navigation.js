@@ -69,6 +69,7 @@ const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
 const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
 const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
 const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
+const ONBOARDING_APP_LOAD = "ONBOARDING_APP_LOAD";
 
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
@@ -101,6 +102,7 @@ export const routes = {
   OnboardingBio: ONBOARDING_BIO_ROUTE,
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
   OnboardingFinish: ONBOARDING_FINISH_ROUTE,
+  OnboardingAppLoad: ONBOARDING_APP_LOAD,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
   MainSwitch: MAIN_SWITCH,
@@ -187,7 +189,8 @@ const OnboardingStack = createStackNavigator(
     ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
     ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
     ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
-    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish }
+    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish },
+    ONBOARDING_APP_LOAD: { screen: AppLoading }
   },
   {
     initialRouteName: ONBOARDING_START_ROUTE,
