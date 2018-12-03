@@ -1,24 +1,37 @@
 // @flow
 import type { Dispatch } from "redux";
 import DevTesting from "../../utils/DevTesting";
-import type { UserSettings, UserProfile } from "mobile/reducers";
+import type { User, UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
+import getMySettings from "mobile/api/users/GetMySettings";
 
 // Gets auth (token, utln) from async store, saves to redux state.
 export const LOAD_APP__INITIATED = "LOAD_APP__INITIATED";
 export const LOAD_APP__COMPLETED = "LOAD_APP__COMPLETED";
+type LOAD_APP__INITIATED_TYPE = { type: string };
+type LOAD_APP__COMPLETE_TYPE = { type: string, user: ?User };
 
-function initiate() {
+function initiate(): LOAD_APP__INITIATED_TYPE {
   return {
     type: LOAD_APP__INITIATED
   };
 }
 
-function complete(profile: ?UserProfile, settings: ?UserSettings) {
+function complete(
+  profile: ?UserProfile,
+  settings: ?UserSettings
+): LOAD_APP__COMPLETE_TYPE {
+  console.log("Load app complete:", profile, settings);
+
   return {
     type: LOAD_APP__COMPLETED,
-    profile,
-    settings
+    user:
+      profile && settings
+        ? {
+            profile: profile,
+            settings: settings
+          }
+        : null
   };
 }
 
@@ -30,7 +43,13 @@ export function loadApp(token: string) {
       getMyProfile({
         token
       }).then(profile => {
-        dispatch(complete(profile, null));
+        console.log("profile:", profile);
+        getMySettings({
+          token
+        }).then(settings => {
+          console.log("settings:", settings);
+          dispatch(complete(profile, settings));
+        });
       });
     });
   };
