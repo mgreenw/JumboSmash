@@ -1,6 +1,6 @@
 // @flow
 
-// Use this Higher Order Component for a wrapper around screens that need
+// Use this component for a wrapper around screens that need
 // keybaords; it will handle the keyboard avoiding view AND the dismissing
 
 import * as React from "react"; // need this format to access children
