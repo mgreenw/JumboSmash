@@ -65,7 +65,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         vegan: require("../../assets/fonts/vegan.ttf")
       }),
       Font.loadAsync({
-        vegan: require("../../assets/fonts/SourceSansPro-Regular.ttf")
+        SourceSansPro: require("../../assets/fonts/SourceSansPro-Regular.ttf")
       })
     ])
       .then(results => {
