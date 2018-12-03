@@ -9,7 +9,9 @@ import {
   Text,
   Image,
   View,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
@@ -21,6 +23,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
+import { KeyboardView } from "mobile/components/shared/KeyboardView";
 
 type Props = {
   navigation: any
@@ -159,7 +162,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
+      <KeyboardView waves={1}>
         <View style={{ flex: 2, alignItems: "center" }}>
           <Text style={Arthur_Styles.title}>Project Gem</Text>
           <Image
@@ -209,12 +212,7 @@ class SplashScreen extends React.Component<Props, State> {
           </View>
           <View style={{ flex: 1 }} />
         </View>
-        <Image
-          resizeMode="stretch"
-          source={require("../../../assets/waves/waves1/waves.png")}
-          style={Arthur_Styles.waves}
-        />
-      </KeyboardAvoidingView>
+      </KeyboardView>
     );
   }
 }
