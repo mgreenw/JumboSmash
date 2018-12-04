@@ -11,14 +11,14 @@ const PROFILE_SETUP_INCOMPLETE = "PROFILE_SETUP_INCOMPLETE";
 
 // This is how we encode profiles on the server, which is the schema of the
 // profiles database
-type ServerProfile = {
+export type ServerProfile = {
   display_name: string,
   birthday: string,
   bio: string,
   image1_url: string,
-  image2_url: string,
-  image3_url: string,
-  image4_url: string
+  image2_url: ?string,
+  image3_url: ?string,
+  image4_url: ?string
 };
 
 type request = {

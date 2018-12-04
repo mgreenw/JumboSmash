@@ -54,7 +54,9 @@ class SplashScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = {
-    header: null
+    headerStyle: {
+      borderBottomWidth: 0
+    }
   };
 
   // for refs
@@ -157,71 +159,62 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={Arthur_Styles.container}>
-        <Text style={Arthur_Styles.title}>Project Gem</Text>
-        <KeyboardAvoidingView
-          style={{
-            flex: 1,
-            alignSelf: "stretch"
-          }}
-          behavior="padding"
-        >
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Image
-              resizeMode="contain"
-              style={{
-                flex: 1,
-                width: 185,
-                height: 153
-              }}
-              source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
-            />
-            <Input
-              containerStyle={
-                this.state.validUtln
-                  ? styles.inputWrapperStyle
-                  : styles.inputWrapperStyleWithError
-              }
-              placeholderTextColor={"#DDDDDD"}
-              inputStyle={{ color: "#222222" }}
-              labelStyle={styles.labelStyle}
-              inputContainerStyle={styles.inputContainerStyle}
-              label="Tufts UTLN"
-              placeholder="amonac01"
-              onChangeText={text => this.setState({ utln: text.toLowerCase() })}
-              ref={input => (this.utlnInput = input)}
-              errorMessage={
-                this.state.validUtln ? "" : this.state.errorMessageUtln
-              }
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            {this.state.validUtln && (
-              <View style={styles.helpTextContainer}>
-                <Text style={styles.helpText}>Ex: jjaffe01</Text>
-              </View>
-            )}
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <View style={{ flex: 1 }} />
-              <View style={{ flex: 1 }}>
-                <PrimaryButton
-                  onPress={this._onSubmit}
-                  title="Roll 'Bos'"
-                  disabled={this.state.isSubmitting || this.state.utln == ""}
-                  loading={this.state.isSubmitting}
-                />
-                <Button onPress={this._onHelp} title="help" />
-              </View>
-              <View style={{ flex: 1 }} />
+      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
+        <View style={{ flex: 2, alignItems: "center" }}>
+          <Text style={Arthur_Styles.title}>Project Gem</Text>
+          <Image
+            resizeMode="contain"
+            style={{
+              flex: 1,
+              maxWidth: "60%"
+            }}
+            source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
+          />
+          <Input
+            containerStyle={
+              this.state.validUtln
+                ? styles.inputWrapperStyle
+                : styles.inputWrapperStyleWithError
+            }
+            placeholderTextColor={"#DDDDDD"}
+            inputStyle={{ color: "#222222" }}
+            labelStyle={styles.labelStyle}
+            inputContainerStyle={styles.inputContainerStyle}
+            label="Tufts UTLN"
+            placeholder="amonac01"
+            onChangeText={text => this.setState({ utln: text.toLowerCase() })}
+            ref={input => (this.utlnInput = input)}
+            errorMessage={
+              this.state.validUtln ? "" : this.state.errorMessageUtln
+            }
+            autoCorrect={false}
+            autoCapitalize="none"
+          />
+          {this.state.validUtln && (
+            <View style={styles.helpTextContainer}>
+              <Text style={styles.helpText}>Ex: jjaffe01</Text>
             </View>
+          )}
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <PrimaryButton
+              onPress={this._onSubmit}
+              title="Roll 'Bos'"
+              disabled={this.state.isSubmitting || this.state.utln == ""}
+              loading={this.state.isSubmitting}
+            />
+            <Button onPress={this._onHelp} title="help" />
           </View>
-        </KeyboardAvoidingView>
+          <View style={{ flex: 1 }} />
+        </View>
         <Image
-          resizeMode="contain"
+          resizeMode="stretch"
           source={require("../../../assets/waves/waves1/waves.png")}
-          style={{ position: "absolute", bottom: 0, right: 0 }}
+          style={Arthur_Styles.waves}
         />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

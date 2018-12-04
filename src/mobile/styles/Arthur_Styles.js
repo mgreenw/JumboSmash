@@ -1,34 +1,9 @@
 // @flow
 
 import { StyleSheet } from "react-native";
+import { Colors } from "./colors";
 
 // Arthur Styles is our set of standardized styles.
-const AquaMarine = "#38c7cc";
-const Black = "#000000";
-const BlueyGrey = "#8f99a1";
-const Grapefruit = "#ff6262";
-const Grey80 = "#cccccc";
-const Grey85 = "#d9d9d9";
-const Ice = "#f0f5f4";
-const IceBlue = "#f0f3f5";
-const Offblack = "#363535";
-const SunYellow = "#fbcc23";
-const White = "#ffffff";
-
-export const Colors = {
-  AquaMarine,
-  Black,
-  BlueyGrey,
-  Grapefruit,
-  Grey80,
-  Grey85,
-  Ice,
-  IceBlue,
-  Offblack,
-  SunYellow,
-  White
-};
-
 const buttonBase = {
   height: 40,
   borderRadius: 20,
@@ -45,30 +20,30 @@ export const Arthur_Styles = StyleSheet.create({
     width: "100%",
     borderRadius: 30,
     margin: 0,
-    backgroundColor: AquaMarine
+    backgroundColor: Colors.AquaMarine
   },
   checkBoxContainer_unchecked: {
     width: "100%",
     borderRadius: 30,
     margin: 0,
-    backgroundColor: IceBlue
+    backgroundColor: Colors.IceBlue
   },
   checkBoxText_unchecked: {
     fontSize: 12,
     marginLeft: 2,
-    color: Black
+    color: Colors.Black
   },
   checkBoxText_checked: {
     fontSize: 12,
     marginLeft: 2,
-    color: IceBlue
+    color: Colors.IceBlue
   },
   checkBoxWrapper: {
     flex: 1,
     backgroundColor: "red"
   },
   title: {
-    color: Grapefruit,
+    color: Colors.Grapefruit,
     fontFamily: "vegan",
     fontSize: 45,
     padding: 15,
@@ -80,22 +55,28 @@ export const Arthur_Styles = StyleSheet.create({
   },
   buttonPrimaryActive: {
     ...buttonBase,
-    backgroundColor: Grapefruit
+    backgroundColor: Colors.Grapefruit
   },
   buttonTitlePrimaryActive: {
     ...buttonTitleBase,
-    color: White
+    color: Colors.White
   },
   buttonPrimaryDisabled: {
     ...buttonBase,
-    backgroundColor: Grey85
+    backgroundColor: Colors.Grey85
   },
   buttonTitlePrimaryDisabled: {
     ...buttonTitleBase,
-    color: BlueyGrey
+    color: Colors.BlueyGrey
   },
   container: {
-    backgroundColor: White,
+    backgroundColor: Colors.White,
     flex: 1
+  },
+  waves: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: "100%"
   }
 });

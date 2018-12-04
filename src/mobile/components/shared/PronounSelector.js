@@ -4,7 +4,8 @@ import { View } from "react-native";
 import { Button, CheckBox } from "react-native-elements";
 import _ from "lodash";
 import { StyleSheet } from "react-native";
-import { Colors, Arthur_Styles } from "../../styles/Arthur_Styles";
+import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { Colors } from "mobile/styles/colors";
 import type { Pronouns } from "mobile/reducers/";
 
 type Props = {

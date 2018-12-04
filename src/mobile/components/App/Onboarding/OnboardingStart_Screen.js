@@ -40,9 +40,9 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     let propsSettings: ?UserSettings = navigation.getParam("settings", null);
     this.state = {
       profile: propsProfile || {
-        bio: "",
-        birthday: "",
-        displayName: "",
+        bio: "foo",
+        birthday: "1997-06-26",
+        displayName: "Jacob",
         images: []
       },
       settings: propsSettings || {

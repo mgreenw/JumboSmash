@@ -8,7 +8,8 @@ import {
   TextInput,
   Text,
   View,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Image
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
@@ -19,6 +20,7 @@ import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
 
@@ -116,6 +118,11 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
+  _onHelp = () => {
+    const { navigate } = this.props.navigation;
+    navigate(routes.AuthHelp, {});
+  };
+
   // When we submit, a few things happen.
   // First, we set the state of this component to have isSubmitting = true,
   // so that we lock the UI to disable going back, editting the fields,
@@ -196,9 +203,9 @@ class SplashScreen extends React.Component<Props, State> {
     return (
       <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
         <View style={{ flex: 1 }}>
-          <Text>{message}</Text>
+          <Text style={textStyles.body1Style}>{message}</Text>
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Input
             containerStyle={
               this.state.validCode
@@ -234,9 +241,19 @@ class SplashScreen extends React.Component<Props, State> {
               disabled={isLoading || this.state.code == ""}
               loading={isLoading}
             />
+            <Button
+              buttonStyle={styles.button}
+              title="help"
+              onPress={this._onHelp}
+            />
           </View>
           <View style={{ flex: 1 }} />
         </View>
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
+        />
       </KeyboardAvoidingView>
     );
   }
