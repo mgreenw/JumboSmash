@@ -43,11 +43,9 @@ export function loadApp(token: string) {
       getMyProfile({
         token
       }).then(profile => {
-        console.log("profile:", profile);
         getMySettings({
           token
         }).then(settings => {
-          console.log("settings:", settings);
           dispatch(complete(profile, settings));
         });
       });

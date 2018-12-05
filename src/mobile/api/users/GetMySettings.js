@@ -26,7 +26,6 @@ export default function getMyProfile(request: request): Promise<?UserSettings> {
   )
     .then(response => response.json())
     .then(response => {
-      console.log("get my settings response:", response);
       switch (response.status) {
         case GET_SETTINGS__SUCCESS:
           return response;
