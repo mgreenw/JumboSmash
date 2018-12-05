@@ -21,8 +21,6 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings
 ): LOAD_APP__COMPLETE_TYPE {
-  console.log("Load app complete:", profile, settings);
-
   return {
     type: LOAD_APP__COMPLETED,
     user:
