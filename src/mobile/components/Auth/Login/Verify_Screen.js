@@ -1,16 +1,7 @@
 // @flow
 
 import React from "react";
-import {
-  Alert,
-  Linking,
-  StyleSheet,
-  TextInput,
-  Text,
-  View,
-  KeyboardAvoidingView,
-  Image
-} from "react-native";
+import { Linking, StyleSheet, TextInput, Text, View } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
@@ -23,6 +14,7 @@ import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
+import { KeyboardView } from "mobile/components/shared/KeyboardView";
 
 type State = {
   code: string,
@@ -201,7 +193,7 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
+      <KeyboardView waves={1}>
         <View style={{ flex: 1 }}>
           <Text style={textStyles.body1Style}>{message}</Text>
         </View>
@@ -249,12 +241,7 @@ class SplashScreen extends React.Component<Props, State> {
           </View>
           <View style={{ flex: 1 }} />
         </View>
-        <Image
-          resizeMode="stretch"
-          source={require("../../../assets/waves/waves1/waves.png")}
-          style={Arthur_Styles.waves}
-        />
-      </KeyboardAvoidingView>
+      </KeyboardView>
     );
   }
 }
