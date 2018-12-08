@@ -33,10 +33,5 @@
     "react-native-progress": "^3.5.0",
     "react-navigation": "^2.16.0",
     "redux-thunk": "^2.3.0"
-  },
-  "rnpm": {
-    "assets": [
-      "resources/fonts"
-    ]
   }
 }
