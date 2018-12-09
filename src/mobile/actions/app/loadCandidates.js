@@ -10,6 +10,11 @@ import {
 
 export const LOAD_CANDIDATES__INITIATED = "LOAD_CANDIDATES__INITIATED";
 export const LOAD_CANDIDATES__COMPLETED = "LOAD_CANDIDATES__COMPLETED";
+type LOAD_CANDIDATES__INITIATED_TYPE = { type: string };
+type LOAD_CANDIDATES__COMPLETED_TYPE = {
+  type: string,
+  candidates: ?Array<Candidate>
+};
 
 type request = {
   token: string
@@ -26,13 +31,15 @@ function parseCandidate(candidate: ServerCandidate): Candidate {
   };
 }
 
-function initiate() {
+function initiate(): LOAD_CANDIDATES__INITIATED_TYPE {
   return {
     type: LOAD_CANDIDATES__INITIATED
   };
 }
 
-function complete(candidates: ?Array<Candidate>) {
+function complete(
+  candidates: ?Array<Candidate>
+): LOAD_CANDIDATES__COMPLETED_TYPE {
   return {
     type: LOAD_CANDIDATES__COMPLETED,
     candidates
@@ -49,7 +56,6 @@ export function loadCandidates(token: string) {
           token
         },
         (response, request) => {
-          console.log(response);
           const candidates = parseCandidates(response.candidates);
           dispatch(complete(candidates));
         },
@@ -57,7 +63,6 @@ export function loadCandidates(token: string) {
           console.log("invalid scene");
         },
         (response, request) => {
-          console.log(request);
           console.log("bad request");
         },
         (error, request) => {

@@ -42,7 +42,10 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     loadApp: (token: string) => {
       dispatch(loadApp(token));
@@ -60,8 +63,9 @@ class AppLoadingScreen extends React.Component<Props, State> {
     if (!this.props.token) {
       // TODO: error handling
     } else {
-      this.props.loadApp(this.props.token);
-      this.props.loadCandidates(this.props.token);
+      const token = this.props.token;
+      this.props.loadApp(token);
+      this.props.loadCandidates(token);
     }
   }
 
