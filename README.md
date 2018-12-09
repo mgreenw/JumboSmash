@@ -1,6 +1,10 @@
 # Project GEM [![Build Status](https://travis-ci.com/mgreenw/ProjectGEM.svg?token=Gqw9uK7j5g8prgyHD4xx&branch=master)](https://travis-ci.com/mgreenw/ProjectGEM)
-Development Team: Jacob Jaffe, Bianca Capretta, Dan Katz, Emily Colwell, Max Greenwald
-UX/UI Designers: Jillian Howarth, Erin Hsu 
+Project Lead: Jacob Jaffe
+Server: Max Greenwald, Spencer Perry
+Mobile: Jacob Jaffe, Dan Katz
+Design: Jillian Howarth, Erin Hsu
+Website: Matthew Langen
+Operations/Marketing: Sophie Martin
 
 # Getting Started
 Follow the steps below for the appropriate directory you are trying to develop in.
