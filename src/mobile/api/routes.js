@@ -47,6 +47,9 @@ const MY = "/me";
 const PROFILE = "/profile/";
 export const MY_PROFILE__ROUTE = USERS_ROUTE + MY + PROFILE;
 
+const SETTINGS = "/settings/";
+export const MY_SETTINGS__ROUTE = USERS_ROUTE + MY + SETTINGS;
+
 const CANDIDATES = "/candidates";
 const CANDIDATES__ROUTE = RELATIONSHIPS_ROUTE + CANDIDATES;
 const SMASH = "/smash/";

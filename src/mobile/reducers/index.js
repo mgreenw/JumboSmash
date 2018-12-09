@@ -11,6 +11,10 @@ import {
   LOAD_APP__INITIATED,
   LOAD_APP__COMPLETED
 } from "mobile/actions/app/loadApp";
+import {
+  CREATE_PROFILE_AND_SETTINGS__INITIATED,
+  CREATE_PROFILE_AND_SETTINGS__COMPLETED
+} from "mobile/actions/app/createUser";
 
 import {
   LOAD_CANDIDATES__INITIATED,
@@ -42,17 +46,21 @@ export type Candidate = {
   profile: UserProfile
 };
 
+// the client
+export type User = {
+  profile: UserProfile,
+  settings: UserSettings
+};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
-  utln: string,
   token: ?string,
 
   ///////////////////
   // app data:
   ///////////////////
 
-  settings: ?UserSettings,
-  profile: ?UserProfile,
+  user: ?User,
   candidates: ?Array<Candidate>,
 
   ///////////////////
@@ -69,15 +77,14 @@ export type ReduxState = {
     logout: boolean,
     login: boolean,
     loadApp: boolean,
-    loadCandidates: boolean
+    loadCandidates: boolean,
+    createUser: boolean
   }
 };
 
 const defaultState: ReduxState = {
-  utln: "",
   token: null,
-  settings: null,
-  profile: null,
+  user: null,
   candidates: null,
   loggedIn: false,
   authLoaded: false,
@@ -88,7 +95,8 @@ const defaultState: ReduxState = {
     logout: false,
     login: false,
     loadApp: false,
-    loadCandidates: false
+    loadCandidates: false,
+    createUser: false
   }
 };
 
@@ -116,7 +124,6 @@ export default function rootReducer(
       return {
         ...state,
         loggedIn: true,
-        utln: action.utln,
         token: action.token,
         inProgress: {
           ...state.inProgress,
@@ -139,7 +146,6 @@ export default function rootReducer(
     case LOGOUT_COMPLETED: {
       return {
         ...state,
-        utln: "",
         token: null,
         loggedIn: false,
         inProgress: {
@@ -163,7 +169,6 @@ export default function rootReducer(
     case LOAD_AUTH__COMPLETED: {
       return {
         ...state,
-        utln: action.utln,
         token: action.token,
         authLoaded: true,
         inProgress: {
@@ -177,6 +182,7 @@ export default function rootReducer(
     case LOAD_APP__INITIATED: {
       return {
         ...state,
+        user: null,
         inProgress: {
           ...state.inProgress,
           loadApp: true
@@ -188,8 +194,7 @@ export default function rootReducer(
       return {
         ...state,
         appLoaded: true,
-        settings: action.settings,
-        profile: action.profile,
+        user: action.user,
         inProgress: {
           ...state.inProgress,
           loadApp: false
@@ -216,6 +221,16 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadCandidates: false
+        }
+      };
+    }
+
+    case CREATE_PROFILE_AND_SETTINGS__COMPLETED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
         }
       };
     }

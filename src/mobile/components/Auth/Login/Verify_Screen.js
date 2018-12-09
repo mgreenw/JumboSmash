@@ -1,15 +1,7 @@
 // @flow
 
 import React from "react";
-import {
-  Alert,
-  Linking,
-  StyleSheet,
-  TextInput,
-  Text,
-  View,
-  KeyboardAvoidingView
-} from "react-native";
+import { Linking, StyleSheet, TextInput, Text, View } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
@@ -19,8 +11,10 @@ import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
+import { KeyboardView } from "mobile/components/shared/KeyboardView";
 
 type State = {
   code: string,
@@ -31,12 +25,11 @@ type State = {
 
 type Props = {
   navigation: any,
-  utln: string,
   loggedIn: boolean,
   loginInProgress: boolean,
 
   // dispatch function with token
-  login: (utln: string, token: string) => void
+  login: (token: string) => void
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -48,8 +41,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
-    login: (utln: string, token: string) => {
-      dispatch(login(utln, token));
+    login: (token: string) => {
+      dispatch(login(token));
     }
   };
 }
@@ -161,7 +154,7 @@ class SplashScreen extends React.Component<Props, State> {
           },
           (response, request) => {
             stopSubmitting(() => {
-              this.props.login(utln, response.token);
+              this.props.login(response.token);
             });
           },
           (response, request) => {
@@ -199,11 +192,11 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardAvoidingView style={Arthur_Styles.container} behavior="padding">
+      <KeyboardView waves={1}>
         <View style={{ flex: 1 }}>
-          <Text>{message}</Text>
+          <Text style={textStyles.body1Style}>{message}</Text>
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch", width: "100%" }}>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Input
             containerStyle={
               this.state.validCode
@@ -239,15 +232,15 @@ class SplashScreen extends React.Component<Props, State> {
               disabled={isLoading || this.state.code == ""}
               loading={isLoading}
             />
+            <Button
+              buttonStyle={styles.button}
+              title="help"
+              onPress={this._onHelp}
+            />
           </View>
           <View style={{ flex: 1 }} />
         </View>
-        <Button
-          buttonStyle={styles.button}
-          onPress={this._onHelp}
-          title="help"
-        />
-      </KeyboardAvoidingView>
+      </KeyboardView>
     );
   }
 }

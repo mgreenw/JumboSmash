@@ -18,7 +18,7 @@ import Splash from "mobile/components/Auth/Login/Splash_Screen";
 import Verify from "mobile/components/Auth/Login/Verify_Screen";
 import ExpiredCode from "mobile/components/Auth/Login/ExpiredCode_Screen";
 import Not2019 from "mobile/components/Auth/Login/Not2019_Screen";
-import Help from "mobile/components/Auth/Login/Help_Screen";
+import AuthHelp from "mobile/components/Auth/Login/AuthHelp_Screen";
 
 /////////
 // APP:
@@ -30,6 +30,7 @@ import AppLoading from "mobile/components/App/AppLoading_Screen";
 import Profile from "mobile/components/App/Main/Profile/Profile_Screen";
 import ProfileEdit from "mobile/components/App/Main/Profile/ProfileEdit_Screen";
 import SettingsEdit from "mobile/components/App/Main/Profile/SettingsEdit_Screen";
+import ProfileHelp from "mobile/components/App/Main/Profile/ProfileHelp_Screen";
 
 import Cards from "mobile/components/App/Main/Cards/Cards_Screen";
 import Matches from "mobile/components/App/Main/Matches/Matches_Screen";
@@ -49,6 +50,7 @@ const MATCHES_ROUTE = "MATCHES_ROUTE";
 const CARDS_ROUTE = "CARDS_ROUTE";
 const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
 const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
+const PROFILE_HELP_ROUTE = "PROFILE_HELP_ROUTE";
 const CARDS_STACK = "CARDS_STACK";
 const PROFILE_STACK = "PROFILE_STACK";
 const MATCHES_STACK = "MATCHES_STACK";
@@ -67,6 +69,7 @@ const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
 const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
 const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
 const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
+const ONBOARDING_APP_LOAD = "ONBOARDING_APP_LOAD";
 
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
@@ -82,6 +85,7 @@ export const routes = {
   Cards: CARDS_ROUTE,
   SettingsEdit: SETTINGS_EDIT_ROUTE,
   ProfileEdit: PROFILE_EDIT_ROUTE,
+  ProfileHelp: PROFILE_HELP_ROUTE,
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
@@ -98,6 +102,7 @@ export const routes = {
   OnboardingBio: ONBOARDING_BIO_ROUTE,
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
   OnboardingFinish: ONBOARDING_FINISH_ROUTE,
+  OnboardingAppLoad: ONBOARDING_APP_LOAD,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
   MainSwitch: MAIN_SWITCH,
@@ -122,7 +127,8 @@ const ProfileStack = createStackNavigator(
   {
     PROFILE_ROUTE: { screen: Profile },
     SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
-    PROFILE_EDIT_ROUTE: { screen: ProfileEdit }
+    PROFILE_EDIT_ROUTE: { screen: ProfileEdit },
+    PROFILE_HELP_ROUTE: { screen: ProfileHelp }
   },
   {
     initialRouteName: PROFILE_ROUTE
@@ -157,7 +163,7 @@ const LoginStack = createStackNavigator(
     VERIFY_ROUTE: { screen: Verify },
     EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
     NOT2019_ROUTE: { screen: Not2019 },
-    AUTH_HELP_ROUTE: { screen: Help }
+    AUTH_HELP_ROUTE: { screen: AuthHelp }
   },
   {
     initialRouteName: SPLASH_ROUTE
@@ -183,7 +189,8 @@ const OnboardingStack = createStackNavigator(
     ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
     ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
     ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
-    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish }
+    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish },
+    ONBOARDING_APP_LOAD: { screen: AppLoading }
   },
   {
     initialRouteName: ONBOARDING_START_ROUTE,

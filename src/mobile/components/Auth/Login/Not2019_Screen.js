@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, KeyboardAvoidingView } from "react-native";
+import { Text, View, KeyboardAvoidingView, Image } from "react-native";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
@@ -62,6 +62,11 @@ class Not2019Screen extends React.Component<Props, State> {
           buttonStyle={styles.button}
           onPress={this._onHelp}
           title="help"
+        />
+        <Image
+          resizeMode="stretch"
+          source={require("../../../assets/waves/waves1/waves.png")}
+          style={Arthur_Styles.waves}
         />
       </View>
     );

@@ -12,21 +12,20 @@ function initiate() {
   };
 }
 
-function complete(utln: string, token: string) {
+function complete(token: string) {
   return {
     type: LOGIN_COMPLETED,
-    utln: utln,
     token: token
   };
 }
 
 // TODO: consider error handling on the multiSet.
-export function login(utln: string, token: string) {
+export function login(token: string) {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      AsyncStorage.multiSet([["utln", utln], ["token", token]]).then(errors => {
-        dispatch(complete(utln, token));
+      AsyncStorage.multiSet([["token", token]]).then(errors => {
+        dispatch(complete(token));
       });
     });
   };

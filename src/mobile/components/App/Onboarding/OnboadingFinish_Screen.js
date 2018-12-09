@@ -10,9 +10,17 @@ import type { ReduxState } from "mobile/reducers/index";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type { UserSettings, UserProfile } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import { createUser } from "mobile/actions/app/createUser";
 
 type Props = {
-  navigation: any
+  navigation: any,
+  token: string,
+  createUser: (
+    token: string,
+    profile: UserProfile,
+    settings: UserSettings
+  ) => void,
+  createUserInProgress: boolean
 };
 
 type State = {
@@ -21,11 +29,22 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+  return {
+    token: reduxState.token,
+    createUserInProgress: reduxState.inProgress.createUser
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+  return {
+    createUser: (
+      token: string,
+      profile: UserProfile,
+      settings: UserSettings
+    ) => {
+      dispatch(createUser(token, profile, settings));
+    }
+  };
 }
 
 class OnboardingFinishScreen extends React.Component<Props, State> {
@@ -38,9 +57,35 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.createUserInProgress != this.props.createUserInProgress) {
+      this.props.navigation.setParams({
+        headerLeft: this.props.createUserInProgress ? null : ""
+      });
+
+      // todo: watch for errors
+      if (!this.props.createUserInProgress) {
+        const { navigate } = this.props.navigation;
+        navigate(routes.OnboardingAppLoad, {});
+      }
+    }
+  }
+
+  // IMPORTANT: must be like this in order for back button toggling!
+  static navigationOptions = ({ navigation }) => ({
+    headerLeft: navigation.state.params.headerLeft,
+    title: "Verification",
+    headerStyle: {
+      borderBottomWidth: 0
+    }
+  });
+
   _saveSettingsAndProfile = () => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.MainSwitch);
+    this.props.createUser(
+      this.props.token,
+      this.state.profile,
+      this.state.settings
+    );
   };
 
   render() {
@@ -66,6 +111,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
           <View style={{ flex: 1 }}>
             <PrimaryButton
               onPress={this._saveSettingsAndProfile}
+              loading={this.props.createUserInProgress}
               title="Roll 'Bos"
             />
           </View>
