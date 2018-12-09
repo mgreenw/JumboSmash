@@ -19,11 +19,6 @@ exports.up = (pgm) => {
       notNull: true,
       unique: true,
     },
-    confirmed: {
-      type: 'boolean',
-      notNull: true,
-      default: false,
-    },
   });
 
   pgm.createIndex('photos', ['id', 'user_id'], {
@@ -32,6 +27,22 @@ exports.up = (pgm) => {
 
   pgm.createIndex('photos', ['user_id', 'index'], {
     unique: true,
+  });
+
+  pgm.createTable('unconfirmed_photos', {
+    id: 'id',
+    user_id: {
+      type: 'integer',
+      notNull: true,
+      references: 'users',
+      unique: true,
+      onDelete: 'cascade',
+    },
+    uuid: {
+      type: 'uuid',
+      notNull: true,
+      unique: true,
+    },
   });
 
   pgm.dropColumns('profiles', ['image1_url', 'image2_url', 'image3_url', 'image4_url']);
