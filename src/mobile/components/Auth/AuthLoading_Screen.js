@@ -13,28 +13,28 @@ import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { routes } from "mobile/components/Navigation";
 
-type Props = {
-  navigation: any,
-
-  // Redux state
-  loadAuthInProgress: boolean, // redux state for action in progress
+type reduxProps = {
+  token: ?string,
+  loadAuthInProgress: boolean,
   authLoaded: boolean,
-  loggedIn: boolean,
-
-  // Actions
-  loadAuth: void => void,
-  login: (utln: string, token: string) => void,
-
-  // Async store -> Redux
-  utln: string,
-  token: string
+  loggedIn: boolean
 };
+
+type navigationProps = {
+  navigation: any
+};
+
+type dispatchProps = {
+  loadAuth: void => void,
+  login: (token: string) => void
+};
+
+type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {};
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
-    utln: reduxState.utln,
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
     loggedIn: reduxState.loggedIn,
@@ -42,13 +42,16 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     loadAuth: () => {
       dispatch(loadAuth());
     },
-    login: (utln: string, token: string) => {
-      dispatch(login(utln, token));
+    login: (token: string) => {
+      dispatch(login(token));
     }
   };
 }
@@ -87,24 +90,14 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     // so we use it for determining if the load occured.
     if (prevProps.loadAuthInProgress != this.props.loadAuthInProgress) {
       if (this.props.authLoaded) {
-        const { utln, token } = this.props;
-        if (utln && token) {
+        const { token } = this.props;
+        if (token) {
           getTokenUtln(
             {
               token
             },
             (response, request) => {
-              // Check if the server's utln is the same as one we have stored on device.
-              // If not, invalidate the token (navigate to the auth screen).
-              // This will fail if the stored UTLN is not exactly equal to the
-              // server's utln
-              const lowercaseUtln = utln.toLowerCase();
-              const lowercaseResponseUtln = response.utln.toLowerCase();
-              if (lowercaseUtln !== lowercaseResponseUtln) {
-                this._onInvalidToken();
-              } else {
-                this._onValidToken(lowercaseUtln, token);
-              }
+              this._onValidToken(token);
             },
             (response, request) => {
               this._onInvalidToken();
@@ -129,8 +122,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
   // If the token is valid, we want to trigger login logic, so we must dispatch
   // login first.
-  _onValidToken = (utln: string, token: string) => {
-    this.props.login(utln, token);
+  _onValidToken = (token: string) => {
+    this.props.login(token);
   };
 
   // If the token is invalid, we don't need to set any more state, because

@@ -25,12 +25,11 @@ type State = {
 
 type Props = {
   navigation: any,
-  utln: string,
   loggedIn: boolean,
   loginInProgress: boolean,
 
   // dispatch function with token
-  login: (utln: string, token: string) => void
+  login: (token: string) => void
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -42,8 +41,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
-    login: (utln: string, token: string) => {
-      dispatch(login(utln, token));
+    login: (token: string) => {
+      dispatch(login(token));
     }
   };
 }
@@ -155,7 +154,7 @@ class SplashScreen extends React.Component<Props, State> {
           },
           (response, request) => {
             stopSubmitting(() => {
-              this.props.login(utln, response.token);
+              this.props.login(response.token);
             });
           },
           (response, request) => {

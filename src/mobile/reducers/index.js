@@ -41,17 +41,21 @@ export type Candidate = {
   profile: UserProfile
 };
 
+// the client
+export type User = {
+  profile: UserProfile,
+  settings: UserSettings
+};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
-  utln: string,
   token: ?string,
 
   ///////////////////
   // app data:
   ///////////////////
 
-  settings: ?UserSettings,
-  profile: ?UserProfile,
+  user: ?User,
 
   ///////////////////
   // action states:
@@ -71,10 +75,8 @@ export type ReduxState = {
 };
 
 const defaultState: ReduxState = {
-  utln: "",
   token: null,
-  settings: null,
-  profile: null,
+  user: null,
   loggedIn: false,
   authLoaded: false,
   appLoaded: false,
@@ -111,7 +113,6 @@ export default function rootReducer(
       return {
         ...state,
         loggedIn: true,
-        utln: action.utln,
         token: action.token,
         inProgress: {
           ...state.inProgress,
@@ -134,7 +135,6 @@ export default function rootReducer(
     case LOGOUT_COMPLETED: {
       return {
         ...state,
-        utln: "",
         token: null,
         loggedIn: false,
         inProgress: {
@@ -158,7 +158,6 @@ export default function rootReducer(
     case LOAD_AUTH__COMPLETED: {
       return {
         ...state,
-        utln: action.utln,
         token: action.token,
         authLoaded: true,
         inProgress: {
@@ -172,6 +171,7 @@ export default function rootReducer(
     case LOAD_APP__INITIATED: {
       return {
         ...state,
+        user: null,
         inProgress: {
           ...state.inProgress,
           loadApp: true
@@ -183,8 +183,7 @@ export default function rootReducer(
       return {
         ...state,
         appLoaded: true,
-        settings: action.settings,
-        profile: action.profile,
+        user: action.user,
         inProgress: {
           ...state.inProgress,
           loadApp: false
