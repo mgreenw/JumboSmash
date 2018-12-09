@@ -46,7 +46,6 @@ describe('PATCH api/users/me/profile', () => {
       .send({
         displayName: 'Max',
         bio: 'He is a guy',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
         birthday: '1997-09-09',
       })
       .expect(403);
@@ -58,7 +57,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -78,7 +76,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -95,7 +92,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -106,7 +102,6 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'he is a man',
         displayName: 'Max is a person who likes going on long hikes and playing with his dog',
         birthday: '1997-09-09',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
@@ -123,7 +118,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -134,7 +128,6 @@ describe('PATCH api/users/me/profile', () => {
         bio,
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1997-09-09',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
@@ -146,7 +139,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -157,7 +149,6 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1997-099-09',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST);
@@ -169,7 +160,6 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const res = await request(app)
@@ -180,59 +170,10 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1980-10-09',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
     expect(res.body.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
-  });
-
-  it('should ensure the the image urls use HTTPS', async () => {
-    const user = await dbUtils.createUser('mgreen23');
-    await dbUtils.createProfile(user.id, {
-      displayName: 'Max',
-      bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-      birthday: '1997-09-09',
-    });
-    const res = await request(app)
-      .patch('/api/users/me/profile')
-      .set('Accept', 'application/json')
-      .set('Authorization', user.token)
-      .send({
-        bio: 'Someone likes Star Trek',
-        displayName: 'Max is a person who likes going on long hikes',
-        birthday: '1997-10-09',
-        // doen't use HTTPS
-        image1Url: 'http://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-      })
-      .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
-    expect(res.body.message).toBe(profileErrorMessages.IMAGE_URL_NOT_VALID);
-  });
-
-  it('should ensure the the image urls are valid URLs', async () => {
-    const user = await dbUtils.createUser('mgreen24');
-    await dbUtils.createProfile(user.id, {
-      displayName: 'Max',
-      bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-      birthday: '1997-09-09',
-    });
-    const res = await request(app)
-      .patch('/api/users/me/profile')
-      .set('Accept', 'application/json')
-      .set('Authorization', user.token)
-      .send({
-        bio: 'Someone likes Star Trek',
-        displayName: 'Max is a person who likes going on long hikes',
-        birthday: '1997-10-09',
-        image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-        image2Url: 'https:static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-      })
-      .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
-    expect(res.body.message).toBe(profileErrorMessages.IMAGE_URL_NOT_VALID);
   });
 
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
@@ -240,11 +181,9 @@ describe('PATCH api/users/me/profile', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1997-09-09',
     });
     const birthday = '1997-10-09';
-    const url = 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w';
     const res = await request(app)
       .patch('/api/users/me/profile')
       .set('Accept', 'application/json')
@@ -253,10 +192,6 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max',
         birthday,
-        image1Url: url,
-        image2Url: url,
-        image3Url: url,
-        image4Url: url,
       })
       .expect(201);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS);
@@ -271,9 +206,5 @@ describe('PATCH api/users/me/profile', () => {
     expect(profile.bio).toBe('Someone likes Star Trek');
     expect(profile.display_name).toBe('Max');
     expect(profile.birthday_date).toBe(birthday);
-    expect(profile.image1_url).toBe(url);
-    expect(profile.image2_url).toBe(url);
-    expect(profile.image3_url).toBe(url);
-    expect(profile.image4_url).toBe(url);
   });
 });

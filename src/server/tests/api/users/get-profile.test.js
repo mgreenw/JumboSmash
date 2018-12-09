@@ -19,8 +19,6 @@ describe('GET api/users/:userId/profile', () => {
     user.profile = {
       displayName: 'Max',
       birthday: '1999-01-07',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/58c10d86893fc02bf06984b8/1489046924720/tufts-beelzebubs-max-stache.jpg?format=300w',
-      image2Url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiE3JC81L3eAhWld98KHUiBDkAQjRx6BAgBEAU&url=http%3A%2F%2Fwww.bubs.com%2Fmax-greenwald%2F&psig=AOvVaw212VC9a-Z8fNnPPeBc-LBq&ust=1541521276461189',
       bio: 'Already has a girlfriend so...',
     };
     await dbUtils.createProfile(user.id, user.profile);
@@ -30,7 +28,6 @@ describe('GET api/users/:userId/profile', () => {
     otherUser.profile = {
       displayName: 'Max16',
       birthday: '1999-01-27',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/58c10d86893fc02bf06984b8/1489046924720/tufts-beelzebubs-max-stache.jpg?format=300w',
       bio: 'Already has 2 friends so...',
     };
     await dbUtils.createProfile(otherUser.id, otherUser.profile);
@@ -71,10 +68,6 @@ describe('GET api/users/:userId/profile', () => {
     expect(res.body.profile.displayName).toBe(user.profile.displayName);
     expect(res.body.profile.birthday).toBe(user.profile.birthday);
     expect(res.body.profile.bio).toBe(user.profile.bio);
-    expect(res.body.profile.image1Url).toBe(user.profile.image1Url);
-    expect(res.body.profile.image2Url).toBe(user.profile.image2Url);
-    expect(res.body.profile.image3Url).toBeNull();
-    expect(res.body.profile.image4Url).toBeNull();
   });
 
   it('should be able to get the another user profile', async () => {
@@ -89,10 +82,6 @@ describe('GET api/users/:userId/profile', () => {
     expect(res.body.profile.displayName).toBe(otherUser.profile.displayName);
     expect(res.body.profile.birthday).toBe(otherUser.profile.birthday);
     expect(res.body.profile.bio).toBe(otherUser.profile.bio);
-    expect(res.body.profile.image1Url).toBe(otherUser.profile.image1Url);
-    expect(res.body.profile.image2Url).toBeNull();
-    expect(res.body.profile.image3Url).toBeNull();
-    expect(res.body.profile.image4Url).toBeNull();
   });
 
   it('should fail to get another user profile if that user has not setup a profile', async () => {

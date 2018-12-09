@@ -35,11 +35,7 @@ const getProfile = async (req: $Request, res: $Response) => {
       SELECT
         display_name as "displayName",
         birthday,
-        bio,
-        image1_url as "image1Url",
-        image2_url as "image2Url",
-        image3_url as "image3Url",
-        image4_url as "image4Url"
+        bio
       FROM profiles
       WHERE user_id = $1`, [userId]);
 
