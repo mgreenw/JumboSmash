@@ -4,10 +4,10 @@ import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
-import { Button, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import HeaderIcon from "mobile/components/shared/HeaderIcon";
 
 type Props = {
   navigation: any
@@ -34,14 +34,14 @@ class MessagingScreen extends React.Component<Props, State> {
     return {
       title: "Messaging",
       headerLeft: (
-        <Icon
-          name="diamond"
-          type="font-awesome"
-          size={40}
+        <HeaderIcon
           onPress={() => navigation.navigate(routes.Cards)}
-          containerStyle={{ paddingLeft: 10 }}
+          name="cards"
         />
-      )
+      ),
+      headerStyle: {
+        borderBottomWidth: 0
+      }
     };
   };
 
