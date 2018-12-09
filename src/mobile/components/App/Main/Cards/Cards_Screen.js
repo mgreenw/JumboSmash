@@ -22,7 +22,8 @@ import type { UserProfile, Candidate } from "mobile/reducers";
 import Card from "./Card";
 
 type Props = {
-  navigation: any
+  navigation: any,
+  candidates: ?Array<Candidate>
 };
 
 type State = {
@@ -31,7 +32,9 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+  return {
+    candidates: reduxState.candidates
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
@@ -177,7 +180,7 @@ class SwipingScreen extends React.Component<Props, State> {
       <View style={{ backgroundColor: "white", flex: 1 }}>
         <Deck
           ref={deck => (this.deck = deck)}
-          data={DATA}
+          data={this.props.candidates || []}
           renderCard={this._renderCard}
           renderEmpty={this._renderEmpty}
           onSwipeStart={this._onSwipeStart}

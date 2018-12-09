@@ -11,6 +11,7 @@ import {
   Dimensions
 } from "react-native";
 import { connect } from "react-redux";
+import moment from "moment";
 import { styles } from "mobile/styles/template";
 import { Button, Card as RneCard, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
@@ -42,6 +43,7 @@ class Card extends React.Component<Props, State> {
 
   _renderNotExpanded() {
     const { user } = this.props;
+    debugger;
     return (
       <View
         style={{
@@ -76,9 +78,10 @@ class Card extends React.Component<Props, State> {
             shadowOpacity: 0.2
           }}
         >
-          <Text style={{ fontSize: 28 }}>{`${user.displayName}, ${
-            user.birthday
-          }`}</Text>
+          <Text style={{ fontSize: 28 }}>{`${user.displayName}, ${moment().diff(
+            moment(user.birthday),
+            "years"
+          )}`}</Text>
         </View>
       </View>
     );
@@ -134,11 +137,7 @@ class Card extends React.Component<Props, State> {
               <Text style={{ fontSize: 28 }}>{"<"}</Text>
             </TouchableHighlight>
           </View>
-          <Text>
-            {
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sed vehicula urna, in fringilla ipsum. Aenean non lorem quis lorem sollicitudin consequat. Donec tempor erat in ipsum ornare, eu aliquet orci egestas. Vestibulum a convallis metus. Morbi faucibus in orci quis lacinia. Quisque auctor dictum neque, id finibus odio porta in. Suspendisse eget elementum nisl. Vivamus nec massa at dui porta congue. Cras aliquet nunc et elit sodales viverra. Donec elementum semper scelerisque."
-            }
-          </Text>
+          <Text>{user.bio}</Text>
         </View>
       </ScrollView>
     );

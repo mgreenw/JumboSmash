@@ -9,6 +9,7 @@ import type { ReduxState, UserProfile } from "mobile/reducers/index";
 import { Colors, Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import ProgressBar from "react-native-progress/Bar";
 import { loadApp } from "mobile/actions/app/loadApp";
+import { loadCandidates } from "mobile/actions/app/loadCandidates";
 import { routes } from "mobile/components/Navigation";
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
 
   // dispatch
   loadApp: (token: string) => void,
+  loadCandidates: (token: string) => void,
 
   // redux state
   token: string,
@@ -40,6 +42,9 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
     loadApp: (token: string) => {
       dispatch(loadApp(token));
+    },
+    loadCandidates: (token: string) => {
+      dispatch(loadCandidates(token));
     }
   };
 }
@@ -49,6 +54,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
     super(props);
     this.state = {};
     this.props.loadApp(this.props.token);
+    this.props.loadCandidates(this.props.token);
   }
 
   componentDidUpdate(prevProps, prevState) {
