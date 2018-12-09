@@ -12,6 +12,11 @@ import {
   LOAD_APP__COMPLETED
 } from "mobile/actions/app/loadApp";
 
+import {
+  LOAD_CANDIDATES__INITIATED,
+  LOAD_CANDIDATES__COMPLETED
+} from "mobile/actions/app/loadCandidates";
+
 // TODO: make own ReduxState file
 export type Pronouns = {
   he: boolean,
@@ -28,8 +33,8 @@ export type UserSettings = {
 export type UserProfile = {
   displayName: string,
   birthday: string,
-  bio: string,
-  images: $ReadOnlyArray<?string>
+  bio: string
+  //images: $ReadOnlyArray<?string>
 };
 
 export type Candidate = {
@@ -48,6 +53,7 @@ export type ReduxState = {
 
   settings: ?UserSettings,
   profile: ?UserProfile,
+  candidates: ?Array<Candidate>,
 
   ///////////////////
   // action states:
@@ -56,12 +62,14 @@ export type ReduxState = {
   loggedIn: boolean,
   authLoaded: boolean,
   appLoaded: boolean,
+  candidatesLoaded: boolean,
 
   inProgress: {
     loadAuth: boolean,
     logout: boolean,
     login: boolean,
-    loadApp: boolean
+    loadApp: boolean,
+    loadCandidates: boolean
   }
 };
 
@@ -70,14 +78,17 @@ const defaultState: ReduxState = {
   token: null,
   settings: null,
   profile: null,
+  candidates: null,
   loggedIn: false,
   authLoaded: false,
   appLoaded: false,
+  candidatesLoaded: false,
   inProgress: {
     loadAuth: false,
     logout: false,
     login: false,
-    loadApp: false
+    loadApp: false,
+    loadCandidates: false
   }
 };
 
@@ -182,6 +193,29 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadApp: false
+        }
+      };
+    }
+
+    // LOAD CANDIDATES:
+    case LOAD_CANDIDATES__INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          loadCandidates: true
+        }
+      };
+    }
+
+    case LOAD_CANDIDATES__COMPLETED: {
+      return {
+        ...state,
+        candidatesLoaded: true,
+        candidates: action.candidates,
+        inProgress: {
+          ...state.inProgress,
+          loadCandidates: false
         }
       };
     }
