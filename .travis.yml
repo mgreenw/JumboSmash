@@ -1,10 +1,11 @@
+language: generic
+
 jobs:
   include:
     sudo: required
     services:
       - docker
       - stage: website
-        language: generic
         before_install:
           - cd src/website
           - docker build -t projectgem/website .
