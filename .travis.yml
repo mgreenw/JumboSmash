@@ -8,8 +8,8 @@ jobs:
     - stage: website
       before_install:
         - cd src/website
-        - docker build -t projectgem/website .
+        - docker build -t sperrys/website .
       script:
         - docker images
       after_success:
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push projectgem/website; fi 
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website; fi
