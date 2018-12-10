@@ -1,15 +1,15 @@
 language: generic
+sudo: required
+services:
+  - docker
 
 jobs:
   include:
-    sudo: required
-    services:
-      - docker
-      - stage: website
-        before_install:
-          - cd src/website
-          - docker build -t projectgem/website .
-        script:
-          - docker images
-        after_success:
-          - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; docker push projectgem/website; fi
+    - stage: website
+      before_install:
+        - cd src/website
+        - docker build -t projectgem/website .
+      script:
+        - docker images
+      after_success:
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"; docker push projectgem/website; fi
