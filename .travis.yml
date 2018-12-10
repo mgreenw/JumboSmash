@@ -14,4 +14,4 @@ jobs:
       after_success:
         - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ];
         then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
-        docker push projectgem/website; fi
+        docker push projectgem/website; fi 
