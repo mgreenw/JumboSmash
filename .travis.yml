@@ -1,5 +1,7 @@
 
-
+branches:
+  only:
+  - spencer.infra.pipeline
 jobs:
   include:
       - stage: website
@@ -11,22 +13,18 @@ jobs:
         - docker build -t projectgem/website .
       script:
         - docker images
-
       after_success:
         - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then
           docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
           docker push projectgem/website;
           fi
 
-        # Leaving everything else as is for the moment.
+        # Leaving everything else as is for the moment...
         - stage: everything else
 
           language: node_js
           node_js:
             - "8.12"
-          branches:
-            only:
-            - spencer.infra.pipeline
           env:
             global:
               - NODE_CONFIG_ENV=travis
