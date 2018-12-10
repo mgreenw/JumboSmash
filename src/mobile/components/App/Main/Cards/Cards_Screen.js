@@ -20,8 +20,10 @@ import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import Card from "./Card";
-import HeaderIcon from "mobile/components/shared/HeaderIcon";
 import { textStyles } from "mobile/styles/textStyles";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
+import NavigationService from "mobile/NavigationService";
 
 type Props = {
   navigation: any
@@ -70,30 +72,9 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   static navigationOptions = ({ navigation }) => {
-    const isExpanded = navigation.getParam("isExpanded", false);
-    return isExpanded
-      ? {
-          header: null
-        }
-      : {
-          title: "PROJECTGEM",
-          headerStyle: textStyles.headline5Style,
-          headerRight: (
-            <HeaderIcon
-              onPress={() => navigation.navigate(routes.Matches)}
-              name="message"
-            />
-          ),
-          headerLeft: (
-            <HeaderIcon
-              onPress={() => navigation.navigate(routes.Profile)}
-              name="user"
-            />
-          ),
-          headerStyle: {
-            borderBottomWidth: 0
-          }
-        };
+    return {
+      header: null
+    };
   };
 
   _renderCard = (user: UserProfile, isTop: boolean) => {
@@ -173,47 +154,54 @@ class SwipingScreen extends React.Component<Props, State> {
   deck: ?Deck;
 
   render() {
+    const navigation = this.props.navigation;
+    const isExpanded = navigation.getParam("isExpanded", false);
     return (
-      <View style={{ backgroundColor: "white", flex: 1 }}>
-        <Deck
-          ref={deck => (this.deck = deck)}
-          data={DATA}
-          renderCard={this._renderCard}
-          renderEmpty={this._renderEmpty}
-          onSwipeStart={this._onSwipeStart}
-          onSwipeRight={this._onSwipeRight}
-          onSwipeLeft={this._onSwipeLeft}
-          onSwipeComplete={this._onSwipeComplete}
-          disableSwipe={this.state.isExpanded}
-          onTap={this._onCardTap}
-          infinite={true}
-        />
+      <Transition inline appear={"scale"}>
+        <View style={{ flex: 1 }}>
+          {!isExpanded && <GEMHeader screen="cards" />}
+          <View style={{ backgroundColor: "white", flex: 1 }}>
+            <Deck
+              ref={deck => (this.deck = deck)}
+              data={DATA}
+              renderCard={this._renderCard}
+              renderEmpty={this._renderEmpty}
+              onSwipeStart={this._onSwipeStart}
+              onSwipeRight={this._onSwipeRight}
+              onSwipeLeft={this._onSwipeLeft}
+              onSwipeComplete={this._onSwipeComplete}
+              disableSwipe={this.state.isExpanded}
+              onTap={this._onCardTap}
+              infinite={true}
+            />
 
-        <TouchableHighlight
-          disabled={this.state.swipeGestureInProgress}
-          onPress={this._onSwipeDislike}
-        >
-          <Image
-            source={{
-              uri:
-                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-            }}
-            style={styles.swipeButton_dislike}
-          />
-        </TouchableHighlight>
-        <TouchableHighlight
-          disabled={this.state.swipeGestureInProgress}
-          onPress={this._onSwipeLike}
-        >
-          <Image
-            source={{
-              uri:
-                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-            }}
-            style={styles.swipeButton_like}
-          />
-        </TouchableHighlight>
-      </View>
+            <TouchableHighlight
+              disabled={this.state.swipeGestureInProgress}
+              onPress={this._onSwipeDislike}
+            >
+              <Image
+                source={{
+                  uri:
+                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                }}
+                style={styles.swipeButton_dislike}
+              />
+            </TouchableHighlight>
+            <TouchableHighlight
+              disabled={this.state.swipeGestureInProgress}
+              onPress={this._onSwipeLike}
+            >
+              <Image
+                source={{
+                  uri:
+                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                }}
+                style={styles.swipeButton_like}
+              />
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Transition>
     );
   }
 }

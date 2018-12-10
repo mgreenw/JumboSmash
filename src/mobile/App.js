@@ -6,12 +6,15 @@ import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { createRootNavigator } from "./components/Navigation";
 import rootReducer from "./reducers";
+import NavigationService from "./NavigationService";
+import { createAppContainer } from "@react-navigation/native";
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
+const TopLevelNavigator = createRootNavigator();
+const AppContainer = createAppContainer(TopLevelNavigator);
 
 type Props = {};
 type State = {};
-
 export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -19,10 +22,13 @@ export default class App extends React.Component<Props, State> {
   }
 
   render() {
-    const Navigator = createRootNavigator();
     return (
       <Provider store={store}>
-        <Navigator />
+        <AppContainer
+          ref={navigatorRef => {
+            NavigationService.setTopLevelNavigator(navigatorRef);
+          }}
+        />
       </Provider>
     );
   }

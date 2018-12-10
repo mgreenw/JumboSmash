@@ -5,6 +5,7 @@ import {
   createSwitchNavigator,
   createBottomTabNavigator
 } from "react-navigation";
+import { FluidNavigator, Transition } from "react-navigation-fluid-transitions";
 
 //////////
 // AUTH:
@@ -146,13 +147,14 @@ const MatchesStack = createStackNavigator(
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
-const MainContentSwitch = createSwitchNavigator(
+const MainContentSwitch = FluidNavigator(
   {
     CARDS_STACK: CardsStack,
     PROFILE_STACK: ProfileStack,
     MATCHES_STACK: MatchesStack
   },
   {
+    mode: "card",
     initialRouteName: CARDS_STACK
   }
 );

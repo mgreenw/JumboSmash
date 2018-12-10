@@ -8,7 +8,8 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
-import HeaderIcon from "mobile/components/shared/HeaderIcon";
+import GEMHeader from "mobile/components/shared/Header";
+import { Transition } from "react-navigation-fluid-transitions";
 
 type Props = {
   navigation: any
@@ -32,18 +33,7 @@ class ProfileScreen extends React.Component<Props, State> {
 
   // These are for react navigation, like header bar and such
   static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Profile",
-      headerRight: (
-        <HeaderIcon
-          onPress={() => navigation.navigate(routes.Cards)}
-          name="cards"
-        />
-      ),
-      headerStyle: {
-        borderBottomWidth: 0
-      }
-    };
+    return { header: null };
   };
 
   _onSettingsPress = () => {
@@ -63,29 +53,34 @@ class ProfileScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-          <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
+      <Transition inline appear="horizontal" appear="left">
+        <View style={{ flex: 1 }}>
+          <GEMHeader screen="profile" />
+          <View style={styles.container}>
+            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+              <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
+            </View>
+            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+              <Button
+                title="Edit Profile"
+                buttonStyle={styles.button}
+                onPress={this._onProfileEditPress}
+              />
+              <Button
+                title="Settings"
+                buttonStyle={styles.button}
+                onPress={this._onSettingsPress}
+              />
+              <Button
+                title="Help & Contact"
+                buttonStyle={styles.button}
+                onPress={this._onProfileHelpPress}
+              />
+            </View>
+            <View style={{ flex: 1 }} />
+          </View>
         </View>
-        <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-          <Button
-            title="Edit Profile"
-            buttonStyle={styles.button}
-            onPress={this._onProfileEditPress}
-          />
-          <Button
-            title="Settings"
-            buttonStyle={styles.button}
-            onPress={this._onSettingsPress}
-          />
-          <Button
-            title="Help & Contact"
-            buttonStyle={styles.button}
-            onPress={this._onProfileHelpPress}
-          />
-        </View>
-        <View style={{ flex: 1 }} />
-      </View>
+      </Transition>
     );
   }
 }

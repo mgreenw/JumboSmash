@@ -1,13 +1,14 @@
 // @flow
 
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Switch } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
-import HeaderIcon from "mobile/components/shared/HeaderIcon";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
 
 type Props = {
   navigation: any
@@ -26,22 +27,12 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class MessagingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
   }
 
   // These are for react navigation, like header bar and such
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Messaging",
-      headerLeft: (
-        <HeaderIcon
-          onPress={() => navigation.navigate(routes.Cards)}
-          name="cards"
-        />
-      ),
-      headerStyle: {
-        borderBottomWidth: 0
-      }
+      header: null
     };
   };
 
@@ -50,11 +41,16 @@ class MessagingScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
+      <Transition inline appear={"right"}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>PROJECT GEM: MESSAGING</Text>
+          <GEMHeader screen="matches" />
+          <View style={styles.container}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>PROJECT GEM: MESSAGING</Text>
+            </View>
+          </View>
         </View>
-      </View>
+      </Transition>
     );
   }
 }
