@@ -65,7 +65,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     this.state = {};
     Promise.all([
       Font.loadAsync({
-        vegan: require("../../assets/fonts/Vegan.ttf")
+        vegan: require("../../assets/fonts/Vegan-Regular.ttf")
       }),
       Font.loadAsync({
         SourceSansPro: require("../../assets/fonts/SourceSansPro-Regular.ttf")
