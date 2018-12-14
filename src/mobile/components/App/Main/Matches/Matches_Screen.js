@@ -41,16 +41,14 @@ class MessagingScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <Transition inline appear={"right"}>
-        <View style={{ flex: 1 }}>
-          <GEMHeader screen="matches" />
-          <View style={styles.container}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.title}>PROJECT GEM: MESSAGING</Text>
-            </View>
+      <View style={{ flex: 1 }}>
+        <GEMHeader screen="matches" />
+        <View style={styles.container}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.title}>PROJECT GEM: MESSAGING</Text>
           </View>
         </View>
-      </Transition>
+      </View>
     );
   }
 }

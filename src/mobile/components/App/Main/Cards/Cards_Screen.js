@@ -157,51 +157,49 @@ class SwipingScreen extends React.Component<Props, State> {
     const navigation = this.props.navigation;
     const isExpanded = navigation.getParam("isExpanded", false);
     return (
-      <Transition inline appear={"scale"}>
-        <View style={{ flex: 1 }}>
-          {!isExpanded && <GEMHeader screen="cards" />}
-          <View style={{ backgroundColor: "white", flex: 1 }}>
-            <Deck
-              ref={deck => (this.deck = deck)}
-              data={DATA}
-              renderCard={this._renderCard}
-              renderEmpty={this._renderEmpty}
-              onSwipeStart={this._onSwipeStart}
-              onSwipeRight={this._onSwipeRight}
-              onSwipeLeft={this._onSwipeLeft}
-              onSwipeComplete={this._onSwipeComplete}
-              disableSwipe={this.state.isExpanded}
-              onTap={this._onCardTap}
-              infinite={true}
-            />
+      <View style={{ flex: 1 }}>
+        {!isExpanded && <GEMHeader screen="cards" />}
+        <View style={{ backgroundColor: "white", flex: 1 }}>
+          <Deck
+            ref={deck => (this.deck = deck)}
+            data={DATA}
+            renderCard={this._renderCard}
+            renderEmpty={this._renderEmpty}
+            onSwipeStart={this._onSwipeStart}
+            onSwipeRight={this._onSwipeRight}
+            onSwipeLeft={this._onSwipeLeft}
+            onSwipeComplete={this._onSwipeComplete}
+            disableSwipe={this.state.isExpanded}
+            onTap={this._onCardTap}
+            infinite={true}
+          />
 
-            <TouchableHighlight
-              disabled={this.state.swipeGestureInProgress}
-              onPress={this._onSwipeDislike}
-            >
-              <Image
-                source={{
-                  uri:
-                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-                }}
-                style={styles.swipeButton_dislike}
-              />
-            </TouchableHighlight>
-            <TouchableHighlight
-              disabled={this.state.swipeGestureInProgress}
-              onPress={this._onSwipeLike}
-            >
-              <Image
-                source={{
-                  uri:
-                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-                }}
-                style={styles.swipeButton_like}
-              />
-            </TouchableHighlight>
-          </View>
+          <TouchableHighlight
+            disabled={this.state.swipeGestureInProgress}
+            onPress={this._onSwipeDislike}
+          >
+            <Image
+              source={{
+                uri:
+                  "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+              }}
+              style={styles.swipeButton_dislike}
+            />
+          </TouchableHighlight>
+          <TouchableHighlight
+            disabled={this.state.swipeGestureInProgress}
+            onPress={this._onSwipeLike}
+          >
+            <Image
+              source={{
+                uri:
+                  "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+              }}
+              style={styles.swipeButton_like}
+            />
+          </TouchableHighlight>
         </View>
-      </Transition>
+      </View>
     );
   }
 }

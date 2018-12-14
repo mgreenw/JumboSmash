@@ -53,34 +53,32 @@ class ProfileScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <Transition inline appear="horizontal" appear="left">
-        <View style={{ flex: 1 }}>
-          <GEMHeader screen="profile" />
-          <View style={styles.container}>
-            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-              <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
-            </View>
-            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
-              <Button
-                title="Edit Profile"
-                buttonStyle={styles.button}
-                onPress={this._onProfileEditPress}
-              />
-              <Button
-                title="Settings"
-                buttonStyle={styles.button}
-                onPress={this._onSettingsPress}
-              />
-              <Button
-                title="Help & Contact"
-                buttonStyle={styles.button}
-                onPress={this._onProfileHelpPress}
-              />
-            </View>
-            <View style={{ flex: 1 }} />
+      <View style={{ flex: 1 }}>
+        <GEMHeader screen="profile" />
+        <View style={styles.container}>
+          <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+            <Text style={styles.title}>PROJECT GEM: PROFILE</Text>
           </View>
+          <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+            <Button
+              title="Edit Profile"
+              buttonStyle={styles.button}
+              onPress={this._onProfileEditPress}
+            />
+            <Button
+              title="Settings"
+              buttonStyle={styles.button}
+              onPress={this._onSettingsPress}
+            />
+            <Button
+              title="Help & Contact"
+              buttonStyle={styles.button}
+              onPress={this._onProfileHelpPress}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
         </View>
-      </Transition>
+      </View>
     );
   }
 }
