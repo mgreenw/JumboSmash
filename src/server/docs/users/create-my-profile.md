@@ -1,6 +1,6 @@
 # Create My Profile
 
-Create a profile for the current user. Only allow this if a user has not yet created a profile.
+Create a profile for the current user. Only allow this if a user has not yet created a profile. A user must have a confirmed uploaded photo to create a profile.
 
 **URL** : `/api/users/me/profile`
 
@@ -55,7 +55,7 @@ Provide the user's initial profile fields.
 
 **Condition** : The user's profile has alreday been created. The caller should use PATCH instead to update the profile
 
-**Code** : `400 BAD REQUEST`
+**Code** : `409 CONFLICT`
 
 **Content** :
 ```json
@@ -118,5 +118,19 @@ Provide the user's initial profile fields.
 {
     "status": "BAD_REQUEST",
     "message": "data should have required property 'utln'"
+}
+```
+
+### OR
+
+**Condition**: The user has no uploaded and confirmed photos.
+
+**Code** : `409 CONFLICT`
+
+**Content example**
+
+```json
+{
+    "status": "CREATE_PROFILE__PHOTO_REQUIRED"
 }
 ```
