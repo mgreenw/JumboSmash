@@ -51,17 +51,33 @@ const createMyProfile = async (req: $Request, res: $Response) => {
     bio,
   } = req.body;
 
-
   try {
+    // Get the user's splash photo ID. Error if it does not exist.
+    const photoResult = await db.query(`
+      SELECT id
+      FROM photos
+      WHERE user_id = $1
+      AND index = 1
+      LIMIT 1
+    `, [req.user.id]);
+
+    if (photoResult.rowCount === 0) {
+      return res.status(409).json({
+        status: codes.CREATE_PROFILE__PHOTO_REQUIRED,
+      });
+    }
+
+    const splashPhotoId = photoResult.rows[0].id;
+
     // Insert the profile into the database
     const results = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, bio)
-      VALUES ($1, $2, $3, $4)
+      (user_id, display_name, birthday, bio, splash_photo_id)
+      VALUES ($1, $2, $3, $4, $5)
       ON CONFLICT DO NOTHING
       RETURNING user_id AS "userId"
     `,
-    [req.user.id, displayName, birthday, bio]);
+    [req.user.id, displayName, birthday, bio, splashPhotoId]);
 
     // If no rows were returned, then the profile already exists.
     if (results.rowCount === 0) {

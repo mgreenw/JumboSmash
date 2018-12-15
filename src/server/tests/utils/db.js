@@ -10,6 +10,20 @@ function signToken(id) {
   });
 }
 
+async function insertPhoto(userId, index = 1, photoUUID = uuid()) {
+  try {
+    const result = await db.query(`
+      INSERT INTO photos
+      (user_id, index, uuid)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `, [userId, index, photoUUID]);
+    return result.rows[0].id;
+  } catch (error) {
+    throw new Error('Failed to insert photo');
+  }
+}
+
 async function createProfile(userId, body) {
   const {
     displayName, birthday, bio,
@@ -36,21 +50,6 @@ async function createProfile(userId, body) {
     throw new Error('Failed to insert profile');
   }
 }
-
-async function insertPhoto(userId, index = 1, photoUUID = uuid()) {
-  try {
-    const result = await db.query(`
-      INSERT INTO photos
-      (user_id, index, uuid)
-      VALUES ($1, $2, $3)
-      RETURNING id
-    `, [userId, index, photoUUID]);
-    return result.rows[0].id;
-  } catch (error) {
-    throw new Error('Failed to insert photo');
-  }
-}
-
 
 async function createUser(utln, useDefaultProfile = false, profileBody = null) {
   const email = `${utln}@tufts.edu`;
@@ -164,4 +163,5 @@ module.exports = {
   updateSettings,
   signToken,
   createRelationship,
+  insertPhoto,
 };

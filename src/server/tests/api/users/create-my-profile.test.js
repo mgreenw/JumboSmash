@@ -37,8 +37,24 @@ describe('POST api/users/me/profile', () => {
     expect(res.body.status).toBe(codes.UNAUTHORIZED);
   });
 
-  it('should succeed if the user has been created and does not yet have a profile', async () => {
+  it('should not allow a user without a photo to create a profile', async () => {
+    const user = await dbUtils.createUser('mgreen99');
+    const res = await request(app)
+      .post('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        displayName: 'Max',
+        bio: 'He is a guy',
+        birthday: '1997-09-09',
+      });
+    expect(res.status).toBe(409);
+    expect(res.body.status).toBe(codes.CREATE_PROFILE__PHOTO_REQUIRED);
+  });
+
+  it('should succeed if the user has been created and has uploaded a photo yet does not yet have a profile', async () => {
     const user = await dbUtils.createUser('mgreen13');
+    await dbUtils.insertPhoto(user.id);
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')
@@ -188,8 +204,8 @@ describe('POST api/users/me/profile', () => {
 
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
     const user = await dbUtils.createUser('mgreen25');
+    await dbUtils.insertPhoto(user.id);
     const birthday = '1997-10-09';
-    const url = 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w';
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')

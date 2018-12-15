@@ -1,5 +1,5 @@
 exports.shorthands = undefined;
- exports.up = (pgm) => {
+exports.up = (pgm) => {
   pgm.createTable('photos', {
     id: 'id',
     user_id: {
@@ -52,7 +52,7 @@ exports.shorthands = undefined;
     foreign key (user_id, splash_photo_id) references photos (user_id, id) on delete restrict
   `);
 };
- exports.down = (pgm) => {
+exports.down = (pgm) => {
   pgm.dropConstraint('profiles', 'profiles_photo_exists');
   pgm.dropColumns('profiles', ['splash_photo_id']);
   pgm.addColumns('profiles', {
