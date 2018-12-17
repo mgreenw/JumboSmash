@@ -3,33 +3,33 @@ services:
   nginx:
     build: ./nginx
     links:
-      - server-1
-      - server-2
-      - server-3
-      - server-4
+      - test-1
+      - test-2
+      - test-3
+      - test-4
     ports:
-    - "3000:80"
-  server-1:
+    - "3003:3003"
+  test-1:
     image: maxgreenwald/projectgem
     expose:
-      - "3000"
+      - "3003"
     environment:
       NODE_ENV: production
-  server-2:
+  test-2:
     image: maxgreenwald/projectgem
     expose:
-      - "3000"
+      - "3003"
     environment:
       NODE_ENV: production
-  server-3:
+  test-3:
     image: maxgreenwald/projectgem
     expose:
-      - "3000"
+      - "3003"
     environment:
       NODE_ENV: production
-  server-4:
+  test-4:
     image: maxgreenwald/projectgem
     expose:
-      - "3000"
+      - "3003"
     environment:
       NODE_ENV: production

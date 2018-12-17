@@ -1,0 +1,6 @@
+version: '3'
+services:
+  deploy:
+    image: "sperrys/deploy:latest"
+    ports:
+        - "3004:3004"

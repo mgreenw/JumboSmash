@@ -1,5 +1,5 @@
 version: '3'
 services:
   nginx:
-    build: ./nginx
+    image: proxy_nginx:latest
     network_mode: host
