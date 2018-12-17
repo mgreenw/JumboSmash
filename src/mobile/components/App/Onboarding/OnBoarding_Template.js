@@ -17,24 +17,35 @@ import { routes } from "mobile/components/Navigation";
 import GEMHeader from "mobile/components/shared/Header";
 import { Transition } from "react-navigation-fluid-transitions";
 
-type Props = {
-  navigation: any
-};
+type ReduxProps = {};
+type DispatchProps = {};
+
+type Props = ReduxProps &
+  DispatchProps & {
+    navigation: any,
+    first: ?boolean, // flag to indicate first screen, useful for header
+    nextText: string,
+    nextRoute: string, // should be an onboarding route. I think typing that is overkill.
+    title:
+  };
 
 type State = {
   profile: UserProfile,
   settings: UserSettings
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   return {};
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): DispatchProps {
   return {};
 }
 
-class OnboardingStartScreen extends React.Component<Props, State> {
+class OnboardingTemplate extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -62,13 +73,19 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     };
   }
 
-  static navigationOptions = {
-    headerLeft: null
-  };
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state != prevState) {
+      const { navigation } = this.props;
+      navigation.state.params.onUpdateProfileSettings(
+        this.state.profile,
+        this.state.settings
+      );
+    }
+  }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingNameAge, {
+    navigation.navigate(this.props.nextRoute, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (
@@ -123,4 +140,4 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingStartScreen);
+)(OnboardingTemplate);

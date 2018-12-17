@@ -182,7 +182,7 @@ const AuthSwitch = createSwitchNavigator(
   }
 );
 
-const OnboardingStack = createStackNavigator(
+const OnboardingStack = FluidNavigator(
   {
     ONBOARDING_START_ROUTE: { screen: OnboardingStart },
     ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },

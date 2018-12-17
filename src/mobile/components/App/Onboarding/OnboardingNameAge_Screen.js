@@ -15,6 +15,8 @@ import type {
 } from "mobile/reducers/index";
 import { HeaderBackButton } from "react-navigation";
 import { routes } from "mobile/components/Navigation";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
 
 type Props = {
   navigation: any
@@ -73,56 +75,61 @@ class NameAgeScreen extends React.Component<Props, State> {
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={Arthur_Styles.onboardingHeader}>Name & Age</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Input
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            label="Name"
-            value={this.state.profile.displayName}
-            placeholder="Tony Monaco"
-            onChangeText={name =>
-              this.setState((state, props) => {
-                return {
-                  profile: {
-                    ...this.state.profile,
-                    displayName: name
-                  }
-                };
-              })
-            }
-            autoCorrect={false}
-          />
-          <Input
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            label="Birthday"
-            value={this.state.profile.birthday}
-            placeholder="01/01/97"
-            onChangeText={birthday =>
-              this.setState((state, props) => {
-                return {
-                  profile: {
-                    ...this.state.profile,
-                    birthday: birthday
-                  }
-                };
-              })
-            }
-            autoCorrect={false}
-          />
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
+        <GEMHeader screen="onboarding-main" />
+        <Transition inline appear={"horizontal"}>
           <View style={{ flex: 1 }}>
-            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
+            <View style={{ flex: 1, justifyContent: "center" }}>
+              <Text style={Arthur_Styles.onboardingHeader}>Name & Age</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Input
+                placeholderTextColor={"#DDDDDD"}
+                inputStyle={{ color: "#222222" }}
+                labelStyle={styles.labelStyle}
+                label="Name"
+                value={this.state.profile.displayName}
+                placeholder="Tony Monaco"
+                onChangeText={name =>
+                  this.setState((state, props) => {
+                    return {
+                      profile: {
+                        ...this.state.profile,
+                        displayName: name
+                      }
+                    };
+                  })
+                }
+                autoCorrect={false}
+              />
+              <Input
+                placeholderTextColor={"#DDDDDD"}
+                inputStyle={{ color: "#222222" }}
+                labelStyle={styles.labelStyle}
+                label="Birthday"
+                value={this.state.profile.birthday}
+                placeholder="01/01/97"
+                onChangeText={birthday =>
+                  this.setState((state, props) => {
+                    return {
+                      profile: {
+                        ...this.state.profile,
+                        birthday: birthday
+                      }
+                    };
+                  })
+                }
+                autoCorrect={false}
+              />
+            </View>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1 }} />
+              <View style={{ flex: 1 }}>
+                <PrimaryButton onPress={this._goToNextPage} title="Continue" />
+              </View>
+              <View style={{ flex: 1 }} />
+            </View>
           </View>
-          <View style={{ flex: 1 }} />
-        </View>
+        </Transition>
       </View>
     );
   }
