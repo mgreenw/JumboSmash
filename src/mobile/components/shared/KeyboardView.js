@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { Transition } from "react-navigation-fluid-transitions";
 
 const waves1 = require("../../assets/waves/waves1/waves.png");
 
@@ -38,12 +39,14 @@ export class KeyboardView extends React.Component<Props, State> {
           <View style={{ flex: 1 }}>{this.props.children}</View>
         </TouchableWithoutFeedback>
         {this.props.waves && (
-          <Image
-            resizeMode="stretch"
-            source={waves1}
-            style={Arthur_Styles.waves}
-            zIndex={-1} // Force everything on top
-          />
+          <Transition inline appear={"bottom"}>
+            <Image
+              resizeMode="stretch"
+              source={waves1}
+              style={Arthur_Styles.waves}
+              zIndex={-1} // Force everything on top
+            />
+          </Transition>
         )}
       </KeyboardAvoidingView>
     );
