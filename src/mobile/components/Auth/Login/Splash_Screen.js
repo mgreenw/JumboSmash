@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
+import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail";
@@ -195,33 +196,19 @@ class SplashScreen extends React.Component<Props, State> {
                   }}
                   source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
                 />
-                <Input
-                  containerStyle={
-                    this.state.validUtln
-                      ? styles.inputWrapperStyle
-                      : styles.inputWrapperStyleWithError
-                  }
-                  placeholderTextColor={"#DDDDDD"}
-                  inputStyle={{ color: "#222222" }}
-                  labelStyle={styles.labelStyle}
-                  inputContainerStyle={styles.inputContainerStyle}
-                  label="Tufts UTLN"
+                <PrimaryInput
+                  label="UTLN"
                   placeholder="amonac01"
                   onChangeText={text =>
                     this.setState({ utln: text.toLowerCase() })
                   }
-                  ref={input => (this.utlnInput = input)}
+                  error={this.state.errorMessageUtln}
+                  assitive="Ex: jjaffe01"
+                  setRef={input => (this.utlnInput = input)}
                   errorMessage={
                     this.state.validUtln ? "" : this.state.errorMessageUtln
                   }
-                  autoCorrect={false}
-                  autoCapitalize="none"
                 />
-                {this.state.validUtln && (
-                  <View style={styles.helpTextContainer}>
-                    <Text style={styles.helpText}>Ex: jjaffe01</Text>
-                  </View>
-                )}
               </View>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }} />
