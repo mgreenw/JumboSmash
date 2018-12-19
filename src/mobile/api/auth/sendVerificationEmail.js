@@ -2,8 +2,7 @@
 
 // Self contained API file for sendVerificationEmail.
 // NOTE: must be kept in sync with send-verifcation-email.js
-
-import { timeout } from "./../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { SEND_VERIFCATION_EMAIL__ROUTE } from "../routes";
 
 type verificationEmailResponse__SUCCESS = {
@@ -58,20 +57,7 @@ export default function sendVerificationEmail(
   ) => void,
   callback__ERROR: (response: any, request: request) => void
 ) {
-  return timeout(
-    30000,
-    // Send a request to the server to check if UTLN is valid. If it is, send
-    // a verification email, and return that email address.
-    fetch(SEND_VERIFCATION_EMAIL__ROUTE, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(request)
-    })
-  )
-    .then(response => response.json())
+  return apiRequest("POST", SEND_VERIFCATION_EMAIL__ROUTE, null, request)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {

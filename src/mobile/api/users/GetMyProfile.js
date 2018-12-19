@@ -1,8 +1,6 @@
 // @flow
 
-// Self contained API file for GetMyProfile
-
-import { timeout } from "../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { MY_PROFILE__ROUTE } from "../routes";
 import type { UserProfile } from "mobile/reducers";
 
@@ -40,18 +38,7 @@ function parseProfile(apiResponse: ServerProfile): UserProfile {
 }
 
 export default function getMyProfile(request: request): Promise<?UserProfile> {
-  return timeout(
-    30000,
-    fetch(MY_PROFILE__ROUTE, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: request.token
-      }
-    })
-  )
-    .then(response => response.json())
+  return apiRequest("GET", MY_PROFILE__ROUTE, request.token)
     .then(response => {
       switch (response.status) {
         case GET_PROFILE__SUCCESS:

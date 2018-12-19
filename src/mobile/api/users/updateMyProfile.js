@@ -1,5 +1,5 @@
 // @flow
-import { timeout } from "../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { MY_PROFILE__ROUTE } from "../routes";
 import type { UserProfile } from "mobile/reducers";
 import type { ServerProfile } from "./GetMyProfile";
@@ -12,23 +12,17 @@ function updateOrCreateMyProfile(
   request: UserProfile,
   method: "PATCH" | "POST"
 ): Promise<void> {
-  return timeout(
-    30000,
-    fetch(MY_PROFILE__ROUTE, {
-      method: method,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: token
-      },
-      body: JSON.stringify({
-        ...request,
-        image1Url:
-          "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w"
-      })
-    })
+  return apiRequest(
+    method,
+
+    MY_PROFILE__ROUTE,
+    token,
+    {
+      ...request,
+      image1Url:
+        "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w"
+    }
   )
-    .then(response => response.json())
     .then(response => {
       switch (response.status) {
         case (UPDATE_PROFILE__SUCCESS, CREATE_PROFILE__SUCCESS):

@@ -1,6 +1,6 @@
 // @flow
 
-import { timeout } from "../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { VERIFY__ROUTE } from "../routes";
 
 type verifyResponse__SUCCESS = {
@@ -50,21 +50,9 @@ export default function verify(
   ) => void,
   callback__ERROR: (error: any, request: request) => void
 ) {
-  return timeout(
-    30000,
-    // Send a request to the server to check if UTLN is valid. If it is, send
-    // a verification email, and return that email address.
-    // TODO: on dev mode hit local, on prod hit prod.
-    fetch(VERIFY__ROUTE, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(request)
-    })
-  )
-    .then(response => response.json())
+  // Send a request to the server to check if UTLN is valid. If it is, send
+  // a verification email, and return that email address.
+  return apiRequest("POST", VERIFY__ROUTE, null, request)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
