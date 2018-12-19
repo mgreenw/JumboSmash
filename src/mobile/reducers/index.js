@@ -2,6 +2,7 @@
 
 // Auth:
 import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
+import type { login_response } from "mobile/actions/auth/login";
 import {
   SEND_VERIFICATION_EMAIL_INITIATED,
   SEND_VERIFICATION_EMAIL_COMPLETED
@@ -66,7 +67,6 @@ export type ReduxState = {
   // action states:
   ///////////////////
 
-  loggedIn: boolean,
   authLoaded: boolean,
   appLoaded: boolean,
 
@@ -81,7 +81,8 @@ export type ReduxState = {
 
   // Unfortunately, we really need case analysis for a few calls.
   response: {
-    sendVerificationEmail: ?sendVerificationEmail_response
+    sendVerificationEmail: ?sendVerificationEmail_response,
+    login: ?login_response
   }
 };
 
@@ -100,7 +101,8 @@ const defaultState: ReduxState = {
     createUser: false
   },
   response: {
-    sendVerificationEmail: null
+    sendVerificationEmail: null,
+    login: null
   }
 };
 
@@ -125,13 +127,17 @@ export default function rootReducer(
     }
 
     case LOGIN_COMPLETED: {
+      console.log(action);
       return {
         ...state,
-        loggedIn: true,
-        token: action.token,
+        token: action.response ? action.response.token : null,
         inProgress: {
           ...state.inProgress,
           login: false
+        },
+        response: {
+          ...state.response,
+          login: action.response
         }
       };
     }
@@ -187,6 +193,7 @@ export default function rootReducer(
       return {
         ...state,
         user: null,
+        appLoaded: false,
         inProgress: {
           ...state.inProgress,
           loadApp: true

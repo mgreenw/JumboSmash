@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import getTokenUtln from "mobile/api/auth/getTokenUtln";
 import { loadAuth } from "mobile/actions/auth/loadAuth";
-import { login } from "mobile/actions/auth/login";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { routes } from "mobile/components/Navigation";
@@ -16,8 +15,7 @@ import { routes } from "mobile/components/Navigation";
 type reduxProps = {
   token: ?string,
   loadAuthInProgress: boolean,
-  authLoaded: boolean,
-  loggedIn: boolean
+  authLoaded: boolean
 };
 
 type navigationProps = {
@@ -25,8 +23,7 @@ type navigationProps = {
 };
 
 type dispatchProps = {
-  loadAuth: void => void,
-  login: (token: string) => void
+  loadAuth: void => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -37,7 +34,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
-    loggedIn: reduxState.loggedIn,
     authLoaded: reduxState.authLoaded
   };
 }
@@ -49,9 +45,6 @@ function mapDispatchToProps(
   return {
     loadAuth: () => {
       dispatch(loadAuth());
-    },
-    login: (token: string) => {
-      dispatch(login(token));
     }
   };
 }
@@ -89,6 +82,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { navigate } = this.props.navigation;
+
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
     if (prevProps.loadAuthInProgress != this.props.loadAuthInProgress) {
@@ -97,32 +92,13 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         // The token might be expired. This is caught upstream though in
         // by redux middleware.
         if (token) {
-          this._onValidToken(token);
+          navigate(routes.AppSwitch, {});
         } else {
-          this._onInvalidToken();
+          navigate(routes.LoginStack);
         }
       }
     }
-
-    // for receiving completion of login action
-    if (prevProps.loggedIn != this.props.loggedIn && this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      navigate(routes.AppSwitch, {});
-    }
   }
-
-  // If the token is valid, we want to trigger login logic, so we must dispatch
-  // login first.
-  _onValidToken = (token: string) => {
-    this.props.login(token);
-  };
-
-  // If the token is invalid, we don't need to set any more state, because
-  // our redux state defaults being logged out, so we go straight to auth.
-  _onInvalidToken = () => {
-    const { navigate } = this.props.navigation;
-    navigate(routes.LoginStack);
-  };
 
   render() {
     return (

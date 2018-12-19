@@ -21,6 +21,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings
 ): LOAD_APP__COMPLETE_TYPE {
+  console.log("load app complete; profile && settigs: ", profile, settings);
   return {
     type: LOAD_APP__COMPLETED,
     user:
@@ -35,6 +36,7 @@ function complete(
 
 // TODO: catch errors, e.g. the common network timeout.
 export function loadApp(token: string) {
+  console.log("loading app with token: ", token);
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {

@@ -15,6 +15,7 @@ import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
+import type { login_response } from "mobile/actions/auth/login";
 
 type State = {
   code: string,
@@ -23,26 +24,33 @@ type State = {
   verifyUtlnInProgress: boolean
 };
 
-type Props = {
-  navigation: any,
-  loggedIn: boolean,
-  loginInProgress: boolean,
-
-  // dispatch function with token
-  login: (token: string) => void
+type reduxProps = {
+  login_inProgress: boolean,
+  login_response: ?login_response
+};
+type navigationProps = {
+  navigation: any
+};
+type dispatchProps = {
+  login: (utln: string, code: string) => void
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+type Props = reduxProps & navigationProps & dispatchProps;
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
-    loggedIn: reduxState.loggedIn,
-    loginInProgress: reduxState.inProgress.login
+    login_inProgress: reduxState.inProgress.login,
+    login_response: reduxState.response.login
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
-    login: (token: string) => {
-      dispatch(login(token));
+    login: (utln, code) => {
+      dispatch(login(utln, code));
     }
   };
 }
@@ -68,19 +76,15 @@ class SplashScreen extends React.Component<Props, State> {
   });
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.verifyUtlnInProgress != this.state.verifyUtlnInProgress ||
-      prevProps.loginInProgress != this.props.loginInProgress
-    ) {
-      const isLoading =
-        this.state.verifyUtlnInProgress || this.props.loginInProgress;
-      this.props.navigation.setParams({
-        headerLeft: isLoading ? null : ""
-      });
-
-      if (this.props.loggedIn) {
+    if (prevProps.login_inProgress != this.props.login_inProgress) {
+      if (!this.props.login_inProgress && this.props.login_response) {
         const { navigate } = this.props.navigation;
-        navigate(routes.AppSwitch, {});
+        if (this.props.login_response.statusCode === "SUCCESS") {
+          navigate(routes.AppSwitch, {});
+        } else {
+          // TODO: more verbose errors
+          this._codeInputError(this.props.login_response.statusCode);
+        }
       }
     }
   }
@@ -130,50 +134,18 @@ class SplashScreen extends React.Component<Props, State> {
       return;
     }
     const { navigation } = this.props;
-    const utln = navigation.getParam("utln", "");
-    const email = navigation.getParam("email", "");
-    const stopSubmitting = (callBack: () => void) => {
-      this.setState(
-        {
-          verifyUtlnInProgress: false
-        },
-        callBack
-      );
-    };
+    const utln = navigation.getParam("utln", null);
+    const email = navigation.getParam("email", null);
+    if (!utln || !email) {
+      throw ("Error in Verify Screen: utln or email null: ", utln, email);
+    }
     this.setState(
       {
-        verifyUtlnInProgress: true,
         validCode: true,
         errorMessageCode: ""
       },
       () => {
-        verify(
-          {
-            utln: utln,
-            code: this.state.code
-          },
-          (response, request) => {
-            stopSubmitting(() => {
-              this.props.login(response.token);
-            });
-          },
-          (response, request) => {
-            stopSubmitting(() =>
-              this._codeInputError("Incorrect verification code")
-            );
-          },
-          (response, request) => {
-            stopSubmitting(() => this._onExpiredCode(utln, email));
-          },
-          (response, request) => {
-            stopSubmitting(() =>
-              this._codeInputError("No email sent for UTLN: " + request.utln)
-            );
-          },
-          (error, request) => {
-            stopSubmitting(() => this._codeInputError("Could not verify"));
-          }
-        );
+        this.props.login(utln, this.state.code);
       }
     );
   };
@@ -184,8 +156,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
     const alreadySent = navigation.getParam("alreadySent", false);
-    const isLoading =
-      this.state.verifyUtlnInProgress || this.props.loginInProgress;
+    const isLoading = this.props.login_inProgress;
 
     const message = alreadySent
       ? `Looks like you've already been sent an email to ${email}.`
