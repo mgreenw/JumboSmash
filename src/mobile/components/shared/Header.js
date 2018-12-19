@@ -19,7 +19,8 @@ type screen =
 type Props = {
   screen: screen,
   onLeftIconPress?: () => void,
-  onRightIconPress?: () => void
+  onRightIconPress?: () => void,
+  loading?: boolean
 };
 
 type State = {};
@@ -70,19 +71,48 @@ export default class GEMHeader extends React.Component<Props, State> {
     }
   };
 
+  _screenToTitle = (screen: screen): string => {
+    switch (screen) {
+      case "profile": {
+        return "Profile";
+      }
+      case "cards": {
+        return "Project GEM";
+      }
+      case "matches": {
+        return "Messages";
+      }
+      case "onboarding-start": {
+        return "Profile Setup";
+      }
+      case "onboarding-main": {
+        return "Profile Setup";
+      }
+      default: {
+        throw ("No title found for screen: ", screen);
+      }
+    }
+  };
+
   render() {
     // TODO: make this styling via a style sheet, and better!
-    const rightIconName = this._screenToRightIconName(this.props.screen);
-    const leftIconName = this._screenToLeftIconName(this.props.screen);
+    const { screen } = this.props;
+    const rightIconName = this._screenToRightIconName(screen);
+    const leftIconName = this._screenToLeftIconName(screen);
+    const title = this._screenToTitle(screen);
 
     return (
       <Header
         placement="center"
         backgroundColor="transparent"
-        leftComponent={<HeaderIcon name={leftIconName} />}
-        rightComponent={<HeaderIcon name={rightIconName} />}
+        leftComponent={
+          <HeaderIcon name={leftIconName} disabled={this.props.loading} />
+        }
+        rightComponent={
+          <HeaderIcon name={rightIconName} disabled={this.props.loading} />
+        }
         centerComponent={{
-          text: this.props.screen,
+          text: title,
           style: textStyles.headline5Style
         }}
         outerContainerStyles={{ borderBottomWidth: 0 }}

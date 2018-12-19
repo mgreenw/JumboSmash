@@ -91,5 +91,14 @@ export const textStyles = StyleSheet.create({
     fontStyle: "normal",
     letterSpacing: 0,
     color: Colors.Black
+  },
+
+  // Not in Zeplin styleguide, but part of the style:
+  veganTitle: {
+    color: Colors.Grapefruit,
+    fontFamily: "vegan",
+    fontSize: 45,
+    padding: 15,
+    textAlign: "center"
   }
 });

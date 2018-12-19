@@ -1,22 +1,18 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
+import { Input } from "react-native-elements";
+import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type {
   UserSettings,
   UserProfile,
   Pronouns
 } from "mobile/reducers/index";
-import { HeaderBackButton } from "react-navigation";
 import { routes } from "mobile/components/Navigation";
-import { Transition } from "react-navigation-fluid-transitions";
-import GEMHeader from "mobile/components/shared/Header";
+import { OnboardingLayout } from "./Onboarding_Layout";
 
 type Props = {
   navigation: any
@@ -73,64 +69,49 @@ class NameAgeScreen extends React.Component<Props, State> {
   };
 
   render() {
-    return (
-      <View style={Arthur_Styles.container}>
-        <GEMHeader screen="onboarding-main" />
-        <Transition inline appear={"horizontal"}>
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, justifyContent: "center" }}>
-              <Text style={Arthur_Styles.onboardingHeader}>Name & Age</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Input
-                placeholderTextColor={"#DDDDDD"}
-                inputStyle={{ color: "#222222" }}
-                labelStyle={styles.labelStyle}
-                label="Name"
-                value={this.state.profile.displayName}
-                placeholder="Tony Monaco"
-                onChangeText={name =>
-                  this.setState((state, props) => {
-                    return {
-                      profile: {
-                        ...this.state.profile,
-                        displayName: name
-                      }
-                    };
-                  })
+    const body = (
+      <View style={{ flex: 1 }}>
+        <Input
+          value={this.state.profile.displayName}
+          placeholder="Preferred Name"
+          onChangeText={name =>
+            this.setState((state, props) => {
+              return {
+                profile: {
+                  ...this.state.profile,
+                  displayName: name
                 }
-                autoCorrect={false}
-              />
-              <Input
-                placeholderTextColor={"#DDDDDD"}
-                inputStyle={{ color: "#222222" }}
-                labelStyle={styles.labelStyle}
-                label="Birthday"
-                value={this.state.profile.birthday}
-                placeholder="01/01/97"
-                onChangeText={birthday =>
-                  this.setState((state, props) => {
-                    return {
-                      profile: {
-                        ...this.state.profile,
-                        birthday: birthday
-                      }
-                    };
-                  })
+              };
+            })
+          }
+          autoCorrect={false}
+        />
+        <Input
+          label="Birthday"
+          value={this.state.profile.birthday}
+          placeholder="01/01/97"
+          onChangeText={birthday =>
+            this.setState((state, props) => {
+              return {
+                profile: {
+                  ...this.state.profile,
+                  birthday: birthday
                 }
-                autoCorrect={false}
-              />
-            </View>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <View style={{ flex: 1 }} />
-              <View style={{ flex: 1 }}>
-                <PrimaryButton onPress={this._goToNextPage} title="Continue" />
-              </View>
-              <View style={{ flex: 1 }} />
-            </View>
-          </View>
-        </Transition>
+              };
+            })
+          }
+          autoCorrect={false}
+        />
       </View>
+    );
+    return (
+      <OnboardingLayout
+        body={body}
+        onButtonPress={this._goToNextPage}
+        title="Name & Age"
+        main={true}
+        progress={0}
+      />
     );
   }
 }

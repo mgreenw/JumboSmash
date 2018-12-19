@@ -6,19 +6,27 @@ import CustomIcon from "mobile/assets/icons/CustomIcon";
 import NavigationService from "mobile/NavigationService";
 import { routes } from "mobile/components/Navigation";
 
+// add more from fontello as needed. See "demo.html" of the fontello
+// config if you need to figure out the names.
 export type IconName = "user" | "message" | "cards" | "back";
-type AbstractIconProps = {
-  // add more from fontello as needed. See "demo.html" of the fontello
-  // config if you need to figure out the names.
-  name: ?IconName
+type Props = {
+  name: ?IconName,
+  disabled?: boolean
 };
 
 type State = {};
 
-export class HeaderIcon extends React.Component<AbstractIconProps, State> {
-  constructor(props: AbstractIconProps) {
+export class HeaderIcon extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {};
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevProps.disabled != this.props.disabled) {
+      const opacity = this.props.disabled ? 0.2 : 1;
+      this.iconTouchableOpacity.setOpacityTo(opacity);
+    }
   }
 
   _onPress = (name: IconName): (() => void) => {
@@ -48,18 +56,27 @@ export class HeaderIcon extends React.Component<AbstractIconProps, State> {
     }
   };
 
+  // for refs
+  iconTouchableOpacity: TouchableOpacity;
+
   render() {
     // TODO: make this styling via a style sheet, and better!
     return (
       <TouchableOpacity
+        ref={self => (this.iconTouchableOpacity = self)}
         style={{
           paddingLeft: 22,
           paddingRight: 22,
           height: "100%",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          opacity: this.props.disabled ? 0.2 : 1
         }}
-        onPress={this.props.name ? this._onPress(this.props.name) : null}
+        onPress={
+          this.props.name && !this.props.disabled
+            ? this._onPress(this.props.name)
+            : null
+        }
       >
         <CustomIcon
           name={this.props.name || "user"}

@@ -1,20 +1,18 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
+import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type {
   UserSettings,
   UserProfile,
   Pronouns
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import { OnboardingLayout } from "./Onboarding_Layout";
+import { PronounSelector } from "mobile/components/shared/PronounSelector";
 
 type Props = {
   navigation: any
@@ -82,32 +80,29 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    return (
-      <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={Arthur_Styles.onboardingHeader}>
-            Pronoun Preferences
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text>
-            We use pronouns to help determine who to show in your stack in
-            Project GEM. Your pronouns will not be shown on your profile.
-          </Text>
-          <Text>{"I'm looking for:"}</Text>
-          <PronounSelector
-            defaultPronouns={this.state.settings.wantPronouns}
-            onChange={this._onMyPronounChange}
-          />
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
-            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
+    const body = (
+      <View style={{ flex: 1 }}>
+        <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
+          These pronouns help determine who to show to you in JumboSmash.
+          Pronouns will not be shown on your profile.
+        </Text>
+        <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
+          I'm looking for:
+        </Text>
+        <PronounSelector
+          defaultPronouns={this.state.settings.wantPronouns}
+          onChange={this._onMyPronounChange}
+        />
       </View>
+    );
+    return (
+      <OnboardingLayout
+        body={body}
+        onButtonPress={this._goToNextPage}
+        title="Pronoun Preferences"
+        main={true}
+        progress={0}
+      />
     );
   }
 }
