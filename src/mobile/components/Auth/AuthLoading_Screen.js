@@ -26,8 +26,7 @@ type navigationProps = {
 
 type dispatchProps = {
   loadAuth: void => void,
-  login: (token: string) => void,
-  getTokenUtln: (token: string)
+  login: (token: string) => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
