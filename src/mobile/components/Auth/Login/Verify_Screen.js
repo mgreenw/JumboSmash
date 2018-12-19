@@ -166,11 +166,14 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <View style={Arthur_Styles.container}>
-        <GEMHeader screen={"onboarding-main"} title={"Verification"} />
+        <GEMHeader
+          screen={"onboarding-main"}
+          title={"Verification"}
+          loading={isLoading}
+        />
         <KeyboardView waves={1}>
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
-              {" "}
               <View style={{ flex: 1 }}>
                 <Text style={textStyles.body1Style}>{message}</Text>
               </View>
