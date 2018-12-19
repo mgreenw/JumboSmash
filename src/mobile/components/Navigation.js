@@ -172,7 +172,7 @@ const LoginStack = FluidNavigator(
   }
 );
 
-const AuthSwitch = createSwitchNavigator(
+const AuthSwitch = FluidNavigator(
   {
     LOGIN_STACK: LoginStack,
     AUTH_LOADING_ROUTE: { screen: AuthLoading }
@@ -206,7 +206,7 @@ const OnboardingStack = FluidNavigator(
   }
 );
 
-const AppSwitch = createSwitchNavigator(
+const AppSwitch = FluidNavigator(
   {
     MAIN_SWITCH: MainContentSwitch,
     ONBOARDING_STACK: OnboardingStack,
@@ -218,7 +218,7 @@ const AppSwitch = createSwitchNavigator(
 );
 
 export const createRootNavigator = () => {
-  return createSwitchNavigator(
+  return FluidNavigator(
     {
       APP_SWITCH: AppSwitch,
       AUTH_SWITCH: AuthSwitch
