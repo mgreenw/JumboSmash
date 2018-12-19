@@ -16,6 +16,8 @@ import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { login_response } from "mobile/actions/auth/login";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
 
 type State = {
   code: string,
@@ -163,55 +165,63 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardView waves={1}>
-        <View style={{ flex: 1 }}>
-          <Text style={textStyles.body1Style}>{message}</Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Input
-            containerStyle={
-              this.state.validCode
-                ? styles.inputWrapperStyle
-                : styles.inputWrapperStyleWithError
-            }
-            keyboardType="numeric"
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Verification Code"
-            placeholder=""
-            onChangeText={text => this.setState({ code: text })}
-            ref={input => (this.codeInput = input)}
-            errorMessage={
-              this.state.validCode ? "" : this.state.errorMessageCode
-            }
-            autoCorrect={false}
-          />
-          {this.state.validCode && (
-            <View style={styles.helpTextContainer}>
-              <Text style={styles.helpText}>Ex: 123456</Text>
+      <View style={Arthur_Styles.container}>
+        <GEMHeader screen={"onboarding-main"} title={"Verification"} />
+        <KeyboardView waves={1}>
+          <Transition inline appear={"horizontal"}>
+            <View style={{ flex: 1 }}>
+              {" "}
+              <View style={{ flex: 1 }}>
+                <Text style={textStyles.body1Style}>{message}</Text>
+              </View>
+              <View style={{ flex: 1, alignSelf: "stretch" }}>
+                <Input
+                  containerStyle={
+                    this.state.validCode
+                      ? styles.inputWrapperStyle
+                      : styles.inputWrapperStyleWithError
+                  }
+                  keyboardType="numeric"
+                  placeholderTextColor={"#DDDDDD"}
+                  inputStyle={{ color: "#222222" }}
+                  labelStyle={styles.labelStyle}
+                  inputContainerStyle={styles.inputContainerStyle}
+                  label="Verification Code"
+                  placeholder=""
+                  onChangeText={text => this.setState({ code: text })}
+                  ref={input => (this.codeInput = input)}
+                  errorMessage={
+                    this.state.validCode ? "" : this.state.errorMessageCode
+                  }
+                  autoCorrect={false}
+                />
+                {this.state.validCode && (
+                  <View style={styles.helpTextContainer}>
+                    <Text style={styles.helpText}>Ex: 123456</Text>
+                  </View>
+                )}
+              </View>
+              <View style={{ flex: 1, flexDirection: "row" }}>
+                <View style={{ flex: 1 }} />
+                <View style={{ flex: 1 }}>
+                  <PrimaryButton
+                    onPress={this._onSubmit}
+                    title="submit"
+                    disabled={isLoading || this.state.code == ""}
+                    loading={isLoading}
+                  />
+                  <Button
+                    buttonStyle={styles.button}
+                    title="help"
+                    onPress={this._onHelp}
+                  />
+                </View>
+                <View style={{ flex: 1 }} />
+              </View>
             </View>
-          )}
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
-            <PrimaryButton
-              onPress={this._onSubmit}
-              title="submit"
-              disabled={isLoading || this.state.code == ""}
-              loading={isLoading}
-            />
-            <Button
-              buttonStyle={styles.button}
-              title="help"
-              onPress={this._onHelp}
-            />
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
-      </KeyboardView>
+          </Transition>
+        </KeyboardView>
+      </View>
     );
   }
 }

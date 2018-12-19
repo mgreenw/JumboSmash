@@ -20,7 +20,8 @@ type Props = {
   screen: screen,
   onLeftIconPress?: () => void,
   onRightIconPress?: () => void,
-  loading?: boolean
+  loading?: boolean,
+  title?: string
 };
 
 type State = {};
@@ -99,7 +100,12 @@ export default class GEMHeader extends React.Component<Props, State> {
     const { screen } = this.props;
     const rightIconName = this._screenToRightIconName(screen);
     const leftIconName = this._screenToLeftIconName(screen);
-    const title = this._screenToTitle(screen);
+
+    // terrible sketchy null checks. don't land this code.
+    let title = this.props.title || this._screenToTitle(screen);
+    if (this.props.title === "") {
+      title = "";
+    }
 
     return (
       <Header

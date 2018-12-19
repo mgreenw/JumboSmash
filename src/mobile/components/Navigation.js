@@ -159,7 +159,7 @@ const MainContentSwitch = FluidNavigator(
   }
 );
 
-const LoginStack = createStackNavigator(
+const LoginStack = FluidNavigator(
   {
     SPLASH_ROUTE: { screen: Splash },
     VERIFY_ROUTE: { screen: Verify },

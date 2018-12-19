@@ -42,6 +42,7 @@ export class KeyboardView extends React.Component<Props, State> {
             resizeMode="stretch"
             source={waves1}
             style={Arthur_Styles.waves}
+            zIndex={-1} // Force everything on top
           />
         )}
       </KeyboardAvoidingView>
