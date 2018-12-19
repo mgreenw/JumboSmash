@@ -12,7 +12,7 @@ import { createAppContainer } from "@react-navigation/native";
 const store = createStore(rootReducer, applyMiddleware(thunk));
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
-
+console.disableYellowBox = true;
 type Props = {};
 type State = {};
 export default class App extends React.Component<Props, State> {
