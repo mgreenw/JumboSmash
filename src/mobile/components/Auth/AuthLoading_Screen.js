@@ -26,7 +26,8 @@ type navigationProps = {
 
 type dispatchProps = {
   loadAuth: void => void,
-  login: (token: string) => void
+  login: (token: string) => void,
+  getTokenUtln: (token: string)
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -94,22 +95,10 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     if (prevProps.loadAuthInProgress != this.props.loadAuthInProgress) {
       if (this.props.authLoaded) {
         const { token } = this.props;
+        // The token might be expired. This is caught upstream though in
+        // by redux middleware.
         if (token) {
-          getTokenUtln(
-            {
-              token
-            },
-            (response, request) => {
-              this._onValidToken(token);
-            },
-            (response, request) => {
-              this._onInvalidToken();
-            },
-            // Treat any errors as an invalid token, make them log in
-            (response, request) => {
-              this._onInvalidToken();
-            }
-          );
+          this._onValidToken(token);
         } else {
           this._onInvalidToken();
         }
