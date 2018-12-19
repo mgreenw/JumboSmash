@@ -10,7 +10,7 @@ import {
   HeaderBackButton
 } from "react-navigation";
 import { styles } from "mobile/styles/auth";
-import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
+import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
@@ -64,71 +64,6 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     };
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.isSubmitting != this.state.isSubmitting) {
-      this.props.navigation.setParams({
-        shouldShowButton: !this.state.isSubmitting
-      });
-    }
-  }
-
-  _onSuccess = (utln: string, email: string) => {
-    const { navigate } = this.props.navigation;
-    navigate(routes.Verify, {
-      utln: utln,
-      email: email
-    });
-  };
-
-  _onError = () => {
-    //TODO: Navigate to error screen
-    console.log("error");
-  };
-
-  _onHelp = () => {
-    const { navigate } = this.props.navigation;
-    navigate(routes.AuthHelp, {});
-  };
-
-  _onResend = () => {
-    const { navigation } = this.props;
-    const utln = navigation.getParam("utln", "");
-
-    const stopSubmitting = (callBack: any => void) => {
-      this.setState(
-        {
-          isSubmitting: false
-        },
-        callBack()
-      );
-    };
-
-    this.setState(
-      {
-        isSubmitting: true
-      },
-      () => {
-        sendVerificationEmail(
-          {
-            utln,
-            forceResend: true
-          },
-          (response, request) =>
-            stopSubmitting(() => {
-              this._onSuccess(request.utln, response.email);
-            }),
-          (response, request) => stopSubmitting(this._onError),
-          (response, request) => stopSubmitting(this._onError),
-          (response, request) =>
-            stopSubmitting(() => {
-              this._onSuccess(request.utln, response.email);
-            }),
-          (error, request) => stopSubmitting(this._onError)
-        );
-      }
-    );
-  };
-
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
@@ -142,25 +77,6 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
           <Text
           >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
         </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Button
-            buttonStyle={styles.button}
-            onPress={this._onResend}
-            title="Resend Code"
-            disabled={this.state.isSubmitting}
-            loading={this.state.isSubmitting}
-          />
-        </View>
-        <Button
-          buttonStyle={styles.button}
-          onPress={this._onHelp}
-          title="help"
-        />
-        <Image
-          resizeMode="stretch"
-          source={require("../../../assets/waves/waves1/waves.png")}
-          style={Arthur_Styles.waves}
-        />
       </View>
     );
   }

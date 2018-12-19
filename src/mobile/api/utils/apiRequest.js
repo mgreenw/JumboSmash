@@ -1,5 +1,6 @@
 // @flow
 import { timeout } from "./timeout";
+import DevTesting from "mobile/utils/DevTesting";
 
 type method = "PATCH" | "GET" | "POST";
 export function apiRequest(

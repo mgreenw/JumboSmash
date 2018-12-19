@@ -1,6 +1,11 @@
 // @flow
 
 // Auth:
+import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
+import {
+  SEND_VERIFICATION_EMAIL_INITIATED,
+  SEND_VERIFICATION_EMAIL_COMPLETED
+} from "mobile/actions/auth/sendVerificationEmail";
 import { LOGIN_INITIATED, LOGIN_COMPLETED } from "mobile/actions/auth/login";
 import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "mobile/actions/auth/logout";
 import {
@@ -67,10 +72,16 @@ export type ReduxState = {
 
   inProgress: {
     loadAuth: boolean,
+    sendVerificationEmail: boolean,
     logout: boolean,
     login: boolean,
     loadApp: boolean,
     createUser: boolean
+  },
+
+  // Unfortunately, we really need case analysis for a few calls.
+  response: {
+    sendVerificationEmail: ?sendVerificationEmail_response
   }
 };
 
@@ -82,10 +93,14 @@ const defaultState: ReduxState = {
   appLoaded: false,
   inProgress: {
     loadAuth: false,
+    sendVerificationEmail: false,
     logout: false,
     login: false,
     loadApp: false,
     createUser: false
+  },
+  response: {
+    sendVerificationEmail: null
   }
 };
 
@@ -207,6 +222,30 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           createUser: false
+        }
+      };
+    }
+
+    case SEND_VERIFICATION_EMAIL_INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendVerificationEmail: true
+        }
+      };
+    }
+
+    case SEND_VERIFICATION_EMAIL_COMPLETED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendVerificationEmail: false
+        },
+        response: {
+          ...state.response,
+          sendVerificationEmail: action.response
         }
       };
     }

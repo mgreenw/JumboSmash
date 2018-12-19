@@ -17,31 +17,54 @@ import { StackNavigator } from "react-navigation";
 import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
-import sendVerificationEmail from "mobile/api/auth/sendVerificationEmail";
+import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
+import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
 
-type Props = {
+type reduxProps = {
+  sendVerificationEmail_inProgress: boolean,
+  sendVerificationEmail_response: ?sendVerificationEmail_response
+};
+
+type navigationProps = {
   navigation: any
 };
+
+type dispatchProps = {
+  sendVerificationEmail: (utln: string) => void
+};
+
+type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   utln: string,
   validUtln: boolean,
-  errorMessageUtln: string,
-  isSubmitting: boolean
+  errorMessageUtln: string
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+  return {
+    sendVerificationEmail_inProgress:
+      reduxState.inProgress.sendVerificationEmail,
+    sendVerificationEmail_response: reduxState.response.sendVerificationEmail
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
+  return {
+    // no need for force resend here.
+    sendVerificationEmail: utln => {
+      dispatch(sendVerificationEmail(utln, false));
+    }
+  };
 }
 
 class SplashScreen extends React.Component<Props, State> {
@@ -50,18 +73,44 @@ class SplashScreen extends React.Component<Props, State> {
     this.state = {
       utln: "",
       validUtln: true,
-      errorMessageUtln: "",
-      isSubmitting: false
+      errorMessageUtln: ""
     };
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (
+      prevProps.sendVerificationEmail_inProgress !=
+        this.props.sendVerificationEmail_inProgress &&
+      !this.props.sendVerificationEmail_inProgress
+    ) {
+      const response = this.props.sendVerificationEmail_response;
+      if (!response) {
+        throw "Error in Login: Send Verification Email complete but no response";
+      }
+      switch (response.statusCode) {
+        case "SUCCESS": {
+          this._onSuccess(response.utln, response.email, false);
+          break;
+        }
+        case "ALREADY_SENT": {
+          this._onSuccess(response.utln, response.email, true);
+          break;
+        }
+        case "WRONG_CLASS_YEAR": {
+          this._onNot2019(response.classYear);
+        }
+        // TODO: maybe this needs its own case or be part of Not_2019?
+        case "NOT_STUDENT": {
+          this._onNotFound();
+          break;
+        }
+        case "NOT_FOUND": {
+          this._onNotFound();
+          break;
+        }
+      }
     }
-  };
-
+  }
   // for refs
   utlnInput: Input;
 
@@ -87,10 +136,6 @@ class SplashScreen extends React.Component<Props, State> {
     this._utlnInputError("Could not find UTLN");
   };
 
-  _onError = (error: any) => {
-    this._onNotFound();
-  };
-
   _onHelp = () => {
     const { navigate } = this.props.navigation;
     navigate(routes.AuthHelp, {});
@@ -99,42 +144,13 @@ class SplashScreen extends React.Component<Props, State> {
   _onSubmit = () => {
     // First, we validate the UTLN to preliminarily shake it / display errors
     if (this._validateUtln()) {
-      const stopSubmitting = (callBack: any => void) => {
-        this.setState(
-          {
-            isSubmitting: false
-          },
-          callBack()
-        );
-      };
-
       this.setState(
         {
-          isSubmitting: true,
           validUtln: true,
           errorMessageUtln: ""
         },
         () => {
-          sendVerificationEmail(
-            { utln: this.state.utln },
-            (response, request) =>
-              stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email, false);
-              }),
-            (response, request) =>
-              stopSubmitting(() => {
-                this._onNot2019(response.classYear);
-              }),
-            (response, request) => stopSubmitting(this._onNotFound),
-            (response, request) =>
-              stopSubmitting(() => {
-                this._onSuccess(request.utln, response.email, true);
-              }),
-            (error, request) =>
-              stopSubmitting(() => {
-                this._onError(error);
-              })
-          );
+          this.props.sendVerificationEmail(this.state.utln);
         }
       );
     }
@@ -205,8 +221,11 @@ class SplashScreen extends React.Component<Props, State> {
             <PrimaryButton
               onPress={this._onSubmit}
               title="Roll 'Bos'"
-              disabled={this.state.isSubmitting || this.state.utln == ""}
-              loading={this.state.isSubmitting}
+              disabled={
+                this.props.sendVerificationEmail_inProgress ||
+                this.state.utln == ""
+              }
+              loading={this.props.sendVerificationEmail_inProgress}
             />
             <Button onPress={this._onHelp} title="help" />
           </View>
