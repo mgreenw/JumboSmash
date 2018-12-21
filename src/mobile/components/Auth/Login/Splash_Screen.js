@@ -182,7 +182,7 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <View style={Arthur_Styles.container}>
-        <GEMHeader screen={"onboarding-start"} title={""} />
+        <View style={{ height: 64 }} />
         <KeyboardView waves={1}>
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
@@ -199,20 +199,29 @@ class SplashScreen extends React.Component<Props, State> {
                 <PrimaryInput
                   label="UTLN"
                   placeholder="amonac01"
-                  onChangeText={text =>
-                    this.setState({ utln: text.toLowerCase() })
-                  }
+                  onChange={text => this.setState({ utln: text.toLowerCase() })}
                   error={this.state.errorMessageUtln}
                   assitive="Ex: jjaffe01"
                   setRef={input => (this.utlnInput = input)}
                   errorMessage={
                     this.state.validUtln ? "" : this.state.errorMessageUtln
                   }
+                  containerStyle={{ width: "60%" }}
                 />
               </View>
-              <View style={{ flex: 1, flexDirection: "row" }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row"
+                }}
+              >
                 <View style={{ flex: 1 }} />
-                <View style={{ flex: 1 }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "space-around"
+                  }}
+                >
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="Roll 'Bos'"

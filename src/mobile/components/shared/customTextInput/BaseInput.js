@@ -1,0 +1,151 @@
+// Fork of https://github.com/halilb/react-native-textinput-effects
+import { Component } from "react";
+import PropTypes from "prop-types";
+
+import { Animated, Text, View, ViewPropTypes } from "react-native";
+
+export default class BaseInput extends Component {
+  static propTypes = {
+    label: PropTypes.string,
+    value: PropTypes.string,
+    defaultValue: PropTypes.string,
+    style: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
+    inputStyle: Text.propTypes.style,
+    labelStyle: Text.propTypes.style,
+    easing: PropTypes.func,
+    animationDuration: PropTypes.number,
+    useNativeDriver: PropTypes.bool,
+
+    editable: PropTypes.bool,
+
+    /* those are TextInput props which are overridden
+     * so, i'm calling them manually
+     */
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
+    onChange: PropTypes.func
+  };
+
+  constructor(props, context) {
+    super(props, context);
+
+    this._onLayout = this._onLayout.bind(this);
+    this._onChange = this._onChange.bind(this);
+    this._onBlur = this._onBlur.bind(this);
+    this._onFocus = this._onFocus.bind(this);
+    this.focus = this.focus.bind(this);
+
+    const value = props.value || props.defaultValue;
+
+    this.state = {
+      value,
+      labelAnim: new Animated.Value(value ? 1 : 0),
+      underlineAnim: new Animated.Value(value ? 1 : 0)
+    };
+  }
+
+  componentWillReceiveProps(newProps) {
+    const newValue = newProps.value;
+    if (newProps.hasOwnProperty("value") && newValue !== this.state.value) {
+      this.setState({
+        value: newValue
+      });
+
+      // animate input if it's active state has changed with the new value
+      // and input is not focused currently.
+      const isFocused = this.refs.input.isFocused();
+      if (!isFocused) {
+        const isActive = Boolean(newValue);
+        if (isActive !== this.isActive) {
+          this._toggleLabel(isActive);
+          this._toggleUnderline(isActive);
+        }
+      }
+    }
+  }
+
+  _onLayout(event) {
+    this.setState({
+      width: event.nativeEvent.layout.width
+    });
+  }
+
+  _onChange(event) {
+    this.setState({
+      value: event.nativeEvent.text
+    });
+
+    const onChange = this.props.onChange;
+    if (onChange) {
+      onChange(event.nativeEvent.text);
+    }
+  }
+
+  _onBlur(event) {
+    if (!this.state.value) {
+      this._toggleLabel(false);
+    }
+    this._toggleUnderline(false);
+
+    const onBlur = this.props.onBlur;
+    if (onBlur) {
+      onBlur(event);
+    }
+  }
+
+  _onFocus(event) {
+    this._toggleLabel(true);
+    this._toggleUnderline(true);
+
+    const onFocus = this.props.onFocus;
+    if (onFocus) {
+      onFocus(event);
+    }
+  }
+
+  _toggleUnderline(isActive) {
+    const { animationDuration, easing, useNativeDriver } = this.props;
+    this.isActive = isActive;
+    Animated.timing(this.state.underlineAnim, {
+      toValue: isActive ? 1 : 0,
+      duration: animationDuration,
+      easing,
+      useNativeDriver
+    }).start();
+  }
+
+  _toggleLabel(isActive) {
+    const { animationDuration, easing, useNativeDriver } = this.props;
+    this.isActive = isActive;
+    Animated.timing(this.state.labelAnim, {
+      toValue: isActive ? 1 : 0,
+      duration: animationDuration,
+      easing,
+      useNativeDriver
+    }).start();
+  }
+
+  // public methods
+
+  inputRef() {
+    return this.refs.input;
+  }
+
+  focus() {
+    if (this.props.editable !== false) {
+      this.inputRef().focus();
+    }
+  }
+
+  blur() {
+    this.inputRef().blur();
+  }
+
+  isFocused() {
+    return this.inputRef().isFocused();
+  }
+
+  clear() {
+    this.inputRef().clear();
+  }
+}

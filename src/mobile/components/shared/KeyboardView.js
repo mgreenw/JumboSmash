@@ -43,8 +43,7 @@ export class KeyboardView extends React.Component<Props, State> {
             <Image
               resizeMode="stretch"
               source={waves1}
-              style={Arthur_Styles.waves}
-              zIndex={-1} // Force everything on top
+              style={[Arthur_Styles.waves, { zIndex: -1 }]}
             />
           </Transition>
         )}
