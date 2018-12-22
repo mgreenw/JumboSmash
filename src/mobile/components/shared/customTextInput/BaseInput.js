@@ -6,17 +6,9 @@ import { Animated, Text, View, ViewPropTypes } from "react-native";
 
 export default class BaseInput extends Component {
   static propTypes = {
-    label: PropTypes.string,
     value: PropTypes.string,
-    defaultValue: PropTypes.string,
-    style: ViewPropTypes ? ViewPropTypes.style : View.propTypes.style,
-    inputStyle: Text.propTypes.style,
-    labelStyle: Text.propTypes.style,
-    easing: PropTypes.func,
     animationDuration: PropTypes.number,
     useNativeDriver: PropTypes.bool,
-
-    editable: PropTypes.bool,
 
     /* those are TextInput props which are overridden
      * so, i'm calling them manually
@@ -35,12 +27,13 @@ export default class BaseInput extends Component {
     this._onFocus = this._onFocus.bind(this);
     this.focus = this.focus.bind(this);
 
-    const value = props.value || props.defaultValue;
+    const value = props.value;
 
     this.state = {
       value,
-      labelAnim: new Animated.Value(value ? 1 : 0),
-      underlineAnim: new Animated.Value(value ? 1 : 0)
+      moveLabelAnim: new Animated.Value(value ? 1 : 0),
+      selectedAnim: new Animated.Value(value ? 1 : 0),
+      errorAnim: new Animated.Value(value ? 1 : 0)
     };
   }
 
@@ -57,10 +50,19 @@ export default class BaseInput extends Component {
       if (!isFocused) {
         const isActive = Boolean(newValue);
         if (isActive !== this.isActive) {
-          this._toggleLabel(isActive);
-          this._toggleUnderline(isActive);
+          this._toggleAnimation(isActive, this.state.moveLabelAnim);
+          this._toggleAnimation(isActive, this.state.selectedAnim);
         }
       }
+    }
+
+    const newError = newProps.error;
+    if (newProps.hasOwnProperty("error") && newError !== this.state.error) {
+      this.setState({
+        error: newError
+      });
+      this._toggleAnimation(newError !== "", this.state.errorAnim);
+      console.log(newError);
     }
   }
 
@@ -83,9 +85,9 @@ export default class BaseInput extends Component {
 
   _onBlur(event) {
     if (!this.state.value) {
-      this._toggleLabel(false);
+      this._toggleAnimation(false, this.state.moveLabelAnim);
     }
-    this._toggleUnderline(false);
+    this._toggleAnimation(false, this.state.selectedAnim);
 
     const onBlur = this.props.onBlur;
     if (onBlur) {
@@ -94,8 +96,8 @@ export default class BaseInput extends Component {
   }
 
   _onFocus(event) {
-    this._toggleLabel(true);
-    this._toggleUnderline(true);
+    this._toggleAnimation(true, this.state.moveLabelAnim);
+    this._toggleAnimation(true, this.state.selectedAnim);
 
     const onFocus = this.props.onFocus;
     if (onFocus) {
@@ -103,24 +105,12 @@ export default class BaseInput extends Component {
     }
   }
 
-  _toggleUnderline(isActive) {
-    const { animationDuration, easing, useNativeDriver } = this.props;
+  _toggleAnimation(isActive, animation) {
+    const { animationDuration, useNativeDriver } = this.props;
     this.isActive = isActive;
-    Animated.timing(this.state.underlineAnim, {
+    Animated.timing(animation, {
       toValue: isActive ? 1 : 0,
       duration: animationDuration,
-      easing,
-      useNativeDriver
-    }).start();
-  }
-
-  _toggleLabel(isActive) {
-    const { animationDuration, easing, useNativeDriver } = this.props;
-    this.isActive = isActive;
-    Animated.timing(this.state.labelAnim, {
-      toValue: isActive ? 1 : 0,
-      duration: animationDuration,
-      easing,
       useNativeDriver
     }).start();
   }
@@ -132,9 +122,7 @@ export default class BaseInput extends Component {
   }
 
   focus() {
-    if (this.props.editable !== false) {
-      this.inputRef().focus();
-    }
+    this.inputRef().focus();
   }
 
   blur() {

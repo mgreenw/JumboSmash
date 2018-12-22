@@ -145,7 +145,7 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onSubmit = () => {
-    // First, we validate the UTLN to preliminarily shake it / display errors
+    // First, we validate the UTLN to preliminarily display errors
     if (this._validateUtln()) {
       this.setState(
         {
@@ -160,7 +160,6 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _utlnInputError = (errorMessage: string) => {
-    this.utlnInput.shake();
     this.setState({
       validUtln: false,
       errorMessageUtln: errorMessage
@@ -198,11 +197,9 @@ class SplashScreen extends React.Component<Props, State> {
                 />
                 <PrimaryInput
                   label="UTLN"
-                  placeholder="amonac01"
                   onChange={text => this.setState({ utln: text.toLowerCase() })}
                   error={this.state.errorMessageUtln}
                   assitive="Ex: jjaffe01"
-                  setRef={input => (this.utlnInput = input)}
                   errorMessage={
                     this.state.validUtln ? "" : this.state.errorMessageUtln
                   }
