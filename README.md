@@ -13,10 +13,4 @@
 
 
 # Getting Started
-Follow the steps below for the appropriate directory you are trying to develop in.
-
-## Mobile
-Go to `./src/mobile` and check out the README there for instructions!
-
-## Server
-Go to `./src/server` and check out the README there for more instructions!
+Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Getting-Started) for getting up and running!
