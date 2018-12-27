@@ -13,6 +13,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { login_response } from "mobile/actions/auth/login";
@@ -204,19 +205,28 @@ class SplashScreen extends React.Component<Props, State> {
                   </View>
                 )}
               </View>
-              <View style={{ flex: 1, flexDirection: "row" }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row"
+                }}
+              >
                 <View style={{ flex: 1 }} />
-                <View style={{ flex: 1 }}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "space-around"
+                  }}
+                >
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="submit"
                     disabled={isLoading || this.state.code == ""}
                     loading={isLoading}
                   />
-                  <Button
-                    buttonStyle={styles.button}
-                    title="help"
+                  <TertiaryButton
                     onPress={this._onHelp}
+                    title="Having Touble?"
                   />
                 </View>
                 <View style={{ flex: 1 }} />
