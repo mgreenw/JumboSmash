@@ -164,16 +164,34 @@ export default class Hoshi extends BaseInput {
           />
         </Animated.View>
         <View style={{ height: 18, width: "100%" }}>
-          <Text
-            style={{
-              fontFamily: "SourceSansPro",
-              fontSize: 14,
-              paddingLeft: 7,
-              color: error ? errorColor : primaryColor
-            }}
+          <Animated.Text
+            style={[
+              styles.subtext,
+              {
+                color: errorColor,
+                opacity: errorAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 1]
+                })
+              }
+            ]}
           >
-            {error || assitive}
-          </Text>
+            {error}
+          </Animated.Text>
+          <Animated.Text
+            style={[
+              styles.subtext,
+              {
+                color: primaryColor,
+                opacity: errorAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 0]
+                })
+              }
+            ]}
+          >
+            {error ? "" : assitive /* to instantly fade */}
+          </Animated.Text>
         </View>
       </View>
     );
@@ -201,5 +219,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2
+  },
+  subtext: {
+    fontFamily: "SourceSansPro",
+    fontSize: 14,
+    paddingLeft: 7,
+    position: "absolute"
   }
 });
