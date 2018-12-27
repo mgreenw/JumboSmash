@@ -175,6 +175,19 @@ class SplashScreen extends React.Component<Props, State> {
     return true;
   };
 
+  _onInputChange = (text: string) => {
+    const utln = text.toLowerCase();
+    if (utln !== this.state.utln && !this.state.validUtln) {
+      this.setState({
+        validUtln: true,
+        errorMessageUtln: "",
+        utln
+      });
+    } else {
+      this.setState({ utln });
+    }
+  };
+
   render() {
     // this is the navigator we passed in from App.js
     const { navigate } = this.props.navigation;
@@ -197,7 +210,7 @@ class SplashScreen extends React.Component<Props, State> {
                 />
                 <PrimaryInput
                   label="UTLN"
-                  onChange={text => this.setState({ utln: text.toLowerCase() })}
+                  onChange={this._onInputChange}
                   error={this.state.errorMessageUtln}
                   assitive="Ex: jjaffe01"
                   errorMessage={

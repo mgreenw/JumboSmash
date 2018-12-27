@@ -8,7 +8,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
-  StyleSheet
+  StyleSheet,
+  Easing
 } from "react-native";
 import BaseInput from "./BaseInput";
 
@@ -39,18 +40,37 @@ export default class Hoshi extends BaseInput {
       labelStyle,
       primaryColor,
       selectedColor,
-      errorColor
+      errorColor,
+      error,
+      assitive
     } = this.props;
-    const { width, selectedAnim, errorAnim, moveLabelAnim, value } = this.state;
+    const {
+      width,
+      selectedAnim,
+      errorAnim,
+      moveLabelAnim,
+      value,
+      shakeAnim
+    } = this.state;
+
+    // for shake
+    const shakeTranslateX = shakeAnim.interpolate({
+      inputRange: [0, 0.5, 1, 1.5, 2, 2.5, 3],
+      outputRange: [0, -15, 0, 15, 0, -15, 0]
+    });
+
+    // for elements we DON'T want to shake.
+    const invertShakeTranslateX = Animated.multiply(-1, shakeTranslateX);
     return (
       <View style={this.props.containerStyle}>
-        <View
-          style={[
+        <Animated.View
+          style={StyleSheet.flatten([
             {
               height: HEIGHT + PADDING,
               width: width
-            }
-          ]}
+            },
+            { transform: [{ translateX: shakeTranslateX }] }
+          ])}
           onLayout={this._onLayout}
         >
           <TextInput
@@ -68,6 +88,8 @@ export default class Hoshi extends BaseInput {
             onChange={this._onChange}
             onFocus={this._onFocus}
             underlineColorAndroid={"transparent"}
+            autoCorrect={false}
+            autoCapitalize="none"
           />
           <TouchableWithoutFeedback onPress={this.focus}>
             <Animated.View
@@ -79,14 +101,15 @@ export default class Hoshi extends BaseInput {
                     outputRange: [1, 0, 1]
                   }),
                   top: moveLabelAnim.interpolate({
-                    inputRange: [0, 0.5, 0.51, 1],
-                    outputRange: [HEIGHT - 15, HEIGHT - 15, 0, 0]
+                    inputRange: [0, 1],
+                    outputRange: [HEIGHT - 15, 0]
                   }),
                   left: moveLabelAnim.interpolate({
-                    inputRange: [0, 0.5, 0.51, 1],
-                    outputRange: [INSET, 2 * INSET, 0, INSET]
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [INSET, 2 * INSET, INSET]
                   })
-                }
+                },
+                { transform: [{ translateX: invertShakeTranslateX }] }
               ]}
             >
               <Animated.Text
@@ -94,14 +117,17 @@ export default class Hoshi extends BaseInput {
                   inputStyle,
                   {
                     fontSize: moveLabelAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [20, 20, 14]
+                      inputRange: [0, 1],
+                      outputRange: [20, 14]
                     }),
                     // Gah, what an abuse of a variable name.
                     // TODO: make 'undnerlienAnim' be 'selectedAnim'
                     color: selectedAnim.interpolate({
-                      inputRange: [0, 0.5, 1],
-                      outputRange: [primaryColor, primaryColor, selectedColor]
+                      inputRange: [0, 1],
+                      outputRange: [
+                        error ? errorColor : primaryColor,
+                        error ? errorColor : selectedColor
+                      ]
                     })
                   }
                 ]}
@@ -111,21 +137,12 @@ export default class Hoshi extends BaseInput {
             </Animated.View>
           </TouchableWithoutFeedback>
           <View style={[styles.labelMask]} />
-          // base underline
-          <Animated.View
+          <View
             style={[
               styles.border,
               {
-                width:
-                  width -
-                  selectedAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, width]
-                  }),
-                backgroundColor: errorAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [primaryColor, errorColor]
-                })
+                width: width,
+                backgroundColor: error ? errorColor : primaryColor
               }
             ]}
           />
@@ -145,21 +162,18 @@ export default class Hoshi extends BaseInput {
               }
             ]}
           />
-        </View>
+        </Animated.View>
         <View style={{ height: 18, width: "100%" }}>
-          <Animated.Text
+          <Text
             style={{
               fontFamily: "SourceSansPro",
               fontSize: 14,
               paddingLeft: 7,
-              color: errorAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [primaryColor, errorColor]
-              })
+              color: error ? errorColor : primaryColor
             }}
           >
-            {this.props.error || this.props.assitive}
-          </Animated.Text>
+            {error || assitive}
+          </Text>
         </View>
       </View>
     );

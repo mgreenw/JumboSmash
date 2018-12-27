@@ -2,7 +2,7 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 
-import { Animated, Text, View, ViewPropTypes } from "react-native";
+import { Animated, Text, View, ViewPropTypes, Easing } from "react-native";
 
 export default class BaseInput extends Component {
   static propTypes = {
@@ -33,7 +33,8 @@ export default class BaseInput extends Component {
       value,
       moveLabelAnim: new Animated.Value(value ? 1 : 0),
       selectedAnim: new Animated.Value(value ? 1 : 0),
-      errorAnim: new Animated.Value(value ? 1 : 0)
+      errorAnim: new Animated.Value(value ? 1 : 0),
+      shakeAnim: new Animated.Value(0)
     };
   }
 
@@ -62,9 +63,23 @@ export default class BaseInput extends Component {
         error: newError
       });
       this._toggleAnimation(newError !== "", this.state.errorAnim);
-      console.log(newError);
+      if (newError != "") {
+        this._shake();
+      }
     }
   }
+  // from https://github.com/react-native-training/react-native-elements/blob/master/src/input/Input.js
+  _shake = () => {
+    const shakeAnim = this.state.shakeAnim;
+    shakeAnim.setValue(0);
+    // Animation duration based on Material Design
+    // https://material.io/guidelines/motion/duration-easing.html#duration-easing-common-durations
+    Animated.timing(shakeAnim, {
+      duration: 375,
+      toValue: 3,
+      ease: Easing.bounce
+    }).start();
+  };
 
   _onLayout(event) {
     this.setState({
