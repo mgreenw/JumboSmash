@@ -23,6 +23,7 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
@@ -241,7 +242,10 @@ class SplashScreen extends React.Component<Props, State> {
                     }
                     loading={this.props.sendVerificationEmail_inProgress}
                   />
-                  <Button onPress={this._onHelp} title="help" />
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Touble?"
+                  />
                 </View>
                 <View style={{ flex: 1 }} />
               </View>
