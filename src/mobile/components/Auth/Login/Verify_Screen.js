@@ -14,6 +14,7 @@ import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
+import { CodeInput } from "mobile/components/shared/DigitInput";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { login_response } from "mobile/actions/auth/login";
@@ -204,6 +205,7 @@ class SplashScreen extends React.Component<Props, State> {
                     <Text style={styles.helpText}>Ex: 123456</Text>
                   </View>
                 )}
+                <CodeInput value={this.state.code} />
               </View>
               <View
                 style={{
