@@ -2,7 +2,12 @@
   "expo": {
     "sdkVersion": "27.0.0",
     "orientation": "portrait",
-    "privacy": "unlisted"
+    "privacy": "unlisted",
+    "name": "ProjectGEM-dev",
+    "slug": "projectgem-dev",
+    "version": "0.0.1",
+    "description": "Thru PR 204",
+    "githubUrl": "https://github.com/mgreenw/ProjectGEM"
   },
   "privacy": "unlisted"
 }
