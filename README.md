@@ -13,4 +13,9 @@
 
 
 # Getting Started
-Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Getting-Started) for getting up and running!
+
+## Mobile
+Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Mobile-setup) for Mobile Setup
+
+## Server Setup
+Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Server-setup) for Server Setup
