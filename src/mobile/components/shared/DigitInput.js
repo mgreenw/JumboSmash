@@ -133,6 +133,14 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
       const j = i;
       characterArray[i] = input.charAt(j);
     }
+    characterInputs = characterArray.map<SingleDigitInput>(char => {
+      return (
+        <View>
+          <Text>{data.time}</Text>
+        </View>
+      );
+    });
+
     return (
       <View
         style={{
@@ -148,42 +156,31 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
             width: "100%"
           }}
         >
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[0]}
-              selected={inputLen === 0}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[1]}
-              selected={inputLen === 1}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[2]}
-              selected={inputLen === 2}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[3]}
-              selected={inputLen === 3}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[4]}
-              selected={inputLen === 4}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SingleDigitInput
-              value={characterArray[5]}
-              selected={inputLen === 5}
-            />
-          </View>
+          {}
+          <SingleDigitInput
+            value={characterArray[0]}
+            selected={inputLen === 0}
+          />
+          <SingleDigitInput
+            value={characterArray[1]}
+            selected={inputLen === 1}
+          />
+          <SingleDigitInput
+            value={characterArray[2]}
+            selected={inputLen === 2}
+          />
+          <SingleDigitInput
+            value={characterArray[3]}
+            selected={inputLen === 3}
+          />
+          <SingleDigitInput
+            value={characterArray[4]}
+            selected={inputLen === 4}
+          />
+          <SingleDigitInput
+            value={characterArray[5]}
+            selected={inputLen === 5}
+          />
         </View>
       </View>
     );
