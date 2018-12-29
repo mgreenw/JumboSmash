@@ -20,7 +20,7 @@ jobs:
       env:
         global:
           - NODE_CONFIG_ENV=travis
-           - PGPORT=5432
+           - PGPORT=5433
       services:
         - postgresql
       addons:
