@@ -20,6 +20,7 @@ jobs:
       env:
         global:
           - NODE_CONFIG_ENV=travis
+           - PGPORT=5432
       services:
         - postgresql
       addons:
@@ -28,9 +29,7 @@ jobs:
           packages:
           - postgresql-10
           - postgresql-client-10
-      env:
-        global:
-          - PGPORT=5432
+
       before_install:
         - sudo apt-get update
         - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
@@ -44,6 +43,7 @@ jobs:
         - npm install --prefix ./src/mobile
         - npm install --prefix ./src/server
       before_script:
+        - cd ~postgres/
         - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
         - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
         - cd ./src/server && npm run migrate up
