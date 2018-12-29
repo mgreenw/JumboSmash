@@ -12,6 +12,7 @@ import {
   Easing
 } from "react-native";
 import BaseInput from "./BaseInput";
+import AssistiveError from "../AssistiveError";
 
 const PADDING = 16;
 const INSET = 7;
@@ -19,7 +20,7 @@ const HEIGHT = 45;
 
 type Props = {
   label: string,
-  assitive: string,
+  assistive: string,
   error: string,
   onChange: (value: string) => void,
   containerStyle: any, // TODO: type as a stylesheet
@@ -41,8 +42,7 @@ export default class Hoshi extends BaseInput {
       primaryColor,
       selectedColor,
       errorColor,
-      error,
-      assitive
+      error
     } = this.props;
     const {
       width,
@@ -62,138 +62,106 @@ export default class Hoshi extends BaseInput {
     // for elements we DON'T want to shake.
     const invertShakeTranslateX = Animated.multiply(-1, shakeTranslateX);
     return (
-      <View style={this.props.containerStyle}>
-        <Animated.View
-          style={StyleSheet.flatten([
+      <Animated.View
+        style={StyleSheet.flatten([
+          {
+            height: HEIGHT + PADDING,
+            width: width
+          },
+          { transform: [{ translateX: shakeTranslateX }] }
+        ])}
+        onLayout={this._onLayout}
+      >
+        <TextInput
+          ref="input"
+          style={[
+            styles.textInput,
+            inputStyle,
             {
-              height: HEIGHT + PADDING,
-              width: width
-            },
-            { transform: [{ translateX: shakeTranslateX }] }
-          ])}
-          onLayout={this._onLayout}
-        >
-          <TextInput
-            ref="input"
-            style={[
-              styles.textInput,
-              inputStyle,
-              {
-                width,
-                height: HEIGHT
-              }
-            ]}
-            value={value}
-            onBlur={this._onBlur}
-            onChange={this._onChange}
-            onFocus={this._onFocus}
-            underlineColorAndroid={"transparent"}
-            autoCorrect={false}
-            autoCapitalize="none"
-          />
-          <TouchableWithoutFeedback onPress={this.focus}>
-            <Animated.View
-              style={[
-                styles.labelContainer,
-                {
-                  opacity: moveLabelAnim.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [1, 0, 1]
-                  }),
-                  top: moveLabelAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [HEIGHT - 15, 0]
-                  }),
-                  left: moveLabelAnim.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [INSET, 2 * INSET, INSET]
-                  })
-                },
-                { transform: [{ translateX: invertShakeTranslateX }] }
-              ]}
-            >
-              <Animated.Text
-                style={[
-                  inputStyle,
-                  {
-                    fontSize: moveLabelAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [20, 14]
-                    }),
-                    // Gah, what an abuse of a variable name.
-                    // TODO: make 'undnerlienAnim' be 'selectedAnim'
-                    color: selectedAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [
-                        error ? errorColor : primaryColor,
-                        error ? errorColor : selectedColor
-                      ]
-                    })
-                  }
-                ]}
-              >
-                {label}
-              </Animated.Text>
-            </Animated.View>
-          </TouchableWithoutFeedback>
-          <View style={[styles.labelMask]} />
-          <View
-            style={[
-              styles.border,
-              {
-                width: width,
-                backgroundColor: error ? errorColor : primaryColor
-              }
-            ]}
-          />
-          // animated underline
+              width,
+              height: HEIGHT
+            }
+          ]}
+          value={value}
+          onBlur={this._onBlur}
+          onChange={this._onChange}
+          onFocus={this._onFocus}
+          underlineColorAndroid={"transparent"}
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <TouchableWithoutFeedback onPress={this.focus}>
           <Animated.View
             style={[
-              styles.border,
+              styles.labelContainer,
               {
-                width: selectedAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, width]
+                opacity: moveLabelAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [1, 0, 1]
                 }),
-                backgroundColor: errorAnim.interpolate({
+                top: moveLabelAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [selectedColor, errorColor]
+                  outputRange: [HEIGHT - 15, 0]
+                }),
+                left: moveLabelAnim.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [INSET, 2 * INSET, INSET]
                 })
-              }
-            ]}
-          />
-        </Animated.View>
-        <View style={{ height: 18, width: "100%" }}>
-          <Animated.Text
-            style={[
-              styles.subtext,
-              {
-                color: errorColor,
-                opacity: errorAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 1]
-                })
-              }
+              },
+              { transform: [{ translateX: invertShakeTranslateX }] }
             ]}
           >
-            {error}
-          </Animated.Text>
-          <Animated.Text
-            style={[
-              styles.subtext,
-              {
-                color: primaryColor,
-                opacity: errorAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 0]
-                })
-              }
-            ]}
-          >
-            {error ? "" : assitive /* to instantly fade */}
-          </Animated.Text>
-        </View>
-      </View>
+            <Animated.Text
+              style={[
+                inputStyle,
+                {
+                  fontSize: moveLabelAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [20, 14]
+                  }),
+                  // Gah, what an abuse of a variable name.
+                  // TODO: make 'undnerlienAnim' be 'selectedAnim'
+                  color: selectedAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [
+                      error ? errorColor : primaryColor,
+                      error ? errorColor : selectedColor
+                    ]
+                  })
+                }
+              ]}
+            >
+              {label}
+            </Animated.Text>
+          </Animated.View>
+        </TouchableWithoutFeedback>
+        <View style={[styles.labelMask]} />
+        <View
+          style={[
+            styles.border,
+            {
+              width: width,
+              backgroundColor: error ? errorColor : primaryColor
+            }
+          ]}
+        />
+        // animated underline
+        <Animated.View
+          style={[
+            styles.border,
+            {
+              width: selectedAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, width]
+              }),
+              backgroundColor: errorAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [selectedColor, errorColor]
+              })
+            }
+          ]}
+        />
+      </Animated.View>
     );
   }
 }
@@ -219,11 +187,5 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 2
-  },
-  subtext: {
-    fontFamily: "SourceSansPro",
-    fontSize: 14,
-    paddingLeft: 7,
-    position: "absolute"
   }
 });

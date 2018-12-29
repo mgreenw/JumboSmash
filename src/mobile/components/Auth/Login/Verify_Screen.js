@@ -3,7 +3,7 @@
 import React from "react";
 import { Linking, StyleSheet, TextInput, Text, View } from "react-native";
 import { StackNavigator } from "react-navigation";
-import { Button, Input } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import verify from "mobile/api/auth/verify";
@@ -11,6 +11,7 @@ import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { Colors } from "mobile/styles/colors";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
@@ -20,6 +21,8 @@ import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { login_response } from "mobile/actions/auth/login";
 import { Transition } from "react-navigation-fluid-transitions";
 import GEMHeader from "mobile/components/shared/Header";
+
+const NUM_DIGITS = 6;
 
 type State = {
   code: string,
@@ -102,7 +105,6 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _codeInputError = (errorMessage: string) => {
-    this.codeInput.shake();
     this.setState({
       validCode: false,
       errorMessageCode: errorMessage
@@ -154,7 +156,11 @@ class SplashScreen extends React.Component<Props, State> {
     );
   };
 
-  codeInput: Input;
+  _onChangeText = (text: string) => {
+    if (text.length <= NUM_DIGITS) {
+      this.setState({ code: text, validCode: true, errorMessageCode: "" });
+    }
+  };
 
   render() {
     const { navigation } = this.props;
@@ -180,32 +186,15 @@ class SplashScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>{message}</Text>
               </View>
               <View style={{ flex: 1, alignSelf: "stretch" }}>
-                <Input
-                  containerStyle={
-                    this.state.validCode
-                      ? styles.inputWrapperStyle
-                      : styles.inputWrapperStyleWithError
-                  }
-                  keyboardType="numeric"
-                  placeholderTextColor={"#DDDDDD"}
-                  inputStyle={{ color: "#222222" }}
-                  labelStyle={styles.labelStyle}
-                  inputContainerStyle={styles.inputContainerStyle}
-                  label="Verification Code"
-                  placeholder=""
-                  onChangeText={text => this.setState({ code: text })}
-                  ref={input => (this.codeInput = input)}
-                  errorMessage={
-                    this.state.validCode ? "" : this.state.errorMessageCode
-                  }
-                  autoCorrect={false}
+                <CodeInput
+                  value={this.state.code}
+                  onChangeValue={this._onChangeText}
+                  maxLength={NUM_DIGITS}
+                  primaryColor={Colors.Black}
+                  errorColor={Colors.Grapefruit}
+                  error={this.state.errorMessageCode}
+                  assistive={"Make sure to check your spam folder!"}
                 />
-                {this.state.validCode && (
-                  <View style={styles.helpTextContainer}>
-                    <Text style={styles.helpText}>Ex: 123456</Text>
-                  </View>
-                )}
-                <CodeInput value={this.state.code} />
               </View>
               <View
                 style={{
@@ -223,7 +212,9 @@ class SplashScreen extends React.Component<Props, State> {
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="submit"
-                    disabled={isLoading || this.state.code == ""}
+                    disabled={
+                      isLoading || this.state.code.length !== NUM_DIGITS
+                    }
                     loading={isLoading}
                   />
                   <TertiaryButton

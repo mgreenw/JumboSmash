@@ -213,7 +213,7 @@ class SplashScreen extends React.Component<Props, State> {
                   label="UTLN"
                   onChange={this._onInputChange}
                   error={this.state.errorMessageUtln}
-                  assitive="Ex: jjaffe01"
+                  assistive="Ex: jjaffe01"
                   errorMessage={
                     this.state.validUtln ? "" : this.state.errorMessageUtln
                   }
