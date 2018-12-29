@@ -108,36 +108,23 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
     };
   }
 
-  // _renderSingleInputs(input: string) {
-  //   const inputLen = input.length;
-  //   const characterArray: Array<string> = Array(numChars).fill("");
-  //   for (let i = 0; i < inputLen; i++) {
-  //     const j = i;
-  //     characterArray[i] = input.charAt(j);
-  //   }
-  //   return characterArray.map<SingleDigitInput>(char => {
-  //     return (
-  //       <View>
-  //         <Text>{data.time}</Text>
-  //       </View>
-  //     );
-  //   });
-  // }
-
   render() {
     const input = this.props.value;
     const inputLen = input.length;
-    console.log(input, inputLen);
     const characterArray: Array<string> = Array(NUM_CHARS).fill("");
     for (let i = 0; i < inputLen; i++) {
       const j = i;
       characterArray[i] = input.charAt(j);
     }
-    characterInputs = characterArray.map<SingleDigitInput>(char => {
+
+    let j = 0;
+    const digitList = characterArray.map((char, index) => {
       return (
-        <View>
-          <Text>{data.time}</Text>
-        </View>
+        <SingleDigitInput
+          value={characterArray[index]}
+          selected={inputLen === index}
+          key={index}
+        />
       );
     });
 
@@ -156,31 +143,7 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
             width: "100%"
           }}
         >
-          {}
-          <SingleDigitInput
-            value={characterArray[0]}
-            selected={inputLen === 0}
-          />
-          <SingleDigitInput
-            value={characterArray[1]}
-            selected={inputLen === 1}
-          />
-          <SingleDigitInput
-            value={characterArray[2]}
-            selected={inputLen === 2}
-          />
-          <SingleDigitInput
-            value={characterArray[3]}
-            selected={inputLen === 3}
-          />
-          <SingleDigitInput
-            value={characterArray[4]}
-            selected={inputLen === 4}
-          />
-          <SingleDigitInput
-            value={characterArray[5]}
-            selected={inputLen === 5}
-          />
+          {digitList}
         </View>
       </View>
     );
