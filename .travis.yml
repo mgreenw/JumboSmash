@@ -8,8 +8,49 @@ jobs:
     - stage: website
       before_install:
         - cd src/website
-        - docker build -t sperrys/website .
+        - docker build -t sperrys/website:master .
       script:
         - docker images
       after_success:
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website; fi
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:master; fi
+    - stage: server
+      language: node_js
+      node_js:
+        - "8.12"
+      env:
+        global:
+          - NODE_CONFIG_ENV=travis
+      services:
+        - postgresql
+      addons:
+        postgresql: "10"
+        apt:
+          packages:
+          - postgresql-10
+          - postgresql-client-10
+      env:
+        global:
+          - PGPORT=5433
+      before_install:
+        - sudo apt-get update
+        - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
+        - sudo service postgresql restart
+        - sleep 1
+      install:
+        - npm install
+        - ls ./src
+        - ls ./src/koh
+        - npm install --prefix ./src/koh
+        - npm install --prefix ./src/mobile
+        - npm install --prefix ./src/server
+      before_script:
+        - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
+        - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+        - cd ./src/server && npm run migrate up
+      script:
+        - npm run lint
+        - cd ../..
+        - npm run flow
+        - cd src/server
+        - npm run check-env
+        - npm run test
