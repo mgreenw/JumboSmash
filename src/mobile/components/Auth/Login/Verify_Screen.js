@@ -157,9 +157,7 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onChangeText = (text: string) => {
-    if (text.length <= NUM_DIGITS) {
-      this.setState({ code: text, validCode: true, errorMessageCode: "" });
-    }
+    this.setState({ code: text, validCode: true, errorMessageCode: "" });
   };
 
   render() {

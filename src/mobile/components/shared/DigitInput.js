@@ -127,8 +127,6 @@ type CodeInputProps = {
   value: string,
   onChangeValue: string => void,
   maxLength: number,
-  primaryColor: string,
-  errorColor: string,
   error: string,
   assistive: string
 };
@@ -186,13 +184,7 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
   render() {
     const { shakeAnim, isFocused } = this.state;
     const input = this.props.value;
-    const {
-      primaryColor,
-      errorColor,
-      assistive,
-      error,
-      maxLength
-    } = this.props;
+    const { assistive, error, maxLength } = this.props;
     const inputLen = input.length;
     const characterArray: Array<string> = Array(maxLength).fill("");
     for (let i = 0; i < inputLen; i++) {
@@ -205,8 +197,8 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
           value={characterArray[index]}
           selected={inputLen === index && isFocused}
           key={index}
-          primaryColor={primaryColor}
-          errorColor={errorColor}
+          primaryColor={Colors.Black}
+          errorColor={Colors.Grapefruit}
           selectedColor={Colors.AquaMarine}
           error={error != null && error != ""}
         />
@@ -261,7 +253,13 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
             </View>
           </Animated.View>
           <View style={{ paddingTop: 10 }}>
-            <AssistiveError {...this.props} centered={true} />
+            <AssistiveError
+              {...this.props}
+              centered={true}
+              primaryColor={Colors.Black}
+              errorColor={Colors.Grapefruit}
+              selectedColor={Colors.AquaMarine}
+            />
           </View>
         </View>
       </TouchableWithoutFeedback>

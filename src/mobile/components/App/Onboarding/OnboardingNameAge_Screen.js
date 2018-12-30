@@ -3,7 +3,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
-import { Input } from "react-native-elements";
+import { CodeInput } from "mobile/components/shared/DigitInput";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
@@ -73,7 +73,7 @@ class NameAgeScreen extends React.Component<Props, State> {
     });
   };
 
-  _onNameChange = name =>
+  _onChangeName = name => {
     this.setState((state, props) => {
       return {
         profile: {
@@ -83,6 +83,19 @@ class NameAgeScreen extends React.Component<Props, State> {
         errorMessageName: ""
       };
     });
+  };
+
+  _onChangeBirthday = birthday => {
+    this.setState((state, props) => {
+      return {
+        profile: {
+          ...this.state.profile,
+          birthday: birthday
+        },
+        errorMessageBirthday: ""
+      };
+    });
+  };
 
   _validateInputs = () => {
     let valid = true;
@@ -102,27 +115,33 @@ class NameAgeScreen extends React.Component<Props, State> {
         <PrimaryInput
           value={this.state.profile.displayName}
           label="Preferred Name"
-          onChange={this._onNameChange}
+          onChange={this._onChangeName}
           error={this.state.errorMessageName}
           containerStyle={{ width: "100%" }}
           assistive={""}
           autoCapitalize={"words"}
         />
-        <Input
-          label="Birthday"
+        <CodeInput
+          assistive={""}
+          error={this.state.errorMessageBirthday}
           value={this.state.profile.birthday}
-          placeholder="01/01/97"
-          onChangeText={birthday =>
-            this.setState((state, props) => {
-              return {
-                profile: {
-                  ...this.state.profile,
-                  birthday: birthday
-                }
-              };
-            })
-          }
-          autoCorrect={false}
+          onChangeValue={this._onChangeBirthday}
+          maxLength={6}
+
+          // label="Birthday"
+          // value={this.state.profile.birthday}
+          // placeholder="01/01/97"
+          // onChangeText={birthday =>
+          //   this.setState((state, props) => {
+          //     return {
+          //       profile: {
+          //         ...this.state.profile,
+          //         birthday: birthday
+          //       }
+          //     };
+          //   })
+          // }
+          // autoCorrect={false}
         />
       </View>
     );
