@@ -28,7 +28,8 @@ type Props = {
   labelStyle: any,
   primaryColor: string,
   selectedColor: string,
-  errorColor: string
+  errorColor: string,
+  autoCapitalize?: "none" | "sentences" | "words" | "characters"
 };
 
 export default class Hoshi extends BaseInput {
@@ -42,7 +43,8 @@ export default class Hoshi extends BaseInput {
       primaryColor,
       selectedColor,
       errorColor,
-      error
+      error,
+      autoCapitalize
     } = this.props;
     const {
       width,
@@ -88,7 +90,7 @@ export default class Hoshi extends BaseInput {
           onFocus={this._onFocus}
           underlineColorAndroid={"transparent"}
           autoCorrect={false}
-          autoCapitalize="none"
+          autoCapitalize={autoCapitalize}
         />
         <TouchableWithoutFeedback onPress={this.focus}>
           <Animated.View

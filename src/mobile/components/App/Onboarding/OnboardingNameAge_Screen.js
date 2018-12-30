@@ -2,6 +2,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
+import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
 import { Input } from "react-native-elements";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
@@ -20,7 +21,9 @@ type Props = {
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings
+  settings: UserSettings,
+  errorMessageName: string,
+  errorMessageBirthday: string
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -37,7 +40,9 @@ class NameAgeScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam("profile", null),
-      settings: navigation.getParam("settings", null)
+      settings: navigation.getParam("settings", null),
+      errorMessageName: "",
+      errorMessageBirthday: ""
     };
   }
 
@@ -68,23 +73,40 @@ class NameAgeScreen extends React.Component<Props, State> {
     });
   };
 
+  _onNameChange = name =>
+    this.setState((state, props) => {
+      return {
+        profile: {
+          ...this.state.profile,
+          displayName: name
+        },
+        errorMessageName: ""
+      };
+    });
+
+  _validateInputs = () => {
+    let valid = true;
+    // TODO: Validation criteria
+    return valid;
+  };
+
+  _onContinue = () => {
+    if (this._validateInputs()) {
+      this._goToNextPage();
+    }
+  };
+
   render() {
     const body = (
       <View style={{ flex: 1 }}>
-        <Input
+        <PrimaryInput
           value={this.state.profile.displayName}
-          placeholder="Preferred Name"
-          onChangeText={name =>
-            this.setState((state, props) => {
-              return {
-                profile: {
-                  ...this.state.profile,
-                  displayName: name
-                }
-              };
-            })
-          }
-          autoCorrect={false}
+          label="Preferred Name"
+          onChange={this._onNameChange}
+          error={this.state.errorMessageName}
+          containerStyle={{ width: "100%" }}
+          assistive={""}
+          autoCapitalize={"words"}
         />
         <Input
           label="Birthday"
@@ -107,10 +129,14 @@ class NameAgeScreen extends React.Component<Props, State> {
     return (
       <OnboardingLayout
         body={body}
-        onButtonPress={this._goToNextPage}
+        onButtonPress={this._onContinue}
         title="Name & Age"
         main={true}
         progress={0}
+        buttonDisabled={
+          this.state.profile.displayName == "" ||
+          this.state.profile.birthday == ""
+        }
       />
     );
   }

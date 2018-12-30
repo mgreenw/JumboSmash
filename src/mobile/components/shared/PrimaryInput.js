@@ -11,7 +11,9 @@ type Props = {
   assistive: string,
   error: string,
   containerStyle: any, // TODO: type as a stylesheet
-  onChange: (value: string) => void
+  onChange: (value: string) => void,
+  autoCapitalize?: "none" | "sentences" | "words" | "characters",
+  value?: string
 };
 
 type State = {};

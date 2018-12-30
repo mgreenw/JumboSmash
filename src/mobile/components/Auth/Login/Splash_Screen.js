@@ -214,10 +214,8 @@ class SplashScreen extends React.Component<Props, State> {
                   onChange={this._onInputChange}
                   error={this.state.errorMessageUtln}
                   assistive="Ex: jjaffe01"
-                  errorMessage={
-                    this.state.validUtln ? "" : this.state.errorMessageUtln
-                  }
                   containerStyle={{ width: "60%" }}
+                  autoCapitalize={"none"}
                 />
               </View>
               <View

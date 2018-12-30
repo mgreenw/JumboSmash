@@ -40,7 +40,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
       profile: propsProfile || {
         bio: "foo",
         birthday: "1997-06-26",
-        displayName: "Jacob",
+        displayName: "",
         images: []
       },
       settings: propsSettings || {

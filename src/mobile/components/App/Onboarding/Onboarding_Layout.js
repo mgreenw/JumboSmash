@@ -18,7 +18,8 @@ type Props = {
   first?: boolean,
   last?: boolean,
   progress?: number,
-  loading?: boolean
+  loading?: boolean,
+  buttonDisabled?: boolean
 };
 type State = {};
 
@@ -39,17 +40,25 @@ export class OnboardingLayout extends React.Component<Props, State> {
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
               <View style={{ flex: 2 }}>
-                <View style={{ flex: 1, justifyContent: "space-around" }}>
-                  {this.props.first || this.props.last ? (
-                    <Text style={textStyles.veganTitle}>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  // TODO: also add the progress
+                  <View>
+                    <Text
+                      style={
+                        this.props.first || this.props.last
+                          ? textStyles.veganTitle
+                          : Arthur_Styles.onboardingHeader
+                      }
+                    >
                       {this.props.title}
                     </Text>
-                  ) : (
-                    // TODO: also add the progress
-                    <Text style={Arthur_Styles.onboardingHeader}>
-                      {this.props.title}
-                    </Text>
-                  )}
+                  </View>
                 </View>
                 <View style={{ flex: 2 }}>{this.props.body} </View>
               </View>
@@ -60,6 +69,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                     onPress={this.props.onButtonPress}
                     title={this.props.buttonText || "continue"}
                     loading={this.props.loading}
+                    disabled={this.props.buttonDisabled}
                   />
                 </View>
                 <View style={{ flex: 1 }} />

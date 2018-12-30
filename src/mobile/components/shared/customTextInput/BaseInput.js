@@ -32,7 +32,7 @@ export default class BaseInput extends Component {
     this.state = {
       value,
       moveLabelAnim: new Animated.Value(value ? 1 : 0),
-      selectedAnim: new Animated.Value(value ? 1 : 0),
+      selectedAnim: new Animated.Value(0),
       errorAnim: new Animated.Value(value ? 1 : 0),
       shakeAnim: new Animated.Value(0)
     };
