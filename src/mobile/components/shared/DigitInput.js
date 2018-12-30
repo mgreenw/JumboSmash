@@ -174,7 +174,11 @@ export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
   // for shaking input if all empty but delete is pressed
   // TODO: get type for NativeEvent
   _onKeyPress = (event: any) => {
-    if (event.nativeEvent.key === "Backspace" && this.props.value === "") {
+    const isBackspace = event.nativeEvent.key === "Backspace";
+    const deleteOnEmpty = isBackspace && this.props.value === "";
+    const keyOnMaxLength =
+      !isBackspace && this.props.value.length === this.props.maxLength;
+    if (deleteOnEmpty || keyOnMaxLength) {
       this._shake();
     }
   };

@@ -127,7 +127,6 @@ export default function rootReducer(
     }
 
     case LOGIN_COMPLETED: {
-      console.log(action);
       return {
         ...state,
         token: action.response ? action.response.token : null,
