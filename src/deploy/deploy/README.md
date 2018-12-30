@@ -9,6 +9,21 @@ Deploy is a python based webserver that exposes endpoints related to project gem
   * Wait a specific amount of time to pull down the new image, stop the old one, and start the new one.
   * Log relevant information internally and externally.
 
+### Deployment Procedures
+
+These are the various deployment flows for each service.
+
+* **koh**
+
+* **beta**
+  1. A new website image is built
+  2. Automatically pull down the new image from dockerhub.
+  3. Stop the current container running the old image.
+  4. Start a new container with the new image.
+
+* **jumbosmash**
+
+* **server**
 
 #### Complications / TODOs
 

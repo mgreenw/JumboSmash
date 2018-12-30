@@ -12,12 +12,20 @@ Deploy is a component dedicated to handling some considerations of our deploymen
 
 ## System Architecture  
 
-![system_diagram](./ProjectGemSystemDiagram.png)
-
+![system_diagram](ProjectGemSystemDiagram.png)
 
 An editable version of our system diagram can be found [here](https://drive.google.com/file/d/18lGvUnp-HuKm_aOY-EH1pVw1YGpRW55L/view?usp=sharing).
 
 ## Deployment Process
+
+1. A push to master
+2. Travis tests run in the travis environment
+3. Depending on what happens with the travis tests
+  * A. If the tests pass...
+  * B. If the tests fail, the deployment pipeline stops and the user is informed of the travis error.
+4.
+5.
+6.   
 
 ## User Flows
 * TODO - Map out what machines and services are hit based upon our various admin and normal user flows.
