@@ -24,12 +24,6 @@ jobs:
           - PGUSER=postgres
       addons:
         postgresql: "10"
-      before_install:
-        - sudo apt-get update
-        - sudo apt-get install --yes postgresql-10
-        - sudo apt-get install --yes postgresql-client-10
-        - sudo /etc/init.d/postgresql restart
-        - sleep 2
       install:
         - npm install
         - ls ./src
