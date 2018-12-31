@@ -21,6 +21,7 @@ jobs:
       env:
         global:
           - NODE_CONFIG_ENV=travis
+          - PGUSER=postgres
           - PGPORT=5433
       addons:
         postgresql: "10"
@@ -38,8 +39,8 @@ jobs:
         - npm install --prefix ./src/mobile
         - npm install --prefix ./src/server
       before_script:
-        - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
-        - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+        - psql -c 'create database jumbosmash_test;' -U postgres
+        - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
         - cd ./src/server && npm run migrate up
       script:
         - npm run lint
