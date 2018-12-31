@@ -23,7 +23,7 @@ jobs:
           - NODE_CONFIG_ENV=travis
           - PGPORT=5433
       addons:
-        postgresql: "10.5"
+        postgresql: "10"
         apt:
           packages:
             - postgresql-10
