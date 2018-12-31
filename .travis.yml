@@ -30,7 +30,7 @@ jobs:
       before_install:
         - sudo apt-get update
         - sudo apt-get install --yes postgresql-10
-        - sudo apt-get install --yes postgresql-10
+        - sudo apt-get install --yes postgresql-client-10
         - sudo /etc/init.d/postgresql restart
       install:
         - npm install
