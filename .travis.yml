@@ -31,6 +31,12 @@ jobs:
             - postgresql-client-10
       services:
         - postgresql
+      before_install:
+        - sudo service postgresql stop
+        - sed -e 's/^port.*/port = 5432/' /etc/postgresql/10/main/postgresql.conf > postgresql.conf
+        - sudo chown postgres postgresql.conf
+        - sudo mv postgresql.conf /etc/postgresql/10/main
+        - sudo service postgresql start 10
       install:
         - npm install
         - ls ./src
