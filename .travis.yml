@@ -22,7 +22,6 @@ jobs:
         global:
           - NODE_CONFIG_ENV=travis
           - PGUSER=postgres
-          - PGPORT=5433
       addons:
         postgresql: "10"
       before_install:
