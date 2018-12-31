@@ -22,20 +22,16 @@ jobs:
         global:
           - NODE_CONFIG_ENV=travis
           - PGUSER=postgres
+          - PGPORT=5433
       addons:
         postgresql: "10"
-        apt:
-          packages:
-            - postgresql-10
-            - postgresql-client-10
       services:
         - postgresql
       before_install:
-        - sudo service postgresql stop
-        - sed -e 's/^port.*/port = 5432/' /etc/postgresql/10/main/postgresql.conf > postgresql.conf
-        - sudo chown postgres postgresql.conf
-        - sudo mv postgresql.conf /etc/postgresql/10/main
-        - sudo service postgresql start 10
+        - sudo apt-get update
+        - sudo apt-get install --yes postgresql-10
+        - sudo apt-get install --yes postgresql-10
+        - sudo /etc/init.d/postgresql restart
       install:
         - npm install
         - ls ./src
