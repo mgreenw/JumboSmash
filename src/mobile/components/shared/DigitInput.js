@@ -16,21 +16,32 @@ import AssistiveError from "mobile/components/shared/AssistiveError";
 
 type SingleDigitInputProps = {
   value: string,
-  selected: boolean,
   emphasized: boolean, // for enlarging
   primaryColor: string,
   errorColor: string,
   error: boolean,
   selectedColor: string,
   placeholder: string,
-  secondaryColor: string
+  secondaryColor: string,
+  selectedAnim: Animated.Value
 };
 
 type SingleDigitInputState = {
-  selectedAnim: Animated.Value,
   emphasizedAnim: Animated.Value,
   errorAnim: Animated.Value
 };
+
+function _toggleAnimation(
+  animation: Animated.Value,
+  active: boolean,
+  duration?: number
+) {
+  Animated.timing(animation, {
+    toValue: active ? 1 : 0,
+    useNativeDriver: false,
+    duration
+  }).start();
+}
 
 const WIDTH = 35;
 const HEIGHT = 33;
@@ -44,56 +55,42 @@ class SingleDigitInput extends React.Component<
 > {
   constructor(props: SingleDigitInputProps) {
     super(props);
-    const { selected, emphasized, error } = this.props;
+    const { emphasized, error } = this.props;
     this.state = {
-      selectedAnim: new Animated.Value(selected ? 1 : 0),
       emphasizedAnim: new Animated.Value(emphasized ? 1 : 0),
       errorAnim: new Animated.Value(error ? 1 : 0)
     };
   }
 
   static defaultProps = {
-    placeholder: "",
-    secondaryColor: Colors.BlueyGrey,
-    primaryColor: Colors.Black,
-    errorColor: Colors.Grapefruit,
-    selectedColor: Colors.AquaMarine
+    placeholder: ""
   };
 
   componentDidUpdate(
     prevProps: SingleDigitInputProps,
     prevState: SingleDigitInputState
   ) {
-    if (this.props.selected != prevProps.selected) {
-      this._toggleAnimation(this.state.selectedAnim, this.props.selected);
-    }
     if (this.props.emphasized != prevProps.emphasized) {
-      this._toggleAnimation(this.state.emphasizedAnim, this.props.emphasized);
+      _toggleAnimation(this.state.emphasizedAnim, this.props.emphasized, 200);
     }
     if (!prevProps.error && this.props.error) {
-      this._toggleAnimation(this.state.errorAnim, true);
+      _toggleAnimation(this.state.errorAnim, true);
     } else if (!this.props.error && prevProps.error) {
-      this._toggleAnimation(this.state.errorAnim, false);
+      _toggleAnimation(this.state.errorAnim, false);
     }
   }
 
-  _toggleAnimation = (animation: Animated.Value, active: boolean) => {
-    Animated.timing(animation, {
-      toValue: active ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false
-    }).start();
-  };
-
   render() {
-    const { selectedAnim, errorAnim, emphasizedAnim } = this.state;
+    const { errorAnim, emphasizedAnim } = this.state;
     const {
       primaryColor,
       errorColor,
       selectedColor,
       secondaryColor,
       value,
-      placeholder
+      placeholder,
+      selectedAnim,
+      error
     } = this.props;
     const scaleX = emphasizedAnim.interpolate({
       inputRange: [0, 1],
@@ -130,15 +127,12 @@ class SingleDigitInput extends React.Component<
         >
           {value || placeholder}
         </Text>
-        <Animated.View
+        <View
           style={{
             position: "absolute",
             bottom: 0,
             width: "100%",
-            backgroundColor: selectedAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [primaryColor, errorColor]
-            }),
+            backgroundColor: error ? errorColor : primaryColor,
             height: NORMAL_LINE_THICKNESS
           }}
         />
@@ -169,10 +163,16 @@ type MultiDigitInputProps = {
   maxLength: number,
   error: string,
   assistive: string,
-  placeholder: string
+  placeholder: string,
+  label?: string,
+  secondaryColor: string,
+  primaryColor: string,
+  errorColor: string,
+  selectedColor: string
 };
 type MultiDigitInputState = {
   shakeAnim: Animated.Value,
+  selectedAnim: Animated.Value,
   isFocused: boolean
 };
 
@@ -190,13 +190,18 @@ function MultiDigitInput(
       const { value } = this.props;
       this.state = {
         shakeAnim: new Animated.Value(0),
+        selectedAnim: new Animated.Value(0),
         isFocused: false
       };
     }
 
     static defaultProps = {
       maxLength: 6,
-      placeholder: ""
+      placeholder: "",
+      secondaryColor: Colors.BlueyGrey,
+      primaryColor: Colors.Black,
+      errorColor: Colors.Grapefruit,
+      selectedColor: Colors.AquaMarine
     };
 
     componentDidUpdate(
@@ -205,6 +210,9 @@ function MultiDigitInput(
     ) {
       if (!prevProps.error && this.props.error) {
         this._shake();
+      }
+      if (this.state.isFocused != prevState.isFocused) {
+        _toggleAnimation(this.state.selectedAnim, this.state.isFocused);
       }
     }
 
@@ -239,8 +247,18 @@ function MultiDigitInput(
     };
 
     render() {
-      const { shakeAnim, isFocused } = this.state;
-      const { assistive, error, maxLength, placeholder } = this.props;
+      const { shakeAnim, isFocused, selectedAnim } = this.state;
+      const {
+        assistive,
+        error,
+        maxLength,
+        placeholder,
+        label,
+        errorColor,
+        primaryColor,
+        selectedColor,
+        secondaryColor
+      } = this.props;
       const input = this.props.value;
       const inputLen = input.length;
       const characterArray: Array<string> = Array(maxLength).fill("");
@@ -251,12 +269,17 @@ function MultiDigitInput(
       const digitList = characterArray.map((char, index) => {
         return (
           <SingleDigitInput
+            secondaryColor={secondaryColor}
+            primaryColor={primaryColor}
+            errorColor={errorColor}
+            selectedColor={selectedColor}
             value={characterArray[index]}
             selected={isFocused}
             emphasized={inputLen === index && isFocused}
             key={index}
             error={error != null && error != ""}
             placeholder={placeholder.length > index ? placeholder[index] : ""}
+            selectedAnim={this.state.selectedAnim}
           />
         );
       });
@@ -276,6 +299,24 @@ function MultiDigitInput(
           }}
         >
           <View>
+            {label && (
+              <Animated.Text
+                style={[
+                  textStyles.body2styles,
+                  {
+                    color: selectedAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [
+                        error ? errorColor : primaryColor,
+                        error ? errorColor : selectedColor
+                      ]
+                    })
+                  }
+                ]}
+              >
+                {label}
+              </Animated.Text>
+            )}
             <Animated.View
               style={{
                 height: HEIGHT,

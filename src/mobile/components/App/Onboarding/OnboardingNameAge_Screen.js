@@ -112,22 +112,27 @@ class NameAgeScreen extends React.Component<Props, State> {
   render() {
     const body = (
       <View style={{ flex: 1 }}>
-        <PrimaryInput
-          value={this.state.profile.displayName}
-          label="Preferred Name"
-          onChange={this._onChangeName}
-          error={this.state.errorMessageName}
-          containerStyle={{ width: "100%" }}
-          assistive={""}
-          autoCapitalize={"words"}
-        />
-        <BirthdayInput
-          assistive={""}
-          error={this.state.errorMessageBirthday}
-          value={this.state.profile.birthday}
-          onChangeValue={this._onChangeBirthday}
-          placeholder={"MMDDYY"}
-        />
+        <View style={{ flex: 1 }}>
+          <PrimaryInput
+            value={this.state.profile.displayName}
+            label="Preferred Name"
+            onChange={this._onChangeName}
+            error={this.state.errorMessageName}
+            containerStyle={{ width: "100%" }}
+            assistive={""}
+            autoCapitalize={"words"}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <BirthdayInput
+            label={"Birthday"}
+            assistive={""}
+            error={this.state.errorMessageBirthday}
+            value={this.state.profile.birthday}
+            onChangeValue={this._onChangeBirthday}
+            placeholder={"MMDDYY"}
+          />
+        </View>
       </View>
     );
     return (
