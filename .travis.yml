@@ -12,7 +12,7 @@ jobs:
       script:
         - docker images
       after_success:
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:master; fi
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:latest; fi
     - stage: server
       dist: xenial
       language: node_js
@@ -42,3 +42,6 @@ jobs:
         - cd src/server
         - npm run check-env
         - npm run test
+      after_success:
+        - docker build -t maxgreenwald/projectgem:latest .
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push maxgreenwald/projectgem:latest; fi
