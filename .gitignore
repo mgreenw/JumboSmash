@@ -1,3 +1,7 @@
+.idea/
+
+src/.idea/
+
 # Logs
 logs
 *.log

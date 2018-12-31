@@ -8,8 +8,41 @@ jobs:
     - stage: website
       before_install:
         - cd src/website
-        - docker build -t sperrys/website .
+        - docker build -t sperrys/website:master .
       script:
         - docker images
       after_success:
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website; fi
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:latest; fi
+    - stage: server
+      dist: xenial
+      language: node_js
+      node_js:
+        - "8.12"
+      cache: npm
+      env:
+        global:
+          - NODE_CONFIG_ENV=travis
+          - PGUSER=postgres
+      addons:
+        postgresql: "10"
+      install:
+        - npm install
+        - ls ./src
+        - ls ./src/koh
+        - npm install --prefix ./src/koh
+        - npm install --prefix ./src/mobile
+        - npm install --prefix ./src/server
+      before_script:
+        - psql -c 'create database jumbosmash_test;' -U postgres
+        - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+        - cd ./src/server && npm run migrate up
+      script:
+        - npm run lint
+        - cd ../..
+        - npm run flow
+        - cd src/server
+        - npm run check-env
+        - npm run test
+      after_success:
+        - docker build -t maxgreenwald/projectgem:latest .
+        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push maxgreenwald/projectgem:latest; fi
