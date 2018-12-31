@@ -1,48 +1,54 @@
 language: generic
 sudo: required
 services:
-  - docker
-
+- docker
 jobs:
   include:
-    - stage: website
-      before_install:
-        - cd src/website
-        - docker build -t sperrys/website:master .
-      script:
-        - docker images
-      after_success:
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:latest; fi
-    - stage: server
-      dist: xenial
-      language: node_js
-      node_js:
-        - "8.12"
-      cache: npm
-      env:
-        global:
-          - NODE_CONFIG_ENV=travis
-          - PGUSER=postgres
-      addons:
-        postgresql: "10"
-      install:
-        - npm install
-        - ls ./src
-        - ls ./src/koh
-        - npm install --prefix ./src/koh
-        - npm install --prefix ./src/mobile
-        - npm install --prefix ./src/server
-      before_script:
-        - psql -c 'create database jumbosmash_test;' -U postgres
-        - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
-        - cd ./src/server && npm run migrate up
-      script:
-        - npm run lint
-        - cd ../..
-        - npm run flow
-        - cd src/server
-        - npm run check-env
-        - npm run test
-      after_success:
-        - docker build -t maxgreenwald/projectgem:latest .
-        - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push maxgreenwald/projectgem:latest; fi
+  - stage: website
+    before_install:
+    - cd src/website
+    - docker build -t sperrys/website:master .
+    script:
+    - docker images
+    after_success:
+    - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD"
+      | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:latest;
+      fi
+  - stage: server
+    dist: xenial
+    language: node_js
+    node_js:
+    - '8.12'
+    cache: npm
+    env:
+      global:
+      - NODE_CONFIG_ENV=travis
+      - PGUSER=postgres
+    addons:
+      postgresql: '10'
+    install:
+    - npm install
+    - ls ./src
+    - ls ./src/koh
+    - npm install --prefix ./src/koh
+    - npm install --prefix ./src/mobile
+    - npm install --prefix ./src/server
+    before_script:
+    - psql -c 'create database jumbosmash_test;' -U postgres
+    - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+    - cd ./src/server && npm run migrate up
+    script:
+    - npm run lint
+    - cd ../..
+    - npm run flow
+    - cd src/server
+    - npm run check-env
+    - npm run test
+    after_success:
+    - docker build -t maxgreenwald/projectgem:latest .
+    - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD"
+      | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push maxgreenwald/projectgem:latest;
+      fi
+notifications:
+  slack:
+    secure: BT+I+DPQBPupDHMADVKtE7QPkqpDpchMS9eLxrGqNc7WuND8dnce/p0/PpodbSOiBTlgoxaGj0iFg1rSf3Z6dOiLcJs4RuuY4hRVxto2nlznOnY4xHY8gHMvaWUy7JkIXeLKLRQ4+jXHvhVU8h1y+GvxHL2VmDlxYWWKlw/r1ltHi7/fDObIhEDQx6Da/pdqfVPpQAkBaPnF+z0I3ZqFh2f1TIMknn3SPDTHqbseioVc4BD9lceICQ+h82a2eQF9QTyYbBkeCk2rA4kfaA3zNmaDTpbApuYzryjtgAtyhowRngU4k9OCSFYJ8VVUGFDpAchakRffCvHMN0uf2UUtL0lZRL3Dre00bTTvwFNSH7ZRL7czUb0Fdr9NMyf6JS99ijVRb2LTsdf3aEgRgu/uq0zgca3vM1J28ZzZ5BBJvzezp6G9ia5m102CJ1Pcjspc8wUmcHw0YhKAsNBVzJWTW4JXkcoN0o/t04Y+QkESOrQ37uS+8WeaOZYK0AWos05Owd2AVJXk5oZBvqMxSNGSqn7qP6MgxV1gxi4A3qotWIr6kRfgO1qGdDthnyZMyPKfcH8eDDc18vWGPmDSkU5c4kMm28Poyv7Ne2CrWGcsTHJzrKdnNtpCCcnpZqRnTNgiotSfaEbCS21r4JP4E40Dz7FilJ//zkPdoNi361AJ1+U=
