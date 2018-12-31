@@ -3,6 +3,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Animated, Text, View, Easing, StyleSheet } from "react-native";
+import { Colors } from "mobile/styles/colors";
 
 type Props = {
   assistive: string,
@@ -23,6 +24,12 @@ export default class AssistiveError extends React.Component<Props, State> {
       errorAnim: new Animated.Value(0)
     };
   }
+
+  static defaultProps = {
+    primaryColor: Colors.Black,
+    errorColor: Colors.Grapefruit,
+    selectedColor: Colors.AquaMarine
+  };
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (!prevProps.error && this.props.error) {

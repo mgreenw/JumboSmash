@@ -3,7 +3,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { connect } from "react-redux";
 import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
-import { CodeInput } from "mobile/components/shared/DigitInput";
+import { BirthdayInput } from "mobile/components/shared/DigitInput";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
@@ -99,7 +99,7 @@ class NameAgeScreen extends React.Component<Props, State> {
 
   _validateInputs = () => {
     let valid = true;
-    // TODO: Validation criteria
+    // validate birthday to be the correct
     return valid;
   };
 
@@ -121,27 +121,12 @@ class NameAgeScreen extends React.Component<Props, State> {
           assistive={""}
           autoCapitalize={"words"}
         />
-        <CodeInput
+        <BirthdayInput
           assistive={""}
           error={this.state.errorMessageBirthday}
           value={this.state.profile.birthday}
           onChangeValue={this._onChangeBirthday}
-          maxLength={6}
-
-          // label="Birthday"
-          // value={this.state.profile.birthday}
-          // placeholder="01/01/97"
-          // onChangeText={birthday =>
-          //   this.setState((state, props) => {
-          //     return {
-          //       profile: {
-          //         ...this.state.profile,
-          //         birthday: birthday
-          //       }
-          //     };
-          //   })
-          // }
-          // autoCorrect={false}
+          placeholder={"MMDDYY"}
         />
       </View>
     );

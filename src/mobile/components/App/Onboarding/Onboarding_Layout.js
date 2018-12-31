@@ -60,7 +60,9 @@ export class OnboardingLayout extends React.Component<Props, State> {
                     </Text>
                   </View>
                 </View>
-                <View style={{ flex: 2 }}>{this.props.body} </View>
+                <View style={{ flex: 2, paddingLeft: 22, paddingRight: 22 }}>
+                  {this.props.body}
+                </View>
               </View>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }} />

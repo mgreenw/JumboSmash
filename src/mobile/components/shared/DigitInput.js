@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import * as React from "react";
 import {
   StyleSheet,
   Animated,
@@ -17,14 +17,18 @@ import AssistiveError from "mobile/components/shared/AssistiveError";
 type SingleDigitInputProps = {
   value: string,
   selected: boolean,
+  emphasized: boolean, // for enlarging
   primaryColor: string,
   errorColor: string,
   error: boolean,
-  selectedColor: string
+  selectedColor: string,
+  placeholder: string,
+  secondaryColor: string
 };
 
 type SingleDigitInputState = {
   selectedAnim: Animated.Value,
+  emphasizedAnim: Animated.Value,
   errorAnim: Animated.Value
 };
 
@@ -40,33 +44,41 @@ class SingleDigitInput extends React.Component<
 > {
   constructor(props: SingleDigitInputProps) {
     super(props);
-    const { selected } = this.props;
+    const { selected, emphasized, error } = this.props;
     this.state = {
       selectedAnim: new Animated.Value(selected ? 1 : 0),
-      errorAnim: new Animated.Value(0)
+      emphasizedAnim: new Animated.Value(emphasized ? 1 : 0),
+      errorAnim: new Animated.Value(error ? 1 : 0)
     };
   }
+
+  static defaultProps = {
+    placeholder: "",
+    secondaryColor: Colors.BlueyGrey,
+    primaryColor: Colors.Black,
+    errorColor: Colors.Grapefruit,
+    selectedColor: Colors.AquaMarine
+  };
 
   componentDidUpdate(
     prevProps: SingleDigitInputProps,
     prevState: SingleDigitInputState
   ) {
     if (this.props.selected != prevProps.selected) {
-      Animated.timing(this.state.selectedAnim, {
-        toValue: this.props.selected ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false
-      }).start();
+      this._toggleAnimation(this.state.selectedAnim, this.props.selected);
+    }
+    if (this.props.emphasized != prevProps.emphasized) {
+      this._toggleAnimation(this.state.emphasizedAnim, this.props.emphasized);
     }
     if (!prevProps.error && this.props.error) {
-      this._toggleErrorAnim(true);
+      this._toggleAnimation(this.state.errorAnim, true);
     } else if (!this.props.error && prevProps.error) {
-      this._toggleErrorAnim(false);
+      this._toggleAnimation(this.state.errorAnim, false);
     }
   }
 
-  _toggleErrorAnim = (active: boolean) => {
-    Animated.timing(this.state.errorAnim, {
+  _toggleAnimation = (animation: Animated.Value, active: boolean) => {
+    Animated.timing(animation, {
       toValue: active ? 1 : 0,
       duration: 200,
       useNativeDriver: false
@@ -74,13 +86,20 @@ class SingleDigitInput extends React.Component<
   };
 
   render() {
-    const { selectedAnim, errorAnim } = this.state;
-    const { primaryColor, errorColor, selectedColor } = this.props;
-    const scaleX = selectedAnim.interpolate({
+    const { selectedAnim, errorAnim, emphasizedAnim } = this.state;
+    const {
+      primaryColor,
+      errorColor,
+      selectedColor,
+      secondaryColor,
+      value,
+      placeholder
+    } = this.props;
+    const scaleX = emphasizedAnim.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 1.2]
     });
-    const scaleY = selectedAnim.interpolate({
+    const scaleY = emphasizedAnim.interpolate({
       inputRange: [0, 1],
       outputRange: [1, 1.3]
     });
@@ -101,15 +120,36 @@ class SingleDigitInput extends React.Component<
       >
         <Text
           containerStyle={{ width: "100%" }}
-          style={[textStyles.headline5Style, { textAlign: "center" }]}
+          style={[
+            textStyles.headline5Style,
+            {
+              textAlign: "center",
+              color: value ? primaryColor : secondaryColor
+            }
+          ]}
         >
-          {this.props.value}
+          {value || placeholder}
         </Text>
         <Animated.View
           style={{
             position: "absolute",
             bottom: 0,
             width: "100%",
+            backgroundColor: selectedAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [primaryColor, errorColor]
+            }),
+            height: NORMAL_LINE_THICKNESS
+          }}
+        />
+        <Animated.View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: selectedAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ["0%", "100%"]
+            }),
             backgroundColor: errorAnim.interpolate({
               inputRange: [0, 1],
               outputRange: [selectedColor, errorColor]
@@ -123,146 +163,192 @@ class SingleDigitInput extends React.Component<
 }
 
 // if length is exceeded, bad things will happen.
-type CodeInputProps = {
+type MultiDigitInputProps = {
   value: string,
   onChangeValue: string => void,
   maxLength: number,
   error: string,
-  assistive: string
+  assistive: string,
+  placeholder: string
 };
-type CodeInputState = {
+type MultiDigitInputState = {
   shakeAnim: Animated.Value,
   isFocused: boolean
 };
 
-export class CodeInput extends React.Component<CodeInputProps, CodeInputState> {
-  constructor(props: CodeInputProps) {
-    super(props);
-    const { value } = this.props;
-    this.state = {
-      shakeAnim: new Animated.Value(0),
-      isFocused: false
+function MultiDigitInput(
+  alterSingleDigits: (
+    React.ChildrenArray<React.Element<typeof SingleDigitInput>>
+  ) => React.Node
+) {
+  return class extends React.Component<
+    MultiDigitInputProps,
+    MultiDigitInputState
+  > {
+    constructor(props: MultiDigitInputProps) {
+      super(props);
+      const { value } = this.props;
+      this.state = {
+        shakeAnim: new Animated.Value(0),
+        isFocused: false
+      };
+    }
+
+    static defaultProps = {
+      maxLength: 6,
+      placeholder: ""
     };
-  }
 
-  componentDidUpdate(prevProps: CodeInputProps, prevState: CodeInputState) {
-    if (!prevProps.error && this.props.error) {
-      this._shake();
+    componentDidUpdate(
+      prevProps: MultiDigitInputProps,
+      prevState: MultiDigitInputState
+    ) {
+      if (!prevProps.error && this.props.error) {
+        this._shake();
+      }
     }
-  }
 
-  _shake = () => {
-    const shakeAnim = this.state.shakeAnim;
-    shakeAnim.setValue(0);
-    // Animation duration based on Material Design
-    // https://material.io/guidelines/motion/duration-easing.html#duration-easing-common-durations
-    Animated.timing(shakeAnim, {
-      duration: 375,
-      toValue: 3,
-      ease: Easing.bounce
-    }).start();
-  };
+    _shake = () => {
+      const shakeAnim = this.state.shakeAnim;
+      shakeAnim.setValue(0);
+      // Animation duration based on Material Design
+      // https://material.io/guidelines/motion/duration-easing.html#duration-easing-common-durations
+      Animated.timing(shakeAnim, {
+        duration: 375,
+        toValue: 3,
+        ease: Easing.bounce
+      }).start();
+    };
 
-  inputRef: TextInput;
+    inputRef: TextInput;
 
-  _handleInputFocus = () => this.setState({ isFocused: true });
+    _handleInputFocus = () => this.setState({ isFocused: true });
 
-  _handleInputBlur = () => this.setState({ isFocused: false });
+    _handleInputBlur = () => this.setState({ isFocused: false });
 
-  // for shaking input if all empty but delete is pressed
-  // TODO: get type for NativeEvent
-  _onKeyPress = (event: any) => {
-    const isBackspace = event.nativeEvent.key === "Backspace";
-    const deleteOnEmpty = isBackspace && this.props.value === "";
-    const keyOnMaxLength =
-      !isBackspace && this.props.value.length === this.props.maxLength;
-    if (deleteOnEmpty || keyOnMaxLength) {
-      this._shake();
-    }
-  };
+    // for shaking input if all empty but delete is pressed
+    // TODO: get type for NativeEvent
+    _onKeyPress = (event: any) => {
+      const isBackspace = event.nativeEvent.key === "Backspace";
+      const deleteOnEmpty = isBackspace && this.props.value === "";
+      const keyOnMaxLength =
+        !isBackspace && this.props.value.length === this.props.maxLength;
+      if (deleteOnEmpty || keyOnMaxLength) {
+        this._shake();
+      }
+    };
 
-  render() {
-    const { shakeAnim, isFocused } = this.state;
-    const input = this.props.value;
-    const { assistive, error, maxLength } = this.props;
-    const inputLen = input.length;
-    const characterArray: Array<string> = Array(maxLength).fill("");
-    for (let i = 0; i < inputLen; i++) {
-      const j = i;
-      characterArray[i] = input.charAt(j);
-    }
-    const digitList = characterArray.map((char, index) => {
+    render() {
+      const { shakeAnim, isFocused } = this.state;
+      const { assistive, error, maxLength, placeholder } = this.props;
+      const input = this.props.value;
+      const inputLen = input.length;
+      const characterArray: Array<string> = Array(maxLength).fill("");
+      for (let i = 0; i < inputLen; i++) {
+        const j = i;
+        characterArray[i] = input.charAt(j);
+      }
+      const digitList = characterArray.map((char, index) => {
+        return (
+          <SingleDigitInput
+            value={characterArray[index]}
+            selected={isFocused}
+            emphasized={inputLen === index && isFocused}
+            key={index}
+            error={error != null && error != ""}
+            placeholder={placeholder.length > index ? placeholder[index] : ""}
+          />
+        );
+      });
+
+      const shakeTranslateX = shakeAnim.interpolate({
+        inputRange: [0, 0.5, 1, 1.5, 2, 2.5, 3],
+        outputRange: [0, -15, 0, 15, 0, -15, 0]
+      });
+
       return (
-        <SingleDigitInput
-          value={characterArray[index]}
-          selected={inputLen === index && isFocused}
-          key={index}
-          primaryColor={Colors.Black}
-          errorColor={Colors.Grapefruit}
-          selectedColor={Colors.AquaMarine}
-          error={error != null && error != ""}
-        />
-      );
-    });
-
-    const shakeTranslateX = shakeAnim.interpolate({
-      inputRange: [0, 0.5, 1, 1.5, 2, 2.5, 3],
-      outputRange: [0, -15, 0, 15, 0, -15, 0]
-    });
-
-    return (
-      <TouchableWithoutFeedback
-        style={{
-          width: "100%"
-        }}
-        onPress={() => {
-          this.inputRef.focus();
-        }}
-      >
-        <View>
-          <Animated.View
-            style={{
-              height: HEIGHT,
-              transform: [{ translateX: shakeTranslateX }]
-            }}
-          >
-            <TextInput
-              style={[StyleSheet.absoluteFill, { color: "transparent" }]}
-              keyboardType="numeric"
-              placeholder=""
-              onChangeText={this.props.onChangeValue}
-              autoCorrect={false}
-              spellCheck={false}
-              ref={ref => (this.inputRef = ref)}
-              underlineColorAndroid={"transparent"}
-              onFocus={this._handleInputFocus}
-              onBlur={this._handleInputBlur}
-              maxLength={this.props.maxLength}
-              onKeyPress={this._onKeyPress}
-              caretHidden={true}
-            />
-            <View
+        <TouchableWithoutFeedback
+          style={{
+            width: "100%"
+          }}
+          onPress={() => {
+            this.inputRef.focus();
+          }}
+        >
+          <View>
+            <Animated.View
               style={{
-                justifyContent: "space-evenly",
-                flexDirection: "row",
-                flex: 1,
-                width: "100%"
+                height: HEIGHT,
+                transform: [{ translateX: shakeTranslateX }]
               }}
             >
-              {digitList}
+              <TextInput
+                style={[StyleSheet.absoluteFill, { color: "transparent" }]}
+                keyboardType="numeric"
+                placeholder=""
+                onChangeText={this.props.onChangeValue}
+                autoCorrect={false}
+                spellCheck={false}
+                ref={ref => (this.inputRef = ref)}
+                underlineColorAndroid={"transparent"}
+                onFocus={this._handleInputFocus}
+                onBlur={this._handleInputBlur}
+                maxLength={this.props.maxLength}
+                onKeyPress={this._onKeyPress}
+                caretHidden={true}
+              />
+              <View
+                style={{
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  flex: 1,
+                  width: "100%"
+                }}
+              >
+                {alterSingleDigits(digitList)}
+              </View>
+            </Animated.View>
+            <View style={{ paddingTop: 10 }}>
+              <AssistiveError {...this.props} centered={true} />
             </View>
-          </Animated.View>
-          <View style={{ paddingTop: 10 }}>
-            <AssistiveError
-              {...this.props}
-              centered={true}
-              primaryColor={Colors.Black}
-              errorColor={Colors.Grapefruit}
-              selectedColor={Colors.AquaMarine}
-            />
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
+        </TouchableWithoutFeedback>
+      );
+    }
+  };
 }
+
+function makeDividor(key) {
+  return (
+    <Text
+      key={key}
+      style={{
+        color: Colors.BlueyGrey,
+        fontSize: 30,
+        fontFamily: "SourceSansPro",
+        fontWeight: "300"
+      }}
+    >
+      {"/"}
+    </Text>
+  );
+}
+
+function birthdayDividors(singleDigts) {
+  const singleDigtsWithDividors = React.Children.toArray(singleDigts);
+  const length = singleDigtsWithDividors.length;
+
+  // This should never happen, but let's have a nice error message anyways.
+  if (length != 6) {
+    console.log("ERROR: birthdayDividors called on array of size, ", length);
+  } else {
+    singleDigtsWithDividors.splice(2, 0, makeDividor("dividor 1"));
+    singleDigtsWithDividors.splice(5, 0, makeDividor("dividor 2"));
+  }
+
+  return singleDigtsWithDividors;
+}
+
+export const CodeInput = MultiDigitInput(digits => digits);
+
+export const BirthdayInput = MultiDigitInput(birthdayDividors);
