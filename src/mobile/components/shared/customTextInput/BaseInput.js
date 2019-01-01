@@ -28,12 +28,13 @@ export default class BaseInput extends Component {
     this.focus = this.focus.bind(this);
 
     const value = props.value;
+    const error = props.error;
 
     this.state = {
       value,
       moveLabelAnim: new Animated.Value(value ? 1 : 0),
       selectedAnim: new Animated.Value(0),
-      errorAnim: new Animated.Value(value ? 1 : 0),
+      errorAnim: new Animated.Value(error ? 1 : 0),
       shakeAnim: new Animated.Value(0)
     };
   }

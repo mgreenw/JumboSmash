@@ -14,7 +14,8 @@ type screen =
   | "cards"
   | "matches"
   | "onboarding-start"
-  | "onboarding-main";
+  | "onboarding-main"
+  | "profile-edit";
 
 type Props = {
   screen: screen,
@@ -49,6 +50,9 @@ export default class GEMHeader extends React.Component<Props, State> {
       case "onboarding-main": {
         return "back";
       }
+      case "profile-edit": {
+        return "back";
+      }
     }
   };
 
@@ -67,6 +71,9 @@ export default class GEMHeader extends React.Component<Props, State> {
         return null;
       }
       case "onboarding-main": {
+        return null;
+      }
+      case "profile-edit": {
         return null;
       }
     }
@@ -88,6 +95,9 @@ export default class GEMHeader extends React.Component<Props, State> {
       }
       case "onboarding-main": {
         return "Profile Setup";
+      }
+      case "profile-edit": {
+        return "Edit Profile";
       }
       default: {
         throw ("No title found for screen: ", screen);
@@ -112,10 +122,18 @@ export default class GEMHeader extends React.Component<Props, State> {
         placement="center"
         backgroundColor="transparent"
         leftComponent={
-          <HeaderIcon name={leftIconName} disabled={this.props.loading} />
+          <HeaderIcon
+            name={leftIconName}
+            disabled={this.props.loading}
+            onPress={this.props.onLeftIconPress}
+          />
         }
         rightComponent={
-          <HeaderIcon name={rightIconName} disabled={this.props.loading} />
+          <HeaderIcon
+            name={rightIconName}
+            disabled={this.props.loading}
+            onPress={this.props.onRightIconPress}
+          />
         }
         centerComponent={{
           text: title,

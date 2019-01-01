@@ -25,13 +25,17 @@ function updateOrCreateMyProfile(
   )
     .then(response => {
       switch (response.status) {
-        case (UPDATE_PROFILE__SUCCESS, CREATE_PROFILE__SUCCESS):
+        case CREATE_PROFILE__SUCCESS:
           return;
+        case UPDATE_PROFILE__SUCCESS: {
+          return;
+        }
         default:
           throw { response };
       }
     })
     .catch(error => {
+      console.log("error :()");
       throw { error, request };
     });
 }

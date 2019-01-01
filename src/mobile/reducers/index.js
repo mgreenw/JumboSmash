@@ -21,6 +21,10 @@ import {
   CREATE_PROFILE_AND_SETTINGS__INITIATED,
   CREATE_PROFILE_AND_SETTINGS__COMPLETED
 } from "mobile/actions/app/createUser";
+import {
+  SAVE_PROFILE__COMPLETED,
+  SAVE_PROFILE__INITIATED
+} from "mobile/actions/app/saveProfile";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -76,7 +80,8 @@ export type ReduxState = {
     logout: boolean,
     login: boolean,
     loadApp: boolean,
-    createUser: boolean
+    createUser: boolean,
+    saveProfile: boolean
   },
 
   // Unfortunately, we really need case analysis for a few calls.
@@ -98,7 +103,8 @@ const defaultState: ReduxState = {
     logout: false,
     login: false,
     loadApp: false,
-    createUser: false
+    createUser: false,
+    saveProfile: false
   },
   response: {
     sendVerificationEmail: null,
@@ -252,6 +258,30 @@ export default function rootReducer(
         response: {
           ...state.response,
           sendVerificationEmail: action.response
+        }
+      };
+    }
+
+    case SAVE_PROFILE__INITIATED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: true
+        }
+      };
+    }
+
+    case SAVE_PROFILE__COMPLETED: {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false
+        },
+        user: {
+          ...state.user,
+          profile: action.profile
         }
       };
     }

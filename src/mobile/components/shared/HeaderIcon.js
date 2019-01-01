@@ -11,7 +11,8 @@ import { routes } from "mobile/components/Navigation";
 export type IconName = "user" | "message" | "cards" | "back";
 type Props = {
   name: ?IconName,
-  disabled?: boolean
+  disabled?: boolean,
+  onPress?: () => void
 };
 
 type State = {};
@@ -29,7 +30,7 @@ export class HeaderIcon extends React.Component<Props, State> {
     }
   }
 
-  _onPress = (name: IconName): (() => void) => {
+  _inferOnPress = (name: IconName): (() => void) => {
     switch (name) {
       case "user": {
         return () => {
@@ -74,7 +75,7 @@ export class HeaderIcon extends React.Component<Props, State> {
         }}
         onPress={
           this.props.name && !this.props.disabled
-            ? this._onPress(this.props.name)
+            ? this.props.onPress || this._inferOnPress(this.props.name)
             : null
         }
       >
