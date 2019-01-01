@@ -20,6 +20,7 @@ type Props = {
 };
 
 type State = {
+  unformatedBirthday: string,
   profile: UserProfile,
   settings: UserSettings,
   errorMessageName: string,
@@ -39,6 +40,7 @@ class NameAgeScreen extends React.Component<Props, State> {
     super(props);
     const { navigation } = this.props;
     this.state = {
+      unformatedBirthday: "",
       profile: navigation.getParam("profile", null),
       settings: navigation.getParam("settings", null),
       errorMessageName: "",
@@ -85,12 +87,14 @@ class NameAgeScreen extends React.Component<Props, State> {
     });
   };
 
-  _onChangeBirthday = birthday => {
+  _onChangeBirthday = MMDDYY => {
+    const formatedBirthday = this._formatBirthday(MMDDYY);
     this.setState((state, props) => {
       return {
+        unformatedBirthday: MMDDYY,
         profile: {
           ...this.state.profile,
-          birthday: birthday
+          birthday: formatedBirthday
         },
         errorMessageBirthday: ""
       };
@@ -107,6 +111,20 @@ class NameAgeScreen extends React.Component<Props, State> {
     if (this._validateInputs()) {
       this._goToNextPage();
     }
+  };
+
+  _formatBirthday = (MMDDYY: string) => {
+    if (MMDDYY.length < 6) {
+      return ""; // Don't bother formating incorrect birthdays.
+    }
+    const decade = MMDDYY[4];
+    const isTwentiethCentury = decade === "0" || decade === "1";
+    const mileniaAndCentury = isTwentiethCentury ? "20" : "19";
+    const year = mileniaAndCentury + MMDDYY[4] + MMDDYY[5];
+    const day = MMDDYY[2] + MMDDYY[3];
+    const month = MMDDYY[0] + MMDDYY[1];
+    const formated = year + "-" + month + "-" + day;
+    return formated;
   };
 
   render() {
@@ -128,7 +146,7 @@ class NameAgeScreen extends React.Component<Props, State> {
             label={"Birthday"}
             assistive={""}
             error={this.state.errorMessageBirthday}
-            value={this.state.profile.birthday}
+            value={this.state.unformatedBirthday}
             onChangeValue={this._onChangeBirthday}
             placeholder={"MMDDYY"}
           />

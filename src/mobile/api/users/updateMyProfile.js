@@ -28,11 +28,11 @@ function updateOrCreateMyProfile(
         case (UPDATE_PROFILE__SUCCESS, CREATE_PROFILE__SUCCESS):
           return;
         default:
-          throw (response, request);
+          throw { response };
       }
     })
     .catch(error => {
-      throw (error, request);
+      throw { error, request };
     });
 }
 

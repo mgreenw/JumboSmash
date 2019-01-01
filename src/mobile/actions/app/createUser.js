@@ -35,10 +35,8 @@ export function createUser(
       // to determine that onboarding is done, so settings must be created first
       updateMySettings(token, settings)
         .then(() => {
-          DevTesting.fakeLatency(() => {
-            createMyProfile(token, profile).then(() => {
-              dispatch(complete());
-            });
+          createMyProfile(token, profile).then(() => {
+            dispatch(complete());
           });
         })
         .catch(error => {
