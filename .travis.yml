@@ -9,7 +9,6 @@ jobs:
       global:
         - IMAGE_REPO=sperrys/website
         - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
-        - FAST_PATH=""
       script:
         - echo "No Tests for Website";
   - stage: server
