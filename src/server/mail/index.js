@@ -2,21 +2,18 @@
 
 // const config = require("config");
 // const sgMail = require("@sendgrid/mail");
-
+const { IncomingWebhook } = require('@slack/client');
 const logger = require('../logger');
 const utils = require('../utils');
 
-const { IncomingWebhook } = require('@slack/client');
-
 const url = 'https://hooks.slack.com/services/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';
 const webhook = new IncomingWebhook(url);
-
 const NODE_ENV = utils.getNodeEnv();
 
 // Non-critical code for the purposes of beta-testing only,
 // so let's throw away errors if we get any.
 function postVerificationCodeToSlack(content: any) {
-  webhook.send(JSON.stringify(content, null, 2), (err, res) => {});
+  webhook.send(JSON.stringify(content, null, 2));
 }
 
 // Todo: Add logging for these endpoints
