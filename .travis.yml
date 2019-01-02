@@ -9,12 +9,11 @@ jobs:
       - IMAGE_REPO=sperrys/website
       - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
     before_install:
+      - apt get install libssl-dev
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - wget https://docker-fastpath.s3-eu-west-1.amazonaws.com/releases/linux/docker-fastpath-linux-amd64-latest.tgz
-      - tar xzvf docker-fastpath-linux-amd64-latest.tgz
       - echo "$IMAGE_REPO";
       - echo "$DEPLOY_TAG";
-      - FAST_PATH=$(./fastpath --verbose HEAD $IMAGE_REPO)
+      - FAST_PATH=$(./scripts/fastpath --verbose -s src/website HEAD $IMAGE_REPO)
       - cd src/website
 
     script:
@@ -41,7 +40,7 @@ jobs:
     env:
       - NODE_CONFIG_ENV=travis
       - PGUSER=postgres
-      - IMAGE_REPO=sperrys/website
+      - IMAGE_REPO=maxgreenwald/projectgem
       - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
     cache:
       - npm
