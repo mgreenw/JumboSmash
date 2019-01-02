@@ -8,7 +8,7 @@ import { textStyles } from "mobile/styles/textStyles";
 
 import { routes } from "mobile/components/Navigation";
 
-import type { IconName } from "./HeaderIcon";
+import type { IconName } from "mobile/assets/icons/CustomIcon";
 type screen =
   | "profile"
   | "cards"
