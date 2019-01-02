@@ -8,7 +8,6 @@ jobs:
     env:
       global:
         - IMAGE_REPO=sperrys/website
-        - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
     before_install:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - wget https://docker-fastpath.s3-eu-west-1.amazonaws.com/releases/linux/docker-fastpath-linux-amd64-latest.tgz
