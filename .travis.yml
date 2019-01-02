@@ -7,7 +7,7 @@ jobs:
   - stage: website
     env:
       global:
-        - IMAGE_REPO=sperrys/website
+        - IMAGE_REPO=website
     before_install:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - wget https://docker-fastpath.s3-eu-west-1.amazonaws.com/releases/linux/docker-fastpath-linux-amd64-latest.tgz
