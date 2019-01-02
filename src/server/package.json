@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
+    "@slack/client": "^4.8.0",
     "ajv": "^6.5.4",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
