@@ -3,12 +3,10 @@ import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
+import type { IconName } from "mobile/assets/icons/CustomIcon";
 import NavigationService from "mobile/NavigationService";
 import { routes } from "mobile/components/Navigation";
 
-// add more from fontello as needed. See "demo.html" of the fontello
-// config if you need to figure out the names.
-export type IconName = "user" | "message" | "cards" | "back";
 type Props = {
   name: ?IconName,
   disabled?: boolean,

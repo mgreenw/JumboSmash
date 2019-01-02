@@ -6,3 +6,13 @@ export default createIconSetFromFontello(
   "gemicons",
   "gemicons.ttf"
 );
+
+// add more from fontello as needed. See "demo.html" of the fontello
+// config if you need to figure out the names.
+export type IconName =
+  | "user"
+  | "message"
+  | "cards"
+  | "back"
+  | "life-ring"
+  | "gear";
