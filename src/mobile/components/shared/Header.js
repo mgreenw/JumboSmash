@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StatusBar } from "react-native";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import { HeaderIcon } from "./HeaderIcon";
 import { Header } from "react-native-elements";
@@ -118,29 +118,32 @@ export default class GEMHeader extends React.Component<Props, State> {
     }
 
     return (
-      <Header
-        placement="center"
-        backgroundColor="transparent"
-        leftComponent={
-          <HeaderIcon
-            name={leftIconName}
-            disabled={this.props.loading}
-            onPress={this.props.onLeftIconPress}
-          />
-        }
-        rightComponent={
-          <HeaderIcon
-            name={rightIconName}
-            disabled={this.props.loading}
-            onPress={this.props.onRightIconPress}
-          />
-        }
-        centerComponent={{
-          text: title,
-          style: textStyles.headline5Style
-        }}
-        outerContainerStyles={{ borderBottomWidth: 0 }}
-      />
+      <View>
+        <Header
+          placement="center"
+          backgroundColor="transparent"
+          leftComponent={
+            <HeaderIcon
+              name={leftIconName}
+              disabled={this.props.loading}
+              onPress={this.props.onLeftIconPress}
+            />
+          }
+          rightComponent={
+            <HeaderIcon
+              name={rightIconName}
+              disabled={this.props.loading}
+              onPress={this.props.onRightIconPress}
+            />
+          }
+          centerComponent={{
+            text: title,
+            style: textStyles.headline5Style
+          }}
+          outerContainerStyles={{ borderBottomWidth: 0 }}
+        />
+        <StatusBar barStyle="dark-content" />
+      </View>
     );
   }
 }
