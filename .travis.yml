@@ -8,6 +8,8 @@ jobs:
     env:
       - IMAGE_REPO=sperrys/website
       - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
+      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
     before_install:
       - sudo apt-get install libssl-dev
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
