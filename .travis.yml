@@ -5,15 +5,33 @@ services:
 jobs:
   include:
   - stage: website
+    env:
+      global:
+        - IMAGE_REPO=sperrys/website
+        - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
+        - FAST_PATH=""
     before_install:
-    - cd src/website
-    - docker build -t sperrys/website:master .
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - wget https://docker-fastpath.s3-eu-west-1.amazonaws.com/releases/linux/docker-fastpath-linux-amd64-latest.tgz
+      - tar xzvf docker-fastpath-linux-amd64-latest.tgz
+      - FAST_PATH=$(./fastpath --verbose HEAD $IMAGE_REPO)
     script:
-    - docker images
+      - echo "No Tests for Website";
     after_success:
-    - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD"
-      | docker login -u "$DOCKER_USERNAME" --password-stdin; docker push sperrys/website:latest;
-      fi
+      - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then
+          if [ -z "$FAST_PATH" ]; then
+            echo "New code. Performing a Docker build";
+            docker build -t $DEPLOY_TAG .;
+            echo "Pushing $DEPLOY_TAG to the registry";
+            docker push $DEPLOY_TAG;
+          else
+            DEPLOY_TAG=$IMAGE_REPO:$FAST_PATH;
+            echo "Found a suitable image $DEPLOY_TAG";
+          fi
+          else
+            echo "Build not on master branch, skipping docker build and pushing!";
+        fi
+
   - stage: server
     dist: xenial
     language: node_js
