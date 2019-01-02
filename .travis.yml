@@ -15,7 +15,7 @@ jobs:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - echo "$IMAGE_REPO";
       - echo "$DEPLOY_TAG";
-      - FAST_PATH=$(./scripts/fastpath --verbose -s src/website HEAD $IMAGE_REPO)
+      - FAST_PATH=$(./scripts/fastpath_precise --verbose -s src/website HEAD $IMAGE_REPO)
       - cd src/website
 
     script:
