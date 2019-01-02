@@ -9,13 +9,14 @@ jobs:
       - IMAGE_REPO=sperrys/website
       - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
     before_install:
-      - cd src/website 
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - wget https://docker-fastpath.s3-eu-west-1.amazonaws.com/releases/linux/docker-fastpath-linux-amd64-latest.tgz
       - tar xzvf docker-fastpath-linux-amd64-latest.tgz
       - echo "$IMAGE_REPO";
       - echo "$DEPLOY_TAG";
       - FAST_PATH=$(./fastpath --verbose HEAD $IMAGE_REPO)
+      - cd src/website 
+
     script:
       - echo "No Tests for Website";
     after_success:
