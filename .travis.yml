@@ -15,7 +15,7 @@ jobs:
       - echo "$IMAGE_REPO";
       - echo "$DEPLOY_TAG";
       - FAST_PATH=$(./fastpath --verbose HEAD $IMAGE_REPO)
-      - cd src/website 
+      - cd src/website
 
     script:
       - echo "No Tests for Website";
@@ -37,32 +37,34 @@ jobs:
     dist: xenial
     language: node_js
     node_js:
-    - '8.12'
-    cache: npm
+      - '8.12'
     env:
-      global:
       - NODE_CONFIG_ENV=travis
       - PGUSER=postgres
+      - IMAGE_REPO=sperrys/website
+      - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
+    cache:
+      - npm
     addons:
       postgresql: '10'
     install:
-    - npm install
-    - ls ./src
-    - ls ./src/koh
-    - npm install --prefix ./src/koh
-    - npm install --prefix ./src/mobile
-    - npm install --prefix ./src/server
+      - npm install
+      - ls ./src
+      - ls ./src/koh
+      - npm install --prefix ./src/koh
+      - npm install --prefix ./src/mobile
+      - npm install --prefix ./src/server
     before_script:
-    - psql -c 'create database jumbosmash_test;' -U postgres
-    - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
-    - cd ./src/server && npm run migrate up
+      - psql -c 'create database jumbosmash_test;' -U postgres
+      - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+      - cd ./src/server && npm run migrate up
     script:
-    - npm run lint
-    - cd ../..
-    - npm run flow
-    - cd src/server
-    - npm run check-env
-    - npm run test
+      - npm run lint
+      - cd ../..
+      - npm run flow
+      - cd src/server
+      - npm run check-env
+      - npm run test
     after_success:
     - docker build -t maxgreenwald/projectgem:latest .
     - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then echo "$DOCKER_PASSWORD"
