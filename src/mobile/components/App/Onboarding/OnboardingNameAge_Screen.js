@@ -14,6 +14,7 @@ import type {
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
+import validateBirthday from "mobile/utils/ValidateBirthday";
 
 type Props = {
   navigation: any
@@ -102,9 +103,16 @@ class NameAgeScreen extends React.Component<Props, State> {
   };
 
   _validateInputs = () => {
-    let valid = true;
     // validate birthday to be the correct
-    return valid;
+    const validBirthday = validateBirthday(this.state.profile.birthday);
+    if (!validBirthday) {
+      this.setState({
+        errorMessageBirthday: "Invalid Birthday"
+      });
+    }
+    // TODO: validate name
+    const validName = true;
+    return validBirthday && validName;
   };
 
   _onContinue = () => {
@@ -162,7 +170,9 @@ class NameAgeScreen extends React.Component<Props, State> {
         progress={0}
         buttonDisabled={
           this.state.profile.displayName == "" ||
-          this.state.profile.birthday == ""
+          this.state.profile.birthday == "" ||
+          this.state.errorMessageName != "" ||
+          this.state.errorMessageBirthday != ""
         }
       />
     );
