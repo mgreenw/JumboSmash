@@ -15,6 +15,7 @@ import type {
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 import validateBirthday from "mobile/utils/ValidateBirthday";
+import validateName from "mobile/utils/ValidateName";
 
 type Props = {
   navigation: any
@@ -105,13 +106,18 @@ class NameAgeScreen extends React.Component<Props, State> {
   _validateInputs = () => {
     // validate birthday to be the correct
     const validBirthday = validateBirthday(this.state.profile.birthday);
+    const validName = validateName(this.state.profile.displayName);
     if (!validBirthday) {
       this.setState({
         errorMessageBirthday: "Invalid Birthday"
       });
     }
-    // TODO: validate name
-    const validName = true;
+    if (!validName) {
+      this.setState({
+        errorMessageName: "Too Long of Name"
+      });
+    }
+
     return validBirthday && validName;
   };
 
@@ -147,6 +153,7 @@ class NameAgeScreen extends React.Component<Props, State> {
             containerStyle={{ width: "100%" }}
             assistive={""}
             autoCapitalize={"words"}
+            maxLength={50}
           />
         </View>
         <View style={{ flex: 1 }}>

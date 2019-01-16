@@ -13,7 +13,8 @@ type Props = {
   containerStyle: any, // TODO: type as a stylesheet
   onChange: (value: string) => void,
   autoCapitalize?: "none" | "sentences" | "words" | "characters",
-  value?: string
+  value?: string,
+  maxLength?: number
 };
 
 type State = {};
