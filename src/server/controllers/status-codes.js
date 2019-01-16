@@ -60,6 +60,10 @@ const UPDATE_SETTINGS__SUCCESS = 'UPDATE_SETTINGS__SUCCESS';
 // Get Settings
 const GET_SETTINGS__SUCCESS = 'GET_SETTINGS__SUCCESS';
 
+// PHOTOS
+// Sign Url
+const SIGN_URL__SUCCESS = 'SIGN_URL__SUCCESS';
+
 module.exports = {
   // Shared
   SERVER_ERROR,
@@ -118,4 +122,8 @@ module.exports = {
 
   // Get Settings
   GET_SETTINGS__SUCCESS,
+
+  // PHOTOS
+  // Sign Url
+  SIGN_URL__SUCCESS,
 };

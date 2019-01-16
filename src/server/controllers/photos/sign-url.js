@@ -4,6 +4,7 @@ import type { $Request, $Response } from 'express';
 
 const config = require('config');
 const aws = require('aws-sdk');
+const uuid = require('uuid/v4');
 
 const db = require('../../db');
 const utils = require('../utils');
@@ -17,25 +18,37 @@ const bucket = config.get('s3_bucket');
  */
 const signURL = async (req: $Request, res: $Response) => {
   const s3 = new aws.S3();
-  const fileName = req.query['file-name'];
+  const photoUUID = uuid();
+
   const s3Params = {
     Bucket: bucket,
-    Key: fileName,
+    Key: `uploads/${req.user.id}`,
     Expires: 600,
-    ACL: 'authenticated-read',
+    ACL: 'bucket-owner-full-control',
+    Metadata: {
+      uuid: photoUUID,
+    },
   };
 
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
+  // 1. Confirm that we can actually upload an object
+  s3.getSignedUrl('putObject', s3Params, async (err, data) => {
     if (err) {
       return utils.error.server(res, 'S3 Error.');
     }
 
-    const returnData = {
-      signedRequest: data,
-      url: `https://${bucket}.s3.amazonaws.com/${fileName}`,
-    };
+    // 2. Invalidate any old upload.
+    await db.query(`
+      INSERT INTO unconfirmed_photos
+      (user_id, uuid)
+      VALUES ($1, $2)
+      ON CONFLICT (user_id) DO UPDATE
+      SET uuid = $3
+    `, [req.user.id, photoUUID, photoUUID]);
 
-    return res.status(200).json(returnData);
+    return res.status(200).json({
+      status: codes.SIGN_URL__SUCCESS,
+      url: data,
+    });
   });
 };
 
