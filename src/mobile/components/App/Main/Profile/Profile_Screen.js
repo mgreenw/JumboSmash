@@ -8,7 +8,6 @@ import { styles } from "mobile/styles/template";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
-import HeaderIcon from "mobile/components/shared/HeaderIcon";
 
 type Props = {
   navigation: any
@@ -35,14 +34,14 @@ class ProfileScreen extends React.Component<Props, State> {
     return {
       title: "Profile",
       headerRight: (
-        <HeaderIcon
+        <Icon
+          name="diamond"
+          type="font-awesome"
+          size={40}
           onPress={() => navigation.navigate(routes.Cards)}
-          name="cards"
+          containerStyle={{ paddingRight: 10 }}
         />
-      ),
-      headerStyle: {
-        borderBottomWidth: 0
-      }
+      )
     };
   };
 

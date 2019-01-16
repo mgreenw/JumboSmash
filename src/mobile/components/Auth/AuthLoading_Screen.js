@@ -69,9 +69,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       }),
       Font.loadAsync({
         SourceSansPro: require("../../assets/fonts/SourceSansPro-Regular.ttf")
-      }),
-      Font.loadAsync({
-        gemicons: require("../../assets/icons/gemicons.ttf")
       })
     ])
       .then(results => {
