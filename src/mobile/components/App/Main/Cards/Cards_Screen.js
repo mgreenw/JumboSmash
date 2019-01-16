@@ -20,8 +20,6 @@ import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import Card from "./Card";
-import HeaderIcon from "mobile/components/shared/HeaderIcon";
-import { textStyles } from "mobile/styles/textStyles";
 
 type Props = {
   navigation: any
@@ -76,23 +74,25 @@ class SwipingScreen extends React.Component<Props, State> {
           header: null
         }
       : {
-          title: "PROJECTGEM",
-          headerStyle: textStyles.headline5Style,
+          title: "Swiping",
           headerRight: (
-            <HeaderIcon
+            <Icon
+              name="send"
+              type="font-awesome"
+              size={40}
               onPress={() => navigation.navigate(routes.Matches)}
-              name="message"
+              containerStyle={{ paddingRight: 10 }}
             />
           ),
           headerLeft: (
-            <HeaderIcon
-              onPress={() => navigation.navigate(routes.Profile)}
+            <Icon
               name="user"
+              type="font-awesome"
+              size={40}
+              onPress={() => navigation.navigate(routes.Profile)}
+              containerStyle={{ paddingLeft: 10 }}
             />
-          ),
-          headerStyle: {
-            borderBottomWidth: 0
-          }
+          )
         };
   };
 
