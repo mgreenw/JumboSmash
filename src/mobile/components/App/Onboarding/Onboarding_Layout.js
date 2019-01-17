@@ -54,7 +54,6 @@ export class OnboardingLayout extends React.Component<Props, State> {
                     alignItems: "center"
                   }}
                 >
-                  // TODO: also add the progress
                   <View>
                     <Text
                       style={
