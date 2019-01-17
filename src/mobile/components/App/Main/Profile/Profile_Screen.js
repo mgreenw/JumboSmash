@@ -86,11 +86,6 @@ function mapDispatchToProps(
 }
 
 class ProfileScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
-
   _onSettingsPress = () => {
     const { navigate } = this.props.navigation;
     navigate(routes.SettingsEdit, {});

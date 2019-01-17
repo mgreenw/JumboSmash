@@ -67,7 +67,7 @@ function mapDispatchToProps(
   };
 }
 
-class SettingsScreen extends React.Component<Props, State> {
+class ProfileEditScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -165,4 +165,4 @@ class SettingsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SettingsScreen);
+)(ProfileEditScreen);
