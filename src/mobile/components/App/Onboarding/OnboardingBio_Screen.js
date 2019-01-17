@@ -12,7 +12,6 @@ import type {
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import { GenderSelector } from "mobile/components/shared/GenderSelector";
 import BioInput from "mobile/components/shared/BioInput";
 
 type Props = {
