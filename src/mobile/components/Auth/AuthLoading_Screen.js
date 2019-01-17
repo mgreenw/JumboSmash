@@ -80,12 +80,16 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { navigate, loadAuthInProgress, authLoaded } = this.props.navigation;
+    const { navigate } = this.props.navigation;
 
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (prevProps.loadAuthInProgress != loadAuthInProgress && authLoaded) {
+    if (
+      this.props.authLoaded &&
+      prevProps.loadAuthInProgress != this.props.loadAuthInProgress
+    ) {
       const { token } = this.props;
+      // If there is a token, our upstream middleware
       if (token) {
         navigate(routes.AppSwitch, {});
       } else {
