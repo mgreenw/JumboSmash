@@ -137,7 +137,7 @@ class SwipingScreen extends React.Component<Props, State> {
   deck: ?Deck;
 
   render() {
-    const navigation = this.props.navigation;
+    const { navigation } = this.props;
     const isExpanded = navigation.getParam("isExpanded", false);
     return (
       <Transition inline appear={"scale"}>

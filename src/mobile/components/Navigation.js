@@ -115,12 +115,20 @@ export const routes = {
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
+const removeHeader = {
+  headerMode: "none",
+  navigationOptions: {
+    headerVisible: false
+  }
+};
+
 const CardsStack = createStackNavigator(
   {
     CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: CARDS_ROUTE
+    initialRouteName: CARDS_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -132,7 +140,8 @@ const ProfileStack = createStackNavigator(
     PROFILE_HELP_ROUTE: { screen: ProfileHelp }
   },
   {
-    initialRouteName: PROFILE_ROUTE
+    initialRouteName: PROFILE_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -141,7 +150,8 @@ const MatchesStack = createStackNavigator(
     MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: MATCHES_ROUTE
+    initialRouteName: MATCHES_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -155,7 +165,8 @@ const MainContentSwitch = FluidNavigator(
   },
   {
     mode: "card",
-    initialRouteName: CARDS_STACK
+    initialRouteName: CARDS_STACK,
+    ...removeHeader
   }
 );
 
@@ -168,7 +179,8 @@ const LoginStack = FluidNavigator(
     AUTH_HELP_ROUTE: { screen: AuthHelp }
   },
   {
-    initialRouteName: SPLASH_ROUTE
+    initialRouteName: SPLASH_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -178,7 +190,8 @@ const AuthSwitch = FluidNavigator(
     AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
-    initialRouteName: AUTH_LOADING_ROUTE
+    initialRouteName: AUTH_LOADING_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -195,7 +208,8 @@ const OnboardingStack = FluidNavigator(
     ONBOARDING_APP_LOAD: { screen: AppLoading }
   },
   {
-    initialRouteName: ONBOARDING_START_ROUTE
+    initialRouteName: ONBOARDING_START_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -206,7 +220,8 @@ const AppSwitch = FluidNavigator(
     APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
-    initialRouteName: APP_LOADING_ROUTE
+    initialRouteName: APP_LOADING_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -217,7 +232,8 @@ export const createRootNavigator = () => {
       AUTH_SWITCH: AuthSwitch
     },
     {
-      initialRouteName: AUTH_SWITCH
+      initialRouteName: AUTH_SWITCH,
+      ...removeHeader
     }
   );
 };
