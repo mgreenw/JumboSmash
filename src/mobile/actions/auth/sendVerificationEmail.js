@@ -18,20 +18,26 @@ export type sendVerificationEmail_response = {
   classYear: string
 };
 
-export const SEND_VERIFICATION_EMAIL_INITIATED =
-  "SEND_VERIFICATION_EMAIL_INITIATED";
-export const SEND_VERIFICATION_EMAIL_COMPLETED =
-  "SEND_VERIFICATION_EMAIL_COMPLETED";
+export type SendVerificationEmailCompleted_Action = {
+  type: "SEND_VERIFICATION_EMAIL_COMPLETED",
+  response: sendVerificationEmail_response
+};
 
-function initiate() {
+export type SendVerificationEmailInitiated_Action = {
+  type: "SEND_VERIFICATION_EMAIL_INITIATED"
+};
+
+function initiate(): SendVerificationEmailInitiated_Action {
   return {
-    type: SEND_VERIFICATION_EMAIL_INITIATED
+    type: "SEND_VERIFICATION_EMAIL_INITIATED"
   };
 }
 
-function complete(response: sendVerificationEmail_response) {
+function complete(
+  response: sendVerificationEmail_response
+): SendVerificationEmailCompleted_Action {
   return {
-    type: SEND_VERIFICATION_EMAIL_COMPLETED,
+    type: "SEND_VERIFICATION_EMAIL_COMPLETED",
     response: response
   };
 }

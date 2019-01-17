@@ -5,20 +5,22 @@ import type { UserProfile, UserSettings } from "mobile/reducers";
 import { createMyProfile } from "mobile/api/users/updateMyProfile";
 import updateMySettings from "mobile/api/users/updateMySettings";
 
-export const CREATE_PROFILE_AND_SETTINGS__INITIATED =
-  "CREATE_PROFILE_AND_SETTINGS__INITIATED";
-export const CREATE_PROFILE_AND_SETTINGS__COMPLETED =
-  "CREATE_PROFILE_AND_SETTINGS__COMPLETED";
+export type CreateProfileAndSettingsInitiated_Action = {
+  type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
+};
+export type CreateProfileAndSettingsCompleted_Action = {
+  type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
+};
 
-function initiate() {
+function initiate(): CreateProfileAndSettingsInitiated_Action {
   return {
-    type: CREATE_PROFILE_AND_SETTINGS__INITIATED
+    type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
   };
 }
 
-function complete() {
+function complete(): CreateProfileAndSettingsCompleted_Action {
   return {
-    type: CREATE_PROFILE_AND_SETTINGS__COMPLETED
+    type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
   };
 }
 
@@ -40,7 +42,7 @@ export function createUser(
           });
         })
         .catch(error => {
-          console.log("Error in Creating User: ", error);
+          DevTesting.log("Error in Creating User: ", error);
         });
     });
   };

@@ -24,7 +24,7 @@ export function apiRequest(
   )
     .then(response => response.json())
     .catch(error => {
-      console.log("Error caught in apiRequest.js: ", error);
+      DevTesting.log("Error caught in apiRequest.js: ", error);
       throw (error, request);
     });
 }

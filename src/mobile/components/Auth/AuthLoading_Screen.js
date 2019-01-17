@@ -11,6 +11,7 @@ import { loadAuth } from "mobile/actions/auth/loadAuth";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { routes } from "mobile/components/Navigation";
+import DevTesting from "mobile/utils/DevTesting";
 
 type reduxProps = {
   token: ?string,
@@ -74,10 +75,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         this.props.loadAuth();
       })
       .catch(e => {
-        // $FlowFixMe (__DEV__ will break flow)
-        if (__DEV__) {
-          console.log("Error importing fonts:", e);
-        }
+        DevTesting.log("Error importing fonts:", e);
       });
   }
 

@@ -13,6 +13,7 @@ import {
 import { textStyles } from "mobile/styles/textStyles";
 import { Colors } from "mobile/styles/colors";
 import AssistiveError from "mobile/components/shared/AssistiveError";
+import DevTesting from "mobile/utils/DevTesting";
 
 type SingleDigitInputProps = {
   value: string,
@@ -381,7 +382,7 @@ function birthdayDividors(singleDigts) {
 
   // This should never happen, but let's have a nice error message anyways.
   if (length != 6) {
-    console.log("ERROR: birthdayDividors called on array of size, ", length);
+    DevTesting.log("ERROR: birthdayDividors called on array of size, ", length);
   } else {
     singleDigtsWithDividors.splice(2, 0, makeDividor("dividor 1"));
     singleDigtsWithDividors.splice(5, 0, makeDividor("dividor 2"));

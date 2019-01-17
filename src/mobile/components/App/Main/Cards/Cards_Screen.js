@@ -24,6 +24,7 @@ import { textStyles } from "mobile/styles/textStyles";
 import { Transition } from "react-navigation-fluid-transitions";
 import GEMHeader from "mobile/components/shared/Header";
 import NavigationService from "mobile/NavigationService";
+import DevTesting from "mobile/utils/DevTesting";
 
 type Props = {
   navigation: any
@@ -94,24 +95,15 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeStart = () => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("swiping");
-    }
+    DevTesting.log("swiping");
   };
 
   _onSwipeRight = (user: Candidate) => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("Card liked: " + user.profile.displayName);
-    }
+    DevTesting.log("Card liked: " + user.profile.displayName);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("Card disliked: " + user.profile.displayName);
-    }
+    DevTesting.log("Card disliked: " + user.profile.displayName);
   };
 
   _onSwipeComplete = () => {
@@ -119,10 +111,7 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onCardTap = () => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("tapped");
-    }
+    DevTesting.log("tapped");
     this.setState({ isExpanded: true });
   };
 

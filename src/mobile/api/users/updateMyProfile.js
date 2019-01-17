@@ -35,7 +35,6 @@ function updateOrCreateMyProfile(
       }
     })
     .catch(error => {
-      console.log("error :()");
       throw { error, request };
     });
 }

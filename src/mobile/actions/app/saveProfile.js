@@ -4,18 +4,23 @@ import DevTesting from "../../utils/DevTesting";
 import type { UserProfile } from "mobile/reducers";
 import { updateMyProfile } from "mobile/api/users/updateMyProfile";
 
-export const SAVE_PROFILE__INITIATED = "SAVE_PROFILE__INITIATED";
-export const SAVE_PROFILE__COMPLETED = "SAVE_PROFILE__COMPLETED";
+export type SaveProfileInitiated_Action = {
+  type: "SAVE_PROFILE__INITIATED"
+};
+export type SaveProfileCompleted_Action = {
+  type: "SAVE_PROFILE__COMPLETED",
+  profile: UserProfile
+};
 
-function initiate() {
+function initiate(): SaveProfileInitiated_Action {
   return {
-    type: SAVE_PROFILE__INITIATED
+    type: "SAVE_PROFILE__INITIATED"
   };
 }
 
-function complete(profile: UserProfile) {
+function complete(profile: UserProfile): SaveProfileCompleted_Action {
   return {
-    type: SAVE_PROFILE__COMPLETED,
+    type: "SAVE_PROFILE__COMPLETED",
     profile
   };
 }

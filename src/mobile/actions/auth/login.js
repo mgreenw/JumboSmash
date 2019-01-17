@@ -9,19 +9,24 @@ export type login_response = {
   token?: string
 };
 
-export const LOGIN_INITIATED = "LOGIN_INITIATED";
-export const LOGIN_COMPLETED = "LOGIN_COMPLETED";
+export type LoginInitiated_Action = {
+  type: "LOGIN_INITIATED"
+};
+export type LoginCompleted_Action = {
+  type: "LOGIN_COMPLETED",
+  response: login_response
+};
 
-function initiate() {
+function initiate(): LoginInitiated_Action {
   return {
-    type: LOGIN_INITIATED
+    type: "LOGIN_INITIATED"
   };
 }
 
-function complete(response: login_response) {
+function complete(response: login_response): LoginCompleted_Action {
   return {
-    type: LOGIN_COMPLETED,
-    response: response
+    type: "LOGIN_COMPLETED",
+    response
   };
 }
 
