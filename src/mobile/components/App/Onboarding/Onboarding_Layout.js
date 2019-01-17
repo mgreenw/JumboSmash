@@ -24,11 +24,7 @@ type Props = {
 type State = {};
 
 export class OnboardingLayout extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  // TODO: header / progress and stuff
+  // TODO: Progress bar
   render() {
     const {
       firstScreen,
