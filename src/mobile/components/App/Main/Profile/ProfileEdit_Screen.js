@@ -115,7 +115,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader screen="profile-edit" onLeftIconPress={this._onBack} />
+        <GEMHeader
+          title="profile-edit"
+          leftIconName={"back"}
+          onLeftIconPress={this._onBack}
+        />
         <KeyboardAwareScrollView extraScrollHeight={30}>
           {spacer}
           <AddPhotos />

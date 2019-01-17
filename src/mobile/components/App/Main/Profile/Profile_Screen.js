@@ -105,7 +105,7 @@ class ProfileScreen extends React.Component<Props, State> {
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>
-          <GEMHeader screen="profile" />
+          <GEMHeader title="profile" rightIconName="cards" />
           <View
             style={{
               flex: 1

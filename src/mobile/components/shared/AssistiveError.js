@@ -1,5 +1,6 @@
 // @flow
 // Displays an assistive message, or transitions to an console.error
+
 import React from "react";
 import PropTypes from "prop-types";
 import { Animated, Text, View, Easing, StyleSheet } from "react-native";

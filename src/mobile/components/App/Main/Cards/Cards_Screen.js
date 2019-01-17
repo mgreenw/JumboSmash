@@ -142,7 +142,13 @@ class SwipingScreen extends React.Component<Props, State> {
     return (
       <Transition inline appear={"scale"}>
         <View style={{ flex: 1 }}>
-          {!isExpanded && <GEMHeader screen="cards" />}
+          {!isExpanded && (
+            <GEMHeader
+              title="cards"
+              rightIconName="message"
+              leftIconName="user"
+            />
+          )}
           <View style={{ backgroundColor: "white", flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}

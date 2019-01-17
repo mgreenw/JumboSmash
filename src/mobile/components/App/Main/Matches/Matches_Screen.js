@@ -36,7 +36,7 @@ class MessagingScreen extends React.Component<Props, State> {
     return (
       <Transition inline appear={"right"}>
         <View style={{ flex: 1 }}>
-          <GEMHeader screen="matches" />
+          <GEMHeader title="matches" leftIconName={"cards"} />
           <View style={styles.container}>
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>PROJECT GEM: MESSAGING</Text>
