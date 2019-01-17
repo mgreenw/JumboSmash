@@ -28,6 +28,7 @@ function getUser(token: string): Promise<any> {
           return reject();
         }
 
+        // Check if the user's token's uuid is valid
         const user = result.rows[0];
         if (user.tokenUUID === null || decoded.uuid !== user.tokenUUID) {
           return reject();

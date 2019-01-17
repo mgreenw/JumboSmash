@@ -4,11 +4,11 @@ import type { $Request, $Response } from 'express';
 
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const uuid = require('uuid/v4');
 
 const db = require('../../db');
 const codes = require('../status-codes');
 const utils = require('../utils');
-const uuid = require('uuid/v4');
 
 /* eslint-disable */
 const schema = {
@@ -84,10 +84,12 @@ try {
         VALUES ($1, $2, $3)
       ON CONFLICT (utln)
         DO UPDATE
-          SET successful_logins = users.successful_logins + EXCLUDED.successful_logins
+          SET
+            successful_logins = users.successful_logins + EXCLUDED.successful_logins,
+            token_uuid = $4
       RETURNING id
     `,
-      [utln, verification.email, tokenUUID]
+      [utln, verification.email, tokenUUID, tokenUUID]
     );
 
     // Get the user from the query results

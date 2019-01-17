@@ -31,7 +31,7 @@ describe('PATCH api/users/me/profile', () => {
     const res = await request(app)
       .patch('/api/users/me/profile')
       .set('Accept', 'application/json')
-      .set('Authorization', dbUtils.signToken(1))
+      .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED);
