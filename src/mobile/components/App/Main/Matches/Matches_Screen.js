@@ -29,13 +29,6 @@ class MessagingScreen extends React.Component<Props, State> {
     super(props);
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => {
-    return {
-      header: null
-    };
-  };
-
   render() {
     // this is the navigator we passed in from App.js
     const { navigate } = this.props.navigation;

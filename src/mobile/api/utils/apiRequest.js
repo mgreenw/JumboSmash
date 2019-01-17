@@ -8,7 +8,6 @@ export function apiRequest(
   route: string,
   auth: ?string,
   request: ?Object
-  // TODO: find a better way to type these promises
 ): Promise<Object> {
   return timeout(
     30000,

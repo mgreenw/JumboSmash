@@ -73,15 +73,6 @@ class SplashScreen extends React.Component<Props, State> {
     };
   }
 
-  // IMPORTANT: must be like this in order for back button toggling!
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Verification",
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  });
-
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.login_inProgress != this.props.login_inProgress) {
       if (!this.props.login_inProgress && this.props.login_response) {

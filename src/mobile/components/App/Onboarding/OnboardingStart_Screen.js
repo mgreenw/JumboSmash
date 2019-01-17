@@ -58,10 +58,6 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     };
   }
 
-  static navigationOptions = {
-    headerLeft: null
-  };
-
   _goToNextPage = () => {
     const { navigation } = this.props;
     navigation.navigate(routes.OnboardingNameAge, {

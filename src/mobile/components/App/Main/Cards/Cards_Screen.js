@@ -72,12 +72,6 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   }
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      header: null
-    };
-  };
-
   _renderCard = (user: UserProfile, isTop: boolean) => {
     return (
       <Card

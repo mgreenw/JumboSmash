@@ -71,12 +71,6 @@ class SettingsScreen extends React.Component<Props, State> {
     }
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Settings"
-  });
-
   _onUsePronounChange = (pronouns: Pronouns) => {
     this.setState({
       usePronouns: pronouns

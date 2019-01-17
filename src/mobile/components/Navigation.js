@@ -195,14 +195,7 @@ const OnboardingStack = FluidNavigator(
     ONBOARDING_APP_LOAD: { screen: AppLoading }
   },
   {
-    initialRouteName: ONBOARDING_START_ROUTE,
-    navigationOptions: {
-      headerBackTitle: null,
-      headerStyle: {
-        borderBottomWidth: 0
-      },
-      title: "Profile Setup"
-    }
+    initialRouteName: ONBOARDING_START_ROUTE
   }
 );
 

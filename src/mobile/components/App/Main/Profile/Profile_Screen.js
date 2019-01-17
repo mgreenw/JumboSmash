@@ -91,11 +91,6 @@ class ProfileScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => {
-    return { header: null };
-  };
-
   _onSettingsPress = () => {
     const { navigate } = this.props.navigation;
     navigate(routes.SettingsEdit, {});

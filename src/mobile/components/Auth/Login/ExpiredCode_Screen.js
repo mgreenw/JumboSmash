@@ -40,30 +40,6 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
     };
   }
 
-  static navigationOptions = ({ navigation }) => {
-    //if no param value then we just navigated to the page so we should show the back button
-    const shouldShowButton = navigation.getParam("shouldShowButton", true);
-    return {
-      headerStyle: {
-        borderBottomWidth: 0
-      },
-      headerLeft: shouldShowButton ? (
-        <HeaderBackButton
-          onPress={() => {
-            const resetAction = StackActions.reset({
-              index: 0,
-              actions: [
-                NavigationActions.navigate({ routeName: routes.Splash })
-              ]
-            });
-            navigation.dispatch(resetAction);
-          }}
-          disabled={true}
-        />
-      ) : null
-    };
-  };
-
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");

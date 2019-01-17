@@ -38,8 +38,12 @@ export function login(utln: string, code: string) {
     DevTesting.fakeLatency(() => {
       verify({ utln, code }).then(response => {
         const token = response.token;
+        // should be non-null, should be non-empty
         if (token) {
           AsyncStorage.multiSet([["token", token]]).then(errors => {
+            if (errors) {
+              DevTesting.log("Error in storing token:", errors);
+            }
             dispatch(complete(response));
           });
         } else {

@@ -76,11 +76,6 @@ class SettingsScreen extends React.Component<Props, State> {
     };
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => ({
-    header: null
-  });
-
   // for refs
   nameInput: Input;
   bioInput: Input;

@@ -73,15 +73,6 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     }
   }
 
-  // IMPORTANT: must be like this in order for back button toggling!
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Verification",
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  });
-
   _saveSettingsAndProfile = () => {
     this.props.createUser(
       this.props.token,
