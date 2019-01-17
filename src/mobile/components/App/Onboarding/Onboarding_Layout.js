@@ -15,8 +15,8 @@ type Props = {
   onButtonPress: () => void,
   title: string,
   buttonText?: string,
-  first?: boolean,
-  last?: boolean,
+  firstScreen?: boolean,
+  lastScreen?: boolean,
   progress?: number,
   loading?: boolean,
   buttonDisabled?: boolean
@@ -30,11 +30,22 @@ export class OnboardingLayout extends React.Component<Props, State> {
 
   // TODO: header / progress and stuff
   render() {
+    const {
+      firstScreen,
+      lastScreen,
+      loading,
+      onButtonPress,
+      title,
+      body,
+      buttonText,
+      progress,
+      buttonDisabled
+    } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
-          screen={this.props.first ? "onboarding-start" : "onboarding-main"}
-          loading={this.props.loading}
+          screen={firstScreen ? "onboarding-start" : "onboarding-main"}
+          loading={loading}
         />
         <KeyboardView>
           <Transition inline appear={"horizontal"}>
@@ -51,27 +62,27 @@ export class OnboardingLayout extends React.Component<Props, State> {
                   <View>
                     <Text
                       style={
-                        this.props.first || this.props.last
+                        firstScreen || lastScreen
                           ? textStyles.veganTitle
                           : Arthur_Styles.onboardingHeader
                       }
                     >
-                      {this.props.title}
+                      {title}
                     </Text>
                   </View>
                 </View>
                 <View style={{ flex: 2, paddingLeft: 22, paddingRight: 22 }}>
-                  {this.props.body}
+                  {body}
                 </View>
               </View>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }} />
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
-                    onPress={this.props.onButtonPress}
-                    title={this.props.buttonText || "continue"}
-                    loading={this.props.loading}
-                    disabled={this.props.buttonDisabled}
+                    onPress={onButtonPress}
+                    title={buttonText || "continue"}
+                    loading={loading}
+                    disabled={buttonDisabled}
                   />
                 </View>
                 <View style={{ flex: 1 }} />

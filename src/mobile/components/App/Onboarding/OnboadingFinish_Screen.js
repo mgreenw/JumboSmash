@@ -91,7 +91,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
         }
         onButtonPress={this._saveSettingsAndProfile}
         title="Project Gem"
-        last={true}
+        lastScreen={true}
         loading={this.props.createUserInProgress}
       />
     );

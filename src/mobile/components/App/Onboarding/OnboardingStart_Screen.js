@@ -87,7 +87,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         }
         onButtonPress={this._goToNextPage}
         title="Project Gem"
-        first={true}
+        firstScreen={true}
       />
     );
   }
