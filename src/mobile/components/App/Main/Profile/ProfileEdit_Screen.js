@@ -15,42 +15,98 @@ import type { ReduxState } from "mobile/reducers/index";
 import AddPhotos from "mobile/components/shared/AddPhotos";
 import { styles } from "mobile/styles/template";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import GEMHeader from "mobile/components/shared/Header";
+import type { UserProfile } from "mobile/reducers";
+import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
+import { saveProfile } from "mobile/actions/app/saveProfile";
+import NavigationService from "mobile/NavigationService";
 
-type Props = {
+type navigationProps = {
   navigation: any
 };
 
-type State = {
-  displayName: string,
-  bio: string
+type reduxProps = {
+  token: string,
+  profile: UserProfile,
+  saveProfileInProgress: boolean
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+type dispatchProps = {
+  saveProfile: (token: string, profile: UserProfile) => void
+};
+
+type Props = reduxProps & navigationProps & dispatchProps;
+
+type State = {
+  editedProfile: UserProfile,
+  errorMessageName: string
+};
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+  if (!reduxState.user) {
+    throw "Redux User is null";
+  }
+  if (!reduxState.token) {
+    throw "Token is null";
+  }
+  return {
+    token: reduxState.token,
+    profile: reduxState.user.profile,
+    saveProfileInProgress: reduxState.inProgress.saveProfile
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
+  return {
+    saveProfile: (token: string, profile: UserProfile) => {
+      dispatch(saveProfile(token, profile));
+    }
+  };
 }
 
-class SettingsScreen extends React.Component<Props, State> {
+class ProfileEditScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      displayName: "", // TODO: load from redux
-      bio: ""
+      editedProfile: props.profile,
+      errorMessageName: ""
     };
   }
-
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Edit Profile"
-  });
 
   // for refs
   nameInput: Input;
   bioInput: Input;
+
+  _onChangeBio = (bio: string) => {
+    this.setState((prevState, prevProps) => {
+      return {
+        editedProfile: {
+          ...prevState.editedProfile,
+          bio
+        }
+      };
+    });
+  };
+
+  _onChangeName = (displayName: string) => {
+    this.setState((prevState, prevProps) => {
+      return {
+        editedProfile: {
+          ...prevState.editedProfile,
+          displayName
+        }
+      };
+    });
+  };
+
+  // we intercept errors as notifications to user, not as a lock.
+  _onBack = () => {
+    this.props.saveProfile(this.props.token, this.state.editedProfile);
+    NavigationService.back();
+  };
 
   render() {
     const spacer = (
@@ -58,52 +114,54 @@ class SettingsScreen extends React.Component<Props, State> {
     );
 
     return (
-      <KeyboardAwareScrollView extraScrollHeight={30}>
-        {spacer}
-        <AddPhotos />
-        {spacer}
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").width,
-            backgroundColor: "#f0f3f5"
-          }}
-        >
-          <View style={{ padding: 20 }}>
-            <Input
-              placeholderTextColor={"#DDDDDD"}
-              inputStyle={{ color: "#222222" }}
-              labelStyle={styles.labelStyle}
-              label="Prefered Name"
-              placeholder="Tony Monaco"
-              onChangeText={name => {
-                this.setState({ displayName: name });
-              }}
-              ref={input => (this.nameInput = input)}
-              errorMessage={""}
-              autoCorrect={false}
-            />
+      <View style={{ flex: 1 }}>
+        <GEMHeader
+          title="profile-edit"
+          leftIconName={"back"}
+          onLeftIconPress={this._onBack}
+        />
+        <KeyboardAwareScrollView extraScrollHeight={30}>
+          {spacer}
+          <AddPhotos />
+          {spacer}
+          <View
+            style={{
+              width: Dimensions.get("window").width,
+              height: Dimensions.get("window").width,
+              backgroundColor: "#f0f3f5"
+            }}
+          >
+            <View style={{ padding: 20 }}>
+              <PrimaryInput
+                value={this.state.editedProfile.displayName}
+                label="Preferred Name"
+                onChange={this._onChangeName}
+                error={this.state.errorMessageName}
+                containerStyle={{ width: "100%" }}
+                assistive={""}
+                autoCapitalize={"words"}
+              />
+            </View>
+            <View style={{ flex: 1, padding: 20 }}>
+              <TextInput
+                style={{ flex: 1, borderWidth: 1 }}
+                placeholderTextColor={"#DDDDDD"}
+                inputStyle={{ color: "#222222" }}
+                labelStyle={styles.labelStyle}
+                label="About Me"
+                placeholder="Dan Katz Dan Katz"
+                onChangeText={this._onChangeBio}
+                ref={input => (this.bioInput = input)}
+                errorMessage={""}
+                autoCorrect={false}
+                multiline={true}
+                value={this.state.editedProfile.bio}
+              />
+            </View>
           </View>
-          <View style={{ flex: 1, padding: 20 }}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 1 }}
-              placeholderTextColor={"#DDDDDD"}
-              inputStyle={{ color: "#222222" }}
-              labelStyle={styles.labelStyle}
-              label="About Me"
-              placeholder="Dan Katz Dan Katz"
-              onChangeText={bio => {
-                this.setState({ bio: bio });
-              }}
-              ref={input => (this.bioInput = input)}
-              errorMessage={""}
-              autoCorrect={false}
-              multiline={true}
-            />
-          </View>
-        </View>
-        {spacer}
-      </KeyboardAwareScrollView>
+          {spacer}
+        </KeyboardAwareScrollView>
+      </View>
     );
   }
 }
@@ -111,4 +169,4 @@ class SettingsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SettingsScreen);
+)(ProfileEditScreen);

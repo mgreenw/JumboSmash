@@ -1,28 +1,32 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button, Input } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
+import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
+import { BirthdayInput } from "mobile/components/shared/DigitInput";
+import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import type {
   UserSettings,
   UserProfile,
   Pronouns
 } from "mobile/reducers/index";
-import { HeaderBackButton } from "react-navigation";
 import { routes } from "mobile/components/Navigation";
+import { OnboardingLayout } from "./Onboarding_Layout";
+import validateBirthday from "mobile/utils/ValidateBirthday";
+import validateName from "mobile/utils/ValidateName";
 
 type Props = {
   navigation: any
 };
 
 type State = {
+  unformatedBirthday: string,
   profile: UserProfile,
-  settings: UserSettings
+  settings: UserSettings,
+  errorMessageName: string,
+  errorMessageBirthday: string
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -38,8 +42,11 @@ class NameAgeScreen extends React.Component<Props, State> {
     super(props);
     const { navigation } = this.props;
     this.state = {
+      unformatedBirthday: "",
       profile: navigation.getParam("profile", null),
-      settings: navigation.getParam("settings", null)
+      settings: navigation.getParam("settings", null),
+      errorMessageName: "",
+      errorMessageBirthday: ""
     };
   }
 
@@ -70,60 +77,109 @@ class NameAgeScreen extends React.Component<Props, State> {
     });
   };
 
+  _onChangeName = name => {
+    this.setState((state, props) => {
+      return {
+        profile: {
+          ...this.state.profile,
+          displayName: name
+        },
+        errorMessageName: ""
+      };
+    });
+  };
+
+  _onChangeBirthday = MMDDYY => {
+    const formatedBirthday = this._formatBirthday(MMDDYY);
+    this.setState((state, props) => {
+      return {
+        unformatedBirthday: MMDDYY,
+        profile: {
+          ...this.state.profile,
+          birthday: formatedBirthday
+        },
+        errorMessageBirthday: ""
+      };
+    });
+  };
+
+  _validateInputs = () => {
+    // validate birthday to be the correct
+    const validBirthday = validateBirthday(this.state.profile.birthday);
+    const validName = validateName(this.state.profile.displayName);
+    if (!validBirthday) {
+      this.setState({
+        errorMessageBirthday: "Invalid Birthday"
+      });
+    }
+    if (!validName) {
+      this.setState({
+        errorMessageName: "Too Long of Name"
+      });
+    }
+
+    return validBirthday && validName;
+  };
+
+  _onContinue = () => {
+    if (this._validateInputs()) {
+      this._goToNextPage();
+    }
+  };
+
+  _formatBirthday = (MMDDYY: string) => {
+    if (MMDDYY.length < 6) {
+      return ""; // Don't bother formating incorrect birthdays.
+    }
+    const decade = MMDDYY[4];
+    const isTwoThousandsKid = decade === "0" || decade === "1";
+    const year = `${isTwoThousandsKid ? "20" : "19"}${MMDDYY[4]}${MMDDYY[5]}`;
+    const day = MMDDYY[2] + MMDDYY[3];
+    const month = MMDDYY[0] + MMDDYY[1];
+    return `${year}-${month}-${day}`;
+  };
+
   render() {
-    return (
-      <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={Arthur_Styles.onboardingHeader}>Name & Age</Text>
+    const body = (
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <PrimaryInput
+            value={this.state.profile.displayName}
+            label="Preferred Name"
+            onChange={this._onChangeName}
+            error={this.state.errorMessageName}
+            containerStyle={{ width: "100%" }}
+            assistive={""}
+            autoCapitalize={"words"}
+            maxLength={50}
+          />
         </View>
         <View style={{ flex: 1 }}>
-          <Input
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            label="Name"
-            value={this.state.profile.displayName}
-            placeholder="Tony Monaco"
-            onChangeText={name =>
-              this.setState((state, props) => {
-                return {
-                  profile: {
-                    ...this.state.profile,
-                    displayName: name
-                  }
-                };
-              })
-            }
-            autoCorrect={false}
+          <BirthdayInput
+            label={"Birthday"}
+            assistive={""}
+            error={this.state.errorMessageBirthday}
+            value={this.state.unformatedBirthday}
+            onChangeValue={this._onChangeBirthday}
+            placeholder={"MMDDYY"}
           />
-          <Input
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            label="Birthday"
-            value={this.state.profile.birthday}
-            placeholder="01/01/97"
-            onChangeText={birthday =>
-              this.setState((state, props) => {
-                return {
-                  profile: {
-                    ...this.state.profile,
-                    birthday: birthday
-                  }
-                };
-              })
-            }
-            autoCorrect={false}
-          />
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
-            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
-          </View>
-          <View style={{ flex: 1 }} />
         </View>
       </View>
+    );
+    return (
+      <OnboardingLayout
+        body={body}
+        onButtonPress={this._onContinue}
+        title="Name & Age"
+        main={true}
+        progress={0}
+        buttonDisabled={
+          this.state.profile.displayName == "" ||
+          this.state.profile.birthday == "" ||
+          this.state.errorMessageName != "" ||
+          this.state.errorMessageBirthday != ""
+        }
+      />
     );
   }
 }

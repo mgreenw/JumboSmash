@@ -1,15 +1,17 @@
 // @flow
 import React from "react";
 import { Text, View } from "react-native";
-import { Button } from "react-native-elements";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
+import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
-import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import type {
+  UserSettings,
+  UserProfile,
+  Pronouns
+} from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import { OnboardingLayout } from "./Onboarding_Layout";
 
 type Props = {
   navigation: any
@@ -51,28 +53,21 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const body = (
+      <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
+        We use push notifications to let you know when you have a new match or
+        message.
+      </Text>
+    );
+
     return (
-      <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Push Notifications</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={Arthur_Styles.onboardingHeader}>
-            We use push notifications to let you know when you have a new match
-            or message.
-          </Text>
-        </View>
-        <View
-          style={{ flex: 1, flexDirection: "column", alignItems: "center" }}
-        >
-          <PrimaryButton
-            onPress={this._enableNotifications}
-            title="Enable Push Notifications"
-          />
-          // TODO: make secondary button
-          <PrimaryButton onPress={this._goToNextPage} title="skip" />
-        </View>
-      </View>
+      <OnboardingLayout
+        body={body}
+        onButtonPress={this._goToNextPage}
+        title="Push Notifications"
+        main={true}
+        progress={0}
+      />
     );
   }
 }
