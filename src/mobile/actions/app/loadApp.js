@@ -5,24 +5,25 @@ import type { User, UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
 import getMySettings from "mobile/api/users/GetMySettings";
 
-// Gets auth (token, utln) from async store, saves to redux state.
-export const LOAD_APP__INITIATED = "LOAD_APP__INITIATED";
-export const LOAD_APP__COMPLETED = "LOAD_APP__COMPLETED";
-type LOAD_APP__INITIATED_TYPE = { type: string };
-type LOAD_APP__COMPLETE_TYPE = { type: string, user: ?User };
+export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
+export type LoadAppCompleted_Action = {
+  type: "LOAD_APP__COMPLETED",
+  user: ?User
+};
 
-function initiate(): LOAD_APP__INITIATED_TYPE {
+function initiate(): LoadAppInitiated_Action {
   return {
-    type: LOAD_APP__INITIATED
+    type: "LOAD_APP__INITIATED"
   };
 }
 
 function complete(
   profile: ?UserProfile,
   settings: ?UserSettings
-): LOAD_APP__COMPLETE_TYPE {
+): LoadAppCompleted_Action {
+  DevTesting.log("load app complete; profile && settigs: ", profile, settings);
   return {
-    type: LOAD_APP__COMPLETED,
+    type: "LOAD_APP__COMPLETED",
     user:
       profile && settings
         ? {
@@ -35,6 +36,7 @@ function complete(
 
 // TODO: catch errors, e.g. the common network timeout.
 export function loadApp(token: string) {
+  DevTesting.log("loading app with token: ", token);
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {

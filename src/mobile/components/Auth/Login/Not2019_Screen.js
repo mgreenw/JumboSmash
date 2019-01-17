@@ -36,13 +36,6 @@ class Not2019Screen extends React.Component<Props, State> {
     };
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  };
-
   _onHelp = () => {
     const { navigate } = this.props.navigation;
     navigate(routes.AuthHelp, {});

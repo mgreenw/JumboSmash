@@ -40,7 +40,10 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     loadApp: (token: string) => {
       dispatch(loadApp(token));
@@ -74,10 +77,6 @@ class AppLoadingScreen extends React.Component<Props, State> {
       }
     }
   }
-
-  static navigationOptions = ({ navigation }) => ({
-    header: null
-  });
 
   render() {
     return (

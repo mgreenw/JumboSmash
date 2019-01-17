@@ -3,7 +3,7 @@
 import React from "react";
 import { Linking, StyleSheet, TextInput, Text, View } from "react-native";
 import { StackNavigator } from "react-navigation";
-import { Button, Input } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import verify from "mobile/api/auth/verify";
@@ -11,10 +11,18 @@ import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { Colors } from "mobile/styles/colors";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
+import { CodeInput } from "mobile/components/shared/DigitInput";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
+import type { login_response } from "mobile/actions/auth/login";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
+
+const NUM_DIGITS = 6;
 
 type State = {
   code: string,
@@ -23,26 +31,33 @@ type State = {
   verifyUtlnInProgress: boolean
 };
 
-type Props = {
-  navigation: any,
-  loggedIn: boolean,
-  loginInProgress: boolean,
-
-  // dispatch function with token
-  login: (token: string) => void
+type reduxProps = {
+  login_inProgress: boolean,
+  login_response: ?login_response
+};
+type navigationProps = {
+  navigation: any
+};
+type dispatchProps = {
+  login: (utln: string, code: string) => void
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+type Props = reduxProps & navigationProps & dispatchProps;
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
-    loggedIn: reduxState.loggedIn,
-    loginInProgress: reduxState.inProgress.login
+    login_inProgress: reduxState.inProgress.login,
+    login_response: reduxState.response.login
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
-    login: (token: string) => {
-      dispatch(login(token));
+    login: (utln, code) => {
+      dispatch(login(utln, code));
     }
   };
 }
@@ -58,29 +73,16 @@ class SplashScreen extends React.Component<Props, State> {
     };
   }
 
-  // IMPORTANT: must be like this in order for back button toggling!
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Verification",
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  });
-
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.verifyUtlnInProgress != this.state.verifyUtlnInProgress ||
-      prevProps.loginInProgress != this.props.loginInProgress
-    ) {
-      const isLoading =
-        this.state.verifyUtlnInProgress || this.props.loginInProgress;
-      this.props.navigation.setParams({
-        headerLeft: isLoading ? null : ""
-      });
-
-      if (this.props.loggedIn) {
+    if (prevProps.login_inProgress != this.props.login_inProgress) {
+      if (!this.props.login_inProgress && this.props.login_response) {
         const { navigate } = this.props.navigation;
-        navigate(routes.AppSwitch, {});
+        if (this.props.login_response.statusCode === "SUCCESS") {
+          navigate(routes.AppSwitch, {});
+        } else {
+          // TODO: more verbose errors
+          this._codeInputError(this.props.login_response.statusCode);
+        }
       }
     }
   }
@@ -94,7 +96,6 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _codeInputError = (errorMessage: string) => {
-    this.codeInput.shake();
     this.setState({
       validCode: false,
       errorMessageCode: errorMessage
@@ -130,117 +131,92 @@ class SplashScreen extends React.Component<Props, State> {
       return;
     }
     const { navigation } = this.props;
-    const utln = navigation.getParam("utln", "");
-    const email = navigation.getParam("email", "");
-    const stopSubmitting = (callBack: () => void) => {
-      this.setState(
-        {
-          verifyUtlnInProgress: false
-        },
-        callBack
-      );
-    };
+    const utln = navigation.getParam("utln", null);
+    const email = navigation.getParam("email", null);
+    if (!utln || !email) {
+      throw ("Error in Verify Screen: utln or email null: ", utln, email);
+    }
     this.setState(
       {
-        verifyUtlnInProgress: true,
         validCode: true,
         errorMessageCode: ""
       },
       () => {
-        verify(
-          {
-            utln: utln,
-            code: this.state.code
-          },
-          (response, request) => {
-            stopSubmitting(() => {
-              this.props.login(response.token);
-            });
-          },
-          (response, request) => {
-            stopSubmitting(() =>
-              this._codeInputError("Incorrect verification code")
-            );
-          },
-          (response, request) => {
-            stopSubmitting(() => this._onExpiredCode(utln, email));
-          },
-          (response, request) => {
-            stopSubmitting(() =>
-              this._codeInputError("No email sent for UTLN: " + request.utln)
-            );
-          },
-          (error, request) => {
-            stopSubmitting(() => this._codeInputError("Could not verify"));
-          }
-        );
+        this.props.login(utln, this.state.code);
       }
     );
   };
 
-  codeInput: Input;
+  _onChangeText = (text: string) => {
+    this.setState({ code: text, validCode: true, errorMessageCode: "" });
+  };
 
   render() {
     const { navigation } = this.props;
     const email = navigation.getParam("email", "");
     const alreadySent = navigation.getParam("alreadySent", false);
-    const isLoading =
-      this.state.verifyUtlnInProgress || this.props.loginInProgress;
+    const isLoading = this.props.login_inProgress;
 
     const message = alreadySent
       ? `Looks like you've already been sent an email to ${email}.`
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <KeyboardView waves={1}>
-        <View style={{ flex: 1 }}>
-          <Text style={textStyles.body1Style}>{message}</Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Input
-            containerStyle={
-              this.state.validCode
-                ? styles.inputWrapperStyle
-                : styles.inputWrapperStyleWithError
-            }
-            keyboardType="numeric"
-            placeholderTextColor={"#DDDDDD"}
-            inputStyle={{ color: "#222222" }}
-            labelStyle={styles.labelStyle}
-            inputContainerStyle={styles.inputContainerStyle}
-            label="Verification Code"
-            placeholder=""
-            onChangeText={text => this.setState({ code: text })}
-            ref={input => (this.codeInput = input)}
-            errorMessage={
-              this.state.validCode ? "" : this.state.errorMessageCode
-            }
-            autoCorrect={false}
-          />
-          {this.state.validCode && (
-            <View style={styles.helpTextContainer}>
-              <Text style={styles.helpText}>Ex: 123456</Text>
+      <View style={Arthur_Styles.container}>
+        <GEMHeader
+          screen={"onboarding-main"}
+          title={"Verification"}
+          loading={isLoading}
+        />
+        <KeyboardView waves={1}>
+          <Transition inline appear={"horizontal"}>
+            <View style={{ flex: 1 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={textStyles.body1Style}>{message}</Text>
+              </View>
+              <View style={{ flex: 1, alignSelf: "stretch" }}>
+                <CodeInput
+                  value={this.state.code}
+                  onChangeValue={this._onChangeText}
+                  maxLength={NUM_DIGITS}
+                  primaryColor={Colors.Black}
+                  errorColor={Colors.Grapefruit}
+                  error={this.state.errorMessageCode}
+                  assistive={"Make sure to check your spam folder!"}
+                />
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row"
+                }}
+              >
+                <View style={{ flex: 1 }} />
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "space-around"
+                  }}
+                >
+                  <PrimaryButton
+                    onPress={this._onSubmit}
+                    title="submit"
+                    disabled={
+                      isLoading || this.state.code.length !== NUM_DIGITS
+                    }
+                    loading={isLoading}
+                  />
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Touble?"
+                  />
+                </View>
+                <View style={{ flex: 1 }} />
+              </View>
             </View>
-          )}
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
-            <PrimaryButton
-              onPress={this._onSubmit}
-              title="submit"
-              disabled={isLoading || this.state.code == ""}
-              loading={isLoading}
-            />
-            <Button
-              buttonStyle={styles.button}
-              title="help"
-              onPress={this._onHelp}
-            />
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
-      </KeyboardView>
+          </Transition>
+        </KeyboardView>
+      </View>
     );
   }
 }

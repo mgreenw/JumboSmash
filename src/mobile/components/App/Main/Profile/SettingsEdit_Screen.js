@@ -14,7 +14,6 @@ import { routes } from "mobile/components/Navigation";
 type Props = {
   navigation: any,
   logoutInProgress: boolean,
-  loggedIn: boolean,
   logout: () => void
 };
 
@@ -25,8 +24,7 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    logoutInProgress: reduxState.inProgress.logout,
-    loggedIn: reduxState.loggedIn
+    logoutInProgress: reduxState.inProgress.logout
   };
 }
 
@@ -58,25 +56,20 @@ class SettingsScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.logoutInProgress != this.props.logoutInProgress) {
+    if (
+      !this.props.logoutInProgress &&
+      prevProps.logoutInProgress != this.props.logoutInProgress
+    ) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({
         headerLeft: this.props.logoutInProgress ? null : ""
       });
 
       // For recieving the logout completion
-      if (!this.props.loggedIn) {
-        const { navigate } = this.props.navigation;
-        navigate(routes.Splash, {});
-      }
+      const { navigate } = this.props.navigation;
+      navigate(routes.Splash, {});
     }
   }
-
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Settings"
-  });
 
   _onUsePronounChange = (pronouns: Pronouns) => {
     this.setState({

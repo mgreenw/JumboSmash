@@ -1,5 +1,5 @@
 // @flow
-import { timeout } from "../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { MY_SETTINGS__ROUTE } from "../routes";
 import type { UserSettings } from "mobile/reducers";
 
@@ -9,19 +9,7 @@ export default function updateMySettings(
   token: string,
   request: UserSettings
 ): Promise<void> {
-  return timeout(
-    30000,
-    fetch(MY_SETTINGS__ROUTE, {
-      method: "PATCH",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: token
-      },
-      body: JSON.stringify(request)
-    })
-  )
-    .then(response => response.json())
+  return apiRequest("PATCH", MY_SETTINGS__ROUTE, token, request)
     .then(response => {
       switch (response.status) {
         case UPDATE_MY_SETTINGS__SUCCESS:

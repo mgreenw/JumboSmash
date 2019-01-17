@@ -1,20 +1,37 @@
 // @flow
 
 // Auth:
-import { LOGIN_INITIATED, LOGIN_COMPLETED } from "mobile/actions/auth/login";
-import { LOGOUT_INITIATED, LOGOUT_COMPLETED } from "mobile/actions/auth/logout";
-import {
-  LOAD_AUTH__INITIATED,
-  LOAD_AUTH__COMPLETED
+import type {
+  sendVerificationEmail_response,
+  SendVerificationEmailCompleted_Action,
+  SendVerificationEmailInitiated_Action
+} from "mobile/actions/auth/sendVerificationEmail";
+import type {
+  login_response,
+  LoginInitiated_Action,
+  LoginCompleted_Action
+} from "mobile/actions/auth/login";
+import type {
+  LogoutInitiated_Action,
+  LogoutCompleted_Action
+} from "mobile/actions/auth/logout";
+import type {
+  LoadAuthCompleted_Action,
+  LoadAuthInitiated_Action
 } from "mobile/actions/auth/loadAuth";
-import {
-  LOAD_APP__INITIATED,
-  LOAD_APP__COMPLETED
+import type {
+  LoadAppCompleted_Action,
+  LoadAppInitiated_Action
 } from "mobile/actions/app/loadApp";
-import {
-  CREATE_PROFILE_AND_SETTINGS__INITIATED,
-  CREATE_PROFILE_AND_SETTINGS__COMPLETED
+import type {
+  CreateProfileAndSettingsInitiated_Action,
+  CreateProfileAndSettingsCompleted_Action
 } from "mobile/actions/app/createUser";
+import type {
+  SaveProfileInitiated_Action,
+  SaveProfileCompleted_Action
+} from "mobile/actions/app/saveProfile";
+import DevTesting from "mobile/utils/DevTesting";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -49,30 +66,47 @@ export type User = {
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
+  // app data:
+  user: ?User,
   token: ?string,
 
-  ///////////////////
-  // app data:
-  ///////////////////
-
-  user: ?User,
-
-  ///////////////////
   // action states:
-  ///////////////////
-
-  loggedIn: boolean,
   authLoaded: boolean,
   appLoaded: boolean,
 
   inProgress: {
     loadAuth: boolean,
+    sendVerificationEmail: boolean,
     logout: boolean,
     login: boolean,
     loadApp: boolean,
-    createUser: boolean
+    createUser: boolean,
+    saveProfile: boolean
+  },
+
+  // Unfortunately, we really need case analysis for a few calls that we
+  // trigger different component states for different errors.
+  response: {
+    sendVerificationEmail: ?sendVerificationEmail_response,
+    login: ?login_response
   }
 };
+
+type Action =
+  | LoginInitiated_Action
+  | LoginCompleted_Action
+  | LogoutInitiated_Action
+  | LogoutCompleted_Action
+  | LoadAuthInitiated_Action
+  | LoadAuthCompleted_Action
+  | LoadAppInitiated_Action
+  | LoadAppCompleted_Action
+  | CreateProfileAndSettingsInitiated_Action
+  | CreateProfileAndSettingsCompleted_Action
+  | SendVerificationEmailInitiated_Action
+  | SendVerificationEmailCompleted_Action
+  | SaveProfileInitiated_Action
+  | SaveProfileCompleted_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -82,24 +116,27 @@ const defaultState: ReduxState = {
   appLoaded: false,
   inProgress: {
     loadAuth: false,
+    sendVerificationEmail: false,
     logout: false,
     login: false,
     loadApp: false,
-    createUser: false
+    createUser: false,
+    saveProfile: false
+  },
+  response: {
+    sendVerificationEmail: null,
+    login: null
   }
 };
 
 export default function rootReducer(
   state: ReduxState = defaultState,
-  action: any
+  action: Action
 ): ReduxState {
-  // $FlowFixMe (__DEV__ will break flow)
-  if (__DEV__) {
-    console.log(action.type);
-  }
+  DevTesting.log(action.type);
   switch (action.type) {
     // LOGIN:
-    case LOGIN_INITIATED: {
+    case "LOGIN_INITIATED": {
       return {
         ...state,
         inProgress: {
@@ -109,20 +146,23 @@ export default function rootReducer(
       };
     }
 
-    case LOGIN_COMPLETED: {
+    case "LOGIN_COMPLETED": {
       return {
         ...state,
-        loggedIn: true,
-        token: action.token,
+        token: action.response ? action.response.token : null,
         inProgress: {
           ...state.inProgress,
           login: false
+        },
+        response: {
+          ...state.response,
+          login: action.response
         }
       };
     }
 
     // LOGOUT:
-    case LOGOUT_INITIATED: {
+    case "LOGOUT_INITIATED": {
       return {
         ...state,
         inProgress: {
@@ -132,7 +172,7 @@ export default function rootReducer(
       };
     }
 
-    case LOGOUT_COMPLETED: {
+    case "LOGOUT_COMPLETED": {
       return {
         ...state,
         token: null,
@@ -145,7 +185,7 @@ export default function rootReducer(
     }
 
     // LOAD AUTH:
-    case LOAD_AUTH__INITIATED: {
+    case "LOAD_AUTH__INITIATED": {
       return {
         ...state,
         inProgress: {
@@ -155,7 +195,7 @@ export default function rootReducer(
       };
     }
 
-    case LOAD_AUTH__COMPLETED: {
+    case "LOAD_AUTH__COMPLETED": {
       return {
         ...state,
         token: action.token,
@@ -168,10 +208,11 @@ export default function rootReducer(
     }
 
     // LOAD APP:
-    case LOAD_APP__INITIATED: {
+    case "LOAD_APP__INITIATED": {
       return {
         ...state,
         user: null,
+        appLoaded: false,
         inProgress: {
           ...state.inProgress,
           loadApp: true
@@ -179,7 +220,7 @@ export default function rootReducer(
       };
     }
 
-    case LOAD_APP__COMPLETED: {
+    case "LOAD_APP__COMPLETED": {
       return {
         ...state,
         appLoaded: true,
@@ -191,7 +232,7 @@ export default function rootReducer(
       };
     }
 
-    case CREATE_PROFILE_AND_SETTINGS__INITIATED: {
+    case "CREATE_PROFILE_AND_SETTINGS__INITIATED": {
       return {
         ...state,
         inProgress: {
@@ -201,7 +242,7 @@ export default function rootReducer(
       };
     }
 
-    case CREATE_PROFILE_AND_SETTINGS__COMPLETED: {
+    case "CREATE_PROFILE_AND_SETTINGS__COMPLETED": {
       return {
         ...state,
         inProgress: {
@@ -211,7 +252,56 @@ export default function rootReducer(
       };
     }
 
+    case "SEND_VERIFICATION_EMAIL_INITIATED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendVerificationEmail: true
+        }
+      };
+    }
+
+    case "SEND_VERIFICATION_EMAIL_COMPLETED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendVerificationEmail: false
+        },
+        response: {
+          ...state.response,
+          sendVerificationEmail: action.response
+        }
+      };
+    }
+
+    case "SAVE_PROFILE__INITIATED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: true
+        }
+      };
+    }
+
+    case "SAVE_PROFILE__COMPLETED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false
+        },
+        user: {
+          ...state.user,
+          profile: action.profile
+        }
+      };
+    }
+
     default: {
+      (action: empty); // ensures we have handled all cases
       return state;
     }
   }

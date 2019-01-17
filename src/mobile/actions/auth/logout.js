@@ -3,18 +3,22 @@ import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
 import DevTesting from "../../utils/DevTesting";
 
-export const LOGOUT_INITIATED = "LOGOUT_INITIATED";
-export const LOGOUT_COMPLETED = "LOGOUT_COMPLETED";
+export type LogoutInitiated_Action = {
+  type: "LOGOUT_INITIATED"
+};
+export type LogoutCompleted_Action = {
+  type: "LOGOUT_COMPLETED"
+};
 
-function initiate() {
+function initiate(): LogoutInitiated_Action {
   return {
-    type: LOGOUT_INITIATED
+    type: "LOGOUT_INITIATED"
   };
 }
 
-function complete() {
+function complete(): LogoutCompleted_Action {
   return {
-    type: LOGOUT_COMPLETED
+    type: "LOGOUT_COMPLETED"
   };
 }
 
