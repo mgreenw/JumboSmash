@@ -12,7 +12,7 @@ import type {
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
+import { GenderSelector } from "mobile/components/shared/GenderSelector";
 
 type Props = {
   navigation: any
@@ -89,9 +89,10 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
         <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
           I'm looking for:
         </Text>
-        <PronounSelector
+        <GenderSelector
           defaultPronouns={this.state.settings.wantPronouns}
           onChange={this._onMyPronounChange}
+          plural={true}
         />
       </View>
     );

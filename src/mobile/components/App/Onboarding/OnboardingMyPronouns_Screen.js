@@ -12,7 +12,7 @@ import type {
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
+import { GenderSelector } from "mobile/components/shared/GenderSelector";
 
 type Props = {
   navigation: any
@@ -83,16 +83,15 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     const body = (
       <View style={{ flex: 1 }}>
         <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
-          {
-            "We use pronouns to help determine who to show in your stack in Project GEM. Your pronouns will not be shown on your profile."
-          }
+          {"[statement on gender identity]"}
         </Text>
         <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
-          {"I use:"}
+          {"I identify as:"}
         </Text>
-        <PronounSelector
+        <GenderSelector
           defaultPronouns={this.state.settings.usePronouns}
           onChange={this._onMyPronounChange}
+          plural={false}
         />
       </View>
     );

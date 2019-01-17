@@ -15,4 +15,5 @@ export type IconName =
   | "cards"
   | "back"
   | "life-ring"
-  | "gear";
+  | "gear"
+  | "check";
