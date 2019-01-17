@@ -13,10 +13,10 @@ const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
 /**
- * @api {get} /api/photos/:photoId
+ * @api {patch} /api/photos/reorder
  *
  */
-const getPhoto = async (req: $Request, res: $Response) => {
+const reorderPhotos = async (req: $Request, res: $Response) => {
   // On error, return a server error.
   const { photoId } = req.params;
   try {
@@ -48,4 +48,4 @@ const getPhoto = async (req: $Request, res: $Response) => {
   }
 };
 
-module.exports = getPhoto;
+module.exports = reorderPhotos;

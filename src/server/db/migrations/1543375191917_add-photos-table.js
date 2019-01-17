@@ -53,6 +53,7 @@ exports.up = (pgm) => {
   `);
 };
 exports.down = (pgm) => {
+  pgm.dropTable('unconfirmed_photos');
   pgm.dropConstraint('profiles', 'profiles_photo_exists');
   pgm.dropColumns('profiles', ['splash_photo_id']);
   pgm.addColumns('profiles', {
