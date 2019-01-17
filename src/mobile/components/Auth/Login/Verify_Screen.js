@@ -164,8 +164,8 @@ class SplashScreen extends React.Component<Props, State> {
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
-          screen={"onboarding-main"}
           title={"Verification"}
+          leftIconName={"back"}
           loading={isLoading}
         />
         <KeyboardView waves={1}>
