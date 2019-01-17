@@ -12,7 +12,6 @@ import type {
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
 import AddPhotos from "mobile/components/shared/AddPhotos";
 
 type Props = {
