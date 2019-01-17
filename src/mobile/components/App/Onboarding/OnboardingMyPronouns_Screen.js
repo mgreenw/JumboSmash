@@ -83,11 +83,12 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     const body = (
       <View style={{ flex: 1 }}>
         <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
-          We use pronouns to help determine who to show in your stack in Project
-          GEM. Your pronouns will not be shown on your profile.
+          {
+            "We use pronouns to help determine who to show in your stack in Project GEM. Your pronouns will not be shown on your profile."
+          }
         </Text>
         <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
-          I use:
+          {"I use:"}
         </Text>
         <PronounSelector
           defaultPronouns={this.state.settings.usePronouns}
