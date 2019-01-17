@@ -132,13 +132,11 @@ class NameAgeScreen extends React.Component<Props, State> {
       return ""; // Don't bother formating incorrect birthdays.
     }
     const decade = MMDDYY[4];
-    const isTwentiethCentury = decade === "0" || decade === "1";
-    const mileniaAndCentury = isTwentiethCentury ? "20" : "19";
-    const year = mileniaAndCentury + MMDDYY[4] + MMDDYY[5];
+    const isTwoThousandsKid = decade === "0" || decade === "1";
+    const year = `${isTwoThousandsKid ? "20" : "19"}${MMDDYY[4]}${MMDDYY[5]}`;
     const day = MMDDYY[2] + MMDDYY[3];
     const month = MMDDYY[0] + MMDDYY[1];
-    const formated = year + "-" + month + "-" + day;
-    return formated;
+    return `${year}-${month}-${day}`;
   };
 
   render() {
