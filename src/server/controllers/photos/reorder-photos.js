@@ -4,51 +4,83 @@ import type { $Request, $Response } from 'express';
 
 const config = require('config');
 const aws = require('aws-sdk');
+const _ = require('lodash');
 
 const db = require('../../db');
 const utils = require('../utils');
 const codes = require('../status-codes');
 const serverUtils = require('../../utils');
+const apiUtils = require('../utils');
 
 const NODE_ENV = serverUtils.getNodeEnv();
 
 const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
+/* eslint-disable */
+const schema = {
+  "type": "array",
+  "minItems": 2,
+  "maxItems": 4,
+  "items": {
+    "type": "number",
+    "uniqueItems": true,
+    "multipleOf": 1
+  }
+};
+/* eslint-enable */
+
 /**
  * @api {patch} /api/photos/reorder
  *
  */
 const reorderPhotos = async (req: $Request, res: $Response) => {
-  // On error, return a server error.
-  const { photoId } = req.params;
+
+  const newOrder = req.body;
+  // No worry about SQL Injection here: newOrder is verified to be an
+  // array of integers/numbers.
   try {
-    const photoRes = await db.query(`
-      SELECT uuid
-      FROM photos
-      WHERE id = $1
-    `, [photoId]);
-    if (photoRes.rowCount === 0) {
+    const result = await db.query(`
+      SELECT COUNT(*) AS "mismatchCount"
+      FROM UNNEST(ARRAY[${newOrder.join(',')}]) photo_id
+      FULL JOIN (SELECT id FROM photos WHERE user_id = $1) photos on photos.id=photo_id
+      WHERE
+           photo_id IS NULL
+        OR photos.id IS NULL
+    `, [req.user.id]);
+
+    const [{ mismatchCount }] = result.rows;
+
+    // If there are photo id mismatches, error
+    if (mismatchCount > 0) {
       return res.status(400).json({
-        status: 'GET_PHOTO__NOT_FOUND',
+        status: 'REORDER_PHOTOS__MISMATCHED_IDS',
       });
     }
 
-    const [{ uuid }] = photoRes.rows;
-    const params = {
-      Bucket: bucket,
-      Key: `photos/${NODE_ENV}/${uuid}`,
-    };
+    // Get an updated list of photos for the requesting user
+    const updatedPhotos = _.map(newOrder, (photoId, index) => {
+      return `(${photoId}, ${index + 1})`;
+    });
 
-    s3.getSignedUrl('getObject', params, (err, url) => {
-      if (err) {
-        return utils.error.server(res, 'Failed to get photo url.');
-      }
-      return res.redirect(url);
+    // 2. Update the photos for the requesting user
+    await db.query(`
+      UPDATE photos
+      SET index = updated_photos.index
+      FROM
+        (VALUES
+          ${updatedPhotos.join(',')}
+        ) AS updated_photos (id, index)
+      WHERE photos.id = updated_photos.id
+    `);
+
+    return res.status(200).json({
+      status: 'REORDER_PHOTOS__SUCCESS',
     });
   } catch (error) {
-    return utils.error.server(res, 'Query failed');
+    console.log(error);
+    utils.error.server(res, 'Failed to get user photos');
   }
 };
 
-module.exports = reorderPhotos;
+module.exports = [apiUtils.validate(schema), reorderPhotos];

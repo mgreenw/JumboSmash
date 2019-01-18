@@ -22,9 +22,11 @@ exports.up = (pgm) => {
   pgm.createIndex('photos', ['id', 'user_id'], {
     unique: true,
   });
-  pgm.createIndex('photos', ['user_id', 'index'], {
-    unique: true,
-  });
+  pgm.addConstraint(
+    'photos',
+    'photos_user_id_index_unique_constraint',
+    'unique (user_id, index) deferrable initially immediate',
+  );
   pgm.createTable('unconfirmed_photos', {
     id: 'id',
     user_id: {
@@ -72,9 +74,7 @@ exports.down = (pgm) => {
       type: 'text',
     },
   });
-  pgm.dropIndex('photos', ['user_id', 'index'], {
-    name: 'photos_user_id_index_unique_index',
-  });
+  pgm.dropConstraint('photos', 'photos_user_id_index_unique_constraint');
   pgm.dropIndex('photos', ['id', 'user_id'], {
     name: 'photos_id_user_id_unique_index',
   });
