@@ -13,13 +13,14 @@ import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import AddPhotos from "mobile/components/shared/AddPhotos";
-import { styles } from "mobile/styles/template";
+import { Colors } from "mobile/styles/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import GEMHeader from "mobile/components/shared/Header";
 import type { UserProfile } from "mobile/reducers";
 import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
 import { saveProfile } from "mobile/actions/app/saveProfile";
 import NavigationService from "mobile/NavigationService";
+import BioInput from "mobile/components/shared/BioInput";
 
 type navigationProps = {
   navigation: any
@@ -109,57 +110,57 @@ class ProfileEditScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const spacer = (
-      <View style={{ width: "100%", height: 25, backgroundColor: "#38c7cc" }} />
-    );
-
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="profile-edit"
+          title="Edit Profile"
           leftIconName={"back"}
           onLeftIconPress={this._onBack}
         />
-        <KeyboardAwareScrollView extraScrollHeight={30}>
-          {spacer}
-          <AddPhotos />
-          {spacer}
+        <KeyboardAwareScrollView
+          extraScrollHeight={30}
+          style={{
+            backgroundColor: Colors.AquaMarine
+          }}
+        >
           <View
             style={{
-              width: Dimensions.get("window").width,
-              height: Dimensions.get("window").width,
-              backgroundColor: "#f0f3f5"
+              backgroundColor: Colors.White,
+              paddingLeft: 32,
+              paddingRight: 32,
+              paddingBottom: 20,
+              paddingTop: 20,
+              marginBottom: 20,
+              marginTop: 20
             }}
           >
-            <View style={{ padding: 20 }}>
-              <PrimaryInput
-                value={this.state.editedProfile.displayName}
-                label="Preferred Name"
-                onChange={this._onChangeName}
-                error={this.state.errorMessageName}
-                containerStyle={{ width: "100%" }}
-                assistive={""}
-                autoCapitalize={"words"}
-              />
-            </View>
-            <View style={{ flex: 1, padding: 20 }}>
-              <TextInput
-                style={{ flex: 1, borderWidth: 1 }}
-                placeholderTextColor={"#DDDDDD"}
-                inputStyle={{ color: "#222222" }}
-                labelStyle={styles.labelStyle}
-                label="About Me"
-                placeholder="Dan Katz Dan Katz"
-                onChangeText={this._onChangeBio}
-                ref={input => (this.bioInput = input)}
-                errorMessage={""}
-                autoCorrect={false}
-                multiline={true}
-                value={this.state.editedProfile.bio}
-              />
-            </View>
+            <AddPhotos />
           </View>
-          {spacer}
+          <View
+            style={{
+              backgroundColor: Colors.White,
+              paddingLeft: 32,
+              paddingRight: 32,
+              marginBottom: 20,
+              paddingTop: 13,
+              paddingBottom: 13
+            }}
+          >
+            <PrimaryInput
+              value={this.state.editedProfile.displayName}
+              label="Preferred Name"
+              onChange={this._onChangeName}
+              error={this.state.errorMessageName}
+              containerStyle={{ width: "100%" }}
+              assistive={""}
+              autoCapitalize={"words"}
+            />
+            <BioInput
+              value={this.state.editedProfile.bio}
+              onChangeText={this._onChangeBio}
+              label={"About Me"}
+            />
+          </View>
         </KeyboardAwareScrollView>
       </View>
     );

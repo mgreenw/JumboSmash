@@ -32,10 +32,7 @@ export class PrimaryInput extends React.Component<Props, State> {
       <View style={this.props.containerStyle}>
         <Hoshi
           {...this.props}
-          labelStyle={{
-            fontFamily: "SourceSansPro",
-            fontSize: 14
-          }}
+          labelStyle={textStyles.body2Style}
           inputStyle={textStyles.headline6Style}
           primaryColor={primaryColor}
           selectedColor={Colors.AquaMarine}
