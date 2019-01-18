@@ -8,6 +8,9 @@ const aws = require('aws-sdk');
 const db = require('../../db');
 const utils = require('../utils');
 const codes = require('../status-codes');
+const serverUtils = require('../../utils');
+
+const NODE_ENV = serverUtils.getNodeEnv();
 
 const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
@@ -34,7 +37,7 @@ const reorderPhotos = async (req: $Request, res: $Response) => {
     const [{ uuid }] = photoRes.rows;
     const params = {
       Bucket: bucket,
-      Key: `photos/${uuid}`,
+      Key: `photos/${NODE_ENV}/${uuid}`,
     };
 
     s3.getSignedUrl('getObject', params, (err, url) => {

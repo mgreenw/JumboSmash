@@ -9,7 +9,7 @@ exports.up = (pgm) => {
       onDelete: 'cascade',
     },
     index: {
-      type: 'int',
+      type: 'smallint',
       notNull: true,
       check: 'index >= 1 and index <= 4',
     },

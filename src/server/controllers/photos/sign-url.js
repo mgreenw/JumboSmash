@@ -9,6 +9,9 @@ const uuidv4 = require('uuid/v4');
 const db = require('../../db');
 const utils = require('../utils');
 const codes = require('../status-codes');
+const serverUtils = require('../../utils');
+
+const NODE_ENV = serverUtils.getNodeEnv();
 
 const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
@@ -35,7 +38,7 @@ const signURL = async (req: $Request, res: $Response) => {
 
   const s3Params = {
     Bucket: bucket,
-    Key: `photos/${uuid}`,
+    Key: `photos/${NODE_ENV}/${uuid}`,
     Expires: 600,
     ACL: 'authenticated-read',
     Metadata: {
