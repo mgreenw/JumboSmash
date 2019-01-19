@@ -56,7 +56,6 @@ const signURL = async (req: $Request, res: $Response) => {
       url: data,
     });
   });
-
 };
 
 module.exports = signURL;

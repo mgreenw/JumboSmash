@@ -2,20 +2,12 @@
 
 import type { $Request, $Response } from 'express';
 
-const config = require('config');
-const aws = require('aws-sdk');
 const _ = require('lodash');
 
 const db = require('../../db');
 const utils = require('../utils');
 const codes = require('../status-codes');
-const serverUtils = require('../../utils');
 const apiUtils = require('../utils');
-
-const NODE_ENV = serverUtils.getNodeEnv();
-
-const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
-const bucket = config.get('s3_bucket');
 
 /* eslint-disable */
 const schema = {
@@ -35,7 +27,6 @@ const schema = {
  *
  */
 const reorderPhotos = async (req: $Request, res: $Response) => {
-
   const newOrder = req.body;
   // No worry about SQL Injection here: newOrder is verified to be an
   // array of integers/numbers.
@@ -54,7 +45,7 @@ const reorderPhotos = async (req: $Request, res: $Response) => {
     // If there are photo id mismatches, error
     if (mismatchCount > 0) {
       return res.status(400).json({
-        status: 'REORDER_PHOTOS__MISMATCHED_IDS',
+        status: codes.REORDER_PHOTOS__MISMATCHED_IDS,
       });
     }
 
@@ -75,11 +66,10 @@ const reorderPhotos = async (req: $Request, res: $Response) => {
     `);
 
     return res.status(200).json({
-      status: 'REORDER_PHOTOS__SUCCESS',
+      status: codes.REORDER_PHOTOS__SUCCESS,
     });
   } catch (error) {
-    console.log(error);
-    utils.error.server(res, 'Failed to get user photos');
+    return utils.error.server(res, 'Failed to get user photos');
   }
 };
 

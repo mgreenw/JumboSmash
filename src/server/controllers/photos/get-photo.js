@@ -15,6 +15,15 @@ const NODE_ENV = serverUtils.getNodeEnv();
 const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
+const getSignedUrl = async (params) => {
+  return new Promise((resolve, reject) => {
+    s3.getSignedUrl('getObject', params, (err, url) => {
+      if (err) return reject(err);
+      return resolve(url);
+    });
+  });
+};
+
 /**
  * @api {get} /api/photos/:photoId
  *
@@ -30,7 +39,7 @@ const getPhoto = async (req: $Request, res: $Response) => {
     `, [photoId]);
     if (photoRes.rowCount === 0) {
       return res.status(400).json({
-        status: 'GET_PHOTO__NOT_FOUND',
+        status: codes.GET_PHOTO__NOT_FOUND,
       });
     }
 
@@ -40,12 +49,8 @@ const getPhoto = async (req: $Request, res: $Response) => {
       Key: `photos/${NODE_ENV}/${uuid}`,
     };
 
-    s3.getSignedUrl('getObject', params, (err, url) => {
-      if (err) {
-        return utils.error.server(res, 'Failed to get photo url.');
-      }
-      return res.redirect(url);
-    });
+    const url = await getSignedUrl(params);
+    return res.redirect(url);
   } catch (error) {
     return utils.error.server(res, 'Query failed');
   }

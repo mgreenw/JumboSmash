@@ -31,7 +31,7 @@ const confirmUpload = async (req: $Request, res: $Response) => {
 
     if (unconfirmedPhotoRes.rowCount === 0) {
       return res.status(400).json({
-        status: 'CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO',
+        status: codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO,
       });
     }
 
@@ -49,7 +49,7 @@ const confirmUpload = async (req: $Request, res: $Response) => {
       await s3.headObject(s3Params).promise();
     } catch (error) {
       return res.status(400).json({
-        status: 'CONFIRM_UPLOAD__NO_UPLOAD_FOUND',
+        status: codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND,
       });
     }
 
@@ -73,7 +73,7 @@ const confirmUpload = async (req: $Request, res: $Response) => {
       const [{ photoCount }] = photosRes.rows;
       if (photoCount > 3) {
         return res.status(400).json({
-          status: 'CONFIRM_UPLOAD__NO_AVAILABLE_SLOT',
+          status: codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT,
         });
       }
 
@@ -93,15 +93,12 @@ const confirmUpload = async (req: $Request, res: $Response) => {
 
       await client.query('COMMIT');
       return res.status(200).json({
-        status: 'CONFIRM_UPLOAD__SUCCESS',
+        status: codes.CONFIRM_UPLOAD__SUCCESS,
       });
     } catch (error) {
       await client.query('ROLLBACK');
-      console.log(error);
       return utils.error.server(res, 'Failed to confirm upload - db query.');
     }
-
-
   } catch (error) {
     return utils.error.server(res, 'Failed to confirm upload.');
   }
