@@ -112,6 +112,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { height, width } = Dimensions.get("window");
+    // A bit of a hack, but we want pictures to look nice.
+    // We have 32 padding around this screen,
+    // and  we want 20 padding between each
+    const containerWidth = width - 64;
+    const imageWidth = (containerWidth - 15) / 2;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -138,6 +144,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
           >
             <AddPhotos
               images={this.state.editedProfile.images}
+              width={containerWidth}
+              imageWidth={imageWidth}
               onChangeImages={images => {
                 this.setState(prevState => {
                   return {
