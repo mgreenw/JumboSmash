@@ -72,11 +72,17 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 
   render() {
     const body = (
-      <BioInput
-        placeholder="The real Tony Monaco"
-        onChangeText={this._onBioUpdate}
-        value={this.state.profile.bio}
-      />
+      <View
+        style={{
+          width: "100%"
+        }}
+      >
+        <BioInput
+          placeholder="The real Tony Monaco"
+          onChangeText={this._onBioUpdate}
+          value={this.state.profile.bio}
+        />
+      </View>
     );
 
     return (

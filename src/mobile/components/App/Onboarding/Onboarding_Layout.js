@@ -67,11 +67,20 @@ export class OnboardingLayout extends React.Component<Props, State> {
                     </Text>
                   </View>
                 </View>
-                <View style={{ flex: 2, paddingLeft: 22, paddingRight: 22 }}>
+                <View
+                  style={{
+                    flex: 2,
+                    paddingLeft: 22,
+                    paddingRight: 22,
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
                   {body}
                 </View>
               </View>
-              <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1, flexDirection: "row", paddingTop: 12 }}>
                 <View style={{ flex: 1 }} />
                 <View style={{ flex: 1 }}>
                   <PrimaryButton

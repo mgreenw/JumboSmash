@@ -13,19 +13,25 @@ type ProfilePcitureProps = {
   showDeleteButton: boolean,
   uri: ?string,
   onAdd?: () => void,
-  onRemove?: () => void
+  onRemove?: () => void,
+  imageWidth: number
 };
 class ProfilePciture extends React.Component<ProfilePcitureProps> {
   render() {
-    const { uri, disabled, onAdd, showDeleteButton, onRemove } = this.props;
-    var { height, width } = Dimensions.get("window");
-    const imageDimension = (width - 32 * 2 - 20) / 2 + 2;
+    const {
+      uri,
+      disabled,
+      onAdd,
+      showDeleteButton,
+      onRemove,
+      imageWidth
+    } = this.props;
     return (
       <View style={{ opacity: disabled ? 0.2 : 1 }}>
         <TouchableOpacity
           style={{
-            width: imageDimension,
-            height: imageDimension,
+            width: imageWidth,
+            height: imageWidth,
             backgroundColor: Colors.Ice,
             aspectRatio: 1,
             borderColor: Colors.AquaMarine,
@@ -42,8 +48,8 @@ class ProfilePciture extends React.Component<ProfilePcitureProps> {
             <Image
               style={{
                 flex: 1,
-                height: imageDimension,
-                width: imageDimension,
+                height: imageWidth,
+                width: imageWidth,
                 borderRadius: 8
               }}
               resizeMode="contain"
@@ -90,7 +96,9 @@ class ProfilePciture extends React.Component<ProfilePcitureProps> {
 type AddPhotosProps = {
   images: $ReadOnlyArray<?string>,
   enableDeleteFirst?: boolean,
-  onChangeImages: ($ReadOnlyArray<?string>) => void
+  onChangeImages: ($ReadOnlyArray<?string>) => void,
+  imageWidth: number,
+  width: number
 };
 
 export default class AddPhotos extends React.Component<AddPhotosProps> {
@@ -108,7 +116,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
   };
 
   render() {
-    const { images, enableDeleteFirst } = this.props;
+    const { images, enableDeleteFirst, imageWidth, width } = this.props;
 
     const numImages = images.length;
     const uri1 = numImages > 0 ? images[0] : null;
@@ -117,58 +125,67 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
     const uri4 = numImages > 3 ? images[3] : null;
 
     return (
-      <View style={{ flex: 1, alignItems: "center" }}>
-        <View style={{ flex: 1, aspectRatio: 1 }}>
-          <View style={{ flexDirection: "row", paddingBottom: 20 }}>
-            <ProfilePciture
-              uri={uri1}
-              disabled={false}
-              showDeleteButton={uri2 != null || enableDeleteFirst === true}
-              onAdd={() => {
-                this._onAdd(0, MAX_PHOTO_URI);
-              }}
-              onRemove={() => {
-                this._onRemove(0);
-              }}
-            />
-            <View style={{ width: 20 }} />
-            <ProfilePciture
-              uri={uri2}
-              disabled={uri1 == null}
-              showDeleteButton={true}
-              onAdd={() => {
-                this._onAdd(1, MAX_PHOTO_URI);
-              }}
-              onRemove={() => {
-                this._onRemove(1);
-              }}
-            />
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <ProfilePciture
-              uri={uri3}
-              disabled={uri2 == null}
-              showDeleteButton={true}
-              onAdd={() => {
-                this._onAdd(2, MAX_PHOTO_URI);
-              }}
-              onRemove={() => {
-                this._onRemove(2);
-              }}
-            />
-            <View style={{ width: 20 }} />
-            <ProfilePciture
-              uri={uri4}
-              disabled={uri3 == null}
-              showDeleteButton={true}
-              onAdd={() => {
-                this._onAdd(3, MAX_PHOTO_URI);
-              }}
-              onRemove={() => {
-                this._onRemove(3);
-              }}
-            />
-          </View>
+      <View
+        style={{
+          width: width,
+          height: width
+        }}
+      >
+        <View style={{ top: 0, left: 0, position: "absolute" }}>
+          <ProfilePciture
+            uri={uri1}
+            disabled={false}
+            showDeleteButton={uri2 != null || enableDeleteFirst === true}
+            onAdd={() => {
+              this._onAdd(0, MAX_PHOTO_URI);
+            }}
+            onRemove={() => {
+              this._onRemove(0);
+            }}
+            imageWidth={imageWidth}
+          />
+        </View>
+        <View style={{ top: 0, right: 0, position: "absolute" }}>
+          <ProfilePciture
+            uri={uri2}
+            disabled={uri1 == null}
+            showDeleteButton={true}
+            onAdd={() => {
+              this._onAdd(1, MAX_PHOTO_URI);
+            }}
+            onRemove={() => {
+              this._onRemove(1);
+            }}
+            imageWidth={imageWidth}
+          />
+        </View>
+        <View style={{ bottom: 0, left: 0, position: "absolute" }}>
+          <ProfilePciture
+            uri={uri3}
+            disabled={uri2 == null}
+            showDeleteButton={true}
+            onAdd={() => {
+              this._onAdd(2, MAX_PHOTO_URI);
+            }}
+            onRemove={() => {
+              this._onRemove(2);
+            }}
+            imageWidth={imageWidth}
+          />
+        </View>
+        <View style={{ bottom: 0, right: 0, position: "absolute" }}>
+          <ProfilePciture
+            uri={uri4}
+            disabled={uri3 == null}
+            showDeleteButton={true}
+            onAdd={() => {
+              this._onAdd(3, MAX_PHOTO_URI);
+            }}
+            onRemove={() => {
+              this._onRemove(3);
+            }}
+            imageWidth={imageWidth}
+          />
         </View>
       </View>
     );
