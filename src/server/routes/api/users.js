@@ -18,6 +18,6 @@ usersRouter.use(hasProfile);
 
 usersRouter.get('/me/profile', usersController.getMyProfile);
 usersRouter.patch('/me/profile', usersController.updateMyProfile);
-usersRouter.get('/:userId(\\d+$)/profile', usersController.getProfile);
+usersRouter.get('/:userId(\\d+)/profile', usersController.getProfile);
 
 module.exports = usersRouter;

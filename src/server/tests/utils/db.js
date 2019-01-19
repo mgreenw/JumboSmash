@@ -44,7 +44,6 @@ async function createProfile(userId, body) {
       RETURNING user_id AS "userId"
     `,
     [userId, displayName, birthday, bio, photoId]);
-
     return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');

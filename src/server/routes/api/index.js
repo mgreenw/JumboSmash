@@ -36,8 +36,4 @@ apiRouter.use(hasProfile);
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
 
-apiRouter.use((req, res) => {
-  return res.status(404).send('Not found');
-});
-
 module.exports = apiRouter;

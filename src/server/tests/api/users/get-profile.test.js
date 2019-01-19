@@ -94,12 +94,11 @@ describe('GET api/users/:userId/profile', () => {
   });
 
   it('should error if the user id is not an integer', async () => {
-    const res = await request(app)
+    await request(app)
       .get('/api/users/BAD-INT/profile')
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
-      .expect(400);
-    expect(res.body.status).toBe(codes.GET_PROFILE__BAD_USER_ID);
+      .expect(404);
   });
 
   it('should error if the user does not exist', async () => {
