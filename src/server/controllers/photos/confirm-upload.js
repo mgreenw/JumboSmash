@@ -12,7 +12,7 @@ const serverUtils = require('../../utils');
 
 const NODE_ENV = serverUtils.getNodeEnv();
 
-const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
+const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
 /**
@@ -78,12 +78,14 @@ const confirmUpload = async (req: $Request, res: $Response) => {
       }
 
       // Insert the photo in the `photos` table, giving it the "next" index.
-      await client.query(`
+      const insertRes = await client.query(`
         INSERT INTO photos
         (user_id, index, uuid)
         VALUES ($1, $2, $3)
         RETURNING id
       `, [req.user.id, photoCount + 1, uuid]);
+
+      const photoId = insertRes.rows[0].id;
 
       // Delete the unconfirmed photo
       await client.query(`
@@ -94,6 +96,7 @@ const confirmUpload = async (req: $Request, res: $Response) => {
       await client.query('COMMIT');
       return res.status(200).json({
         status: codes.CONFIRM_UPLOAD__SUCCESS,
+        photoId,
       });
     } catch (error) {
       await client.query('ROLLBACK');

@@ -13,7 +13,7 @@ const serverUtils = require('../../utils');
 
 const NODE_ENV = serverUtils.getNodeEnv();
 
-const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
+const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
 /**
@@ -36,24 +36,31 @@ const signURL = async (req: $Request, res: $Response) => {
   // for that uuid. Else, get a new UUID.
   const { uuid } = result.rows[0];
 
-  const s3Params = {
+  const params = {
     Bucket: bucket,
-    Key: `photos/${NODE_ENV}/${uuid}`,
-    Expires: 600,
-    ACL: 'authenticated-read',
-    Metadata: {
-      uuid,
+    Fields: {
+      key: `photos/${NODE_ENV}/${uuid}`,
     },
+    Expires: 600,
+    Conditions: [
+      { acl: 'authenticated-read' },
+      { 'Content-Type': 'image/jpeg' },
+      ['content-length-range', 1, 500000], // 0.5 Mb
+    ],
   };
 
   // Get a signed url for the given photo uuid.
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
+  s3.createPresignedPost(params, (err, data) => {
     if (err) return utils.error.server(res, `S3 Error: ${err}`);
+
+    // Add acl to payload
+    const payload = data;
+    payload.fields.acl = 'authenticated-read';
 
     // Return success!
     return res.status(200).json({
       status: codes.SIGN_URL__SUCCESS,
-      url: data,
+      payload,
     });
   });
 };

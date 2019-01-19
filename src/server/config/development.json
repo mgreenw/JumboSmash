@@ -8,5 +8,5 @@
   },
   "secret": "ohhhhhnoooo!!",
   "koh_host": "http://koh.jumbosmash.com",
-  "s3_bucket": "projectgem-prod"
+  "s3_bucket": "projectgem-dev"
 }

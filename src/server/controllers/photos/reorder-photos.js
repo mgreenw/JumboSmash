@@ -65,6 +65,15 @@ const reorderPhotos = async (req: $Request, res: $Response) => {
       WHERE photos.id = updated_photos.id
     `);
 
+    // If the user has a profile, set the new first photo to be the splash photo
+    if (req.user.profileUserId !== null) {
+      await db.query(`
+        UPDATE profiles
+        SET splash_photo_id = $1
+        WHERE user_id = $2
+      `, [newOrder[0], req.user.id]);
+    }
+
     return res.status(200).json({
       status: codes.REORDER_PHOTOS__SUCCESS,
     });

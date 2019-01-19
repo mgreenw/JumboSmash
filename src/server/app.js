@@ -11,7 +11,7 @@ const api = require('./routes/api');
 const app = express();
 app.use(bodyParser.json());
 
-aws.config.region = 'us-east-2';
+aws.config.region = 'us-east-1';
 
 app.use((req, res, next) => {
   const body = req.body ? JSON.stringify(req.body, null, 2) : '';

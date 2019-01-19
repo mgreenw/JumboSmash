@@ -13,7 +13,7 @@ const serverUtils = require('../../utils');
 
 const NODE_ENV = serverUtils.getNodeEnv();
 
-const s3 = new aws.S3({ region: 'us-east-2', signatureVersion: 'v4' });
+const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
 /**
