@@ -40,7 +40,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   editedProfile: UserProfile,
-  errorMessageName: string
+  errorMessageName: string,
+  scrollEnabled: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
@@ -73,7 +74,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       editedProfile: props.profile,
-      errorMessageName: ""
+      errorMessageName: "",
+      scrollEnabled: false
     };
   }
 
@@ -134,7 +136,32 @@ class ProfileEditScreen extends React.Component<Props, State> {
               marginTop: 20
             }}
           >
-            <AddPhotos />
+            <AddPhotos
+              images={this.state.editedProfile.images}
+              onChangeImages={images => {
+                this.setState(prevState => {
+                  return {
+                    editedProfile: {
+                      ...prevState.editedProfile,
+                      images
+                    }
+                  };
+                });
+              }}
+              onRemove={index => {
+                this.setState(prevState => {
+                  const newImages = prevState.editedProfile.images.slice();
+                  newImages.splice(index, 1);
+                  newImages[3] = null;
+                  return {
+                    editedProfile: {
+                      ...prevState.editedProfile,
+                      images: newImages
+                    }
+                  };
+                });
+              }}
+            />
           </View>
           <View
             style={{

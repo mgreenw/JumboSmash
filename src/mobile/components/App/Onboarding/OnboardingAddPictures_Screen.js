@@ -71,7 +71,21 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   render() {
     return (
       <OnboardingLayout
-        body={<AddPhotos />}
+        body={
+          <AddPhotos
+            images={this.state.profile.images}
+            onChangeImages={images => {
+              this.setState(prevState => {
+                return {
+                  profile: {
+                    ...prevState.profile,
+                    images
+                  }
+                };
+              });
+            }}
+          />
+        }
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main={true}

@@ -1,60 +1,176 @@
 // @flow
 import React from "react";
-import { View } from "react-native";
-import { connect } from "react-redux";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
+import { Text, View, TouchableOpacity, Image, Dimensions } from "react-native";
+import { Icon } from "react-native-elements";
+import { Colors } from "mobile/styles/colors";
+import { textStyles } from "mobile/styles/textStyles";
+import CustomIcon from "mobile/assets/icons/CustomIcon";
 
-type Props = {};
-
-type State = {};
-
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-class AddPhotos extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
+const MAX_PHOTO_URI =
+  "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
+type ProfilePcitureProps = {
+  disabled: boolean,
+  showDeleteButton: boolean,
+  uri: ?string,
+  onAdd?: () => void,
+  onRemove?: () => void
+};
+class ProfilePciture extends React.Component<ProfilePcitureProps> {
+  render() {
+    const { uri, disabled, onAdd, showDeleteButton, onRemove } = this.props;
+    var { height, width } = Dimensions.get("window");
+    const imageDimension = (width - 32 * 2 - 20) / 2 + 2;
+    return (
+      <View style={{ opacity: disabled ? 0.2 : 1 }}>
+        <TouchableOpacity
+          style={{
+            width: imageDimension,
+            height: imageDimension,
+            backgroundColor: Colors.Ice,
+            aspectRatio: 1,
+            borderColor: Colors.AquaMarine,
+            borderWidth: uri ? 0 : 2,
+            borderStyle: "dashed",
+            borderRadius: 3,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+          disabled={disabled}
+          onPress={uri ? null : onAdd}
+        >
+          {uri ? (
+            <Image
+              style={{
+                flex: 1,
+                height: imageDimension,
+                width: imageDimension,
+                borderRadius: 8
+              }}
+              resizeMode="contain"
+              loadingStyle={{ size: "large", color: "blue" }}
+              source={{ uri: uri ? uri : "" }}
+            />
+          ) : (
+            <Text style={textStyles.headline6Style}>
+              {disabled ? "" : "add"}
+            </Text>
+          )}
+        </TouchableOpacity>
+        {showDeleteButton && uri ? (
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              right: -8,
+              top: -8,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onPress={onRemove}
+          >
+            <View
+              style={{
+                backgroundColor: Colors.White,
+                width: 20,
+                height: 20,
+                position: "absolute"
+              }}
+            />
+            <CustomIcon
+              size={30}
+              color={Colors.Offblack}
+              name="delete-filled"
+            />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
   }
+}
+
+type AddPhotosProps = {
+  images: $ReadOnlyArray<?string>,
+  enableDeleteFirst?: boolean,
+  onChangeImages: ($ReadOnlyArray<?string>) => void
+};
+
+export default class AddPhotos extends React.Component<AddPhotosProps> {
+  _onAdd = (index: number, uri: string) => {
+    const newImages = this.props.images.slice();
+    newImages[index] = uri;
+    this.props.onChangeImages(newImages);
+  };
+
+  _onRemove = (index: number) => {
+    const newImages = this.props.images.slice();
+    newImages.splice(index, 1);
+    newImages[3] = null;
+    this.props.onChangeImages(newImages);
+  };
 
   render() {
-    const picPlaceholder = (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "grey",
-          margin: 5,
-          aspectRatio: 1,
-          borderColor: "#38c7cc",
-          borderWidth: 2,
-          borderStyle: "dashed"
-        }}
-      />
-    );
+    const { images, enableDeleteFirst } = this.props;
+
+    const numImages = images.length;
+    const uri1 = numImages > 0 ? images[0] : null;
+    const uri2 = numImages > 1 ? images[1] : null;
+    const uri3 = numImages > 2 ? images[2] : null;
+    const uri4 = numImages > 3 ? images[3] : null;
+
     return (
       <View style={{ flex: 1, alignItems: "center" }}>
         <View style={{ flex: 1, aspectRatio: 1 }}>
-          <View style={{ flexDirection: "row" }}>
-            {picPlaceholder}
-            {picPlaceholder}
+          <View style={{ flexDirection: "row", paddingBottom: 20 }}>
+            <ProfilePciture
+              uri={uri1}
+              disabled={false}
+              showDeleteButton={uri2 != null || enableDeleteFirst === true}
+              onAdd={() => {
+                this._onAdd(0, MAX_PHOTO_URI);
+              }}
+              onRemove={() => {
+                this._onRemove(0);
+              }}
+            />
+            <View style={{ width: 20 }} />
+            <ProfilePciture
+              uri={uri2}
+              disabled={uri1 == null}
+              showDeleteButton={true}
+              onAdd={() => {
+                this._onAdd(1, MAX_PHOTO_URI);
+              }}
+              onRemove={() => {
+                this._onRemove(1);
+              }}
+            />
           </View>
           <View style={{ flexDirection: "row" }}>
-            {picPlaceholder}
-            {picPlaceholder}
+            <ProfilePciture
+              uri={uri3}
+              disabled={uri2 == null}
+              showDeleteButton={true}
+              onAdd={() => {
+                this._onAdd(2, MAX_PHOTO_URI);
+              }}
+              onRemove={() => {
+                this._onRemove(2);
+              }}
+            />
+            <View style={{ width: 20 }} />
+            <ProfilePciture
+              uri={uri4}
+              disabled={uri3 == null}
+              showDeleteButton={true}
+              onAdd={() => {
+                this._onAdd(3, MAX_PHOTO_URI);
+              }}
+              onRemove={() => {
+                this._onRemove(3);
+              }}
+            />
           </View>
         </View>
       </View>
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddPhotos);
