@@ -18,13 +18,10 @@ import type { ReduxState } from "mobile/reducers/index";
 import type { UserProfile } from "mobile/reducers";
 
 type Props = {
-  navigation: any,
-  user: UserProfile,
-  isExpanded: boolean,
-  onMinimize: () => void
+  navigation: any
 };
 
-type State = {};
+type State = { user: UserProfile, onMinimize: () => void };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -37,55 +34,15 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class Card extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    const { navigation } = this.props;
+    this.state = {
+      user: navigation.getParam("user", null),
+      onMinimize: navigation.getParam("onMinimize", null)
+    };
   }
 
-  _renderNotExpanded() {
-    const { user } = this.props;
-    return (
-      <View
-        style={{
-          flex: 1,
-          margin: 20
-        }}
-      >
-        <View style={{ flex: 2 }}>
-          <Image
-            source={{
-              uri:
-                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-            }}
-            style={{
-              aspectRatio: 1,
-              borderRadius: 20
-            }}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "white",
-            padding: 20,
-            alignItems: "center",
-            marginTop: -30,
-            marginLeft: 20,
-            marginRight: 20,
-            borderRadius: 20,
-            shadowOffset: { width: 1, height: 2 },
-            shadowColor: "black",
-            shadowOpacity: 0.2
-          }}
-        >
-          <Text style={{ fontSize: 28 }}>{`${user.displayName}, ${
-            user.birthday
-          }`}</Text>
-        </View>
-      </View>
-    );
-  }
-
-  _renderExpanded() {
-    const { user } = this.props;
+  render() {
+    const { user, onMinimize } = this.state;
     return (
       <ScrollView
         style={{
@@ -129,7 +86,7 @@ class Card extends React.Component<Props, State> {
 
             <TouchableHighlight
               style={{ position: "absolute", right: 20, padding: 5 }}
-              onPress={this.props.onMinimize}
+              onPress={onMinimize}
             >
               <Text style={{ fontSize: 28 }}>{"<"}</Text>
             </TouchableHighlight>
@@ -142,12 +99,6 @@ class Card extends React.Component<Props, State> {
         </View>
       </ScrollView>
     );
-  }
-
-  render() {
-    return this.props.isExpanded
-      ? this._renderExpanded()
-      : this._renderNotExpanded();
   }
 }
 

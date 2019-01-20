@@ -19,7 +19,7 @@ import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
 import type { UserProfile, Candidate } from "mobile/reducers";
-import Card from "./Card";
+import PreviewCard from "./PreviewCard_Screen";
 import { textStyles } from "mobile/styles/textStyles";
 import { Transition } from "react-navigation-fluid-transitions";
 import GEMHeader from "mobile/components/shared/Header";
@@ -73,13 +73,20 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   _renderCard = (user: UserProfile, isTop: boolean) => {
+    const { navigation } = this.props;
     return (
-      <Card
+      <PreviewCard
         user={user}
         isExpanded={isTop && this.state.isExpanded}
         onMinimize={() => {
           this.setState({ isExpanded: false });
         }}
+        onPress={() =>
+          navigation.navigate(routes.ExpandedCard, {
+            user,
+            onMinimize: () => navigation.pop()
+          })
+        }
       />
     );
   };

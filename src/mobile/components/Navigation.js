@@ -34,6 +34,7 @@ import SettingsEdit from "mobile/components/App/Main/Profile/SettingsEdit_Screen
 import ProfileHelp from "mobile/components/App/Main/Profile/ProfileHelp_Screen";
 
 import Cards from "mobile/components/App/Main/Cards/Cards_Screen";
+import ExpandedCard from "mobile/components/App/Main/Cards/ExpandedCard_Screen";
 import Matches from "mobile/components/App/Main/Matches/Matches_Screen";
 
 // OnBoarding Screens
@@ -49,6 +50,7 @@ import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_S
 const PROFILE_ROUTE = "PROFILE_ROUTE";
 const MATCHES_ROUTE = "MATCHES_ROUTE";
 const CARDS_ROUTE = "CARDS_ROUTE";
+const EXPANDED_CARD_ROUTE = "EXPANDED_CARD_ROUTE";
 const SETTINGS_EDIT_ROUTE = "SETTINGS_EDIT_ROUTE";
 const PROFILE_EDIT_ROUTE = "PROFILE_EDIT_ROUTE";
 const PROFILE_HELP_ROUTE = "PROFILE_HELP_ROUTE";
@@ -88,6 +90,7 @@ export const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   ProfileHelp: PROFILE_HELP_ROUTE,
   CardsStack: CARDS_STACK,
+  ExpandedCard: EXPANDED_CARD_ROUTE,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
   Splash: SPLASH_ROUTE,
@@ -124,7 +127,8 @@ const removeHeader = {
 
 const CardsStack = createStackNavigator(
   {
-    CARDS_ROUTE: { screen: Cards }
+    CARDS_ROUTE: { screen: Cards },
+    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: CARDS_ROUTE,
