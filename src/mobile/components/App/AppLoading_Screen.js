@@ -5,39 +5,45 @@ import { Image, View, Text } from "react-native";
 import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
-import type { ReduxState, UserProfile } from "mobile/reducers/index";
+import type { ReduxState, User } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { Colors } from "mobile/styles/colors";
 import ProgressBar from "react-native-progress/Bar";
 import { loadApp } from "mobile/actions/app/loadApp";
 import { routes } from "mobile/components/Navigation";
 
-type Props = {
-  // navigation
-  navigation: any,
-
-  // dispatch
-  loadApp: (token: string) => void,
-
-  // redux state
-  token: string,
+type reduxProps = {
+  token: ?string,
   appLoaded: boolean,
   loadAppInProgress: boolean,
-  userProfile: UserProfile
+  user: ?User
 };
+
+type navigationProps = {
+  navigation: any
+};
+
+type dispatchProps = {
+  loadApp: (token: string) => void
+};
+
+type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {};
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     token: reduxState.token,
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
-    userProfile: reduxState.profile
+    user: reduxState.user
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     loadApp: (token: string) => {
       dispatch(loadApp(token));
@@ -49,7 +55,11 @@ class AppLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    this.props.loadApp(this.props.token);
+    if (!this.props.token) {
+      // TODO: error handling
+    } else {
+      this.props.loadApp(this.props.token);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -60,17 +70,13 @@ class AppLoadingScreen extends React.Component<Props, State> {
       prevProps.loadAppInProgress != this.props.loadAppInProgress
     ) {
       const { navigate } = this.props.navigation;
-      if (this.props.userProfile === null) {
+      if (this.props.user === null) {
         navigate(routes.OnboardingStack, {});
       } else {
         navigate(routes.MainSwitch, {});
       }
     }
   }
-
-  static navigationOptions = ({ navigation }) => ({
-    header: null
-  });
 
   render() {
     return (

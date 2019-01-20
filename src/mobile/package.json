@@ -1,5 +1,5 @@
 {
-  "name": "jumbosmash-mobile",
+  "name": "mobile",
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
@@ -31,7 +31,9 @@
     "react-native-elements": "^1.0.0-beta",
     "react-native-keyboard-aware-scroll-view": "^0.7.4",
     "react-native-progress": "^3.5.0",
-    "react-navigation": "^2.16.0",
+    "react-native-textinput-effects": "^0.4.2",
+    "react-navigation": "^3.0.7",
+    "react-navigation-fluid-transitions": "^0.2.74",
     "redux-thunk": "^2.3.0"
   }
 }

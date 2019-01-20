@@ -2,7 +2,7 @@
 
 // Self contained API file for validateToken
 
-import { timeout } from "../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { GET_TOKEN_UTLN__ROUTE } from "../routes";
 import { AUTHORIZED, UNAUTHORIZED } from "../sharedResponseCodes";
 
@@ -37,18 +37,7 @@ export default function getTokenUtln(
   ) => void,
   callback__ERROR: (response: any, request: request) => void
 ) {
-  return timeout(
-    30000,
-    fetch(GET_TOKEN_UTLN__ROUTE, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: request.token
-      }
-    })
-  )
-    .then(response => response.json())
+  return apiRequest("GET", GET_TOKEN_UTLN__ROUTE, request.token)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {

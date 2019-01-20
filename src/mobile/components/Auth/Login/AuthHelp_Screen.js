@@ -44,13 +44,6 @@ class AuthHelpScreen extends React.Component<Props, State> {
     };
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  };
-
   // @flow
   renderHelpMessage(prevRoute: ?string) {
     if (prevRoute == routes.Splash) {
