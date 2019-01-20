@@ -13,18 +13,19 @@ const codes = require('../status-codes');
 
 /* eslint-disable */
 const schema = {
-  "type": "object",
-  "properties": {
-    "utln": {
-      "description": "The user's Tufts UTLN. Must be from the Class of 2019",
-      "type": "string"
+  type: 'object',
+  properties: {
+    utln: {
+      description: "The user's Tufts UTLN. Must be from the Class of 2019",
+      type: 'string',
     },
-    "forceResend": {
-      "description": "If true, then asks the server to resend the verification email, even if a code is still valid.",
-      "type": "boolean"
-    }
+    forceResend: {
+      description:
+        'If true, then asks the server to resend the verification email, even if a code is still valid.',
+      type: 'boolean',
+    },
   },
-  "required": ["utln"]
+  required: ['utln'],
 };
 /* eslint-enable /*
 
@@ -101,16 +102,27 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     }
 
     // Code range is 000000 to 999999
-    const verificationCode = Math.floor(Math.random() * (999999 + 1)).toString().padStart(6, '000000');
+    const verificationCode = Math.floor(Math.random() * (999999 + 1))
+      .toString()
+      .padStart(6, '000000');
 
     // Set an expiration date for the verification hash
     const now = new Date();
-    const expirationDate = new Date(now.getTime() + (10 * 60000)); // 10 minutes from now
+    const expirationDate = new Date(now.getTime() + 10 * 60000); // 10 minutes from now
 
     // Upsert the verification code into the database.
     const result = await db.query(
       'INSERT INTO verification_codes (utln, code, expiration, attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
-      [utln, verificationCode, expirationDate, memberInfo.email, verificationCode, expirationDate, emailSends + 1, memberInfo.email],
+      [
+        utln,
+        verificationCode,
+        expirationDate,
+        memberInfo.email,
+        verificationCode,
+        expirationDate,
+        emailSends + 1,
+        memberInfo.email,
+      ],
     );
 
     // If the insert did not return any rows, the user has already registered.
@@ -121,12 +133,15 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     }
 
     // Create the verification url and send the email!
-    // TODO: Ensure that the mail sent.
+    // TODO: Enable sending emails again, ensure they work.
     mail.send({
-      to: memberInfo.email,
-      from: 'jumbosmash19@gmail.com',
-      subject: 'JumboSmash Email Verification',
-      html: `<p>Enter this code: ${verificationCode}</p>`,
+      // to: memberInfo.email,
+      // from: 'jumbosmash19@gmail.com',
+      // subject: 'JumboSmash Email Verification',
+      // html: `<p>Enter this code: ${verificationCode}</p>`,
+      email: memberInfo.email,
+      utln,
+      verificationCode,
     });
 
     // Send a success response to the client
@@ -135,7 +150,7 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       email: memberInfo.email,
     });
   } catch (err) {
-    console.log("ERR", err);
+    console.log('ERR', err);
     // TODO: Log this to a standard logger
     return apiUtils.error.server(res, err);
   }

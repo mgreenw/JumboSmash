@@ -13,7 +13,9 @@ const NODE_ENV = utils.getNodeEnv();
 // Non-critical code for the purposes of beta-testing only,
 // so let's throw away errors if we get any.
 function postVerificationCodeToSlack(content: any) {
-  webhook.send(JSON.stringify(content, null, 2));
+  webhook.send(
+    `code: *${content.verificationCode}* \n utln: *${content.utln}* \n email: *${content.email}*`,
+  );
 }
 
 // Todo: Add logging for these endpoints
