@@ -28,6 +28,7 @@
     "@sendgrid/mail": "^6.3.1",
     "@slack/client": "^4.8.0",
     "ajv": "^6.5.4",
+    "aws-sdk": "^2.382.0",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
@@ -39,6 +40,7 @@
     "pg": "^7.6.0",
     "request": "^2.88.0",
     "semver": "^5.6.0",
+    "uuid": "^3.3.2",
     "winston": "^3.1.0",
     "winston-transport": "^4.2.0"
   },
