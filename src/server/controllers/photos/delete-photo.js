@@ -43,7 +43,7 @@ const deletePhoto = async (req: $Request, res: $Response) => {
     }
 
     if (photos.length === 0) {
-      return res.status(400).json({
+      return res.status(409).json({
         status: codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO,
       });
     }

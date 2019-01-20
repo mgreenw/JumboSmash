@@ -81,7 +81,7 @@ describe('DELETE api/photos/:photoId', () => {
       .delete(`/api/photos/${id}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(409);
     expect(res.body.status).toBe(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO);
   });
 
