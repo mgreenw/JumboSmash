@@ -19,19 +19,24 @@ import { routes } from "mobile/components/Navigation";
 import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
 import type { UserProfile, Candidate } from "mobile/reducers";
-import PreviewCard from "./PreviewCard_Screen";
+import PreviewCard from "mobile/components/shared/PreviewCard";
 import { textStyles } from "mobile/styles/textStyles";
 import { Transition } from "react-navigation-fluid-transitions";
 import GEMHeader from "mobile/components/shared/Header";
 import NavigationService from "mobile/NavigationService";
 import DevTesting from "mobile/utils/DevTesting";
 
-type Props = {
+type navigationProps = {
   navigation: any
 };
 
+type reduxProps = {};
+
+type dispatchProps = {};
+
+type Props = reduxProps & navigationProps & dispatchProps;
+
 type State = {
-  isExpanded: boolean,
   swipeGestureInProgress: boolean
 };
 
@@ -67,7 +72,6 @@ class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isExpanded: false,
       swipeGestureInProgress: false
     };
   }
@@ -77,11 +81,7 @@ class SwipingScreen extends React.Component<Props, State> {
     return (
       <PreviewCard
         user={user}
-        isExpanded={isTop && this.state.isExpanded}
-        onMinimize={() => {
-          this.setState({ isExpanded: false });
-        }}
-        onPress={() =>
+        onCardTap={() =>
           navigation.navigate(routes.ExpandedCard, {
             user,
             onMinimize: () => navigation.pop()
@@ -111,25 +111,11 @@ class SwipingScreen extends React.Component<Props, State> {
     this.setState({ swipeGestureInProgress: false });
   };
 
-  _onCardTap = () => {
-    DevTesting.log("tapped");
-    this.setState({ isExpanded: true });
-  };
-
   _onPressSwipeButton = (swipeDirection: swipeDirection) => {
-    const { isExpanded, swipeGestureInProgress } = this.state;
+    const { swipeGestureInProgress } = this.state;
 
     this.setState({ swipeGestureInProgress: true }, () => {
-      if (isExpanded) {
-        this.setState({ isExpanded: false }, () => {
-          setTimeout(
-            () => this.deck && this.deck._forceSwipe(swipeDirection, 750),
-            250
-          );
-        });
-      } else {
-        this.deck && this.deck._forceSwipe(swipeDirection, 750);
-      }
+      this.deck && this.deck._forceSwipe(swipeDirection, 750);
     });
   };
 
@@ -145,17 +131,14 @@ class SwipingScreen extends React.Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const isExpanded = navigation.getParam("isExpanded", false);
     return (
       <Transition inline appear={"scale"}>
         <View style={{ flex: 1 }}>
-          {!isExpanded && (
-            <GEMHeader
-              title="cards"
-              rightIconName="message"
-              leftIconName="user"
-            />
-          )}
+          <GEMHeader
+            title="cards"
+            rightIconName="message"
+            leftIconName="user"
+          />
           <View style={{ backgroundColor: "white", flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}
@@ -166,9 +149,8 @@ class SwipingScreen extends React.Component<Props, State> {
               onSwipeRight={this._onSwipeRight}
               onSwipeLeft={this._onSwipeLeft}
               onSwipeComplete={this._onSwipeComplete}
-              disableSwipe={this.state.isExpanded}
-              onTap={this._onCardTap}
               infinite={true}
+              disableSwipe={false}
             />
 
             <TouchableHighlight

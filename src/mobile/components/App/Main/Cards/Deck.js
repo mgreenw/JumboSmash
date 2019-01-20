@@ -26,7 +26,6 @@ type Props = {
   onSwipeRight: (user: Candidate) => void,
   onSwipeLeft: (user: Candidate) => void,
   onSwipeComplete: () => void,
-  onTap: () => void,
   disableSwipe: boolean,
   infinite?: boolean
 };
@@ -90,11 +89,6 @@ export default class Deck extends React.Component<Props, State> {
         } else {
           DevTesting.log("Swipe dismissed");
           this._resetPosition();
-        }
-
-        //if the swipeGestureInProgress is false then the user tapped the card
-        if (!this.state.swipeGestureInProgress) {
-          this.props.onTap();
         }
 
         //The gesture is over so reset to false
