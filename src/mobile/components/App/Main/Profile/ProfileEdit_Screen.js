@@ -128,20 +128,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
         <KeyboardAwareScrollView
           extraScrollHeight={30}
           style={{
-            backgroundColor: Colors.AquaMarine
+            backgroundColor: Colors.AquaMarine,
+            paddingTop: 20
           }}
         >
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              paddingBottom: 20,
-              paddingTop: 20,
-              marginBottom: 20,
-              marginTop: 20
-            }}
-          >
+          <View style={styles.profileBlock}>
             <AddPhotos
               images={this.state.editedProfile.images}
               width={containerWidth}
@@ -171,16 +162,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               }}
             />
           </View>
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              marginBottom: 20,
-              paddingTop: 13,
-              paddingBottom: 13
-            }}
-          >
+          <View style={styles.profileBlock}>
             <PrimaryInput
               value={this.state.editedProfile.displayName}
               label="Preferred Name"
@@ -201,6 +183,17 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  profileBlock: {
+    backgroundColor: Colors.White,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingTop: 20,
+    marginBottom: 20,
+    paddingBottom: 20
+  }
+});
 
 export default connect(
   mapStateToProps,
