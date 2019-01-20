@@ -7,6 +7,7 @@ const _ = require('lodash');
 const logger = require('../../logger');
 const db = require('../../db');
 const mail = require('../../mail');
+const slack = require('../../slack');
 const authUtils = require('./utils');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
@@ -135,14 +136,12 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     // Create the verification url and send the email!
     // TODO: Enable sending emails again, ensure they work.
     mail.send({
-      // to: memberInfo.email,
-      // from: 'jumbosmash19@gmail.com',
-      // subject: 'JumboSmash Email Verification',
-      // html: `<p>Enter this code: ${verificationCode}</p>`,
-      email: memberInfo.email,
-      utln,
-      verificationCode,
+      to: memberInfo.email,
+      from: 'jumbosmash19@gmail.com',
+      subject: 'JumboSmash Email Verification',
+      html: `<p>Enter this code: ${verificationCode}</p>`,
     });
+    slack.postVerificationCode(verificationCode, utln, memberInfo.email, true);
 
     // Send a success response to the client
     return res.status(200).json({
