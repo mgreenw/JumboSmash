@@ -10,39 +10,112 @@
 h1 {
   font-family: 'Vegan Style', sans-serif;
   color: #FF6262;
+  font-size: 5em;
 }
 
-h4 {
+h2 {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 600;
   color: #38c7cc;
 }
 
-p {
+h3 {
 font-family: 'Source Sans Pro', sans-serif;
+font-size: 1.25em;
+font-weight: 400;
 }
 
-img {
-  padding-bottom: 10%;
+p {
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
-.container {
+.page {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
   height: 100vh;
-  z-index: 2;
 }
 
-.row {
-  text-align: center;
+#landing-image {
+  margin-left: 4%;
+  width: 33%
+}
+#landing-text {
+  width: 66%;
+}
+#landing img {
+  height: 230px;
+}
+#landing a {
+  text-decoration: none;
+  color: #FF6262;
+  font-weight: 600;
+  transition: 0.3s;
+}
+#landing-container {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
 }
 
-/* FOOTER WAVES */
-.footer {
-  display: none;
+#arrow-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: absolute;
+  bottom: 30px;
+}
+#arrow-container img {
+  height: 40px;
+}
+#arrow-container p {
+  margin-bottom: 2.5rem;
+}
+
+/* SIGNUP */
+#signup {
+  margin: 0 ;
+  background: #FF6262;
+  color: white;
+}
+#signup-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
+#signup h2, #signup p, form label {
+  color: white;
+}
+form {
+  width: 320px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.25em;
+}
+#emailInput {
+  padding: 10px 12px;
+}
+
+#disclaimer {
+  font-size: 0.75em;
+}
+
+.button-primary {
+  height: auto !important;
+  background-color: #FF6262 !important;
+  border: 2px solid white !important;
+  font-family: 'Source Sans Pro', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.75em !important;
+  transition: 0.3s !important;
+}
+.button-primary:hover {
+  background-color: white !important;
+  color: #FF6262 !important;
+}
+#disclaimer {
+  font-size: 0.75em;
 }
 
 /* FADE IN */
@@ -82,24 +155,7 @@ img {
 @media (min-width: 400px) {}
 
 /* Larger than phablet (also point when grid becomes active) */
-@media (min-width: 550px) {
-  .row {
-    text-align: left;
-  }
-  img {
-    padding-bottom: 0%;
-  }
-  .footer {
-    display: block;
-    position: fixed;
-    width: 100%;
-    bottom: -20vh; left: 0;
-    z-index: 1;
-  }
-  .footer img {
-    width: 100%;
-  }
-}
+@media (min-width: 550px) {}
 
 /* Larger than tablet */
 @media (min-width: 750px) {}

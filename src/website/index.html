@@ -8,7 +8,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-130424473-1');
 </script>
 
@@ -46,22 +45,38 @@
 
   <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <div class="row">
-      <div class="one-third column fade-in one">
-        <img alt="JumboSmash Logo" class="u-max-full-width" src="images/ArthurLogo.png" data-tilt>
-      </div>
-      <div class="two-thirds column fade-in two">
+  <div class="page" id="landing">
+    <div id="landing-container">
+      <div class="fade-in" id="landing-text">
         <h1>JumboSmash</h1>
-        <h4>Swipe. Swipe. Smash.</h4>
-        <p>JumboSmash 2019 is coming soon. Can't wait? Follow the team on <a href="https://www.instagram.com/jumbosmash/">Instagram</a>.</p>
-        <p>JumboSmash is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Tufts University, or any of its subsidiaries or its affiliates.</p>
+        <h2>Swipe. Swipe. Smash.</h2>
+        <h3>JumboSmash 2019 is coming soon. Can't wait? Follow the team on <a href="https://www.instagram.com/jumbosmash/">Instagram</a>.</h3>
       </div>
+      <div class="fade-in one" id="landing-image">
+        <img alt="JumboSmash Logo" src="images/ArthurLogo.png" data-tilt>
+      </div>
+    </div>
+    <div id ="arrow-container" class="fade-in two">
+      <p>Wanna help us out and be a beta tester? Sign up below.</p>
+      <img alt="arrow" src="images/arrow.png">
     </div>
   </div>
 
-  <div class="footer">
-    <img alt="waves" src="images/waves.png">
+  <div class="page" id="signup">
+    <div id="signup-container">
+      <h2>Interested in beta testing?</h2>
+      <p>Simply enter your email below and we'll get back to you soon.</p>
+      <form>
+        <div class="row">
+          <div class="u-full-width">
+            <label for="emailInput">Your email</label>
+            <input class="u-full-width" type="email" name="email" placeholder="tmonaco01@tufts.edu" id="emailInput">
+          </div>
+        </div>
+        <input class="button-primary" type="submit" value="Submit">
+      </form>
+      <p id="disclaimer">JumboSmash is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Tufts University, or any of its subsidiaries or its affiliates.</p>
+    </div>
   </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>

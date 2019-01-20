@@ -24,3 +24,4 @@
 * [Get Scene Candidates](relationships/get-scene-candidates.md) : `GET /api/relationships/candidates/:scene`
 * [Get Matches](relationships/get-matches.md) : `GET /api/relationships/matches`
 * [Judge](relationships/judge.md) : `POST /api/relationships/judge`
+* [Block](relationships/block.md) : `POST /api/relationships/block`
