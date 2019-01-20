@@ -41,11 +41,13 @@ Type: `Array of Integers`
 
 **Code**: `200 OK`
 
-**Content**
+**Content Example**
 
 ```json
 {
-    "status": "REORDER_PHOTOS__SUCCESS"
+    "status": "REORDER_PHOTOS__SUCCESS",
+    "photos": [1, 2, 3]
+
 }
 ```
 

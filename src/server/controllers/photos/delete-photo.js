@@ -100,11 +100,19 @@ const deletePhoto = async (req: $Request, res: $Response) => {
       return utils.error.server(res, 'Failed to delete photo from database');
     }
 
+    const newOrderRes = await db.query(`
+      SELECT id
+      FROM photos
+      WHERE user_id = $1
+      ORDER BY index
+    `, [req.user.id]);
+
     return res.status(200).json({
       status: codes.DELETE_PHOTO__SUCCESS,
+      photos: _.map(newOrderRes.rows, row => row.id),
     });
   } catch (error) {
-    return utils.error.server(res, 'Query failed');
+    return utils.error.server(res, 'Failed to delete photo - server error');
   }
 };
 

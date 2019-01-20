@@ -25,11 +25,12 @@ Provide the normal `Authorization` token in the request header.
 
 **Code**: `200 OK`
 
-**Content**
+**Content Example**
 
 ```json
 {
-    "status": "DELETE_PHOTO__SUCCESS"
+    "status": "DELETE_PHOTO__SUCCESS",
+    "photos": [1, 2, 3]
 }
 ```
 

@@ -6,7 +6,7 @@ const photosController = require('../../controllers/photos');
 
 const photosRouter = express.Router();
 
-// HAS PROFILE ONLY METHODS
+// Authenticated methods
 photosRouter.get('/confirm-upload', photosController.confirmUpload);
 photosRouter.get('/sign-url', photosController.signUrl);
 photosRouter.get('/:photoId(\\d+$)', photosController.getPhoto);

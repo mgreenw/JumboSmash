@@ -120,8 +120,6 @@ describe('DELETE api/photos/:photoId', () => {
       RETURNING id
     `, [me.id, uuidv4()]);
 
-    const thirdId = photoRes.rows[0].id;
-
     const res = await request(app)
       .delete(`/api/photos/${secondId}`)
       .set('Authorization', me.token)
@@ -130,10 +128,13 @@ describe('DELETE api/photos/:photoId', () => {
     expect(res.body.status).toBe(codes.DELETE_PHOTO__SUCCESS);
 
     photoRes = await db.query(`
-      SELECT index
+      SELECT index, id
       FROM photos
-      WHERE id = $1
-    `, [thirdId]);
-    expect(photoRes.rows[0].index).toBe(2);
+      WHERE user_id = $1
+      ORDER BY index
+    `, [me.id]);
+
+    expect(photoRes.rows[1].index).toBe(2);
+    expect(res.body.photos[0]).toBe(photoRes.rows[0].id);
   });
 });

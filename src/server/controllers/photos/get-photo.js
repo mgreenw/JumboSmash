@@ -29,26 +29,28 @@ const getSignedUrl = async (params) => {
  *
  */
 const getPhoto = async (req: $Request, res: $Response) => {
-  // On error, return a server error.
   const { photoId } = req.params;
   try {
+    // Get the photo by id
     const photoRes = await db.query(`
       SELECT uuid
       FROM photos
       WHERE id = $1
     `, [photoId]);
+
+    // If it does not exist, error.
     if (photoRes.rowCount === 0) {
       return res.status(400).json({
         status: codes.GET_PHOTO__NOT_FOUND,
       });
     }
 
+    // Sign a url for the photo and redirect the request to it
     const [{ uuid }] = photoRes.rows;
     const params = {
       Bucket: bucket,
       Key: `photos/${NODE_ENV}/${uuid}`,
     };
-
     const url = await getSignedUrl(params);
     return res.redirect(url);
   } catch (error) {

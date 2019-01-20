@@ -76,9 +76,10 @@ const reorderPhotos = async (req: $Request, res: $Response) => {
 
     return res.status(200).json({
       status: codes.REORDER_PHOTOS__SUCCESS,
+      photos: newOrder,
     });
   } catch (error) {
-    return utils.error.server(res, 'Failed to get user photos');
+    return utils.error.server(res, 'Failed to reorder user photos');
   }
 };
 

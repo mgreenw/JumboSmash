@@ -164,5 +164,6 @@ describe('PATCH api/photos/reorder', () => {
     `, [me.id]);
 
     expect(_.isEqual(newOrder, _.map(photoRes.rows, res => res.id))).toBeTruthy();
+    expect(_.isEqual(newOrder, reorderRes.body.photos)).toBeTruthy();
   });
 });

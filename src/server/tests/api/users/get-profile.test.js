@@ -68,6 +68,8 @@ describe('GET api/users/:userId/profile', () => {
     expect(res.body.profile.displayName).toBe(user.profile.displayName);
     expect(res.body.profile.birthday).toBe(user.profile.birthday);
     expect(res.body.profile.bio).toBe(user.profile.bio);
+    expect(res.body.profile.photos).toBeDefined();
+    expect(res.body.profile.photos[0] > 0).toBeTruthy();
   });
 
   it('should be able to get the another user profile', async () => {
