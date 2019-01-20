@@ -27,13 +27,6 @@ class ProfileHelpScreen extends React.Component<Props, State> {
     super(props);
   }
 
-  // These are for react navigation, like header bar and such
-  static navigationOptions = {
-    headerStyle: {
-      borderBottomWidth: 0
-    }
-  };
-
   render() {
     return (
       <View style={Arthur_Styles.container}>

@@ -1,23 +1,18 @@
 // @flow
 import React from "react";
-import {
-  Dimensions,
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  TextInput
-} from "react-native";
+import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { Button, Icon, Input } from "react-native-elements";
+import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import AddPhotos from "mobile/components/shared/AddPhotos";
-import { styles } from "mobile/styles/template";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
-import type { UserSettings, UserProfile } from "mobile/reducers/index";
+import type {
+  UserSettings,
+  UserProfile,
+  Pronouns
+} from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import { OnboardingLayout } from "./Onboarding_Layout";
+import AddPhotos from "mobile/components/shared/AddPhotos";
 
 type Props = {
   navigation: any
@@ -75,21 +70,13 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <Text style={Arthur_Styles.onboardingHeader}>Upload Photos</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <AddPhotos />
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1 }}>
-            <PrimaryButton onPress={this._goToNextPage} title="Continue" />
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
-      </View>
+      <OnboardingLayout
+        body={<AddPhotos />}
+        onButtonPress={this._goToNextPage}
+        title="Upload Photos"
+        main={true}
+        progress={0}
+      />
     );
   }
 }

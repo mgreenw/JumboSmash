@@ -5,6 +5,7 @@ import {
   createSwitchNavigator,
   createBottomTabNavigator
 } from "react-navigation";
+import { FluidNavigator, Transition } from "react-navigation-fluid-transitions";
 
 //////////
 // AUTH:
@@ -69,6 +70,7 @@ const ONBOARDING_ADD_PICTURES_ROUTE = "ONBOARDING_ADD_PICTURES_ROUTE";
 const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
 const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
 const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
+const ONBOARDING_APP_LOAD = "ONBOARDING_APP_LOAD";
 
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
@@ -101,6 +103,7 @@ export const routes = {
   OnboardingBio: ONBOARDING_BIO_ROUTE,
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
   OnboardingFinish: ONBOARDING_FINISH_ROUTE,
+  OnboardingAppLoad: ONBOARDING_APP_LOAD,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
   MainSwitch: MAIN_SWITCH,
@@ -112,12 +115,20 @@ export const routes = {
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
+const removeHeader = {
+  headerMode: "none",
+  navigationOptions: {
+    headerVisible: false
+  }
+};
+
 const CardsStack = createStackNavigator(
   {
     CARDS_ROUTE: { screen: Cards }
   },
   {
-    initialRouteName: CARDS_ROUTE
+    initialRouteName: CARDS_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -129,7 +140,8 @@ const ProfileStack = createStackNavigator(
     PROFILE_HELP_ROUTE: { screen: ProfileHelp }
   },
   {
-    initialRouteName: PROFILE_ROUTE
+    initialRouteName: PROFILE_ROUTE,
+    ...removeHeader
   }
 );
 
@@ -138,24 +150,27 @@ const MatchesStack = createStackNavigator(
     MATCHES_ROUTE: { screen: Matches }
   },
   {
-    initialRouteName: MATCHES_ROUTE
+    initialRouteName: MATCHES_ROUTE,
+    ...removeHeader
   }
 );
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
-const MainContentSwitch = createSwitchNavigator(
+const MainContentSwitch = FluidNavigator(
   {
     CARDS_STACK: CardsStack,
     PROFILE_STACK: ProfileStack,
     MATCHES_STACK: MatchesStack
   },
   {
-    initialRouteName: CARDS_STACK
+    mode: "card",
+    initialRouteName: CARDS_STACK,
+    ...removeHeader
   }
 );
 
-const LoginStack = createStackNavigator(
+const LoginStack = FluidNavigator(
   {
     SPLASH_ROUTE: { screen: Splash },
     VERIFY_ROUTE: { screen: Verify },
@@ -164,21 +179,23 @@ const LoginStack = createStackNavigator(
     AUTH_HELP_ROUTE: { screen: AuthHelp }
   },
   {
-    initialRouteName: SPLASH_ROUTE
+    initialRouteName: SPLASH_ROUTE,
+    ...removeHeader
   }
 );
 
-const AuthSwitch = createSwitchNavigator(
+const AuthSwitch = FluidNavigator(
   {
     LOGIN_STACK: LoginStack,
     AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
-    initialRouteName: AUTH_LOADING_ROUTE
+    initialRouteName: AUTH_LOADING_ROUTE,
+    ...removeHeader
   }
 );
 
-const OnboardingStack = createStackNavigator(
+const OnboardingStack = FluidNavigator(
   {
     ONBOARDING_START_ROUTE: { screen: OnboardingStart },
     ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },
@@ -187,39 +204,36 @@ const OnboardingStack = createStackNavigator(
     ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
     ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
     ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
-    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish }
+    ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish },
+    ONBOARDING_APP_LOAD: { screen: AppLoading }
   },
   {
     initialRouteName: ONBOARDING_START_ROUTE,
-    navigationOptions: {
-      headerBackTitle: null,
-      headerStyle: {
-        borderBottomWidth: 0
-      },
-      title: "Profile Setup"
-    }
+    ...removeHeader
   }
 );
 
-const AppSwitch = createSwitchNavigator(
+const AppSwitch = FluidNavigator(
   {
     MAIN_SWITCH: MainContentSwitch,
     ONBOARDING_STACK: OnboardingStack,
     APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
-    initialRouteName: APP_LOADING_ROUTE
+    initialRouteName: APP_LOADING_ROUTE,
+    ...removeHeader
   }
 );
 
 export const createRootNavigator = () => {
-  return createSwitchNavigator(
+  return FluidNavigator(
     {
       APP_SWITCH: AppSwitch,
       AUTH_SWITCH: AuthSwitch
     },
     {
-      initialRouteName: AUTH_SWITCH
+      initialRouteName: AUTH_SWITCH,
+      ...removeHeader
     }
   );
 };

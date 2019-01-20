@@ -1,47 +1,86 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
-import { Input } from "react-native-elements";
-import { connect } from "react-redux";
-import { styles } from "mobile/styles/template";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
+import { Animated, Text, TextInput, View } from "react-native";
+import { Colors } from "mobile/styles/colors";
+import { textStyles } from "mobile/styles/textStyles";
+import BaseInput from "mobile/components/shared/customTextInput/BaseInput";
 
 type Props = {
-  placeholder: string,
   value: string,
-  onChangeText: (bio: string) => void
+  onChangeText: (bio: string) => void,
+  label?: string
 };
 
-type State = {};
+const MAX_LENGTH = 500;
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-class OnboardingBioScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
+export default class BioInput extends BaseInput {
+  props: Props;
 
   render() {
+    const { value, onChangeText, label } = this.props;
+    const charactersLeft = MAX_LENGTH - value.length;
+
+    // from base input
+    const { selectedAnim } = this.state;
+
     return (
-      <Input
-        multiline={true}
-        placeholder={this.props.placeholder}
-        onChangeText={bio => this.props.onChangeText(bio)}
-        value={this.props.value}
-      />
+      <View>
+        {label && (
+          <Animated.Text
+            style={[
+              textStyles.body2Style,
+              {
+                paddingLeft: 7,
+                paddingBottom: 5,
+                color: selectedAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [Colors.Black, Colors.AquaMarine]
+                })
+              }
+            ]}
+          >
+            {label}
+          </Animated.Text>
+        )}
+        <Animated.View
+          style={{
+            borderWidth: 1.5,
+            borderRadius: 3,
+            borderColor: selectedAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [Colors.Black, Colors.AquaMarine]
+            })
+          }}
+        >
+          <TextInput
+            ref="input"
+            style={[
+              textStyles.headline6Style,
+              {
+                height: 210,
+                padding: 9
+              }
+            ]}
+            onBlur={this._onBlur}
+            onChange={this._onChange}
+            onFocus={this._onFocus}
+            placeholderTextColor={Colors.Grey80}
+            placeholder="[Bio PlaceHolder]"
+            onChangeText={onChangeText}
+            autoCorrect={true}
+            multiline={true}
+            value={value}
+            maxLength={MAX_LENGTH}
+          />
+        </Animated.View>
+        <Text
+          style={
+            (textStyles.body2Style, { paddingRight: 6, textAlign: "right" })
+          }
+        >
+          {charactersLeft}
+        </Text>
+      </View>
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OnboardingBioScreen);

@@ -20,6 +20,11 @@ import Deck from "./Deck";
 import type { swipeDirection } from "./Deck";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import Card from "./Card";
+import { textStyles } from "mobile/styles/textStyles";
+import { Transition } from "react-navigation-fluid-transitions";
+import GEMHeader from "mobile/components/shared/Header";
+import NavigationService from "mobile/NavigationService";
+import DevTesting from "mobile/utils/DevTesting";
 
 type Props = {
   navigation: any
@@ -67,35 +72,6 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   }
 
-  static navigationOptions = ({ navigation }) => {
-    const isExpanded = navigation.getParam("isExpanded", false);
-    return isExpanded
-      ? {
-          header: null
-        }
-      : {
-          title: "Swiping",
-          headerRight: (
-            <Icon
-              name="send"
-              type="font-awesome"
-              size={40}
-              onPress={() => navigation.navigate("Matches")}
-              containerStyle={{ paddingRight: 10 }}
-            />
-          ),
-          headerLeft: (
-            <Icon
-              name="user"
-              type="font-awesome"
-              size={40}
-              onPress={() => navigation.navigate(routes.Profile)}
-              containerStyle={{ paddingLeft: 10 }}
-            />
-          )
-        };
-  };
-
   _renderCard = (user: UserProfile, isTop: boolean) => {
     return (
       <Card
@@ -113,24 +89,15 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeStart = () => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("swiping");
-    }
+    DevTesting.log("swiping");
   };
 
   _onSwipeRight = (user: Candidate) => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("Card liked: " + user.profile.displayName);
-    }
+    DevTesting.log("Card liked: " + user.profile.displayName);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("Card disliked: " + user.profile.displayName);
-    }
+    DevTesting.log("Card disliked: " + user.profile.displayName);
   };
 
   _onSwipeComplete = () => {
@@ -138,10 +105,7 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onCardTap = () => {
-    // $FlowFixMe (__DEV__ will break flow)
-    if (__DEV__) {
-      console.log("tapped");
-    }
+    DevTesting.log("tapped");
     this.setState({ isExpanded: true });
   };
 
@@ -173,47 +137,60 @@ class SwipingScreen extends React.Component<Props, State> {
   deck: ?Deck;
 
   render() {
+    const { navigation } = this.props;
+    const isExpanded = navigation.getParam("isExpanded", false);
     return (
-      <View style={{ backgroundColor: "white", flex: 1 }}>
-        <Deck
-          ref={deck => (this.deck = deck)}
-          data={DATA}
-          renderCard={this._renderCard}
-          renderEmpty={this._renderEmpty}
-          onSwipeStart={this._onSwipeStart}
-          onSwipeRight={this._onSwipeRight}
-          onSwipeLeft={this._onSwipeLeft}
-          onSwipeComplete={this._onSwipeComplete}
-          disableSwipe={this.state.isExpanded}
-          onTap={this._onCardTap}
-          infinite={true}
-        />
+      <Transition inline appear={"scale"}>
+        <View style={{ flex: 1 }}>
+          {!isExpanded && (
+            <GEMHeader
+              title="cards"
+              rightIconName="message"
+              leftIconName="user"
+            />
+          )}
+          <View style={{ backgroundColor: "white", flex: 1 }}>
+            <Deck
+              ref={deck => (this.deck = deck)}
+              data={DATA}
+              renderCard={this._renderCard}
+              renderEmpty={this._renderEmpty}
+              onSwipeStart={this._onSwipeStart}
+              onSwipeRight={this._onSwipeRight}
+              onSwipeLeft={this._onSwipeLeft}
+              onSwipeComplete={this._onSwipeComplete}
+              disableSwipe={this.state.isExpanded}
+              onTap={this._onCardTap}
+              infinite={true}
+            />
 
-        <TouchableHighlight
-          disabled={this.state.swipeGestureInProgress}
-          onPress={this._onSwipeDislike}
-        >
-          <Image
-            source={{
-              uri:
-                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-            }}
-            style={styles.swipeButton_dislike}
-          />
-        </TouchableHighlight>
-        <TouchableHighlight
-          disabled={this.state.swipeGestureInProgress}
-          onPress={this._onSwipeLike}
-        >
-          <Image
-            source={{
-              uri:
-                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-            }}
-            style={styles.swipeButton_like}
-          />
-        </TouchableHighlight>
-      </View>
+            <TouchableHighlight
+              disabled={this.state.swipeGestureInProgress}
+              onPress={this._onSwipeDislike}
+            >
+              <Image
+                source={{
+                  uri:
+                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                }}
+                style={styles.swipeButton_dislike}
+              />
+            </TouchableHighlight>
+            <TouchableHighlight
+              disabled={this.state.swipeGestureInProgress}
+              onPress={this._onSwipeLike}
+            >
+              <Image
+                source={{
+                  uri:
+                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                }}
+                style={styles.swipeButton_like}
+              />
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Transition>
     );
   }
 }

@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { View } from "react-native";
+import { View, Keyboard } from "react-native";
 import { Button } from "react-native-elements";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 
@@ -22,7 +22,10 @@ export class PrimaryButton extends React.Component<Props, State> {
   render() {
     return (
       <Button
-        onPress={this.props.onPress}
+        onPress={() => {
+          Keyboard.dismiss(); // in case a keyboard is up, buttons close them
+          this.props.onPress();
+        }}
         title={this.props.title}
         disabled={this.props.disabled}
         loading={this.props.loading}

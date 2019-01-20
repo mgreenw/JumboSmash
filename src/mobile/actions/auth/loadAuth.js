@@ -3,19 +3,24 @@ import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
 import DevTesting from "../../utils/DevTesting";
 
-// Gets auth (token, utln) from async store, saves to redux state.
-export const LOAD_AUTH__INITIATED = "LOAD_AUTH__INITIATED";
-export const LOAD_AUTH__COMPLETED = "LOAD_AUTH__COMPLETED";
+export type LoadAuthCompleted_Action = {
+  type: "LOAD_AUTH__COMPLETED",
+  utln: string,
+  token: string
+};
+export type LoadAuthInitiated_Action = {
+  type: "LOAD_AUTH__INITIATED"
+};
 
-function initiate() {
+function initiate(): LoadAuthInitiated_Action {
   return {
-    type: LOAD_AUTH__INITIATED
+    type: "LOAD_AUTH__INITIATED"
   };
 }
 
-function complete(utln: string, token: string) {
+function complete(utln: string, token: string): LoadAuthCompleted_Action {
   return {
-    type: LOAD_AUTH__COMPLETED,
+    type: "LOAD_AUTH__COMPLETED",
     utln: utln,
     token: token
   };

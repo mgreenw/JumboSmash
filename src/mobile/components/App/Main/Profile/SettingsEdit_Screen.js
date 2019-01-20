@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { styles } from "mobile/styles/template";
 import { logout } from "mobile/actions/auth/logout";
-import { PronounSelector } from "mobile/components/shared/PronounSelector";
+import { GenderSelector } from "mobile/components/shared/GenderSelector";
 import type { Pronouns } from "mobile/reducers";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
@@ -14,7 +14,6 @@ import { routes } from "mobile/components/Navigation";
 type Props = {
   navigation: any,
   logoutInProgress: boolean,
-  loggedIn: boolean,
   logout: () => void
 };
 
@@ -25,8 +24,7 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    logoutInProgress: reduxState.inProgress.logout,
-    loggedIn: reduxState.loggedIn
+    logoutInProgress: reduxState.inProgress.logout
   };
 }
 
@@ -58,25 +56,20 @@ class SettingsScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.logoutInProgress != this.props.logoutInProgress) {
+    if (
+      !this.props.logoutInProgress &&
+      prevProps.logoutInProgress != this.props.logoutInProgress
+    ) {
       // disable back button when performing a syncronous action.
       this.props.navigation.setParams({
         headerLeft: this.props.logoutInProgress ? null : ""
       });
 
       // For recieving the logout completion
-      if (!this.props.loggedIn) {
-        const { navigate } = this.props.navigation;
-        navigate(routes.Splash, {});
-      }
+      const { navigate } = this.props.navigation;
+      navigate(routes.Splash, {});
     }
   }
-
-  // These are for react navigation, like header bar and such
-  static navigationOptions = ({ navigation }) => ({
-    headerLeft: navigation.state.params.headerLeft,
-    title: "Settings"
-  });
 
   _onUsePronounChange = (pronouns: Pronouns) => {
     this.setState({
@@ -97,22 +90,21 @@ class SettingsScreen extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>Pronoun Preferences</Text>
-          <Text style={{ textAlign: "center" }}>
-            We use Pronouns to help determine who to show in your stack in
-            Project GEM. Your pronouns will not be shown on your profile.
-          </Text>
+          <Text style={{ textAlign: "center" }}>Gender Preferences</Text>
+          <Text style={{ textAlign: "center" }}>[Statement on Gender]</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>{"I use:"}</Text>
-          <PronounSelector
+          <Text style={{ textAlign: "center" }}>{"I identify as:"}</Text>
+          <GenderSelector
             defaultPronouns={this.state.usePronouns}
             onChange={this._onUsePronounChange}
+            plural={false}
           />
           <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
-          <PronounSelector
+          <GenderSelector
             defaultPronouns={this.state.wantPronouns}
             onChange={this._onWantPronounChange}
+            plural={true}
           />
         </View>
         <View style={{ flex: 1 }}>
