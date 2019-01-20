@@ -24,3 +24,10 @@
 * [Get Scene Candidates](relationships/get-scene-candidates.md) : `GET /api/relationships/candidates/:scene`
 * [Get Matches](relationships/get-matches.md) : `GET /api/relationships/matches`
 * [Judge][relationships/judge.md] : `POST /api/relationships/judge`
+
+### Photos
+* [Sign Photo Upload URL](photos/sign-url.md) : `GET /api/photos/sign-url`
+* [Confirm Photo Upload](photos/confirm-upload.md) : `GET /api/photos/confirm-upload`
+* [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoId`
+* [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoId`
+* [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
