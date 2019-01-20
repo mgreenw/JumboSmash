@@ -59,6 +59,8 @@ describe('GET api/photos/:photoId', () => {
     // Perform the file upload
     await utils.uploadTestPhoto(res.body.payload);
 
+    const { key } = res.body.payload.fields;
+
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
@@ -76,5 +78,7 @@ describe('GET api/photos/:photoId', () => {
     expect(res.redirects[0]).toContain('https://projectgem');
     expect(res.redirects[0]).toContain('.s3.amazonaws.com');
     expect(res.header['content-type']).toBe('image/jpeg');
+
+    await utils.deletePhoto(key);
   });
 });

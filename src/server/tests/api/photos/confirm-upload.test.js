@@ -78,6 +78,7 @@ describe('GET api/photos/confirm_upload', () => {
 
     // Perform the file upload
     await utils.uploadTestPhoto(res.body.payload);
+    const { key } = res.body.payload.fields;
 
     res = await request(app)
       .get('/api/photos/confirm-upload')
@@ -86,6 +87,8 @@ describe('GET api/photos/confirm_upload', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS);
     expect(Number.isInteger(res.body.photoId) && res.body.photoId > 0).toBeTruthy();
+
+    await utils.deletePhoto(key);
   });
 
   it('should fail if there are already four confirmed photos', async () => {
@@ -109,11 +112,15 @@ describe('GET api/photos/confirm_upload', () => {
     // Perform the file upload
     await utils.uploadTestPhoto(res.body.payload);
 
+    const { key } = res.body.payload.fields;
+
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT);
+
+    await utils.deletePhoto(key);
   });
 });
