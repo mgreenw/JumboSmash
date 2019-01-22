@@ -149,7 +149,6 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
       email: memberInfo.email,
     });
   } catch (err) {
-    console.log('ERR', err);
     // TODO: Log this to a standard logger
     return apiUtils.error.server(res, err);
   }
