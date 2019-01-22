@@ -23,22 +23,6 @@ Provide updated profile fields
   * Type: `string`
   * Description: The users birthday in the format 'YYYY-MM-DD'
   * Required: `false`
-* `image1Url`
-  * Type: `string`
-  * Description: User's profile image 1: Must be a valid URL to an image.
-  * Required: `false`
-* `image2Url`
-  * Type: `string`
-  * Description: User's profile image 2: Must be a valid URL to an image.
-  * Required: `false`
-* `image3Url`
-  * Type: `string`
-  * Description: User's profile image 3: Must be a valid URL to an image.
-  * Required: `false`
-* `image4Url`
-  * Type: `string`
-  * Description: User's profile image 4: Must be a valid URL to an image.
-  * Required: `false`
 * `bio`
   * Type: `string`
   * Description: The user's bio. Max Length: 500 characters
@@ -50,7 +34,6 @@ Provide updated profile fields
 {
     "displayName": "Max",
     "birthday": "1997-09-30",
-    "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
 }
 ```
 
@@ -108,19 +91,5 @@ Provide updated profile fields
 {
     "status": "UPDATE_PROFILE__INVALID_REQUEST",
     "message": "BIO_TOO_LONG"
-}
-```
-
-### OR
-
-**Condition** : A url that the user supplied is invalid (not a valid url, requires HTTPS)
-
-**Code** : `400 BAD REQUEST`
-
-**Content Examle** :
-```json
-{
-    "status": "UPDATE_PROFILE__INVALID_REQUEST",
-    "message": "IMAGE_URL_NOT_VALID"
 }
 ```

@@ -38,8 +38,6 @@ describe('GET api/users/me/settings', () => {
     const profile = {
       displayName: 'Max',
       birthday: '1999-01-07',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/58c10d86893fc02bf06984b8/1489046924720/tufts-beelzebubs-max-stache.jpg?format=300w',
-      image2Url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiE3JC81L3eAhWld98KHUiBDkAQjRx6BAgBEAU&url=http%3A%2F%2Fwww.bubs.com%2Fmax-greenwald%2F&psig=AOvVaw212VC9a-Z8fNnPPeBc-LBq&ust=1541521276461189',
       bio: 'Hates dogs and realizes that it is not a popular opinion. Sorry Jillian',
     };
 

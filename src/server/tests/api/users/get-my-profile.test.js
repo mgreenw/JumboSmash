@@ -38,8 +38,6 @@ describe('GET api/users/me/profile', () => {
     const profile = {
       displayName: 'Max',
       birthday: '1999-01-07',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/58c10d86893fc02bf06984b8/1489046924720/tufts-beelzebubs-max-stache.jpg?format=300w',
-      image2Url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiE3JC81L3eAhWld98KHUiBDkAQjRx6BAgBEAU&url=http%3A%2F%2Fwww.bubs.com%2Fmax-greenwald%2F&psig=AOvVaw212VC9a-Z8fNnPPeBc-LBq&ust=1541521276461189',
       bio: 'Already has a girlfriend so...',
     };
 
@@ -55,9 +53,5 @@ describe('GET api/users/me/profile', () => {
     expect(res.body.profile.displayName).toBe(profile.displayName);
     expect(res.body.profile.birthday).toBe(profile.birthday);
     expect(res.body.profile.bio).toBe(profile.bio);
-    expect(res.body.profile.image1Url).toBe(profile.image1Url);
-    expect(res.body.profile.image2Url).toBe(profile.image2Url);
-    expect(res.body.profile.image3Url).toBeNull();
-    expect(res.body.profile.image4Url).toBeNull();
   });
 });
