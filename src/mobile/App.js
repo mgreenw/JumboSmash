@@ -8,8 +8,15 @@ import { createRootNavigator } from "./components/Navigation";
 import rootReducer from "./reducers";
 import NavigationService from "./NavigationService";
 import { createAppContainer } from "@react-navigation/native";
+import { loggerMiddleware } from "mobile/reduxMiddleware/loggerMiddleware";
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = createStore(
+  rootReducer,
+  compose(
+    applyMiddleware(thunk),
+    applyMiddleware(loggerMiddleware)
+  )
+);
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
 

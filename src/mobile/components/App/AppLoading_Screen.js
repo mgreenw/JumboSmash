@@ -13,7 +13,6 @@ import { loadApp } from "mobile/actions/app/loadApp";
 import { routes } from "mobile/components/Navigation";
 
 type reduxProps = {
-  token: ?string,
   appLoaded: boolean,
   loadAppInProgress: boolean,
   user: ?User
@@ -24,7 +23,7 @@ type navigationProps = {
 };
 
 type dispatchProps = {
-  loadApp: (token: string) => void
+  loadApp: () => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -33,7 +32,6 @@ type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
-    token: reduxState.token,
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
     user: reduxState.user
@@ -45,8 +43,8 @@ function mapDispatchToProps(
   ownProps: Props
 ): dispatchProps {
   return {
-    loadApp: (token: string) => {
-      dispatch(loadApp(token));
+    loadApp: () => {
+      dispatch(loadApp());
     }
   };
 }
@@ -55,11 +53,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    if (!this.props.token) {
-      // TODO: error handling
-    } else {
-      this.props.loadApp(this.props.token);
-    }
+    this.props.loadApp();
   }
 
   componentDidUpdate(prevProps, prevState) {

@@ -17,31 +17,35 @@ const VERIFY__NO_EMAIL_SENT = "VERIFY__NO_EMAIL_SENT";
 export default function verify(request: request): Promise<login_response> {
   // Send a request to the server to check if UTLN is valid. If it is, send
   // a verification email, and return that email address.
-  return apiRequest("POST", VERIFY__ROUTE, null, request).then(response => {
-    // We use this to ASSERT what the type of the response is.
-    switch (response.status) {
-      case VERIFY__SUCCESS:
-        return {
-          statusCode: "SUCCESS",
-          token: response.token
-        };
-      case VERIFY__BAD_CODE:
-        return {
-          statusCode: "BAD_CODE",
-          token: response.token
-        };
-      case VERIFY__EXPIRED_CODE:
-        return {
-          statusCode: "EXPIRED_CODE",
-          token: response.token
-        };
-      case VERIFY__NO_EMAIL_SENT:
-        return {
-          statusCode: "NO_EMAIL_SENT",
-          token: response.token
-        };
-      default:
-        throw ("Error in verify.js:", response, request);
-    }
-  });
+  return apiRequest("POST", VERIFY__ROUTE, null, request)
+    .then(response => {
+      // We use this to ASSERT what the type of the response is.
+      switch (response.status) {
+        case VERIFY__SUCCESS:
+          return {
+            statusCode: "SUCCESS",
+            token: response.token
+          };
+        case VERIFY__BAD_CODE:
+          return {
+            statusCode: "BAD_CODE",
+            token: response.token
+          };
+        case VERIFY__EXPIRED_CODE:
+          return {
+            statusCode: "EXPIRED_CODE",
+            token: response.token
+          };
+        case VERIFY__NO_EMAIL_SENT:
+          return {
+            statusCode: "NO_EMAIL_SENT",
+            token: response.token
+          };
+        default:
+          throw { response };
+      }
+    })
+    .catch(error => {
+      throw { error, request };
+    });
 }

@@ -31,7 +31,6 @@ import type {
   SaveProfileInitiated_Action,
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
-import DevTesting from "mobile/utils/DevTesting";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -133,7 +132,6 @@ export default function rootReducer(
   state: ReduxState = defaultState,
   action: Action
 ): ReduxState {
-  DevTesting.log(action.type);
   switch (action.type) {
     // LOGIN:
     case "LOGIN_INITIATED": {

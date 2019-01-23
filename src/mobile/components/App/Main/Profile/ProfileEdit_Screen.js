@@ -27,13 +27,12 @@ type navigationProps = {
 };
 
 type reduxProps = {
-  token: string,
   profile: UserProfile,
   saveProfileInProgress: boolean
 };
 
 type dispatchProps = {
-  saveProfile: (token: string, profile: UserProfile) => void
+  saveProfile: (profile: UserProfile) => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -47,11 +46,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   if (!reduxState.user) {
     throw "Redux User is null";
   }
-  if (!reduxState.token) {
-    throw "Token is null";
-  }
   return {
-    token: reduxState.token,
     profile: reduxState.user.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile
   };
@@ -62,8 +57,8 @@ function mapDispatchToProps(
   ownProps: Props
 ): dispatchProps {
   return {
-    saveProfile: (token: string, profile: UserProfile) => {
-      dispatch(saveProfile(token, profile));
+    saveProfile: (profile: UserProfile) => {
+      dispatch(saveProfile(profile));
     }
   };
 }
@@ -105,7 +100,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
-    this.props.saveProfile(this.props.token, this.state.editedProfile);
+    this.props.saveProfile(this.state.editedProfile);
     NavigationService.back();
   };
 

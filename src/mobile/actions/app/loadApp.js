@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from "redux";
+import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
 import type { User, UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
@@ -35,9 +35,9 @@ function complete(
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function loadApp(token: string) {
-  DevTesting.log("loading app with token: ", token);
-  return function(dispatch: Dispatch) {
+export function loadApp() {
+  return function(dispatch: Dispatch, getState: GetState) {
+    const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       getMyProfile({
