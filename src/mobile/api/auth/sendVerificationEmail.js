@@ -2,34 +2,16 @@
 
 // Self contained API file for sendVerificationEmail.
 // NOTE: must be kept in sync with send-verifcation-email.js
-
-import { timeout } from "./../utils/timeout";
+import { apiRequest } from "../utils/apiRequest";
 import { SEND_VERIFCATION_EMAIL__ROUTE } from "../routes";
-
-type verificationEmailResponse__SUCCESS = {
-  status: string,
-  email: string
-};
-
-type verificationEmailResponse__EMAIL_ALREADY_SENT = {
-  status: string,
-  email: string
-};
-
-type verificationEmailResponse__NOT_2019 = {
-  status: string,
-  classYear: string
-};
-
-type verificationEmailResponse__NOT_FOUND = {
-  status: string
-};
+import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
 
 type request = {
   utln: string,
   forceResend?: boolean
 };
 
+// all the codes we might get back
 const SEND_VERIFICATION_EMAIL__SUCCESS = "SEND_VERIFICATION_EMAIL__SUCCESS";
 const SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT =
   "SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT";
@@ -37,61 +19,62 @@ const SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND =
   "SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND";
 const SEND_VERIFICATION_EMAIL__UTLN_NOT_2019 =
   "SEND_VERIFICATION_EMAIL__UTLN_NOT_2019";
+const SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT =
+  "SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT";
+
+// Helpful for debugging, easier than having a conditional type based on an enum
+const NO_EMAIL = "NO EMAIL FOR THIS RESPONSE CODE";
+const NO_CLASS_YEAR = "NO CLASS YEAR FOR THIS RESPONSE CODE";
 
 export default function sendVerificationEmail(
-  request: request,
-  callback__SUCCESS: (
-    response: verificationEmailResponse__SUCCESS,
-    request: request
-  ) => void,
-  callback__NOT_2019: (
-    response: verificationEmailResponse__NOT_2019,
-    request: request
-  ) => void,
-  callback__NOT_FOUND: (
-    response: verificationEmailResponse__NOT_FOUND,
-    request: request
-  ) => void,
-  callback__EMAIL_ALREADY_SENT: (
-    response: verificationEmailResponse__EMAIL_ALREADY_SENT,
-    request: request
-  ) => void,
-  callback__ERROR: (response: any, request: request) => void
-) {
-  return timeout(
-    30000,
-    // Send a request to the server to check if UTLN is valid. If it is, send
-    // a verification email, and return that email address.
-    fetch(SEND_VERIFCATION_EMAIL__ROUTE, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(request)
-    })
-  )
-    .then(response => response.json())
+  request: request
+): Promise<sendVerificationEmail_response> {
+  return apiRequest("POST", SEND_VERIFCATION_EMAIL__ROUTE, null, request)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
+        // Valid UTLN
         case SEND_VERIFICATION_EMAIL__SUCCESS:
-          callback__SUCCESS(response, request);
-          break;
+          return {
+            statusCode: "SUCCESS",
+            email: response.email,
+            utln: request.utln,
+            classYear: NO_CLASS_YEAR
+          };
         case SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT:
-          callback__EMAIL_ALREADY_SENT(response, request);
-          break;
+          return {
+            statusCode: "ALREADY_SENT",
+            utln: request.utln,
+            email: response.email,
+            classYear: NO_CLASS_YEAR
+          };
+        // Invalid UTLN
         case SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND:
-          callback__NOT_FOUND(response, request);
-          break;
+          return {
+            statusCode: "NOT_FOUND",
+            email: NO_EMAIL,
+            utln: request.utln,
+            classYear: NO_CLASS_YEAR
+          };
+        case SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT: // e.g. mgreen01
+          return {
+            statusCode: "NOT_STUDENT",
+            email: NO_EMAIL,
+            utln: request.utln,
+            classYear: NO_CLASS_YEAR
+          };
         case SEND_VERIFICATION_EMAIL__UTLN_NOT_2019:
-          callback__NOT_2019(response, request);
-          break;
+          return {
+            statusCode: "WRONG_CLASS_YEAR",
+            classYear: response.classYear,
+            email: NO_EMAIL,
+            utln: request.utln
+          };
         default:
-          callback__ERROR(response, request);
+          throw ("Error in sendVerification Email: ", response, request);
       }
     })
     .catch(error => {
-      callback__ERROR(error, request);
+      throw ("Error in sendVerification Email: ", error);
     });
 }

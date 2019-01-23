@@ -8,7 +8,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-130424473-1');
 </script>
 
@@ -36,6 +35,8 @@
   <!-- Scripts
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/2.1.2/jquery.scrollTo.min.js"></script>
+
 
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -46,25 +47,61 @@
 
   <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <div class="row">
-      <div class="one-third column fade-in one">
-        <img alt="JumboSmash Logo" class="u-max-full-width" src="images/ArthurLogo.png" data-tilt>
-      </div>
-      <div class="two-thirds column fade-in two">
+  <div class="page" id="landing">
+    <div id="landing-container">
+      <div class="fade-in" id="landing-text">
         <h1>JumboSmash</h1>
-        <h4>Swipe. Swipe. Smash.</h4>
-        <p>JumboSmash 2019 is coming soon. Can't wait? Follow the team on <a href="https://www.instagram.com/jumbosmash/">Instagram</a>.</p>
-        <p>JumboSmash is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Tufts University, or any of its subsidiaries or its affiliates.</p>
+        <h2>Swipe. Swipe. Smash.</h2>
+        <h3>JumboSmash 2019 is coming soon. Can't wait? Follow the team on <a href="https://www.instagram.com/jumbosmash/">Instagram</a>.</h3>
       </div>
+      <div class="fade-in one" id="landing-image">
+        <img alt="JumboSmash Logo" src="images/ArthurLogo.png" data-tilt>
+      </div>
+    </div>
+    <div id ="arrow-container" class="fade-in two">
+      <p>Wanna help the project and be a beta tester? Sign up below.</p>
+      <img alt="arrow" src="images/arrow.png">
     </div>
   </div>
 
-  <div class="footer">
-    <img alt="waves" src="images/waves.png">
+  <div class="page" id="signup">
+    <div id="signup-container">
+      <h2>Interested in beta testing?</h2>
+      <p id="instructions">Simply enter your email below and the team will get back to you soon.</p>
+      <form name="submit-to-google-sheet">
+        <div class="row">
+          <div class="u-full-width">
+            <label for="emailInput">Your Tufts email</label>
+            <input class="u-full-width" type="email" name="email" placeholder="anthony.monaco@tufts.edu" id="emailInput">
+          </div>
+        </div>
+        <input class="button-primary" type="submit" value="Submit">
+      </form>
+      <p id="disclaimer">JumboSmash is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Tufts University, or any of its subsidiaries or its affiliates.</p>
+    </div>
   </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxszdrRQFsqFBXHWe1sfGTDualuj0118cRirnUw9mlDLAa7G9ve/exec'
+    const form = document.forms['submit-to-google-sheet']
+
+    form.addEventListener('submit', e => {
+      e.preventDefault()
+      if($('#emailInput')[0].value!='') {
+        //update page content
+        $('form').hide();
+        $('#signup h2').text('Thanks for signing up!');
+        $('#instructions').text('The team will get back to you as soon as they can.');
+        //submit email to Google Sheet
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then(response => console.log('Success!', response))
+          .catch(error => console.error('Error!', error.message))
+      }
+    })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>

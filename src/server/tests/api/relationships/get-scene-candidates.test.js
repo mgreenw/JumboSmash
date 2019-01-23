@@ -111,7 +111,6 @@ describe('GET api/relationships/candidates/:scene', () => {
       displayName: 'Max',
       bio: 'test',
       birthday: '1997-09-09',
-      image1Url: 'http://www.google.com',
     });
     let res = await request(app)
       .get('/api/relationships/candidates/smash')

@@ -13,5 +13,12 @@ export default {
     } else {
       func();
     }
+  },
+
+  log(...data: Array<any>) {
+    // $FlowFixMe (__DEV__ will break flow)
+    if (__DEV__) {
+      console.log(data);
+    }
   }
 };

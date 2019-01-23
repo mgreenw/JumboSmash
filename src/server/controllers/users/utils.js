@@ -2,8 +2,6 @@
 
 const _ = require('lodash');
 
-const apiUtils = require('../utils');
-
 const minBirthday = new Date('01/01/1988');
 const maxBirthday = new Date('01/01/2001');
 const displayNameMaxLength = 50;
@@ -14,7 +12,6 @@ const profileErrorMessages = {
   DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
-  IMAGE_URL_NOT_VALID: 'IMAGE_URL_NOT_VALID',
 };
 
 // This type here is to ensure that calls to the validateProfile function
@@ -26,10 +23,6 @@ const profileErrorMessages = {
 type Profile = {
   displayName: ?string,
   birthday: ?string,
-  image1Url: ?string,
-  image2Url: ?string,
-  image3Url: ?string,
-  image4Url: ?string,
   bio: ?string,
 }
 
@@ -39,10 +32,6 @@ function validateProfile(profile: Profile) {
   const {
     displayName,
     birthday,
-    image1Url,
-    image2Url,
-    image3Url,
-    image4Url,
     bio,
   } = profile;
 
@@ -62,16 +51,6 @@ function validateProfile(profile: Profile) {
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
     throw profileErrorMessages.BIO_TOO_LONG;
-  }
-
-  // Ensure all supplied urls are valid urls
-  const urls = [image1Url, image2Url, image3Url, image4Url];
-  for (let i = 0; i < urls.length; i += 1) {
-    const url = urls[i];
-    // If the url is undefined, don't check it - it was not included in the request
-    if (url && !apiUtils.isValidUrl(url)) {
-      throw profileErrorMessages.IMAGE_URL_NOT_VALID;
-    }
   }
 }
 

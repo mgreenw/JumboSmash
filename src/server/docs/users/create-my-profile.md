@@ -1,6 +1,6 @@
 # Create My Profile
 
-Create a profile for the current user. Only allow this if a user has not yet created a profile.
+Create a profile for the current user. Only allow this if a user has not yet created a profile. A user must have a confirmed uploaded photo to create a profile.
 
 **URL** : `/api/users/me/profile`
 
@@ -22,22 +22,6 @@ Provide the user's initial profile fields.
   * Type: `string`
   * Description: The users birthday in the format 'YYYY-MM-DD'
   * Required: `true`
-* `image1Url`
-  * Type: `string`
-  * Description: User's profile image 1: Must be a valid URL to an image.
-  * Required: `true`
-* `image2Url`
-  * Type: `string`
-  * Description: User's profile image 2: Must be a valid URL to an image.
-  * Required: `false`
-* `image3Url`
-  * Type: `string`
-  * Description: User's profile image 3: Must be a valid URL to an image.
-  * Required: `false`
-* `image4Url`
-  * Type: `string`
-  * Description: User's profile image 4: Must be a valid URL to an image.
-  * Required: `false`
 * `bio`
   * Type: `string`
   * Description: The user's bio. Max Length: 500 characters
@@ -49,7 +33,6 @@ Provide the user's initial profile fields.
 {
     "displayName": "Max",
     "birthday": "1997-09-30",
-    "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
     "bio": "He's a guy"
 }
 ```
@@ -72,7 +55,7 @@ Provide the user's initial profile fields.
 
 **Condition** : The user's profile has alreday been created. The caller should use PATCH instead to update the profile
 
-**Code** : `400 BAD REQUEST`
+**Code** : `409 CONFLICT`
 
 **Content** :
 ```json
@@ -125,20 +108,6 @@ Provide the user's initial profile fields.
 
 ### OR
 
-**Condition** : A url that the user supplied is invalid (not a valid url, requires HTTPS)
-
-**Code** : `400 BAD REQUEST`
-
-**Content Examle** :
-```json
-{
-    "status": "CREATE_PROFILE__INVALID_REQUEST",
-    "message": "IMAGE_URL_NOT_VALID"
-}
-```
-
-### OR
-
 **Condition**: The required fields were not supplied.
 
 **Code** : `400 BAD REQUEST`
@@ -149,5 +118,19 @@ Provide the user's initial profile fields.
 {
     "status": "BAD_REQUEST",
     "message": "data should have required property 'utln'"
+}
+```
+
+### OR
+
+**Condition**: The user has no uploaded and confirmed photos.
+
+**Code** : `409 CONFLICT`
+
+**Content example**
+
+```json
+{
+    "status": "CREATE_PROFILE__PHOTO_REQUIRED"
 }
 ```
