@@ -68,7 +68,7 @@
     <div id="signup-container">
       <h2>Interested in beta testing?</h2>
       <p id="instructions">Simply enter your email below and the team will get back to you soon.</p>
-      <form name="submit-to-google-sheet">
+      <form name="submit-to-google-sheet" autocomplete="off">
         <div class="row">
           <div class="u-full-width">
             <label for="emailInput">Your Tufts email</label>
@@ -88,14 +88,24 @@
     form.addEventListener('submit', e => {
       e.preventDefault()
       if($('#emailInput')[0].value!='') {
-        //update page content
-        $('form').hide();
-        $('#signup h2').text('Thanks for signing up!');
-        $('#instructions').text('The team will get back to you as soon as they can.');
+        // update page content LOADING
+        $('#signup h2').text('Working...');
+        $('#emailInput').css({'color':'white','background-color':'#FF6262','border':'2px solid white'});
         //submit email to Google Sheet
         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-          .then(response => console.log('Success!', response))
-          .catch(error => console.error('Error!', error.message))
+          .then(response => {
+            //update page content SUCCESS
+            $('form').hide();
+            $('#signup h2').text('Thanks for signing up!');
+            $('#instructions').text('The team will get back to you as soon as they can.');
+            console.log('Success!', response)
+          })
+          .catch(error => {
+            //update page content FAILURE
+            $('#signup h2').text('Oops! Something went wrong.');
+            $('#instructions').text('The team will get back to you as soon as they can.');
+            console.error('Error!', error.message)
+          })
       }
     })
   </script>
