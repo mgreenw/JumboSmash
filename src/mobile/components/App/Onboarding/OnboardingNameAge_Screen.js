@@ -41,9 +41,12 @@ class NameAgeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
+    const profile = navigation.getParam("profile", null);
+    const birthday = profile === null ? "" : profile.birthday;
+    const unformatedBirthday = birthday ? this._unformatBirthday(birthday) : "";
     this.state = {
-      unformatedBirthday: "",
-      profile: navigation.getParam("profile", null),
+      unformatedBirthday,
+      profile,
       settings: navigation.getParam("settings", null),
       errorMessageName: "",
       errorMessageBirthday: ""
@@ -137,6 +140,16 @@ class NameAgeScreen extends React.Component<Props, State> {
     const day = MMDDYY[2] + MMDDYY[3];
     const month = MMDDYY[0] + MMDDYY[1];
     return `${year}-${month}-${day}`;
+  };
+
+  _unformatBirthday = (YYYY_DD_MM: string) => {
+    if (YYYY_DD_MM.length < 10) {
+      return ""; // Don't bother unformatting incorrect birthdays.
+    }
+    const DD = YYYY_DD_MM[8] + YYYY_DD_MM[9];
+    const MM = YYYY_DD_MM[5] + YYYY_DD_MM[6];
+    const YY = YYYY_DD_MM[2] + YYYY_DD_MM[3];
+    return `${MM}${DD}${YY}`;
   };
 
   render() {
