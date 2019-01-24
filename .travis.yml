@@ -8,32 +8,22 @@ jobs:
     env:
       - IMAGE_REPO=sperrys/website
       - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
-      - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-
     before_install:
       - sudo apt-get install libssl-dev
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - echo "$IMAGE_REPO";
       - echo "$DEPLOY_TAG";
-      - FAST_PATH=$(./fastpath_precise --verbose HEAD $IMAGE_REPO)
       - cd src/website
 
     script:
       - echo "No Tests for Website";
     after_success:
       - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then
-          if [ -z "$FAST_PATH" ]; then
             echo "New code. Performing a Docker build";
             docker build -t $DEPLOY_TAG .;
             echo "Pushing $DEPLOY_TAG to the registry";
             docker push $DEPLOY_TAG;
-          else
-            DEPLOY_TAG=$IMAGE_REPO:$FAST_PATH;
-            echo "Found a suitable image $DEPLOY_TAG";
-            fi
-          else
-            echo "Build not on master branch, skipping docker build and pushing!";
-          fi
+        fi
   - stage: server
     dist: xenial
     language: node_js
