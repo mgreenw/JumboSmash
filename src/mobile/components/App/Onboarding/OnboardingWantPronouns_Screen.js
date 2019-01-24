@@ -82,16 +82,26 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
   render() {
     const body = (
       <View style={{ flex: 1 }}>
-        <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
+        <Text
+          style={[
+            textStyles.subtitle1Style,
+            { textAlign: "center", paddingBottom: 30 }
+          ]}
+        >
           {
-            "These pronouns help determine who to show to you in JumboSmash. Pronouns will not be shown on your profile."
+            "JumboSmash uses your gender preferences to determine who to show to you. They will never be shown on your profile."
           }
         </Text>
-        <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: "center", paddingBottom: 15 }
+          ]}
+        >
           {"I'm looking for:"}
         </Text>
         <GenderSelector
-          defaultPronouns={this.state.settings.wantPronouns}
+          defaultPronouns={this.state.settings.usePronouns}
           onChange={this._onMyPronounChange}
           plural={true}
         />

@@ -82,10 +82,22 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
   render() {
     const body = (
       <View style={{ flex: 1 }}>
-        <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
-          {"[statement on gender identity]"}
+        <Text
+          style={[
+            textStyles.subtitle1Style,
+            { textAlign: "center", paddingBottom: 30 }
+          ]}
+        >
+          {
+            "JumboSmash uses your gender identity to determine who to show you to. It will never be shown on your profile."
+          }
         </Text>
-        <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: "center", paddingBottom: 15 }
+          ]}
+        >
           {"I identify as:"}
         </Text>
         <GenderSelector
@@ -99,7 +111,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={body}
         onButtonPress={this._goToNextPage}
-        title="Pronoun Preferences"
+        title="Gender Identity"
         main={true}
         progress={0}
       />
