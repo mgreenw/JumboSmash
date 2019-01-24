@@ -5,6 +5,7 @@ const express = require('express');
 const authRouter = require('./auth');
 const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
+const photosRouter = require('./photos');
 
 const apiRouter = express.Router();
 const authenticated = require('../../controllers/auth/middleware/authenticated');
@@ -26,6 +27,7 @@ apiRouter.use(authenticated);
 // If they want to include more specificity on which routes require
 // authentication or onboarding, they may use the middleware directly.
 apiRouter.use('/users', usersRouter);
+apiRouter.use('/photos', photosRouter);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
