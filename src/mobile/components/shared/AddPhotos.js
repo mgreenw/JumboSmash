@@ -16,7 +16,7 @@ import { Permissions, ImagePicker } from "expo";
 
 const MAX_PHOTO_URI =
   "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
-type ProfilePcitureProps = {
+type ProfilePictureProps = {
   disabled: boolean,
   showDeleteButton: boolean,
   uri: ?string,
@@ -24,7 +24,7 @@ type ProfilePcitureProps = {
   onRemove?: () => void,
   imageWidth: number
 };
-class ProfilePciture extends React.Component<ProfilePcitureProps> {
+class ProfilePicture extends React.Component<ProfilePictureProps> {
   render() {
     const {
       uri,
@@ -158,7 +158,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
         }}
       >
         <View style={{ top: 0, left: 0, position: "absolute" }}>
-          <ProfilePciture
+          <ProfilePicture
             uri={uri1}
             disabled={false}
             showDeleteButton={uri2 != null || enableDeleteFirst === true}
@@ -172,7 +172,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
           />
         </View>
         <View style={{ top: 0, right: 0, position: "absolute" }}>
-          <ProfilePciture
+          <ProfilePicture
             uri={uri2}
             disabled={uri1 == null}
             showDeleteButton={true}
@@ -186,7 +186,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
           />
         </View>
         <View style={{ bottom: 0, left: 0, position: "absolute" }}>
-          <ProfilePciture
+          <ProfilePicture
             uri={uri3}
             disabled={uri2 == null}
             showDeleteButton={true}
@@ -200,7 +200,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
           />
         </View>
         <View style={{ bottom: 0, right: 0, position: "absolute" }}>
-          <ProfilePciture
+          <ProfilePicture
             uri={uri4}
             disabled={uri3 == null}
             showDeleteButton={true}
