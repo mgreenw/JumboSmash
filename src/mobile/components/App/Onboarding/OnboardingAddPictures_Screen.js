@@ -93,6 +93,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
             }}
             width={containerWidth}
             imageWidth={imageWidth}
+            enableDeleteFirst={true}
           />
         }
         onButtonPress={this._goToNextPage}

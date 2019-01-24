@@ -1,10 +1,18 @@
 // @flow
 import React from "react";
-import { Text, View, TouchableOpacity, Image, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  Alert
+} from "react-native";
 import { Icon } from "react-native-elements";
 import { Colors } from "mobile/styles/colors";
 import { textStyles } from "mobile/styles/textStyles";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
+import { Permissions, ImagePicker } from "expo";
 
 const MAX_PHOTO_URI =
   "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
@@ -101,10 +109,29 @@ type AddPhotosProps = {
   width: number
 };
 
+async function selectPhoto() {
+  const { status, permissions } = await Permissions.askAsync(
+    Permissions.CAMERA_ROLL
+  );
+  if (status === "granted") {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1]
+    });
+
+    console.log(result);
+    return result.uri;
+  } else {
+    Alert.alert("Please enable camera roll access to proceed.");
+  }
+}
+
 export default class AddPhotos extends React.Component<AddPhotosProps> {
-  _onAdd = (index: number, uri: string) => {
+  _onAdd = async (index: number, uri: string) => {
+    const newUri = await selectPhoto();
+
     const newImages = this.props.images.slice();
-    newImages[index] = uri;
+    newImages[index] = newUri;
     this.props.onChangeImages(newImages);
   };
 
@@ -123,7 +150,6 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
     const uri2 = numImages > 1 ? images[1] : null;
     const uri3 = numImages > 2 ? images[2] : null;
     const uri4 = numImages > 3 ? images[3] : null;
-
     return (
       <View
         style={{
