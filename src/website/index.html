@@ -99,13 +99,11 @@
             $('form').hide();
             $('#signup h2').text('Thanks for signing up!');
             $('#instructions').text('The team will get back to you as soon as they can.');
-            console.log('Success!', response)
           })
           .catch(error => {
             //update page content FAILURE
-            $('#signup h2').text('Oops! Something went wrong.');
-            $('#instructions').text('Refresh the page and try again.');
-            console.error('Error!', error.message)
+            $('#signup h2').text('Oops! Something went wrong. Refresh the page and try again.');
+            $('#instructions').text('Sorry about that!');
           })
       }
     })
