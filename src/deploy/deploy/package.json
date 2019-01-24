@@ -1,0 +1,37 @@
+{
+  "name": "project_gem_deploy",
+  "version": "1.0.0",
+  "description": "deployment microservice for project gem ",
+  "main": "deployment.js",
+  "scripts": {
+    "start": "node deployment.js",
+    "dev": "export NODE_ENV=development; nodemon --exec babel-node deployment.js",
+    "prod": "export NODE_ENV=production; node deployment.js",
+    "build": "rm -rf ./dist && babel . --ignore node_modules,dist -d dist && cp .npmrc dist && cp -r config dist && cp *.json dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.0.1",
+    "express": "^4.16.4",
+    "winston": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
+    "eslint": "^5.8.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-import": "^2.14.0",
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.5",
+    "regenerator-runtime": "^0.12.1",
+    "supertest": "^3.3.0"
+  }
+}

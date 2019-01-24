@@ -1,1 +1,0 @@
-docker-compose pull ecolwe/koh:0.0.2

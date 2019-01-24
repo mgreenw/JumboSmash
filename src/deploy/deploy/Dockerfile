@@ -1,21 +1,17 @@
-FROM python:3.6-alpine
+FROM node:8.12-alpine AS builder
+WORKDIR /home/src/app
+COPY . .
+RUN apk update && apk add python make g++
+RUN npm install
+RUN npm run build
 
-RUN adduser -D deploy
+FROM node:8.12-alpine
+WORKDIR /home/src/app
 
-WORKDIR /home/deploy
-
-COPY requirements.txt requirements.txt
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn
-
-COPY __init__.py config.py wsgi.py deploy.py boot.sh ./
-RUN chmod +x boot.sh
-
-ENV FLASK_APP deploy.py
-
-RUN chown -R deploy:deploy ./
-USER deploy
-
+COPY ./package* ./
+RUN apk update && apk add python make g++
+RUN npm install --prod
+# RUN npm install --prod && npm cache clean
+COPY --from=builder /home/src/app/dist .
 EXPOSE 3004
-ENTRYPOINT ["./boot.sh"]
+CMD ["npm", "run", "start"]
