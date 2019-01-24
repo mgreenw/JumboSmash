@@ -4,6 +4,7 @@ import DevTesting from "../../utils/DevTesting";
 import type { User, UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
 import getMySettings from "mobile/api/users/GetMySettings";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
 export type LoadAppCompleted_Action = {
@@ -42,13 +43,17 @@ export function loadApp() {
     DevTesting.fakeLatency(() => {
       getMyProfile({
         token
-      }).then(profile => {
-        getMySettings({
-          token
-        }).then(settings => {
-          dispatch(complete(profile, settings));
+      })
+        .then(profile => {
+          getMySettings({
+            token
+          }).then(settings => {
+            dispatch(complete(profile, settings));
+          });
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
         });
-      });
     });
   };
 }

@@ -1,9 +1,11 @@
-// TODO: flow type this
+// @flow
+import DevTesting from "mobile/utils/DevTesting";
 
 // middleware logger for actions
-export function loggerMiddleware({ getState }) {
-  return next => action => {
-    console.log("Will Dispatch:", action.type);
+export function loggerMiddleware({ getState }: any) {
+  return (next: any) => (action: any) => {
+    DevTesting.log("Will Dispatch: ", action.type);
+
     // Call the next dispatch method in the middleware chain.
     return next(action);
   };

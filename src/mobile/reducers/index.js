@@ -31,6 +31,7 @@ import type {
   SaveProfileInitiated_Action,
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
+import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
 
 // TODO: make own ReduxState file
 export type Pronouns = {
@@ -91,7 +92,7 @@ export type ReduxState = {
   }
 };
 
-type Action =
+export type Action =
   | LoginInitiated_Action
   | LoginCompleted_Action
   | LogoutInitiated_Action
@@ -105,7 +106,8 @@ type Action =
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileInitiated_Action
-  | SaveProfileCompleted_Action;
+  | SaveProfileCompleted_Action
+  | Unauthorized_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -296,6 +298,10 @@ export default function rootReducer(
           profile: action.profile
         }
       };
+    }
+
+    case "UNAUTHORIZED": {
+      return defaultState;
     }
 
     default: {

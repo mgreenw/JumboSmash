@@ -3,17 +3,19 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { createStore, compose, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import thunkMiddleware from "redux-thunk";
 import { createRootNavigator } from "./components/Navigation";
 import rootReducer from "./reducers";
 import NavigationService from "./NavigationService";
 import { createAppContainer } from "@react-navigation/native";
 import { loggerMiddleware } from "mobile/reduxMiddleware/loggerMiddleware";
+import { tokenMiddleware } from "mobile/reduxMiddleware/tokenMiddleware";
 
 const store = createStore(
   rootReducer,
   compose(
-    applyMiddleware(thunk),
+    applyMiddleware(thunkMiddleware),
+    applyMiddleware(tokenMiddleware),
     applyMiddleware(loggerMiddleware)
   )
 );

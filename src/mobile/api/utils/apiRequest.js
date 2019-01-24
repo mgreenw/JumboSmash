@@ -1,6 +1,7 @@
 // @flow
 import { timeout } from "./timeout";
 import DevTesting from "mobile/utils/DevTesting";
+import { UNAUTHORIZED } from "../sharedResponseCodes";
 
 type method = "PATCH" | "GET" | "POST";
 export function apiRequest(
@@ -22,7 +23,10 @@ export function apiRequest(
     })
   )
     .then(response => response.json())
-    .catch(error => {
-      throw { error, request };
+    .then(response => {
+      if (response.status === UNAUTHORIZED) {
+        throw UNAUTHORIZED;
+      }
+      return response;
     });
 }

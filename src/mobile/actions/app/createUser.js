@@ -4,6 +4,7 @@ import DevTesting from "../../utils/DevTesting";
 import type { UserProfile, UserSettings } from "mobile/reducers";
 import { createMyProfile } from "mobile/api/users/updateMyProfile";
 import updateMySettings from "mobile/api/users/updateMySettings";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type CreateProfileAndSettingsInitiated_Action = {
   type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
@@ -39,7 +40,7 @@ export function createUser(profile: UserProfile, settings: UserSettings) {
           });
         })
         .catch(error => {
-          DevTesting.log("Error in Creating User: ", error);
+          dispatch(apiErrorHandler(error));
         });
     });
   };

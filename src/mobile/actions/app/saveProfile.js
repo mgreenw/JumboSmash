@@ -3,6 +3,7 @@ import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
 import type { UserProfile } from "mobile/reducers";
 import { updateMyProfile } from "mobile/api/users/updateMyProfile";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type SaveProfileInitiated_Action = {
   type: "SAVE_PROFILE__INITIATED"
@@ -31,9 +32,13 @@ export function saveProfile(profile: UserProfile) {
     const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      updateMyProfile(token, profile).then(() => {
-        dispatch(complete(profile));
-      });
+      updateMyProfile(token, profile)
+        .then(() => {
+          dispatch(complete(profile));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
     });
   };
 }
