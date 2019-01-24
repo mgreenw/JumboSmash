@@ -33,7 +33,6 @@
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
     "express": "^4.16.4",
-    "jsdom": "^12.2.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
     "node-pg-migrate": "^3.13.0",
