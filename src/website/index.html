@@ -89,6 +89,7 @@
       e.preventDefault()
       if($('#emailInput')[0].value!='') {
         // update page content LOADING
+        $('.button-primary').prop('disabled', true);
         $('#signup h2').text('Working...');
         $('#emailInput').css({'color':'white','background-color':'#FF6262','border':'2px solid white'});
         //submit email to Google Sheet
