@@ -60,7 +60,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                       style={
                         firstScreen || lastScreen
                           ? textStyles.veganTitle
-                          : Arthur_Styles.onboardingHeader
+                          : textStyles.headline5StyleDemibold
                       }
                     >
                       {title}
