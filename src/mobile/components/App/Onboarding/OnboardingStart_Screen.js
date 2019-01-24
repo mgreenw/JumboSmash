@@ -81,7 +81,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         body={
           <Text style={[textStyles.headline4Style, { textAlign: "center" }]}>
             {
-              "Let's take 2 minutes to get your profile setup before you begin swiping"
+              "Let's take 2 minutes to get your profile setup before you begin swiping."
             }
           </Text>
         }

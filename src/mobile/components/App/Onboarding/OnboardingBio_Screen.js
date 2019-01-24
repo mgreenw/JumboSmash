@@ -74,6 +74,8 @@ class OnboardingBioScreen extends React.Component<Props, State> {
     const body = (
       <View
         style={{
+          maxHeight: 210,
+          marginBottom: 30,
           width: "100%"
         }}
       >

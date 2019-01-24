@@ -41,46 +41,44 @@ export class OnboardingLayout extends React.Component<Props, State> {
       <View style={Arthur_Styles.container}>
         <GEMHeader
           leftIconName={firstScreen ? undefined : "back"}
-          title={firstScreen ? "onboarding-start" : "onboarding-main"}
+          title={"Profile Setup"}
           loading={loading}
         />
         <KeyboardView>
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 2 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <View>
-                    <Text
-                      style={
-                        firstScreen || lastScreen
-                          ? textStyles.veganTitle
-                          : Arthur_Styles.onboardingHeader
-                      }
-                    >
-                      {title}
-                    </Text>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flex: 2,
-                    paddingLeft: 22,
-                    paddingRight: 22,
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  {body}
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <View>
+                  <Text
+                    style={
+                      firstScreen || lastScreen
+                        ? textStyles.veganTitle
+                        : textStyles.headline5StyleDemibold
+                    }
+                  >
+                    {title}
+                  </Text>
                 </View>
               </View>
-              <View style={{ flex: 1, flexDirection: "row", paddingTop: 12 }}>
+              <View
+                style={{
+                  flex: 2,
+                  paddingLeft: firstScreen || lastScreen ? 20 : 40,
+                  paddingRight: firstScreen || lastScreen ? 20 : 40,
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {body}
+              </View>
+              <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }} />
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
