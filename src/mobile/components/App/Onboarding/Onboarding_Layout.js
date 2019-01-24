@@ -69,8 +69,8 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: 22,
-                  paddingRight: 22
+                  paddingLeft: firstScreen || lastScreen ? 20 : 40,
+                  paddingRight: firstScreen || lastScreen ? 20 : 40
                 }}
               >
                 {body}
