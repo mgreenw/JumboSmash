@@ -30,7 +30,7 @@ describe('GET api/users/me/settings', () => {
     const res = await request(app)
       .patch('/api/users/me/settings')
       .set('Accept', 'application/json')
-      .set('Authorization', dbUtils.signToken(1))
+      .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED);
@@ -41,7 +41,6 @@ describe('GET api/users/me/settings', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Emily',
       bio: 'Likes dogs and cats',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1996-05-14',
     });
     const res = await request(app)
@@ -58,7 +57,6 @@ describe('GET api/users/me/settings', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Emily',
       bio: 'Likes dogs and cats',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1996-05-14',
     });
     const res = await request(app)
@@ -86,7 +84,6 @@ describe('GET api/users/me/settings', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Emily',
       bio: 'Likes dogs and cats',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1996-05-14',
     });
     const res = await request(app)
@@ -114,7 +111,6 @@ describe('GET api/users/me/settings', () => {
     await dbUtils.createProfile(user.id, {
       displayName: 'Rando',
       bio: 'Likes green eggs and ham',
-      image1Url: 'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
       birthday: '1996-05-14',
     });
     const res = await request(app)

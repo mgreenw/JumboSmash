@@ -22,22 +22,6 @@ const schema = {
       "type": "string",
       "format": "date",
     },
-    "image1Url": {
-      "description": "The url to the user's first image.",
-      "type": "string"
-    },
-    "image2Url": {
-      "description": "The url to the user's second image.",
-      "type": "string"
-    },
-    "image3Url": {
-      "description": "The url to the user's third image.",
-      "type": "string"
-    },
-    "image4Url": {
-      "description": "The url to the user's fourth image.",
-      "type": "string"
-    },
     "bio": {
       "description": "The user's bio!",
       "type": "string"
@@ -70,10 +54,6 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     display_name: req.body.displayName,
     birthday: req.body.birthday,
     bio: req.body.bio,
-    image1_url: req.body.image1Url,
-    image2_url: req.body.image2Url,
-    image3_url: req.body.image3Url,
-    image4_url: req.body.image4Url,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs

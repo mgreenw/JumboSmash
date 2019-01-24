@@ -6,7 +6,6 @@ import { StackNavigator } from "react-navigation";
 import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
-import getTokenUtln from "mobile/api/auth/getTokenUtln";
 import { loadAuth } from "mobile/actions/auth/loadAuth";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
@@ -86,7 +85,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
     if (authLoaded && prevProps.loadAuthInProgress != loadAuthInProgress) {
-      // If there is a token, our upstream middleware
       if (token) {
         navigate(routes.AppSwitch, {});
       } else {

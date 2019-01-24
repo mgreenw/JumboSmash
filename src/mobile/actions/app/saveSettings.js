@@ -1,8 +1,9 @@
 // @flow
-import type { Dispatch } from "redux";
+import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
 import type { UserSettings } from "mobile/reducers";
 import updateMySettings from "mobile/api/users/updateMySettings";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export const SAVE_SETTINGS__INITIATED = "SAVE_SETTINGS__INITIATED";
 export const SAVE_SETTINGS__COMPLETED = "SAVE_SETTINGS__COMPLETED";
@@ -22,12 +23,17 @@ function complete(settings: UserSettings) {
 
 // TODO: catch errors, e.g. the common network timeout.
 export function saveSettings(token: string, settings: UserSettings) {
-  return function(dispatch: Dispatch) {
+  return function(dispatch: Dispatch, getState: GetState) {
+    const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      updateMySettings(token, settings).then(() => {
-        dispatch(complete(settings));
-      });
+      updateMySettings(token, settings)
+        .then(() => {
+          dispatch(complete(settings));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
     });
   };
 }

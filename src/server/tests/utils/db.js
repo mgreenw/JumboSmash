@@ -1,39 +1,65 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const uuid = require('uuid/v4');
 
 const db = require('../../db');
 
-function signToken(id) {
-  return jwt.sign({ id }, config.secret, {
+async function signToken(userId) {
+  const tokenUUID = uuid();
+  await db.query(`
+      UPDATE users
+      SET token_uuid = $1
+      WHERE id = $2
+    `,
+  [tokenUUID, userId]);
+
+  return jwt.sign({
+    userId,
+    uuid: tokenUUID,
+  }, config.secret, {
     expiresIn: 31540000, // expires in 365 days
   });
 }
 
+async function insertPhoto(userId, index = 1, photoUUID = uuid()) {
+  try {
+    const result = await db.query(`
+      INSERT INTO photos
+      (user_id, index, uuid)
+      VALUES ($1, $2, $3)
+      RETURNING id
+    `, [userId, index, photoUUID]);
+    return result.rows[0].id;
+  } catch (error) {
+    throw new Error('Failed to insert photo');
+  }
+}
+
 async function createProfile(userId, body) {
   const {
-    displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio,
+    displayName, birthday, bio,
   } = body;
 
   if (displayName === undefined
-    || birthday === undefined || image1Url === undefined || bio === undefined) {
+    || birthday === undefined || bio === undefined) {
     throw new Error('Invalid profile supplied to createUser');
   }
+
+  const photoId = await insertPhoto(userId, 1);
 
   try {
     const result = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      (user_id, display_name, birthday, bio, splash_photo_id)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING user_id AS "userId"
     `,
-    [userId, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
-
+    [userId, displayName, birthday, bio, photoId]);
     return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');
   }
 }
-
 
 async function createUser(utln, useDefaultProfile = false, profileBody = null) {
   const email = `${utln}@tufts.edu`;
@@ -52,7 +78,6 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
         displayName: 'test user',
         bio: 'is a user',
         birthday: '1997-09-09',
-        image1Url: 'https://www.google.com',
       };
 
       const body = useDefaultProfile ? defaultProfile : profileBody;
@@ -60,7 +85,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
       return {
         id,
-        token: signToken(id),
+        token: await signToken(id),
         profile: {
           userId: profile,
           ...body,
@@ -70,7 +95,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
     return {
       id,
-      token: signToken(id),
+      token: await signToken(id),
     };
   } catch (error) {
     throw new Error('Failed to insert user');
@@ -148,4 +173,5 @@ module.exports = {
   updateSettings,
   signToken,
   createRelationship,
+  insertPhoto,
 };

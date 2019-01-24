@@ -52,20 +52,12 @@ Provide the normal `Authorization` token in the request header.
             "displayName": "Tony",
             "birthday": "1996-11-13",
             "bio": "The Real President",
-            "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
-            "image2Url": null,
-            "image3Url": null,
-            "image4Url": null
         },
         {
             "userId": 2,
             "displayName": "Monaco",
             "birthday": "1997-08-12",
             "bio": "Mr. President",
-            "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
-            "image2Url": null,
-            "image3Url": null,
-            "image4Url": null
         }
     ]
 }

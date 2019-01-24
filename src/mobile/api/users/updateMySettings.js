@@ -15,10 +15,10 @@ export default function updateMySettings(
         case UPDATE_MY_SETTINGS__SUCCESS:
           return;
         default:
-          throw (response, request);
+          throw { response };
       }
     })
     .catch(error => {
-      throw (error, request);
+      throw { error, request };
     });
 }
