@@ -99,6 +99,7 @@ form {
 }
 #emailInput {
   padding: 10px 12px;
+  transition: 1s;
 }
 #disclaimer {
   font-size: 0.75em;
