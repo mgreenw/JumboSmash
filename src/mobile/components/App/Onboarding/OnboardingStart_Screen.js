@@ -41,14 +41,14 @@ class OnboardingStartScreen extends React.Component<Props, State> {
       },
       settings: propsSettings || {
         useGenders: {
-          he: true,
-          she: true,
-          they: true
+          male: true,
+          female: true,
+          nonBinary: true
         },
         wantGenders: {
-          he: true,
-          she: true,
-          they: true
+          male: true,
+          female: true,
+          nonBinary: true
         }
       }
     };

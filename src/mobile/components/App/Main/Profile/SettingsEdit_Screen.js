@@ -43,14 +43,14 @@ class SettingsScreen extends React.Component<Props, State> {
       isLoggingOut: false,
       // TODO: initialize via the redux state.
       useGenders: {
-        he: true,
-        she: true,
-        they: true
+        male: true,
+        female: true,
+        nonBinary: true
       },
       wantGenders: {
-        he: true,
-        she: true,
-        they: true
+        male: true,
+        female: true,
+        nonBinary: true
       }
     };
   }

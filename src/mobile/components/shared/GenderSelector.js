@@ -102,11 +102,11 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                she: !prevState.genders.she
+                she: !prevState.genders.female
               }
             }));
           }}
-          selected={this.state.genders.she}
+          selected={this.state.genders.female}
         />
         <View style={styles.spacer} />
         <GenderToggle
@@ -115,11 +115,11 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                they: !prevState.genders.they
+                they: !prevState.genders.nonBinary
               }
             }));
           }}
-          selected={this.state.genders.they}
+          selected={this.state.genders.nonBinary}
         />
         <View style={styles.spacer} />
         <GenderToggle
@@ -128,11 +128,11 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                he: !prevState.genders.he
+                he: !prevState.genders.male
               }
             }));
           }}
-          selected={this.state.genders.he}
+          selected={this.state.genders.male}
         />
       </View>
     );
