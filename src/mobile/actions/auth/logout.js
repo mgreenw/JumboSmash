@@ -27,10 +27,7 @@ function complete(): LogoutCompleted_Action {
 // a token's session, so we just remove their access to that session.
 // We don't care if a key didn't exist, as this will still be logged out.
 export function logout() {
-  console.log("logout!");
   return function(dispatch: Dispatch) {
-    console.log("logout called!");
-
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       AsyncStorage.multiRemove(["token"]).then(stores => {
