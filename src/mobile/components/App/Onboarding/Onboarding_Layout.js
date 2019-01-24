@@ -41,7 +41,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
       <View style={Arthur_Styles.container}>
         <GEMHeader
           leftIconName={firstScreen ? undefined : "back"}
-          title={firstScreen ? "onboarding-start" : "onboarding-main"}
+          title={"Profile Setup"}
           loading={loading}
         />
         <KeyboardView>
