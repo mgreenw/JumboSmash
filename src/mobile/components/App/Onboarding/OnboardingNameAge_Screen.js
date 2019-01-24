@@ -146,8 +146,8 @@ class NameAgeScreen extends React.Component<Props, State> {
     if (YYYY_DD_MM.length < 10) {
       return ""; // Don't bother unformatting incorrect birthdays.
     }
-    const MM = YYYY_DD_MM[8] + YYYY_DD_MM[9];
-    const DD = YYYY_DD_MM[5] + YYYY_DD_MM[6];
+    const DD = YYYY_DD_MM[8] + YYYY_DD_MM[9];
+    const MM = YYYY_DD_MM[5] + YYYY_DD_MM[6];
     const YY = YYYY_DD_MM[2] + YYYY_DD_MM[3];
     return `${MM}${DD}${YY}`;
   };
