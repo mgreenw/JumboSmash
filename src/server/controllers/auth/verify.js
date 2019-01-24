@@ -4,6 +4,7 @@ import type { $Request, $Response } from 'express';
 
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const uuid = require('uuid/v4');
 
 const db = require('../../db');
 const codes = require('../status-codes');
@@ -76,23 +77,29 @@ try {
     );
 
     // Check if a user exists for this utln.
+    const tokenUUID = uuid();
     result = await db.query(`
       INSERT INTO users
-        (utln, email)
-        VALUES ($1, $2)
+        (utln, email, token_uuid)
+        VALUES ($1, $2, $3)
       ON CONFLICT (utln)
         DO UPDATE
-          SET successful_logins = users.successful_logins + EXCLUDED.successful_logins
+          SET
+            successful_logins = users.successful_logins + EXCLUDED.successful_logins,
+            token_uuid = $4
       RETURNING id
     `,
-      [utln, verification.email]
+      [utln, verification.email, tokenUUID, tokenUUID]
     );
 
     // Get the user from the query results
     const user = result.rows[0];
 
     // Sign a login token with the user's id and the config secret
-    const token = jwt.sign({ id: user.id }, config.secret, {
+    const token = jwt.sign({
+      userId: user.id,
+      uuid: tokenUUID,
+    }, config.secret, {
       expiresIn: 31540000, // expires in 365 days
     });
 

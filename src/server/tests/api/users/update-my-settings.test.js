@@ -30,7 +30,7 @@ describe('GET api/users/me/settings', () => {
     const res = await request(app)
       .patch('/api/users/me/settings')
       .set('Accept', 'application/json')
-      .set('Authorization', dbUtils.signToken(1))
+      .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED);

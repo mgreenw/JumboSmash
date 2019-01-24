@@ -258,4 +258,77 @@ describe('api/auth/verify', () => {
         expect(res.body.token).toBeDefined();
       });
   });
+
+  it('should invalidate the users first token if the user logs in AGAIN', async () => {
+    let res1 = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+          forceResend: true,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
+    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
+
+    let codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    let res = await request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+          code: codeForGoodUtln.rows[0].code,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+
+    const firstToken = res.body.token;
+
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
+    expect(res.body.token).toBeDefined();
+
+    // Log in again
+    res1 = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+          forceResend: true,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
+    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
+
+    codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    res = await request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+          code: codeForGoodUtln.rows[0].code,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
+    expect(res.body.token).toBeDefined();
+
+    // Ensure that the first token is invalidated
+    res = await request(app)
+      .get('/api/auth/get-token-utln')
+      .set('Authorization', firstToken)
+      .set('Accept', 'application/json');
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED);
+  });
 });
