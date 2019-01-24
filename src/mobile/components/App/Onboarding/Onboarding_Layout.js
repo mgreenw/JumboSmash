@@ -47,29 +47,33 @@ export class OnboardingLayout extends React.Component<Props, State> {
         <KeyboardView>
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 2 }}>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <View>
-                    <Text
-                      style={
-                        firstScreen || lastScreen
-                          ? textStyles.veganTitle
-                          : Arthur_Styles.onboardingHeader
-                      }
-                    >
-                      {title}
-                    </Text>
-                  </View>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <View>
+                  <Text
+                    style={
+                      firstScreen || lastScreen
+                        ? textStyles.veganTitle
+                        : Arthur_Styles.onboardingHeader
+                    }
+                  >
+                    {title}
+                  </Text>
                 </View>
-                <View style={{ flex: 2, paddingLeft: 22, paddingRight: 22 }}>
-                  {body}
-                </View>
+              </View>
+              <View
+                style={{
+                  flex: 2,
+                  paddingLeft: 22,
+                  paddingRight: 22
+                }}
+              >
+                {body}
               </View>
               <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }} />
