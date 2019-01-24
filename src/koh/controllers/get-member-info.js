@@ -54,8 +54,8 @@ const getUserInfo = async (req: $Request, res: $Response) => {
         status: codes.GET_MEMBER_INFO__NOT_FOUND,
       });
     }
-  } catch (error) {
-    return utils.error.server(res, 'Error looking up member in database.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Error looking up member in database.');
   }
 
   // If the user is not in the database, search ldap for the user
@@ -113,8 +113,8 @@ const getUserInfo = async (req: $Request, res: $Response) => {
       status: codes.GET_MEMBER_INFO__SUCCESS,
       member: insertResult.rows[0],
     });
-  } catch (error) {
-    return utils.error.server(res, 'Failed to get member over ldap.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to get member over ldap.');
   }
 };
 
