@@ -4,8 +4,19 @@ const uuid = require('uuid/v4');
 
 const db = require('../../db');
 
-function signToken(id) {
-  return jwt.sign({ id }, config.secret, {
+async function signToken(userId) {
+  const tokenUUID = uuid();
+  await db.query(`
+      UPDATE users
+      SET token_uuid = $1
+      WHERE id = $2
+    `,
+  [tokenUUID, userId]);
+
+  return jwt.sign({
+    userId,
+    uuid: tokenUUID,
+  }, config.secret, {
     expiresIn: 31540000, // expires in 365 days
   });
 }
@@ -74,7 +85,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
       return {
         id,
-        token: signToken(id),
+        token: await signToken(id),
         profile: {
           userId: profile,
           ...body,
@@ -84,7 +95,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
     return {
       id,
-      token: signToken(id),
+      token: await signToken(id),
     };
   } catch (error) {
     throw new Error('Failed to insert user');
