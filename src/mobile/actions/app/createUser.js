@@ -1,9 +1,10 @@
 // @flow
-import type { Dispatch } from "redux";
+import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
 import type { UserProfile, UserSettings } from "mobile/reducers";
 import { createMyProfile } from "mobile/api/users/updateMyProfile";
 import updateMySettings from "mobile/api/users/updateMySettings";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type CreateProfileAndSettingsInitiated_Action = {
   type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
@@ -25,12 +26,9 @@ function complete(): CreateProfileAndSettingsCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function createUser(
-  token: string,
-  profile: UserProfile,
-  settings: UserSettings
-) {
-  return function(dispatch: Dispatch) {
+export function createUser(profile: UserProfile, settings: UserSettings) {
+  return function(dispatch: Dispatch, getState: GetState) {
+    const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       // Important that they occur in this order; we use a created profile
@@ -42,7 +40,7 @@ export function createUser(
           });
         })
         .catch(error => {
-          DevTesting.log("Error in Creating User: ", error);
+          dispatch(apiErrorHandler(error));
         });
     });
   };

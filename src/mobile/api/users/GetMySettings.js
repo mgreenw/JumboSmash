@@ -17,10 +17,10 @@ export default function getMyProfile(request: request): Promise<?UserSettings> {
         case GET_SETTINGS__SUCCESS:
           return response.settings;
         default:
-          throw (response, request);
+          throw { response };
       }
     })
     .catch(error => {
-      throw (error, request);
+      throw { error, request };
     });
 }
