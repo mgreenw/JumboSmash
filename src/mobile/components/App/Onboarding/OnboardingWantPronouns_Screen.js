@@ -101,7 +101,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
           {"I'm looking for:"}
         </Text>
         <GenderSelector
-          defaultPronouns={this.state.settings.usePronouns}
+          defaultPronouns={this.state.settings.wantPronouns}
           onChange={this._onMyPronounChange}
           plural={true}
         />
