@@ -26,9 +26,7 @@ app.get('/', async (req, res) => {
 // Webhook for Website Image from Dockerhub
 app.post('/website', async (req, res) => {
 
-  push_data = req.body.push_data
-  logger.info(push_data);
-
+  logger.info(req.body.push_data);
   res.send('New Website Image added to Dockerhub');
 
   exec('docker stack deploy --with-registry-auth  -c ../docker-compose.yml pg', (err, stdout, stderr) => {
@@ -45,16 +43,14 @@ app.post('/website', async (req, res) => {
 // Webhook for Koh Image from Dockerhub
 app.post('/koh', async (req, res) => {
   res.send('New Koh Image added to Dockerhub');
-  push_data = req.body.push_data
-  logger.info(push_data);
+  logger.info(req.body.push_data);
 
 });
 
 // Webhook for Server Image from Dockerhub
 app.post('/server', async (req, res) => {
   res.send('New Server Image added to Dockerhub');
-  push_data = req.body.push_data
-  logger.info(push_data);
+  logger.info(req.body.push_data);
 });
 
 
