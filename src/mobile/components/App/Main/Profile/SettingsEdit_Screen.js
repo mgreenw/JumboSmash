@@ -6,7 +6,7 @@ import { Button } from "react-native-elements";
 import { styles } from "mobile/styles/template";
 import { logout } from "mobile/actions/auth/logout";
 import { GenderSelector } from "mobile/components/shared/GenderSelector";
-import type { Pronouns } from "mobile/reducers";
+import type { Genders } from "mobile/reducers";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
@@ -18,8 +18,8 @@ type Props = {
 };
 
 type State = {
-  usePronouns: Pronouns,
-  wantPronouns: Pronouns
+  useGenders: Genders,
+  wantGenders: Genders
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -42,12 +42,12 @@ class SettingsScreen extends React.Component<Props, State> {
     this.state = {
       isLoggingOut: false,
       // TODO: initialize via the redux state.
-      usePronouns: {
+      useGenders: {
         he: true,
         she: true,
         they: true
       },
-      wantPronouns: {
+      wantGenders: {
         he: true,
         she: true,
         they: true
@@ -71,15 +71,15 @@ class SettingsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onUsePronounChange = (pronouns: Pronouns) => {
+  _onUsePronounChange = (genderIdentities: Genders) => {
     this.setState({
-      usePronouns: pronouns
+      useGenders: genderIdentities
     });
   };
 
-  _onWantPronounChange = (pronouns: Pronouns) => {
+  _onWantPronounChange = (genderIdentities: Genders) => {
     this.setState({
-      wantPronouns: pronouns
+      wantGenders: genderIdentities
     });
   };
 
@@ -96,13 +96,13 @@ class SettingsScreen extends React.Component<Props, State> {
         <View style={{ flex: 1 }}>
           <Text style={{ textAlign: "center" }}>{"I identify as:"}</Text>
           <GenderSelector
-            defaultPronouns={this.state.usePronouns}
+            defaultGenders={this.state.useGenders}
             onChange={this._onUsePronounChange}
             plural={false}
           />
           <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
           <GenderSelector
-            defaultPronouns={this.state.wantPronouns}
+            defaultGenders={this.state.wantGenders}
             onChange={this._onWantPronounChange}
             plural={true}
           />

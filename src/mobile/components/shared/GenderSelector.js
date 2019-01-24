@@ -7,16 +7,16 @@ import { StyleSheet } from "react-native";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { textStyles } from "mobile/styles/textStyles";
 import { Colors } from "mobile/styles/colors";
-import type { Pronouns } from "mobile/reducers/";
+import type { Genders } from "mobile/reducers/";
 
 type GenderSelectorProps = {
-  defaultPronouns: Pronouns,
-  onChange: (pronouns: Pronouns) => void,
+  defaultGenders: Genders,
+  onChange: (genders: Genders) => void,
   plural: boolean
 };
 
 type GenderSelectorState = {
-  pronouns: Pronouns
+  genders: Genders
 };
 
 type GenderToggleProps = {
@@ -77,18 +77,18 @@ export class GenderSelector extends React.Component<
   constructor(props: GenderSelectorProps) {
     super(props);
     this.state = {
-      pronouns: this.props.defaultPronouns
+      genders: this.props.defaultGenders
     };
   }
 
   // Check via a deep comparison equality check if anything has changed in the
-  // pronouns. If so, call the onChange.
+  // genders. If so, call the onChange.
   componentDidUpdate(
     prevProps: GenderSelectorProps,
     prevState: GenderSelectorState
   ) {
-    if (!_.isEqual(prevState.pronouns, this.state.pronouns)) {
-      this.props.onChange(this.state.pronouns);
+    if (!_.isEqual(prevState.genders, this.state.genders)) {
+      this.props.onChange(this.state.genders);
     }
   }
 
@@ -100,39 +100,39 @@ export class GenderSelector extends React.Component<
           title={plural ? "Women" : "Woman"}
           onPress={() => {
             this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                she: !prevState.pronouns.she
+              genders: {
+                ...prevState.genders,
+                she: !prevState.genders.she
               }
             }));
           }}
-          selected={this.state.pronouns.she}
+          selected={this.state.genders.she}
         />
         <View style={styles.spacer} />
         <GenderToggle
           title={plural ? "Non-Binary" : "Non-Binary"}
           onPress={() => {
             this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                they: !prevState.pronouns.they
+              genders: {
+                ...prevState.genders,
+                they: !prevState.genders.they
               }
             }));
           }}
-          selected={this.state.pronouns.they}
+          selected={this.state.genders.they}
         />
         <View style={styles.spacer} />
         <GenderToggle
           title={plural ? "Men" : "Man"}
           onPress={() => {
             this.setState(prevState => ({
-              pronouns: {
-                ...prevState.pronouns,
-                he: !prevState.pronouns.he
+              genders: {
+                ...prevState.genders,
+                he: !prevState.genders.he
               }
             }));
           }}
-          selected={this.state.pronouns.he}
+          selected={this.state.genders.he}
         />
       </View>
     );

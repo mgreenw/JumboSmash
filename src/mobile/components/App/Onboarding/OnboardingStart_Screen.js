@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Pronouns
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 
@@ -44,12 +40,12 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         images: []
       },
       settings: propsSettings || {
-        usePronouns: {
+        useGenders: {
           he: true,
           she: true,
           they: true
         },
-        wantPronouns: {
+        wantGenders: {
           he: true,
           she: true,
           they: true
