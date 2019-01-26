@@ -25,7 +25,8 @@ jobs:
             echo "Pushing $DEPLOY_TAG to the registry";
             docker push $DEPLOY_TAG;
           fi
-          echo "No changes in website codebase!"
+          else
+            echo "No changes in website codebase!"
         fi
   - stage: server
     dist: xenial
