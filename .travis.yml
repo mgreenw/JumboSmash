@@ -24,9 +24,9 @@ jobs:
             docker build -t $DEPLOY_TAG .;
             echo "Pushing $DEPLOY_TAG to the registry";
             docker push $DEPLOY_TAG;
-          fi
           else
             echo "No changes in website codebase!";
+          fi
         fi
   - stage: server
     dist: xenial
