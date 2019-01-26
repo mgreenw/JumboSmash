@@ -8,7 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type {
   UserSettings,
   UserProfile,
-  Pronouns
+  Genders
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";

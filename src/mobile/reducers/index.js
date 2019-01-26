@@ -34,15 +34,15 @@ import type {
 import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
 
 // TODO: make own ReduxState file
-export type Pronouns = {
-  he: boolean,
-  she: boolean,
-  they: boolean
+export type Genders = {
+  male: boolean,
+  female: boolean,
+  nonBinary: boolean
 };
 
 export type UserSettings = {
-  usePronouns: Pronouns,
-  wantPronouns: Pronouns
+  useGenders: Genders,
+  wantGenders: Genders
 };
 
 // TODO:

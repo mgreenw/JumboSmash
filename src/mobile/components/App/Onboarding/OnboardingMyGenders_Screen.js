@@ -8,7 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type {
   UserSettings,
   UserProfile,
-  Pronouns
+  Genders
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
@@ -31,7 +31,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingWantPronounsScreen extends React.Component<Props, State> {
+class OnboardingMyGendersScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -51,12 +51,12 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onMyPronounChange = (pronouns: Pronouns) => {
+  _onMyPronounChange = (genderIdentities: Genders) => {
     this.setState((state, props) => {
       return {
         settings: {
           ...this.state.settings,
-          wantPronouns: pronouns
+          useGenders: genderIdentities
         }
       };
     });
@@ -64,7 +64,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingAddPictures, {
+    navigation.navigate(routes.OnboardingWantGenders, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (
@@ -89,7 +89,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
           ]}
         >
           {
-            "JumboSmash uses your gender preferences to determine who to show to you. They will never be shown on your profile."
+            "JumboSmash uses your gender identity to determine who to show you to. It will never be shown on your profile."
           }
         </Text>
         <Text
@@ -98,12 +98,12 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
             { textAlign: "center", paddingBottom: 15 }
           ]}
         >
-          {"I'm looking for:"}
+          {"I identify as:"}
         </Text>
         <GenderSelector
-          defaultPronouns={this.state.settings.wantPronouns}
+          defaultGenders={this.state.settings.useGenders}
           onChange={this._onMyPronounChange}
-          plural={true}
+          plural={false}
         />
       </View>
     );
@@ -111,7 +111,7 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={body}
         onButtonPress={this._goToNextPage}
-        title="Pronoun Preferences"
+        title="Gender Identity"
         main={true}
         progress={0}
       />
@@ -122,4 +122,4 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingWantPronounsScreen);
+)(OnboardingMyGendersScreen);
