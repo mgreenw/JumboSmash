@@ -26,7 +26,7 @@ jobs:
             docker push $DEPLOY_TAG;
           fi
           else
-            echo "No changes in website codebase!"
+            echo "No changes in website codebase!";
         fi
   - stage: server
     dist: xenial
