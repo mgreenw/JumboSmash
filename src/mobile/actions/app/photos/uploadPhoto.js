@@ -2,6 +2,7 @@
 import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../../utils/DevTesting";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+import { getSignedUrl } from "mobile/api/photos/getSignedUrl";
 
 export type UploadPhotoInitiated_Action = {
   type: "UPLOAD_PHOTO__INITIATED"
@@ -27,14 +28,13 @@ export function uploadPhoto(uri: string) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
-    // updateMySettings(token, settings)
-    //   .then(() => {
-    //     createMyProfile(token, profile).then(() => {
-    //       dispatch(complete());
-    //     });
-    //   })
-    //   .catch(error => {
-    //     dispatch(apiErrorHandler(error));
-    //   });
+    getSignedUrl(token)
+      .then(url => {
+        console.log(url);
+        dispatch(complete());
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
   };
 }

@@ -14,8 +14,6 @@ import { textStyles } from "mobile/styles/textStyles";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
 import { Permissions, ImagePicker } from "expo";
 
-const MAX_PHOTO_URI =
-  "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
 type ProfilePictureProps = {
   disabled: boolean,
   showDeleteButton: boolean,
@@ -127,11 +125,10 @@ async function selectPhoto() {
 }
 
 export default class AddPhotos extends React.Component<AddPhotosProps> {
-  _onAdd = async (index: number, uri: string) => {
-    const newUri = await selectPhoto();
-
+  _onAdd = async (index: number) => {
+    const uri = await selectPhoto();
     const newImages = this.props.images.slice();
-    newImages[index] = newUri;
+    newImages[index] = uri;
     this.props.onChangeImages(newImages);
   };
 
@@ -163,7 +160,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
             disabled={false}
             showDeleteButton={uri2 != null || enableDeleteFirst === true}
             onAdd={() => {
-              this._onAdd(0, MAX_PHOTO_URI);
+              this._onAdd(0);
             }}
             onRemove={() => {
               this._onRemove(0);
@@ -177,7 +174,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
             disabled={uri1 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(1, MAX_PHOTO_URI);
+              this._onAdd(1);
             }}
             onRemove={() => {
               this._onRemove(1);
@@ -191,7 +188,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
             disabled={uri2 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(2, MAX_PHOTO_URI);
+              this._onAdd(2);
             }}
             onRemove={() => {
               this._onRemove(2);
@@ -205,7 +202,7 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
             disabled={uri3 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(3, MAX_PHOTO_URI);
+              this._onAdd(3);
             }}
             onRemove={() => {
               this._onRemove(3);
