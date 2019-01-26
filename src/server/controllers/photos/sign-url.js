@@ -51,7 +51,7 @@ const signURL = async (req: $Request, res: $Response) => {
 
   // Get a signed url for the given photo uuid.
   s3.createPresignedPost(params, (err, data) => {
-    if (err) return utils.error.server(res, `S3 Error: ${err}`);
+    if (err) return utils.error.server(res, err, 'S3 Error');
 
     // Add acl to payload
     const payload = data;

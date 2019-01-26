@@ -143,14 +143,14 @@ const sendVerificationEmail = async (req: $Request, res: $Response) => {
     });
     slack.postVerificationCode(verificationCode, utln, memberInfo.email, true);
 
+
     // Send a success response to the client
     return res.status(200).json({
       status: codes.SEND_VERIFICATION_EMAIL__SUCCESS,
       email: memberInfo.email,
     });
   } catch (err) {
-    // TODO: Log this to a standard logger
-    return apiUtils.error.server(res, err);
+    return apiUtils.error.server(res, err, 'Could not send Verification Email');
   }
 };
 

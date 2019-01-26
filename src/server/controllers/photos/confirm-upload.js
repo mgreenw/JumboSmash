@@ -98,12 +98,12 @@ const confirmUpload = async (req: $Request, res: $Response) => {
         status: codes.CONFIRM_UPLOAD__SUCCESS,
         photoId,
       });
-    } catch (error) {
+    } catch (err) {
       await client.query('ROLLBACK');
-      return utils.error.server(res, 'Failed to confirm upload - db query.');
+      return utils.error.server(res, err, 'Failed to confirm upload - db query.');
     }
-  } catch (error) {
-    return utils.error.server(res, 'Failed to confirm upload.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to confirm upload.');
   }
 };
 
