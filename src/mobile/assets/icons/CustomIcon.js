@@ -16,4 +16,5 @@ export type IconName =
   | "back"
   | "life-ring"
   | "gear"
-  | "check";
+  | "check"
+  | "delete-filled";

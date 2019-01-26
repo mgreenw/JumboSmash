@@ -112,7 +112,7 @@ try {
   // In the case of an unknown error, respond with a generic error.
   } catch (err) {
     // TODO: Add logging of a problem
-    return utils.error.server(res, err);
+    return utils.error.server(res, err, 'Failed to verify user');
   }
 };
 

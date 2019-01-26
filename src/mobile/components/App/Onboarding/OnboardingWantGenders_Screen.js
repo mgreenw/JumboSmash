@@ -77,7 +77,7 @@ class OnboardingWantGendersScreen extends React.Component<Props, State> {
 
   render() {
     const body = (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, width: "100%" }}>
         <Text
           style={[
             textStyles.subtitle1Style,

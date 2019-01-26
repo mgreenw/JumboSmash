@@ -95,8 +95,8 @@ const updateMySettings = async (req: $Request, res: $Response) => {
     return res.status(201).json({
       status: codes.UPDATE_SETTINGS__SUCCESS,
     });
-  } catch (error) {
-    return apiUtils.error.server(res, 'Failed to update user settings.');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Failed to update user settings.');
   }
 };
 
