@@ -102,7 +102,7 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                she: !prevState.genders.female
+                female: !prevState.genders.female
               }
             }));
           }}
@@ -115,7 +115,7 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                they: !prevState.genders.nonBinary
+                nonBinary: !prevState.genders.nonBinary
               }
             }));
           }}
@@ -128,7 +128,7 @@ export class GenderSelector extends React.Component<
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                he: !prevState.genders.male
+                male: !prevState.genders.male
               }
             }));
           }}
