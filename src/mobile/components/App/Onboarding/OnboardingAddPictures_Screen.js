@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
@@ -69,13 +69,41 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { height, width } = Dimensions.get("window");
+    // A bit of a hack, but we want pictures to look nice.
+    // We have 22 padding via onboarding layout, plus an additional 40 here,
+    // and  we want 20 padding between each
+    const containerWidth = width - 44 - 80;
+    const imageWidth = (containerWidth - 15) / 2;
+
     return (
       <OnboardingLayout
-        body={<AddPhotos />}
+        body={
+          <AddPhotos
+            images={this.state.profile.images}
+            onChangeImages={images => {
+              this.setState(prevState => {
+                return {
+                  profile: {
+                    ...prevState.profile,
+                    images
+                  }
+                };
+              });
+            }}
+            width={containerWidth}
+            imageWidth={imageWidth}
+            enableDeleteFirst={true}
+          />
+        }
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main={true}
         progress={0}
+        buttonDisabled={
+          this.state.profile.images.length === 0 ||
+          this.state.profile.images[0] === null
+        }
       />
     );
   }

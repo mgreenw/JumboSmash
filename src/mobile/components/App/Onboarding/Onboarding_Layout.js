@@ -70,7 +70,10 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 style={{
                   flex: 2,
                   paddingLeft: firstScreen || lastScreen ? 20 : 40,
-                  paddingRight: firstScreen || lastScreen ? 20 : 40
+                  paddingRight: firstScreen || lastScreen ? 20 : 40,
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
                 {body}

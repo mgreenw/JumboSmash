@@ -39,7 +39,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   editedProfile: UserProfile,
-  errorMessageName: string
+  errorMessageName: string,
+  scrollEnabled: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
@@ -68,7 +69,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       editedProfile: props.profile,
-      errorMessageName: ""
+      errorMessageName: "",
+      scrollEnabled: false
     };
   }
 
@@ -105,6 +107,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { height, width } = Dimensions.get("window");
+    // A bit of a hack, but we want pictures to look nice.
+    // We have 32 padding around this screen,
+    // and  we want 20 padding between each
+    const containerWidth = width - 64;
+    const imageWidth = (containerWidth - 15) / 2;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -115,32 +123,41 @@ class ProfileEditScreen extends React.Component<Props, State> {
         <KeyboardAwareScrollView
           extraScrollHeight={30}
           style={{
-            backgroundColor: Colors.AquaMarine
+            backgroundColor: Colors.AquaMarine,
+            paddingTop: 20
           }}
         >
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              paddingBottom: 20,
-              paddingTop: 20,
-              marginBottom: 20,
-              marginTop: 20
-            }}
-          >
-            <AddPhotos />
+          <View style={styles.profileBlock}>
+            <AddPhotos
+              images={this.state.editedProfile.images}
+              width={containerWidth}
+              imageWidth={imageWidth}
+              onChangeImages={images => {
+                this.setState(prevState => {
+                  return {
+                    editedProfile: {
+                      ...prevState.editedProfile,
+                      images
+                    }
+                  };
+                });
+              }}
+              onRemove={index => {
+                this.setState(prevState => {
+                  const newImages = prevState.editedProfile.images.slice();
+                  newImages.splice(index, 1);
+                  newImages[3] = null;
+                  return {
+                    editedProfile: {
+                      ...prevState.editedProfile,
+                      images: newImages
+                    }
+                  };
+                });
+              }}
+            />
           </View>
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              marginBottom: 20,
-              paddingTop: 13,
-              paddingBottom: 13
-            }}
-          >
+          <View style={styles.profileBlock}>
             <PrimaryInput
               value={this.state.editedProfile.displayName}
               label="Preferred Name"
@@ -161,6 +178,17 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  profileBlock: {
+    backgroundColor: Colors.White,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingTop: 20,
+    marginBottom: 20,
+    paddingBottom: 20
+  }
+});
 
 export default connect(
   mapStateToProps,
