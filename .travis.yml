@@ -19,12 +19,13 @@ jobs:
       - echo "No Tests for Website";
     after_success:
       - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then
-          if git diff --name-only HEAD^ | grep "website/";  then 
+          if git diff --name-only HEAD^ | grep "website/";  then
             echo "New code. Performing a Docker build";
             docker build -t $DEPLOY_TAG .;
             echo "Pushing $DEPLOY_TAG to the registry";
             docker push $DEPLOY_TAG;
           fi
+          echo "No changes in website codebase!"
         fi
   - stage: server
     dist: xenial
