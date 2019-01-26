@@ -27,14 +27,14 @@ export function uploadPhoto(uri: string) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
-    updateMySettings(token, settings)
-      .then(() => {
-        createMyProfile(token, profile).then(() => {
-          dispatch(complete());
-        });
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
+    // updateMySettings(token, settings)
+    //   .then(() => {
+    //     createMyProfile(token, profile).then(() => {
+    //       dispatch(complete());
+    //     });
+    //   })
+    //   .catch(error => {
+    //     dispatch(apiErrorHandler(error));
+    //   });
   };
 }

@@ -67,8 +67,8 @@ const getMatches = async (req: $Request, res: $Response) => {
       status: codes.GET_MATCHES__SUCCESS,
       matches: result.rows,
     });
-  } catch (error) {
-    return apiUtils.error.server(res, 'Failed to get user matches');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Failed to get user matches');
   }
 };
 

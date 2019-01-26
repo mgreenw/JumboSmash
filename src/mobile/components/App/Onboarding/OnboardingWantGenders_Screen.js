@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Pronouns
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 import { GenderSelector } from "mobile/components/shared/GenderSelector";
@@ -31,7 +27,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingWantPronounsScreen extends React.Component<Props, State> {
+class OnboardingWantGendersScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -51,12 +47,12 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onMyPronounChange = (pronouns: Pronouns) => {
+  _onMyPronounChange = (genderIdentities: Genders) => {
     this.setState((state, props) => {
       return {
         settings: {
           ...this.state.settings,
-          wantPronouns: pronouns
+          wantGenders: genderIdentities
         }
       };
     });
@@ -82,16 +78,26 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
   render() {
     const body = (
       <View style={{ flex: 1, width: "100%" }}>
-        <Text style={[textStyles.subtitle1Style, { textAlign: "center" }]}>
+        <Text
+          style={[
+            textStyles.subtitle1Style,
+            { textAlign: "center", paddingBottom: 30 }
+          ]}
+        >
           {
-            "These pronouns help determine who to show to you in JumboSmash. Pronouns will not be shown on your profile."
+            "JumboSmash uses your gender preferences to determine who to show to you. They will never be shown on your profile."
           }
         </Text>
-        <Text style={[textStyles.headline5Style, { textAlign: "center" }]}>
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: "center", paddingBottom: 15 }
+          ]}
+        >
           {"I'm looking for:"}
         </Text>
         <GenderSelector
-          defaultPronouns={this.state.settings.wantPronouns}
+          defaultGenders={this.state.settings.wantGenders}
           onChange={this._onMyPronounChange}
           plural={true}
         />
@@ -112,4 +118,4 @@ class OnboardingWantPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingWantPronounsScreen);
+)(OnboardingWantGendersScreen);

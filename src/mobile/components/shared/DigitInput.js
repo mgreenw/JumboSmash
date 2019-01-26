@@ -188,7 +188,6 @@ function MultiDigitInput(
   > {
     constructor(props: MultiDigitInputProps) {
       super(props);
-      const { value } = this.props;
       this.state = {
         shakeAnim: new Animated.Value(0),
         selectedAnim: new Animated.Value(0),
@@ -326,6 +325,7 @@ function MultiDigitInput(
             >
               <TextInput
                 style={[StyleSheet.absoluteFill, { color: "transparent" }]}
+                value={input}
                 keyboardType="numeric"
                 placeholder=""
                 onChangeText={this.props.onChangeValue}
