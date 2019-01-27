@@ -79,30 +79,20 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.messages[0].content).toBe('hey');
   });
 
-  // Should work if the other user exists
-  // Should succeed but return an empty result if the other user does not exist
+  it('should succeed if the other user exists', async () => {
+    const result = await db.query(`
+      SELECT COALESCE(SUM(id), 0) AS id from users
+    `);
 
-  // it('should fail if the other userId is not an integer', async () => {
-  //   const res = await request(app)
-  //     .get('/api/messages/not-an-integer')
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', me.token)
-  //     .send({ content: 'hey' });
-  //   expect(res.statusCode).toBe(404);
-  // });
+    const [{ id }] = result.rows;
 
-  // it('should succeed if the other user exists', async () => {
-  //   const res = await request(app)
-  //     .get(`/api/messages/${other.id}`)
-  //     .set('Accept', 'application/json')
-  //     .set('Authorization', me.token)
-  //     .send({ content: 'hey' });
-  //   expect(res.statusCode).toBe(201);
-  //   expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS);
-  //   expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS);
-  //   expect(res.body.message).toBeDefined();
-  //   expect(res.body.message.senderUserId).toBe(me.id);
-  //   expect(res.body.message.receiverUserId).toBe(other.id);
-  //   expect(res.body.message.id).toBeDefined();
-  // });
+    const res = await request(app)
+      .get(`/api/messages/${id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS);
+
+    expect(res.body.messages.length).toBe(0);
+  });
 });

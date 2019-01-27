@@ -47,7 +47,7 @@ describe('POST api/messages/:userId', () => {
 
   it('must require the other user to exist', async () => {
     const result = await db.query(`
-      SELECT COALESCE(SUM(id), 0) AS id from messages;
+      SELECT COALESCE(SUM(id), 0) AS id from users
     `);
 
     const [{ id }] = result.rows;
