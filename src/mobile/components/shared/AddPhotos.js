@@ -27,8 +27,6 @@ import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 
-const MAX_PHOTO_URI =
-  "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
 type ProfilePictureProps = {
   disabled: boolean,
   showDeleteButton: boolean,
@@ -180,7 +178,8 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
       defaultAnimationDialog: false
     };
   }
-  _onAdd = async (index: number, uri: string) => {
+
+  _onAdd = async (index: number) => {
     const newUri = await selectPhoto();
     this.setState({
       isUploadingPhoto: true
@@ -218,7 +217,7 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
             disabled={false}
             showDeleteButton={uri2 != null || enableDeleteFirst === true}
             onAdd={() => {
-              this._onAdd(0, MAX_PHOTO_URI);
+              this._onAdd(0);
             }}
             onRemove={() => {
               this._onRemove(0);
@@ -232,7 +231,7 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
             disabled={uri1 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(1, MAX_PHOTO_URI);
+              this._onAdd(1);
             }}
             onRemove={() => {
               this._onRemove(1);
@@ -246,7 +245,7 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
             disabled={uri2 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(2, MAX_PHOTO_URI);
+              this._onAdd(2);
             }}
             onRemove={() => {
               this._onRemove(2);
@@ -260,7 +259,7 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
             disabled={uri3 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(3, MAX_PHOTO_URI);
+              this._onAdd(3);
             }}
             onRemove={() => {
               this._onRemove(3);

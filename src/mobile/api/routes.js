@@ -20,9 +20,11 @@ const SERVER_ROUTE =
 const API = "/api";
 const AUTH = "/auth";
 const USERS = "/users";
+const PHOTOS = "/photos";
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
+const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
 
 ////////////////
 // AUTH ROUTES:
@@ -47,3 +49,7 @@ export const MY_PROFILE__ROUTE = USERS_ROUTE + MY + PROFILE;
 
 const SETTINGS = "/settings/";
 export const MY_SETTINGS__ROUTE = USERS_ROUTE + MY + SETTINGS;
+
+// Photos:
+const SIGN_URL = "/sign-url/";
+export const GET_SIGN_URL__ROUTE = PHOTOS_ROUTE + SIGN_URL;
