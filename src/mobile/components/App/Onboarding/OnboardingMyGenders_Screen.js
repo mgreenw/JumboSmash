@@ -8,7 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type {
   UserSettings,
   UserProfile,
-  Pronouns
+  Genders
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
@@ -31,7 +31,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class OnboardingMyPronounsScreen extends React.Component<Props, State> {
+class OnboardingMyGendersScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -51,12 +51,12 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onMyPronounChange = (pronouns: Pronouns) => {
+  _onMyPronounChange = (genderIdentities: Genders) => {
     this.setState((state, props) => {
       return {
         settings: {
           ...this.state.settings,
-          usePronouns: pronouns
+          useGenders: genderIdentities
         }
       };
     });
@@ -64,7 +64,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingWantPronouns, {
+    navigation.navigate(routes.OnboardingWantGenders, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (
@@ -81,7 +81,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 
   render() {
     const body = (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, width: "100%" }}>
         <Text
           style={[
             textStyles.subtitle1Style,
@@ -101,7 +101,7 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
           {"I identify as:"}
         </Text>
         <GenderSelector
-          defaultPronouns={this.state.settings.usePronouns}
+          defaultGenders={this.state.settings.useGenders}
           onChange={this._onMyPronounChange}
           plural={false}
         />
@@ -122,4 +122,4 @@ class OnboardingMyPronounsScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OnboardingMyPronounsScreen);
+)(OnboardingMyGendersScreen);

@@ -41,8 +41,8 @@ const getMySettings = async (req: $Request, res: $Response) => {
         },
       },
     });
-  } catch (error) {
-    return utils.error.server(res, 'Failed to get user settings.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to get user settings.');
   }
 };
 

@@ -53,8 +53,8 @@ const getPhoto = async (req: $Request, res: $Response) => {
     };
     const url = await getSignedUrl(params);
     return res.redirect(url);
-  } catch (error) {
-    return utils.error.server(res, 'Failed to find photo');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to find photo');
   }
 };
 

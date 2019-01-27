@@ -186,3 +186,10 @@ ______________________________________________________*/
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
+
+/* MOBILE */
+@media (max-width:450px) and (max-height:825px) {
+  #arrow-container {
+    position: static;
+  }
+}
