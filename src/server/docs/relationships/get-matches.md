@@ -41,19 +41,22 @@ Provide the normal `Authorization` token in the request header.
             "displayName": "Emily",
             "birthday": "1997-10-10",
             "bio": "Cool",
-            "scenes": [
-                "smash"
-            ]
+            "scenes": {
+                "smash": "2019-01-27 13:25:43.162-05",
+                "social": null,
+                "stone": null
+            }
         },
         {
             "userId": 8,
             "displayName": "Jacob",
             "birthday": "1997-10-10",
             "bio": "Cool",
-            "scenes": [
-                "social",
-                "stone"
-            ]
+            "scenes": {
+                "smash": null,
+                "social": "2019-01-27 13:25:43.162-05",
+                "stone": null
+            }
         }
     ]
 }
