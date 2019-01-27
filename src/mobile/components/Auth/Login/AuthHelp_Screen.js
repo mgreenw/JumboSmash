@@ -10,6 +10,7 @@ import { textStyles } from "mobile/styles/textStyles";
 import { routes } from "mobile/components/Navigation";
 import GEMHeader from "mobile/components/shared/Header";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import AuthLayout from "mobile/components/Auth/Login/Layout";
 
 type Props = {
   navigation: any
@@ -34,39 +35,16 @@ class AuthHelpScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={Arthur_Styles.container}>
-        <GEMHeader
-          title={"Having Trouble?"}
-          leftIconName={"back"}
-          loading={false}
-        />
-        <View style={{ flex: 1.5 }} />
-        <View style={{ flex: 2, paddingLeft: 40, paddingRight: 40 }}>
-          <Text style={[textStyles.body1Style, { textAlign: "center" }]}>
-            {
-              "If you’re a senior and are having trouble logging in or signing up, email us at jumbosmash19@gmail.com from your .edu email, and the team will get you set up."
-            }
-          </Text>
-        </View>
-        <View
-          style={{
-            alignSelf: "center",
-            flex: 5
-          }}
-        >
-          <PrimaryButton
-            onPress={() => Linking.openURL("mailto:jumbosmash19@gmail.com")}
-            title="Email the Team"
-            disabled={false}
-            loading={false}
-          />
-        </View>
-        <Image
-          resizeMode="stretch"
-          source={require("../../../assets/waves/waves1/waves.png")}
-          style={Arthur_Styles.waves}
-        />
-      </View>
+      <AuthLayout
+        title={"Having Trouble?"}
+        bodyText={
+          "If you’re a senior and are having trouble logging in or signing up, email us at jumbosmash19@gmail.com from your .edu email, and the team will get you set up."
+        }
+        buttonText={"Email the Team"}
+        onButtonPress={() => Linking.openURL("mailto:jumbosmash19@gmail.com")}
+        loading={false}
+        buttonDisabled={false}
+      />
     );
   }
 }
