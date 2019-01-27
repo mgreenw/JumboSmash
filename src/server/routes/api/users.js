@@ -13,6 +13,8 @@ usersRouter.post('/me/profile', usersController.createMyProfile);
 usersRouter.get('/me/settings', usersController.getMySettings);
 usersRouter.patch('/me/settings', usersController.updateMySettings);
 
+usersRouter.get('/me/photos', usersController.getMyPhotos);
+
 // HAS PROFILE ONLY METHODS
 usersRouter.use(hasProfile);
 

@@ -6,6 +6,7 @@ const updateMyProfile = require('./update-my-profile');
 const getMySettings = require('./get-my-settings');
 const updateMySettings = require('./update-my-settings');
 const getProfile = require('./get-profile');
+const getMyPhotos = require('./get-my-photos');
 
 module.exports = {
   createMyProfile,
@@ -14,4 +15,5 @@ module.exports = {
   getMySettings,
   updateMySettings,
   getProfile,
+  getMyPhotos,
 };
