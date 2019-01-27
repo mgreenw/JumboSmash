@@ -15,7 +15,7 @@ type Props = {
   bodyText: string,
   onButtonPress: () => void,
   title: string,
-  buttonText?: string,
+  buttonText: string,
   loading?: boolean,
   buttonDisabled?: boolean
 };
@@ -38,7 +38,6 @@ class AuthHelpScreen extends React.Component<Props, State> {
       title,
       bodyText,
       buttonText,
-      //progress,
       buttonDisabled
     } = this.props;
     return (
