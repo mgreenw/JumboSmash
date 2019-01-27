@@ -1,8 +1,8 @@
 // @flow
 import type { Dispatch } from "redux";
-import { AsyncStorage } from "react-native";
 import DevTesting from "../../utils/DevTesting";
 import sendVerificationEmail_api from "mobile/api/auth/sendVerificationEmail";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 type sendVerificationEmail_statusCode =
   | "SUCCESS"
@@ -46,9 +46,13 @@ export function sendVerificationEmail(utln: string, forceResend: boolean) {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      sendVerificationEmail_api({ utln, forceResend }).then(response => {
-        dispatch(complete(response));
-      });
+      sendVerificationEmail_api({ utln, forceResend })
+        .then(response => {
+          dispatch(complete(response));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
     });
   };
 }

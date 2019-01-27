@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Keyboard } from "react-native";
 import type { UserProfile, Candidate } from "mobile/reducers";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
 import type { IconName } from "mobile/assets/icons/CustomIcon";
@@ -59,6 +59,10 @@ export class HeaderIcon extends React.Component<Props, State> {
   iconTouchableOpacity: TouchableOpacity;
 
   render() {
+    const onPress =
+      this.props.name && !this.props.disabled
+        ? this.props.onPress || this._inferOnPress(this.props.name)
+        : () => {};
     // TODO: make this styling via a style sheet, and better!
     return (
       <TouchableOpacity
@@ -71,11 +75,10 @@ export class HeaderIcon extends React.Component<Props, State> {
           alignItems: "center",
           opacity: this.props.disabled ? 0.2 : 1
         }}
-        onPress={
-          this.props.name && !this.props.disabled
-            ? this.props.onPress || this._inferOnPress(this.props.name)
-            : null
-        }
+        onPress={() => {
+          Keyboard.dismiss(); // in case a keyboard is up, buttons close them
+          onPress();
+        }}
       >
         <CustomIcon
           name={this.props.name || "user"}

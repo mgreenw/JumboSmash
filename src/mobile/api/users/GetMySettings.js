@@ -2,8 +2,8 @@
 
 import { apiRequest } from "../utils/apiRequest";
 import { MY_SETTINGS__ROUTE } from "../routes";
-import type { UserSettings } from "mobile/reducers";
-
+import type { UserSettings, Genders } from "mobile/reducers";
+import { serverSettingsToMobileSettings } from "mobile/api/dataConversion";
 const GET_SETTINGS__SUCCESS = "GET_SETTINGS__SUCCESS";
 
 type request = {
@@ -15,12 +15,12 @@ export default function getMyProfile(request: request): Promise<?UserSettings> {
     .then(response => {
       switch (response.status) {
         case GET_SETTINGS__SUCCESS:
-          return response.settings;
+          return serverSettingsToMobileSettings(response.settings);
         default:
-          throw (response, request);
+          throw { response };
       }
     })
     .catch(error => {
-      throw (error, request);
+      throw { error, request };
     });
 }

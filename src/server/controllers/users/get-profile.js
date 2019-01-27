@@ -2,6 +2,8 @@
 
 import type { $Request, $Response } from 'express';
 
+const _ = require('lodash');
+
 const db = require('../../db');
 const utils = require('../utils');
 const codes = require('../status-codes');
@@ -35,11 +37,7 @@ const getProfile = async (req: $Request, res: $Response) => {
       SELECT
         display_name as "displayName",
         birthday,
-        bio,
-        image1_url as "image1Url",
-        image2_url as "image2Url",
-        image3_url as "image3Url",
-        image4_url as "image4Url"
+        bio
       FROM profiles
       WHERE user_id = $1`, [userId]);
 
@@ -50,17 +48,27 @@ const getProfile = async (req: $Request, res: $Response) => {
       });
     }
 
-    // If the profile was found, return it!
     const profile = result.rows[0];
     profile.birthday = profile.birthday.toISOString().substring(0, 10);
+
+    const photosRes = await db.query(`
+      SELECT id
+      FROM photos
+      WHERE user_id = $1
+      ORDER BY index
+    `, [userId]);
+
+    profile.photos = _.map(photosRes.rows, row => row.id);
+
+    // If the profile was found, return it!
     return res.status(200).json({
       status: codes.GET_PROFILE__SUCCESS,
       profile,
     });
 
   // On error, return a server error.
-  } catch (error) {
-    return utils.error.server(res, 'Failed to get user profile.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to get user profile.');
   }
 };
 

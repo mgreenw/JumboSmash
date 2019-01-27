@@ -24,7 +24,7 @@ export default class BioInput extends BaseInput {
     const { selectedAnim } = this.state;
 
     return (
-      <View>
+      <View style={{ height: "100%" }}>
         {label && (
           <Animated.Text
             style={[
@@ -57,7 +57,7 @@ export default class BioInput extends BaseInput {
             style={[
               textStyles.headline6Style,
               {
-                height: 210,
+                height: "100%",
                 padding: 9
               }
             ]}
@@ -73,13 +73,15 @@ export default class BioInput extends BaseInput {
             maxLength={MAX_LENGTH}
           />
         </Animated.View>
-        <Text
-          style={
-            (textStyles.body2Style, { paddingRight: 6, textAlign: "right" })
-          }
-        >
-          {charactersLeft}
-        </Text>
+        <View>
+          <Text
+            style={
+              (textStyles.body2Style, { paddingRight: 6, textAlign: "right" })
+            }
+          >
+            {charactersLeft}
+          </Text>
+        </View>
       </View>
     );
   }

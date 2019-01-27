@@ -39,11 +39,7 @@ Provide the normal `Authorization` token in the request header.
     "profile": {
         "displayName": "Max Greenwald",
         "birthday": "1997-10-10",
-        "bio": "Cool",
-        "image1Url": "https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w",
-        "image2Url": null,
-        "image3Url": null,
-        "image4Url": null
+        "bio": "Cool"
     }
 }
 ```

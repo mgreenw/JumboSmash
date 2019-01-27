@@ -20,28 +20,12 @@ const schema = {
       "type": "string",
       "format": "date",
     },
-    "image1Url": {
-      "description": "The url to the user's first image.",
-      "type": "string"
-    },
-    "image2Url": {
-      "description": "The url to the user's second image.",
-      "type": "string"
-    },
-    "image3Url": {
-      "description": "The url to the user's third image.",
-      "type": "string"
-    },
-    "image4Url": {
-      "description": "The url to the user's fourth image.",
-      "type": "string"
-    },
     "bio": {
       "description": "The user's bio!",
       "type": "string"
     }
   },
-  "required": ["displayName", "birthday", "image1Url", "bio"]
+  "required": ["displayName", "birthday", "bio"]
 };
 /* eslint-enable */
 
@@ -64,24 +48,36 @@ const createMyProfile = async (req: $Request, res: $Response) => {
   const {
     displayName,
     birthday,
-    image1Url,
-    image2Url,
-    image3Url,
-    image4Url,
     bio,
   } = req.body;
 
-
   try {
+    // Get the user's splash photo ID. Error if it does not exist.
+    const photoResult = await db.query(`
+      SELECT id
+      FROM photos
+      WHERE user_id = $1
+      AND index = 1
+      LIMIT 1
+    `, [req.user.id]);
+
+    if (photoResult.rowCount === 0) {
+      return res.status(409).json({
+        status: codes.CREATE_PROFILE__PHOTO_REQUIRED,
+      });
+    }
+
+    const splashPhotoId = photoResult.rows[0].id;
+
     // Insert the profile into the database
     const results = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, image1_url, image2_url, image3_url, image4_url, bio)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      (user_id, display_name, birthday, bio, splash_photo_id)
+      VALUES ($1, $2, $3, $4, $5)
       ON CONFLICT DO NOTHING
       RETURNING user_id AS "userId"
     `,
-    [req.user.id, displayName, birthday, image1Url, image2Url, image3Url, image4Url, bio]);
+    [req.user.id, displayName, birthday, bio, splashPhotoId]);
 
     // If no rows were returned, then the profile already exists.
     if (results.rowCount === 0) {
@@ -96,8 +92,8 @@ const createMyProfile = async (req: $Request, res: $Response) => {
     });
 
   // Catch an error as a server error.
-  } catch (error) {
-    return apiUtils.error.server(res, 'Failed to insert user profile.');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Failed to insert user profile.');
   }
 };
 
