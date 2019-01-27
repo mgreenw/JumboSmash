@@ -6,6 +6,7 @@ const authRouter = require('./auth');
 const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
+const messagesRouter = require('./messages');
 
 const apiRouter = express.Router();
 const authenticated = require('../../controllers/auth/middleware/authenticated');
@@ -35,5 +36,6 @@ apiRouter.use(hasProfile);
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
+apiRouter.use('/messages', messagesRouter);
 
 module.exports = apiRouter;
