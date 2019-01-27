@@ -45,17 +45,17 @@ const sendMessage = async (req: $Request, res: $Response) => {
       status: codes.SEND_MESSAGE__SUCCESS,
       message,
     });
-  } catch (error) {
+  } catch (err) {
     // Check if the error was due to the fact that the other user does not
     // exist. If so, return a regular error
-    if (error.code === '23503' && error.constraint === 'messages_receiver_user_id_fkey') {
+    if (err.code === '23503' && err.constraint === 'messages_receiver_user_id_fkey') {
       return res.status(400).json({
         status: codes.SEND_MESSAGE__USER_NOT_FOUND,
       });
     }
 
     // Otherwise, return a server error
-    return apiUtils.error.server(res, 'Not implemented');
+    return apiUtils.error.server(res, err, 'Could not send message');
   }
 };
 

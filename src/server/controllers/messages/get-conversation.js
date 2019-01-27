@@ -60,8 +60,8 @@ const getConversation = async (req: $Request, res: $Response) => {
       status: codes.GET_CONVERSATION__SUCCESS,
       messages: result.rows,
     });
-  } catch (error) {
-    return apiUtils.error.server(res, 'Not implemented');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Could not get conversation');
   }
 };
 
