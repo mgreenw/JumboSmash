@@ -32,7 +32,10 @@ import type {
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
 import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
-
+import type {
+  UploadPhotoInitiated_Action,
+  UploadPhotoCompleted_Action
+} from "mobile/actions/app/uploadPhoto";
 // TODO: make own ReduxState file
 export type Genders = {
   male: boolean,
@@ -81,7 +84,8 @@ export type ReduxState = {
     login: boolean,
     loadApp: boolean,
     createUser: boolean,
-    saveProfile: boolean
+    saveProfile: boolean,
+    uploadPhoto: boolean
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -107,7 +111,9 @@ export type Action =
   | SendVerificationEmailCompleted_Action
   | SaveProfileInitiated_Action
   | SaveProfileCompleted_Action
-  | Unauthorized_Action;
+  | Unauthorized_Action
+  | UploadPhotoCompleted_Action
+  | UploadPhotoInitiated_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -122,7 +128,8 @@ const defaultState: ReduxState = {
     login: false,
     loadApp: false,
     createUser: false,
-    saveProfile: false
+    saveProfile: false,
+    uploadPhoto: false
   },
   response: {
     sendVerificationEmail: null,
@@ -302,6 +309,26 @@ export default function rootReducer(
 
     case "UNAUTHORIZED": {
       return defaultState;
+    }
+
+    case "UPLOAD_PHOTO__INITIATED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: true
+        }
+      };
+    }
+
+    case "UPLOAD_PHOTO__COMPLETED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: false
+        }
+      };
     }
 
     default: {

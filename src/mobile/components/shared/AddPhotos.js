@@ -26,6 +26,7 @@ import ProgressBar from "react-native-progress/Bar";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
+import { uploadPhoto } from "mobile/actions/app/uploadPhoto";
 
 type ProfilePictureProps = {
   disabled: boolean,
@@ -129,16 +130,12 @@ type AddPhotosProps = {
 } & reduxProps &
   dispatchProps;
 
-type AddPhotosState = {
-  isUploadingPhoto: boolean
-};
-
 function mapStateToProps(
   reduxState: ReduxState,
   ownProps: AddPhotosProps
 ): reduxProps {
   return {
-    uploadPhotoInProgress: reduxState.inProgress.uploadPhotoInProgress
+    uploadPhotoInProgress: reduxState.inProgress.uploadPhoto
   };
 }
 
@@ -153,7 +150,7 @@ function mapDispatchToProps(
   };
 }
 
-async function selectPhoto() {
+async function selectPhoto(): Promise<?string> {
   const { status, permissions } = await Permissions.askAsync(
     Permissions.CAMERA_ROLL
   );
@@ -162,31 +159,22 @@ async function selectPhoto() {
       allowsEditing: true,
       aspect: [1, 1]
     });
-
-    console.log(result);
     return result.uri;
   } else {
     Alert.alert("Please enable camera roll access to proceed.");
+    return null;
   }
 }
 
-class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
-  constructor(props: AddPhotosProps) {
-    super(props);
-    this.state = {
-      isUploadingPhoto: false,
-      defaultAnimationDialog: false
-    };
-  }
-
+class AddPhotos extends React.Component<AddPhotosProps> {
   _onAdd = async (index: number) => {
     const newUri = await selectPhoto();
-    this.setState({
-      isUploadingPhoto: true
-    });
-    const newImages = this.props.images.slice();
-    newImages[index] = newUri;
-    this.props.onChangeImages(newImages);
+    if (newUri) {
+      const newImages = this.props.images.slice();
+      newImages[index] = newUri;
+      this.props.uploadPhoto(newUri);
+      this.props.onChangeImages(newImages);
+    }
   };
 
   _onRemove = (index: number) => {
@@ -268,12 +256,9 @@ class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
           />
         </View>
         <Dialog
-          onTouchOutside={() => {
-            this.setState({ isUploadingPhoto: false });
-          }}
           dialogAnimation={new ScaleAnimation()}
           width={1}
-          visible={this.state.isUploadingPhoto}
+          visible={this.props.uploadPhotoInProgress}
           actionsBordered
           dialogStyle={{
             /* This is a hack so that we can do a shadow over a wrapper */

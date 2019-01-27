@@ -53,3 +53,5 @@ export const MY_SETTINGS__ROUTE = USERS_ROUTE + MY + SETTINGS;
 // Photos:
 const SIGN_URL = "/sign-url/";
 export const GET_SIGN_URL__ROUTE = PHOTOS_ROUTE + SIGN_URL;
+const CONFIRM_PHOTO = "/confirm-upload/";
+export const CONFIRM_PHOTO__ROUTE = PHOTOS_ROUTE + CONFIRM_PHOTO;

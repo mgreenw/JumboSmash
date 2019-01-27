@@ -5,20 +5,13 @@ import { GET_SIGN_URL__ROUTE } from "../routes";
 
 const SIGN_URL__SUCCESS = "SIGN_URL__SUCCESS";
 
-// This is how we encode profiles on the server, which is the schema of the
-// profiles database
-
-type Request = {
-  token: string
-};
-
-type SignUrlPayload = {
+export type SignedUrlPayload = {
   url: string,
   fields: Object
 };
 
-function getSignedUrl(request: Request): Promise<SignUrlPayload> {
-  return apiRequest("GET", GET_SIGN_URL__ROUTE, request.token)
+function getSignedUrl(token: string): Promise<SignedUrlPayload> {
+  return apiRequest("GET", GET_SIGN_URL__ROUTE, token)
     .then(response => {
       switch (response.status) {
         case SIGN_URL__SUCCESS:
@@ -28,7 +21,7 @@ function getSignedUrl(request: Request): Promise<SignUrlPayload> {
       }
     })
     .catch(error => {
-      throw { error, request };
+      throw { error };
     });
 }
 
