@@ -53,8 +53,24 @@ describe('GET api/relationships/matches', () => {
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
     const other = await dbUtils.createUser('person01', true);
-    await dbUtils.createRelationship(me.id, other.id, true);
-    await dbUtils.createRelationship(other.id, me.id, true);
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: other.id,
+        scene: 'smash',
+        liked: true,
+      });
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', other.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: me.id,
+        scene: 'smash',
+        liked: true,
+      });
     const res = await request(app)
       .get('/api/relationships/matches')
       .set('Authorization', me.token)
@@ -65,13 +81,70 @@ describe('GET api/relationships/matches', () => {
     expect(res.body.matches.length).toBe(1);
     const match = res.body.matches[0];
     expect(match.userId).toBe(other.id);
-    expect(match.scenes).toEqual(['smash']);
+    expect(match.scenes.smash).toBeDefined();
+    expect(match.scenes.smash).not.toBeNull();
+    expect(match.scenes.social).toBeNull();
+    expect(match.scenes.stone).toBeNull();
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
     const person = await dbUtils.createUser('person02', true);
-    await dbUtils.createRelationship(me.id, person.id, true, true, true);
-    await dbUtils.createRelationship(person.id, me.id, true, true, true);
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: person.id,
+        scene: 'smash',
+        liked: true,
+      });
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', person.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: me.id,
+        scene: 'smash',
+        liked: true,
+      });
+
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: person.id,
+        scene: 'social',
+        liked: true,
+      });
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', person.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: me.id,
+        scene: 'social',
+        liked: true,
+      });
+
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: person.id,
+        scene: 'stone',
+        liked: true,
+      });
+    await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', person.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: me.id,
+        scene: 'stone',
+        liked: true,
+      });
     const res = await request(app)
       .get('/api/relationships/matches')
       .set('Authorization', me.token)
@@ -84,7 +157,9 @@ describe('GET api/relationships/matches', () => {
       ? res.body.matches[0]
       : res.body.matches[1];
     expect(personMatch.userId).toBe(person.id);
-    expect(personMatch.scenes.sort()).toEqual(['smash', 'stone', 'social'].sort());
+    expect(personMatch.scenes.smash).not.toBeNull();
+    expect(personMatch.scenes.social).not.toBeNull();
+    expect(personMatch.scenes.stone).not.toBeNull();
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {

@@ -12,7 +12,7 @@ const matchedScenesSelect = utils.scenes.map((scene) => {
     CASE
       me_critic.liked_${scene} AND they_critic.liked_${scene}
       WHEN true
-        THEN '${scene}'
+        THEN GREATEST(me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp)
         ELSE NULL
     END`;
 });
@@ -39,17 +39,17 @@ const getMatches = async (req: $Request, res: $Response) => {
   // 3) We filter out all blocked users (if either person blocked the other)
   //    and also ensure that there exists at least one scene where both
   //    users liked the other (which means they have a match).
-
+  const scenes = utils.scenes.map(scene => `'${scene}'`).join(',');
   try {
-    const result = await db.query(`
+    const query = `
       SELECT
         they_profile.user_id as "userId",
         they_profile.display_name AS "displayName",
         to_char(they_profile.birthday, 'YYYY-MM-DD') AS birthday,
         they_profile.bio,
-        array_remove(ARRAY[
+        json_object(ARRAY[${scenes}], ARRAY[
           ${matchedScenesSelect.join(',')}
-        ], NULL) AS scenes
+        ]::text[]) AS scenes
       FROM relationships me_critic
       JOIN relationships they_critic
         ON they_critic.candidate_user_id = ${req.user.id}
@@ -62,7 +62,8 @@ const getMatches = async (req: $Request, res: $Response) => {
         AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
         AND
           (${matchedScenesChecks.join(' OR ')})
-    `);
+    `;
+    const result = await db.query(query);
     return res.status(200).json({
       status: codes.GET_MATCHES__SUCCESS,
       matches: result.rows,

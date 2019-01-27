@@ -44,13 +44,14 @@ const judge = async (req: $Request, res: $Response) => {
   try {
     await db.query(`
       INSERT INTO relationships
-        (critic_user_id, candidate_user_id, liked_${scene})
-        VALUES ($1, $2, $3)
+        (critic_user_id, candidate_user_id, liked_${scene}, liked_${scene}_timestamp)
+        VALUES ($1, $2, $3, ${liked ? 'NOW()' : 'NULL'})
       ON CONFLICT (critic_user_id, candidate_user_id)
       DO UPDATE
         SET
         liked_${scene} = $4,
-        last_swipe_timestamp = now()
+        last_swipe_timestamp = now(),
+        liked_${scene}_timestamp = ${liked ? 'NOW()' : 'NULL'}
     `, [req.user.id, candidateUserId, liked, liked]);
 
     // If the query succeeded, return success
