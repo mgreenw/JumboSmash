@@ -6,13 +6,26 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  Alert
+  Alert,
+  StyleSheet
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { Colors } from "mobile/styles/colors";
 import { textStyles } from "mobile/styles/textStyles";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
 import { Permissions, ImagePicker } from "expo";
+import Dialog, {
+  DialogTitle,
+  DialogContent,
+  DialogFooter,
+  DialogButton,
+  SlideAnimation,
+  ScaleAnimation
+} from "react-native-popup-dialog";
+import ProgressBar from "react-native-progress/Bar";
+import { connect } from "react-redux";
+import type { Dispatch } from "redux";
+import type { ReduxState } from "mobile/reducers/index";
 
 const MAX_PHOTO_URI =
   "https://scontent.fbed1-2.fna.fbcdn.net/v/t1.0-9/12105723_941787282524951_8320224109759059077_n.jpg?_nc_cat=111&_nc_ht=scontent.fbed1-2.fna&oh=cd25f407f14176cc15e66bd291e3fa3d&oe=5CC58760";
@@ -101,13 +114,46 @@ class ProfilePicture extends React.Component<ProfilePictureProps> {
   }
 }
 
+type reduxProps = {
+  uploadPhotoInProgress: boolean
+};
+
+type dispatchProps = {
+  uploadPhoto: string => void
+};
+
 type AddPhotosProps = {
   images: $ReadOnlyArray<?string>,
   enableDeleteFirst?: boolean,
   onChangeImages: ($ReadOnlyArray<?string>) => void,
   imageWidth: number,
   width: number
+} & reduxProps &
+  dispatchProps;
+
+type AddPhotosState = {
+  isUploadingPhoto: boolean
 };
+
+function mapStateToProps(
+  reduxState: ReduxState,
+  ownProps: AddPhotosProps
+): reduxProps {
+  return {
+    uploadPhotoInProgress: reduxState.inProgress.uploadPhotoInProgress
+  };
+}
+
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: AddPhotosProps
+): dispatchProps {
+  return {
+    uploadPhoto: (uri: string) => {
+      dispatch(uploadPhoto(uri));
+    }
+  };
+}
 
 async function selectPhoto() {
   const { status, permissions } = await Permissions.askAsync(
@@ -126,10 +172,19 @@ async function selectPhoto() {
   }
 }
 
-export default class AddPhotos extends React.Component<AddPhotosProps> {
+class AddPhotos extends React.Component<AddPhotosProps, AddPhotosState> {
+  constructor(props: AddPhotosProps) {
+    super(props);
+    this.state = {
+      isUploadingPhoto: false,
+      defaultAnimationDialog: false
+    };
+  }
   _onAdd = async (index: number, uri: string) => {
     const newUri = await selectPhoto();
-
+    this.setState({
+      isUploadingPhoto: true
+    });
     const newImages = this.props.images.slice();
     newImages[index] = newUri;
     this.props.onChangeImages(newImages);
@@ -213,7 +268,66 @@ export default class AddPhotos extends React.Component<AddPhotosProps> {
             imageWidth={imageWidth}
           />
         </View>
+        <Dialog
+          onTouchOutside={() => {
+            this.setState({ isUploadingPhoto: false });
+          }}
+          dialogAnimation={new ScaleAnimation()}
+          width={1}
+          visible={this.state.isUploadingPhoto}
+          actionsBordered
+          dialogStyle={{
+            /* This is a hack so that we can do a shadow over a wrapper */
+            backgroundColor: "transparent",
+            padding: 18
+          }}
+        >
+          <DialogContent
+            style={{
+              backgroundColor: Colors.White,
+              borderRadius: 8,
+              shadowColor: Colors.Black,
+              shadowOpacity: 1,
+              shadowRadius: 4,
+              shadowOffset: {
+                height: 2,
+                width: 0
+              },
+              padding: 20
+            }}
+          >
+            <View>
+              <Text
+                style={[
+                  textStyles.headline4StyleMedium,
+                  {
+                    color: Colors.Grapefruit,
+                    textAlign: "center",
+                    paddingBottom: 20
+                  }
+                ]}
+              >
+                {"Uploading Photo"}
+              </Text>
+              <ProgressBar
+                progress={0.3}
+                height={10}
+                unfilledColor={Colors.IceBlue}
+                borderWidth={0}
+                color={Colors.Grapefruit}
+                indeterminate={true}
+                borderRadius={6}
+                width={null}
+              />
+            </View>
+          </DialogContent>
+        </Dialog>
       </View>
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AddPhotos);
