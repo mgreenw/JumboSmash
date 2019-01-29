@@ -44,11 +44,11 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
-  if (!reduxState.user) {
+  if (!reduxState.client) {
     throw "Redux User is null";
   }
   return {
-    profile: reduxState.user.profile,
+    profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile
   };
 }
@@ -121,7 +121,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
           onLeftIconPress={this._onBack}
         />
         <KeyboardAwareScrollView
-          extraScrollHeight={30}
+          extraScrollHeight={35}
           style={{
             backgroundColor: Colors.AquaMarine,
             paddingTop: 20
@@ -132,29 +132,6 @@ class ProfileEditScreen extends React.Component<Props, State> {
               images={this.state.editedProfile.photoIds}
               width={containerWidth}
               imageWidth={imageWidth}
-              onChangeImages={images => {
-                this.setState(prevState => {
-                  return {
-                    editedProfile: {
-                      ...prevState.editedProfile,
-                      images
-                    }
-                  };
-                });
-              }}
-              onRemove={index => {
-                this.setState(prevState => {
-                  const newImages = prevState.editedProfile.photoIds.slice();
-                  newImages.splice(index, 1);
-                  newImages[3] = null;
-                  return {
-                    editedProfile: {
-                      ...prevState.editedProfile,
-                      images: newImages
-                    }
-                  };
-                });
-              }}
             />
           </View>
           <View style={styles.profileBlock}>
@@ -167,11 +144,19 @@ class ProfileEditScreen extends React.Component<Props, State> {
               assistive={""}
               autoCapitalize={"words"}
             />
-            <BioInput
-              value={this.state.editedProfile.bio}
-              onChangeText={this._onChangeBio}
-              label={"About Me"}
-            />
+            <View
+              style={{
+                maxHeight: 210,
+                marginBottom: 30,
+                width: "100%"
+              }}
+            >
+              <BioInput
+                value={this.state.editedProfile.bio}
+                onChangeText={this._onChangeBio}
+                label={"About Me"}
+              />
+            </View>
           </View>
         </KeyboardAwareScrollView>
       </View>

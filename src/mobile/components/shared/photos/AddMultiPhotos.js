@@ -27,140 +27,57 @@ import { connect } from "react-redux";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { uploadPhoto } from "mobile/actions/app/uploadPhoto";
-
-import { GET_PHOTO } from "mobile/api/routes";
-
-type ProfilePictureProps = {
-  disabled: boolean,
-  showDeleteButton: boolean,
-  photoId: ?number,
-  onAdd?: () => void,
-  onRemove?: () => void,
-  imageWidth: number,
-  token: ?string
-};
-class ProfilePicture extends React.Component<ProfilePictureProps> {
-  render() {
-    const {
-      photoId,
-      disabled,
-      onAdd,
-      showDeleteButton,
-      onRemove,
-      imageWidth,
-      token
-    } = this.props;
-    return (
-      <View style={{ opacity: disabled ? 0.2 : 1 }}>
-        <TouchableOpacity
-          style={{
-            width: imageWidth,
-            height: imageWidth,
-            backgroundColor: Colors.Ice,
-            aspectRatio: 1,
-            borderColor: Colors.AquaMarine,
-            borderWidth: photoId ? 0 : 2,
-            borderStyle: "dashed",
-            borderRadius: 3,
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          disabled={photoId || disabled}
-          onPress={photoId ? null : onAdd}
-        >
-          {photoId ? (
-            <Image
-              style={{
-                flex: 1,
-                height: imageWidth,
-                width: imageWidth,
-                borderRadius: 8
-              }}
-              resizeMode="contain"
-              loadingStyle={{ size: "large", color: "blue" }}
-              source={{
-                uri: photoId ? GET_PHOTO + photoId : "",
-                headers: {
-                  Authorization: token || ""
-                }
-              }}
-            />
-          ) : (
-            <Text style={textStyles.headline6Style}>
-              {disabled ? "" : "add"}
-            </Text>
-          )}
-        </TouchableOpacity>
-        {showDeleteButton && photoId ? (
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              right: -8,
-              top: -8,
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            onPress={onRemove}
-          >
-            <View
-              style={{
-                backgroundColor: Colors.White,
-                width: 20,
-                height: 20,
-                position: "absolute"
-              }}
-            />
-            <CustomIcon
-              size={30}
-              color={Colors.Offblack}
-              name="delete-filled"
-            />
-          </TouchableOpacity>
-        ) : null}
-      </View>
-    );
-  }
-}
+import { deletePhoto } from "mobile/actions/app/deletePhoto";
+import { AddSinglePhoto } from "./AddSinglePhoto";
+import type { PhotoIds } from "mobile/reducers/";
 
 type reduxProps = {
   uploadPhotoInProgress: boolean,
+  deletePhotoInProgress: boolean,
+  photoIds: PhotoIds,
   token: ?string
 };
 
 type dispatchProps = {
-  uploadPhoto: string => void
+  uploadPhoto: string => void,
+  deletePhoto: number => void
 };
 
-type AddPhotosProps = {
-  photoIds: $ReadOnlyArray<?number>,
+type proppyProps = {
   enableDeleteFirst?: boolean,
-  onChangeImages: ($ReadOnlyArray<?number>) => void,
   imageWidth: number,
   width: number
-} & reduxProps &
-  dispatchProps;
+};
 
-function mapStateToProps(
-  reduxState: ReduxState,
-  ownProps: AddPhotosProps
-): reduxProps {
+type Props = proppyProps & reduxProps & dispatchProps;
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+  if (!reduxState.client) {
+    throw "Err: client null in AddMultiPhotos mapStateToProps";
+  }
   return {
     uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
+    deletePhotoInProgress: reduxState.inProgress.deletePhoto,
+    photoIds: reduxState.client.profile.photoIds,
     token: reduxState.token
   };
 }
 
 function mapDispatchToProps(
   dispatch: Dispatch,
-  ownProps: AddPhotosProps
+  ownProps: Props
 ): dispatchProps {
   return {
     uploadPhoto: (uri: string) => {
       dispatch(uploadPhoto(uri));
+    },
+    deletePhoto: (photoId: number) => {
+      dispatch(deletePhoto(photoId));
     }
   };
 }
 
+// TODO: consider https://github.com/expo/expo/issues/1423 solution for croppinng
 async function selectPhoto(): Promise<?string> {
   const { status, permissions } = await Permissions.askAsync(
     Permissions.CAMERA_ROLL
@@ -170,6 +87,9 @@ async function selectPhoto(): Promise<?string> {
       allowsEditing: true,
       aspect: [1, 1]
     });
+    if (result.cancelled) {
+      return null;
+    }
     return result.uri;
   } else {
     Alert.alert("Please enable camera roll access to proceed.");
@@ -177,23 +97,17 @@ async function selectPhoto(): Promise<?string> {
   }
 }
 
-class AddPhotos extends React.Component<AddPhotosProps> {
-  // _onAdd = async (index: number) => {
-  //   const newUri = await selectPhoto();
-  //   if (newUri) {
-  //     const newImages = this.props.photoIds.slice();
-  //     newImages[index] = newUri;
-  //     this.props.uploadPhoto(newUri);
-  //     this.props.onChangeImages(newImages);
-  //   }
-  // };
-  //
-  // _onRemove = (index: number) => {
-  //   const newImages = this.props.photoIds.slice();
-  //   newImages.splice(index, 1);
-  //   newImages[3] = null;
-  //   this.props.onChangeImages(newImages);
-  // };
+class AddMultiPhotos extends React.Component<Props> {
+  _onAdd = async () => {
+    const newUri = await selectPhoto();
+    if (newUri) {
+      this.props.uploadPhoto(newUri);
+    }
+  };
+
+  _onRemove = (photoId: number) => {
+    this.props.deletePhoto(photoId);
+  };
 
   render() {
     const {
@@ -201,7 +115,9 @@ class AddPhotos extends React.Component<AddPhotosProps> {
       enableDeleteFirst,
       imageWidth,
       width,
-      token
+      token,
+      deletePhotoInProgress,
+      uploadPhotoInProgress
     } = this.props;
     console.log(photoIds);
     const numImages = photoIds.length;
@@ -218,69 +134,77 @@ class AddPhotos extends React.Component<AddPhotosProps> {
         }}
       >
         <View style={{ top: 0, left: 0, position: "absolute" }}>
-          <ProfilePicture
+          <AddSinglePhoto
             token={token}
             photoId={id1}
             disabled={false}
-            showDeleteButton={id2 != null || enableDeleteFirst === true}
+            enableRemove={id2 != null || enableDeleteFirst === true}
             onAdd={() => {
-              // this._onAdd(0);
+              this._onAdd();
             }}
             onRemove={() => {
-              // this._onRemove(0);
+              if (id1) {
+                this._onRemove(id1);
+              }
             }}
-            imageWidth={imageWidth}
+            width={imageWidth}
           />
         </View>
         <View style={{ top: 0, right: 0, position: "absolute" }}>
-          <ProfilePicture
+          <AddSinglePhoto
             token={token}
             photoId={id2}
             disabled={id1 == null}
-            showDeleteButton={true}
+            enableRemove={true}
             onAdd={() => {
-              // this._onAdd(1);
+              this._onAdd();
             }}
             onRemove={() => {
-              // this._onRemove(1);
+              if (id2) {
+                this._onRemove(id2);
+              }
             }}
-            imageWidth={imageWidth}
+            width={imageWidth}
           />
         </View>
         <View style={{ bottom: 0, left: 0, position: "absolute" }}>
-          <ProfilePicture
+          <AddSinglePhoto
             token={token}
             photoId={id3}
             disabled={id2 == null}
-            showDeleteButton={true}
+            enableRemove={true}
             onAdd={() => {
-              // this._onAdd(2);
+              this._onAdd();
             }}
             onRemove={() => {
-              // this._onRemove(2);
+              if (id3) {
+                this._onRemove(id3);
+              }
             }}
-            imageWidth={imageWidth}
+            width={imageWidth}
           />
         </View>
         <View style={{ bottom: 0, right: 0, position: "absolute" }}>
-          <ProfilePicture
+          <AddSinglePhoto
             token={token}
             photoId={id4}
             disabled={id3 == null}
-            showDeleteButton={true}
+            enableRemove={true}
             onAdd={() => {
-              // this._onAdd(3);
+              this._onAdd();
             }}
             onRemove={() => {
-              // this._onRemove(3);
+              if (id4) {
+                this._onRemove(id4);
+              }
             }}
-            imageWidth={imageWidth}
+            width={imageWidth}
           />
         </View>
         <Dialog
           dialogAnimation={new ScaleAnimation()}
           width={1}
-          visible={this.props.uploadPhotoInProgress}
+          visible={uploadPhotoInProgress || deletePhotoInProgress}
           actionsBordered
           dialogStyle={{
             /* This is a hack so that we can do a shadow over a wrapper */
@@ -313,7 +237,7 @@ class AddPhotos extends React.Component<AddPhotosProps> {
                   }
                 ]}
               >
-                {"Uploading Photo"}
+                {uploadPhotoInProgress ? "Uploading Photo" : "Deleting Photo"}
               </Text>
               <ProgressBar
                 progress={0.3}
@@ -336,4 +260,4 @@ class AddPhotos extends React.Component<AddPhotosProps> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AddPhotos);
+)(AddMultiPhotos);

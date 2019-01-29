@@ -8,7 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import AddPhotos from "mobile/components/shared/AddPhotos";
+import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
 
 type Props = {
   navigation: any
@@ -75,18 +75,10 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     return (
       <OnboardingLayout
         body={
-          <AddPhotos
-            photoIds={this.state.profile.photoIds}
-            onChangeImages={images => {
-              this.setState(prevState => {
-                return {
-                  profile: {
-                    ...prevState.profile,
-                    images
-                  }
-                };
-              });
-            }}
+          // AddMultiPhotos gets direct redux access due to constraints on
+          // photo uploading. CreatMyProfile needs previously uploaded photos,
+          // which occurs here.
+          <AddMultiPhotos
             width={containerWidth}
             imageWidth={imageWidth}
             enableDeleteFirst={true}

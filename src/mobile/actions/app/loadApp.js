@@ -1,7 +1,7 @@
 // @flow
 import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
-import type { User, UserSettings, UserProfile } from "mobile/reducers";
+import type { UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
 import getMySettings from "mobile/api/users/GetMySettings";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
@@ -11,7 +11,8 @@ export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
 export type LoadAppCompleted_Action = {
   type: "LOAD_APP__COMPLETED",
   onboardingCompleted: boolean,
-  user: ?User
+  profile: UserProfile,
+  settings: UserSettings
 };
 
 function initiate(): LoadAppInitiated_Action {
@@ -30,24 +31,22 @@ function complete(
   return {
     type: "LOAD_APP__COMPLETED",
     onboardingCompleted,
-    user: {
-      profile: profile || {
-        bio: "",
-        birthday: "",
-        displayName: "",
-        photoIds: photos || [] // incase partial photo uploading in onboarding
+    profile: profile || {
+      bio: "",
+      birthday: "",
+      displayName: "",
+      photoIds: photos || [] // incase partial photo uploading in onboarding
+    },
+    settings: settings || {
+      useGenders: {
+        male: true,
+        female: true,
+        nonBinary: true
       },
-      settings: settings || {
-        useGenders: {
-          male: true,
-          female: true,
-          nonBinary: true
-        },
-        wantGenders: {
-          male: true,
-          female: true,
-          nonBinary: true
-        }
+      wantGenders: {
+        male: true,
+        female: true,
+        nonBinary: true
       }
     }
   };

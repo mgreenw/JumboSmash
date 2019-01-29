@@ -58,4 +58,5 @@ export const CONFIRM_PHOTO__ROUTE = PHOTOS_ROUTE + CONFIRM_PHOTO;
 
 // My Photos (For onboarding):
 export const GET_MY_PHOTOS__ROUTE = USERS_ROUTE + MY + "/photos/";
-export const GET_PHOTO = PHOTOS_ROUTE + "/";
+export const GET_PHOTO__ROUTE = PHOTOS_ROUTE + "/";
+export const DELETE_PHOTO__ROUTE = PHOTOS_ROUTE + "/";
