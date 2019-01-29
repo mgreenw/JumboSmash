@@ -48,12 +48,14 @@ export type UserSettings = {
   wantGenders: Genders
 };
 
+type PhotoIds = $ReadOnlyArray<?number>;
+
 // TODO:
 export type UserProfile = {
   displayName: string,
   birthday: string,
   bio: string,
-  images: $ReadOnlyArray<?string>
+  photoIds: PhotoIds
 };
 
 export type Candidate = {
@@ -76,6 +78,7 @@ export type ReduxState = {
   // action states:
   authLoaded: boolean,
   appLoaded: boolean,
+  onboardingCompleted: boolean,
 
   inProgress: {
     loadAuth: boolean,
@@ -134,7 +137,8 @@ const defaultState: ReduxState = {
   response: {
     sendVerificationEmail: null,
     login: null
-  }
+  },
+  onboardingCompleted: false
 };
 
 export default function rootReducer(
@@ -235,7 +239,8 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadApp: false
-        }
+        },
+        onboardingCompleted: action.onboardingCompleted
       };
     }
 
@@ -322,11 +327,24 @@ export default function rootReducer(
     }
 
     case "UPLOAD_PHOTO__COMPLETED": {
+      if (!state.user) {
+        throw "User null in reducer for UPLOAD_PHOTO__COMPLETED";
+      }
+      const { profile } = state.user;
+      let newPhotoIds = profile.photoIds.slice();
+      newPhotoIds.push(action.photoId);
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
           uploadPhoto: false
+        },
+        user: {
+          ...state.user,
+          profile: {
+            ...profile,
+            photoIds: newPhotoIds
+          }
         }
       };
     }

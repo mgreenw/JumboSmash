@@ -15,7 +15,8 @@ import { routes } from "mobile/components/Navigation";
 type reduxProps = {
   appLoaded: boolean,
   loadAppInProgress: boolean,
-  user: ?User
+  user: ?User,
+  onboardingCompleted: boolean
 };
 
 type navigationProps = {
@@ -34,7 +35,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
-    user: reduxState.user
+    user: reduxState.user,
+    onboardingCompleted: reduxState.onboardingCompleted
   };
 }
 
@@ -64,8 +66,14 @@ class AppLoadingScreen extends React.Component<Props, State> {
       prevProps.loadAppInProgress != this.props.loadAppInProgress
     ) {
       const { navigate } = this.props.navigation;
-      if (this.props.user === null) {
-        navigate(routes.OnboardingStack, {});
+      if (!this.props.onboardingCompleted) {
+        if (!this.props.user) {
+          throw "Error: user is null in app loading";
+        }
+        navigate(routes.OnboardingStack, {
+          profile: this.props.user.profile,
+          settings: this.props.user.settings
+        });
       } else {
         navigate(routes.MainSwitch, {});
       }

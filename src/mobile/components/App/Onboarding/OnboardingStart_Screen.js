@@ -30,27 +30,14 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
-    let propsProfile: ?UserProfile = navigation.getParam("profile", null);
-    let propsSettings: ?UserSettings = navigation.getParam("settings", null);
+    let propsProfile: UserProfile = navigation.getParam("profile", null);
+    let propsSettings: UserSettings = navigation.getParam("settings", null);
+    if (propsProfile === null || propsSettings === null) {
+      throw "Error: User Profile or Settings null in onboarding start";
+    }
     this.state = {
-      profile: propsProfile || {
-        bio: "foo",
-        birthday: "",
-        displayName: "",
-        images: []
-      },
-      settings: propsSettings || {
-        useGenders: {
-          male: true,
-          female: true,
-          nonBinary: true
-        },
-        wantGenders: {
-          male: true,
-          female: true,
-          nonBinary: true
-        }
-      }
+      profile: propsProfile,
+      settings: propsSettings
     };
   }
 

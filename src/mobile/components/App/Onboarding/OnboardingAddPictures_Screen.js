@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Genders
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 import AddPhotos from "mobile/components/shared/AddPhotos";
@@ -80,7 +76,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={
           <AddPhotos
-            images={this.state.profile.images}
+            photoIds={this.state.profile.photoIds}
             onChangeImages={images => {
               this.setState(prevState => {
                 return {
@@ -101,8 +97,8 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         main={true}
         progress={0}
         buttonDisabled={
-          this.state.profile.images.length === 0 ||
-          this.state.profile.images[0] === null
+          this.state.profile.photoIds.length === 0 ||
+          this.state.profile.photoIds[0] === null
         }
       />
     );

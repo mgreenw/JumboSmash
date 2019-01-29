@@ -10,7 +10,8 @@ function uploadPhotoToS3(
 ): Promise<boolean> {
   let formdata = new FormData();
   formdata.append("Content-Type", "image/jpeg");
-  for (field in payload.fields) {
+  for (let f in payload.fields) {
+    const field = f;
     formdata.append(field, payload.fields[field]);
   }
   formdata.append("file", {

@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import AddPhotos from "mobile/components/shared/AddPhotos";
+import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
 import { Colors } from "mobile/styles/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import GEMHeader from "mobile/components/shared/Header";
@@ -128,8 +128,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
           }}
         >
           <View style={styles.profileBlock}>
-            <AddPhotos
-              images={this.state.editedProfile.images}
+            <AddMultiPhotos
+              images={this.state.editedProfile.photoIds}
               width={containerWidth}
               imageWidth={imageWidth}
               onChangeImages={images => {
@@ -144,7 +144,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               }}
               onRemove={index => {
                 this.setState(prevState => {
-                  const newImages = prevState.editedProfile.images.slice();
+                  const newImages = prevState.editedProfile.photoIds.slice();
                   newImages.splice(index, 1);
                   newImages[3] = null;
                   return {

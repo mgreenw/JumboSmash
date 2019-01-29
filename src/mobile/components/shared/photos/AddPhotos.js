@@ -28,23 +28,27 @@ import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { uploadPhoto } from "mobile/actions/app/uploadPhoto";
 
+import { GET_PHOTO } from "mobile/api/routes";
+
 type ProfilePictureProps = {
   disabled: boolean,
   showDeleteButton: boolean,
-  uri: ?string,
+  photoId: ?number,
   onAdd?: () => void,
   onRemove?: () => void,
-  imageWidth: number
+  imageWidth: number,
+  token: ?string
 };
 class ProfilePicture extends React.Component<ProfilePictureProps> {
   render() {
     const {
-      uri,
+      photoId,
       disabled,
       onAdd,
       showDeleteButton,
       onRemove,
-      imageWidth
+      imageWidth,
+      token
     } = this.props;
     return (
       <View style={{ opacity: disabled ? 0.2 : 1 }}>
@@ -55,16 +59,16 @@ class ProfilePicture extends React.Component<ProfilePictureProps> {
             backgroundColor: Colors.Ice,
             aspectRatio: 1,
             borderColor: Colors.AquaMarine,
-            borderWidth: uri ? 0 : 2,
+            borderWidth: photoId ? 0 : 2,
             borderStyle: "dashed",
             borderRadius: 3,
             alignItems: "center",
             justifyContent: "center"
           }}
-          disabled={disabled}
-          onPress={uri ? null : onAdd}
+          disabled={photoId || disabled}
+          onPress={photoId ? null : onAdd}
         >
-          {uri ? (
+          {photoId ? (
             <Image
               style={{
                 flex: 1,
@@ -74,7 +78,12 @@ class ProfilePicture extends React.Component<ProfilePictureProps> {
               }}
               resizeMode="contain"
               loadingStyle={{ size: "large", color: "blue" }}
-              source={{ uri: uri ? uri : "" }}
+              source={{
+                uri: photoId ? GET_PHOTO + photoId : "",
+                headers: {
+                  Authorization: token || ""
+                }
+              }}
             />
           ) : (
             <Text style={textStyles.headline6Style}>
@@ -82,7 +91,7 @@ class ProfilePicture extends React.Component<ProfilePictureProps> {
             </Text>
           )}
         </TouchableOpacity>
-        {showDeleteButton && uri ? (
+        {showDeleteButton && photoId ? (
           <TouchableOpacity
             style={{
               position: "absolute",
@@ -114,7 +123,8 @@ class ProfilePicture extends React.Component<ProfilePictureProps> {
 }
 
 type reduxProps = {
-  uploadPhotoInProgress: boolean
+  uploadPhotoInProgress: boolean,
+  token: ?string
 };
 
 type dispatchProps = {
@@ -122,9 +132,9 @@ type dispatchProps = {
 };
 
 type AddPhotosProps = {
-  images: $ReadOnlyArray<?string>,
+  photoIds: $ReadOnlyArray<?number>,
   enableDeleteFirst?: boolean,
-  onChangeImages: ($ReadOnlyArray<?string>) => void,
+  onChangeImages: ($ReadOnlyArray<?number>) => void,
   imageWidth: number,
   width: number
 } & reduxProps &
@@ -135,7 +145,8 @@ function mapStateToProps(
   ownProps: AddPhotosProps
 ): reduxProps {
   return {
-    uploadPhotoInProgress: reduxState.inProgress.uploadPhoto
+    uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
+    token: reduxState.token
   };
 }
 
@@ -167,31 +178,38 @@ async function selectPhoto(): Promise<?string> {
 }
 
 class AddPhotos extends React.Component<AddPhotosProps> {
-  _onAdd = async (index: number) => {
-    const newUri = await selectPhoto();
-    if (newUri) {
-      const newImages = this.props.images.slice();
-      newImages[index] = newUri;
-      this.props.uploadPhoto(newUri);
-      this.props.onChangeImages(newImages);
-    }
-  };
-
-  _onRemove = (index: number) => {
-    const newImages = this.props.images.slice();
-    newImages.splice(index, 1);
-    newImages[3] = null;
-    this.props.onChangeImages(newImages);
-  };
+  // _onAdd = async (index: number) => {
+  //   const newUri = await selectPhoto();
+  //   if (newUri) {
+  //     const newImages = this.props.photoIds.slice();
+  //     newImages[index] = newUri;
+  //     this.props.uploadPhoto(newUri);
+  //     this.props.onChangeImages(newImages);
+  //   }
+  // };
+  //
+  // _onRemove = (index: number) => {
+  //   const newImages = this.props.photoIds.slice();
+  //   newImages.splice(index, 1);
+  //   newImages[3] = null;
+  //   this.props.onChangeImages(newImages);
+  // };
 
   render() {
-    const { images, enableDeleteFirst, imageWidth, width } = this.props;
+    const {
+      photoIds,
+      enableDeleteFirst,
+      imageWidth,
+      width,
+      token
+    } = this.props;
+    console.log(photoIds);
+    const numImages = photoIds.length;
+    const id1 = numImages > 0 ? photoIds[0] : null;
+    const id2 = numImages > 1 ? photoIds[1] : null;
+    const id3 = numImages > 2 ? photoIds[2] : null;
+    const id4 = numImages > 3 ? photoIds[3] : null;
 
-    const numImages = images.length;
-    const uri1 = numImages > 0 ? images[0] : null;
-    const uri2 = numImages > 1 ? images[1] : null;
-    const uri3 = numImages > 2 ? images[2] : null;
-    const uri4 = numImages > 3 ? images[3] : null;
     return (
       <View
         style={{
@@ -201,56 +219,60 @@ class AddPhotos extends React.Component<AddPhotosProps> {
       >
         <View style={{ top: 0, left: 0, position: "absolute" }}>
           <ProfilePicture
-            uri={uri1}
+            token={token}
+            photoId={id1}
             disabled={false}
-            showDeleteButton={uri2 != null || enableDeleteFirst === true}
+            showDeleteButton={id2 != null || enableDeleteFirst === true}
             onAdd={() => {
-              this._onAdd(0);
+              // this._onAdd(0);
             }}
             onRemove={() => {
-              this._onRemove(0);
+              // this._onRemove(0);
             }}
             imageWidth={imageWidth}
           />
         </View>
         <View style={{ top: 0, right: 0, position: "absolute" }}>
           <ProfilePicture
-            uri={uri2}
-            disabled={uri1 == null}
+            token={token}
+            photoId={id2}
+            disabled={id1 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(1);
+              // this._onAdd(1);
             }}
             onRemove={() => {
-              this._onRemove(1);
+              // this._onRemove(1);
             }}
             imageWidth={imageWidth}
           />
         </View>
         <View style={{ bottom: 0, left: 0, position: "absolute" }}>
           <ProfilePicture
-            uri={uri3}
-            disabled={uri2 == null}
+            token={token}
+            photoId={id3}
+            disabled={id2 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(2);
+              // this._onAdd(2);
             }}
             onRemove={() => {
-              this._onRemove(2);
+              // this._onRemove(2);
             }}
             imageWidth={imageWidth}
           />
         </View>
         <View style={{ bottom: 0, right: 0, position: "absolute" }}>
           <ProfilePicture
-            uri={uri4}
-            disabled={uri3 == null}
+            token={token}
+            photoId={id4}
+            disabled={id3 == null}
             showDeleteButton={true}
             onAdd={() => {
-              this._onAdd(3);
+              // this._onAdd(3);
             }}
             onRemove={() => {
-              this._onRemove(3);
+              // this._onRemove(3);
             }}
             imageWidth={imageWidth}
           />

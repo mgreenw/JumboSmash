@@ -55,3 +55,7 @@ const SIGN_URL = "/sign-url/";
 export const GET_SIGN_URL__ROUTE = PHOTOS_ROUTE + SIGN_URL;
 const CONFIRM_PHOTO = "/confirm-upload/";
 export const CONFIRM_PHOTO__ROUTE = PHOTOS_ROUTE + CONFIRM_PHOTO;
+
+// My Photos (For onboarding):
+export const GET_MY_PHOTOS__ROUTE = USERS_ROUTE + MY + "/photos/";
+export const GET_PHOTO = PHOTOS_ROUTE + "/";

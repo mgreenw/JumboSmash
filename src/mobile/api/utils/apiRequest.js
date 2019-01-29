@@ -28,5 +28,8 @@ export function apiRequest(
         throw UNAUTHORIZED;
       }
       return response;
+    })
+    .catch(err => {
+      throw { err, route };
     });
 }

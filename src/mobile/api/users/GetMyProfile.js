@@ -13,10 +13,7 @@ export type ServerProfile = {
   displayName: string,
   birthday: string,
   bio: string,
-  image1Url: string,
-  image2Url: ?string,
-  image3Url: ?string,
-  image4Url: ?string
+  photos: Array<number>
 };
 
 type request = {
@@ -24,20 +21,13 @@ type request = {
 };
 
 function parseProfile(apiResponse: ServerProfile): UserProfile {
-  const {
-    displayName,
-    birthday,
-    bio,
-    image1Url,
-    image2Url,
-    image3Url,
-    image4Url
-  } = apiResponse;
+  console.log(apiResponse);
+  const { displayName, birthday, bio, photos } = apiResponse;
   return {
     displayName,
     birthday,
     bio,
-    images: [image1Url, image2Url, image3Url, image4Url]
+    photoIds: photos
   };
 }
 
