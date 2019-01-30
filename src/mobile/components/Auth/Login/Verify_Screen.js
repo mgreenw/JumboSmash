@@ -1,16 +1,12 @@
 // @flow
 
 import React from "react";
-import { Linking, StyleSheet, TextInput, Text, View } from "react-native";
-import { StackNavigator } from "react-navigation";
-import { Button } from "react-native-elements";
+import { Text, View } from "react-native";
 import { connect } from "react-redux";
-import { styles } from "mobile/styles/auth";
 import verify from "mobile/api/auth/verify";
 import { login } from "mobile/actions/auth/login";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { Colors } from "mobile/styles/colors";
 import { textStyles } from "mobile/styles/textStyles";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
@@ -162,7 +158,7 @@ class SplashScreen extends React.Component<Props, State> {
       : `A verification code has been sent to ${email}.`;
 
     return (
-      <View style={Arthur_Styles.container}>
+      <View style={{ flex: 1 }}>
         <GEMHeader
           title={"Verification"}
           leftIconName={"back"}
@@ -171,19 +167,50 @@ class SplashScreen extends React.Component<Props, State> {
         <KeyboardView waves={1}>
           <Transition inline appear={"horizontal"}>
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 1 }}>
-                <Text style={textStyles.body1Style}>{message}</Text>
-              </View>
-              <View style={{ flex: 1, alignSelf: "stretch" }}>
-                <CodeInput
-                  value={this.state.code}
-                  onChangeValue={this._onChangeText}
-                  maxLength={NUM_DIGITS}
-                  primaryColor={Colors.Black}
-                  errorColor={Colors.Grapefruit}
-                  error={this.state.errorMessageCode}
-                  assistive={"Make sure to check your spam folder!"}
-                />
+              <View
+                style={{
+                  flex: 2
+                }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    paddingLeft: 50,
+                    paddingRight: 50
+                  }}
+                >
+                  <View style={{ paddingTop: 20 }}>
+                    <Text style={textStyles.body1Style}>{message}</Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    width: "100%",
+                    paddingLeft: 40,
+                    paddingRight: 40
+                  }}
+                >
+                  <CodeInput
+                    value={this.state.code}
+                    onChangeValue={this._onChangeText}
+                    maxLength={NUM_DIGITS}
+                    primaryColor={Colors.Black}
+                    errorColor={Colors.Grapefruit}
+                    error={this.state.errorMessageCode}
+                    assistive={"Make sure to check your spam folder!"}
+                  />
+                  <View style={{ padding: 20 }}>
+                    <Text
+                      style={[
+                        textStyles.headline6Style,
+                        { textAlign: "center", color: Colors.Grapefruit }
+                      ]}
+                    >
+                      {"COUNTDOWN" /* TODO: make countdown timer */}
+                    </Text>
+                  </View>
+                </View>
               </View>
               <View
                 style={{
