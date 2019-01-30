@@ -84,8 +84,8 @@ const updateMyProfile = async (req: $Request, res: $Response) => {
     return res.status(201).json({
       status: codes.UPDATE_PROFILE__SUCCESS,
     });
-  } catch (error) {
-    return apiUtils.error.server(res, 'Failed to update user profile.');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Failed to update user profile.');
   }
 };
 

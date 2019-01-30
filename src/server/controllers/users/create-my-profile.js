@@ -92,8 +92,8 @@ const createMyProfile = async (req: $Request, res: $Response) => {
     });
 
   // Catch an error as a server error.
-  } catch (error) {
-    return apiUtils.error.server(res, 'Failed to insert user profile.');
+  } catch (err) {
+    return apiUtils.error.server(res, err, 'Failed to insert user profile.');
   }
 };
 

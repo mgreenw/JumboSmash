@@ -18,7 +18,7 @@ export default {
   log(...data: Array<any>) {
     // $FlowFixMe (__DEV__ will break flow)
     if (__DEV__) {
-      console.log(data);
+      console.log(...data);
     }
   }
 };

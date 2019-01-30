@@ -8,7 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type {
   UserSettings,
   UserProfile,
-  Pronouns
+  Genders
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
@@ -16,12 +16,7 @@ import { createUser } from "mobile/actions/app/createUser";
 
 type Props = {
   navigation: any,
-  token: string,
-  createUser: (
-    token: string,
-    profile: UserProfile,
-    settings: UserSettings
-  ) => void,
+  createUser: (profile: UserProfile, settings: UserSettings) => void,
   createUserInProgress: boolean
 };
 
@@ -32,19 +27,14 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {
-    token: reduxState.token,
     createUserInProgress: reduxState.inProgress.createUser
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {
-    createUser: (
-      token: string,
-      profile: UserProfile,
-      settings: UserSettings
-    ) => {
-      dispatch(createUser(token, profile, settings));
+    createUser: (profile: UserProfile, settings: UserSettings) => {
+      dispatch(createUser(profile, settings));
     }
   };
 }
@@ -74,11 +64,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   }
 
   _saveSettingsAndProfile = () => {
-    this.props.createUser(
-      this.props.token,
-      this.state.profile,
-      this.state.settings
-    );
+    this.props.createUser(this.state.profile, this.state.settings);
   };
 
   render() {

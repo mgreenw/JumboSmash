@@ -99,6 +99,7 @@ form {
 }
 #emailInput {
   padding: 10px 12px;
+  transition: 1s;
 }
 #disclaimer {
   font-size: 0.75em;
@@ -185,3 +186,10 @@ ______________________________________________________*/
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
+
+/* MOBILE */
+@media (max-width:450px) and (max-height:825px) {
+  #arrow-container {
+    position: static;
+  }
+}

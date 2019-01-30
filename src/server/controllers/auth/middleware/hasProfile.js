@@ -19,10 +19,10 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
 
     // If the user's id is defined, go to the next route!
     return next();
-  } catch (_) {
+  } catch (err) {
     // Server error. Ensure that the 'authenticated' middleware comes before
     // the 'onboarded' middleware
-    return utils.error.server(res, 'No user found. Perhaps the user authentication check has not yet occured.');
+    return utils.error.server(res, err, 'No user found. Perhaps the user authentication check has not yet occured.');
   }
 };
 

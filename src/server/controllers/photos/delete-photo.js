@@ -95,9 +95,9 @@ const deletePhoto = async (req: $Request, res: $Response) => {
 
       // 4. Commit the transaction!
       await client.query('COMMIT');
-    } catch (error) {
+    } catch (err) {
       await client.query('ROLLBACK');
-      return utils.error.server(res, 'Failed to delete photo from database');
+      return utils.error.server(res, err, 'Failed to delete photo from database');
     }
 
     const newOrderRes = await db.query(`
@@ -111,8 +111,8 @@ const deletePhoto = async (req: $Request, res: $Response) => {
       status: codes.DELETE_PHOTO__SUCCESS,
       photos: _.map(newOrderRes.rows, row => row.id),
     });
-  } catch (error) {
-    return utils.error.server(res, 'Failed to delete photo - server error');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to delete photo');
   }
 };
 

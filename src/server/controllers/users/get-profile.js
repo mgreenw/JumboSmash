@@ -67,8 +67,8 @@ const getProfile = async (req: $Request, res: $Response) => {
     });
 
   // On error, return a server error.
-  } catch (error) {
-    return utils.error.server(res, 'Failed to get user profile.');
+  } catch (err) {
+    return utils.error.server(res, err, 'Failed to get user profile.');
   }
 };
 

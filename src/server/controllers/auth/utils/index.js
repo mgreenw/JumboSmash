@@ -15,16 +15,22 @@ function getUser(token: string): Promise<any> {
         // join with that profile. If not, the 'profile' field will be null
         const result = await db.query(
           `
-          SELECT u.id, p.user_id AS "profileUserId", u.utln
+          SELECT u.id, p.user_id AS "profileUserId", u.utln, u.token_uuid AS "tokenUUID"
           FROM users u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $1
           LIMIT 1`,
-          [decoded.id],
+          [decoded.userId],
         );
 
         // If no user exists with that id, fail
         if (result.rowCount === 0) {
+          return reject();
+        }
+
+        // Check if the user's token's uuid is valid
+        const user = result.rows[0];
+        if (user.tokenUUID === null || decoded.uuid !== user.tokenUUID) {
           return reject();
         }
 

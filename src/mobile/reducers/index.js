@@ -31,18 +31,18 @@ import type {
   SaveProfileInitiated_Action,
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
-import DevTesting from "mobile/utils/DevTesting";
+import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
 
 // TODO: make own ReduxState file
-export type Pronouns = {
-  he: boolean,
-  she: boolean,
-  they: boolean
+export type Genders = {
+  male: boolean,
+  female: boolean,
+  nonBinary: boolean
 };
 
 export type UserSettings = {
-  usePronouns: Pronouns,
-  wantPronouns: Pronouns
+  useGenders: Genders,
+  wantGenders: Genders
 };
 
 // TODO:
@@ -92,7 +92,7 @@ export type ReduxState = {
   }
 };
 
-type Action =
+export type Action =
   | LoginInitiated_Action
   | LoginCompleted_Action
   | LogoutInitiated_Action
@@ -106,7 +106,8 @@ type Action =
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileInitiated_Action
-  | SaveProfileCompleted_Action;
+  | SaveProfileCompleted_Action
+  | Unauthorized_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -133,7 +134,6 @@ export default function rootReducer(
   state: ReduxState = defaultState,
   action: Action
 ): ReduxState {
-  DevTesting.log(action.type);
   switch (action.type) {
     // LOGIN:
     case "LOGIN_INITIATED": {
@@ -298,6 +298,10 @@ export default function rootReducer(
           profile: action.profile
         }
       };
+    }
+
+    case "UNAUTHORIZED": {
+      return defaultState;
     }
 
     default: {

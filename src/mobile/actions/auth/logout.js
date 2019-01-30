@@ -2,6 +2,7 @@
 import type { Dispatch } from "redux";
 import { AsyncStorage } from "react-native";
 import DevTesting from "../../utils/DevTesting";
+import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type LogoutInitiated_Action = {
   type: "LOGOUT_INITIATED"
@@ -29,7 +30,7 @@ export function logout() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      AsyncStorage.multiRemove(["utln", "token"]).then(stores => {
+      AsyncStorage.multiRemove(["token"]).then(stores => {
         dispatch(complete());
       });
     });

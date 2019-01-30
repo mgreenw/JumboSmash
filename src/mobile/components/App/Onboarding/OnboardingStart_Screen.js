@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Pronouns
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 
@@ -44,15 +40,15 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         images: []
       },
       settings: propsSettings || {
-        usePronouns: {
-          he: true,
-          she: true,
-          they: true
+        useGenders: {
+          male: true,
+          female: true,
+          nonBinary: true
         },
-        wantPronouns: {
-          he: true,
-          she: true,
-          they: true
+        wantGenders: {
+          male: true,
+          female: true,
+          nonBinary: true
         }
       }
     };
@@ -81,7 +77,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         body={
           <Text style={[textStyles.headline4Style, { textAlign: "center" }]}>
             {
-              "Let's take 2 minutes to get your profile setup before you begin swiping"
+              "Let's take 2 minutes to get your profile setup before you begin swiping."
             }
           </Text>
         }

@@ -71,10 +71,10 @@ export default function sendVerificationEmail(
             utln: request.utln
           };
         default:
-          throw ("Error in sendVerification Email: ", response, request);
+          throw { response };
       }
     })
     .catch(error => {
-      throw ("Error in sendVerification Email: ", error);
+      throw { error, request };
     });
 }
