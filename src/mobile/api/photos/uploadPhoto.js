@@ -14,10 +14,13 @@ function uploadPhotoToS3(
     const field = f;
     formdata.append(field, payload.fields[field]);
   }
-  formdata.append("file", {
-    uri,
-    type: `image/jpeg`
-  });
+  formdata.append(
+    "file",
+    ({
+      uri,
+      type: `image/jpeg`
+    }: any) // TODO: properly import the types
+  );
   return fetch(payload.url, {
     method: "POST",
     body: formdata,
