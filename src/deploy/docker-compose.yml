@@ -123,6 +123,9 @@ services:
       - traefik-net
     secrets:
       - DOCKER_PASSWORD
+    volumes:
+      - /usr/local/bin/docker:/usr/bin/docker
+
     deploy:
       labels:
         - traefik.backend=deploy
@@ -137,6 +140,9 @@ secrets:
     external: true
   secret_key:
     external: true
+  DOCKER_PASSWORD:
+    external: true
+
 
 networks:
   traefik-net:
