@@ -1,8 +1,6 @@
 
-  // production.js
+  // development.js
 
-  //const secrets = require('../secrets');
-  const raw = require('config/raw').raw;
   const secrets = require('../secrets');
 
 
