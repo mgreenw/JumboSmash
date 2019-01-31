@@ -8,6 +8,7 @@ const updateMySettings = require('./update-my-settings');
 const getMyProfile = require('./get-my-profile');
 const updateMyProfile = require('./update-my-profile');
 const getProfile = require('./get-profile');
+const getMyPhotos = require('./get-my-photos');
 
 const { hasProfile } = require('../utils').middleware;
 
@@ -18,6 +19,8 @@ usersRouter.post('/me/profile', createMyProfile.handler);
 
 usersRouter.get('/me/settings', getMySettings.handler);
 usersRouter.patch('/me/settings', updateMySettings.handler);
+
+usersRouter.get('/me/photos', getMyPhotos.handler);
 
 // HAS PROFILE ONLY METHODS
 usersRouter.use(hasProfile);

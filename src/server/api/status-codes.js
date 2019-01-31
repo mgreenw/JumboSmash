@@ -60,6 +60,9 @@ const UPDATE_SETTINGS__SUCCESS = 'UPDATE_SETTINGS__SUCCESS';
 // Get Settings
 const GET_SETTINGS__SUCCESS = 'GET_SETTINGS__SUCCESS';
 
+// Get My Photos
+const GET_MY_PHOTOS__SUCCESS = 'GET_MY_PHOTOS__SUCCESS';
+
 // PHOTOS
 // Sign Url
 const SIGN_URL__SUCCESS = 'SIGN_URL__SUCCESS';
@@ -141,6 +144,9 @@ module.exports = {
 
   // Get Settings
   GET_SETTINGS__SUCCESS,
+
+  // Get My Photos
+  GET_MY_PHOTOS__SUCCESS,
 
   // PHOTOS
   // Sign Url
