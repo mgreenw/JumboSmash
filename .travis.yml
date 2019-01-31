@@ -18,7 +18,7 @@ jobs:
     script:
       - echo "No Tests for Website";
     after_success:
-      - if [ "$TRAVIS_BRANCH" == "spencer.infra.pipeline" ]; then
+      - if [ "$TRAVIS_BRANCH" == "master" ]; then
           if git diff --name-only HEAD^ | grep "src/website/";  then
             echo "New code. Performing a Docker build";
             docker build -t $DEPLOY_TAG .;
