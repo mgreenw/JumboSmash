@@ -7,6 +7,7 @@ const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
 const codes = require('./status-codes');
+const logger = require('../logger');
 
 const { authenticated, hasProfile } = require('./utils').middleware;
 
@@ -37,8 +38,10 @@ apiRouter.use(hasProfile);
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
 
+// --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
+  logger.error(err);
   return res.status(500).json({
     status: codes.SERVER_ERROR,
   });
