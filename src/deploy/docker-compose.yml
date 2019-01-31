@@ -63,7 +63,7 @@ services:
     networks:
       - traefik-net
     environment:
-      - development
+      NODE_ENV: development
     deploy:
       labels:
         - traefik.backend=koh
@@ -116,17 +116,20 @@ services:
   deployment:
     image: "sperrys/deploy:node"
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     ports:
       - 3004:3004
     networks:
       - traefik-net
+    secrets:
+      - DOCKER_PASSWORD
     deploy:
       labels:
         - traefik.backend=deploy
         - traefik.port=3004
         - traefik.frontend.rule=Host:deploy.jumbosmash.localhost
 
+# https://docs.docker.com/engine/swarm/secrets/
 secrets:
   db_pass:
     external: true
