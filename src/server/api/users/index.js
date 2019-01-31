@@ -16,10 +16,8 @@ const usersRouter = express.Router();
 
 // AUTHENTICATED METHODS
 usersRouter.post('/me/profile', createMyProfile.handler);
-
 usersRouter.get('/me/settings', getMySettings.handler);
 usersRouter.patch('/me/settings', updateMySettings.handler);
-
 usersRouter.get('/me/photos', getMyPhotos.handler);
 
 // HAS PROFILE ONLY METHODS
