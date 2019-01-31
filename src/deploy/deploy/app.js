@@ -70,7 +70,7 @@ app.post('/website', async (req, res) => {
         logger.error(`${stderr}`);
 
        // Update the docker stack with the new version of arthur (this command only updates services that change)
-       exec('docker stack deploy --with-registry-auth  -c ../docker-compose.yml pg', (err, stdout, stderr) => {
+       exec('docker stack deploy --with-registry-auth  -c ../prod.yml pg', (err, stdout, stderr) => {
            logger.info("Updating Arthur!");
            if (err) {
              logger.error(err)
