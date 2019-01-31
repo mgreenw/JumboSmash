@@ -15,7 +15,7 @@ These are the various deployment flows for each service.
 
 * **koh**
 
-* **arthura**
+* **arthur**
   1. A new website image is built
   2. Automatically pull down the new image from dockerhub.
   3. Stop the current container running the old image.
