@@ -32,7 +32,7 @@ services:
       labels:
         - traefik.tags=website,prod
         - traefik.backend=website
-        - traefik.frontend.rule=Host:jumbosmash.localhost
+        - traefik.frontend.rule=Host:jumbosmash.com
         - traefik.port=80
 
 
@@ -124,7 +124,6 @@ services:
       - DOCKER_PASSWORD
     volumes:
       - /usr/local/bin/docker:/usr/bin/docker
-
     deploy:
       labels:
         - traefik.backend=deploy
