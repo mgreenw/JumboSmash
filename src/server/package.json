@@ -22,7 +22,8 @@
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "repl": "node ./scripts/repl-client localhost:3001"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

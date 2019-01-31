@@ -2,10 +2,10 @@
 
 const express = require('express');
 
-const authRouter = require('./auth');
-const usersRouter = require('./users');
-const relationshipsRouter = require('./relationships');
-const photosRouter = require('./photos');
+const auth = require('./auth');
+const users = require('./users');
+const relationships = require('./relationships');
+const photos = require('./photos');
 const codes = require('./status-codes');
 const logger = require('../logger');
 
@@ -20,7 +20,7 @@ const apiRouter = express.Router();
 // All routers that require some level of public access must be in this section
 // If they want to include more specificity on which routes require
 // authentication or onboarding, they may use the middleware directly.
-apiRouter.use('/auth', authRouter);
+apiRouter.use('/auth', auth.router);
 
 // --> Authenticated Routers <--
 apiRouter.use(authenticated);
@@ -28,15 +28,15 @@ apiRouter.use(authenticated);
 // All routers that require some level of public access must be in this section
 // If they want to include more specificity on which routes require
 // authentication or onboarding, they may use the middleware directly.
-apiRouter.use('/users', usersRouter);
-apiRouter.use('/photos', photosRouter);
+apiRouter.use('/users', users.router);
+apiRouter.use('/photos', photos.router);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
 // hasProfile: the user has gone through the required profile setup.
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
-apiRouter.use('/relationships', relationshipsRouter);
+apiRouter.use('/relationships', relationships.router);
 
 // --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
@@ -47,4 +47,10 @@ apiRouter.use((err, req, res, _next) => {
   });
 });
 
-module.exports = apiRouter;
+module.exports = {
+  router: apiRouter,
+  auth,
+  users,
+  relationships,
+  photos,
+};

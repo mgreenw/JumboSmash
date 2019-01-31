@@ -19,4 +19,10 @@ authRouter.use(apiUtils.middleware.authenticated);
 
 authRouter.get('/get-token-utln', getTokenUtln.handler);
 
-module.exports = authRouter;
+module.exports = {
+  router: authRouter,
+
+  sendVerificationEmail: sendVerificationEmail.apply,
+  verify: verify.apply,
+  getTokenUtln: getTokenUtln.apply,
+};

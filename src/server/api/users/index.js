@@ -26,4 +26,13 @@ usersRouter.get('/me/profile', getMyProfile.handler);
 usersRouter.patch('/me/profile', updateMyProfile.handler);
 usersRouter.get('/:userId(\\d+)/profile', getProfile.handler);
 
-module.exports = usersRouter;
+module.exports = {
+  router: usersRouter,
+
+  createMyProfile: createMyProfile.apply,
+  getMySettings: getMySettings.apply,
+  updateMySettings: updateMySettings.apply,
+  getMyProfile: getMyProfile.apply,
+  updateMyProfile: updateMyProfile.apply,
+  getProfile: getMyProfile.apply,
+};

@@ -19,6 +19,6 @@ app.use((req, res, next) => {
 });
 
 // Define all routes here.
-app.use('/api', api);
+app.use('/api', api.router);
 
 module.exports = app;

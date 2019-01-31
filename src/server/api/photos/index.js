@@ -17,4 +17,12 @@ photosRouter.get('/:photoId(\\d+$)', getPhoto.handler);
 photosRouter.delete('/:photoId(\\d+$)', deletePhoto.handler);
 photosRouter.patch('/reorder', reorderPhotos.handler);
 
-module.exports = photosRouter;
+module.exports = {
+  router: photosRouter,
+
+  confirmUpload: confirmUpload.apply,
+  signUrl: signUrl.apply,
+  getPhoto: getPhoto.apply,
+  deletePhoto: deletePhoto.apply,
+  reorderPhotos: reorderPhotos.apply,
+};

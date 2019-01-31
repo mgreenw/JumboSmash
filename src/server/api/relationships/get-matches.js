@@ -1,6 +1,8 @@
 // @flow
 
 import type { $Request } from 'express';
+const { types } = require('pg').types
+
 
 const db = require('../../db');
 const apiUtils = require('../utils');
@@ -61,6 +63,9 @@ const getMatches = async (userId: number) => {
       AND
         (${matchedScenesChecks.join(' OR ')})
   `);
+
+  console.log(result.fields);
+
 
   return apiUtils.status(200).json({
     status: codes.GET_MATCHES__SUCCESS,

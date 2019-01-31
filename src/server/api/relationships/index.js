@@ -15,4 +15,11 @@ relationshipsRouter.get('/matches', getMatches.handler);
 relationshipsRouter.post('/judge', judge.handler);
 relationshipsRouter.post('/block', block.handler);
 
-module.exports = relationshipsRouter;
+module.exports = {
+  router: relationshipsRouter,
+
+  getSceneCandidates: getSceneCandidates.apply,
+  getMatches: getMatches.apply,
+  judge: judge.apply,
+  block: block.apply,
+};
