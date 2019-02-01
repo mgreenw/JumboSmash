@@ -37,11 +37,7 @@ export function uploadPhoto(uri: string) {
         uploadPhotoToS3(uri, payload).then(success => {
           if (success) {
             confirmUpload(token).then(photoId => {
-              if (success) {
-                dispatch(complete(photoId));
-              } else {
-                throw "Error Confirming Photo";
-              }
+              dispatch(complete(photoId));
             });
           } else {
             throw "Error Uploading Photo";
