@@ -3,7 +3,7 @@ import { timeout } from "./timeout";
 import DevTesting from "mobile/utils/DevTesting";
 import { UNAUTHORIZED } from "../sharedResponseCodes";
 
-type method = "PATCH" | "GET" | "POST";
+type method = "PATCH" | "GET" | "POST" | "DELETE";
 export function apiRequest(
   method: method,
   route: string,
@@ -28,5 +28,8 @@ export function apiRequest(
         throw UNAUTHORIZED;
       }
       return response;
+    })
+    .catch(err => {
+      throw { err, route };
     });
 }

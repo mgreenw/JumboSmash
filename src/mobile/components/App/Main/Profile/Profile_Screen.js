@@ -14,6 +14,7 @@ import { Colors } from "mobile/styles/colors";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import CustomIcon from "mobile/assets/icons/CustomIcon";
 import type { IconName } from "mobile/assets/icons/CustomIcon";
+import { GET_PHOTO__ROUTE } from "mobile/api/routes";
 
 const waves1 = require("../../../../assets/waves/waves1/waves.png");
 
@@ -63,18 +64,24 @@ type navigationProps = {
 
 type dispatchProps = {};
 
-type reduxProps = { displayName: string };
+type reduxProps = { token: ?string, photoId: number, displayName: string };
 
 type Props = navigationProps & dispatchProps & reduxProps;
 
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
-  if (!reduxState.user) {
-    throw "reduxState user is null";
+  if (!reduxState.client) {
+    throw "client is null in Profile Screen";
+  }
+  const photoIds = reduxState.client.profile.photoIds;
+  if (photoIds.length === 0) {
+    throw "no photos in Profile Screen";
   }
   return {
-    displayName: reduxState.user.profile.displayName
+    displayName: reduxState.client.profile.displayName,
+    photoId: photoIds[0],
+    token: reduxState.token
   };
 }
 
@@ -102,6 +109,7 @@ class ProfileScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { token, photoId, displayName } = this.props;
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>
@@ -124,8 +132,10 @@ class ProfileScreen extends React.Component<Props, State> {
                 size="xlarge"
                 rounded
                 source={{
-                  uri:
-                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                  uri: GET_PHOTO__ROUTE + photoId,
+                  headers: {
+                    Authorization: token
+                  }
                 }}
               />
               <Text
@@ -134,7 +144,7 @@ class ProfileScreen extends React.Component<Props, State> {
                   { textAlign: "center", paddingTop: 10 }
                 ]}
               >
-                {this.props.displayName}
+                {displayName}
               </Text>
               <Image
                 resizeMode="stretch"

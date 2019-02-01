@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Genders
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 import { GenderSelector } from "mobile/components/shared/GenderSelector";

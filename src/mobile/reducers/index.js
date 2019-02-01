@@ -32,8 +32,20 @@ import type {
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
 import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
+import type {
+  UploadPhotoInitiated_Action,
+  UploadPhotoCompleted_Action
+} from "mobile/actions/app/uploadPhoto";
+import type {
+  DeletePhotoInitiated_Action,
+  DeletePhotoCompleted_Action
+} from "mobile/actions/app/deletePhoto";
 
-// TODO: make own ReduxState file
+export type PhotoIds = $ReadOnlyArray<number>;
+
+///////////////
+// USER TYPES:
+///////////////
 export type Genders = {
   male: boolean,
   female: boolean,
@@ -45,34 +57,28 @@ export type UserSettings = {
   wantGenders: Genders
 };
 
-// TODO:
 export type UserProfile = {
   displayName: string,
   birthday: string,
   bio: string,
-  images: $ReadOnlyArray<?string>
+  photoIds: PhotoIds
 };
 
-export type Candidate = {
-  userId: number,
-  profile: UserProfile
-};
-
-// the client
-export type User = {
-  profile: UserProfile,
-  settings: UserSettings
-};
+type BaseUser = { userId: number, profile: UserProfile };
+export type Client = BaseUser & { settings: UserSettings };
+export type Candidate = BaseUser; // TODO: add scenes
+type User = Client | Candidate;
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
   // app data:
-  user: ?User,
+  client: ?Client,
   token: ?string,
 
   // action states:
   authLoaded: boolean,
   appLoaded: boolean,
+  onboardingCompleted: boolean,
 
   inProgress: {
     loadAuth: boolean,
@@ -81,7 +87,9 @@ export type ReduxState = {
     login: boolean,
     loadApp: boolean,
     createUser: boolean,
-    saveProfile: boolean
+    saveProfile: boolean,
+    uploadPhoto: boolean,
+    deletePhoto: boolean
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -107,11 +115,15 @@ export type Action =
   | SendVerificationEmailCompleted_Action
   | SaveProfileInitiated_Action
   | SaveProfileCompleted_Action
-  | Unauthorized_Action;
+  | Unauthorized_Action
+  | UploadPhotoCompleted_Action
+  | UploadPhotoInitiated_Action
+  | DeletePhotoCompleted_Action
+  | DeletePhotoInitiated_Action;
 
 const defaultState: ReduxState = {
   token: null,
-  user: null,
+  client: null,
   loggedIn: false,
   authLoaded: false,
   appLoaded: false,
@@ -122,12 +134,15 @@ const defaultState: ReduxState = {
     login: false,
     loadApp: false,
     createUser: false,
-    saveProfile: false
+    saveProfile: false,
+    uploadPhoto: false,
+    deletePhoto: false
   },
   response: {
     sendVerificationEmail: null,
     login: null
-  }
+  },
+  onboardingCompleted: false
 };
 
 export default function rootReducer(
@@ -211,7 +226,6 @@ export default function rootReducer(
     case "LOAD_APP__INITIATED": {
       return {
         ...state,
-        user: null,
         appLoaded: false,
         inProgress: {
           ...state.inProgress,
@@ -224,11 +238,16 @@ export default function rootReducer(
       return {
         ...state,
         appLoaded: true,
-        user: action.user,
+        client: {
+          userId: 0, // TODO: RETRIEVE THIS
+          profile: action.profile,
+          settings: action.settings
+        },
         inProgress: {
           ...state.inProgress,
           loadApp: false
-        }
+        },
+        onboardingCompleted: action.onboardingCompleted
       };
     }
 
@@ -293,8 +312,8 @@ export default function rootReducer(
           ...state.inProgress,
           saveProfile: false
         },
-        user: {
-          ...state.user,
+        client: {
+          ...state.client,
           profile: action.profile
         }
       };
@@ -302,6 +321,71 @@ export default function rootReducer(
 
     case "UNAUTHORIZED": {
       return defaultState;
+    }
+
+    case "UPLOAD_PHOTO__INITIATED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: true
+        }
+      };
+    }
+
+    // After a succesful photo upload, update our list of photos to include
+    // the ID for the new photo.
+    case "UPLOAD_PHOTO__COMPLETED": {
+      if (!state.client) {
+        throw "User null in reducer for UPLOAD_PHOTO__COMPLETED";
+      }
+      const { profile } = state.client;
+      let newPhotoIds = profile.photoIds.slice();
+      newPhotoIds.push(action.photoId);
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: false
+        },
+        client: {
+          ...state.client,
+          profile: {
+            ...profile,
+            photoIds: newPhotoIds
+          }
+        }
+      };
+    }
+
+    case "DELETE_PHOTO__INITIATED": {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          deletePhoto: true
+        }
+      };
+    }
+
+    case "DELETE_PHOTO__COMPLETED": {
+      if (!state.client) {
+        throw "User null in reducer for DELETE_PHOTO__COMPLETED";
+      }
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          deletePhoto: false
+        },
+        client: {
+          ...state.client,
+          profile: {
+            ...state.client.profile,
+            photoIds: action.photoIds
+          }
+        }
+      };
     }
 
     default: {
