@@ -6,7 +6,8 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  TextInput
+  TextInput,
+  ImageBackground
 } from "react-native";
 import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
@@ -21,6 +22,8 @@ import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
 import { saveProfile } from "mobile/actions/app/saveProfile";
 import NavigationService from "mobile/NavigationService";
 import BioInput from "mobile/components/shared/BioInput";
+
+const wavesFull = require("../../../../assets/waves/wavesFullScreen/wavesFullScreen.png");
 
 type navigationProps = {
   navigation: any
@@ -120,45 +123,45 @@ class ProfileEditScreen extends React.Component<Props, State> {
           leftIconName={"back"}
           onLeftIconPress={this._onBack}
         />
-        <KeyboardAwareScrollView
-          extraScrollHeight={35}
-          style={{
-            backgroundColor: Colors.AquaMarine,
-            paddingTop: 20
-          }}
-        >
-          <View style={styles.profileBlock}>
-            <AddMultiPhotos
-              images={this.state.editedProfile.photoIds}
-              width={containerWidth}
-              imageWidth={imageWidth}
-            />
-          </View>
-          <View style={styles.profileBlock}>
-            <PrimaryInput
-              value={this.state.editedProfile.displayName}
-              label="Preferred Name"
-              onChange={this._onChangeName}
-              error={this.state.errorMessageName}
-              containerStyle={{ width: "100%" }}
-              assistive={""}
-              autoCapitalize={"words"}
-            />
-            <View
-              style={{
-                maxHeight: 210,
-                marginBottom: 30,
-                width: "100%"
-              }}
-            >
-              <BioInput
-                value={this.state.editedProfile.bio}
-                onChangeText={this._onChangeBio}
-                label={"About Me"}
+        <View style={{ flex: 1 }}>
+          <ImageBackground
+            source={wavesFull}
+            style={{ width: "100%", height: "100%", position: "absolute" }}
+          />
+          <KeyboardAwareScrollView extraScrollHeight={35}>
+            <View style={[styles.profileBlock, { marginTop: 20 }]}>
+              <AddMultiPhotos
+                images={this.state.editedProfile.photoIds}
+                width={containerWidth}
+                imageWidth={imageWidth}
               />
             </View>
-          </View>
-        </KeyboardAwareScrollView>
+            <View style={styles.profileBlock}>
+              <PrimaryInput
+                value={this.state.editedProfile.displayName}
+                label="Preferred Name"
+                onChange={this._onChangeName}
+                error={this.state.errorMessageName}
+                containerStyle={{ width: "100%" }}
+                assistive={""}
+                autoCapitalize={"words"}
+              />
+              <View
+                style={{
+                  maxHeight: 210,
+                  marginBottom: 30,
+                  width: "100%"
+                }}
+              >
+                <BioInput
+                  value={this.state.editedProfile.bio}
+                  onChangeText={this._onChangeBio}
+                  label={"About Me"}
+                />
+              </View>
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
       </View>
     );
   }

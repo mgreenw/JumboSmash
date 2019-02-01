@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, StyleSheet, Switch } from "react-native";
+import { Text, View, StyleSheet, Switch, ImageBackground } from "react-native";
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
 import { logout } from "mobile/actions/auth/logout";
@@ -15,6 +15,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import NavigationService from "mobile/NavigationService";
 import { textStyles } from "mobile/styles/textStyles";
+
+const wavesFull = require("../../../../assets/waves/wavesFullScreen/wavesFullScreen.png");
 
 type navigationProps = {
   navigation: any
@@ -124,81 +126,91 @@ class SettingsScreen extends React.Component<Props, State> {
           leftIconName={"back"}
           onLeftIconPress={this._onBack}
         />
-        <KeyboardAwareScrollView
-          extraScrollHeight={35}
-          style={{
-            backgroundColor: Colors.AquaMarine,
-            paddingTop: 20
-          }}
-        >
-          <View
-            style={[
-              styles.settingsBlock,
-              { flexDirection: "row", justifyContent: "space-between" }
-            ]}
+        <View style={{ flex: 1 }}>
+          <ImageBackground
+            source={wavesFull}
+            style={{ width: "100%", height: "100%", position: "absolute" }}
+          />
+          <KeyboardAwareScrollView
+            extraScrollHeight={35}
+            style={{
+              backgroundColor: "transparent",
+              paddingTop: 20
+            }}
           >
-            <Text style={textStyles.headline6Style}>{"Show me on Smash"}</Text>
-            <Switch
-              value={this.state.showOnSmash}
-              tintColor={
-                Colors.AquaMarine /* TODO: investigate if this is deprecated */
-              }
-              onTintColor={Colors.AquaMarine}
-              trackColor={Colors.AquaMarine}
-              ios_backgroundColor={Colors.AquaMarine}
-              onValueChange={value => {
-                this.setState({
-                  showOnSmash: value
-                });
-              }}
-            />
-          </View>
-          <View style={styles.settingsBlock}>
-            <Text style={[textStyles.headline6Style, { textAlign: "center" }]}>
-              {"Gender Preferences"}
-            </Text>
-            <Text style={[textStyles.body2Style, { padding: 10 }]}>
-              {
-                "Your gender preferences help determine who you’ll be shown to and who to show to you for JumboSmash. Your preferences will never be shown on your profile. "
-              }
-            </Text>
-            <Text
+            <View
               style={[
-                textStyles.headline6Style,
-                { textAlign: "center", paddingBottom: 10 }
+                styles.settingsBlock,
+                { flexDirection: "row", justifyContent: "space-between" }
               ]}
             >
-              {"I identify as:"}
-            </Text>
-            <GenderSelector
-              defaultGenders={this.state.editedSettings.useGenders}
-              onChange={this._onUseGendersChange}
-              plural={false}
-            />
-            <Text
-              style={[
-                textStyles.headline6Style,
-                { textAlign: "center", padding: 10 }
-              ]}
-            >
-              {"I identify as:"}
-            </Text>
-            <GenderSelector
-              defaultGenders={this.state.editedSettings.wantGenders}
-              onChange={this._onWantGendersChange}
-              plural={true}
-            />
-          </View>
+              <Text style={textStyles.headline6Style}>
+                {"Show me on Smash"}
+              </Text>
+              <Switch
+                value={this.state.showOnSmash}
+                tintColor={
+                  Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                }
+                onTintColor={Colors.AquaMarine}
+                trackColor={Colors.AquaMarine}
+                ios_backgroundColor={Colors.AquaMarine}
+                onValueChange={value => {
+                  this.setState({
+                    showOnSmash: value
+                  });
+                }}
+              />
+            </View>
+            <View style={styles.settingsBlock}>
+              <Text
+                style={[textStyles.headline6Style, { textAlign: "center" }]}
+              >
+                {"Gender Preferences"}
+              </Text>
+              <Text style={[textStyles.body2Style, { padding: 10 }]}>
+                {
+                  "Your gender preferences help determine who you’ll be shown to and who to show to you for JumboSmash. Your preferences will never be shown on your profile. "
+                }
+              </Text>
+              <Text
+                style={[
+                  textStyles.headline6Style,
+                  { textAlign: "center", paddingBottom: 10 }
+                ]}
+              >
+                {"I identify as:"}
+              </Text>
+              <GenderSelector
+                defaultGenders={this.state.editedSettings.useGenders}
+                onChange={this._onUseGendersChange}
+                plural={false}
+              />
+              <Text
+                style={[
+                  textStyles.headline6Style,
+                  { textAlign: "center", padding: 10 }
+                ]}
+              >
+                {"I identify as:"}
+              </Text>
+              <GenderSelector
+                defaultGenders={this.state.editedSettings.wantGenders}
+                onChange={this._onWantGendersChange}
+                plural={true}
+              />
+            </View>
 
-          <View style={styles.settingsBlock}>
-            <PrimaryButton
-              title="Log Out"
-              onPress={this.props.logout}
-              disabled={this.props.logoutInProgress}
-              loading={this.props.logoutInProgress}
-            />
-          </View>
-        </KeyboardAwareScrollView>
+            <View style={styles.settingsBlock}>
+              <PrimaryButton
+                title="Log Out"
+                onPress={this.props.logout}
+                disabled={this.props.logoutInProgress}
+                loading={this.props.logoutInProgress}
+              />
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
       </View>
     );
   }
