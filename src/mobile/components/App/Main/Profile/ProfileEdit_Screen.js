@@ -45,11 +45,7 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   if (!reduxState.client) {
-<<<<<<< HEAD
     throw "Redux Client is null in Profile Edit";
-=======
-    throw "Redux User is null";
->>>>>>> eb271348512caa3362227aba4cda1f72b571a625
   }
   return {
     profile: reduxState.client.profile,
