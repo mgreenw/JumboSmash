@@ -95,6 +95,8 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
+  } finally {
+    client.release();
   }
 
   const newOrderRes = await db.query(`

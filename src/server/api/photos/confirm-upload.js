@@ -100,6 +100,8 @@ const confirmUpload = async (userId: number) => {
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
+  } finally {
+    client.release();
   }
 };
 
