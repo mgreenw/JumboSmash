@@ -20,13 +20,7 @@ class AddSinglePhoto extends React.Component<Props> {
   render() {
     const { onAdd, onRemove, width, photoId, token, enableRemove } = this.props;
     return (
-      <View
-        style={
-          {
-            /*{ opacity: disabled ? 0.2 : 1 }*/
-          }
-        }
-      >
+      <View>
         <TouchableOpacity
           style={{
             width: width,

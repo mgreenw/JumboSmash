@@ -1,7 +1,7 @@
 const request = require('supertest');
 
-const codes = require('../../../controllers/status-codes');
-const { profileErrorMessages } = require('../../../controllers/users/utils');
+const codes = require('../../../api/status-codes');
+const { profileErrorMessages } = require('../../../api/users/utils');
 const app = require('../../../app');
 const db = require('../../../db');
 const dbUtils = require('../../utils/db');
