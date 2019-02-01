@@ -1,0 +1,77 @@
+// @flow
+
+import type { $Request } from 'express';
+
+const db = require('../../db');
+const apiUtils = require('../utils');
+const codes = require('../status-codes');
+
+/**
+ * @api {get} /api/messages/:userId
+ *
+ */
+const getConversation = async (
+  userId: number,
+  matchUserId: number,
+  mostRecentMessageIdStr: ?string = undefined,
+) => {
+  let query = `
+    SELECT id, content, timestamp, sender_user_id AS "senderUserId", receiver_user_id AS "receiverUserId"
+    FROM messages
+    WHERE (
+        (sender_user_id = $1 AND receiver_user_id = $2)
+        OR
+        (sender_user_id = $3 AND receiver_user_id = $4)
+      )`;
+
+  // No worries of SQL injection: we have run it through Number.parseInt()
+  // If it is a number, use it in the query
+  // Get the most recent message id. If it exists, parse the number
+  let mostRecentMessageId;
+  if (mostRecentMessageIdStr) {
+    // Get the integer of the most recent message it
+    mostRecentMessageId = Number.parseInt(mostRecentMessageIdStr, 10);
+
+    // If it is invalid (not an int), fail.
+    if (Number.isNaN(mostRecentMessageId) || mostRecentMessageId <= 0) {
+      return apiUtils.status(400).json({
+        status: codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID,
+      });
+    }
+
+    // Add the "most recent" part of the query
+    query += `AND timestamp >= (
+        SELECT timestamp
+        FROM messages
+        WHERE id = ${mostRecentMessageId}
+      )
+      AND id != ${mostRecentMessageId}`;
+  }
+
+
+  // Always order by timestamp
+  query += `
+    ORDER BY timestamp
+  `;
+
+  const result = await db.query(
+    query,
+    [userId, matchUserId, matchUserId, userId],
+  );
+
+  return apiUtils.status(200).json({
+    status: codes.GET_CONVERSATION__SUCCESS,
+    messages: result.rows,
+  });
+};
+
+const handler = [
+  apiUtils.asyncHandler(async (req: $Request) => {
+    return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
+  }),
+];
+
+module.exports = {
+  handler,
+  apply: getConversation,
+};
