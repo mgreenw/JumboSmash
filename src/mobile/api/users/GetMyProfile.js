@@ -21,7 +21,6 @@ type request = {
 };
 
 function parseProfile(apiResponse: ServerProfile): UserProfile {
-  console.log(apiResponse);
   const { displayName, birthday, bio, photos } = apiResponse;
   return {
     displayName,
