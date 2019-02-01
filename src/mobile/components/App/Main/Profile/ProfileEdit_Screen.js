@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import AddPhotos from "mobile/components/shared/AddPhotos";
+import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
 import { Colors } from "mobile/styles/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import GEMHeader from "mobile/components/shared/Header";
@@ -44,11 +44,11 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
-  if (!reduxState.user) {
-    throw "Redux User is null";
+  if (!reduxState.client) {
+    throw "Redux Client is null in Profile Edit";
   }
   return {
-    profile: reduxState.user.profile,
+    profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile
   };
 }
@@ -121,40 +121,17 @@ class ProfileEditScreen extends React.Component<Props, State> {
           onLeftIconPress={this._onBack}
         />
         <KeyboardAwareScrollView
-          extraScrollHeight={30}
+          extraScrollHeight={35}
           style={{
             backgroundColor: Colors.AquaMarine,
             paddingTop: 20
           }}
         >
           <View style={styles.profileBlock}>
-            <AddPhotos
-              images={this.state.editedProfile.images}
+            <AddMultiPhotos
+              images={this.state.editedProfile.photoIds}
               width={containerWidth}
               imageWidth={imageWidth}
-              onChangeImages={images => {
-                this.setState(prevState => {
-                  return {
-                    editedProfile: {
-                      ...prevState.editedProfile,
-                      images
-                    }
-                  };
-                });
-              }}
-              onRemove={index => {
-                this.setState(prevState => {
-                  const newImages = prevState.editedProfile.images.slice();
-                  newImages.splice(index, 1);
-                  newImages[3] = null;
-                  return {
-                    editedProfile: {
-                      ...prevState.editedProfile,
-                      images: newImages
-                    }
-                  };
-                });
-              }}
             />
           </View>
           <View style={styles.profileBlock}>
@@ -167,11 +144,19 @@ class ProfileEditScreen extends React.Component<Props, State> {
               assistive={""}
               autoCapitalize={"words"}
             />
-            <BioInput
-              value={this.state.editedProfile.bio}
-              onChangeText={this._onChangeBio}
-              label={"About Me"}
-            />
+            <View
+              style={{
+                maxHeight: 210,
+                marginBottom: 30,
+                width: "100%"
+              }}
+            >
+              <BioInput
+                value={this.state.editedProfile.bio}
+                onChangeText={this._onChangeBio}
+                label={"About Me"}
+              />
+            </View>
           </View>
         </KeyboardAwareScrollView>
       </View>
