@@ -148,9 +148,6 @@ module.exports = {
   // Get Settings
   GET_SETTINGS__SUCCESS,
 
-  // Get My Photos
-  GET_MY_PHOTOS__SUCCESS,
-
   // PHOTOS
   // Sign Url
   SIGN_URL__SUCCESS,
