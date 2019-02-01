@@ -1,37 +1,62 @@
 // @flow
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet, Switch } from "react-native";
 import { connect } from "react-redux";
 import { Button } from "react-native-elements";
-import { styles } from "mobile/styles/template";
 import { logout } from "mobile/actions/auth/logout";
 import { GenderSelector } from "mobile/components/shared/GenderSelector";
-import type { Genders } from "mobile/reducers";
+import type { Genders, UserSettings } from "mobile/reducers";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
+import GEMHeader from "mobile/components/shared/Header";
+import { Colors } from "mobile/styles/colors";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import NavigationService from "mobile/NavigationService";
+import { textStyles } from "mobile/styles/textStyles";
 
-type Props = {
-  navigation: any,
-  logoutInProgress: boolean,
-  logout: () => void
+type navigationProps = {
+  navigation: any
 };
+
+type reduxProps = {
+  settings: UserSettings,
+  logoutInProgress: boolean
+};
+
+type dispatchProps = {
+  logout: () => void,
+  saveSettings: (settings: UserSettings) => void
+};
+
+type Props = navigationProps & reduxProps & dispatchProps;
 
 type State = {
-  useGenders: Genders,
-  wantGenders: Genders
+  editedSettings: UserSettings,
+  showOnSmash: boolean // temporary for UI testing
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+  if (!reduxState.client) {
+    throw "Redux Client is null in Settings Edit";
+  }
   return {
-    logoutInProgress: reduxState.inProgress.logout
+    logoutInProgress: reduxState.inProgress.logout,
+    settings: reduxState.client.settings
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     logout: () => {
       dispatch(logout());
+    },
+    saveSettings: () => {
+      // TODO
     }
   };
 }
@@ -40,18 +65,8 @@ class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoggingOut: false,
-      // TODO: initialize via the redux state.
-      useGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
-      },
-      wantGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
-      }
+      editedSettings: props.settings,
+      showOnSmash: false
     };
   }
 
@@ -71,16 +86,31 @@ class SettingsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onUsePronounChange = (genderIdentities: Genders) => {
-    this.setState({
-      useGenders: genderIdentities
+  _onUseGendersChange = (useGenders: Genders) => {
+    this.setState((state, props) => {
+      return {
+        editedSettings: {
+          ...this.state.editedSettings,
+          useGenders
+        }
+      };
     });
   };
 
-  _onWantPronounChange = (genderIdentities: Genders) => {
-    this.setState({
-      wantGenders: genderIdentities
+  _onWantGendersChange = (wantGenders: Genders) => {
+    this.setState((state, props) => {
+      return {
+        editedSettings: {
+          ...this.state.editedSettings,
+          wantGenders
+        }
+      };
     });
+  };
+
+  _onBack = () => {
+    this.props.saveSettings(this.state.editedSettings);
+    NavigationService.back();
   };
 
   render() {
@@ -88,38 +118,102 @@ class SettingsScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
 
     return (
-      <View style={styles.container}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>Gender Preferences</Text>
-          <Text style={{ textAlign: "center" }}>[Statement on Gender]</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: "center" }}>{"I identify as:"}</Text>
-          <GenderSelector
-            defaultGenders={this.state.useGenders}
-            onChange={this._onUsePronounChange}
-            plural={false}
-          />
-          <Text style={{ textAlign: "center" }}>{"I'm looking for:"}</Text>
-          <GenderSelector
-            defaultGenders={this.state.wantGenders}
-            onChange={this._onWantPronounChange}
-            plural={true}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            title="Log Out"
-            buttonStyle={styles.button}
-            onPress={this.props.logout}
-            disabled={this.props.logoutInProgress}
-            loading={this.props.logoutInProgress}
-          />
-        </View>
+      <View style={{ flex: 1 }}>
+        <GEMHeader
+          title="Edit Profile"
+          leftIconName={"back"}
+          onLeftIconPress={this._onBack}
+        />
+        <KeyboardAwareScrollView
+          extraScrollHeight={35}
+          style={{
+            backgroundColor: Colors.AquaMarine,
+            paddingTop: 20
+          }}
+        >
+          <View
+            style={[
+              styles.settingsBlock,
+              { flexDirection: "row", justifyContent: "space-between" }
+            ]}
+          >
+            <Text style={textStyles.headline6Style}>{"Show me on Smash"}</Text>
+            <Switch
+              value={this.state.showOnSmash}
+              tintColor={
+                Colors.AquaMarine /* TODO: investigate if this is deprecated */
+              }
+              onTintColor={Colors.AquaMarine}
+              trackColor={Colors.AquaMarine}
+              ios_backgroundColor={Colors.AquaMarine}
+              onValueChange={value => {
+                this.setState({
+                  showOnSmash: value
+                });
+              }}
+            />
+          </View>
+          <View style={styles.settingsBlock}>
+            <Text style={[textStyles.headline6Style, { textAlign: "center" }]}>
+              {"Gender Preferences"}
+            </Text>
+            <Text style={[textStyles.body2Style, { padding: 10 }]}>
+              {
+                "Your gender preferences help determine who you’ll be shown to and who to show to you for JumboSmash. Your preferences will never be shown on your profile. "
+              }
+            </Text>
+            <Text
+              style={[
+                textStyles.headline6Style,
+                { textAlign: "center", paddingBottom: 10 }
+              ]}
+            >
+              {"I identify as:"}
+            </Text>
+            <GenderSelector
+              defaultGenders={this.state.editedSettings.useGenders}
+              onChange={this._onUseGendersChange}
+              plural={false}
+            />
+            <Text
+              style={[
+                textStyles.headline6Style,
+                { textAlign: "center", padding: 10 }
+              ]}
+            >
+              {"I identify as:"}
+            </Text>
+            <GenderSelector
+              defaultGenders={this.state.editedSettings.wantGenders}
+              onChange={this._onWantGendersChange}
+              plural={true}
+            />
+          </View>
+
+          <View style={styles.settingsBlock}>
+            <PrimaryButton
+              title="Log Out"
+              onPress={this.props.logout}
+              disabled={this.props.logoutInProgress}
+              loading={this.props.logoutInProgress}
+            />
+          </View>
+        </KeyboardAwareScrollView>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  settingsBlock: {
+    backgroundColor: Colors.White,
+    paddingLeft: 18,
+    paddingRight: 18,
+    paddingTop: 20,
+    marginBottom: 20,
+    paddingBottom: 20
+  }
+});
 
 export default connect(
   mapStateToProps,
