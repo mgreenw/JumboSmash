@@ -39,8 +39,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
   try {
     utils.validateProfile(profile);
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.CREATE_PROFILE__INVALID_REQUEST,
+    return apiUtils.status(codes.CREATE_PROFILE__INVALID_REQUEST).data({
       message: error,
     });
   }
@@ -60,9 +59,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
   `, [userId]);
 
   if (photoResult.rowCount === 0) {
-    return apiUtils.status(409).json({
-      status: codes.CREATE_PROFILE__PHOTO_REQUIRED,
-    });
+    return apiUtils.status(codes.CREATE_PROFILE__PHOTO_REQUIRED).data({});
   }
 
   const splashPhotoId = photoResult.rows[0].id;
@@ -79,15 +76,11 @@ const createMyProfile = async (userId: number, profile: Object) => {
 
   // If no rows were returned, then the profile already exists.
   if (results.rowCount === 0) {
-    return apiUtils.status(409).json({
-      status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
-    });
+    return apiUtils.status(codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED).data({});
   }
 
   // If there is an id returned, success!
-  return apiUtils.status(201).json({
-    status: codes.CREATE_PROFILE__SUCCESS,
-  });
+  return apiUtils.status(codes.CREATE_PROFILE__SUCCESS).data({});
 };
 
 const handler = [

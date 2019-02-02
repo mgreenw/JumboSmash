@@ -41,9 +41,7 @@ const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile:
 
   // If there are photo id mismatches, error
   if (mismatchCount > 0) {
-    return apiUtils.status(400).json({
-      status: codes.REORDER_PHOTOS__MISMATCHED_IDS,
-    });
+    return apiUtils.status(codes.REORDER_PHOTOS__MISMATCHED_IDS).data({});
   }
 
   // Get an updated list of photos for the requesting user
@@ -71,8 +69,7 @@ const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile:
     `, [newOrder[0], userId]);
   }
 
-  return apiUtils.status(200).json({
-    status: codes.REORDER_PHOTOS__SUCCESS,
+  return apiUtils.status(codes.REORDER_PHOTOS__SUCCESS).data({
     photos: newOrder,
   });
 };

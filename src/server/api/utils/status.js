@@ -1,11 +1,19 @@
 // @flow
 
-const status = (statusCode: number) => {
+type ResponseStatus = {
+  status: string,
+  code: number,
+};
+
+const status = (responseStatus: ResponseStatus) => {
   return {
-    json: (body: Object) => {
+    data: (data: Object) => {
       return {
-        status: statusCode,
-        body,
+        statusCode: responseStatus.code,
+        body: {
+          status: responseStatus.status,
+          data,
+        },
       };
     },
   };

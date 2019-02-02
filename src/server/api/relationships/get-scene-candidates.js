@@ -20,8 +20,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
   if (exclude) {
     // Ensure the exclude params are an array
     if (!Array.isArray(exclude)) {
-      return apiUtils.status(400).json({
-        status: codes.BAD_REQUEST,
+      return apiUtils.status(codes.BAD_REQUEST).data({
         message: 'Exclude paramaters recieved as a non-array. Use "exclude[]=..."',
       });
     }
@@ -31,8 +30,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
 
     // Ensure all excluded users are integers. If not, error.
     if (_.includes(excludedUsers, NaN)) {
-      return apiUtils.status(400).json({
-        status: codes.BAD_REQUEST,
+      return apiUtils.status(codes.BAD_REQUEST).data({
         message: 'Exclude parameters includes a non-integer',
       });
     }
@@ -40,9 +38,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
 
   // Ensure the scene is valid.
   if (!utils.sceneIsValid(scene)) {
-    return apiUtils.status(400).json({
-      status: codes.GET_SCENE_CANDIDATES__INVALID_SCENE,
-    });
+    return apiUtils.status(codes.GET_SCENE_CANDIDATES__INVALID_SCENE).data({});
   }
 
   const isSmash = scene === 'smash';
@@ -90,8 +86,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
     LIMIT 10
   `, [excludedUsers]);
 
-  return apiUtils.status(200).json({
-    status: codes.GET_SCENE_CANDIDATES__SUCCESS,
+  return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data({
     candidates: result.rows,
   });
 };

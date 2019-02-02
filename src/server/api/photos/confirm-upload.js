@@ -29,9 +29,7 @@ const confirmUpload = async (userId: number) => {
   `, [userId]);
 
   if (unconfirmedPhotoRes.rowCount === 0) {
-    return apiUtils.status(400).json({
-      status: codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO).data({});
   }
 
   const [{ uuid }] = unconfirmedPhotoRes.rows;
@@ -47,9 +45,7 @@ const confirmUpload = async (userId: number) => {
   try {
     await s3.headObject(s3Params).promise();
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND).data({});
   }
 
   // TRANSACTION: Insert the photo and delete its "unconfirmed" counterpart
@@ -71,9 +67,7 @@ const confirmUpload = async (userId: number) => {
     // Ensure there are only 3 or fewer photos
     const [{ photoCount }] = photosRes.rows;
     if (photoCount > 3) {
-      return apiUtils.status(400).json({
-        status: codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT,
-      });
+      return apiUtils.status(codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT).data({});
     }
 
     // Insert the photo in the `photos` table, giving it the "next" index.
@@ -96,8 +90,7 @@ const confirmUpload = async (userId: number) => {
     await client.query('COMMIT');
     client.release();
 
-    return apiUtils.status(200).json({
-      status: codes.CONFIRM_UPLOAD__SUCCESS,
+    return apiUtils.status(codes.CONFIRM_UPLOAD__SUCCESS).data({
       photoId,
     });
   } catch (err) {

@@ -34,15 +34,11 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
   const photos = photosRes.rows;
   const [photoToDelete] = _.remove(photos, photo => photo.id === photoId);
   if (photoToDelete === undefined) {
-    return apiUtils.status(400).json({
-      status: codes.DELETE_PHOTO__NOT_FOUND,
-    });
+    return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).data({});
   }
 
   if (photos.length === 0) {
-    return apiUtils.status(409).json({
-      status: codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO,
-    });
+    return apiUtils.status(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO).data({});
   }
 
   // Transaction to delete the photo:
@@ -106,8 +102,7 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
     ORDER BY index
   `, [userId]);
 
-  return apiUtils.status(200).json({
-    status: codes.DELETE_PHOTO__SUCCESS,
+  return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data({
     photos: _.map(newOrderRes.rows, row => row.id),
   });
 };

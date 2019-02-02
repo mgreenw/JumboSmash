@@ -71,9 +71,7 @@ const updateMySettings = async (userId: number, wantPronouns: Object, usePronoun
 
   // If there is nothing to update, success!
   if (definedFields.length === 0) {
-    return apiUtils.status(201).json({
-      status: codes.UPDATE_SETTINGS__SUCCESS,
-    });
+    return apiUtils.status(codes.UPDATE_SETTINGS__SUCCESS).data({});
   }
 
   // Get an object of the template strings and fields
@@ -89,9 +87,7 @@ const updateMySettings = async (userId: number, wantPronouns: Object, usePronoun
   [...fieldTemplate.fields, userId]);
 
   // If there is an id returned, success!
-  return apiUtils.status(201).json({
-    status: codes.UPDATE_SETTINGS__SUCCESS,
-  });
+  return apiUtils.status(codes.UPDATE_SETTINGS__SUCCESS).data({});
 };
 
 const handler = [

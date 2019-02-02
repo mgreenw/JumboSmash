@@ -46,17 +46,13 @@ const block = async (userId: number, blockedUserId: number) => {
     `, [userId, blockedUserId]);
 
     // If the query succeeded, return success
-    return apiUtils.status(200).json({
-      status: codes.BLOCK__SUCCESS,
-    });
+    return apiUtils.status(codes.BLOCK__SUCCESS).data({});
   } catch (err) {
     // If the query failed due to a voilation of the candidate_user_id fkey
     // into the profiles table, return a more specific error. See here:
     // https://www.postgresql.org/docs/10/errcodes-appendix.html
     if (err.code === '23503' && err.constraint === 'relationships_candidate_user_id_fkey') {
-      return apiUtils.status(400).json({
-        status: codes.BLOCK__USER_NOT_FOUND,
-      });
+      return apiUtils.status(codes.BLOCK__USER_NOT_FOUND).data({});
     }
 
     throw err;

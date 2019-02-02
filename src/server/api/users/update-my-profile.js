@@ -41,8 +41,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   try {
     utils.validateProfile(profile);
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.UPDATE_PROFILE__INVALID_REQUEST,
+    return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
       message: error,
     });
   }
@@ -62,9 +61,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
 
   // If there is nothing to update, success!
   if (definedFields.length === 0) {
-    return apiUtils.status(201).json({
-      status: codes.UPDATE_PROFILE__SUCCESS,
-    });
+    return apiUtils.status(codes.UPDATE_PROFILE__SUCCESS).data({});
   }
 
   // Generates a template and fields for a postgres query
@@ -80,9 +77,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   [...template.fields, userId]);
 
   // If there is an id returned, success!
-  return apiUtils.status(201).json({
-    status: codes.UPDATE_PROFILE__SUCCESS,
-  });
+  return apiUtils.status(codes.UPDATE_PROFILE__SUCCESS).data({});
 };
 
 const handler = [

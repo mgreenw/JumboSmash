@@ -25,8 +25,7 @@ const getMySettings = async (userId: number) => {
 
   // Can assume user exists and is in db b/c authenticated upstream
   const settings = result.rows[0];
-  return apiUtils.status(200).json({
-    status: codes.GET_SETTINGS__SUCCESS,
+  return apiUtils.status(codes.GET_SETTINGS__SUCCESS).data({
     settings: {
       usePronouns: {
         he: settings.useHe,

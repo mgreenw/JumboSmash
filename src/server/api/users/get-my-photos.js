@@ -20,8 +20,7 @@ const getMyPhotos = async (userId: number) => {
     ORDER BY index
   `, [userId]);
 
-  return apiUtils.status(200).json({
-    status: codes.GET_MY_PHOTOS__SUCCESS,
+  return apiUtils.status(codes.GET_MY_PHOTOS__SUCCESS).data({
     photoIds: _.map(result.rows, row => row.id),
   });
 };

@@ -55,8 +55,7 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
     // respond that the email has already been sent
     if (forceResend !== true && !oldCodeExpired) {
       logger.info(`Already sent code: ${code.code}`);
-      return apiUtils.status(200).json({
-        status: codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT,
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT).data({
         email: code.email,
       });
     }
@@ -67,22 +66,17 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
 
   //  If the member info is null (not found), error that it was not found.
   if (!memberInfo) {
-    return apiUtils.status(400).json({
-      status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND,
-    });
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND).data({});
   }
 
   // Ensure the member is a student
   if (!memberInfo.classYear) {
-    return apiUtils.status(400).json({
-      status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT,
-    });
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT).data({});
   }
 
   // Check that the student is in A&S or E
   if (!_.includes(['A&S', 'E'], memberInfo.college)) {
-    return apiUtils.status(400).json({
-      status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD,
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD).data({
       college: memberInfo.college,
       classYear: memberInfo.classYear,
     });
@@ -90,8 +84,7 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
 
   // Ensure user is in the Class of 2019
   if (memberInfo.classYear !== '19') {
-    return apiUtils.status(400).json({
-      status: codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019,
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019).data({
       classYear: memberInfo.classYear,
     });
   }
@@ -132,8 +125,7 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
   slack.postVerificationCode(verificationCode, utln, memberInfo.email);
 
   // Send a success response to the client
-  return apiUtils.status(200).json({
-    status: codes.SEND_VERIFICATION_EMAIL__SUCCESS,
+  return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
     email: memberInfo.email,
   });
 };

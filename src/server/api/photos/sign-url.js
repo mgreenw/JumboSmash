@@ -67,8 +67,7 @@ const signURL = async (userId: number) => {
   payload.fields.acl = 'authenticated-read';
 
   // Return success!
-  return apiUtils.status(200).json({
-    status: codes.SIGN_URL__SUCCESS,
+  return apiUtils.status(codes.SIGN_URL__SUCCESS).data({
     payload,
   });
 };

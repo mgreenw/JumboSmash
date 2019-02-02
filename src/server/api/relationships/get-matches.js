@@ -62,8 +62,7 @@ const getMatches = async (userId: number) => {
         (${matchedScenesChecks.join(' OR ')})
   `);
 
-  return apiUtils.status(200).json({
-    status: codes.GET_MATCHES__SUCCESS,
+  return apiUtils.status(codes.GET_MATCHES__SUCCESS).data({
     matches: result.rows,
   });
 };
