@@ -11,10 +11,15 @@ function postVerificationCode(
   verificationCode: string,
   utln: string,
   email: string,
-  inProduction: boolean,
 ) {
-  if (!inProduction || NODE_ENV === 'production') {
-    webhook.send(`code: *${verificationCode}* \n utln: *${utln}* \n email: *${email}*`);
+  // TODO: fix the NODE_ENV issue
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+    webhook.send(`
+      ENV: *${NODE_ENV}*
+      code: *${verificationCode}*
+      utln: *${utln}*
+      email: *${email}*
+    `);
   }
 }
 

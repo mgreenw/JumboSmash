@@ -56,7 +56,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingNameAge, {
+    navigation.navigate(routes.OnboardingTermsAndConditions, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (

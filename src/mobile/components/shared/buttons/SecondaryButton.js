@@ -11,14 +11,7 @@ type Props = {
   loading?: boolean
 };
 
-type State = {};
-
-export class PrimaryButton extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
-
+export class SecondaryButton extends React.Component<Props> {
   render() {
     return (
       <Button
@@ -30,11 +23,11 @@ export class PrimaryButton extends React.Component<Props, State> {
         disabled={this.props.disabled}
         loading={this.props.loading}
         containerStyle={{ width: "100%" }}
-        buttonStyle={Arthur_Styles.buttonPrimaryActive}
-        titleStyle={Arthur_Styles.buttonTitlePrimaryActive}
-        disabledStyle={Arthur_Styles.buttonPrimaryDisabled}
-        disabledTitleStyle={Arthur_Styles.buttonTitlePrimaryDisabled}
-        loadingStyle={Arthur_Styles.buttonPrimaryDisabled}
+        buttonStyle={Arthur_Styles.buttonSecondaryActive}
+        titleStyle={Arthur_Styles.buttonTitleSecondaryActive}
+        disabledStyle={Arthur_Styles.buttonSecondaryDisabled}
+        disabledTitleStyle={Arthur_Styles.buttonTitleSecondaryDisabled}
+        loadingStyle={Arthur_Styles.buttonSecondaryDisabled}
       />
     );
   }
