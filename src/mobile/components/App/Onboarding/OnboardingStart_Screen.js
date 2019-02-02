@@ -55,21 +55,20 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   }
 
   _goToNextPage = () => {
-    // const { navigation } = this.props;
-    // navigation.navigate(routes.OnboardingNameAge, {
-    //   profile: this.state.profile,
-    //   settings: this.state.settings,
-    //   onUpdateProfileSettings: (
-    //     profile: UserProfile,
-    //     settings: UserSettings
-    //   ) => {
-    //     this.setState({
-    //       profile,
-    //       settings
-    //     });
-    //   }
-    // });
-    NavigationService.reset();
+    const { navigation } = this.props;
+    navigation.navigate(routes.OnboardingNameAge, {
+      profile: this.state.profile,
+      settings: this.state.settings,
+      onUpdateProfileSettings: (
+        profile: UserProfile,
+        settings: UserSettings
+      ) => {
+        this.setState({
+          profile,
+          settings
+        });
+      }
+    });
   };
 
   render() {
