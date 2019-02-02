@@ -5,18 +5,22 @@ const url = 'https://hooks.slack.com/services/TCR3CCRDL/BF4RA0TNH/clPhcPhtvY6U32
 const webhook = new IncomingWebhook(url);
 const utils = require('../utils');
 
-// const NODE_ENV = utils.getNodeEnv();
+const NODE_ENV = utils.getNodeEnv();
 
 function postVerificationCode(
   verificationCode: string,
   utln: string,
   email: string,
-  inProduction: boolean,
 ) {
   // TODO: fix the NODE_ENV issue
-  // if (!inProduction || NODE_ENV === 'production') {
-  webhook.send(`code: *${verificationCode}* \n utln: *${utln}* \n email: *${email}*`);
-  // }
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+    webhook.send(`
+      ENV: *${NODE_ENV}*
+      code: *${verificationCode}*
+      utln: *${utln}*
+      email: *${email}*
+    `);
+  }
 }
 
 exports.postVerificationCode = postVerificationCode;
