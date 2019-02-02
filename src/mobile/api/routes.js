@@ -4,14 +4,7 @@ const { manifest } = Expo.Constants;
 
 // if in dev mode, use the same IP address as the hosting expo server. Otherwise,
 // use prod server.
-const SERVER_ROUTE =
-  typeof manifest.packagerOpts === `object` && manifest.packagerOpts.dev
-    ? "http://" +
-      manifest.debuggerHost
-        .split(`:`)
-        .shift()
-        .concat(`:3000`)
-    : `jumbosmash.com`;
+const SERVER_ROUTE = `http://server.jumbosmash.com`;
 
 ///////////////////////
 // ROUTE CONSTRUCTORS:

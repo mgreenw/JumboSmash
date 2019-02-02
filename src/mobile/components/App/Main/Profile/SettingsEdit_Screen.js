@@ -12,12 +12,8 @@ import { routes } from "mobile/components/Navigation";
 import GEMHeader from "mobile/components/shared/Header";
 import { Colors } from "mobile/styles/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-<<<<<<< HEAD
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
-=======
 import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
 import { SecondaryButton } from "mobile/components/shared/buttons/SecondaryButton";
->>>>>>> jacob.mobile.secondary-button
 import NavigationService from "mobile/NavigationService";
 import { textStyles } from "mobile/styles/textStyles";
 
