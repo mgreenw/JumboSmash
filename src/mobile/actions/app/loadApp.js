@@ -39,14 +39,14 @@ function complete(
     },
     settings: settings || {
       useGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
+        male: false,
+        female: false,
+        nonBinary: false
       },
       wantGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
+        male: false,
+        female: false,
+        nonBinary: false
       }
     }
   };

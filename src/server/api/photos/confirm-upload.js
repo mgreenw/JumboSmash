@@ -92,13 +92,20 @@ const confirmUpload = async (userId: number) => {
       WHERE uuid = $1
     `, [uuid]);
 
+    // Commit the transaction and RELASE the client
     await client.query('COMMIT');
+    client.release();
+
     return apiUtils.status(200).json({
       status: codes.CONFIRM_UPLOAD__SUCCESS,
       photoId,
     });
   } catch (err) {
+    // Rollback the transaction and release the client
     await client.query('ROLLBACK');
+    client.release();
+
+    // Re-throw the error so it is caught by asyncHandler
     throw err;
   }
 };

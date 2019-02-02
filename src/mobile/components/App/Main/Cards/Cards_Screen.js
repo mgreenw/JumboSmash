@@ -149,7 +149,7 @@ class SwipingScreen extends React.Component<Props, State> {
         <View style={{ flex: 1 }}>
           {!isExpanded && (
             <GEMHeader
-              title="cards"
+              title="PROJECTGEM"
               rightIconName="message"
               leftIconName="user"
             />

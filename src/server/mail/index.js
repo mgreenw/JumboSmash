@@ -15,6 +15,9 @@ if (NODE_ENV === 'production') {
   // in the meantime, verification codes can be posted to Slack.
   // sgMail.setApiKey(config.get("sendgrid_api_key"));
   // exports.send = sgMail.send;
+  exports.send = (output: any) => {
+    return output;
+  };
 } else if (NODE_ENV === 'development') {
   exports.send = (output: any) => {
     logger.info(JSON.stringify(output, null, 2));
