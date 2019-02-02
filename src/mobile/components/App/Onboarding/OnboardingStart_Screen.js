@@ -8,6 +8,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
+import NavigationService from "mobile/NavigationService";
 
 type ReduxProps = {
   profile: UserProfile,
@@ -54,20 +55,21 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   }
 
   _goToNextPage = () => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingNameAge, {
-      profile: this.state.profile,
-      settings: this.state.settings,
-      onUpdateProfileSettings: (
-        profile: UserProfile,
-        settings: UserSettings
-      ) => {
-        this.setState({
-          profile,
-          settings
-        });
-      }
-    });
+    // const { navigation } = this.props;
+    // navigation.navigate(routes.OnboardingNameAge, {
+    //   profile: this.state.profile,
+    //   settings: this.state.settings,
+    //   onUpdateProfileSettings: (
+    //     profile: UserProfile,
+    //     settings: UserSettings
+    //   ) => {
+    //     this.setState({
+    //       profile,
+    //       settings
+    //     });
+    //   }
+    // });
+    NavigationService.reset();
   };
 
   render() {
