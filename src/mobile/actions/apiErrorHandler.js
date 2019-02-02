@@ -9,7 +9,7 @@ export type Unauthorized_Action = {
 
 export function apiErrorHandler(reject: empty): Unauthorized_Action {
   DevTesting.log("Api Error Handler: ", reject);
-  if (reject.error === UNAUTHORIZED) {
+  if (reject.error.err === UNAUTHORIZED) {
     return {
       type: "UNAUTHORIZED"
     };
