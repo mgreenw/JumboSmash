@@ -31,7 +31,10 @@ import type {
   SaveProfileInitiated_Action,
   SaveProfileCompleted_Action
 } from "mobile/actions/app/saveProfile";
-import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
+import type {
+  Unauthorized_Action,
+  Error_Action
+} from "mobile/actions/apiErrorHandler";
 import type {
   UploadPhotoInitiated_Action,
   UploadPhotoCompleted_Action
@@ -116,6 +119,7 @@ export type Action =
   | SaveProfileInitiated_Action
   | SaveProfileCompleted_Action
   | Unauthorized_Action
+  | Error_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
@@ -320,7 +324,11 @@ export default function rootReducer(
     }
 
     case "UNAUTHORIZED": {
-      return defaultState;
+      return state;
+    }
+
+    case "SERVER_ERROR": {
+      return state;
     }
 
     case "UPLOAD_PHOTO__INITIATED": {
