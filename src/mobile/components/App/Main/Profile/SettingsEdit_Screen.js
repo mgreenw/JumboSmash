@@ -123,7 +123,7 @@ class SettingsScreen extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="Edit Profile"
+          title="Edit Settings"
           leftIconName={"back"}
           onLeftIconPress={this._onBack}
         />
@@ -136,7 +136,7 @@ class SettingsScreen extends React.Component<Props, State> {
             extraScrollHeight={35}
             style={{
               backgroundColor: "transparent",
-              paddingTop: 20
+              marginTop: 20
             }}
           >
             <View
