@@ -69,6 +69,26 @@ export const Arthur_Styles = StyleSheet.create({
     ...buttonTitleBase,
     color: Colors.BlueyGrey
   },
+  buttonSecondaryActive: {
+    ...buttonBase,
+    backgroundColor: Colors.White,
+    borderColor: Colors.Grapefruit,
+    borderWidth: 1
+  },
+  buttonTitleSecondaryActive: {
+    ...buttonTitleBase,
+    color: Colors.Grapefruit
+  },
+  buttonSecondaryDisabled: {
+    ...buttonBase,
+    backgroundColor: Colors.White,
+    borderColor: Colors.Grey85,
+    borderWidth: 1
+  },
+  buttonTitleSecondaryDisabled: {
+    ...buttonTitleBase,
+    color: Colors.BlueyGrey
+  },
   container: {
     backgroundColor: Colors.White,
     flex: 1
