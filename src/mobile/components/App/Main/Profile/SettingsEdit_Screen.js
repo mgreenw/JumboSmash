@@ -209,8 +209,8 @@ class SettingsScreen extends React.Component<Props, State> {
                   onPress={() => {
                     /* TODO */
                   }}
-                  disabled={false}
-                  loading={this.props.logoutInProgress}
+                  disabled={this.props.logoutInProgress}
+                  loading={false}
                 />
               </View>
               <View style={{ paddingBottom: 20 }}>
@@ -219,8 +219,8 @@ class SettingsScreen extends React.Component<Props, State> {
                   onPress={() => {
                     /* TODO */
                   }}
-                  disabled={false}
-                  loading={this.props.logoutInProgress}
+                  disabled={this.props.logoutInProgress}
+                  loading={false}
                 />
               </View>
               <PrimaryButton
