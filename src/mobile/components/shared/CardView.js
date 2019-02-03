@@ -7,7 +7,7 @@ import {
   ScrollView,
   Image,
   TouchableWithoutFeedback,
-  TouchableHighlight,
+  TouchableOpacity,
   Dimensions,
   Animated
 } from "react-native";
@@ -17,6 +17,7 @@ import { Button, Card as RneCard, Icon } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import type { UserProfile } from "mobile/reducers";
+import { isIphoneX } from "mobile/utils/Platform";
 
 type Props = {
   user: UserProfile,
@@ -57,6 +58,9 @@ export default class CardView extends React.Component<Props, State> {
         }}
         contentInset={{ bottom: 40 }}
       >
+        {isIphoneX() && (
+          <View style={{ height: 40, backgroundColor: "#fff" }} />
+        )}
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
@@ -128,12 +132,12 @@ export default class CardView extends React.Component<Props, State> {
               user.displayName
             }, ${user.birthday}`}</Text>
 
-            <TouchableHighlight
+            <TouchableOpacity
               style={{ position: "absolute", right: 20, padding: 5 }}
               onPress={onMinimize}
             >
               <Text style={{ fontSize: 28 }}>{"<"}</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
           <Text>
             {
