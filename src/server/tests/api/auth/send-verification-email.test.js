@@ -36,7 +36,7 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.BAD_REQUEST);
+        expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
         expect(res.body.message).toContain('utln');
       });
   });
@@ -52,7 +52,7 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND);
+        expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND.status);
       });
   });
 
@@ -66,8 +66,8 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019);
-    expect(res.body.classYear).toBe('20');
+    expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019.status);
+    expect(res.body.data.classYear).toBe('20');
   });
 
   it('should fail given a utln that is not a current student', async () => {
@@ -80,7 +80,7 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT);
+    expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT.status);
   });
 
   it('should fail given a utln that is a current GRADUATE student in the class of 2019', async () => {
@@ -93,9 +93,9 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD);
-    expect(res.body.college).toBeDefined();
-    expect(res.body.classYear).toBe('19');
+    expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD.status);
+    expect(res.body.data.college).toBeDefined();
+    expect(res.body.data.classYear).toBe('19');
   });
 
   it('should succeed in sending an email with a valid utln', () => {
@@ -109,10 +109,10 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-        expect(res.body.email).toBeDefined();
-        expect(res.body.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
-        expect(res.body.email).not.toContain(GOOD_UTLN);
+        expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+        expect(res.body.data.email).toBeDefined();
+        expect(res.body.data.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
+        expect(res.body.data.email).not.toContain(GOOD_UTLN);
       });
   });
 
@@ -127,10 +127,10 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT);
-        expect(res.body.email).toBeDefined();
-        expect(res.body.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
-        expect(res.body.email).not.toContain(GOOD_UTLN);
+        expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT.status);
+        expect(res.body.data.email).toBeDefined();
+        expect(res.body.data.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
+        expect(res.body.data.email).not.toContain(GOOD_UTLN);
       });
   });
 
@@ -146,10 +146,10 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-        expect(res.body.email).toBeDefined();
-        expect(res.body.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
-        expect(res.body.email).not.toContain(GOOD_UTLN);
+        expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+        expect(res.body.data.email).toBeDefined();
+        expect(res.body.data.email).toMatch(/^[A-Za-z0-9._%+-]+@tufts.edu/);
+        expect(res.body.data.email).not.toContain(GOOD_UTLN);
       });
   });
 
@@ -165,7 +165,7 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT);
+        expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT.status);
       });
   });
 
@@ -181,7 +181,7 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.BAD_REQUEST);
+        expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
       });
   });
 });

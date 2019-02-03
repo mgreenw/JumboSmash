@@ -69,9 +69,7 @@ const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile:
     `, [newOrder[0], userId]);
   }
 
-  return apiUtils.status(codes.REORDER_PHOTOS__SUCCESS).data({
-    photos: newOrder,
-  });
+  return apiUtils.status(codes.REORDER_PHOTOS__SUCCESS).data(newOrder);
 };
 
 const handler = [

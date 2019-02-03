@@ -156,7 +156,7 @@ exports.BLOCK__USER_NOT_FOUND = {
 // Update Settings
 exports.UPDATE_SETTINGS__SUCCESS = {
   status: 'UPDATE_SETTINGS__SUCCESS',
-  code: 400,
+  code: 201,
 };
 
 // Get Settings

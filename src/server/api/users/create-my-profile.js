@@ -67,8 +67,8 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Insert the profile into the database
   const results = await db.query(`
     INSERT INTO profiles
-    (user_id, display_name, birthday, bio, splash_photo_id)
-    VALUES ($1, $2, $3, $4, $5)
+    (user_id, display_name, birthday, bio)
+    VALUES ($1, $2, $3, $4)
     ON CONFLICT DO NOTHING
     RETURNING user_id AS "userId"
   `,

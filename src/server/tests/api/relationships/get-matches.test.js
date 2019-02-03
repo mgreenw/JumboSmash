@@ -29,7 +29,7 @@ describe('GET api/relationships/matches', () => {
       .get('/api/relationships/matches')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('jjaffe01');
@@ -38,7 +38,7 @@ describe('GET api/relationships/matches', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toEqual(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should not return any matches if the user has no relationships', async () => {
@@ -48,7 +48,7 @@ describe('GET api/relationships/matches', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS);
+    expect(res.body.status).toEqual(codes.GET_MATCHES__SUCCESS.status);
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
@@ -61,9 +61,9 @@ describe('GET api/relationships/matches', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS);
-    expect(res.body.matches.length).toBe(1);
-    const match = res.body.matches[0];
+    expect(res.body.status).toEqual(codes.GET_MATCHES__SUCCESS.status);
+    expect(res.body.data.matches.length).toBe(1);
+    const match = res.body.data.matches[0];
     expect(match.userId).toBe(other.id);
     expect(match.scenes).toEqual(['smash']);
   });
@@ -78,11 +78,11 @@ describe('GET api/relationships/matches', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS);
-    expect(res.body.matches.length).toBe(2);
-    const personMatch = (res.body.matches[0].id === person.id)
-      ? res.body.matches[0]
-      : res.body.matches[1];
+    expect(res.body.status).toEqual(codes.GET_MATCHES__SUCCESS.status);
+    expect(res.body.data.matches.length).toBe(2);
+    const personMatch = (res.body.data.matches[0].id === person.id)
+      ? res.body.data.matches[0]
+      : res.body.data.matches[1];
     expect(personMatch.userId).toBe(person.id);
     expect(personMatch.scenes.sort()).toEqual(['smash', 'stone', 'social'].sort());
   });
@@ -97,8 +97,9 @@ describe('GET api/relationships/matches', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS);
-    expect(res.body.matches.length).toBe(2); // We should not recieve a result for the blocked one
+    expect(res.body.status).toEqual(codes.GET_MATCHES__SUCCESS.status);
+    // We should not recieve a result for the blocked one
+    expect(res.body.data.matches.length).toBe(2);
   });
 
   // Check that a relationship with likes but also blocks does not get matched

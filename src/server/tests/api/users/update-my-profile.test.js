@@ -24,7 +24,7 @@ describe('PATCH api/users/me/profile', () => {
       .set('Authorization', 'this-is-not-a-valid-json-web-token')
       .send({})
       .expect(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED);
+    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
   });
 
   it('should error if the user does not exist for the given auth token', async () => {
@@ -34,7 +34,7 @@ describe('PATCH api/users/me/profile', () => {
       .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED);
+    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
   });
 
   it('should fail if the user has been created but does not yet have a profile', async () => {
@@ -49,7 +49,7 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toEqual(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should succeed if the user has already created a profile', async () => {
@@ -68,7 +68,7 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1999-09-09',
       })
       .expect(201);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__SUCCESS.status);
   });
 
   it('should succeed if no fields are included', async () => {
@@ -84,7 +84,7 @@ describe('PATCH api/users/me/profile', () => {
       .set('Authorization', user.token)
       .send({})
       .expect(201);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__SUCCESS.status);
   });
 
   it('should error if the display name is too long (>50 characters)', async () => {
@@ -104,8 +104,8 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
-    expect(res.body.message).toBe(profileErrorMessages.DISPLAY_NAME_TOO_LONG);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.DISPLAY_NAME_TOO_LONG);
   });
 
   it('should error if the bio is too long (>500 characters)', async () => {
@@ -130,8 +130,8 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
-    expect(res.body.message).toBe(profileErrorMessages.BIO_TOO_LONG);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.BIO_TOO_LONG);
   });
 
   it('should ensure the date is formatted correctly', async () => {
@@ -151,7 +151,7 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1997-099-09',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
     expect(res.body.message).toContain('should match format "date"');
   });
 
@@ -172,8 +172,8 @@ describe('PATCH api/users/me/profile', () => {
         birthday: '1980-10-09',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST);
-    expect(res.body.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
@@ -194,7 +194,7 @@ describe('PATCH api/users/me/profile', () => {
         birthday,
       })
       .expect(201);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS);
+    expect(res.body.status).toEqual(codes.UPDATE_PROFILE__SUCCESS.status);
 
     const profileResult = await db.query(`
     SELECT *, to_char("birthday", 'YYYY-MM-DD') AS birthday_date

@@ -21,7 +21,7 @@ Provide the normal `Authorization` token in the request header.
 
 ## Success Response
 
-**Condition**: The photo with the given id exists. The photo will be deleted.
+**Condition**: The photo with the given id exists. The photo will be deleted. The return data is the updated list of photo ids.
 
 **Code**: `200 OK`
 
@@ -30,7 +30,7 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "DELETE_PHOTO__SUCCESS",
-    "photos": [1, 2, 3]
+    "data": [1, 2, 3]
 }
 ```
 

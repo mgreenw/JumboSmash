@@ -7,7 +7,7 @@ type ResponseStatus = {
 
 const status = (responseStatus: ResponseStatus) => {
   return {
-    data: (data: Object) => {
+    data: (data: any) => {
       return {
         statusCode: responseStatus.code,
         body: {

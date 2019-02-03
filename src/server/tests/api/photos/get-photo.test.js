@@ -34,7 +34,7 @@ describe('GET api/photos/:photoId', () => {
       .get('/api/photos/sign-url')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -44,7 +44,7 @@ describe('GET api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_PHOTO__NOT_FOUND);
+    expect(res.body.status).toEqual(codes.GET_PHOTO__NOT_FOUND.status);
   });
 
   it('should succeed if there is a photo with the given id', async () => {
@@ -54,23 +54,23 @@ describe('GET api/photos/:photoId', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
+    expect(res.body.status).toEqual(codes.SIGN_URL__SUCCESS.status);
 
     // Perform the file upload
-    await utils.uploadTestPhoto(res.body.payload);
+    await utils.uploadTestPhoto(res.body.data);
 
-    const { key } = res.body.payload.fields;
+    const { key } = res.body.data.fields;
 
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS);
-    expect(Number.isInteger(res.body.photoId) && res.body.photoId > 0).toBeTruthy();
+    expect(res.body.status).toEqual(codes.CONFIRM_UPLOAD__SUCCESS.status);
+    expect(Number.isInteger(res.body.data[0]) && res.body.data[0] > 0).toBeTruthy();
 
     res = await request(app)
-      .get(`/api/photos/${res.body.photoId}`)
+      .get(`/api/photos/${res.body.data[res.body.data.length - 1]}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json')
       .redirects(1);

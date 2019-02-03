@@ -41,6 +41,7 @@ apiRouter.use('/relationships', relationshipsRouter);
 // --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
+  console.log(err);
   logger.error(err);
   return res.status(500).json({
     status: codes.SERVER_ERROR,

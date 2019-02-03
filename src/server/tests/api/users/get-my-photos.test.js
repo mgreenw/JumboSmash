@@ -28,7 +28,7 @@ describe('GET api/users/me/photos', () => {
       .get('/api/users/me/photos')
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -56,7 +56,7 @@ describe('GET api/users/me/photos', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_MY_PHOTOS__SUCCESS);
-    expect(res.body.photoIds).toEqual([firstId, secondId]);
+    expect(res.body.status).toEqual(codes.GET_MY_PHOTOS__SUCCESS.status);
+    expect(res.body.data.photoIds).toEqual([firstId, secondId]);
   });
 });

@@ -2,8 +2,6 @@
 
 import type { $Request } from 'express';
 
-const _ = require('lodash');
-
 const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
@@ -29,33 +27,28 @@ const getProfile = async (userId: number) => {
   // Try to get the user from the profiles table
   const result = await db.query(`
     SELECT
-      display_name as "displayName",
-      birthday,
-      bio
+      json_build_object(
+        'displayName', display_name,
+        'birthday', to_char(birthday, 'YYYY-MM-DD'),
+        'bio', bio
+      ) AS fields,
+      ARRAY(
+        SELECT id
+        FROM photos
+        WHERE user_id = $1
+        ORDER BY index
+      ) AS "photoIds"
     FROM profiles
-    WHERE user_id = $1`, [userId]);
+    WHERE user_id = $2
+  `, [userId, userId]);
 
   // If the user is not in the database, respond with 'not found'
   if (result.rowCount === 0) {
     return apiUtils.status(codes.GET_PROFILE__PROFILE_NOT_FOUND).data({});
   }
 
-  const profile = result.rows[0];
-  profile.birthday = profile.birthday.toISOString().substring(0, 10);
-
-  const photosRes = await db.query(`
-    SELECT id
-    FROM photos
-    WHERE user_id = $1
-    ORDER BY index
-  `, [userId]);
-
-  profile.photos = _.map(photosRes.rows, row => row.id);
-
   // If the profile was found, return it!
-  return apiUtils.status(codes.GET_PROFILE__SUCCESS).data({
-    profile,
-  });
+  return apiUtils.status(codes.GET_PROFILE__SUCCESS).data(result.rows[0]);
 };
 
 const handler = [

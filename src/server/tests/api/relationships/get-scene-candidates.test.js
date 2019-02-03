@@ -93,7 +93,7 @@ describe('GET api/relationships/candidates/:scene', () => {
       .get('/api/relationships/candidates/smash')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('mgreen01');
@@ -102,7 +102,7 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toEqual(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should only allow valid scenes (smash, social, stone)', async () => {
@@ -117,42 +117,42 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__SUCCESS);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__SUCCESS.status);
 
     res = await request(app)
       .get('/api/relationships/candidates/social')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__SUCCESS);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__SUCCESS.status);
 
     res = await request(app)
       .get('/api/relationships/candidates/stone')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__SUCCESS);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__SUCCESS.status);
 
     res = await request(app)
       .get('/api/relationships/candidates/smsh')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__INVALID_SCENE);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__INVALID_SCENE.status);
 
     res = await request(app)
       .get('/api/relationships/candidates/aoei-aoeuu-aoe')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__INVALID_SCENE);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__INVALID_SCENE.status);
 
     res = await request(app)
       .get('/api/relationships/candidates/stinky')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__INVALID_SCENE);
+    expect(res.body.status).toEqual(codes.GET_SCENE_CANDIDATES__INVALID_SCENE.status);
 
     res = await request(app)
       .get('/api/relationships/candidates')
@@ -167,7 +167,7 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body.candidates)).toBeTruthy();
+    expect(Array.isArray(res.body.data.candidates)).toBeTruthy();
   });
 
   it('should only return <10 candidates that are active in the scene', async () => {
@@ -177,10 +177,10 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return users[candidate.userId].settings.activeSmash;
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(10);
 
     // Stone
     res = await request(app)
@@ -188,10 +188,10 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return users[candidate.userId.toString()].settings.activeSocial;
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(10);
 
     // Social
     res = await request(app)
@@ -199,10 +199,10 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return users[candidate.userId.toString()].settings.activeStone;
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(10);
   });
 
   // Check that only profiles that have not yet been liked show up
@@ -220,10 +220,10 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return users[candidate.userId].settings.activeSmash;
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(5);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(5);
   });
 
   it('should only show the "correct" profiles for a given scene', async () => {
@@ -233,12 +233,12 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return _.find(nonLiked, (person) => {
         return person.id === candidate.userId;
       });
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(5);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(5);
   });
 
   it('should not return a blocked user', async () => {
@@ -256,11 +256,11 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(_.every(res.body.candidates, (candidate) => {
+    expect(_.every(res.body.data.candidates, (candidate) => {
       return _.find(nonLikedNotBlocked, (person) => {
         return person.id === candidate.userId;
       });
     })).toBeTruthy();
-    expect(res.body.candidates.length).toBeLessThanOrEqual(4);
+    expect(res.body.data.candidates.length).toBeLessThanOrEqual(4);
   });
 });

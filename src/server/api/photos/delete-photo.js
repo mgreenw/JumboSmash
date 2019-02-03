@@ -69,7 +69,7 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
     });
 
     // 2. Update the photos for the requesting user
-    await client.query(`
+    const newPhotosRes = await client.query(`
       UPDATE photos
       SET index = updated_photos.index
       FROM
@@ -77,7 +77,14 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
           ${updatedPhotos.join(',')}
         ) AS updated_photos (id, index)
       WHERE photos.id = updated_photos.id
-    `);
+      RETURNING
+        ARRAY(
+          SELECT id
+          FROM photos
+          WHERE user_id = $1
+          ORDER BY index
+        ) AS "photoIds"
+    `, [userId]);
 
     // 3. Delete the photo from S3
     const params = {
@@ -88,23 +95,16 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
 
     // 4. Commit the transaction!
     await client.query('COMMIT');
+
+    return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data(
+      newPhotosRes.rows[0].photoIds,
+    );
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
   } finally {
     client.release();
   }
-
-  const newOrderRes = await db.query(`
-    SELECT id
-    FROM photos
-    WHERE user_id = $1
-    ORDER BY index
-  `, [userId]);
-
-  return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data({
-    photos: _.map(newOrderRes.rows, row => row.id),
-  });
 };
 
 const handler = [

@@ -72,13 +72,28 @@ const confirmUpload = async (userId: number) => {
 
     // Insert the photo in the `photos` table, giving it the "next" index.
     const insertRes = await client.query(`
-      INSERT INTO photos
-      (user_id, index, uuid)
-      VALUES ($1, $2, $3)
-      RETURNING id
-    `, [userId, photoCount + 1, uuid]);
+      WITH inserted AS (
+        INSERT INTO photos
+        (user_id, index, uuid)
+        VALUES ($1, $2, $3)
+        RETURNING id
+      )
+      SELECT
+        array_cat(
+          ARRAY(
+            SELECT id
+            FROM photos
+            WHERE user_id = $4
+            ORDER BY index
+          ),
+          ARRAY(
+            SELECT id
+            FROM inserted
+          )
+        ) AS "photoIds"
+    `, [userId, photoCount + 1, uuid, userId]);
 
-    const photoId = insertRes.rows[0].id;
+    const [{ photoIds }] = insertRes.rows;
 
     // Delete the unconfirmed photo
     await client.query(`
@@ -90,9 +105,7 @@ const confirmUpload = async (userId: number) => {
     await client.query('COMMIT');
     client.release();
 
-    return apiUtils.status(codes.CONFIRM_UPLOAD__SUCCESS).data({
-      photoId,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__SUCCESS).data(photoIds);
   } catch (err) {
     // Rollback the transaction and release the client
     await client.query('ROLLBACK');
