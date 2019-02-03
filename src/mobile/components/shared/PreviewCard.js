@@ -33,25 +33,25 @@ export default class PreviewCard extends React.Component<Props, State> {
   render() {
     const { user, onCardTap } = this.props;
     return (
-      <TouchableWithoutFeedback onPress={onCardTap}>
-        <View
-          style={{
-            flex: 1,
-            margin: 20
-          }}
-        >
-          <View style={{ flex: 2 }}>
-            <Image
-              source={{
-                uri:
-                  "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
-              }}
-              style={{
-                aspectRatio: 1,
-                borderRadius: 20
-              }}
-            />
-          </View>
+      <View
+        style={{
+          flex: 1,
+          margin: 20
+        }}
+      >
+        <View style={{ flex: 2 }}>
+          <Image
+            source={{
+              uri:
+                "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+            }}
+            style={{
+              aspectRatio: 1,
+              borderRadius: 20
+            }}
+          />
+        </View>
+        <TouchableWithoutFeedback onPress={onCardTap}>
           <View
             style={{
               flex: 1,
@@ -71,8 +71,8 @@ export default class PreviewCard extends React.Component<Props, State> {
               user.birthday
             }`}</Text>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </View>
     );
   }
 }
