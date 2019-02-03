@@ -10,7 +10,7 @@ import { textStyles } from "mobile/styles/textStyles";
 import { routes } from "mobile/components/Navigation";
 import AuthLayout from "mobile/components/Auth/Login/Layout";
 import GEMHeader from "mobile/components/shared/Header";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
+import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
 
 type Props = {
   navigation: any
