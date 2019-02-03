@@ -11,7 +11,7 @@ import { OnboardingLayout } from "./Onboarding_Layout";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import GEMHeader from "mobile/components/shared/Header";
 import { Transition } from "react-navigation-fluid-transitions";
-import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
+import { PrimaryButton } from "mobile/components/shared/buttons/shared/PrimaryButton";
 
 type Props = {
   navigation: any
