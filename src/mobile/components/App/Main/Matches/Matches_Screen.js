@@ -48,7 +48,6 @@ class MessagingScreen extends React.Component<Props, State> {
   keyExtractor = (item: item, index: number) => "" + index;
 
   renderItem = item => {
-    console.log(item);
     return (
       <TouchableOpacity
         style={{ height: 90, width: "100%", paddingHorizontal: 15 }}
