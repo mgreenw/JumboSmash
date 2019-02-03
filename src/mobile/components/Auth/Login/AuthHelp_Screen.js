@@ -12,27 +12,15 @@ import GEMHeader from "mobile/components/shared/Header";
 import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
 import AuthLayout from "mobile/components/Auth/Login/Layout";
 
-type Props = {
+type navigationProps = {
   navigation: any
 };
 
+type Props = navigationProps;
+
 type State = {};
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
 class AuthHelpScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {};
-  }
-
   render() {
     return (
       <AuthLayout
@@ -49,7 +37,4 @@ class AuthHelpScreen extends React.Component<Props, State> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AuthHelpScreen);
+export default AuthHelpScreen;

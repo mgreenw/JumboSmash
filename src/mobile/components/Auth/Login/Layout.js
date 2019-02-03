@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, Image, Linking } from "react-native";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
@@ -21,14 +21,6 @@ type Props = {
 };
 
 type State = {};
-
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
 
 class AuthHelpScreen extends React.Component<Props, State> {
   render() {
@@ -72,7 +64,4 @@ class AuthHelpScreen extends React.Component<Props, State> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AuthHelpScreen);
+export default AuthHelpScreen;

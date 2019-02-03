@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { Text, View, Image, Linking } from "react-native";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "mobile/styles/auth";
 import type { Dispatch } from "redux";
