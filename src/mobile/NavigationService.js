@@ -20,8 +20,8 @@ function back() {
   _navigator.dispatch(NavigationActions.back());
 }
 
-function reset() {
-  navigate("SPLASH_ROUTE", { error: "UNAUTHORIZED" });
+function reset(error: "UNAUTHORIZED" | "SERVER_ERROR") {
+  navigate("SPLASH_ROUTE", { error });
 }
 
 // add other navigation functions that you need and export them

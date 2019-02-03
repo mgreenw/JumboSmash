@@ -39,7 +39,16 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
     const { navigation } = this.props;
     navigation.navigate(routes.OnboardingNameAge, {
       profile: this.state.profile,
-      settings: this.state.settings
+      settings: this.state.settings,
+      onUpdateProfileSettings: (
+        profile: UserProfile,
+        settings: UserSettings
+      ) => {
+        this.setState({
+          profile,
+          settings
+        });
+      }
     });
   };
 
