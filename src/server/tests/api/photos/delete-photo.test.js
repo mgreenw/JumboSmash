@@ -67,24 +67,6 @@ describe('DELETE api/photos/:photoId', () => {
     expect(res.body.status).toBe(codes.DELETE_PHOTO__NOT_FOUND.status);
   });
 
-  it('should fail if the user only has one photo remaining', async () => {
-    const photoRes = await db.query(`
-      INSERT INTO photos (user_id, index, uuid)
-      VALUES
-        ($1, 1, $2)
-      RETURNING id
-    `, [me.id, uuidv4()]);
-
-    const [{ id }] = photoRes.rows;
-
-    const res = await request(app)
-      .delete(`/api/photos/${id}`)
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json');
-    expect(res.statusCode).toBe(409);
-    expect(res.body.status).toBe(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO.status);
-  });
-
   it('should succeed if the photo was properly deleted', async () => {
     const photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)

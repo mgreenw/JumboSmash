@@ -205,10 +205,6 @@ exports.DELETE_PHOTO__SUCCESS = {
   status: 'DELETE_PHOTO__SUCCESS',
   code: 200,
 };
-exports.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO = {
-  status: 'DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO',
-  code: 409,
-};
 exports.DELETE_PHOTO__NOT_FOUND = {
   status: 'DELETE_PHOTO__NOT_FOUND',
   code: 400,

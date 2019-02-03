@@ -47,17 +47,3 @@ Provide the normal `Authorization` token in the request header.
     "status": "DELETE_PHOTO__NOT_FOUND"
 }
 ```
-
-### OR
-
-**Condition** : The photo that was supplied is the only photo the user currently has uploaded. Because users need at least one photo to have a profile, we reject the deleton of this photo. That being said, the photo does exist.
-
-**Code** : `409 CONFLICT`
-
-**Content**
-
-```json
-{
-    "status": "DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO"
-}
-```
