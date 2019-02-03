@@ -47,19 +47,24 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 let DATA: Array<Candidate> = [
   {
     userId: 1,
-    profile: { displayName: "Anthony", birthday: "21", bio: "BIO", images: [] }
+    profile: {
+      displayName: "Anthony",
+      birthday: "21",
+      bio: "BIO",
+      photoIds: []
+    }
   },
   {
     userId: 2,
-    profile: { displayName: "Tony", birthday: "22", bio: "BIO", images: [] }
+    profile: { displayName: "Tony", birthday: "22", bio: "BIO", photoIds: [] }
   },
   {
     userId: 3,
-    profile: { displayName: "Ant", birthday: "69", bio: "BIO", images: [] }
+    profile: { displayName: "Ant", birthday: "69", bio: "BIO", photoIds: [] }
   },
   {
     userId: 4,
-    profile: { displayName: "T-dawg", birthday: "47", bio: "BIO", images: [] }
+    profile: { displayName: "T-dawg", birthday: "47", bio: "BIO", photoIds: [] }
   }
 ];
 
@@ -144,7 +149,7 @@ class SwipingScreen extends React.Component<Props, State> {
         <View style={{ flex: 1 }}>
           {!isExpanded && (
             <GEMHeader
-              title="cards"
+              title="PROJECTGEM"
               rightIconName="message"
               leftIconName="user"
             />

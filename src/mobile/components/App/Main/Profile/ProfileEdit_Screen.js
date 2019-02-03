@@ -6,13 +6,14 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  TextInput
+  TextInput,
+  ImageBackground
 } from "react-native";
 import { connect } from "react-redux";
 import { Button, Icon, Input } from "react-native-elements";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import AddPhotos from "mobile/components/shared/AddPhotos";
+import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
 import { Colors } from "mobile/styles/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import GEMHeader from "mobile/components/shared/Header";
@@ -21,6 +22,8 @@ import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
 import { saveProfile } from "mobile/actions/app/saveProfile";
 import NavigationService from "mobile/NavigationService";
 import BioInput from "mobile/components/shared/BioInput";
+
+const wavesFull = require("../../../../assets/waves/wavesFullScreen/wavesFullScreen.png");
 
 type navigationProps = {
   navigation: any
@@ -39,15 +42,16 @@ type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   editedProfile: UserProfile,
-  errorMessageName: string
+  errorMessageName: string,
+  scrollEnabled: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
-  if (!reduxState.user) {
-    throw "Redux User is null";
+  if (!reduxState.client) {
+    throw "Redux Client is null in Profile Edit";
   }
   return {
-    profile: reduxState.user.profile,
+    profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile
   };
 }
@@ -68,7 +72,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       editedProfile: props.profile,
-      errorMessageName: ""
+      errorMessageName: "",
+      scrollEnabled: false
     };
   }
 
@@ -105,6 +110,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { height, width } = Dimensions.get("window");
+    // A bit of a hack, but we want pictures to look nice.
+    // We have 32 padding around this screen,
+    // and  we want 20 padding between each
+    const containerWidth = width - 64;
+    const imageWidth = (containerWidth - 15) / 2;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -112,55 +123,60 @@ class ProfileEditScreen extends React.Component<Props, State> {
           leftIconName={"back"}
           onLeftIconPress={this._onBack}
         />
-        <KeyboardAwareScrollView
-          extraScrollHeight={30}
-          style={{
-            backgroundColor: Colors.AquaMarine
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              paddingBottom: 20,
-              paddingTop: 20,
-              marginBottom: 20,
-              marginTop: 20
-            }}
-          >
-            <AddPhotos />
-          </View>
-          <View
-            style={{
-              backgroundColor: Colors.White,
-              paddingLeft: 32,
-              paddingRight: 32,
-              marginBottom: 20,
-              paddingTop: 13,
-              paddingBottom: 13
-            }}
-          >
-            <PrimaryInput
-              value={this.state.editedProfile.displayName}
-              label="Preferred Name"
-              onChange={this._onChangeName}
-              error={this.state.errorMessageName}
-              containerStyle={{ width: "100%" }}
-              assistive={""}
-              autoCapitalize={"words"}
-            />
-            <BioInput
-              value={this.state.editedProfile.bio}
-              onChangeText={this._onChangeBio}
-              label={"About Me"}
-            />
-          </View>
-        </KeyboardAwareScrollView>
+        <View style={{ flex: 1 }}>
+          <ImageBackground
+            source={wavesFull}
+            style={{ width: "100%", height: "100%", position: "absolute" }}
+          />
+          <KeyboardAwareScrollView extraScrollHeight={35}>
+            <View style={[styles.profileBlock, { marginTop: 20 }]}>
+              <AddMultiPhotos
+                images={this.state.editedProfile.photoIds}
+                width={containerWidth}
+                imageWidth={imageWidth}
+              />
+            </View>
+            <View style={styles.profileBlock}>
+              <PrimaryInput
+                value={this.state.editedProfile.displayName}
+                label="Preferred Name"
+                onChange={this._onChangeName}
+                error={this.state.errorMessageName}
+                containerStyle={{ width: "100%" }}
+                assistive={""}
+                autoCapitalize={"words"}
+              />
+              <View
+                style={{
+                  maxHeight: 210,
+                  marginBottom: 30,
+                  width: "100%"
+                }}
+              >
+                <BioInput
+                  value={this.state.editedProfile.bio}
+                  onChangeText={this._onChangeBio}
+                  label={"About Me"}
+                />
+              </View>
+            </View>
+          </KeyboardAwareScrollView>
+        </View>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  profileBlock: {
+    backgroundColor: Colors.White,
+    paddingLeft: 32,
+    paddingRight: 32,
+    paddingTop: 20,
+    marginBottom: 20,
+    paddingBottom: 20
+  }
+});
 
 export default connect(
   mapStateToProps,

@@ -30,6 +30,7 @@
     "react-native": "~0.55.2",
     "react-native-elements": "^1.0.0-beta",
     "react-native-keyboard-aware-scroll-view": "^0.7.4",
+    "react-native-popup-dialog": "^0.17.0",
     "react-native-progress": "^3.5.0",
     "react-native-textinput-effects": "^0.4.2",
     "react-navigation": "^3.0.7",

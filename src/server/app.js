@@ -5,8 +5,7 @@ const bodyParser = require('body-parser');
 const aws = require('aws-sdk');
 
 const logger = require('./logger');
-const index = require('./routes/index');
-const api = require('./routes/api');
+const api = require('./api');
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,7 +19,6 @@ app.use((req, res, next) => {
 });
 
 // Define all routes here.
-app.use('/', index);
 app.use('/api', api);
 
 module.exports = app;

@@ -22,13 +22,23 @@ import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/PrimaryButton";
-import { TertiaryButton } from "mobile/components/shared/TertiaryButton";
+import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
+import { TertiaryButton } from "mobile/components/shared/buttons/TertiaryButton";
 import { routes } from "mobile/components/Navigation";
 import { KeyboardView } from "mobile/components/shared/KeyboardView";
 import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
 import { Transition } from "react-navigation-fluid-transitions";
 import GEMHeader from "mobile/components/shared/Header";
+import Dialog, {
+  DialogTitle,
+  DialogContent,
+  DialogFooter,
+  DialogButton,
+  SlideAnimation,
+  ScaleAnimation
+} from "react-native-popup-dialog";
+import { textStyles } from "mobile/styles/textStyles";
+import { Colors } from "mobile/styles/colors";
 
 type reduxProps = {
   sendVerificationEmail_inProgress: boolean,
@@ -48,7 +58,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   validUtln: boolean,
-  errorMessageUtln: string
+  errorMessageUtln: string,
+  showPopup: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
@@ -74,10 +85,13 @@ function mapDispatchToProps(
 class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+    const error = navigation.getParam("error", null);
     this.state = {
       utln: "",
       validUtln: true,
-      errorMessageUtln: ""
+      errorMessageUtln: "",
+      showPopup: error != null
     };
   }
 
@@ -250,6 +264,49 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           </Transition>
         </KeyboardView>
+        <Dialog
+          dialogAnimation={new ScaleAnimation()}
+          width={1}
+          visible={this.state.showPopup}
+          actionsBordered
+          dialogStyle={{
+            /* This is a hack so that we can do a shadow over a wrapper */
+            backgroundColor: "transparent",
+            padding: 18
+          }}
+          onTouchOutside={() => {
+            this.setState({ showPopup: false });
+          }}
+        >
+          <DialogContent
+            style={{
+              backgroundColor: Colors.White,
+              borderRadius: 8,
+              shadowColor: Colors.Black,
+              shadowOpacity: 1,
+              shadowRadius: 4,
+              shadowOffset: {
+                height: 2,
+                width: 0
+              },
+              padding: 20
+            }}
+          >
+            <View>
+              <Text
+                style={[
+                  textStyles.headline4StyleMedium,
+                  {
+                    color: Colors.Grapefruit,
+                    textAlign: "center"
+                  }
+                ]}
+              >
+                {"Your session has expired, please login again!"}
+              </Text>
+            </View>
+          </DialogContent>
+        </Dialog>
       </View>
     );
   }

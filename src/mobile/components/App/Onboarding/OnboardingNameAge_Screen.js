@@ -10,7 +10,7 @@ import type { ReduxState } from "mobile/reducers/index";
 import type {
   UserSettings,
   UserProfile,
-  Pronouns
+  Genders
 } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
@@ -65,7 +65,7 @@ class NameAgeScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
-    navigation.navigate(routes.OnboardingMyPronouns, {
+    navigation.navigate(routes.OnboardingMyGenders, {
       profile: this.state.profile,
       settings: this.state.settings,
       onUpdateProfileSettings: (

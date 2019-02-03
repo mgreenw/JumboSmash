@@ -5,11 +5,7 @@ import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Pronouns
-} from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
 import BioInput from "mobile/components/shared/BioInput";
@@ -72,7 +68,13 @@ class OnboardingBioScreen extends React.Component<Props, State> {
 
   render() {
     const body = (
-      <View style={{ maxHeight: 210, marginBottom: 30 }}>
+      <View
+        style={{
+          maxHeight: 210,
+          marginBottom: 30,
+          width: "100%"
+        }}
+      >
         <BioInput
           placeholder="The real Tony Monaco"
           onChangeText={this._onBioUpdate}

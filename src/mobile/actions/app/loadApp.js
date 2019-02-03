@@ -1,15 +1,18 @@
 // @flow
 import type { Dispatch, GetState } from "redux";
 import DevTesting from "../../utils/DevTesting";
-import type { User, UserSettings, UserProfile } from "mobile/reducers";
+import type { UserSettings, UserProfile } from "mobile/reducers";
 import getMyProfile from "mobile/api/users/GetMyProfile";
 import getMySettings from "mobile/api/users/GetMySettings";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+import { getMyPhotos } from "mobile/api/users/GetMyPhotos";
 
 export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
 export type LoadAppCompleted_Action = {
   type: "LOAD_APP__COMPLETED",
-  user: ?User
+  onboardingCompleted: boolean,
+  profile: UserProfile,
+  settings: UserSettings
 };
 
 function initiate(): LoadAppInitiated_Action {
@@ -20,18 +23,32 @@ function initiate(): LoadAppInitiated_Action {
 
 function complete(
   profile: ?UserProfile,
-  settings: ?UserSettings
+  settings: ?UserSettings,
+  onboardingCompleted: boolean,
+  photos: ?$ReadOnlyArray<number>
 ): LoadAppCompleted_Action {
   DevTesting.log("load app complete; profile && settigs: ", profile, settings);
   return {
     type: "LOAD_APP__COMPLETED",
-    user:
-      profile && settings
-        ? {
-            profile: profile,
-            settings: settings
-          }
-        : null
+    onboardingCompleted,
+    profile: profile || {
+      bio: "",
+      birthday: "",
+      displayName: "",
+      photoIds: photos || [] // incase partial photo uploading in onboarding
+    },
+    settings: settings || {
+      useGenders: {
+        male: false,
+        female: false,
+        nonBinary: false
+      },
+      wantGenders: {
+        male: false,
+        female: false,
+        nonBinary: false
+      }
+    }
   };
 }
 
@@ -45,11 +62,19 @@ export function loadApp() {
         token
       })
         .then(profile => {
-          getMySettings({
-            token
-          }).then(settings => {
-            dispatch(complete(profile, settings));
-          });
+          // if profile is null, onboarding has not been completed, though
+          // some photos may have been uploaded.
+          if (profile === null) {
+            getMyPhotos(token).then(photoIds => {
+              dispatch(complete(null, null, false, photoIds));
+            });
+          } else {
+            getMySettings({
+              token
+            }).then(settings => {
+              dispatch(complete(profile, settings, true));
+            });
+          }
         })
         .catch(error => {
           dispatch(apiErrorHandler(error));
