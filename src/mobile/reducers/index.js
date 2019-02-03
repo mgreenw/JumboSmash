@@ -43,6 +43,7 @@ import type {
   DeletePhotoInitiated_Action,
   DeletePhotoCompleted_Action
 } from "mobile/actions/app/deletePhoto";
+import { isFSA } from "mobile/utils/fluxStandardAction";
 
 export type PhotoIds = $ReadOnlyArray<number>;
 
@@ -153,6 +154,11 @@ export default function rootReducer(
   state: ReduxState = defaultState,
   action: Action
 ): ReduxState {
+  // Sanity check for our actions abiding FSA format.
+  if (!isFSA(action)) {
+    throw ("Err: Action is not FSA", action);
+  }
+
   switch (action.type) {
     // LOGIN:
     case "LOGIN_INITIATED": {
