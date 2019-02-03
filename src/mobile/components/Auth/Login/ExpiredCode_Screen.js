@@ -1,28 +1,22 @@
 // @flow
-
 import React from "react";
-import { Text, View, KeyboardAvoidingView, Image } from "react-native";
-import { Button } from "react-native-elements";
+import { Text, View, Image } from "react-native";
 import { connect } from "react-redux";
-import {
-  StackActions,
-  NavigationActions,
-  HeaderBackButton
-} from "react-navigation";
 import { styles } from "mobile/styles/auth";
-import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail";
 import type { Dispatch } from "redux";
 import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
+import { textStyles } from "mobile/styles/textStyles";
 import { routes } from "mobile/components/Navigation";
+import AuthLayout from "mobile/components/Auth/Login/Layout";
+import GEMHeader from "mobile/components/shared/Header";
+import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
 
 type Props = {
   navigation: any
 };
 
-type State = {
-  isSubmitting: boolean
-};
+type State = {};
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
@@ -33,27 +27,19 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 }
 
 class ExpiredCodeScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isSubmitting: false
-    };
-  }
-
+  //TODO: Resend code functionality
   render() {
-    const { navigation } = this.props;
-    const email = navigation.getParam("email", "");
-
     return (
-      <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Expired Verification Code</Text>
-        </View>
-        <View>
-          <Text
-          >{`Your email verification code has expired. To sign in, have a new code sent to ${email}`}</Text>
-        </View>
-      </View>
+      <AuthLayout
+        title={"Verification"}
+        bodyText={
+          "Oops! Looks like your verification code has expired. Probably TuftsSecure’s fault. Hit the button below to get another one. "
+        }
+        buttonText={"Send New Code"}
+        onButtonPress={() => console.log("pressed")}
+        loading={false}
+        buttonDisabled={false}
+      />
     );
   }
 }
