@@ -6,23 +6,33 @@ import { updateMyProfile } from "mobile/api/users/updateMyProfile";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type SaveProfileInitiated_Action = {
-  type: "SAVE_PROFILE__INITIATED"
+  type: "SAVE_PROFILE__INITIATED",
+  payload: {},
+  meta: {}
 };
 export type SaveProfileCompleted_Action = {
   type: "SAVE_PROFILE__COMPLETED",
-  profile: UserProfile
+  payload: {
+    profile: UserProfile
+  },
+  meta: {}
 };
 
 function initiate(): SaveProfileInitiated_Action {
   return {
-    type: "SAVE_PROFILE__INITIATED"
+    type: "SAVE_PROFILE__INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(profile: UserProfile): SaveProfileCompleted_Action {
   return {
     type: "SAVE_PROFILE__COMPLETED",
-    profile
+    payload: {
+      profile
+    },
+    meta: {}
   };
 }
 

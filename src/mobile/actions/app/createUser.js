@@ -7,21 +7,29 @@ import updateMySettings from "mobile/api/users/updateMySettings";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type CreateProfileAndSettingsInitiated_Action = {
-  type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
+  type: "CREATE_PROFILE_AND_SETTINGS__INITIATED",
+  payload: {},
+  meta: {}
 };
 export type CreateProfileAndSettingsCompleted_Action = {
-  type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
+  type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED",
+  payload: {},
+  meta: {}
 };
 
 function initiate(): CreateProfileAndSettingsInitiated_Action {
   return {
-    type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
+    type: "CREATE_PROFILE_AND_SETTINGS__INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(): CreateProfileAndSettingsCompleted_Action {
   return {
-    type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
+    type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED",
+    payload: {},
+    meta: {}
   };
 }
 

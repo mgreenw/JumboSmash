@@ -10,23 +10,33 @@ export type login_response = {
 };
 
 export type LoginInitiated_Action = {
-  type: "LOGIN_INITIATED"
+  type: "LOGIN_INITIATED",
+  payload: {},
+  meta: {}
 };
 export type LoginCompleted_Action = {
   type: "LOGIN_COMPLETED",
-  response: login_response
+  payload: {
+    response: login_response
+  },
+  meta: {}
 };
 
 function initiate(): LoginInitiated_Action {
   return {
-    type: "LOGIN_INITIATED"
+    type: "LOGIN_INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(response: login_response): LoginCompleted_Action {
   return {
     type: "LOGIN_COMPLETED",
-    response
+    payload: {
+      response
+    },
+    meta: {}
   };
 }
 

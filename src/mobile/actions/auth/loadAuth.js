@@ -6,22 +6,30 @@ import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type LoadAuthCompleted_Action = {
   type: "LOAD_AUTH__COMPLETED",
-  token: string
+  payload: {
+    token: string
+  },
+  meta: {}
 };
 export type LoadAuthInitiated_Action = {
-  type: "LOAD_AUTH__INITIATED"
+  type: "LOAD_AUTH__INITIATED",
+  payload: {},
+  meta: {}
 };
 
 function initiate(): LoadAuthInitiated_Action {
   return {
-    type: "LOAD_AUTH__INITIATED"
+    type: "LOAD_AUTH__INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(token: string): LoadAuthCompleted_Action {
   return {
     type: "LOAD_AUTH__COMPLETED",
-    token: token
+    payload: { token: token },
+    meta: {}
   };
 }
 

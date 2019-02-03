@@ -20,16 +20,23 @@ export type sendVerificationEmail_response = {
 
 export type SendVerificationEmailCompleted_Action = {
   type: "SEND_VERIFICATION_EMAIL_COMPLETED",
-  response: sendVerificationEmail_response
+  payload: {
+    response: sendVerificationEmail_response
+  },
+  meta: {}
 };
 
 export type SendVerificationEmailInitiated_Action = {
-  type: "SEND_VERIFICATION_EMAIL_INITIATED"
+  type: "SEND_VERIFICATION_EMAIL_INITIATED",
+  payload: {},
+  meta: {}
 };
 
 function initiate(): SendVerificationEmailInitiated_Action {
   return {
-    type: "SEND_VERIFICATION_EMAIL_INITIATED"
+    type: "SEND_VERIFICATION_EMAIL_INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
@@ -38,7 +45,8 @@ function complete(
 ): SendVerificationEmailCompleted_Action {
   return {
     type: "SEND_VERIFICATION_EMAIL_COMPLETED",
-    response: response
+    payload: { response },
+    meta: {}
   };
 }
 
