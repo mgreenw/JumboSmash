@@ -45,7 +45,7 @@ const photos = [
   }
 ];
 
-export default class CardView extends React.Component<Props, State> {
+export default class CardView extends React.Component<Props> {
   scrollX = new Animated.Value(0); // this will be the scroll location of our ScrollView
 
   render() {
