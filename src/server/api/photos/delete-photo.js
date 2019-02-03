@@ -37,10 +37,6 @@ const deletePhoto = async (photoId: number, userId: number) => {
     return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).noData();
   }
 
-  if (photos.length === 0) {
-    return apiUtils.status(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO).noData();
-  }
-
   // Transaction to delete the photo:
   const client = await db.connect();
   try {
