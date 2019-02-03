@@ -23,8 +23,6 @@ type Props = {
   onMinimize: () => void
 };
 
-type State = {};
-
 const { width } = Dimensions.get("window");
 
 const photos = [
