@@ -20,7 +20,7 @@ const bucket = config.get('s3_bucket');
  * @api {delete} /api/photos/:photoId
  *
  */
-const deletePhoto = async (photoId: number, userId: number, userHasProfile: boolean) => {
+const deletePhoto = async (photoId: number, userId: number) => {
   // On error, return a server error.
   const photosRes = await db.query(`
     SELECT id, uuid, index
@@ -34,11 +34,11 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
   const photos = photosRes.rows;
   const [photoToDelete] = _.remove(photos, photo => photo.id === photoId);
   if (photoToDelete === undefined) {
-    return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).data({});
+    return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).noData();
   }
 
   if (photos.length === 0) {
-    return apiUtils.status(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO).data({});
+    return apiUtils.status(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO).noData();
   }
 
   // Transaction to delete the photo:
@@ -46,16 +46,6 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
   try {
     // 0. Begin the transaction
     await client.query('BEGIN');
-
-    // If we are deleting the splash photo, update the user's splash photo
-    // Only do this if the user already has a profile
-    if (userHasProfile && photoToDelete.index === 1) {
-      await client.query(`
-        UPDATE profiles
-        SET splash_photo_id = $1
-        WHERE user_id = $2
-      `, [photos[0].id, userId]);
-    }
 
     // 1. Remove the photo from our database
     await client.query(`
@@ -109,7 +99,7 @@ const deletePhoto = async (photoId: number, userId: number, userHasProfile: bool
 
 const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
-    return deletePhoto(Number.parseInt(req.params.photoId, 10), req.user.id, req.user.hasProfile);
+    return deletePhoto(Number.parseInt(req.params.photoId, 10), req.user.id);
   }),
 ];
 

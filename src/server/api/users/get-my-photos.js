@@ -20,9 +20,9 @@ const getMyPhotos = async (userId: number) => {
     ORDER BY index
   `, [userId]);
 
-  return apiUtils.status(codes.GET_MY_PHOTOS__SUCCESS).data({
-    photoIds: _.map(result.rows, row => row.id),
-  });
+  return apiUtils.status(codes.GET_MY_PHOTOS__SUCCESS).data(
+    _.map(result.rows, row => row.id),
+  );
 };
 
 const handler = [

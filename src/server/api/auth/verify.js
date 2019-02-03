@@ -42,7 +42,7 @@ const verify = async (utln: string, code: number) => {
 
   // No email has been sent for this utln
   if (result.rowCount === 0) {
-    return apiUtils.status(codes.VERIFY__NO_EMAIL_SENT).data({});
+    return apiUtils.status(codes.VERIFY__NO_EMAIL_SENT).noData();
   }
 
   const verification = result.rows[0];
@@ -50,12 +50,12 @@ const verify = async (utln: string, code: number) => {
 
   // Check if the code is expired
   if (verification.attempts > 3 || expired) {
-    return apiUtils.status(codes.VERIFY__EXPIRED_CODE).data({});
+    return apiUtils.status(codes.VERIFY__EXPIRED_CODE).noData();
   }
 
   // Check if the code is valid. If not, send a bad code message
   if (verification.code !== code) {
-    return apiUtils.status(codes.VERIFY__BAD_CODE).data({});
+    return apiUtils.status(codes.VERIFY__BAD_CODE).noData();
   }
 
   // Success! The code is verified!

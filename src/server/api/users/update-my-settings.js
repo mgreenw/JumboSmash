@@ -5,7 +5,7 @@ import type { $Request } from 'express';
 const _ = require('lodash');
 
 const apiUtils = require('../utils');
-const utils = require('./utils');
+const { settingsSelectQuery, getFieldTemplates } = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
@@ -69,25 +69,33 @@ const updateMySettings = async (userId: number, wantPronouns: Object, usePronoun
   // for a consistant ordering
   const definedFields = _.toPairs(_.omitBy(allFields, _.isUndefined));
 
-  // If there is nothing to update, success!
+  // Result of SELECT or UPDATE query (will be the same either way)
+  let result;
+
+  // If there is nothing to update, just get the settings and return them
   if (definedFields.length === 0) {
-    return apiUtils.status(codes.UPDATE_SETTINGS__SUCCESS).data({});
+    result = await db.query(`
+      SELECT ${settingsSelectQuery()}
+      FROM users
+      WHERE id = $1
+    `, [userId]);
+  } else {
+    // Get an object of the template strings and fields
+    const fieldTemplate = getFieldTemplates(definedFields);
+
+    // Update the settings in the database. Utilize fieldTemplates and the field
+    // length as the parameter templates. It is ok to construct the string like
+    // this because none of the values in the construction come from user input
+    result = await db.query(`
+      UPDATE users
+      SET ${fieldTemplate.templateString}
+      WHERE id = $${fieldTemplate.fields.length + 1}
+      RETURNING ${settingsSelectQuery()}
+    `, [...fieldTemplate.fields, userId]);
   }
 
-  // Get an object of the template strings and fields
-  const fieldTemplate = utils.getFieldTemplates(definedFields);
-
-  // Update the settings in the database. Utilize fieldTemplates and the field
-  // length as the parameter templates. It is ok to construct the string like
-  // this because none of the values in the construction come from user input
-  await db.query(`
-    UPDATE users
-    SET ${fieldTemplate.templateString}
-    WHERE id = $${fieldTemplate.fields.length + 1}`,
-  [...fieldTemplate.fields, userId]);
-
   // If there is an id returned, success!
-  return apiUtils.status(codes.UPDATE_SETTINGS__SUCCESS).data({});
+  return apiUtils.status(codes.UPDATE_SETTINGS__SUCCESS).data(result.rows[0]);
 };
 
 const handler = [

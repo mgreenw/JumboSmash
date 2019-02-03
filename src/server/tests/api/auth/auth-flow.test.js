@@ -30,7 +30,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res.body.data.email).toContain('Jasmin.Chun@tufts.edu');
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
@@ -63,7 +63,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toEqual(codes.VERIFY__NO_EMAIL_SENT.status);
+        expect(res.body.status).toBe(codes.VERIFY__NO_EMAIL_SENT.status);
       });
   });
 
@@ -126,7 +126,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toEqual(codes.VERIFY__EXPIRED_CODE.status);
+        expect(res.body.status).toBe(codes.VERIFY__EXPIRED_CODE.status);
       });
   });
 
@@ -184,7 +184,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
       });
   });
 
@@ -220,7 +220,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
         expect(res.body.data.token).toBeDefined();
       });
   });
@@ -254,7 +254,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
         expect(res.body.data.token).toBeDefined();
       });
   });
@@ -289,7 +289,7 @@ describe('api/auth/verify', () => {
 
     const firstToken = res.body.data.token;
 
-    expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
 
     // Log in again
@@ -319,7 +319,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
 
     // Ensure that the first token is invalidated
@@ -329,6 +329,6 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(401);
-    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 });

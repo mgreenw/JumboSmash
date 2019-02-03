@@ -44,7 +44,7 @@ describe('GET api/users/:userId/profile', () => {
     let res = await request(app)
       .get('/api/users/1/profile')
       .set('Accept', 'application/json');
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const tempUser = await dbUtils.createUser('mgreen14');
@@ -53,7 +53,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', tempUser.token)
       .set('Accept', 'application/json')
       .expect(403);
-    expect(res.body.status).toEqual(codes.PROFILE_SETUP_INCOMPLETE.status);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should be able to get the current user profile', async () => {
@@ -62,7 +62,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toEqual(codes.GET_PROFILE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS.status);
     expect(res.body.data).toBeDefined();
 
     expect(res.body.data.fields.displayName).toBe(user.profile.displayName);
@@ -78,7 +78,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toEqual(codes.GET_PROFILE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS.status);
     expect(res.body.data).toBeDefined();
 
     expect(res.body.data.fields.displayName).toBe(otherUser.profile.displayName);
@@ -92,7 +92,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(404);
-    expect(res.body.status).toEqual(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
   });
 
   it('should error if the user id is not an integer', async () => {
@@ -109,6 +109,6 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(404);
-    expect(res.body.status).toEqual(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
   });
 });

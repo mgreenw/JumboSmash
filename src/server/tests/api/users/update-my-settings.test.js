@@ -23,7 +23,7 @@ describe('GET api/users/me/settings', () => {
       .set('Authorization', 'this-is-not-a-valid-json-web-token')
       .send({})
       .expect(401);
-    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 
   it('should error if the user does not exist for the given auth token', async () => {
@@ -33,7 +33,7 @@ describe('GET api/users/me/settings', () => {
       .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
-    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 
   it('should succeed if there is a empty body', async () => {
@@ -49,7 +49,7 @@ describe('GET api/users/me/settings', () => {
       .set('Authorization', user.token)
       .send({});
     expect(res.statusCode).toBe(201);
-    expect(res.body.status).toEqual(codes.UPDATE_SETTINGS__SUCCESS.status);
+    expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
   });
 
   it('should succeed in updating all of the pronoun preferences', async () => {
@@ -76,7 +76,7 @@ describe('GET api/users/me/settings', () => {
         },
       });
     expect(res.statusCode).toBe(201);
-    expect(res.body.status).toEqual(codes.UPDATE_SETTINGS__SUCCESS.status);
+    expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
   });
 
   it('should fail if the the pronoun preferences are not booleans', async () => {
@@ -103,7 +103,7 @@ describe('GET api/users/me/settings', () => {
         },
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
   });
 
   it('should succeed in only updating some of the user settings at once', async () => {
@@ -120,13 +120,23 @@ describe('GET api/users/me/settings', () => {
       .send({
         wantPronouns: {
           he: true,
-          they: 'true',
+          they: true,
         },
         usePronouns: {
           he: true,
         },
       });
-    expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
+
+    expect(res.body.data.usePronouns).toBeDefined();
+    expect(res.body.data.wantPronouns).toBeDefined();
+
+    expect(res.body.data.usePronouns.he).toBeDefined();
+    expect(res.body.data.usePronouns.she).toBeDefined();
+    expect(res.body.data.usePronouns.they).toBeDefined();
+    expect(res.body.data.wantPronouns.he).toBeDefined();
+    expect(res.body.data.wantPronouns.she).toBeDefined();
+    expect(res.body.data.wantPronouns.they).toBeDefined();
   });
 });

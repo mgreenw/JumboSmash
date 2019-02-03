@@ -24,7 +24,7 @@ describe('POST api/users/me/profile', () => {
       .set('Authorization', 'this-is-not-a-valid-json-web-token')
       .send({})
       .expect(401);
-    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 
   it('should error if the user does not exist for the given auth token', async () => {
@@ -34,7 +34,7 @@ describe('POST api/users/me/profile', () => {
       .set('Authorization', await dbUtils.signToken(1))
       .send({})
       .expect(401);
-    expect(res.body.status).toEqual(codes.UNAUTHORIZED.status);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 
   it('should not allow a user without a photo to create a profile', async () => {
@@ -49,12 +49,12 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       });
     expect(res.status).toBe(409);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__PHOTO_REQUIRED.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED.status);
   });
 
   it('should succeed if the user has been created and has uploaded a photo yet does not yet have a profile', async () => {
     const user = await dbUtils.createUser('mgreen13');
-    await dbUtils.insertPhoto(user.id);
+    const photoId = await dbUtils.insertPhoto(user.id);
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')
@@ -65,7 +65,12 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(201);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data.photoIds).toEqual([photoId]);
+    expect(res.body.data.fields.displayName).toBe('Max');
+    expect(res.body.data.fields.bio).toBe('He is a guy');
+    expect(res.body.data.fields.birthday).toBe('1997-09-09');
   });
 
   it('should fail if the user has already created a profile', async () => {
@@ -85,7 +90,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(409);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__PROFILE_ALREADY_CREATED.status);
   });
 
   it('should return bad request if displayName is not included', async () => {
@@ -99,7 +104,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toContain('displayName');
   });
 
@@ -114,7 +119,7 @@ describe('POST api/users/me/profile', () => {
         bio: 'He is a guy',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toContain('birthday');
   });
 
@@ -129,7 +134,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toContain('bio');
   });
 
@@ -145,7 +150,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST.status);
     expect(res.body.data.message).toBe(profileErrorMessages.DISPLAY_NAME_TOO_LONG);
   });
 
@@ -166,7 +171,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-09-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST.status);
     expect(res.body.data.message).toBe(profileErrorMessages.BIO_TOO_LONG);
   });
 
@@ -182,7 +187,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1997-099-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toContain('should match format "date"');
   });
 
@@ -198,7 +203,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '1980-10-09',
       })
       .expect(400);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST.status);
     expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
@@ -216,7 +221,7 @@ describe('POST api/users/me/profile', () => {
         birthday,
       })
       .expect(201);
-    expect(res.body.status).toEqual(codes.CREATE_PROFILE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__SUCCESS.status);
 
     const profileResult = await db.query(`
     SELECT *, to_char("birthday", 'YYYY-MM-DD') AS birthday_date

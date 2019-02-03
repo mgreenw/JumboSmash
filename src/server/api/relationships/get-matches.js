@@ -4,6 +4,7 @@ import type { $Request } from 'express';
 
 const db = require('../../db');
 const apiUtils = require('../utils');
+const { profileSelectQuery } = require('../users/utils');
 const utils = require('./utils');
 const codes = require('../status-codes');
 
@@ -42,9 +43,7 @@ const getMatches = async (userId: number) => {
   const result = await db.query(`
     SELECT
       they_profile.user_id as "userId",
-      they_profile.display_name AS "displayName",
-      to_char(they_profile.birthday, 'YYYY-MM-DD') AS birthday,
-      they_profile.bio,
+      ${profileSelectQuery('they_profile.user_id', { tableAlias: 'they_profile', buildJSON: true })} AS profile,
       array_remove(ARRAY[
         ${matchedScenesSelect.join(',')}
       ], NULL) AS scenes
@@ -62,9 +61,7 @@ const getMatches = async (userId: number) => {
         (${matchedScenesChecks.join(' OR ')})
   `);
 
-  return apiUtils.status(codes.GET_MATCHES__SUCCESS).data({
-    matches: result.rows,
-  });
+  return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(result.rows);
 };
 
 const handler = [

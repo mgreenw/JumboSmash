@@ -7,6 +7,7 @@ const _ = require('lodash');
 const db = require('../../db');
 const apiUtils = require('../utils');
 const utils = require('./utils');
+const { profileSelectQuery } = require('../users/utils');
 const codes = require('../status-codes');
 
 /**
@@ -38,7 +39,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
 
   // Ensure the scene is valid.
   if (!utils.sceneIsValid(scene)) {
-    return apiUtils.status(codes.GET_SCENE_CANDIDATES__INVALID_SCENE).data({});
+    return apiUtils.status(codes.GET_SCENE_CANDIDATES__INVALID_SCENE).noData();
   }
 
   const isSmash = scene === 'smash';
@@ -61,18 +62,16 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
   //      parameter in the request
   const result = await db.query(`
     SELECT
-      profile.user_id as "userId",
-      profile.display_name AS "displayName",
-      to_char(profile.birthday, 'YYYY-MM-DD') AS birthday,
-      profile.bio
+      profile.user_id AS "userId",
+      ${profileSelectQuery('profile.user_id', { tableAlias: 'profile', buildJSON: true })} AS profile
     FROM profiles profile
     JOIN users candidate on candidate.id = profile.user_id
-    LEFT JOIN relationships r_critic ON r_critic.critic_user_id = ${userId} AND r_critic.candidate_user_id = candidate.id
-    LEFT JOIN relationships r_candidate ON r_candidate.critic_user_id = candidate.id AND r_candidate.candidate_user_id = ${userId}
-    ${isSmash ? `JOIN users critic on critic.id = ${userId}` : ''}
+    LEFT JOIN relationships r_critic ON r_critic.critic_user_id = $1 AND r_critic.candidate_user_id = candidate.id
+    LEFT JOIN relationships r_candidate ON r_candidate.critic_user_id = candidate.id AND r_candidate.candidate_user_id = $1
+    ${isSmash ? 'JOIN users critic on critic.id = $1' : ''}
     WHERE
-      NOT profile.user_id = ANY($1) AND
-      profile.user_id != ${userId} AND
+      NOT profile.user_id = ANY($2) AND
+      profile.user_id != $1 AND
       candidate.active_${scene} AND
       NOT COALESCE(r_critic.blocked, false) AND
       NOT COALESCE(r_candidate.blocked, false) AND
@@ -84,11 +83,11 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
       )` : ''}
     ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST
     LIMIT 10
-  `, [excludedUsers]);
 
-  return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data({
-    candidates: result.rows,
-  });
+
+  `, [userId, excludedUsers]);
+
+  return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data(result.rows);
 };
 
 const handler = [

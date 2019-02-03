@@ -25,7 +25,7 @@ const schema = {
  * @api {patch} /api/photos/reorder
  *
  */
-const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile: boolean) => {
+const reorderPhotos = async (newOrder: number[], userId: number) => {
   // No worry about SQL Injection here: newOrder is verified to be an
   // array of integers/numbers.
   const result = await db.query(`
@@ -41,7 +41,7 @@ const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile:
 
   // If there are photo id mismatches, error
   if (mismatchCount > 0) {
-    return apiUtils.status(codes.REORDER_PHOTOS__MISMATCHED_IDS).data({});
+    return apiUtils.status(codes.REORDER_PHOTOS__MISMATCHED_IDS).noData();
   }
 
   // Get an updated list of photos for the requesting user
@@ -60,22 +60,13 @@ const reorderPhotos = async (newOrder: number[], userId: number, userHasProfile:
     WHERE photos.id = updated_photos.id
   `);
 
-  // If the user has a profile, set the new first photo to be the splash photo
-  if (userHasProfile) {
-    await db.query(`
-      UPDATE profiles
-      SET splash_photo_id = $1
-      WHERE user_id = $2
-    `, [newOrder[0], userId]);
-  }
-
   return apiUtils.status(codes.REORDER_PHOTOS__SUCCESS).data(newOrder);
 };
 
 const handler = [
   apiUtils.validate(schema),
   apiUtils.asyncHandler(async (req: $Request) => {
-    return reorderPhotos(req.body, req.user.id, req.user.hasProfile);
+    return reorderPhotos(req.body, req.user.id);
   }),
 ];
 

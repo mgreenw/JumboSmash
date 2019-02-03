@@ -16,6 +16,14 @@ const status = (responseStatus: ResponseStatus) => {
         },
       };
     },
+    noData: () => {
+      return {
+        statusCode: responseStatus.code,
+        body: {
+          status: responseStatus.status,
+        },
+      };
+    },
   };
 };
 

@@ -33,7 +33,7 @@ describe('GET api/photos/sign-url', () => {
       .get('/api/photos/sign-url')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -43,7 +43,7 @@ describe('GET api/photos/sign-url', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.SIGN_URL__SUCCESS.status);
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
     expect(res.body.data.url).toContain('https://s3.amazonaws.com/projectgem');
     expect(res.body.data.fields.key).toContain('photos/');
     expect(res.body.data.fields.bucket).toContain('projectgem-');
@@ -65,7 +65,7 @@ describe('GET api/photos/sign-url', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.SIGN_URL__SUCCESS.status);
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
     expect(res.body.data.url).toContain('https://s3.amazonaws.com/projectgem');
     expect(res.body.data.fields.key).toContain('photos/');
     expect(res.body.data.fields.bucket).toContain('projectgem-');

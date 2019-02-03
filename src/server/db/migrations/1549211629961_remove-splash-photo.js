@@ -2,7 +2,6 @@ exports.shorthands = undefined;
 
 exports.up = (pgm) => {
   pgm.dropColumns('profiles', ['splash_photo_id']);
-  pgm.dropContstraint('profiles', 'profiles_photo_exists');
 };
 
 exports.down = (pgm) => {

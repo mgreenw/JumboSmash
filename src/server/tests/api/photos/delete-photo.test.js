@@ -35,7 +35,7 @@ describe('DELETE api/photos/:photoId', () => {
       .delete('/api/photos/1')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -45,7 +45,7 @@ describe('DELETE api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.DELETE_PHOTO__NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.DELETE_PHOTO__NOT_FOUND.status);
   });
 
   it('should fail if the photo belongs to another user', async () => {
@@ -64,7 +64,7 @@ describe('DELETE api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.DELETE_PHOTO__NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.DELETE_PHOTO__NOT_FOUND.status);
   });
 
   it('should fail if the user only has one photo remaining', async () => {
@@ -82,7 +82,7 @@ describe('DELETE api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(409);
-    expect(res.body.status).toEqual(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO.status);
+    expect(res.body.status).toBe(codes.DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO.status);
   });
 
   it('should succeed if the photo was properly deleted', async () => {
@@ -100,7 +100,7 @@ describe('DELETE api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.DELETE_PHOTO__SUCCESS.status);
+    expect(res.body.status).toBe(codes.DELETE_PHOTO__SUCCESS.status);
     expect(res.body.data.length).toBe(1);
   });
 
@@ -126,7 +126,7 @@ describe('DELETE api/photos/:photoId', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.DELETE_PHOTO__SUCCESS.status);
+    expect(res.body.status).toBe(codes.DELETE_PHOTO__SUCCESS.status);
 
     photoRes = await db.query(`
       SELECT index, id

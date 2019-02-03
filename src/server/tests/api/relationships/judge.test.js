@@ -29,7 +29,7 @@ describe('POST api/relationships/judge', () => {
       .get('/api/relationships/judge')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('jjaffe01');
@@ -38,7 +38,7 @@ describe('POST api/relationships/judge', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toEqual(codes.PROFILE_SETUP_INCOMPLETE.status);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should fail if candidateUserId is not a number or not a multiple of 1', async () => {
@@ -52,7 +52,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.candidateUserId should be number');
 
     res = await request(app)
@@ -65,7 +65,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.candidateUserId should be multiple of 1');
   });
 
@@ -80,7 +80,7 @@ describe('POST api/relationships/judge', () => {
         liked: 'true',
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.liked should be boolean');
   });
 
@@ -95,7 +95,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.scene should be string');
 
     res = await request(app)
@@ -108,7 +108,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.scene should be equal to one of the allowed values');
 
     res = await request(app)
@@ -121,7 +121,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.BAD_REQUEST.status);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.scene should be equal to one of the allowed values');
   });
 
@@ -136,7 +136,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toEqual(codes.JUDGE__CANDIDATE_NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.JUDGE__CANDIDATE_NOT_FOUND.status);
   });
 
   it('should allow a user without a profile setup to be judged', async () => {
@@ -152,7 +152,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
   });
 
   it('should allow a candidate with a profile to be liked on any scene', async () => {
@@ -167,7 +167,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
 
     res = await request(app)
       .post('/api/relationships/judge')
@@ -179,7 +179,7 @@ describe('POST api/relationships/judge', () => {
         liked: false,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
 
     res = await request(app)
       .post('/api/relationships/judge')
@@ -191,7 +191,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
   });
 
   it('should allow a user to be disliked after being liked on a scene', async () => {
@@ -206,7 +206,7 @@ describe('POST api/relationships/judge', () => {
         liked: true,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
 
     res = await request(app)
       .post('/api/relationships/judge')
@@ -218,6 +218,6 @@ describe('POST api/relationships/judge', () => {
         liked: false,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.JUDGE__SUCCESS.status);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
   });
 });
