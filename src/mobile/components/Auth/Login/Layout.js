@@ -22,7 +22,7 @@ type Props = {
 
 type State = {};
 
-class AuthHelpScreen extends React.Component<Props, State> {
+class AuthLayout extends React.Component<Props, State> {
   render() {
     const {
       loading,
@@ -64,4 +64,4 @@ class AuthHelpScreen extends React.Component<Props, State> {
   }
 }
 
-export default AuthHelpScreen;
+export default AuthLayout;

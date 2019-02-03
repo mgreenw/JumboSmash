@@ -27,12 +27,6 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 }
 
 class ExpiredCodeScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {};
-  }
-
   //TODO: Resend code functionality
   render() {
     return (
