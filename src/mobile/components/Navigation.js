@@ -46,6 +46,7 @@ import OnboardingAddPictures from "mobile/components/App/Onboarding/OnboardingAd
 import OnboardingBio from "mobile/components/App/Onboarding/OnboardingBio_Screen";
 import OnboardingNotifications from "mobile/components/App/Onboarding/OnboardingNotifications_Screen";
 import OnboardingFinish from "mobile/components/App/Onboarding/OnboadingFinish_Screen";
+import OnboardingTermsAndConditions from "mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen";
 
 const PROFILE_ROUTE = "PROFILE_ROUTE";
 const MATCHES_ROUTE = "MATCHES_ROUTE";
@@ -73,6 +74,8 @@ const ONBOARDING_BIO_ROUTE = "ONBOARDING_BIO_ROUTE";
 const ONBOARDING_NOTIFICATIONS_ROUTE = "ONBOARDING_NOTIFICATIONS_ROUTE";
 const ONBOARDING_FINISH_ROUTE = "ONBOARDING_FINISH_ROUTE";
 const ONBOARDING_APP_LOAD = "ONBOARDING_APP_LOAD";
+const ONBOARDING_TERMS_AND_CONDITIONS_ROUTE =
+  "ONBOARDING_TERMS_AND_CONDITIONS_ROUTE";
 
 const LOGIN_STACK = "LOGIN_STACK";
 const AUTH_LOADING_ROUTE = "AUTH_LOADING_ROUTE";
@@ -107,6 +110,7 @@ export const routes = {
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
   OnboardingFinish: ONBOARDING_FINISH_ROUTE,
   OnboardingAppLoad: ONBOARDING_APP_LOAD,
+  OnboardingTermsAndConditions: ONBOARDING_TERMS_AND_CONDITIONS_ROUTE,
   LoginStack: LOGIN_STACK,
   AuthLoading: AUTH_LOADING_ROUTE,
   MainSwitch: MAIN_SWITCH,
@@ -209,7 +213,10 @@ const OnboardingStack = FluidNavigator(
     ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
     ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },
     ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish },
-    ONBOARDING_APP_LOAD: { screen: AppLoading }
+    ONBOARDING_APP_LOAD: { screen: AppLoading },
+    ONBOARDING_TERMS_AND_CONDITIONS_ROUTE: {
+      screen: OnboardingTermsAndConditions
+    }
   },
   {
     initialRouteName: ONBOARDING_START_ROUTE,

@@ -4,30 +4,42 @@ import { Text, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { textStyles } from "mobile/styles/textStyles";
 import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import type {
-  UserSettings,
-  UserProfile,
-  Genders
-} from "mobile/reducers/index";
+import type { ReduxState, PhotoIds } from "mobile/reducers/index";
+import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
 import { routes } from "mobile/components/Navigation";
 import { OnboardingLayout } from "./Onboarding_Layout";
-import AddPhotos from "mobile/components/shared/AddPhotos";
+import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
 
-type Props = {
+type NavigationProps = {
   navigation: any
 };
+
+type ReduxProps = {
+  photoIds: PhotoIds
+};
+
+type DispatchProps = {};
+
+type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   profile: UserProfile,
   settings: UserSettings
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+  if (!reduxState.client) {
+    throw "Error: client is null in onboarding add photos";
+  }
+  return {
+    photoIds: reduxState.client.profile.photoIds
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): DispatchProps {
   return {};
 }
 
@@ -79,18 +91,10 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     return (
       <OnboardingLayout
         body={
-          <AddPhotos
-            images={this.state.profile.images}
-            onChangeImages={images => {
-              this.setState(prevState => {
-                return {
-                  profile: {
-                    ...prevState.profile,
-                    images
-                  }
-                };
-              });
-            }}
+          // AddMultiPhotos gets direct redux access due to constraints on
+          // photo uploading. CreatMyProfile needs previously uploaded photos,
+          // which occurs here.
+          <AddMultiPhotos
             width={containerWidth}
             imageWidth={imageWidth}
             enableDeleteFirst={true}
@@ -100,10 +104,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         title="Upload Photos"
         main={true}
         progress={0}
-        buttonDisabled={
-          this.state.profile.images.length === 0 ||
-          this.state.profile.images[0] === null
-        }
+        buttonDisabled={this.props.photoIds.length === 0}
       />
     );
   }

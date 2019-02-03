@@ -10,11 +10,12 @@ import NavigationService from "./NavigationService";
 import { createAppContainer } from "@react-navigation/native";
 import { loggerMiddleware } from "mobile/reduxMiddleware/loggerMiddleware";
 import { tokenMiddleware } from "mobile/reduxMiddleware/tokenMiddleware";
-
+import { errorMiddleware } from "mobile/reduxMiddleware/errorMiddleware";
 const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunkMiddleware),
+    applyMiddleware(errorMiddleware),
     applyMiddleware(tokenMiddleware),
     applyMiddleware(loggerMiddleware)
   )

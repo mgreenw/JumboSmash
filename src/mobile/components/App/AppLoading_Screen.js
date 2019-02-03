@@ -5,7 +5,7 @@ import { Image, View, Text } from "react-native";
 import { Font } from "expo";
 import { connect } from "react-redux";
 import type { Dispatch } from "redux";
-import type { ReduxState, User } from "mobile/reducers/index";
+import type { ReduxState } from "mobile/reducers/index";
 import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
 import { Colors } from "mobile/styles/colors";
 import ProgressBar from "react-native-progress/Bar";
@@ -15,7 +15,7 @@ import { routes } from "mobile/components/Navigation";
 type reduxProps = {
   appLoaded: boolean,
   loadAppInProgress: boolean,
-  user: ?User
+  onboardingCompleted: boolean
 };
 
 type navigationProps = {
@@ -34,7 +34,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
-    user: reduxState.user
+    onboardingCompleted: reduxState.onboardingCompleted
   };
 }
 
@@ -64,8 +64,8 @@ class AppLoadingScreen extends React.Component<Props, State> {
       prevProps.loadAppInProgress != this.props.loadAppInProgress
     ) {
       const { navigate } = this.props.navigation;
-      if (this.props.user === null) {
-        navigate(routes.OnboardingStack, {});
+      if (!this.props.onboardingCompleted) {
+        navigate(routes.OnboardingStack);
       } else {
         navigate(routes.MainSwitch, {});
       }
