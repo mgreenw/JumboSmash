@@ -128,8 +128,8 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
     subject: 'JumboSmash Email Verification',
     html: `<p>Enter this code: ${verificationCode}</p>`,
   });
-  slack.postVerificationCode(verificationCode, utln, memberInfo.email, true);
 
+  slack.postVerificationCode(verificationCode, utln, memberInfo.email);
 
   // Send a success response to the client
   return apiUtils.status(200).json({
