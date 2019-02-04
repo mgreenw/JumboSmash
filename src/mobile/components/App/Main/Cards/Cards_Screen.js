@@ -142,7 +142,7 @@ class SwipingScreen extends React.Component<Props, State> {
       <Transition inline appear={"scale"}>
         <View style={{ flex: 1 }}>
           <GEMHeader
-            title="cards"
+            title="PROJECTGEM"
             rightIconName="message"
             leftIconName="user"
           />
