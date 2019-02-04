@@ -42,9 +42,23 @@ class Card extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
+    const user = navigation.getParam("user", null);
+    const onMinimize = navigation.getParam("onMinimize", null);
+    if (user === null) {
+      {
+        throw "Error: Navigation Param of User is null";
+      }
+    }
+
+    if (onMinimize === null) {
+      {
+        throw "Error: Navigation Param of OnMinimize is null";
+      }
+    }
+
     this.state = {
-      user: navigation.getParam("user", null),
-      onMinimize: navigation.getParam("onMinimize", null)
+      user,
+      onMinimize
     };
   }
 
