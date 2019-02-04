@@ -46,7 +46,8 @@ const deletePhoto = async (photoId: number, userId: number) => {
     // 1. Remove the photo from our database
     await client.query(`
       DELETE FROM photos
-      WHERE id = $1
+      WHERE
+        id = $1
     `, [photoToDelete.id]);
 
     // Get an updated list of photos for the requesting user
@@ -54,23 +55,18 @@ const deletePhoto = async (photoId: number, userId: number) => {
       return `(${photo.id}, ${index + 1})`;
     });
 
-    // 2. Update the photos for the requesting user
-    const newPhotosRes = await client.query(`
-      UPDATE photos
-      SET index = updated_photos.index
-      FROM
-        (VALUES
-          ${updatedPhotos.join(',')}
-        ) AS updated_photos (id, index)
-      WHERE photos.id = updated_photos.id
-      RETURNING
-        ARRAY(
-          SELECT id
-          FROM photos
-          WHERE user_id = $1
-          ORDER BY index
-        ) AS "photoIds"
-    `, [userId]);
+    // 2. Update the photos for the requesting user. Only do if some photos exist
+    if (photos.length > 0) {
+      await client.query(`
+        UPDATE photos
+        SET index = updated_photos.index
+        FROM
+          (VALUES
+            ${updatedPhotos.join(',')}
+          ) AS updated_photos (id, index)
+        WHERE photos.id = updated_photos.id
+      `);
+    }
 
     // 3. Delete the photo from S3
     const params = {
@@ -83,7 +79,7 @@ const deletePhoto = async (photoId: number, userId: number) => {
     await client.query('COMMIT');
 
     return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data(
-      newPhotosRes.rows[0].photoIds,
+      _.map(photos, photo => photo.id),
     );
   } catch (err) {
     await client.query('ROLLBACK');

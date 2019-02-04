@@ -68,7 +68,14 @@ describe('DELETE api/photos/:photoId', () => {
   });
 
   it('should succeed if the photo was properly deleted', async () => {
-    const photoRes = await db.query(`
+    let photoRes = await db.query(`
+      INSERT INTO photos (user_id, index, uuid)
+      VALUES
+        ($1, 1, $2)
+      RETURNING id
+    `, [me.id, uuidv4()]);
+
+    photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 2, $2)
