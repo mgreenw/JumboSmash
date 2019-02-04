@@ -50,7 +50,7 @@ export default class CardView extends React.Component<Props> {
 
   render() {
     const { user, onMinimize } = this.props;
-    let position = Animated.divide(this.scrollX, width);
+    const position = Animated.divide(this.scrollX, width);
     return (
       <ScrollView
         style={{
@@ -88,7 +88,7 @@ export default class CardView extends React.Component<Props> {
           </View>
           <View style={{ flexDirection: "row" }}>
             {photos.map((_, i) => {
-              let opacity = position.interpolate({
+              const opacity = position.interpolate({
                 inputRange: [i - 1, i, i + 1], // each dot will need to have an opacity of 1 when position is equal to their index (i)
                 outputRange: [0.4, 1, 0.4], // when position is not i, the opacity of the dot will animate to 0.4
                 extrapolate: "clamp" // this will prevent the opacity of the dots from going outside of the outputRange (i.e. opacity will not be less than 0.4)
