@@ -43,6 +43,7 @@ import type {
   DeletePhotoInitiated_Action,
   DeletePhotoCompleted_Action
 } from "mobile/actions/app/deletePhoto";
+import { isFSA } from "mobile/utils/fluxStandardAction";
 
 export type PhotoIds = $ReadOnlyArray<number>;
 
@@ -153,6 +154,11 @@ export default function rootReducer(
   state: ReduxState = defaultState,
   action: Action
 ): ReduxState {
+  // Sanity check for our actions abiding FSA format.
+  if (!isFSA(action)) {
+    throw ("Err: Action is not FSA", action);
+  }
+
   switch (action.type) {
     // LOGIN:
     case "LOGIN_INITIATED": {
@@ -166,16 +172,17 @@ export default function rootReducer(
     }
 
     case "LOGIN_COMPLETED": {
+      const { response } = action.payload;
       return {
         ...state,
-        token: action.response ? action.response.token : null,
+        token: response ? response.token : null,
         inProgress: {
           ...state.inProgress,
           login: false
         },
         response: {
           ...state.response,
-          login: action.response
+          login: response
         }
       };
     }
@@ -215,9 +222,10 @@ export default function rootReducer(
     }
 
     case "LOAD_AUTH__COMPLETED": {
+      const { token } = action.payload;
       return {
         ...state,
-        token: action.token,
+        token,
         authLoaded: true,
         inProgress: {
           ...state.inProgress,
@@ -239,19 +247,20 @@ export default function rootReducer(
     }
 
     case "LOAD_APP__COMPLETED": {
+      const { profile, settings, onboardingCompleted } = action.payload;
       return {
         ...state,
         appLoaded: true,
         client: {
           userId: 0, // TODO: RETRIEVE THIS
-          profile: action.profile,
-          settings: action.settings
+          profile,
+          settings
         },
         inProgress: {
           ...state.inProgress,
           loadApp: false
         },
-        onboardingCompleted: action.onboardingCompleted
+        onboardingCompleted
       };
     }
 
@@ -286,6 +295,7 @@ export default function rootReducer(
     }
 
     case "SEND_VERIFICATION_EMAIL_COMPLETED": {
+      const { response } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -294,7 +304,7 @@ export default function rootReducer(
         },
         response: {
           ...state.response,
-          sendVerificationEmail: action.response
+          sendVerificationEmail: response
         }
       };
     }
@@ -310,6 +320,7 @@ export default function rootReducer(
     }
 
     case "SAVE_PROFILE__COMPLETED": {
+      const { profile } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -318,7 +329,7 @@ export default function rootReducer(
         },
         client: {
           ...state.client,
-          profile: action.profile
+          profile
         }
       };
     }
@@ -348,8 +359,9 @@ export default function rootReducer(
         throw "User null in reducer for UPLOAD_PHOTO__COMPLETED";
       }
       const { profile } = state.client;
+      const { photoId } = action.payload;
       let newPhotoIds = profile.photoIds.slice();
-      newPhotoIds.push(action.photoId);
+      newPhotoIds.push(photoId);
       return {
         ...state,
         inProgress: {
@@ -380,6 +392,7 @@ export default function rootReducer(
       if (!state.client) {
         throw "User null in reducer for DELETE_PHOTO__COMPLETED";
       }
+      const { photoIds } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -390,7 +403,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds: action.photoIds
+            photoIds: photoIds
           }
         }
       };

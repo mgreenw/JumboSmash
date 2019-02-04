@@ -7,17 +7,26 @@ import getMySettings from "mobile/api/users/GetMySettings";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 import { getMyPhotos } from "mobile/api/users/GetMyPhotos";
 
-export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
+export type LoadAppInitiated_Action = {
+  type: "LOAD_APP__INITIATED",
+  payload: {},
+  meta: {}
+};
 export type LoadAppCompleted_Action = {
   type: "LOAD_APP__COMPLETED",
-  onboardingCompleted: boolean,
-  profile: UserProfile,
-  settings: UserSettings
+  payload: {
+    onboardingCompleted: boolean,
+    profile: UserProfile,
+    settings: UserSettings
+  },
+  meta: {}
 };
 
 function initiate(): LoadAppInitiated_Action {
   return {
-    type: "LOAD_APP__INITIATED"
+    type: "LOAD_APP__INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
@@ -30,25 +39,28 @@ function complete(
   DevTesting.log("load app complete; profile && settigs: ", profile, settings);
   return {
     type: "LOAD_APP__COMPLETED",
-    onboardingCompleted,
-    profile: profile || {
-      bio: "",
-      birthday: "",
-      displayName: "",
-      photoIds: photos || [] // incase partial photo uploading in onboarding
-    },
-    settings: settings || {
-      useGenders: {
-        male: false,
-        female: false,
-        nonBinary: false
+    payload: {
+      onboardingCompleted,
+      profile: profile || {
+        bio: "",
+        birthday: "",
+        displayName: "",
+        photoIds: photos || [] // incase partial photo uploading in onboarding
       },
-      wantGenders: {
-        male: false,
-        female: false,
-        nonBinary: false
+      settings: settings || {
+        useGenders: {
+          male: false,
+          female: false,
+          nonBinary: false
+        },
+        wantGenders: {
+          male: false,
+          female: false,
+          nonBinary: false
+        }
       }
-    }
+    },
+    meta: {}
   };
 }
 

@@ -5,23 +5,33 @@ import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 import { deletePhotoApi } from "mobile/api/photos/deletePhoto";
 
 export type DeletePhotoInitiated_Action = {
-  type: "DELETE_PHOTO__INITIATED"
+  type: "DELETE_PHOTO__INITIATED",
+  payload: {},
+  meta: {}
 };
 export type DeletePhotoCompleted_Action = {
   type: "DELETE_PHOTO__COMPLETED",
-  photoIds: Array<number>
+  payload: {
+    photoIds: Array<number>
+  },
+  meta: {}
 };
 
 function initiate(): DeletePhotoInitiated_Action {
   return {
-    type: "DELETE_PHOTO__INITIATED"
+    type: "DELETE_PHOTO__INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
   return {
     type: "DELETE_PHOTO__COMPLETED",
-    photoIds
+    payload: {
+      photoIds
+    },
+    meta: {}
   };
 }
 

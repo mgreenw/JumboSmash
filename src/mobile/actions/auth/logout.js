@@ -5,21 +5,29 @@ import DevTesting from "../../utils/DevTesting";
 import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
 
 export type LogoutInitiated_Action = {
-  type: "LOGOUT_INITIATED"
+  type: "LOGOUT_INITIATED",
+  payload: {},
+  meta: {}
 };
 export type LogoutCompleted_Action = {
-  type: "LOGOUT_COMPLETED"
+  type: "LOGOUT_COMPLETED",
+  payload: {},
+  meta: {}
 };
 
 function initiate(): LogoutInitiated_Action {
   return {
-    type: "LOGOUT_INITIATED"
+    type: "LOGOUT_INITIATED",
+    payload: {},
+    meta: {}
   };
 }
 
 function complete(): LogoutCompleted_Action {
   return {
-    type: "LOGOUT_COMPLETED"
+    type: "LOGOUT_COMPLETED",
+    payload: {},
+    meta: {}
   };
 }
 
