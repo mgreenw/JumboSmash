@@ -1,23 +1,24 @@
 module.exports = {
-  extends: "airbnb",
-  parser: "babel-eslint",
+  extends: 'airbnb',
+  parser: 'babel-eslint',
   env: {
     jest: true,
-    es6: true
+    es6: true,
   },
   settings: {
-    "import/resolver": {
-      "babel-module": {
-        root: ["./"],
+    'import/resolver': {
+      'babel-module': {
+        root: ['./'],
         alias: {
-          mobile: "./"
-        }
-      }
-    }
+          mobile: './',
+        },
+      },
+    },
   },
   rules: {
-    "prefer-destructuring": "off",
-    "react/no-multi-comp": "off",
-    "no-underscore-dangle": "off"
-  }
+    'prefer-destructuring': 'off',
+    'react/no-multi-comp': 'off',
+    'no-underscore-dangle': 'off',
+    'react/destructuring/assignment': 'off',
+  },
 };
