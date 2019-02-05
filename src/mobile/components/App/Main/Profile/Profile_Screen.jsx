@@ -2,18 +2,17 @@
 
 import React from 'react';
 import {
- Text, View, Image, TouchableOpacity 
+  TouchableOpacity, Text, View, Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar } from 'react-native-elements';
-import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
-import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
+import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
@@ -23,7 +22,7 @@ const waves1 = require('../../../../assets/waves/waves1/waves.png');
 type cardButtonProps = {
   title: string,
   onPress: () => void,
-  icon: IconName
+  icon: IconName,
 };
 class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
@@ -43,9 +42,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
       >
         <View style={{ flexDirection: 'row' }}>
           <CustomIcon name={icon} size={26} color="black" />
-          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
-            {title}
-          </Text>
+          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>{title}</Text>
         </View>
         <CustomIcon
           name="back"
@@ -59,7 +56,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
 }
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type dispatchProps = {};
@@ -71,42 +68,40 @@ type Props = navigationProps & dispatchProps & reduxProps;
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
-  const { client } = reduxState;
-  const { profile } = client;
   if (!reduxState.client) {
-    throw { message: 'client is null in Profile Screen' };
+    throw new Error('client is null in Profile Screen');
   }
-  const photoIds = profile.photoIds;
+  const photoIds = reduxState.client.profile.photoIds;
   if (photoIds.length === 0) {
-    throw 'no photos in Profile Screen';
+    throw new Error('no photos in Profile Screen');
   }
   return {
-    displayName: profile.displayName,
+    displayName: reduxState.client.profile.displayName,
     photoId: photoIds[0],
     token: reduxState.token,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props,
-): dispatchProps {
+function mapDispatchToProps(): dispatchProps {
   return {};
 }
 
 class ProfileScreen extends React.Component<Props, State> {
   _onSettingsPress = () => {
-    const { navigate } = this.props.navigation;
+    const { navigation } = this.props;
+    const { navigate } = navigation;
     navigate(routes.SettingsEdit, {});
   };
 
   _onProfileEditPress = () => {
-    const { navigate } = this.props.navigation;
+    const { navigation } = this.props;
+    const { navigate } = navigation;
     navigate(routes.ProfileEdit, {});
   };
 
   _onProfileHelpPress = () => {
-    const { navigate } = this.props.navigation;
+    const { navigation } = this.props;
+    const { navigate } = navigation;
     navigate(routes.ProfileHelp, {});
   };
 
@@ -141,17 +136,14 @@ class ProfileScreen extends React.Component<Props, State> {
                 }}
               />
               <Text
-                style={[
-                  textStyles.headline4StyleMedium,
-                  { textAlign: 'center', paddingTop: 10 },
-                ]}
+                style={[textStyles.headline4StyleMedium, { textAlign: 'center', paddingTop: 10 }]}
               >
                 {displayName}
               </Text>
               <Image
                 resizeMode="stretch"
                 source={waves1}
-                style={[Arthur_Styles.waves, { zIndex: -1, bottom: -10 }]}
+                style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
               />
             </View>
             <View
@@ -170,16 +162,8 @@ class ProfileScreen extends React.Component<Props, State> {
               }}
               elevation={5}
             >
-              <CardButton
-                title="Edit Profile"
-                onPress={this._onProfileEditPress}
-                icon="user"
-              />
-              <CardButton
-                title="Settings"
-                onPress={this._onSettingsPress}
-                icon="gear"
-              />
+              <CardButton title="Edit Profile" onPress={this._onProfileEditPress} icon="user" />
+              <CardButton title="Settings" onPress={this._onSettingsPress} icon="gear" />
               <CardButton
                 title="Help & Contact"
                 onPress={this._onProfileHelpPress}
