@@ -136,7 +136,7 @@ class SwipingScreen extends React.Component<Props, State> {
     this._onPressSwipeButton("left");
   };
 
-  deck: ?Deck;
+  deck: Deck;
 
   render() {
     const { navigation } = this.props;
