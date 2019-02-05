@@ -119,11 +119,13 @@ class SwipingScreen extends React.Component<Props, State> {
   _onPressSwipeButton = (swipeDirection: swipeDirection) => {
     const { swipeGestureInProgress } = this.state;
 
-    if (this.deck) {
-      this.setState({ swipeGestureInProgress: true }, () => {
-        this.deck && this.deck._forceSwipe(swipeDirection, 750);
-      });
-    }
+    this.setState({ swipeGestureInProgress: true }, () => {
+      if (this.deck) {
+        this.deck._forceSwipe(swipeDirection, 750);
+      } else {
+        throw "this.deck is null in Cards_Screen";
+      }
+    });
   };
 
   _onSwipeLike = () => {

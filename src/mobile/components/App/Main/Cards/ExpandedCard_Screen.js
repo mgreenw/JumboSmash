@@ -28,8 +28,6 @@ type dispatchProps = {};
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
-type State = { user: UserProfile, onMinimize: () => void };
-
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
   return {};
 }
@@ -38,7 +36,7 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
   return {};
 }
 
-class Card extends React.Component<Props, State> {
+class Card extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -46,25 +44,25 @@ class Card extends React.Component<Props, State> {
     const onMinimize = navigation.getParam("onMinimize", null);
     if (user === null) {
       {
-        throw "Error: Navigation Param of User is null";
+        throw "Error: Navigation Param of User is null in Expanded Card Screen";
       }
     }
 
     if (onMinimize === null) {
       {
-        throw "Error: Navigation Param of OnMinimize is null";
+        throw "Error: Navigation Param of OnMinimize is null in Expanded Card Screen";
       }
     }
-
-    this.state = {
-      user,
-      onMinimize
-    };
   }
 
   render() {
-    const { user, onMinimize } = this.state;
-    return <CardView user={user} onMinimize={onMinimize} />;
+    const { navigation } = this.props;
+    return (
+      <CardView
+        user={navigation.getParam("user")}
+        onMinimize={navigation.getParam("onMinimize")}
+      />
+    );
   }
 }
 
