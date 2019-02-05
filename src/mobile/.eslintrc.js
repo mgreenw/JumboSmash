@@ -16,6 +16,7 @@ module.exports = {
     }
   },
   rules: {
-    "prefer-destructuring": "off"
+    "prefer-destructuring": "off",
+    "react/no-multi-comp": "off"
   }
 };
