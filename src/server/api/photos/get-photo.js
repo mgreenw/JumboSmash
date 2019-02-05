@@ -38,6 +38,7 @@ const getPhoto = async (photoId: number) => {
 
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
+    // Weird flowtype issue requires us to specifically define return type
     const notFoundBody: { body: { status: string }, statusCode: number } = apiUtils
       .status(codes.GET_PHOTO__NOT_FOUND)
       .noData();
