@@ -43,7 +43,7 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_CONVERSATION__SUCCESS",
-    "messages": [
+    "data": [
         {
             "id": 13,
             "content": "aoeuaoeu",

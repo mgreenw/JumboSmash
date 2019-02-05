@@ -31,7 +31,7 @@ describe('GET api/messages/:userId', () => {
       .get('/api/messages/1')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('jjaffe01');
@@ -40,7 +40,7 @@ describe('GET api/messages/:userId', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should not accept an invalid most recent message id', async () => {
@@ -49,14 +49,14 @@ describe('GET api/messages/:userId', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
 
     res = await request(app)
       .get('/api/messages/9?most-recent-message-id=-44')
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
   });
 
   it('should succeed if the other user exists', async () => {
@@ -66,17 +66,17 @@ describe('GET api/messages/:userId', () => {
       .set('Authorization', me.token)
       .send({ content: 'hey' });
     expect(res.statusCode).toBe(201);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS);
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
     res = await request(app)
       .get(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
 
-    expect(res.body.messages.length).toBe(1);
-    expect(res.body.messages[0].content).toBe('hey');
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].content).toBe('hey');
   });
 
   it('should succeed if the other user exists', async () => {
@@ -91,8 +91,8 @@ describe('GET api/messages/:userId', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
 
-    expect(res.body.messages.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 });

@@ -32,7 +32,7 @@ describe('POST api/messages/:userId', () => {
       .set('Accept', 'application/json')
       .send({ content: 'hey' });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('jjaffe01');
@@ -42,7 +42,7 @@ describe('POST api/messages/:userId', () => {
       .set('Accept', 'application/json')
       .send({ content: 'hey there' });
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('must require the other user to exist', async () => {
@@ -58,7 +58,7 @@ describe('POST api/messages/:userId', () => {
       .set('Authorization', me.token)
       .send({ content: 'hey' });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__USER_NOT_FOUND);
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__USER_NOT_FOUND.status);
   });
 
   it('should fail if the other userId is not an integer', async () => {
@@ -77,11 +77,10 @@ describe('POST api/messages/:userId', () => {
       .set('Authorization', me.token)
       .send({ content: 'hey' });
     expect(res.statusCode).toBe(201);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS);
-    expect(res.body.message).toBeDefined();
-    expect(res.body.message.senderUserId).toBe(me.id);
-    expect(res.body.message.receiverUserId).toBe(other.id);
-    expect(res.body.message.id).toBeDefined();
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data.senderUserId).toBe(me.id);
+    expect(res.body.data.receiverUserId).toBe(other.id);
+    expect(res.body.data.id).toBeDefined();
   });
 });
