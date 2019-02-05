@@ -41,8 +41,7 @@ Provide the normal `Authorization` token in the request header.
         "id": 17,
         "timestamp": "2019-01-27T17:43:51.031Z",
         "content": "haha",
-        "senderUserId": 1,
-        "receiverUserId": 6
+        "fromClient": true
     }
 }
 ```

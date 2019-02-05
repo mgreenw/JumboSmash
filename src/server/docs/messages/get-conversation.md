@@ -48,22 +48,19 @@ Provide the normal `Authorization` token in the request header.
             "id": 13,
             "content": "aoeuaoeu",
             "timestamp": "2019-01-27T16:53:43.337Z",
-            "senderUserId": 1,
-            "receiverUserId": 2
+            "fromClint": true
         },
         {
             "id": 14,
             "content": "aoeuaoeu",
             "timestamp": "2019-01-27T16:54:02.715Z",
-            "senderUserId": 1,
-            "receiverUserId": 2
+            "fromClient": false
         },
         {
             "id": 15,
             "content": "aoeuaoeu",
             "timestamp": "2019-01-27T17:04:50.704Z",
-            "senderUserId": 2,
-            "receiverUserId": 1
+            "fromClient": true
         }
     ]
 }

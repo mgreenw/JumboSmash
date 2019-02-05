@@ -35,8 +35,7 @@ const sendMessage = async (senderUserId: number, receieverUserId: number, conten
         id,
         timestamp,
         content,
-        sender_user_id AS "senderUserId",
-        receiver_user_id AS "receiverUserId"
+        true AS "fromClient"
     `, [content, senderUserId, receieverUserId]);
 
     const [message] = result.rows;

@@ -77,6 +77,7 @@ describe('GET api/messages/:userId', () => {
 
     expect(res.body.data.length).toBe(1);
     expect(res.body.data[0].content).toBe('hey');
+    expect(res.body.data[0].fromClient).toBe(true);
   });
 
   it('should succeed if the other user exists', async () => {
@@ -94,5 +95,22 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
 
     expect(res.body.data.length).toBe(0);
+  });
+
+  it('should make the message be from the other person if they sent it', async () => {
+    let res = await request(app)
+      .post(`/api/messages/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token)
+      .send({ content: 'hey to you too' });
+
+    res = await request(app)
+      .get(`/api/messages/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data[res.body.data.length - 1].fromClient).toBe(false);
   });
 });

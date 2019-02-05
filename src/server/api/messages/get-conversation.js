@@ -16,12 +16,16 @@ const getConversation = async (
   mostRecentMessageIdStr: ?string = undefined,
 ) => {
   let query = `
-    SELECT id, content, timestamp, sender_user_id AS "senderUserId", receiver_user_id AS "receiverUserId"
+    SELECT
+      id,
+      content,
+      timestamp,
+      (sender_user_id = $1) AS "fromClient"
     FROM messages
     WHERE (
         (sender_user_id = $1 AND receiver_user_id = $2)
         OR
-        (sender_user_id = $3 AND receiver_user_id = $4)
+        (sender_user_id = $2 AND receiver_user_id = $1)
       )`;
 
   // No worries of SQL injection: we have run it through Number.parseInt()
@@ -54,7 +58,7 @@ const getConversation = async (
 
   const result = await db.query(
     query,
-    [userId, matchUserId, matchUserId, userId],
+    [userId, matchUserId],
   );
 
   return apiUtils.status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
