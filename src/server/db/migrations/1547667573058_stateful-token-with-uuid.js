@@ -4,7 +4,6 @@ exports.up = (pgm) => {
   pgm.addColumns('users', {
     token_uuid: {
       type: 'uuid',
-      notNull: false,
       default: null,
     },
   });
