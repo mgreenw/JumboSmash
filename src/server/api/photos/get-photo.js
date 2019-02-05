@@ -38,8 +38,10 @@ const getPhoto = async (photoId: number) => {
 
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
-    // $FlowFixMe I'm really not sure what's going on here...it's only HERE
-    return apiUtils.status(codes.GET_PHOTO__NOT_FOUND).noData();
+    const notFoundBody: { body: { status: string }, statusCode: number } = apiUtils
+      .status(codes.GET_PHOTO__NOT_FOUND)
+      .noData();
+    return notFoundBody;
   }
 
   // Sign a url for the photo and redirect the request to it
