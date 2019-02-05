@@ -80,6 +80,6 @@ describe('POST api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
     expect(res.body.data).toBeDefined();
     expect(res.body.data.fromClient).toBe(true);
-    expect(res.body.data.id).toBeDefined();
+    expect(res.body.data.messageId).toBeDefined();
   });
 });

@@ -38,7 +38,7 @@ Provide the normal `Authorization` token in the request header.
 {
     "status": "SEND_MESSAGE__SUCCESS",
     "data": {
-        "id": 17,
+        "messageId": 17,
         "timestamp": "2019-01-27T17:43:51.031Z",
         "content": "haha",
         "fromClient": true

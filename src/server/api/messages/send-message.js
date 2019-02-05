@@ -32,7 +32,7 @@ const sendMessage = async (senderUserId: number, receieverUserId: number, conten
       (content, sender_user_id, receiver_user_id)
       VALUES ($1, $2, $3)
       RETURNING
-        id,
+        id AS "messageId",
         timestamp,
         content,
         true AS "fromClient"

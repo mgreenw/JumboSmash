@@ -17,7 +17,7 @@ const getConversation = async (
 ) => {
   let query = `
     SELECT
-      id,
+      id AS "messageId",
       content,
       timestamp,
       (sender_user_id = $1) AS "fromClient"
@@ -49,7 +49,6 @@ const getConversation = async (
       )
       AND id != ${mostRecentMessageId}`;
   }
-
 
   // Always order by timestamp
   query += `

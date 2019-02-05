@@ -112,5 +112,6 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data).toBeDefined();
     expect(res.body.data[res.body.data.length - 1].fromClient).toBe(false);
+    expect(res.body.data[0].messageId).toBeDefined();
   });
 });
