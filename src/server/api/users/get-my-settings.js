@@ -3,8 +3,11 @@
 import type { $Request } from 'express';
 
 const apiUtils = require('../utils');
+const { settingsSelectQuery } = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+
+const selectSettings = settingsSelectQuery();
 
 /**
  * @api {get} /api/users/me/settings
@@ -13,33 +16,12 @@ const db = require('../../db');
 const getMySettings = async (userId: number) => {
   // try to get the user's settings from the users table
   const result = await db.query(`
-    SELECT
-      want_he as "wantHe",
-      want_she as "wantShe",
-      want_they as "wantThey",
-      use_he as "useHe",
-      use_she as "useShe",
-      use_they as "useThey"
+    SELECT ${selectSettings}
     FROM users
     WHERE id = $1`, [userId]);
 
   // Can assume user exists and is in db b/c authenticated upstream
-  const settings = result.rows[0];
-  return apiUtils.status(200).json({
-    status: codes.GET_SETTINGS__SUCCESS,
-    settings: {
-      usePronouns: {
-        he: settings.useHe,
-        she: settings.useShe,
-        they: settings.useThey,
-      },
-      wantPronouns: {
-        he: settings.wantHe,
-        she: settings.wantShe,
-        they: settings.wantThey,
-      },
-    },
-  });
+  return apiUtils.status(codes.GET_SETTINGS__SUCCESS).data(result.rows[0]);
 };
 
 const handler = [

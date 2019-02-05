@@ -37,7 +37,7 @@ describe('GET api/photos/confirm_upload', () => {
       .get('/api/photos/sign-url')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -47,7 +47,7 @@ describe('GET api/photos/confirm_upload', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO);
+    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO.status);
   });
 
   it('should fail if a photo was not actually uploaded', async () => {
@@ -57,14 +57,14 @@ describe('GET api/photos/confirm_upload', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
 
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND);
+    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND.status);
   });
 
   it('should succeed if the photo was properly uploaded', async () => {
@@ -74,19 +74,19 @@ describe('GET api/photos/confirm_upload', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
 
     // Perform the file upload
-    await utils.uploadTestPhoto(res.body.payload);
-    const { key } = res.body.payload.fields;
+    await utils.uploadTestPhoto(res.body.data);
+    const { key } = res.body.data.fields;
 
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS);
-    expect(Number.isInteger(res.body.photoId) && res.body.photoId > 0).toBeTruthy();
+    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS.status);
+    expect(Number.isInteger(res.body.data[0]) && res.body.data[0] > 0).toBeTruthy();
 
     await utils.deletePhoto(key);
   });
@@ -107,19 +107,19 @@ describe('GET api/photos/confirm_upload', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
 
     // Perform the file upload
-    await utils.uploadTestPhoto(res.body.payload);
+    await utils.uploadTestPhoto(res.body.data);
 
-    const { key } = res.body.payload.fields;
+    const { key } = res.body.data.fields;
 
     res = await request(app)
       .get('/api/photos/confirm-upload')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT);
+    expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT.status);
 
     await utils.deletePhoto(key);
   });

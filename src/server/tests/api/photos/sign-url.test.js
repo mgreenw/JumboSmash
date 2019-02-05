@@ -33,7 +33,7 @@ describe('GET api/photos/sign-url', () => {
       .get('/api/photos/sign-url')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -43,16 +43,15 @@ describe('GET api/photos/sign-url', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
-    expect(res.body.payload).toBeDefined();
-    expect(res.body.payload.url).toContain('https://s3.amazonaws.com/projectgem');
-    expect(res.body.payload.fields.key).toContain('photos/');
-    expect(res.body.payload.fields.bucket).toContain('projectgem-');
-    expect(res.body.payload.fields['X-Amz-Algorithm']).toBe('AWS4-HMAC-SHA256');
-    expect(res.body.payload.fields['X-Amz-Credential']).toBeDefined();
-    expect(res.body.payload.fields['X-Amz-Date']).toBeDefined();
-    expect(res.body.payload.fields.Policy).toBeDefined();
-    expect(res.body.payload.fields['X-Amz-Signature']).toBeDefined();
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
+    expect(res.body.data.url).toContain('https://s3.amazonaws.com/projectgem');
+    expect(res.body.data.fields.key).toContain('photos/');
+    expect(res.body.data.fields.bucket).toContain('projectgem-');
+    expect(res.body.data.fields['X-Amz-Algorithm']).toBe('AWS4-HMAC-SHA256');
+    expect(res.body.data.fields['X-Amz-Credential']).toBeDefined();
+    expect(res.body.data.fields['X-Amz-Date']).toBeDefined();
+    expect(res.body.data.fields.Policy).toBeDefined();
+    expect(res.body.data.fields['X-Amz-Signature']).toBeDefined();
   });
 
   it('should succeed given an authenticated user with a profile', async () => {
@@ -66,15 +65,14 @@ describe('GET api/photos/sign-url', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS);
-    expect(res.body.payload).toBeDefined();
-    expect(res.body.payload.url).toContain('https://s3.amazonaws.com/projectgem');
-    expect(res.body.payload.fields.key).toContain('photos/');
-    expect(res.body.payload.fields.bucket).toContain('projectgem-');
-    expect(res.body.payload.fields['X-Amz-Algorithm']).toBe('AWS4-HMAC-SHA256');
-    expect(res.body.payload.fields['X-Amz-Credential']).toBeDefined();
-    expect(res.body.payload.fields['X-Amz-Date']).toBeDefined();
-    expect(res.body.payload.fields.Policy).toBeDefined();
-    expect(res.body.payload.fields['X-Amz-Signature']).toBeDefined();
+    expect(res.body.status).toBe(codes.SIGN_URL__SUCCESS.status);
+    expect(res.body.data.url).toContain('https://s3.amazonaws.com/projectgem');
+    expect(res.body.data.fields.key).toContain('photos/');
+    expect(res.body.data.fields.bucket).toContain('projectgem-');
+    expect(res.body.data.fields['X-Amz-Algorithm']).toBe('AWS4-HMAC-SHA256');
+    expect(res.body.data.fields['X-Amz-Credential']).toBeDefined();
+    expect(res.body.data.fields['X-Amz-Date']).toBeDefined();
+    expect(res.body.data.fields.Policy).toBeDefined();
+    expect(res.body.data.fields['X-Amz-Signature']).toBeDefined();
   });
 });

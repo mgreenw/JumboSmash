@@ -29,7 +29,7 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_MY_PHOTOS__SUCCESS",
-    "photoIds": [
+    "data": [
         14
     ]
 }

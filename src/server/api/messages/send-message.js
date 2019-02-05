@@ -41,17 +41,12 @@ const sendMessage = async (senderUserId: number, receieverUserId: number, conten
 
     const [message] = result.rows;
 
-    return apiUtils.status(201).json({
-      status: codes.SEND_MESSAGE__SUCCESS,
-      message,
-    });
+    return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data(message);
   } catch (err) {
     // Check if the error was due to the fact that the other user does not
     // exist. If so, return a regular error
     if (err.code === '23503' && err.constraint === 'messages_receiver_user_id_fkey') {
-      return apiUtils.status(400).json({
-        status: codes.SEND_MESSAGE__USER_NOT_FOUND,
-      });
+      return apiUtils.status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
     }
 
     throw err;

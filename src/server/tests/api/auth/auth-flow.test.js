@@ -30,8 +30,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res.body.email).toContain('Jasmin.Chun@tufts.edu');
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toContain('Jasmin.Chun@tufts.edu');
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
     return request(app)
@@ -45,8 +45,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res2) => {
-        expect(res2.body.status).toBe(codes.VERIFY__SUCCESS);
-        expect(res2.body.token).toBeDefined();
+        expect(res2.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+        expect(res2.body.data.token).toBeDefined();
       });
   });
 
@@ -61,9 +61,9 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json')
-      .expect(401)
+      .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__NO_EMAIL_SENT);
+        expect(res.body.status).toBe(codes.VERIFY__NO_EMAIL_SENT.status);
       });
   });
 
@@ -86,7 +86,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(req1.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(req1.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const req2 = await request(app)
       .post('/api/auth/verify')
@@ -99,7 +99,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(req2.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(req2.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const req3 = await request(app)
       .post('/api/auth/verify')
@@ -112,7 +112,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(req3.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(req3.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
     return request(app)
@@ -126,7 +126,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__EXPIRED_CODE);
+        expect(res.body.status).toBe(codes.VERIFY__EXPIRED_CODE.status);
       });
   });
 
@@ -143,8 +143,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(sendEmailRes.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(sendEmailRes.body.email).toContain('Ronald.Zampolin@tufts.edu');
+    expect(sendEmailRes.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(sendEmailRes.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
     const verifyRes1 = await request(app)
       .post('/api/auth/verify')
@@ -157,7 +157,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(verifyRes1.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(verifyRes1.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const verifyRes2 = await request(app)
       .post('/api/auth/verify')
@@ -170,7 +170,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(verifyRes2.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(verifyRes2.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
@@ -184,7 +184,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
       });
   });
 
@@ -206,7 +206,7 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(400);
 
-    expect(res1.body.status).toBe(codes.VERIFY__BAD_CODE);
+    expect(res1.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
@@ -220,8 +220,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
-        expect(res.body.token).toBeDefined();
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+        expect(res.body.data.token).toBeDefined();
       });
   });
 
@@ -239,8 +239,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
+    expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
     const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     return request(app)
@@ -254,8 +254,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then((res) => {
-        expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
-        expect(res.body.token).toBeDefined();
+        expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+        expect(res.body.data.token).toBeDefined();
       });
   });
 
@@ -271,8 +271,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
+    expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
     let codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     let res = await request(app)
@@ -287,10 +287,10 @@ describe('api/auth/verify', () => {
       .expect(200);
 
 
-    const firstToken = res.body.token;
+    const firstToken = res.body.data.token;
 
-    expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
-    expect(res.body.token).toBeDefined();
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
 
     // Log in again
     res1 = await request(app)
@@ -304,8 +304,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res1.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS);
-    expect(res1.body.email).toContain('Ronald.Zampolin@tufts.edu');
+    expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
     codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     res = await request(app)
@@ -319,8 +319,8 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json')
       .expect(200);
 
-    expect(res.body.status).toBe(codes.VERIFY__SUCCESS);
-    expect(res.body.token).toBeDefined();
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
 
     // Ensure that the first token is invalidated
     res = await request(app)
@@ -329,6 +329,6 @@ describe('api/auth/verify', () => {
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED);
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
 });

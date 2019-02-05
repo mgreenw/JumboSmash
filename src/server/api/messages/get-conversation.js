@@ -34,9 +34,7 @@ const getConversation = async (
 
     // If it is invalid (not an int), fail.
     if (Number.isNaN(mostRecentMessageId) || mostRecentMessageId <= 0) {
-      return apiUtils.status(400).json({
-        status: codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID,
-      });
+      return apiUtils.status(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID).noData();
     }
 
     // Add the "most recent" part of the query
@@ -59,10 +57,7 @@ const getConversation = async (
     [userId, matchUserId, matchUserId, userId],
   );
 
-  return apiUtils.status(200).json({
-    status: codes.GET_CONVERSATION__SUCCESS,
-    messages: result.rows,
-  });
+  return apiUtils.status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
 };
 
 const handler = [
