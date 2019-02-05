@@ -17,6 +17,7 @@ module.exports = {
   },
   rules: {
     "prefer-destructuring": "off",
-    "react/no-multi-comp": "off"
+    "react/no-multi-comp": "off",
+    "no-underscore-dangle": "off"
   }
 };
