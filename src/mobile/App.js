@@ -8,9 +8,9 @@ import { createAppContainer } from '@react-navigation/native';
 import { loggerMiddleware } from 'mobile/reduxMiddleware/loggerMiddleware';
 import { tokenMiddleware } from 'mobile/reduxMiddleware/tokenMiddleware';
 import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
-import NavigationService from './NavigationService';
-import rootReducer from './reducers';
-import { createRootNavigator } from './components/Navigation';
+import NavigationService from 'mobile/NavigationService';
+import rootReducer from 'mobile/reducers';
+import { createRootNavigator } from 'mobile/components/Navigation';
 
 const store = createStore(
   rootReducer,
@@ -33,11 +33,12 @@ export default class App extends React.Component<Props, State> {
     this.state = {};
   }
 
+  /* eslint-disable */
   render() {
     return (
       <Provider store={store}>
         <AppContainer
-          ref={(navigatorRef) => {
+          ref={navigatorRef => {
             NavigationService.setTopLevelNavigator(navigatorRef);
           }}
         />
