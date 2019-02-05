@@ -8,7 +8,6 @@ exports.down = (pgm) => {
   pgm.addColumns('profiles', {
     splash_photo_id: {
       type: 'int',
-      notNull: true,
       unique: true,
     },
   });
