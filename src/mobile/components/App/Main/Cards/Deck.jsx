@@ -1,6 +1,7 @@
 // @flow
+/* eslint-disable */
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Animated,
@@ -8,15 +9,15 @@ import {
   Dimensions,
   StyleSheet,
   LayoutAnimation,
-  UIManager
-} from "react-native";
-import type { AnimatedValueXY, Node } from "react-native";
-import type { UserProfile, Candidate } from "mobile/reducers";
-import DevTesting from "mobile/utils/DevTesting";
+  UIManager,
+} from 'react-native';
+import type { AnimatedValueXY, Node } from 'react-native';
+import type { UserProfile, Candidate } from 'mobile/reducers';
+import DevTesting from 'mobile/utils/DevTesting';
 
-const RIGHT = "right";
-const LEFT = "left";
-export type swipeDirection = "left" | "right";
+const RIGHT = 'right';
+const LEFT = 'left';
+export type swipeDirection = 'left' | 'right';
 
 type Props = {
   data: $ReadOnlyArray<Candidate>,
@@ -27,17 +28,17 @@ type Props = {
   onSwipeLeft: (user: Candidate) => void,
   onSwipeComplete: () => void,
   disableSwipe: boolean,
-  infinite?: boolean
+  infinite?: boolean,
 };
 
 type State = {
   panResponder: any,
   position: AnimatedValueXY,
   index: number,
-  swipeGestureInProgress: boolean
+  swipeGestureInProgress: boolean,
 };
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.4 * SCREEN_WIDTH;
 const TAP_THRESHOLD = 5;
 
@@ -66,9 +67,9 @@ export default class Deck extends React.Component<Props, State> {
         ) {
           this.setState(
             {
-              swipeGestureInProgress: true
+              swipeGestureInProgress: true,
             },
-            () => this.props.onSwipeStart()
+            () => this.props.onSwipeStart(),
           );
         }
         //set the position of the card to the position of the gesture
@@ -87,22 +88,22 @@ export default class Deck extends React.Component<Props, State> {
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
           this._forceSwipe(LEFT, 500);
         } else {
-          DevTesting.log("Swipe dismissed");
+          DevTesting.log('Swipe dismissed');
           this._resetPosition();
         }
 
         //The gesture is over so reset to false
         this.setState({
-          swipeGestureInProgress: false
+          swipeGestureInProgress: false,
         });
-      }
+      },
     });
 
     this.state = {
       panResponder,
       position,
       index: 0,
-      swipeGestureInProgress: false
+      swipeGestureInProgress: false,
     };
   }
 
@@ -117,7 +118,7 @@ export default class Deck extends React.Component<Props, State> {
 
     Animated.timing(this.state.position, {
       toValue: { x: x * 2, y: swipeDirection === RIGHT ? -x : x },
-      duration: duration
+      duration: duration,
     }).start(() => this._onSwipeComplete(swipeDirection));
   }
 
@@ -132,7 +133,7 @@ export default class Deck extends React.Component<Props, State> {
 
   _resetPosition() {
     Animated.spring(this.state.position, {
-      toValue: { x: 0, y: 0 }
+      toValue: { x: 0, y: 0 },
     }).start();
   }
 
@@ -140,12 +141,12 @@ export default class Deck extends React.Component<Props, State> {
     const { position } = this.state;
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2],
-      outputRange: ["-30deg", "0deg", "30deg"]
+      outputRange: ['-30deg', '0deg', '30deg'],
     });
 
     return {
       ...this.state.position.getLayout(),
-      transform: [{ rotate }]
+      transform: [{ rotate }],
     };
   }
 
@@ -180,17 +181,13 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   render() {
-    return (
-      <View style={{ position: "relative", flex: 1 }}>
-        {this._renderCards()}
-      </View>
-    );
+    return <View style={{ position: 'relative', flex: 1 }}>{this._renderCards()}</View>;
   }
 }
 
 const styles = StyleSheet.create({
   cardStyle: {
-    position: "absolute",
-    width: "100%"
-  }
+    position: 'absolute',
+    width: '100%',
+  },
 });

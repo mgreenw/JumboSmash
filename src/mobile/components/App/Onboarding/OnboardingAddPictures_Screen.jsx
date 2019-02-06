@@ -1,21 +1,23 @@
 // @flow
-import React from "react";
-import { Text, View, Dimensions } from "react-native";
-import { connect } from "react-redux";
-import { textStyles } from "mobile/styles/textStyles";
-import type { Dispatch } from "redux";
-import type { ReduxState, PhotoIds } from "mobile/reducers/index";
-import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
-import { routes } from "mobile/components/Navigation";
-import { OnboardingLayout } from "./Onboarding_Layout";
-import AddMultiPhotos from "mobile/components/shared/photos/AddMultiPhotos";
+/* eslint-disable */
+
+import React from 'react';
+import { Text, View, Dimensions } from 'react-native';
+import { connect } from 'react-redux';
+import { textStyles } from 'mobile/styles/textStyles';
+import type { Dispatch } from 'redux';
+import type { ReduxState, PhotoIds } from 'mobile/reducers/index';
+import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
+import { routes } from 'mobile/components/Navigation';
+import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
+import { OnboardingLayout } from './Onboarding_Layout';
 
 type NavigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type ReduxProps = {
-  photoIds: PhotoIds
+  photoIds: PhotoIds,
 };
 
 type DispatchProps = {};
@@ -24,22 +26,19 @@ type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings
+  settings: UserSettings,
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (!reduxState.client) {
-    throw "Error: client is null in onboarding add photos";
+    throw 'Error: client is null in onboarding add photos';
   }
   return {
-    photoIds: reduxState.client.profile.photoIds
+    photoIds: reduxState.client.profile.photoIds,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
   return {};
 }
 
@@ -48,18 +47,15 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     super(props);
     const { navigation } = this.props;
     this.state = {
-      profile: navigation.getParam("profile", null),
-      settings: navigation.getParam("settings", null)
+      profile: navigation.getParam('profile', null),
+      settings: navigation.getParam('settings', null),
     };
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.state != prevState) {
       const { navigation } = this.props;
-      navigation.state.params.onUpdateProfileSettings(
-        this.state.profile,
-        this.state.settings
-      );
+      navigation.state.params.onUpdateProfileSettings(this.state.profile, this.state.settings);
     }
   }
 
@@ -68,20 +64,17 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingBio, {
       profile: this.state.profile,
       settings: this.state.settings,
-      onUpdateProfileSettings: (
-        profile: UserProfile,
-        settings: UserSettings
-      ) => {
+      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
         this.setState({
           profile,
-          settings
+          settings,
         });
-      }
+      },
     });
   };
 
   render() {
-    const { height, width } = Dimensions.get("window");
+    const { height, width } = Dimensions.get('window');
     // A bit of a hack, but we want pictures to look nice.
     // We have 22 padding via onboarding layout, plus an additional 40 here,
     // and  we want 20 padding between each
@@ -94,15 +87,11 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
           // AddMultiPhotos gets direct redux access due to constraints on
           // photo uploading. CreatMyProfile needs previously uploaded photos,
           // which occurs here.
-          <AddMultiPhotos
-            width={containerWidth}
-            imageWidth={imageWidth}
-            enableDeleteFirst={true}
-          />
+          <AddMultiPhotos width={containerWidth} imageWidth={imageWidth} enableDeleteFirst />
         }
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
-        main={true}
+        main
         progress={0}
         buttonDisabled={this.props.photoIds.length === 0}
       />
@@ -112,5 +101,5 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(OnboardingAddPicturesScreen);

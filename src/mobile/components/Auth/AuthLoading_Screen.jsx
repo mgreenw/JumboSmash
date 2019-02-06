@@ -1,29 +1,30 @@
 // @flow
+/* eslint-disable */
 
-import React from "react";
-import { Image, View } from "react-native";
-import { StackNavigator } from "react-navigation";
-import { Font } from "expo";
-import { connect } from "react-redux";
-import type { Dispatch } from "redux";
-import { loadAuth } from "mobile/actions/auth/loadAuth";
-import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { routes } from "mobile/components/Navigation";
-import DevTesting from "mobile/utils/DevTesting";
+import React from 'react';
+import { Image, View } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { Font } from 'expo';
+import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
+import { loadAuth } from 'mobile/actions/auth/loadAuth';
+import type { ReduxState } from 'mobile/reducers/index';
+import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
+import { routes } from 'mobile/components/Navigation';
+import DevTesting from 'mobile/utils/DevTesting';
 
 type reduxProps = {
   token: ?string,
   loadAuthInProgress: boolean,
-  authLoaded: boolean
+  authLoaded: boolean,
 };
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type dispatchProps = {
-  loadAuth: void => void
+  loadAuth: void => void,
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -34,18 +35,15 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
-    authLoaded: reduxState.authLoaded
+    authLoaded: reduxState.authLoaded,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
   return {
     loadAuth: () => {
       dispatch(loadAuth());
-    }
+    },
   };
 }
 
@@ -58,23 +56,23 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     this.state = {};
     Promise.all([
       Font.loadAsync({
-        vegan: require("../../assets/fonts/Vegan-Regular.ttf")
+        vegan: require('../../assets/fonts/Vegan-Regular.ttf'),
       }),
       Font.loadAsync({
-        SourceSansPro: require("../../assets/fonts/SourceSansPro-Regular.ttf")
+        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf'),
       }),
       Font.loadAsync({
-        gemicons: require("../../assets/icons/gemicons.ttf")
+        gemicons: require('../../assets/icons/gemicons.ttf'),
       }),
       Font.loadAsync({
-        AvenirNext: require("../../assets/fonts/AvenirNext-Regular.ttf")
-      })
+        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf'),
+      }),
     ])
       .then(results => {
         this.props.loadAuth();
       })
       .catch(e => {
-        DevTesting.log("Error importing fonts:", e);
+        DevTesting.log('Error importing fonts:', e);
       });
   }
 
@@ -103,9 +101,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             style={{
               flex: 1,
               width: null,
-              height: null
+              height: null,
             }}
-            source={require("../../assets/arthurIcon.png")} // TODO: investigate why  mobile/ does not work
+            source={require('../../assets/arthurIcon.png')} // TODO: investigate why  mobile/ does not work
           />
         </View>
         <View style={{ flex: 1 }} />
@@ -116,5 +114,5 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AuthLoadingScreen);

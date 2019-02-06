@@ -1,37 +1,36 @@
 // @flow
-import React from "react";
-import { Text, View, ScrollView } from "react-native";
-import { connect } from "react-redux";
-import { textStyles } from "mobile/styles/textStyles";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import type { UserSettings, UserProfile, Genders } from "mobile/reducers/index";
-import { routes } from "mobile/components/Navigation";
-import { OnboardingLayout } from "./Onboarding_Layout";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import GEMHeader from "mobile/components/shared/Header";
-import { Transition } from "react-navigation-fluid-transitions";
-import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
+/* eslint-disable */
+
+import React from 'react';
+import { Text, View, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
+import { textStyles } from 'mobile/styles/textStyles';
+import type { Dispatch } from 'redux';
+import type { ReduxState } from 'mobile/reducers/index';
+import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
+import { routes } from 'mobile/components/Navigation';
+import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
+import GEMHeader from 'mobile/components/shared/Header';
+import { Transition } from 'react-navigation-fluid-transitions';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any
+  navigation: any,
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings
+  settings: UserSettings,
 };
 
-export default class OnboardingTermsAndConditionsScreen extends React.Component<
-  Props,
-  State
-> {
+export default class OnboardingTermsAndConditionsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
     this.state = {
-      profile: navigation.getParam("profile", null),
-      settings: navigation.getParam("settings", null)
+      profile: navigation.getParam('profile', null),
+      settings: navigation.getParam('settings', null),
     };
   }
 
@@ -40,23 +39,20 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
     navigation.navigate(routes.OnboardingNameAge, {
       profile: this.state.profile,
       settings: this.state.settings,
-      onUpdateProfileSettings: (
-        profile: UserProfile,
-        settings: UserSettings
-      ) => {
+      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
         this.setState({
           profile,
-          settings
+          settings,
         });
-      }
+      },
     });
   };
 
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <GEMHeader leftIconName={"back"} title={"T & C"} loading={false} />
-        <Transition inline appear={"horizontal"}>
+        <GEMHeader leftIconName="back" title="T & C" loading={false} />
+        <Transition inline appear="horizontal">
           <View style={{ flex: 1 }}>
             <ScrollView>
               <View style={{ paddingLeft: 38, paddingRight: 38 }}>
@@ -77,16 +73,16 @@ Vivamus ac massa ac nunc fringilla auctor at vitae odio. Morbi tincidunt consequ
               <View
                 style={{
                   flex: 1,
-                  flexDirection: "row",
+                  flexDirection: 'row',
                   paddingTop: 35,
-                  paddingBottom: 35
+                  paddingBottom: 35,
                 }}
               >
                 <View style={{ flex: 1 }} />
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
                     onPress={this._goToNextPage}
-                    title={"Accept"}
+                    title="Accept"
                     loading={false}
                     disabled={false}
                   />

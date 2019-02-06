@@ -1,8 +1,8 @@
 // @flow
+/* eslint-disable */
+
 import React from 'react';
-import {
-  Dimensions, View, StyleSheet, ImageBackground,
-} from 'react-native';
+import { Dimensions, View, StyleSheet, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { Input } from 'react-native-elements';
 import type { Dispatch } from 'redux';

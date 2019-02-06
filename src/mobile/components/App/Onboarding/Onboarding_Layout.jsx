@@ -1,14 +1,16 @@
 // @flow
-import * as React from "react"; // need this format to access children
-import { Text, View } from "react-native";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { textStyles } from "mobile/styles/textStyles";
-import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
-import type { UserSettings, UserProfile } from "mobile/reducers/index";
-import { routes } from "mobile/components/Navigation";
-import GEMHeader from "mobile/components/shared/Header";
-import { Transition } from "react-navigation-fluid-transitions";
-import { KeyboardView } from "mobile/components/shared/KeyboardView";
+/* eslint-disable */
+
+import * as React from 'react'; // need this format to access children
+import { Text, View } from 'react-native';
+import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
+import { textStyles } from 'mobile/styles/textStyles';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import type { UserSettings, UserProfile } from 'mobile/reducers/index';
+import { routes } from 'mobile/components/Navigation';
+import GEMHeader from 'mobile/components/shared/Header';
+import { Transition } from 'react-navigation-fluid-transitions';
+import { KeyboardView } from 'mobile/components/shared/KeyboardView';
 
 type Props = {
   body: React.Node,
@@ -19,7 +21,7 @@ type Props = {
   lastScreen?: boolean,
   progress?: number,
   loading?: boolean,
-  buttonDisabled?: boolean
+  buttonDisabled?: boolean,
 };
 type State = {};
 
@@ -35,23 +37,23 @@ export class OnboardingLayout extends React.Component<Props, State> {
       body,
       buttonText,
       progress,
-      buttonDisabled
+      buttonDisabled,
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
-          leftIconName={firstScreen ? undefined : "back"}
-          title={"Profile Setup"}
+          leftIconName={firstScreen ? undefined : 'back'}
+          title={'Profile Setup'}
           loading={loading}
         />
         <KeyboardView>
-          <Transition inline appear={"horizontal"}>
+          <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
                 style={{
                   flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center"
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
                 <View>
@@ -71,19 +73,19 @@ export class OnboardingLayout extends React.Component<Props, State> {
                   flex: 2,
                   paddingLeft: firstScreen || lastScreen ? 20 : 40,
                   paddingRight: firstScreen || lastScreen ? 20 : 40,
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "center"
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 {body}
               </View>
-              <View style={{ flex: 1, flexDirection: "row" }}>
+              <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ flex: 1 }} />
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
                     onPress={onButtonPress}
-                    title={buttonText || "continue"}
+                    title={buttonText || 'continue'}
                     loading={loading}
                     disabled={buttonDisabled}
                   />

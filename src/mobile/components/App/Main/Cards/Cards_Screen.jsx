@@ -1,6 +1,7 @@
 // @flow
+/* eslint-disable */
 
-import React from "react";
+import React from 'react';
 import {
   Text,
   View,
@@ -9,25 +10,25 @@ import {
   TouchableHighlight,
   Image,
   Dimensions,
-  StyleSheet
-} from "react-native";
-import { connect } from "react-redux";
-import { Button, Icon } from "react-native-elements";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import { routes } from "mobile/components/Navigation";
-import Deck from "./Deck";
-import type { swipeDirection } from "./Deck";
-import type { UserProfile, Candidate } from "mobile/reducers";
-import PreviewCard from "mobile/components/shared/PreviewCard";
-import { textStyles } from "mobile/styles/textStyles";
-import { Transition } from "react-navigation-fluid-transitions";
-import GEMHeader from "mobile/components/shared/Header";
-import NavigationService from "mobile/NavigationService";
-import DevTesting from "mobile/utils/DevTesting";
+  StyleSheet,
+} from 'react-native';
+import { connect } from 'react-redux';
+import { Button, Icon } from 'react-native-elements';
+import type { Dispatch } from 'redux';
+import type { ReduxState } from 'mobile/reducers/index';
+import { routes } from 'mobile/components/Navigation';
+import Deck from './Deck';
+import type { swipeDirection } from './Deck';
+import type { UserProfile, Candidate } from 'mobile/reducers';
+import PreviewCard from 'mobile/components/shared/PreviewCard';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Transition } from 'react-navigation-fluid-transitions';
+import GEMHeader from 'mobile/components/shared/Header';
+import NavigationService from 'mobile/NavigationService';
+import DevTesting from 'mobile/utils/DevTesting';
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type reduxProps = {};
@@ -37,7 +38,7 @@ type dispatchProps = {};
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean
+  swipeGestureInProgress: boolean,
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -53,31 +54,31 @@ let DATA: Array<Candidate> = [
   {
     userId: 1,
     profile: {
-      displayName: "Anthony",
-      birthday: "21",
-      bio: "BIO",
-      photoIds: []
-    }
+      displayName: 'Anthony',
+      birthday: '21',
+      bio: 'BIO',
+      photoIds: [],
+    },
   },
   {
     userId: 2,
-    profile: { displayName: "Tony", birthday: "22", bio: "BIO", photoIds: [] }
+    profile: { displayName: 'Tony', birthday: '22', bio: 'BIO', photoIds: [] },
   },
   {
     userId: 3,
-    profile: { displayName: "Ant", birthday: "69", bio: "BIO", photoIds: [] }
+    profile: { displayName: 'Ant', birthday: '69', bio: 'BIO', photoIds: [] },
   },
   {
     userId: 4,
-    profile: { displayName: "T-dawg", birthday: "47", bio: "BIO", photoIds: [] }
-  }
+    profile: { displayName: 'T-dawg', birthday: '47', bio: 'BIO', photoIds: [] },
+  },
 ];
 
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false
+      swipeGestureInProgress: false,
     };
   }
 
@@ -89,7 +90,7 @@ class SwipingScreen extends React.Component<Props, State> {
         onCardTap={() =>
           navigation.navigate(routes.ExpandedCard, {
             user,
-            onMinimize: () => navigation.pop()
+            onMinimize: () => navigation.pop(),
           })
         }
       />
@@ -101,15 +102,15 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeStart = () => {
-    DevTesting.log("swiping");
+    DevTesting.log('swiping');
   };
 
   _onSwipeRight = (user: Candidate) => {
-    DevTesting.log("Card liked: " + user.profile.displayName);
+    DevTesting.log('Card liked: ' + user.profile.displayName);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    DevTesting.log("Card disliked: " + user.profile.displayName);
+    DevTesting.log('Card disliked: ' + user.profile.displayName);
   };
 
   _onSwipeComplete = () => {
@@ -123,17 +124,17 @@ class SwipingScreen extends React.Component<Props, State> {
       if (this.deck) {
         this.deck._forceSwipe(swipeDirection, 750);
       } else {
-        throw "this.deck is null in Cards_Screen";
+        throw 'this.deck is null in Cards_Screen';
       }
     });
   };
 
   _onSwipeLike = () => {
-    this._onPressSwipeButton("right");
+    this._onPressSwipeButton('right');
   };
 
   _onSwipeDislike = () => {
-    this._onPressSwipeButton("left");
+    this._onPressSwipeButton('left');
   };
 
   deck: ?Deck;
@@ -141,14 +142,10 @@ class SwipingScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     return (
-      <Transition inline appear={"scale"}>
+      <Transition inline appear={'scale'}>
         <View style={{ flex: 1 }}>
-          <GEMHeader
-            title="PROJECTGEM"
-            rightIconName="message"
-            leftIconName="user"
-          />
-          <View style={{ backgroundColor: "white", flex: 1 }}>
+          <GEMHeader title="PROJECTGEM" rightIconName="message" leftIconName="user" />
+          <View style={{ backgroundColor: 'white', flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}
               data={DATA}
@@ -168,8 +165,7 @@ class SwipingScreen extends React.Component<Props, State> {
             >
               <Image
                 source={{
-                  uri:
-                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                  uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
                 }}
                 style={styles.swipeButton_dislike}
               />
@@ -180,8 +176,7 @@ class SwipingScreen extends React.Component<Props, State> {
             >
               <Image
                 source={{
-                  uri:
-                    "https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg"
+                  uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
                 }}
                 style={styles.swipeButton_like}
               />
@@ -198,22 +193,22 @@ const swipeButtonBase = {
   borderRadius: 30,
   height: 60,
   width: 60,
-  position: "absolute",
-  bottom: 20
+  position: 'absolute',
+  bottom: 20,
 };
 
 const styles = StyleSheet.create({
   swipeButton_dislike: {
     ...swipeButtonBase,
-    left: 100
+    left: 100,
   },
   swipeButton_like: {
     ...swipeButtonBase,
-    right: 100
-  }
+    right: 100,
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(SwipingScreen);

@@ -1,22 +1,23 @@
 // @flow
+/* eslint-disable */
 
-import React from "react";
-import { Text, View } from "react-native";
-import { connect } from "react-redux";
-import verify from "mobile/api/auth/verify";
-import { login } from "mobile/actions/auth/login";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import { Colors } from "mobile/styles/colors";
-import { textStyles } from "mobile/styles/textStyles";
-import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
-import { TertiaryButton } from "mobile/components/shared/buttons/TertiaryButton";
-import { CodeInput } from "mobile/components/shared/DigitInput";
-import { routes } from "mobile/components/Navigation";
-import { KeyboardView } from "mobile/components/shared/KeyboardView";
-import type { login_response } from "mobile/actions/auth/login";
-import { Transition } from "react-navigation-fluid-transitions";
-import GEMHeader from "mobile/components/shared/Header";
+import React from 'react';
+import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
+import verify from 'mobile/api/auth/verify';
+import { login } from 'mobile/actions/auth/login';
+import type { Dispatch } from 'redux';
+import type { ReduxState } from 'mobile/reducers/index';
+import { Colors } from 'mobile/styles/colors';
+import { textStyles } from 'mobile/styles/textStyles';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { TertiaryButton } from 'mobile/components/shared/buttons/TertiaryButton';
+import { CodeInput } from 'mobile/components/shared/DigitInput';
+import { routes } from 'mobile/components/Navigation';
+import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import type { login_response } from 'mobile/actions/auth/login';
+import { Transition } from 'react-navigation-fluid-transitions';
+import GEMHeader from 'mobile/components/shared/Header';
 
 const NUM_DIGITS = 6;
 
@@ -24,18 +25,18 @@ type State = {
   code: string,
   validCode: boolean,
   errorMessageCode: string,
-  verifyUtlnInProgress: boolean
+  verifyUtlnInProgress: boolean,
 };
 
 type reduxProps = {
   login_inProgress: boolean,
-  login_response: ?login_response
+  login_response: ?login_response,
 };
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 type dispatchProps = {
-  login: (utln: string, code: string) => void
+  login: (utln: string, code: string) => void,
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -43,18 +44,15 @@ type Props = reduxProps & navigationProps & dispatchProps;
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     login_inProgress: reduxState.inProgress.login,
-    login_response: reduxState.response.login
+    login_response: reduxState.response.login,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
   return {
     login: (utln, code) => {
       dispatch(login(utln, code));
-    }
+    },
   };
 }
 
@@ -62,10 +60,10 @@ class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      code: "",
+      code: '',
       validCode: true,
-      errorMessageCode: "",
-      verifyUtlnInProgress: false
+      errorMessageCode: '',
+      verifyUtlnInProgress: false,
     };
   }
 
@@ -73,7 +71,7 @@ class SplashScreen extends React.Component<Props, State> {
     if (prevProps.login_inProgress != this.props.login_inProgress) {
       if (!this.props.login_inProgress && this.props.login_response) {
         const { navigate } = this.props.navigation;
-        if (this.props.login_response.statusCode === "SUCCESS") {
+        if (this.props.login_response.statusCode === 'SUCCESS') {
           navigate(routes.AppSwitch, {});
         } else {
           // TODO: more verbose errors
@@ -84,8 +82,8 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   _validateUtln = () => {
-    if (this.state.code == "") {
-      this._codeInputError("Required");
+    if (this.state.code == '') {
+      this._codeInputError('Required');
       return false;
     }
     return true;
@@ -94,7 +92,7 @@ class SplashScreen extends React.Component<Props, State> {
   _codeInputError = (errorMessage: string) => {
     this.setState({
       validCode: false,
-      errorMessageCode: errorMessage
+      errorMessageCode: errorMessage,
     });
   };
 
@@ -102,7 +100,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
     navigate(routes.ExpiredCode, {
       utln: utln,
-      email: email
+      email: email,
     });
   };
 
@@ -127,30 +125,30 @@ class SplashScreen extends React.Component<Props, State> {
       return;
     }
     const { navigation } = this.props;
-    const utln = navigation.getParam("utln", null);
-    const email = navigation.getParam("email", null);
+    const utln = navigation.getParam('utln', null);
+    const email = navigation.getParam('email', null);
     if (!utln || !email) {
-      throw ("Error in Verify Screen: utln or email null: ", utln, email);
+      throw ('Error in Verify Screen: utln or email null: ', utln, email);
     }
     this.setState(
       {
         validCode: true,
-        errorMessageCode: ""
+        errorMessageCode: '',
       },
       () => {
         this.props.login(utln, this.state.code);
-      }
+      },
     );
   };
 
   _onChangeText = (text: string) => {
-    this.setState({ code: text, validCode: true, errorMessageCode: "" });
+    this.setState({ code: text, validCode: true, errorMessageCode: '' });
   };
 
   render() {
     const { navigation } = this.props;
-    const email = navigation.getParam("email", "");
-    const alreadySent = navigation.getParam("alreadySent", false);
+    const email = navigation.getParam('email', '');
+    const alreadySent = navigation.getParam('alreadySent', false);
     const isLoading = this.props.login_inProgress;
 
     const message = alreadySent
@@ -159,25 +157,21 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader
-          title={"Verification"}
-          leftIconName={"back"}
-          loading={isLoading}
-        />
+        <GEMHeader title={'Verification'} leftIconName={'back'} loading={isLoading} />
         <KeyboardView waves={1}>
-          <Transition inline appear={"horizontal"}>
+          <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 2
+                  flex: 2,
                 }}
               >
                 <View
                   style={{
                     flex: 1,
-                    alignItems: "center",
+                    alignItems: 'center',
                     paddingLeft: 50,
-                    paddingRight: 50
+                    paddingRight: 50,
                   }}
                 >
                   <View style={{ paddingTop: 20 }}>
@@ -186,9 +180,9 @@ class SplashScreen extends React.Component<Props, State> {
                 </View>
                 <View
                   style={{
-                    width: "100%",
+                    width: '100%',
                     paddingLeft: 40,
-                    paddingRight: 40
+                    paddingRight: 40,
                   }}
                 >
                   <CodeInput
@@ -198,16 +192,16 @@ class SplashScreen extends React.Component<Props, State> {
                     primaryColor={Colors.Black}
                     errorColor={Colors.Grapefruit}
                     error={this.state.errorMessageCode}
-                    assistive={"Make sure to check your spam folder!"}
+                    assistive={'Make sure to check your spam folder!'}
                   />
                   <View style={{ padding: 20 }}>
                     <Text
                       style={[
                         textStyles.headline6Style,
-                        { textAlign: "center", color: Colors.Grapefruit }
+                        { textAlign: 'center', color: Colors.Grapefruit },
                       ]}
                     >
-                      {"COUNTDOWN" /* TODO: make countdown timer */}
+                      {'COUNTDOWN' /* TODO: make countdown timer */}
                     </Text>
                   </View>
                 </View>
@@ -215,28 +209,23 @@ class SplashScreen extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: "row"
+                  flexDirection: 'row',
                 }}
               >
                 <View style={{ flex: 1 }} />
                 <View
                   style={{
                     flex: 1,
-                    justifyContent: "space-around"
+                    justifyContent: 'space-around',
                   }}
                 >
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="submit"
-                    disabled={
-                      isLoading || this.state.code.length !== NUM_DIGITS
-                    }
+                    disabled={isLoading || this.state.code.length !== NUM_DIGITS}
                     loading={isLoading}
                   />
-                  <TertiaryButton
-                    onPress={this._onHelp}
-                    title="Having Touble?"
-                  />
+                  <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
                 </View>
                 <View style={{ flex: 1 }} />
               </View>
@@ -250,5 +239,5 @@ class SplashScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(SplashScreen);

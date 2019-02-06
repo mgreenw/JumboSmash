@@ -1,6 +1,7 @@
 // @flow
+/* eslint-disable */
 
-import React from "react";
+import React from 'react';
 import {
   Alert,
   Linking,
@@ -11,46 +12,46 @@ import {
   View,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback
-} from "react-native";
-import { StackNavigator } from "react-navigation";
-import { Button, Input } from "react-native-elements";
-import { PrimaryInput } from "mobile/components/shared/PrimaryInput";
-import { connect } from "react-redux";
-import { styles } from "mobile/styles/auth";
-import { sendVerificationEmail } from "mobile/actions/auth/sendVerificationEmail";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import { Arthur_Styles } from "mobile/styles/Arthur_Styles";
-import { PrimaryButton } from "mobile/components/shared/buttons/PrimaryButton";
-import { TertiaryButton } from "mobile/components/shared/buttons/TertiaryButton";
-import { routes } from "mobile/components/Navigation";
-import { KeyboardView } from "mobile/components/shared/KeyboardView";
-import type { sendVerificationEmail_response } from "mobile/actions/auth/sendVerificationEmail";
-import { Transition } from "react-navigation-fluid-transitions";
-import GEMHeader from "mobile/components/shared/Header";
+  TouchableWithoutFeedback,
+} from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { Button, Input } from 'react-native-elements';
+import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
+import { connect } from 'react-redux';
+import { styles } from 'mobile/styles/auth';
+import { sendVerificationEmail } from 'mobile/actions/auth/sendVerificationEmail';
+import type { Dispatch } from 'redux';
+import type { ReduxState } from 'mobile/reducers/index';
+import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { TertiaryButton } from 'mobile/components/shared/buttons/TertiaryButton';
+import { routes } from 'mobile/components/Navigation';
+import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import type { sendVerificationEmail_response } from 'mobile/actions/auth/sendVerificationEmail';
+import { Transition } from 'react-navigation-fluid-transitions';
+import GEMHeader from 'mobile/components/shared/Header';
 import Dialog, {
   DialogTitle,
   DialogContent,
   DialogFooter,
   DialogButton,
   SlideAnimation,
-  ScaleAnimation
-} from "react-native-popup-dialog";
-import { textStyles } from "mobile/styles/textStyles";
-import { Colors } from "mobile/styles/colors";
+  ScaleAnimation,
+} from 'react-native-popup-dialog';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
 
 type reduxProps = {
   sendVerificationEmail_inProgress: boolean,
-  sendVerificationEmail_response: ?sendVerificationEmail_response
+  sendVerificationEmail_response: ?sendVerificationEmail_response,
 };
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type dispatchProps = {
-  sendVerificationEmail: (utln: string) => void
+  sendVerificationEmail: (utln: string) => void,
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -59,26 +60,22 @@ type State = {
   utln: string,
   validUtln: boolean,
   errorMessageUtln: string,
-  showPopup: boolean
+  showPopup: boolean,
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
-    sendVerificationEmail_inProgress:
-      reduxState.inProgress.sendVerificationEmail,
-    sendVerificationEmail_response: reduxState.response.sendVerificationEmail
+    sendVerificationEmail_inProgress: reduxState.inProgress.sendVerificationEmail,
+    sendVerificationEmail_response: reduxState.response.sendVerificationEmail,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
   return {
     // no need for force resend here.
     sendVerificationEmail: utln => {
       dispatch(sendVerificationEmail(utln, false));
-    }
+    },
   };
 }
 
@@ -86,49 +83,49 @@ class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
-    const error = navigation.getParam("error", null);
+    const error = navigation.getParam('error', null);
     this.state = {
-      utln: "",
+      utln: '',
       validUtln: true,
-      errorMessageUtln: "",
-      showPopup: error != null
+      errorMessageUtln: '',
+      showPopup: error != null,
     };
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (
-      prevProps.sendVerificationEmail_inProgress !=
-        this.props.sendVerificationEmail_inProgress &&
+      prevProps.sendVerificationEmail_inProgress != this.props.sendVerificationEmail_inProgress &&
       !this.props.sendVerificationEmail_inProgress
     ) {
       const response = this.props.sendVerificationEmail_response;
       if (!response) {
-        throw "Error in Login: Send Verification Email complete but no response";
+        throw 'Error in Login: Send Verification Email complete but no response';
       }
       switch (response.statusCode) {
-        case "SUCCESS": {
+        case 'SUCCESS': {
           this._onSuccess(response.utln, response.email, false);
           break;
         }
-        case "ALREADY_SENT": {
+        case 'ALREADY_SENT': {
           this._onSuccess(response.utln, response.email, true);
           break;
         }
-        case "WRONG_CLASS_YEAR": {
+        case 'WRONG_CLASS_YEAR': {
           this._onNot2019(response.classYear);
         }
         // TODO: maybe this needs its own case or be part of Not_2019?
-        case "NOT_STUDENT": {
+        case 'NOT_STUDENT': {
           this._onNotFound();
           break;
         }
-        case "NOT_FOUND": {
+        case 'NOT_FOUND': {
           this._onNotFound();
           break;
         }
       }
     }
   }
+
   // for refs
   utlnInput: Input;
 
@@ -137,21 +134,21 @@ class SplashScreen extends React.Component<Props, State> {
   _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
     const { navigate } = this.props.navigation;
     navigate(routes.Verify, {
-      utln: utln,
-      email: email,
-      alreadySent: alreadySent
+      utln,
+      email,
+      alreadySent,
     });
   };
 
   _onNot2019 = (classYear: string) => {
     const { navigate } = this.props.navigation;
     navigate(routes.Not2019, {
-      classYear: classYear
+      classYear,
     });
   };
 
   _onNotFound = () => {
-    this._utlnInputError("Could not find UTLN");
+    this._utlnInputError('Could not find UTLN');
   };
 
   _onHelp = () => {
@@ -165,11 +162,11 @@ class SplashScreen extends React.Component<Props, State> {
       this.setState(
         {
           validUtln: true,
-          errorMessageUtln: ""
+          errorMessageUtln: '',
         },
         () => {
           this.props.sendVerificationEmail(this.state.utln);
-        }
+        },
       );
     }
   };
@@ -177,14 +174,14 @@ class SplashScreen extends React.Component<Props, State> {
   _utlnInputError = (errorMessage: string) => {
     this.setState({
       validUtln: false,
-      errorMessageUtln: errorMessage
+      errorMessageUtln: errorMessage,
     });
   };
 
   // TODO: more client side validation!
   _validateUtln = () => {
-    if (this.state.utln == "") {
-      this._utlnInputError("Required");
+    if (this.state.utln == '') {
+      this._utlnInputError('Required');
       return false;
     }
     return true;
@@ -195,8 +192,8 @@ class SplashScreen extends React.Component<Props, State> {
     if (utln !== this.state.utln && !this.state.validUtln) {
       this.setState({
         validUtln: true,
-        errorMessageUtln: "",
-        utln
+        errorMessageUtln: '',
+        utln,
       });
     } else {
       this.setState({ utln });
@@ -211,53 +208,47 @@ class SplashScreen extends React.Component<Props, State> {
       <View style={Arthur_Styles.container}>
         <View style={{ height: 64 }} />
         <KeyboardView waves={1}>
-          <Transition inline appear={"horizontal"}>
+          <Transition inline appear="horizontal">
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 2, alignItems: "center" }}>
+              <View style={{ flex: 2, alignItems: 'center' }}>
                 <Text style={Arthur_Styles.title}>Project Gem</Text>
                 <Image
                   resizeMode="contain"
                   style={{
                     flex: 1,
-                    maxWidth: "60%"
+                    maxWidth: '60%',
                   }}
-                  source={require("../../../assets/arthurIcon.png")} // TODO: investigate why mobile/ does not work
+                  source={require('../../../assets/arthurIcon.png')} // TODO: investigate why mobile/ does not work
                 />
                 <PrimaryInput
                   label="UTLN"
                   onChange={this._onInputChange}
                   error={this.state.errorMessageUtln}
                   assistive="Ex: jjaffe01"
-                  containerStyle={{ width: "60%" }}
-                  autoCapitalize={"none"}
+                  containerStyle={{ width: '60%' }}
+                  autoCapitalize="none"
                 />
               </View>
               <View
                 style={{
                   flex: 1,
-                  flexDirection: "row"
+                  flexDirection: 'row',
                 }}
               >
                 <View style={{ flex: 1 }} />
                 <View
                   style={{
                     flex: 1,
-                    justifyContent: "space-around"
+                    justifyContent: 'space-around',
                   }}
                 >
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="Roll 'Bos'"
-                    disabled={
-                      this.props.sendVerificationEmail_inProgress ||
-                      this.state.utln == ""
-                    }
+                    disabled={this.props.sendVerificationEmail_inProgress || this.state.utln == ''}
                     loading={this.props.sendVerificationEmail_inProgress}
                   />
-                  <TertiaryButton
-                    onPress={this._onHelp}
-                    title="Having Touble?"
-                  />
+                  <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
                 </View>
                 <View style={{ flex: 1 }} />
               </View>
@@ -271,8 +262,8 @@ class SplashScreen extends React.Component<Props, State> {
           actionsBordered
           dialogStyle={{
             /* This is a hack so that we can do a shadow over a wrapper */
-            backgroundColor: "transparent",
-            padding: 18
+            backgroundColor: 'transparent',
+            padding: 18,
           }}
           onTouchOutside={() => {
             this.setState({ showPopup: false });
@@ -287,9 +278,9 @@ class SplashScreen extends React.Component<Props, State> {
               shadowRadius: 4,
               shadowOffset: {
                 height: 2,
-                width: 0
+                width: 0,
               },
-              padding: 20
+              padding: 20,
             }}
           >
             <View>
@@ -298,11 +289,11 @@ class SplashScreen extends React.Component<Props, State> {
                   textStyles.headline4StyleMedium,
                   {
                     color: Colors.Grapefruit,
-                    textAlign: "center"
-                  }
+                    textAlign: 'center',
+                  },
                 ]}
               >
-                {"Your session has expired, please login again!"}
+                {'Your session has expired, please login again!'}
               </Text>
             </View>
           </DialogContent>
@@ -314,5 +305,5 @@ class SplashScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(SplashScreen);
