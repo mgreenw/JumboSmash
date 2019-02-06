@@ -46,7 +46,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
           title={'Profile Setup'}
           loading={loading}
         />
-        <KeyboardView>
+        <KeyboardView waves={1}>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
