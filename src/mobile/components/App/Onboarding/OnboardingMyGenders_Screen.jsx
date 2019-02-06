@@ -1,12 +1,8 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
@@ -21,15 +17,7 @@ type State = {
   settings: UserSettings,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-class OnboardingMyGendersScreen extends React.Component<Props, State> {
+export default class OnboardingMyGendersScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -40,16 +28,17 @@ class OnboardingMyGendersScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state != prevState) {
+    if (this.state !== prevState) {
       const { navigation } = this.props;
-      navigation.state.params.onUpdateProfileSettings(this.state.profile, this.state.settings);
+      const { profile, settings } = this.state;
+      navigation.state.params.onUpdateProfileSettings(profile, settings);
     }
   }
 
   _onMyPronounChange = (genderIdentities: Genders) => {
-    this.setState((state, props) => ({
+    this.setState(state => ({
       settings: {
-        ...this.state.settings,
+        ...state.settings,
         useGenders: genderIdentities,
       },
     }));
@@ -57,19 +46,21 @@ class OnboardingMyGendersScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
+    const { profile, settings } = this.state;
     navigation.navigate(routes.OnboardingWantGenders, {
-      profile: this.state.profile,
-      settings: this.state.settings,
-      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
+      profile,
+      settings,
+      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
         this.setState({
-          profile,
-          settings,
+          profile: newProfile,
+          settings: newSettings,
         });
       },
     });
   };
 
   render() {
+    const { settings } = this.state;
     const body = (
       <View style={{ flex: 1, width: '100%' }}>
         <Text style={[textStyles.subtitle1Style, { textAlign: 'center', paddingBottom: 30 }]}>
@@ -81,7 +72,7 @@ class OnboardingMyGendersScreen extends React.Component<Props, State> {
           {'I identify as:'}
         </Text>
         <GenderSelector
-          defaultGenders={this.state.settings.useGenders}
+          defaultGenders={settings.useGenders}
           onChange={this._onMyPronounChange}
           plural={false}
         />
@@ -94,12 +85,10 @@ class OnboardingMyGendersScreen extends React.Component<Props, State> {
         title="Gender Identity"
         main
         progress={0}
+        buttonDisabled={
+          !settings.useGenders.female && !settings.useGenders.nonBinary && !settings.useGenders.male
+        }
       />
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(OnboardingMyGendersScreen);
