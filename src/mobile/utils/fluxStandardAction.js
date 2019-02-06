@@ -1,13 +1,11 @@
 // https://github.com/redux-utilities/flux-standard-action
 // @flow
-import { isPlainObject, isString } from "lodash";
+/* eslint-disable */
+
+import { isPlainObject, isString } from 'lodash';
 
 export function isFSA(action: any) {
-  return (
-    isPlainObject(action) &&
-    isString(action.type) &&
-    Object.keys(action).every(isValidKey)
-  );
+  return isPlainObject(action) && isString(action.type) && Object.keys(action).every(isValidKey);
 }
 
 export function isError(action: any) {
@@ -15,5 +13,5 @@ export function isError(action: any) {
 }
 
 function isValidKey(key) {
-  return ["type", "payload", "error", "meta"].indexOf(key) > -1;
+  return ['type', 'payload', 'error', 'meta'].indexOf(key) > -1;
 }

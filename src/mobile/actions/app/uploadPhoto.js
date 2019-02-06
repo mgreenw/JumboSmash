@@ -1,39 +1,41 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "mobile/utils/DevTesting";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
-import { getSignedUrl } from "mobile/api/photos/getSignedUrl";
-import { uploadPhotoToS3 } from "mobile/api/photos/uploadPhoto";
-import { confirmUpload } from "mobile/api/photos/confirmUpload";
+/* eslint-disable */
+
+import type { Dispatch, GetState } from 'redux';
+import DevTesting from 'mobile/utils/DevTesting';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import { getSignedUrl } from 'mobile/api/photos/getSignedUrl';
+import { uploadPhotoToS3 } from 'mobile/api/photos/uploadPhoto';
+import { confirmUpload } from 'mobile/api/photos/confirmUpload';
 
 export type UploadPhotoInitiated_Action = {
-  type: "UPLOAD_PHOTO__INITIATED",
+  type: 'UPLOAD_PHOTO__INITIATED',
   payload: {},
-  meta: {}
+  meta: {},
 };
 export type UploadPhotoCompleted_Action = {
-  type: "UPLOAD_PHOTO__COMPLETED",
+  type: 'UPLOAD_PHOTO__COMPLETED',
   payload: {
-    photoId: number
+    photoId: number,
   },
-  meta: {}
+  meta: {},
 };
 
 function initiate(): UploadPhotoInitiated_Action {
   return {
-    type: "UPLOAD_PHOTO__INITIATED",
+    type: 'UPLOAD_PHOTO__INITIATED',
     payload: {},
-    meta: {}
+    meta: {},
   };
 }
 
 function complete(photoId: number): UploadPhotoCompleted_Action {
   return {
-    type: "UPLOAD_PHOTO__COMPLETED",
+    type: 'UPLOAD_PHOTO__COMPLETED',
     payload: {
-      photoId
+      photoId,
     },
-    meta: {}
+    meta: {},
   };
 }
 
@@ -50,7 +52,7 @@ export function uploadPhoto(uri: string) {
               dispatch(complete(photoId));
             });
           } else {
-            throw "Error Uploading Photo";
+            throw 'Error Uploading Photo';
           }
         });
       })

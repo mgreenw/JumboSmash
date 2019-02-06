@@ -1,33 +1,35 @@
 // @flow
-import type { Dispatch } from "redux";
-import { AsyncStorage } from "react-native";
-import DevTesting from "../../utils/DevTesting";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
+
+import type { Dispatch } from 'redux';
+import { AsyncStorage } from 'react-native';
+import DevTesting from '../../utils/DevTesting';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type LogoutInitiated_Action = {
-  type: "LOGOUT_INITIATED",
+  type: 'LOGOUT_INITIATED',
   payload: {},
-  meta: {}
+  meta: {},
 };
 export type LogoutCompleted_Action = {
-  type: "LOGOUT_COMPLETED",
+  type: 'LOGOUT_COMPLETED',
   payload: {},
-  meta: {}
+  meta: {},
 };
 
 function initiate(): LogoutInitiated_Action {
   return {
-    type: "LOGOUT_INITIATED",
+    type: 'LOGOUT_INITIATED',
     payload: {},
-    meta: {}
+    meta: {},
   };
 }
 
 function complete(): LogoutCompleted_Action {
   return {
-    type: "LOGOUT_COMPLETED",
+    type: 'LOGOUT_COMPLETED',
     payload: {},
-    meta: {}
+    meta: {},
   };
 }
 
@@ -38,7 +40,7 @@ export function logout() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      AsyncStorage.multiRemove(["token"]).then(stores => {
+      AsyncStorage.multiRemove(['token']).then(stores => {
         dispatch(complete());
       });
     });
