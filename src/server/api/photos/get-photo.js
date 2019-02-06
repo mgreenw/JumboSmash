@@ -39,6 +39,9 @@ const getPhoto = async (photoId: number) => {
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
     // Weird flowtype issue requires us to specifically define return type
+    // Same bug as https://github.com/facebook/flow/issues/5294. Not resolve.
+    // Should look into this more: Max made a trello ticket 2/4/19
+    // $FlowFixMe
     return apiUtils.status(codes.GET_PHOTO__NOT_FOUND).noData();
   }
 
