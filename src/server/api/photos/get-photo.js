@@ -15,7 +15,7 @@ const NODE_ENV = serverUtils.getNodeEnv();
 const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
-const getSignedUrl = async (params) => {
+const getSignedUrl = async (params): Promise<string> => {
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('getObject', params, (err, url) => {
       if (err) return reject(err);
@@ -39,10 +39,7 @@ const getPhoto = async (photoId: number) => {
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
     // Weird flowtype issue requires us to specifically define return type
-    const notFoundBody: { body: { status: string }, statusCode: number } = apiUtils
-      .status(codes.GET_PHOTO__NOT_FOUND)
-      .noData();
-    return notFoundBody;
+    return apiUtils.status(codes.GET_PHOTO__NOT_FOUND).noData();
   }
 
   // Sign a url for the photo and redirect the request to it
