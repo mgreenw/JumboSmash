@@ -11,6 +11,7 @@ import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import OnboardingProgress from 'mobile/components/shared/OnboardingProgress';
 
 type Props = {
   body: React.Node,
@@ -47,11 +48,14 @@ export class OnboardingLayout extends React.Component<Props, State> {
           loading={loading}
         />
         <KeyboardView>
+          <View style={{ paddingTop: 20 }}>
+            {progress !== undefined && <OnboardingProgress progress={progress} maxProgress={4} />}
+          </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 1,
+                  flex: 0.5,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}

@@ -93,7 +93,7 @@ class OnboardingMyGendersScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="Gender Identity"
         main
-        progress={0}
+        progress={1}
       />
     );
   }

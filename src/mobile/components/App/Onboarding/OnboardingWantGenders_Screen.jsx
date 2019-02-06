@@ -93,7 +93,7 @@ class OnboardingWantGendersScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="Pronoun Preferences"
         main
-        progress={0}
+        progress={2}
       />
     );
   }

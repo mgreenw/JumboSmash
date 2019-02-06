@@ -92,7 +92,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main
-        progress={0}
+        progress={3}
         buttonDisabled={this.props.photoIds.length === 0}
       />
     );
