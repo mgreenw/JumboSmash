@@ -1,10 +1,12 @@
 // @flow
-import React from "react";
-import { textStyles } from "mobile/styles/textStyles";
-import Hoshi from "./customTextInput/Hoshi";
-import { Colors } from "mobile/styles/colors";
-import { View } from "react-native";
-import AssistiveError from "mobile/components/shared/AssistiveError";
+/* eslint-disable */
+
+import React from 'react';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
+import { View } from 'react-native';
+import AssistiveError from 'mobile/components/shared/AssistiveError';
+import Hoshi from './customTextInput/Hoshi';
 
 type Props = {
   label: string,
@@ -12,9 +14,9 @@ type Props = {
   error: string,
   containerStyle: any, // TODO: type as a stylesheet
   onChange: (value: string) => void,
-  autoCapitalize?: "none" | "sentences" | "words" | "characters",
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters',
   value?: string,
-  maxLength?: number
+  maxLength?: number,
 };
 
 type State = {};
@@ -38,11 +40,7 @@ export class PrimaryInput extends React.Component<Props, State> {
           selectedColor={Colors.AquaMarine}
           errorColor={errorColor}
         />
-        <AssistiveError
-          {...this.props}
-          primaryColor={primaryColor}
-          errorColor={errorColor}
-        />
+        <AssistiveError {...this.props} primaryColor={primaryColor} errorColor={errorColor} />
       </View>
     );
   }

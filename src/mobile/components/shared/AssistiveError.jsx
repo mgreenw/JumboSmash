@@ -1,35 +1,37 @@
 // @flow
+/* eslint-disable */
+
 // Displays an assistive message, or transitions to an console.error
 
-import React from "react";
-import PropTypes from "prop-types";
-import { Animated, Text, View, Easing, StyleSheet } from "react-native";
-import { Colors } from "mobile/styles/colors";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Animated, Text, View, Easing, StyleSheet } from 'react-native';
+import { Colors } from 'mobile/styles/colors';
 
 type Props = {
   assistive: string,
   error: string,
   primaryColor: string,
   errorColor: string,
-  centered?: boolean
+  centered?: boolean,
 };
 
 type State = {
-  errorAnim: Animated.Value
+  errorAnim: Animated.Value,
 };
 
 export default class AssistiveError extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      errorAnim: new Animated.Value(0)
+      errorAnim: new Animated.Value(0),
     };
   }
 
   static defaultProps = {
     primaryColor: Colors.Black,
     errorColor: Colors.Grapefruit,
-    selectedColor: Colors.AquaMarine
+    selectedColor: Colors.AquaMarine,
   };
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -44,7 +46,7 @@ export default class AssistiveError extends React.Component<Props, State> {
     Animated.timing(this.state.errorAnim, {
       toValue: active ? 1 : 0,
       duration: 200,
-      useNativeDriver: false
+      useNativeDriver: false,
     }).start();
   };
 
@@ -57,25 +59,25 @@ export default class AssistiveError extends React.Component<Props, State> {
         style={[
           {
             height: 18,
-            width: "100%"
+            width: '100%',
           },
           centered && {
-            justifyContent: "center",
-            alignItems: "center"
-          }
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
         ]}
       >
         <Animated.Text
           style={[
             styles.text,
             {
-              textAlign: centered ? "center" : null,
+              textAlign: centered ? 'center' : null,
               color: errorColor,
               opacity: errorAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, 1]
-              })
-            }
+                outputRange: [0, 1],
+              }),
+            },
           ]}
         >
           {error}
@@ -84,16 +86,16 @@ export default class AssistiveError extends React.Component<Props, State> {
           style={[
             styles.text,
             {
-              textAlign: "center",
+              textAlign: 'center',
               color: primaryColor,
               opacity: errorAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [1, 0]
-              })
-            }
+                outputRange: [1, 0],
+              }),
+            },
           ]}
         >
-          {error ? "" : assistive /* to instantly fade */}
+          {error ? '' : assistive /* to instantly fade */}
         </Animated.Text>
       </View>
     );
@@ -102,9 +104,9 @@ export default class AssistiveError extends React.Component<Props, State> {
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
     fontSize: 14,
     paddingLeft: 7,
-    position: "absolute"
-  }
+    position: 'absolute',
+  },
 });

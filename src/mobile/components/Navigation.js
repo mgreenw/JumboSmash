@@ -1,17 +1,12 @@
 // @flow
 /* eslint-disable */
 
-import React from 'react';
-import {
-  createStackNavigator,
-  createSwitchNavigator,
-  createBottomTabNavigator,
-} from 'react-navigation';
-import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
+import { createStackNavigator } from 'react-navigation';
+import { FluidNavigator } from 'react-navigation-fluid-transitions';
 
-//////////
+// ////////
 // AUTH:
-//////////
+// ////////
 
 // Entry point; used to load from phone storage & determine route
 import AuthLoading from 'mobile/components/Auth/AuthLoading_Screen';
@@ -23,9 +18,9 @@ import ExpiredCode from 'mobile/components/Auth/Login/ExpiredCode_Screen';
 import Not2019 from 'mobile/components/Auth/Login/Not2019_Screen';
 import AuthHelp from 'mobile/components/Auth/Login/AuthHelp_Screen';
 
-/////////
+// ///////
 // APP:
-/////////
+// ///////
 
 import AppLoading from 'mobile/components/App/AppLoading_Screen';
 
@@ -237,8 +232,8 @@ const AppSwitch = FluidNavigator(
   },
 );
 
-export const createRootNavigator = () => {
-  return FluidNavigator(
+export const createRootNavigator = () =>
+  FluidNavigator(
     {
       APP_SWITCH: AppSwitch,
       AUTH_SWITCH: AuthSwitch,
@@ -248,4 +243,3 @@ export const createRootNavigator = () => {
       ...removeHeader,
     },
   );
-};

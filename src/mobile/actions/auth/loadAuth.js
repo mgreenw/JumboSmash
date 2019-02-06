@@ -1,35 +1,37 @@
 // @flow
-import type { Dispatch } from "redux";
-import { AsyncStorage } from "react-native";
-import DevTesting from "../../utils/DevTesting";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
+
+import type { Dispatch } from 'redux';
+import { AsyncStorage } from 'react-native';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import DevTesting from '../../utils/DevTesting';
 
 export type LoadAuthCompleted_Action = {
-  type: "LOAD_AUTH__COMPLETED",
+  type: 'LOAD_AUTH__COMPLETED',
   payload: {
-    token: string
+    token: string,
   },
-  meta: {}
+  meta: {},
 };
 export type LoadAuthInitiated_Action = {
-  type: "LOAD_AUTH__INITIATED",
+  type: 'LOAD_AUTH__INITIATED',
   payload: {},
-  meta: {}
+  meta: {},
 };
 
 function initiate(): LoadAuthInitiated_Action {
   return {
-    type: "LOAD_AUTH__INITIATED",
+    type: 'LOAD_AUTH__INITIATED',
     payload: {},
-    meta: {}
+    meta: {},
   };
 }
 
 function complete(token: string): LoadAuthCompleted_Action {
   return {
-    type: "LOAD_AUTH__COMPLETED",
-    payload: { token: token },
-    meta: {}
+    type: 'LOAD_AUTH__COMPLETED',
+    payload: { token },
+    meta: {},
   };
 }
 
@@ -37,7 +39,7 @@ export function loadAuth() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      AsyncStorage.multiGet(["token"])
+      AsyncStorage.multiGet(['token'])
         .then(stores => {
           const token = stores[0][1];
           dispatch(complete(token));

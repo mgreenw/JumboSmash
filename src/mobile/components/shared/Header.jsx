@@ -1,21 +1,24 @@
 // @flow
-import React from "react";
-import { View, TouchableOpacity, StatusBar } from "react-native";
-import type { UserProfile, Candidate } from "mobile/reducers";
-import { HeaderIcon } from "./HeaderIcon";
-import { Header } from "react-native-elements";
-import { textStyles } from "mobile/styles/textStyles";
+/* eslint-disable */
 
-import { routes } from "mobile/components/Navigation";
+import React from 'react';
+import { View, TouchableOpacity, StatusBar } from 'react-native';
+import type { UserProfile, Candidate } from 'mobile/reducers';
+import { Header } from 'react-native-elements';
+import { textStyles } from 'mobile/styles/textStyles';
 
-import type { IconName } from "mobile/assets/icons/CustomIcon";
+import { routes } from 'mobile/components/Navigation';
+
+import type { IconName } from 'mobile/assets/icons/CustomIcon';
+import { HeaderIcon } from './HeaderIcon';
+
 type screen =
-  | "profile"
-  | "cards"
-  | "matches"
-  | "onboarding-start"
-  | "onboarding-main"
-  | "profile-edit";
+  | 'profile'
+  | 'cards'
+  | 'matches'
+  | 'onboarding-start'
+  | 'onboarding-main'
+  | 'profile-edit';
 
 type Props = {
   leftIconName?: IconName,
@@ -23,7 +26,7 @@ type Props = {
   onLeftIconPress?: () => void,
   onRightIconPress?: () => void,
   title: string,
-  loading?: boolean
+  loading?: boolean,
 };
 
 type State = {};
@@ -42,7 +45,7 @@ export default class GEMHeader extends React.Component<Props, State> {
       onLeftIconPress,
       onRightIconPress,
       title,
-      loading
+      loading,
     } = this.props;
 
     return (
@@ -66,7 +69,7 @@ export default class GEMHeader extends React.Component<Props, State> {
           }
           centerComponent={{
             text: title,
-            style: textStyles.headline5Style
+            style: textStyles.headline5Style,
           }}
           outerContainerStyles={{ borderBottomWidth: 0 }}
         />

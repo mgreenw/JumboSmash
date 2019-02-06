@@ -1,100 +1,88 @@
 // @flow
-import React from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  Alert,
-  StyleSheet
-} from "react-native";
-import { Icon } from "react-native-elements";
-import { Colors } from "mobile/styles/colors";
-import { textStyles } from "mobile/styles/textStyles";
-import CustomIcon from "mobile/assets/icons/CustomIcon";
-import { Permissions, ImagePicker } from "expo";
+/* eslint-disable */
+
+import React from 'react';
+import { Text, View, TouchableOpacity, Image, Dimensions, Alert, StyleSheet } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { Colors } from 'mobile/styles/colors';
+import { textStyles } from 'mobile/styles/textStyles';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { Permissions, ImagePicker } from 'expo';
 import Dialog, {
   DialogTitle,
   DialogContent,
   DialogFooter,
   DialogButton,
   SlideAnimation,
-  ScaleAnimation
-} from "react-native-popup-dialog";
-import ProgressBar from "react-native-progress/Bar";
-import { connect } from "react-redux";
-import type { Dispatch } from "redux";
-import type { ReduxState } from "mobile/reducers/index";
-import { uploadPhoto } from "mobile/actions/app/uploadPhoto";
-import { deletePhoto } from "mobile/actions/app/deletePhoto";
-import { AddSinglePhoto } from "./AddSinglePhoto";
-import type { PhotoIds } from "mobile/reducers/";
+  ScaleAnimation,
+} from 'react-native-popup-dialog';
+import ProgressBar from 'react-native-progress/Bar';
+import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
+import type { ReduxState } from 'mobile/reducers/index';
+import { uploadPhoto } from 'mobile/actions/app/uploadPhoto';
+import { deletePhoto } from 'mobile/actions/app/deletePhoto';
+import type { PhotoIds } from 'mobile/reducers/';
+import { AddSinglePhoto } from './AddSinglePhoto';
 
 type reduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
   photoIds: PhotoIds,
-  token: ?string
+  token: ?string,
 };
 
 type dispatchProps = {
   uploadPhoto: string => void,
-  deletePhoto: number => void
+  deletePhoto: number => void,
 };
 
 type proppyProps = {
   enableDeleteFirst?: boolean,
   imageWidth: number,
-  width: number
+  width: number,
 };
 
 type Props = proppyProps & reduxProps & dispatchProps;
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   if (!reduxState.client) {
-    throw "Err: client null in AddMultiPhotos mapStateToProps";
+    throw 'Err: client null in AddMultiPhotos mapStateToProps';
   }
   return {
     uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
     deletePhotoInProgress: reduxState.inProgress.deletePhoto,
     photoIds: reduxState.client.profile.photoIds,
-    token: reduxState.token
+    token: reduxState.token,
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
   return {
     uploadPhoto: (uri: string) => {
       dispatch(uploadPhoto(uri));
     },
     deletePhoto: (photoId: number) => {
       dispatch(deletePhoto(photoId));
-    }
+    },
   };
 }
 
 // TODO: consider https://github.com/expo/expo/issues/1423 solution for croppinng
 async function selectPhoto(): Promise<?string> {
-  const { status, permissions } = await Permissions.askAsync(
-    Permissions.CAMERA_ROLL
-  );
-  if (status === "granted") {
-    let result = await ImagePicker.launchImageLibraryAsync({
+  const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  if (status === 'granted') {
+    const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [1, 1]
+      aspect: [1, 1],
     });
     if (result.cancelled) {
       return null;
     }
     return result.uri;
-  } else {
-    Alert.alert("Please enable camera roll access to proceed.");
-    return null;
   }
+  Alert.alert('Please enable camera roll access to proceed.');
+  return null;
 }
 
 class AddMultiPhotos extends React.Component<Props> {
@@ -117,7 +105,7 @@ class AddMultiPhotos extends React.Component<Props> {
       width,
       token,
       deletePhotoInProgress,
-      uploadPhotoInProgress
+      uploadPhotoInProgress,
     } = this.props;
     console.log(photoIds);
     const numImages = photoIds.length;
@@ -129,11 +117,11 @@ class AddMultiPhotos extends React.Component<Props> {
     return (
       <View
         style={{
-          width: width,
-          height: width
+          width,
+          height: width,
         }}
       >
-        <View style={{ top: 0, left: 0, position: "absolute" }}>
+        <View style={{ top: 0, left: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
             photoId={id1}
@@ -150,12 +138,12 @@ class AddMultiPhotos extends React.Component<Props> {
             width={imageWidth}
           />
         </View>
-        <View style={{ top: 0, right: 0, position: "absolute" }}>
+        <View style={{ top: 0, right: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
             photoId={id2}
             disabled={id1 == null}
-            enableRemove={true}
+            enableRemove
             onAdd={() => {
               this._onAdd();
             }}
@@ -167,12 +155,12 @@ class AddMultiPhotos extends React.Component<Props> {
             width={imageWidth}
           />
         </View>
-        <View style={{ bottom: 0, left: 0, position: "absolute" }}>
+        <View style={{ bottom: 0, left: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
             photoId={id3}
             disabled={id2 == null}
-            enableRemove={true}
+            enableRemove
             onAdd={() => {
               this._onAdd();
             }}
@@ -184,12 +172,12 @@ class AddMultiPhotos extends React.Component<Props> {
             width={imageWidth}
           />
         </View>
-        <View style={{ bottom: 0, right: 0, position: "absolute" }}>
+        <View style={{ bottom: 0, right: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
             photoId={id4}
             disabled={id3 == null}
-            enableRemove={true}
+            enableRemove
             onAdd={() => {
               this._onAdd();
             }}
@@ -208,8 +196,8 @@ class AddMultiPhotos extends React.Component<Props> {
           actionsBordered
           dialogStyle={{
             /* This is a hack so that we can do a shadow over a wrapper */
-            backgroundColor: "transparent",
-            padding: 18
+            backgroundColor: 'transparent',
+            padding: 18,
           }}
         >
           <DialogContent
@@ -221,9 +209,9 @@ class AddMultiPhotos extends React.Component<Props> {
               shadowRadius: 4,
               shadowOffset: {
                 height: 2,
-                width: 0
+                width: 0,
               },
-              padding: 20
+              padding: 20,
             }}
           >
             <View>
@@ -232,12 +220,12 @@ class AddMultiPhotos extends React.Component<Props> {
                   textStyles.headline4StyleMedium,
                   {
                     color: Colors.Grapefruit,
-                    textAlign: "center",
-                    paddingBottom: 20
-                  }
+                    textAlign: 'center',
+                    paddingBottom: 20,
+                  },
                 ]}
               >
-                {uploadPhotoInProgress ? "Uploading Photo" : "Deleting Photo"}
+                {uploadPhotoInProgress ? 'Uploading Photo' : 'Deleting Photo'}
               </Text>
               <ProgressBar
                 progress={0.3}
@@ -245,7 +233,7 @@ class AddMultiPhotos extends React.Component<Props> {
                 unfilledColor={Colors.IceBlue}
                 borderWidth={0}
                 color={Colors.Grapefruit}
-                indeterminate={true}
+                indeterminate
                 borderRadius={6}
                 width={null}
               />
@@ -259,5 +247,5 @@ class AddMultiPhotos extends React.Component<Props> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AddMultiPhotos);

@@ -1,14 +1,16 @@
 // @flow
-import React from "react";
-import { Animated, Text, TextInput, View } from "react-native";
-import { Colors } from "mobile/styles/colors";
-import { textStyles } from "mobile/styles/textStyles";
-import BaseInput from "mobile/components/shared/customTextInput/BaseInput";
+/* eslint-disable */
+
+import React from 'react';
+import { Animated, Text, TextInput, View } from 'react-native';
+import { Colors } from 'mobile/styles/colors';
+import { textStyles } from 'mobile/styles/textStyles';
+import BaseInput from 'mobile/components/shared/customTextInput/BaseInput';
 
 type Props = {
   value: string,
   onChangeText: (bio: string) => void,
-  label?: string
+  label?: string,
 };
 
 const MAX_LENGTH = 500;
@@ -24,7 +26,7 @@ export default class BioInput extends BaseInput {
     const { selectedAnim } = this.state;
 
     return (
-      <View style={{ height: "100%" }}>
+      <View style={{ height: '100%' }}>
         {label && (
           <Animated.Text
             style={[
@@ -34,9 +36,9 @@ export default class BioInput extends BaseInput {
                 paddingBottom: 5,
                 color: selectedAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [Colors.Black, Colors.AquaMarine]
-                })
-              }
+                  outputRange: [Colors.Black, Colors.AquaMarine],
+                }),
+              },
             ]}
           >
             {label}
@@ -48,8 +50,8 @@ export default class BioInput extends BaseInput {
             borderRadius: 3,
             borderColor: selectedAnim.interpolate({
               inputRange: [0, 1],
-              outputRange: [Colors.Black, Colors.AquaMarine]
-            })
+              outputRange: [Colors.Black, Colors.AquaMarine],
+            }),
           }}
         >
           <TextInput
@@ -57,9 +59,9 @@ export default class BioInput extends BaseInput {
             style={[
               textStyles.headline6Style,
               {
-                height: "100%",
-                padding: 9
-              }
+                height: '100%',
+                padding: 9,
+              },
             ]}
             onBlur={this._onBlur}
             onChange={this._onChange}
@@ -67,18 +69,14 @@ export default class BioInput extends BaseInput {
             placeholderTextColor={Colors.Grey80}
             placeholder="[Bio PlaceHolder]"
             onChangeText={onChangeText}
-            autoCorrect={true}
-            multiline={true}
+            autoCorrect
+            multiline
             value={value}
             maxLength={MAX_LENGTH}
           />
         </Animated.View>
         <View>
-          <Text
-            style={
-              (textStyles.body2Style, { paddingRight: 6, textAlign: "right" })
-            }
-          >
+          <Text style={(textStyles.body2Style, { paddingRight: 6, textAlign: 'right' })}>
             {charactersLeft}
           </Text>
         </View>

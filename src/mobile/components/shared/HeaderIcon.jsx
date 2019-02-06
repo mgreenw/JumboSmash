@@ -1,16 +1,18 @@
 // @flow
-import React from "react";
-import { View, TouchableOpacity, Keyboard } from "react-native";
-import type { UserProfile, Candidate } from "mobile/reducers";
-import CustomIcon from "mobile/assets/icons/CustomIcon";
-import type { IconName } from "mobile/assets/icons/CustomIcon";
-import NavigationService from "mobile/NavigationService";
-import { routes } from "mobile/components/Navigation";
+/* eslint-disable */
+
+import React from 'react';
+import { View, TouchableOpacity, Keyboard } from 'react-native';
+import type { UserProfile, Candidate } from 'mobile/reducers';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import type { IconName } from 'mobile/assets/icons/CustomIcon';
+import NavigationService from 'mobile/NavigationService';
+import { routes } from 'mobile/components/Navigation';
 
 type Props = {
   name: ?IconName,
   disabled?: boolean,
-  onPress?: () => void
+  onPress?: () => void,
 };
 
 type State = {};
@@ -30,28 +32,28 @@ export class HeaderIcon extends React.Component<Props, State> {
 
   _inferOnPress = (name: IconName): (() => void) => {
     switch (name) {
-      case "user": {
+      case 'user': {
         return () => {
           NavigationService.navigate(routes.Profile);
         };
       }
-      case "message": {
+      case 'message': {
         return () => {
           NavigationService.navigate(routes.Matches);
         };
       }
-      case "cards": {
+      case 'cards': {
         return () => {
           NavigationService.navigate(routes.Cards);
         };
       }
-      case "back": {
+      case 'back': {
         return () => {
           NavigationService.back();
         };
       }
       default:
-        throw ("Could not parse icon name: ", name);
+        throw ('Could not parse icon name: ', name);
     }
   };
 
@@ -70,10 +72,10 @@ export class HeaderIcon extends React.Component<Props, State> {
         style={{
           paddingLeft: 22,
           paddingRight: 22,
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          opacity: this.props.disabled ? 0.2 : 1
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          opacity: this.props.disabled ? 0.2 : 1,
         }}
         onPress={() => {
           Keyboard.dismiss(); // in case a keyboard is up, buttons close them
@@ -81,9 +83,9 @@ export class HeaderIcon extends React.Component<Props, State> {
         }}
       >
         <CustomIcon
-          name={this.props.name || "user"}
+          name={this.props.name || 'user'}
           size={26}
-          color={this.props.name ? "black" : "transparent"}
+          color={this.props.name ? 'black' : 'transparent'}
         />
       </TouchableOpacity>
     );

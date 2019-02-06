@@ -1,38 +1,40 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "../../utils/DevTesting";
-import type { UserProfile } from "mobile/reducers";
-import { updateMyProfile } from "mobile/api/users/updateMyProfile";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
+
+import type { Dispatch, GetState } from 'redux';
+import type { UserProfile } from 'mobile/reducers';
+import { updateMyProfile } from 'mobile/api/users/updateMyProfile';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import DevTesting from '../../utils/DevTesting';
 
 export type SaveProfileInitiated_Action = {
-  type: "SAVE_PROFILE__INITIATED",
+  type: 'SAVE_PROFILE__INITIATED',
   payload: {},
-  meta: {}
+  meta: {},
 };
 export type SaveProfileCompleted_Action = {
-  type: "SAVE_PROFILE__COMPLETED",
+  type: 'SAVE_PROFILE__COMPLETED',
   payload: {
-    profile: UserProfile
+    profile: UserProfile,
   },
-  meta: {}
+  meta: {},
 };
 
 function initiate(): SaveProfileInitiated_Action {
   return {
-    type: "SAVE_PROFILE__INITIATED",
+    type: 'SAVE_PROFILE__INITIATED',
     payload: {},
-    meta: {}
+    meta: {},
   };
 }
 
 function complete(profile: UserProfile): SaveProfileCompleted_Action {
   return {
-    type: "SAVE_PROFILE__COMPLETED",
+    type: 'SAVE_PROFILE__COMPLETED',
     payload: {
-      profile
+      profile,
     },
-    meta: {}
+    meta: {},
   };
 }
 
