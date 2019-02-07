@@ -135,7 +135,12 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'he', ${tableName}use_he,
       'she', ${tableName}use_she,
       'they', ${tableName}use_they
-    ) AS "usePronouns"
+    ) AS "usePronouns",
+    json_build_object(
+      'smash', ${tableName}active_smash,
+      'social', ${tableName}active_social,
+      'stone', ${tableName}active_stone
+    ) AS "activeScenes"
   `;
 }
 
