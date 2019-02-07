@@ -340,8 +340,6 @@ export default function rootReducer(
         throw "User null in reducer for UPLOAD_PHOTO__COMPLETED";
       }
       const { profile } = state.client;
-      let newPhotoIds = profile.photoIds.slice();
-      newPhotoIds.push(action.photoId);
       return {
         ...state,
         inProgress: {
@@ -352,7 +350,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...profile,
-            photoIds: newPhotoIds
+            photoIds: action.photoIds
           }
         }
       };

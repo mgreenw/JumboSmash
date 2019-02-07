@@ -15,7 +15,7 @@ export default function getMyProfile(request: request): Promise<?UserSettings> {
     .then(response => {
       switch (response.status) {
         case GET_SETTINGS__SUCCESS:
-          return serverSettingsToMobileSettings(response.settings);
+          return serverSettingsToMobileSettings(response.data);
         default:
           throw { response };
       }

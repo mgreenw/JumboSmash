@@ -37,7 +37,7 @@ export default function sendVerificationEmail(
         case SEND_VERIFICATION_EMAIL__SUCCESS:
           return {
             statusCode: "SUCCESS",
-            email: response.email,
+            email: response.data.email,
             utln: request.utln,
             classYear: NO_CLASS_YEAR
           };
@@ -45,7 +45,7 @@ export default function sendVerificationEmail(
           return {
             statusCode: "ALREADY_SENT",
             utln: request.utln,
-            email: response.email,
+            email: response.data.email,
             classYear: NO_CLASS_YEAR
           };
         // Invalid UTLN
@@ -66,7 +66,7 @@ export default function sendVerificationEmail(
         case SEND_VERIFICATION_EMAIL__UTLN_NOT_2019:
           return {
             statusCode: "WRONG_CLASS_YEAR",
-            classYear: response.classYear,
+            classYear: response.data.classYear,
             email: NO_EMAIL,
             utln: request.utln
           };

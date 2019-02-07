@@ -24,22 +24,22 @@ export default function verify(request: request): Promise<login_response> {
         case VERIFY__SUCCESS:
           return {
             statusCode: "SUCCESS",
-            token: response.token
+            token: response.data.token
           };
         case VERIFY__BAD_CODE:
           return {
             statusCode: "BAD_CODE",
-            token: response.token
+            token: response.data.token
           };
         case VERIFY__EXPIRED_CODE:
           return {
             statusCode: "EXPIRED_CODE",
-            token: response.token
+            token: response.data.token
           };
         case VERIFY__NO_EMAIL_SENT:
           return {
             statusCode: "NO_EMAIL_SENT",
-            token: response.token
+            token: response.data.token
           };
         default:
           throw { response };
