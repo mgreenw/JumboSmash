@@ -44,7 +44,7 @@ describe('GET api/users/:userId/profile', () => {
     let res = await request(app)
       .get('/api/users/1/profile')
       .set('Accept', 'application/json');
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const tempUser = await dbUtils.createUser('mgreen14');
@@ -53,7 +53,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', tempUser.token)
       .set('Accept', 'application/json')
       .expect(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should be able to get the current user profile', async () => {
@@ -62,14 +62,14 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS);
-    expect(res.body.profile).toBeDefined();
+    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
 
-    expect(res.body.profile.displayName).toBe(user.profile.displayName);
-    expect(res.body.profile.birthday).toBe(user.profile.birthday);
-    expect(res.body.profile.bio).toBe(user.profile.bio);
-    expect(res.body.profile.photos).toBeDefined();
-    expect(res.body.profile.photos[0] > 0).toBeTruthy();
+    expect(res.body.data.fields.displayName).toBe(user.profile.displayName);
+    expect(res.body.data.fields.birthday).toBe(user.profile.birthday);
+    expect(res.body.data.fields.bio).toBe(user.profile.bio);
+    expect(res.body.data.photoIds).toBeDefined();
+    expect(res.body.data.photoIds[0] > 0).toBeTruthy();
   });
 
   it('should be able to get the another user profile', async () => {
@@ -78,12 +78,12 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS);
-    expect(res.body.profile).toBeDefined();
+    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
 
-    expect(res.body.profile.displayName).toBe(otherUser.profile.displayName);
-    expect(res.body.profile.birthday).toBe(otherUser.profile.birthday);
-    expect(res.body.profile.bio).toBe(otherUser.profile.bio);
+    expect(res.body.data.fields.displayName).toBe(otherUser.profile.displayName);
+    expect(res.body.data.fields.birthday).toBe(otherUser.profile.birthday);
+    expect(res.body.data.fields.bio).toBe(otherUser.profile.bio);
   });
 
   it('should fail to get another user profile if that user has not setup a profile', async () => {
@@ -92,7 +92,7 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(404);
-    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND);
+    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
   });
 
   it('should error if the user id is not an integer', async () => {
@@ -109,6 +109,6 @@ describe('GET api/users/:userId/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(404);
-    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND);
+    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
   });
 });

@@ -35,21 +35,31 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_MATCHES__SUCCESS",
-    "matches": [
+    "data": [
         {
             "userId": 6,
-            "displayName": "Emily",
-            "birthday": "1997-10-10",
-            "bio": "Cool",
+            "profile": {
+                "fields": {
+                     "displayName": "Emily",
+                    "birthday": "1997-10-10",
+                    "bio": "Cool"
+                },
+                "photoIds": [1, 2, 3]
+            },
             "scenes": [
                 "smash"
             ]
         },
         {
             "userId": 8,
-            "displayName": "Jacob",
-            "birthday": "1997-10-10",
-            "bio": "Cool",
+            "profile": {
+                "fields": {
+                    "displayName": "Jacob",
+                    "birthday": "1997-10-10",
+                    "bio": "Cool"
+                },
+                "photoIds": [4, 5, 6]
+            },
             "scenes": [
                 "social",
                 "stone"

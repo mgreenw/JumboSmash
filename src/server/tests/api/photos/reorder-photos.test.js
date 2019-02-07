@@ -36,7 +36,7 @@ describe('PATCH api/photos/reorder', () => {
       .patch('/api/photos/reorder')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
@@ -47,7 +47,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send({});
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data should be array');
 
     res = await request(app)
@@ -56,7 +56,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data should NOT have fewer than 2 items');
 
     res = await request(app)
@@ -65,7 +65,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([1, 2, 3, 4, 5]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data should NOT have more than 4 items');
 
     res = await request(app)
@@ -74,7 +74,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([1, 2, 3, '4']);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data[3] should be number');
 
     res = await request(app)
@@ -83,7 +83,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([1, 2, 3, 4.4]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data[3] should be multiple of 1');
   });
 
@@ -94,7 +94,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([1, 2]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS);
+    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS.status);
 
     let photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)
@@ -120,7 +120,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([firstId, firstId + secondId]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS);
+    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS.status);
 
     res = await request(app)
       .patch('/api/photos/reorder')
@@ -128,7 +128,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send([firstId, secondId, firstId + secondId]);
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS);
+    expect(res.body.status).toBe(codes.REORDER_PHOTOS__MISMATCHED_IDS.status);
   });
 
   it('should succeed given a correct reordering', async () => {
@@ -154,7 +154,7 @@ describe('PATCH api/photos/reorder', () => {
       .set('Accept', 'application/json')
       .send(newOrder);
     expect(reorderRes.statusCode).toBe(200);
-    expect(reorderRes.body.status).toBe(codes.REORDER_PHOTOS__SUCCESS);
+    expect(reorderRes.body.status).toEqual(codes.REORDER_PHOTOS__SUCCESS.status);
 
     photoRes = await db.query(`
       SELECT id
@@ -164,6 +164,6 @@ describe('PATCH api/photos/reorder', () => {
     `, [me.id]);
 
     expect(_.isEqual(newOrder, _.map(photoRes.rows, res => res.id))).toBeTruthy();
-    expect(_.isEqual(newOrder, reorderRes.body.photos)).toBeTruthy();
+    expect(_.isEqual(newOrder, reorderRes.body.data)).toBeTruthy();
   });
 });

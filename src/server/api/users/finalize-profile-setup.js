@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const apiUtils = require('../utils');
-const utils = require('./utils');
+const { validateProfile, profileSelectQuery } = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
@@ -37,10 +37,9 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    utils.validateProfile(profile);
+    validateProfile(profile);
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.CREATE_PROFILE__INVALID_REQUEST,
+    return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST).data({
       message: error,
     });
   }
@@ -50,7 +49,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
     birthday,
     bio,
   } = profile;
-  // Get the user's splash photo ID. Error if it does not exist.
+  // Ensure that the user has a photo uploaded. Error if it does not exist.
   const photoResult = await db.query(`
     SELECT id
     FROM photos
@@ -60,34 +59,29 @@ const createMyProfile = async (userId: number, profile: Object) => {
   `, [userId]);
 
   if (photoResult.rowCount === 0) {
-    return apiUtils.status(409).json({
-      status: codes.CREATE_PROFILE__PHOTO_REQUIRED,
-    });
+    return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED).noData();
   }
-
-  const splashPhotoId = photoResult.rows[0].id;
 
   // Insert the profile into the database
   const results = await db.query(`
     INSERT INTO profiles
-    (user_id, display_name, birthday, bio, splash_photo_id)
-    VALUES ($1, $2, $3, $4, $5)
-    ON CONFLICT DO NOTHING
-    RETURNING user_id AS "userId"
+    (user_id, display_name, birthday, bio)
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (user_id) DO UPDATE
+      SET display_name = EXCLUDED.display_name
+    RETURNING
+      ${profileSelectQuery('$5')},
+      (xmax::text::int > 0) as existed
   `,
-  [userId, displayName, birthday, bio, splashPhotoId]);
+  [userId, displayName, birthday, bio, userId]);
 
-  // If no rows were returned, then the profile already exists.
-  if (results.rowCount === 0) {
-    return apiUtils.status(409).json({
-      status: codes.CREATE_PROFILE__PROFILE_ALREADY_CREATED,
-    });
-  }
+  const [{ existed, ...finalizedProfile }] = results.rows;
 
-  // If there is an id returned, success!
-  return apiUtils.status(201).json({
-    status: codes.CREATE_PROFILE__SUCCESS,
-  });
+  return apiUtils.status(
+    existed
+      ? codes.FINALIZE_PROFILE_SETUP__PROFILE_ALREADY_CREATED
+      : codes.FINALIZE_PROFILE_SETUP__SUCCESS,
+  ).data(finalizedProfile);
 };
 
 const handler = [
