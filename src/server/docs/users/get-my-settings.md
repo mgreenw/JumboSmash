@@ -39,6 +39,11 @@ Provide the normal `Authorization` token in the request header.
             "he": false,
             "she": false,
             "they": false
+        },
+        "activeScenes": {
+            "smash": true,
+            "social": false,
+            "stone": true
         }
     }
 }

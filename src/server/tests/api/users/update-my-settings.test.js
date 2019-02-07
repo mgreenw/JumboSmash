@@ -74,9 +74,24 @@ describe('GET api/users/me/settings', () => {
           she: true,
           they: true,
         },
+        activeScenes: {
+          smash: true,
+          social: true,
+          stone: true,
+        },
       });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
+
+    expect(res.body.data.usePronouns.he).toBe(true);
+    expect(res.body.data.usePronouns.she).toBe(true);
+    expect(res.body.data.usePronouns.they).toBe(true);
+    expect(res.body.data.wantPronouns.he).toBe(true);
+    expect(res.body.data.wantPronouns.she).toBe(true);
+    expect(res.body.data.wantPronouns.they).toBe(true);
+    expect(res.body.data.activeScenes.smash).toBe(true);
+    expect(res.body.data.activeScenes.social).toBe(true);
+    expect(res.body.data.activeScenes.stone).toBe(true);
   });
 
   it('should fail if the the pronoun preferences are not booleans', async () => {
@@ -100,6 +115,11 @@ describe('GET api/users/me/settings', () => {
           he: true,
           she: true,
           they: true,
+        },
+        activeScenes: {
+          smash: true,
+          social: true,
+          stone: true,
         },
       });
     expect(res.statusCode).toBe(400);
@@ -125,6 +145,9 @@ describe('GET api/users/me/settings', () => {
         usePronouns: {
           he: true,
         },
+        activeScenes: {
+          smash: true,
+        },
       });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
@@ -138,5 +161,15 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.wantPronouns.he).toBeDefined();
     expect(res.body.data.wantPronouns.she).toBeDefined();
     expect(res.body.data.wantPronouns.they).toBeDefined();
+
+    expect(res.body.data.usePronouns.he).toBe(true);
+    expect(res.body.data.usePronouns.she).toBe(false);
+    expect(res.body.data.usePronouns.they).toBe(false);
+    expect(res.body.data.wantPronouns.he).toBe(true);
+    expect(res.body.data.wantPronouns.she).toBe(false);
+    expect(res.body.data.wantPronouns.they).toBe(true);
+    expect(res.body.data.activeScenes.smash).toBe(true);
+    expect(res.body.data.activeScenes.social).toBe(false);
+    expect(res.body.data.activeScenes.stone).toBe(false);
   });
 });
