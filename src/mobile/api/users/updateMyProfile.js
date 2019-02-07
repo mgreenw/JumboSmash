@@ -19,11 +19,7 @@ function updateOrCreateMyProfile(
 
     MY_PROFILE__ROUTE,
     token,
-    {
-      ...request,
-      image1Url:
-        'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-    },
+    request,
   )
     .then(response => {
       switch (response.status) {
