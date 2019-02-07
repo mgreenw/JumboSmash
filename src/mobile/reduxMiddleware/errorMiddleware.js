@@ -7,7 +7,9 @@ const errorMiddleware = (store: any) => (next: any) => (action: Action) => {
   const result = next(action);
   const { type } = action;
   if (type === 'SERVER_ERROR') {
-    throw "Sorry, server error occured. Later, we'll catch these nicely. For now, restart the app!";
+    throw new Error(
+      "Sorry, server error occured. Later, we'll catch these nicely. For now, restart the app!",
+    );
   }
   return result;
 };
