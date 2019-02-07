@@ -2,8 +2,7 @@
 /* eslint-disable */
 
 import React from 'react';
-import { View, TouchableOpacity, StatusBar } from 'react-native';
-import type { UserProfile, Candidate } from 'mobile/reducers';
+import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
 
@@ -67,10 +66,11 @@ export default class GEMHeader extends React.Component<Props, State> {
               onPress={this.props.onRightIconPress}
             />
           }
-          centerComponent={{
-            text: title,
-            style: textStyles.headline5Style,
-          }}
+          centerComponent={
+            <View>
+              <Text style={textStyles.headline5Style}>{title}</Text>
+            </View>
+          }
           outerContainerStyles={{ borderBottomWidth: 0 }}
         />
         <StatusBar barStyle="dark-content" />
