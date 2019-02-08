@@ -2,8 +2,8 @@
 /* eslint-disable */
 
 import type { Dispatch, GetState } from 'redux';
-import type { UserProfile, UserSettings } from 'mobile/reducers';
-import { createMyProfile } from 'mobile/api/users/updateMyProfile';
+import type { ProfileFields, UserSettings } from 'mobile/reducers';
+import { createMyProfileFields } from 'mobile/api/users/updateMyProfile';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -36,7 +36,7 @@ function complete(): CreateProfileAndSettingsCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function createUser(profile: UserProfile, settings: UserSettings) {
+export function createUserAction(fields: ProfileFields, settings: UserSettings) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
@@ -45,7 +45,7 @@ export function createUser(profile: UserProfile, settings: UserSettings) {
       // to determine that onboarding is done, so settings must be created first
       updateMySettings(token, settings)
         .then(() => {
-          createMyProfile(token, profile).then(() => {
+          createMyProfileFields(token, fields).then(() => {
             dispatch(complete());
           });
         })

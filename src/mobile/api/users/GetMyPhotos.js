@@ -9,7 +9,7 @@ import { GET_MY_PHOTOS__ROUTE } from '../routes';
 
 const GET_MY_PHOTOS__SUCCESS = 'GET_MY_PHOTOS__SUCCESS';
 
-function getMyPhotos(token: string): Promise<$ReadOnlyArray<number>> {
+function getMyPhotos(token: string): Promise<number[]> {
   return apiRequest('GET', GET_MY_PHOTOS__ROUTE, token)
     .then(response => {
       switch (response.status) {

@@ -22,13 +22,12 @@ import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import { uploadPhoto } from 'mobile/actions/app/uploadPhoto';
 import { deletePhoto } from 'mobile/actions/app/deletePhoto';
-import type { PhotoIds } from 'mobile/reducers/';
 import { AddSinglePhoto } from './AddSinglePhoto';
 
 type reduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
-  photoIds: PhotoIds,
+  photoIds: number[],
   token: ?string,
 };
 
@@ -107,7 +106,6 @@ class AddMultiPhotos extends React.Component<Props> {
       deletePhotoInProgress,
       uploadPhotoInProgress,
     } = this.props;
-    console.log(photoIds);
     const numImages = photoIds.length;
     const id1 = numImages > 0 ? photoIds[0] : null;
     const id2 = numImages > 1 ? photoIds[1] : null;

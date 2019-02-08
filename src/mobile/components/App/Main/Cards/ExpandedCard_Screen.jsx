@@ -59,7 +59,10 @@ class Card extends React.Component<Props> {
   render() {
     const { navigation } = this.props;
     return (
-      <CardView user={navigation.getParam('user')} onMinimize={navigation.getParam('onMinimize')} />
+      <CardView
+        profile={navigation.getParam('profile')}
+        onMinimize={navigation.getParam('onMinimize')}
+      />
     );
   }
 }

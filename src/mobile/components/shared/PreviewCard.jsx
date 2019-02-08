@@ -19,7 +19,7 @@ import type { ReduxState } from 'mobile/reducers/index';
 import type { UserProfile } from 'mobile/reducers';
 
 type Props = {
-  user: UserProfile,
+  profile: UserProfile,
   onCardTap?: () => void,
 };
 
@@ -32,7 +32,7 @@ export default class PreviewCard extends React.Component<Props, State> {
   }
 
   render() {
-    const { user, onCardTap } = this.props;
+    const { profile, onCardTap } = this.props;
     return (
       <View
         style={{
@@ -67,7 +67,9 @@ export default class PreviewCard extends React.Component<Props, State> {
               shadowOpacity: 0.2,
             }}
           >
-            <Text style={{ fontSize: 28 }}>{`${user.displayName}, ${user.birthday}`}</Text>
+            <Text style={{ fontSize: 28 }}>{`${profile.fields.displayName}, ${
+              profile.fields.birthday
+            }`}</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>
