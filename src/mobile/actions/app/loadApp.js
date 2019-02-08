@@ -1,23 +1,34 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "../../utils/DevTesting";
-import type { UserSettings, UserProfile } from "mobile/reducers";
-import getMyProfile from "mobile/api/users/GetMyProfile";
-import getMySettings from "mobile/api/users/GetMySettings";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
-import { getMyPhotos } from "mobile/api/users/GetMyPhotos";
+/* eslint-disable */
 
-export type LoadAppInitiated_Action = { type: "LOAD_APP__INITIATED" };
+import type { Dispatch, GetState } from 'redux';
+import type { UserSettings, UserProfile } from 'mobile/reducers';
+import getMyProfile from 'mobile/api/users/GetMyProfile';
+import getMySettings from 'mobile/api/users/GetMySettings';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import { getMyPhotos } from 'mobile/api/users/GetMyPhotos';
+import DevTesting from '../../utils/DevTesting';
+
+export type LoadAppInitiated_Action = {
+  type: 'LOAD_APP__INITIATED',
+  payload: {},
+  meta: {},
+};
 export type LoadAppCompleted_Action = {
-  type: "LOAD_APP__COMPLETED",
-  onboardingCompleted: boolean,
-  profile: UserProfile,
-  settings: UserSettings
+  type: 'LOAD_APP__COMPLETED',
+  payload: {
+    onboardingCompleted: boolean,
+    profile: UserProfile,
+    settings: UserSettings,
+  },
+  meta: {},
 };
 
 function initiate(): LoadAppInitiated_Action {
   return {
-    type: "LOAD_APP__INITIATED"
+    type: 'LOAD_APP__INITIATED',
+    payload: {},
+    meta: {},
   };
 }
 
@@ -25,30 +36,33 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  photos: ?$ReadOnlyArray<number>
+  photos: ?$ReadOnlyArray<number>,
 ): LoadAppCompleted_Action {
-  DevTesting.log("load app complete; profile && settigs: ", profile, settings);
+  DevTesting.log('load app complete; profile && settigs: ', profile, settings);
   return {
-    type: "LOAD_APP__COMPLETED",
-    onboardingCompleted,
-    profile: profile || {
-      bio: "",
-      birthday: "",
-      displayName: "",
-      photoIds: photos || [] // incase partial photo uploading in onboarding
-    },
-    settings: settings || {
-      useGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
+    type: 'LOAD_APP__COMPLETED',
+    payload: {
+      onboardingCompleted,
+      profile: profile || {
+        bio: '',
+        birthday: '',
+        displayName: '',
+        photoIds: photos || [], // incase partial photo uploading in onboarding
       },
-      wantGenders: {
-        male: true,
-        female: true,
-        nonBinary: true
-      }
-    }
+      settings: settings || {
+        useGenders: {
+          male: false,
+          female: false,
+          nonBinary: false,
+        },
+        wantGenders: {
+          male: false,
+          female: false,
+          nonBinary: false,
+        },
+      },
+    },
+    meta: {},
   };
 }
 
@@ -59,7 +73,7 @@ export function loadApp() {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       getMyProfile({
-        token
+        token,
       })
         .then(profile => {
           // if profile is null, onboarding has not been completed, though
@@ -70,7 +84,7 @@ export function loadApp() {
             });
           } else {
             getMySettings({
-              token
+              token,
             }).then(settings => {
               dispatch(complete(profile, settings, true));
             });

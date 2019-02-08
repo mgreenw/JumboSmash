@@ -1,14 +1,24 @@
 module.exports = {
-  plugins: ["react", "react-native"],
-  parser: "babel-eslint",
+  extends: 'airbnb',
+  parser: 'babel-eslint',
   env: {
-    "react-native/react-native": true
+    jest: true,
+    es6: true,
+  },
+  settings: {
+    'import/resolver': {
+      'babel-module': {
+        root: ['./'],
+        alias: {
+          mobile: './',
+        },
+      },
+    },
   },
   rules: {
-    "react-native/no-unused-styles": 2,
-    "react-native/split-platform-components": 2,
-    // "react-native/no-inline-styles": 2,
-    // "react-native/no-color-literals": 2,
-    "react-native/no-raw-text": 2
-  }
+    'prefer-destructuring': 'off',
+    'react/no-multi-comp': 'off',
+    'no-underscore-dangle': 'off',
+    'react/destructuring/assignment': 'off',
+  },
 };

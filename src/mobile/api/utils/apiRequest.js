@@ -1,26 +1,28 @@
 // @flow
-import { timeout } from "./timeout";
-import DevTesting from "mobile/utils/DevTesting";
-import { UNAUTHORIZED } from "../sharedResponseCodes";
+/* eslint-disable */
 
-type method = "PATCH" | "GET" | "POST" | "DELETE";
+import DevTesting from 'mobile/utils/DevTesting';
+import { timeout } from './timeout';
+import { UNAUTHORIZED } from '../sharedResponseCodes';
+
+type method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
 export function apiRequest(
   method: method,
   route: string,
   auth: ?string,
-  request: ?Object
+  request: ?Object,
 ): Promise<Object> {
   return timeout(
     30000,
     fetch(route, {
-      method: method,
+      method,
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: auth || "NO_TOKEN"
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: auth || 'NO_TOKEN',
       },
-      body: request && JSON.stringify(request)
-    })
+      body: request && JSON.stringify(request),
+    }),
   )
     .then(response => response.json())
     .then(response => {

@@ -1,44 +1,52 @@
 // @flow
-import type { Dispatch } from "redux";
-import DevTesting from "../../utils/DevTesting";
-import sendVerificationEmail_api from "mobile/api/auth/sendVerificationEmail";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
+
+import type { Dispatch } from 'redux';
+import sendVerificationEmail_api from 'mobile/api/auth/sendVerificationEmail';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import DevTesting from '../../utils/DevTesting';
 
 type sendVerificationEmail_statusCode =
-  | "SUCCESS"
-  | "ALREADY_SENT"
-  | "WRONG_CLASS_YEAR"
-  | "NOT_STUDENT"
-  | "NOT_FOUND";
+  | 'SUCCESS'
+  | 'ALREADY_SENT'
+  | 'WRONG_CLASS_YEAR'
+  | 'NOT_STUDENT'
+  | 'NOT_FOUND';
 
 export type sendVerificationEmail_response = {
   statusCode: sendVerificationEmail_statusCode,
   utln: string,
   email: string,
-  classYear: string
+  classYear: string,
 };
 
 export type SendVerificationEmailCompleted_Action = {
-  type: "SEND_VERIFICATION_EMAIL_COMPLETED",
-  response: sendVerificationEmail_response
+  type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
+  payload: {
+    response: sendVerificationEmail_response,
+  },
+  meta: {},
 };
 
 export type SendVerificationEmailInitiated_Action = {
-  type: "SEND_VERIFICATION_EMAIL_INITIATED"
+  type: 'SEND_VERIFICATION_EMAIL_INITIATED',
+  payload: {},
+  meta: {},
 };
 
 function initiate(): SendVerificationEmailInitiated_Action {
   return {
-    type: "SEND_VERIFICATION_EMAIL_INITIATED"
+    type: 'SEND_VERIFICATION_EMAIL_INITIATED',
+    payload: {},
+    meta: {},
   };
 }
 
-function complete(
-  response: sendVerificationEmail_response
-): SendVerificationEmailCompleted_Action {
+function complete(response: sendVerificationEmail_response): SendVerificationEmailCompleted_Action {
   return {
-    type: "SEND_VERIFICATION_EMAIL_COMPLETED",
-    response: response
+    type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
+    payload: { response },
+    meta: {},
   };
 }
 

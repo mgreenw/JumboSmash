@@ -1,317 +1,319 @@
 // @flow
-import { StyleSheet } from "react-native";
-import { Colors } from "./colors";
+/* eslint-disable */
+
+import { StyleSheet } from 'react-native';
+import { Colors } from './colors';
 
 // Keep synced with Zeplin export!
 export const textStyles = StyleSheet.create({
   headline1Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 96,
 
-    fontWeight: "200",
+    fontWeight: '200',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline2Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 60,
 
-    fontWeight: "200",
+    fontWeight: '200',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline3Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 48,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   jumboSmashStyle: {
-    fontFamily: "VeganStylePersonalUse",
+    fontFamily: 'VeganStylePersonalUse',
 
     fontSize: 40,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    textAlign: "center",
+    textAlign: 'center',
 
-    color: Colors.Grapefruit
+    color: Colors.Grapefruit,
   },
 
   headline4StyleMedium: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 34,
 
-    fontWeight: "500",
+    fontWeight: '500',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline4Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 34,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline4StyleDemibold: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 30,
 
-    fontWeight: "600",
+    fontWeight: '600',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline4StyleSwiping: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 28,
 
-    fontWeight: "500",
+    fontWeight: '500',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    textAlign: "center",
+    textAlign: 'center',
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline5StyleDemibold: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 24,
 
-    fontWeight: "600",
+    fontWeight: '600',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline5Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 24,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline5StyleCondensed: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 24,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     lineHeight: 27,
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   headline6Style: {
-    fontFamily: "AvenirNext",
+    fontFamily: 'AvenirNext',
 
     fontSize: 20,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   body1StyleSemibold: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 18,
 
-    fontWeight: "600",
+    fontWeight: '600',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   body1Style: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 18,
 
-    fontWeight: "200",
+    fontWeight: '200',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   subtitle1StyleSemibold: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 16,
 
-    fontWeight: "600",
+    fontWeight: '600',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.AquaMarine
+    color: Colors.AquaMarine,
   },
 
   subtitle1Style: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 16,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   messageCountStyle: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 16,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    textAlign: "center",
+    textAlign: 'center',
 
-    color: Colors.White
+    color: Colors.White,
   },
 
   buttonStyleSemibold: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 14,
 
-    fontWeight: "600",
+    fontWeight: '600',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   body2Style: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 14,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   subtitle2Style: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 14,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   captionStyle: {
-    fontFamily: "SourceSansPro",
+    fontFamily: 'SourceSansPro',
 
     fontSize: 12,
 
-    fontWeight: "normal",
+    fontWeight: 'normal',
 
-    fontStyle: "normal",
+    fontStyle: 'normal',
 
     letterSpacing: 0,
 
-    color: Colors.Black
+    color: Colors.Black,
   },
 
   // Not in Zeplin styleguide, but part of the style:
   veganTitle: {
     color: Colors.Grapefruit,
-    fontFamily: "vegan",
+    fontFamily: 'vegan',
     fontSize: 45,
     padding: 15,
-    textAlign: "center"
-  }
+    textAlign: 'center',
+  },
 });

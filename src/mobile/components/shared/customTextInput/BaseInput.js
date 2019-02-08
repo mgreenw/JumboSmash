@@ -1,8 +1,10 @@
 // Fork of https://github.com/halilb/react-native-textinput-effects
-import { Component } from "react";
-import PropTypes from "prop-types";
+/* eslint-disable */
 
-import { Animated, Text, View, ViewPropTypes, Easing } from "react-native";
+import { Component } from 'react';
+import PropTypes from 'prop-types';
+
+import { Animated, Text, View, ViewPropTypes, Easing } from 'react-native';
 
 export default class BaseInput extends Component {
   static propTypes = {
@@ -15,7 +17,7 @@ export default class BaseInput extends Component {
      */
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -35,15 +37,15 @@ export default class BaseInput extends Component {
       moveLabelAnim: new Animated.Value(value ? 1 : 0),
       selectedAnim: new Animated.Value(0),
       errorAnim: new Animated.Value(error ? 1 : 0),
-      shakeAnim: new Animated.Value(0)
+      shakeAnim: new Animated.Value(0),
     };
   }
 
   componentWillReceiveProps(newProps) {
     const newValue = newProps.value;
-    if (newProps.hasOwnProperty("value") && newValue !== this.state.value) {
+    if (newProps.hasOwnProperty('value') && newValue !== this.state.value) {
       this.setState({
-        value: newValue
+        value: newValue,
       });
 
       // animate input if it's active state has changed with the new value
@@ -59,12 +61,12 @@ export default class BaseInput extends Component {
     }
 
     const newError = newProps.error;
-    if (newProps.hasOwnProperty("error") && newError !== this.state.error) {
+    if (newProps.hasOwnProperty('error') && newError !== this.state.error) {
       this.setState({
-        error: newError
+        error: newError,
       });
-      this._toggleAnimation(newError !== "", this.state.errorAnim);
-      if (newError != "") {
+      this._toggleAnimation(newError !== '', this.state.errorAnim);
+      if (newError != '') {
         this._shake();
       }
     }
@@ -78,19 +80,19 @@ export default class BaseInput extends Component {
     Animated.timing(shakeAnim, {
       duration: 375,
       toValue: 3,
-      ease: Easing.bounce
+      ease: Easing.bounce,
     }).start();
   };
 
   _onLayout(event) {
     this.setState({
-      width: event.nativeEvent.layout.width
+      width: event.nativeEvent.layout.width,
     });
   }
 
   _onChange(event) {
     this.setState({
-      value: event.nativeEvent.text
+      value: event.nativeEvent.text,
     });
 
     const onChange = this.props.onChange;
@@ -127,7 +129,7 @@ export default class BaseInput extends Component {
     Animated.timing(animation, {
       toValue: isActive ? 1 : 0,
       duration: animationDuration,
-      useNativeDriver
+      useNativeDriver,
     }).start();
   }
 
