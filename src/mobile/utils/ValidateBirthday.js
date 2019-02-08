@@ -1,7 +1,9 @@
 // @flow
+/* eslint-disable */
+
 // See server/users/utils.js
-const minBirthday = new Date("01/01/1988");
-const maxBirthday = new Date("01/01/2001");
+const minBirthday = new Date('01/01/1988');
+const maxBirthday = new Date('01/01/2001');
 
 export default function validateBirthday(birthday: string) {
   const birthdayDate = new Date(birthday);

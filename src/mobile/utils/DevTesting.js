@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable */
 
 const LATENCY_MAX_MS = 3000;
 const LATENCY_MIN_MS = 100;
@@ -20,5 +21,5 @@ export default {
     if (__DEV__) {
       console.log(...data);
     }
-  }
+  },
 };

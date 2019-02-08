@@ -5,18 +5,34 @@ type ResponseStatus = {
   code: number,
 };
 
+export type DataResponse<T> = {
+  statusCode: number,
+  body: {
+    status: string,
+    data: T,
+  },
+};
+
+export type NoDataResponse = {
+  statusCode: number,
+  body: {
+    status: string,
+  },
+};
+
+
 const status = (responseStatus: ResponseStatus) => {
   return {
-    data: (data: any) => {
+    data: function data<T>(responseData: T): DataResponse<T> {
       return {
         statusCode: responseStatus.code,
         body: {
           status: responseStatus.status,
-          data,
+          data: responseData,
         },
       };
     },
-    noData: () => {
+    noData: (): NoDataResponse => {
       return {
         statusCode: responseStatus.code,
         body: {

@@ -15,7 +15,7 @@ const NODE_ENV = serverUtils.getNodeEnv();
 const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
-const getSignedUrl = async (params) => {
+const getSignedUrl = async (params): Promise<string> => {
   return new Promise((resolve, reject) => {
     s3.getSignedUrl('getObject', params, (err, url) => {
       if (err) return reject(err);
@@ -38,7 +38,10 @@ const getPhoto = async (photoId: number) => {
 
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
-    // $FlowFixMe I'm really not sure what's going on here...it's only HERE
+    // Weird flowtype issue requires us to specifically define return type
+    // Same bug as https://github.com/facebook/flow/issues/5294. Not resolve.
+    // Should look into this more: Max made a trello ticket 2/4/19
+    // $FlowFixMe
     return apiUtils.status(codes.GET_PHOTO__NOT_FOUND).noData();
   }
 

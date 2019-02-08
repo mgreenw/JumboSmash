@@ -1,67 +1,63 @@
 // @flow
+/* eslint-disable */
 
 // Auth:
 import type {
   sendVerificationEmail_response,
   SendVerificationEmailCompleted_Action,
-  SendVerificationEmailInitiated_Action
-} from "mobile/actions/auth/sendVerificationEmail";
+  SendVerificationEmailInitiated_Action,
+} from 'mobile/actions/auth/sendVerificationEmail';
 import type {
   login_response,
   LoginInitiated_Action,
-  LoginCompleted_Action
-} from "mobile/actions/auth/login";
-import type {
-  LogoutInitiated_Action,
-  LogoutCompleted_Action
-} from "mobile/actions/auth/logout";
+  LoginCompleted_Action,
+} from 'mobile/actions/auth/login';
+import type { LogoutInitiated_Action, LogoutCompleted_Action } from 'mobile/actions/auth/logout';
 import type {
   LoadAuthCompleted_Action,
-  LoadAuthInitiated_Action
-} from "mobile/actions/auth/loadAuth";
-import type {
-  LoadAppCompleted_Action,
-  LoadAppInitiated_Action
-} from "mobile/actions/app/loadApp";
+  LoadAuthInitiated_Action,
+} from 'mobile/actions/auth/loadAuth';
+import type { LoadAppCompleted_Action, LoadAppInitiated_Action } from 'mobile/actions/app/loadApp';
 import type {
   CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action
-} from "mobile/actions/app/createUser";
+  CreateProfileAndSettingsCompleted_Action,
+} from 'mobile/actions/app/createUser';
 import type {
   SaveProfileInitiated_Action,
-  SaveProfileCompleted_Action
-} from "mobile/actions/app/saveProfile";
-import type { Unauthorized_Action } from "mobile/actions/apiErrorHandler";
+  SaveProfileCompleted_Action,
+} from 'mobile/actions/app/saveProfile';
+import type { Unauthorized_Action, Error_Action } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
-  UploadPhotoCompleted_Action
-} from "mobile/actions/app/uploadPhoto";
+  UploadPhotoCompleted_Action,
+} from 'mobile/actions/app/uploadPhoto';
 import type {
   DeletePhotoInitiated_Action,
-  DeletePhotoCompleted_Action
-} from "mobile/actions/app/deletePhoto";
+  DeletePhotoCompleted_Action,
+} from 'mobile/actions/app/deletePhoto';
+import { isFSA } from 'mobile/utils/fluxStandardAction';
 
 export type PhotoIds = $ReadOnlyArray<number>;
 
-///////////////
+// /////////////
 // USER TYPES:
-///////////////
+// /////////////
 export type Genders = {
   male: boolean,
   female: boolean,
-  nonBinary: boolean
+  nonBinary: boolean,
 };
 
 export type UserSettings = {
   useGenders: Genders,
-  wantGenders: Genders
+  wantGenders: Genders,
 };
 
 export type UserProfile = {
   displayName: string,
   birthday: string,
   bio: string,
-  photoIds: PhotoIds
+  photoIds: PhotoIds,
 };
 
 type BaseUser = { userId: number, profile: UserProfile };
@@ -89,15 +85,15 @@ export type ReduxState = {
     createUser: boolean,
     saveProfile: boolean,
     uploadPhoto: boolean,
-    deletePhoto: boolean
+    deletePhoto: boolean,
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
   response: {
     sendVerificationEmail: ?sendVerificationEmail_response,
-    login: ?login_response
-  }
+    login: ?login_response,
+  },
 };
 
 export type Action =
@@ -116,6 +112,7 @@ export type Action =
   | SaveProfileInitiated_Action
   | SaveProfileCompleted_Action
   | Unauthorized_Action
+  | Error_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
@@ -136,255 +133,265 @@ const defaultState: ReduxState = {
     createUser: false,
     saveProfile: false,
     uploadPhoto: false,
-    deletePhoto: false
+    deletePhoto: false,
   },
   response: {
     sendVerificationEmail: null,
-    login: null
+    login: null,
   },
-  onboardingCompleted: false
+  onboardingCompleted: false,
 };
 
-export default function rootReducer(
-  state: ReduxState = defaultState,
-  action: Action
-): ReduxState {
+export default function rootReducer(state: ReduxState = defaultState, action: Action): ReduxState {
+  // Sanity check for our actions abiding FSA format.
+  if (!isFSA(action)) {
+    throw ('Err: Action is not FSA', action);
+  }
+
   switch (action.type) {
     // LOGIN:
-    case "LOGIN_INITIATED": {
+    case 'LOGIN_INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          login: true
-        }
+          login: true,
+        },
       };
     }
 
-    case "LOGIN_COMPLETED": {
+    case 'LOGIN_COMPLETED': {
+      const { response } = action.payload;
       return {
         ...state,
-        token: action.response ? action.response.token : null,
+        token: response ? response.token : null,
         inProgress: {
           ...state.inProgress,
-          login: false
+          login: false,
         },
         response: {
           ...state.response,
-          login: action.response
-        }
+          login: response,
+        },
       };
     }
 
     // LOGOUT:
-    case "LOGOUT_INITIATED": {
+    case 'LOGOUT_INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          logout: true
-        }
+          logout: true,
+        },
       };
     }
 
-    case "LOGOUT_COMPLETED": {
+    case 'LOGOUT_COMPLETED': {
       return {
         ...state,
         token: null,
         loggedIn: false,
         inProgress: {
           ...state.inProgress,
-          logout: false
-        }
+          logout: false,
+        },
       };
     }
 
     // LOAD AUTH:
-    case "LOAD_AUTH__INITIATED": {
+    case 'LOAD_AUTH__INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          loadAuth: true
-        }
+          loadAuth: true,
+        },
       };
     }
 
-    case "LOAD_AUTH__COMPLETED": {
+    case 'LOAD_AUTH__COMPLETED': {
+      const { token } = action.payload;
       return {
         ...state,
-        token: action.token,
+        token,
         authLoaded: true,
         inProgress: {
           ...state.inProgress,
-          loadAuth: false
-        }
+          loadAuth: false,
+        },
       };
     }
 
     // LOAD APP:
-    case "LOAD_APP__INITIATED": {
+    case 'LOAD_APP__INITIATED': {
       return {
         ...state,
         appLoaded: false,
         inProgress: {
           ...state.inProgress,
-          loadApp: true
-        }
+          loadApp: true,
+        },
       };
     }
 
-    case "LOAD_APP__COMPLETED": {
+    case 'LOAD_APP__COMPLETED': {
+      const { profile, settings, onboardingCompleted } = action.payload;
       return {
         ...state,
         appLoaded: true,
         client: {
           userId: 0, // TODO: RETRIEVE THIS
-          profile: action.profile,
-          settings: action.settings
+          profile,
+          settings,
         },
         inProgress: {
           ...state.inProgress,
-          loadApp: false
+          loadApp: false,
         },
-        onboardingCompleted: action.onboardingCompleted
+        onboardingCompleted,
       };
     }
 
-    case "CREATE_PROFILE_AND_SETTINGS__INITIATED": {
+    case 'CREATE_PROFILE_AND_SETTINGS__INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          createUser: true
-        }
+          createUser: true,
+        },
       };
     }
 
-    case "CREATE_PROFILE_AND_SETTINGS__COMPLETED": {
+    case 'CREATE_PROFILE_AND_SETTINGS__COMPLETED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          createUser: false
-        }
+          createUser: false,
+        },
       };
     }
 
-    case "SEND_VERIFICATION_EMAIL_INITIATED": {
+    case 'SEND_VERIFICATION_EMAIL_INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          sendVerificationEmail: true
-        }
+          sendVerificationEmail: true,
+        },
       };
     }
 
-    case "SEND_VERIFICATION_EMAIL_COMPLETED": {
+    case 'SEND_VERIFICATION_EMAIL_COMPLETED': {
+      const { response } = action.payload;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          sendVerificationEmail: false
+          sendVerificationEmail: false,
         },
         response: {
           ...state.response,
-          sendVerificationEmail: action.response
-        }
+          sendVerificationEmail: response,
+        },
       };
     }
 
-    case "SAVE_PROFILE__INITIATED": {
+    case 'SAVE_PROFILE__INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: true
-        }
+          saveProfile: true,
+        },
       };
     }
 
-    case "SAVE_PROFILE__COMPLETED": {
+    case 'SAVE_PROFILE__COMPLETED': {
+      const { profile } = action.payload;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: false
+          saveProfile: false,
         },
         client: {
           ...state.client,
-          profile: action.profile
-        }
+          profile,
+        },
       };
     }
 
-    case "UNAUTHORIZED": {
-      return defaultState;
+    case 'UNAUTHORIZED': {
+      return state;
     }
 
-    case "UPLOAD_PHOTO__INITIATED": {
+    case 'SERVER_ERROR': {
+      return state;
+    }
+
+    case 'UPLOAD_PHOTO__INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          uploadPhoto: true
-        }
+          uploadPhoto: true,
+        },
       };
     }
 
     // After a succesful photo upload, update our list of photos to include
     // the ID for the new photo.
-    case "UPLOAD_PHOTO__COMPLETED": {
+    case 'UPLOAD_PHOTO__COMPLETED': {
       if (!state.client) {
-        throw "User null in reducer for UPLOAD_PHOTO__COMPLETED";
+        throw 'User null in reducer for UPLOAD_PHOTO__COMPLETED';
       }
       const { profile } = state.client;
-      let newPhotoIds = profile.photoIds.slice();
-      newPhotoIds.push(action.photoId);
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          uploadPhoto: false
+          uploadPhoto: false,
         },
         client: {
           ...state.client,
           profile: {
             ...profile,
-            photoIds: newPhotoIds
-          }
-        }
+            photoIds: action.payload.photoIds,
+          },
+        },
       };
     }
 
-    case "DELETE_PHOTO__INITIATED": {
+    case 'DELETE_PHOTO__INITIATED': {
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          deletePhoto: true
-        }
+          deletePhoto: true,
+        },
       };
     }
 
-    case "DELETE_PHOTO__COMPLETED": {
+    case 'DELETE_PHOTO__COMPLETED': {
       if (!state.client) {
-        throw "User null in reducer for DELETE_PHOTO__COMPLETED";
+        throw 'User null in reducer for DELETE_PHOTO__COMPLETED';
       }
+      const { photoIds } = action.payload;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          deletePhoto: false
+          deletePhoto: false,
         },
         client: {
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds: action.photoIds
-          }
-        }
+            photoIds,
+          },
+        },
       };
     }
 

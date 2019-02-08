@@ -80,9 +80,18 @@ const DefaultProfileOptions = {
   buildJSON: false,
 };
 
+/*
+This function defines the select statement for the profile fields.
+It allows some options:
+  tableAlias: the name of the alias for the table in the query. Example: 'they_profile'
+  buildJSON: instead of returning teh fields directly, this builds the entire profile
+             into a JSON object which can then be named and returned as desired.
+             See "get-scene-candidates.js" for an example of this
+*/
 function profileSelectQuery(
-  userIdMatch: string,
-  options: typeof DefaultProfileOptions = DefaultProfileOptions,
+  userIdMatch: string, /* The query paramater or other match for the user's profile to get.
+                          e.g: $1 or they_profile.user_id */
+  options: typeof DefaultProfileOptions = DefaultProfileOptions, // See options above
 ) {
   const opts = {
     ...DefaultProfileOptions,
@@ -122,6 +131,14 @@ function profileSelectQuery(
     `;
 }
 
+<<<<<<< HEAD
+=======
+/*
+This function allows the selection of a user's settings in a reusable way! Use it in a SELECT
+or RETURNING statement.
+  - settingsTableAlias: the alias for the settings table for the user. E.g. user_setttings
+*/
+>>>>>>> master
 function settingsSelectQuery(settingsTableAlias: string = '') {
   const tableName = settingsTableAlias === '' ? '' : `${settingsTableAlias}.`;
 

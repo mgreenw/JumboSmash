@@ -1,0 +1,150 @@
+version: '3.3'
+
+services:
+  reverse-proxy:
+    image: traefik # The official Traefik docker image
+    command: --api --docker --docker.swarmMode --docker.domain=jumbosmash.localhost --docker.watch --logLevel=DEBUG
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    networks:
+      - traefik-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: traefik-config
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+
+  #
+  #  Prod Website Service
+  #
+
+  website:
+    image: sperrys/website:latest
+    networks:
+      - traefik-net
+    deploy:
+      labels:
+        - traefik.tags=website,prod
+        - traefik.backend=website
+        - traefik.frontend.rule=Host:jumbosmash.com
+        - traefik.port=80
+
+
+  #
+  #  arthur, (beta) Website Service
+  #
+
+  arthur:
+    image: sperrys/website
+    networks:
+      - traefik-net
+    deploy:
+      labels:
+        - traefik.tags=website,test
+        - traefik.backend=arthur
+        - traefik.frontend.rule=Host:arthur.jumbosmash.com
+        - traefik.port=80
+
+  #
+  #  Koh Service
+  #
+
+  koh:
+    image: sperrys/koh
+    ports:
+      - 3005:3005
+    networks:
+      - traefik-net
+    environment:
+      NODE_ENV: development
+    deploy:
+      labels:
+        - traefik.backend=koh
+        - traefik.port=3005
+        - traefik.frontend.rule=Host:koh.jumbosmash.com
+        - traefik.backend.loadbalancer.sticky=true
+
+  #
+  #  Prod API Service
+  #
+
+  server:
+    ports:
+      - 3001:3000
+    environment:
+      NODE_ENV: development
+    image: sperrys/server:secrets
+    secrets:
+      - db_pass
+      - sendgrid_api_key
+      - secret_key
+    links:
+      - redis # ensures that redis is a host that the container can find
+    networks:
+      - traefik-net
+    deploy:
+      labels:
+        - traefik.backend=server
+        - traefik.port=3000
+        - traefik.frontend.rule=Host:server.jumbosmash.com
+        - traefik.backend.loadbalancer.sticky=true
+
+  #
+  # redis service
+  #
+
+  redis:
+    image: redis
+    deploy:
+      labels:
+        - traefik.backend=redis
+        - traefik.port=6379
+        - traefik.backend.loadbalancer.sticky=true
+
+
+  #
+  #  Deployment Service
+  #
+
+  deployment:
+    image: "sperrys/deploy:node"
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3004:3004
+    networks:
+      - traefik-net
+    secrets:
+      - DOCKER_PASSWORD
+    volumes:
+      - /usr/local/bin/docker:/usr/bin/docker
+    deploy:
+      labels:
+        - traefik.backend=deploy
+        - traefik.port=3004
+        - traefik.frontend.rule=Host:deploy.jumbosmash.com
+
+# https://docs.docker.com/engine/swarm/secrets/
+secrets:
+  db_pass:
+    external: true
+  sendgrid_api_key:
+    external: true
+  secret_key:
+    external: true
+  DOCKER_PASSWORD:
+    external: true
+
+
+networks:
+  traefik-net:
+    driver: overlay
+configs:
+  traefik-config:
+    file: config.toml

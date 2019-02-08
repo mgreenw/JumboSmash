@@ -1,23 +1,38 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "../../utils/DevTesting";
-import type { UserSettings } from "mobile/reducers";
-import updateMySettings from "mobile/api/users/updateMySettings";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
 
-export const SAVE_SETTINGS__INITIATED = "SAVE_SETTINGS__INITIATED";
-export const SAVE_SETTINGS__COMPLETED = "SAVE_SETTINGS__COMPLETED";
+import type { Dispatch, GetState } from 'redux';
+import type { UserSettings } from 'mobile/reducers';
+import updateMySettings from 'mobile/api/users/updateMySettings';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import DevTesting from '../../utils/DevTesting';
 
-function initiate() {
+export type SaveSettingsInitiated_Action = {
+  type: 'SAVE_SETTINGS__INITIATED',
+  payload: {},
+  meta: {},
+};
+export type SaveSettingsCompleted_Action = {
+  type: 'SAVE_SETTINGS__COMPLETED',
+  payload: {
+    settings: UserSettings,
+  },
+  meta: {},
+};
+
+function initiate(): SaveSettingsInitiated_Action {
   return {
-    type: SAVE_SETTINGS__INITIATED
+    type: 'SAVE_SETTINGS__INITIATED',
+    payload: {},
+    meta: {},
   };
 }
 
-function complete(settings: UserSettings) {
+function complete(settings: UserSettings): SaveSettingsCompleted_Action {
   return {
-    type: SAVE_SETTINGS__COMPLETED,
-    settings
+    type: 'SAVE_SETTINGS__COMPLETED',
+    payload: { settings },
+    meta: {},
   };
 }
 
