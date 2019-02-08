@@ -1,23 +1,25 @@
 // @flow
 
-import React from "react";
-import { Provider } from "react-redux";
-import { createStore, compose, applyMiddleware } from "redux";
-import thunkMiddleware from "redux-thunk";
-import { createRootNavigator } from "./components/Navigation";
-import rootReducer from "./reducers";
-import NavigationService from "./NavigationService";
-import { createAppContainer } from "@react-navigation/native";
-import { loggerMiddleware } from "mobile/reduxMiddleware/loggerMiddleware";
-import { tokenMiddleware } from "mobile/reduxMiddleware/tokenMiddleware";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore, compose, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { createAppContainer } from '@react-navigation/native';
+import { loggerMiddleware } from 'mobile/reduxMiddleware/loggerMiddleware';
+import { tokenMiddleware } from 'mobile/reduxMiddleware/tokenMiddleware';
+import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
+import NavigationService from 'mobile/NavigationService';
+import rootReducer from 'mobile/reducers';
+import { createRootNavigator } from 'mobile/components/Navigation';
 
 const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunkMiddleware),
+    applyMiddleware(errorMiddleware),
     applyMiddleware(tokenMiddleware),
-    applyMiddleware(loggerMiddleware)
-  )
+    applyMiddleware(loggerMiddleware),
+  ),
 );
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
@@ -31,6 +33,7 @@ export default class App extends React.Component<Props, State> {
     this.state = {};
   }
 
+  /* eslint-disable */
   render() {
     return (
       <Provider store={store}>

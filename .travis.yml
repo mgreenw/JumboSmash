@@ -1,44 +1,65 @@
-
-language: node_js
-node_js:
-  - "8.12"
-branches:
-  only:
-  - master
-env:
-  global:
-    - NODE_CONFIG_ENV=travis
+language: generic
+sudo: required
 services:
-  - postgresql
-addons:
-  postgresql: "10"
-  apt:
-    packages:
-    - postgresql-10
-    - postgresql-client-10
-env:
-  global:
-  - PGPORT=5433
-before_install:
-  - sudo apt-get update
-  - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
-  - sudo service postgresql restart
-  - sleep 1
-install:
-  - npm install
-  - ls ./src
-  - ls ./src/koh
-  - npm install --prefix ./src/koh
-  - npm install --prefix ./src/mobile
-  - npm install --prefix ./src/server
-before_script:
-  - sudo -u postgres psql -c 'create database jumbosmash_test;' -U postgres
-  - sudo -u postgres psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
-  - cd ./src/server && npm run migrate up
-script:
-  - npm run lint
-  - cd ../..
-  - npm run flow
-  - cd src/server
-  - npm run check-env
-  - npm run test
+- docker
+jobs:
+  include:
+  - stage: website
+    env:
+      - IMAGE_REPO=sperrys/website
+      - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
+    before_install:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - echo "$IMAGE_REPO";
+      - echo "$DEPLOY_TAG";
+      - cd src/website
+
+    script:
+      - echo "No Tests for Website";
+    after_success:
+      - if [ "$TRAVIS_BRANCH" == "master" ]; then
+          if git diff --name-only HEAD^ | grep "src/website/";  then
+            echo "New code. Performing a Docker build";
+            docker build -t $DEPLOY_TAG .;
+            echo "Pushing $DEPLOY_TAG to the registry";
+            docker push $DEPLOY_TAG;
+          else
+            echo "No changes in website codebase!";
+          fi
+        fi
+  - stage: server
+    dist: xenial
+    language: node_js
+    node_js:
+      - '8.12'
+    env:
+      - NODE_CONFIG_ENV=travis
+      - PGUSER=postgres
+      - IMAGE_REPO=maxgreenwald/projectgem
+      - DEPLOY_TAG=$IMAGE_REPO:$TRAVIS_COMMIT
+    cache:
+      - npm
+    addons:
+      postgresql: '10'
+    install:
+      - npm install
+      - ls ./src
+      - ls ./src/koh
+      - npm install --prefix ./src/koh
+      - npm install --prefix ./src/mobile
+      - npm install --prefix ./src/deploy/deploy
+      - npm install --prefix ./src/server
+    before_script:
+      - psql -c 'create database jumbosmash_test;' -U postgres
+      - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
+      - cd ./src/server && npm run migrate up
+    script:
+      - npm run lint
+      - cd ../..
+      - npm run flow
+      - cd src/server
+      - npm run check-env
+      - npm run test
+notifications:
+  slack:
+    secure: BT+I+DPQBPupDHMADVKtE7QPkqpDpchMS9eLxrGqNc7WuND8dnce/p0/PpodbSOiBTlgoxaGj0iFg1rSf3Z6dOiLcJs4RuuY4hRVxto2nlznOnY4xHY8gHMvaWUy7JkIXeLKLRQ4+jXHvhVU8h1y+GvxHL2VmDlxYWWKlw/r1ltHi7/fDObIhEDQx6Da/pdqfVPpQAkBaPnF+z0I3ZqFh2f1TIMknn3SPDTHqbseioVc4BD9lceICQ+h82a2eQF9QTyYbBkeCk2rA4kfaA3zNmaDTpbApuYzryjtgAtyhowRngU4k9OCSFYJ8VVUGFDpAchakRffCvHMN0uf2UUtL0lZRL3Dre00bTTvwFNSH7ZRL7czUb0Fdr9NMyf6JS99ijVRb2LTsdf3aEgRgu/uq0zgca3vM1J28ZzZ5BBJvzezp6G9ia5m102CJ1Pcjspc8wUmcHw0YhKAsNBVzJWTW4JXkcoN0o/t04Y+QkESOrQ37uS+8WeaOZYK0AWos05Owd2AVJXk5oZBvqMxSNGSqn7qP6MgxV1gxi4A3qotWIr6kRfgO1qGdDthnyZMyPKfcH8eDDc18vWGPmDSkU5c4kMm28Poyv7Ne2CrWGcsTHJzrKdnNtpCCcnpZqRnTNgiotSfaEbCS21r4JP4E40Dz7FilJ//zkPdoNi361AJ1+U=

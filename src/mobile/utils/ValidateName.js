@@ -1,4 +1,6 @@
 // @flow
+/* eslint-disable */
+
 // See server/users/utils.js
 const displayNameMaxLength = 50;
 

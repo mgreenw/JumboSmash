@@ -1,29 +1,41 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "mobile/utils/DevTesting";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
-import { getSignedUrl } from "mobile/api/photos/getSignedUrl";
-import { uploadPhotoToS3 } from "mobile/api/photos/uploadPhoto";
-import { confirmUpload } from "mobile/api/photos/confirmUpload";
+/* eslint-disable */
+
+import type { Dispatch, GetState } from 'redux';
+import DevTesting from 'mobile/utils/DevTesting';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import { getSignedUrl } from 'mobile/api/photos/getSignedUrl';
+import { uploadPhotoToS3 } from 'mobile/api/photos/uploadPhoto';
+import { confirmUpload } from 'mobile/api/photos/confirmUpload';
 
 export type UploadPhotoInitiated_Action = {
-  type: "UPLOAD_PHOTO__INITIATED"
+  type: 'UPLOAD_PHOTO__INITIATED',
+  payload: {},
+  meta: {},
 };
 export type UploadPhotoCompleted_Action = {
-  type: "UPLOAD_PHOTO__COMPLETED",
-  photoId: number
+  type: 'UPLOAD_PHOTO__COMPLETED',
+  payload: {
+    photoIds: number[],
+  },
+  meta: {},
 };
 
 function initiate(): UploadPhotoInitiated_Action {
   return {
-    type: "UPLOAD_PHOTO__INITIATED"
+    type: 'UPLOAD_PHOTO__INITIATED',
+    payload: {},
+    meta: {},
   };
 }
 
-function complete(photoId: number): UploadPhotoCompleted_Action {
+function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   return {
-    type: "UPLOAD_PHOTO__COMPLETED",
-    photoId
+    type: 'UPLOAD_PHOTO__COMPLETED',
+    payload: {
+      photoIds,
+    },
+    meta: {},
   };
 }
 
@@ -36,11 +48,11 @@ export function uploadPhoto(uri: string) {
       .then(payload => {
         uploadPhotoToS3(uri, payload).then(success => {
           if (success) {
-            confirmUpload(token).then(photoId => {
-              dispatch(complete(photoId));
+            confirmUpload(token).then(photoIds => {
+              dispatch(complete(photoIds));
             });
           } else {
-            throw "Error Uploading Photo";
+            throw 'Error Uploading Photo';
           }
         });
       })

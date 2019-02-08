@@ -1,27 +1,37 @@
 // @flow
-import type { Dispatch, GetState } from "redux";
-import DevTesting from "../../utils/DevTesting";
-import type { UserProfile, UserSettings } from "mobile/reducers";
-import { createMyProfile } from "mobile/api/users/updateMyProfile";
-import updateMySettings from "mobile/api/users/updateMySettings";
-import { apiErrorHandler } from "mobile/actions/apiErrorHandler";
+/* eslint-disable */
+
+import type { Dispatch, GetState } from 'redux';
+import type { UserProfile, UserSettings } from 'mobile/reducers';
+import { createMyProfile } from 'mobile/api/users/updateMyProfile';
+import updateMySettings from 'mobile/api/users/updateMySettings';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import DevTesting from '../../utils/DevTesting';
 
 export type CreateProfileAndSettingsInitiated_Action = {
-  type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
+  type: 'CREATE_PROFILE_AND_SETTINGS__INITIATED',
+  payload: {},
+  meta: {},
 };
 export type CreateProfileAndSettingsCompleted_Action = {
-  type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
+  type: 'CREATE_PROFILE_AND_SETTINGS__COMPLETED',
+  payload: {},
+  meta: {},
 };
 
 function initiate(): CreateProfileAndSettingsInitiated_Action {
   return {
-    type: "CREATE_PROFILE_AND_SETTINGS__INITIATED"
+    type: 'CREATE_PROFILE_AND_SETTINGS__INITIATED',
+    payload: {},
+    meta: {},
   };
 }
 
 function complete(): CreateProfileAndSettingsCompleted_Action {
   return {
-    type: "CREATE_PROFILE_AND_SETTINGS__COMPLETED"
+    type: 'CREATE_PROFILE_AND_SETTINGS__COMPLETED',
+    payload: {},
+    meta: {},
   };
 }
 
