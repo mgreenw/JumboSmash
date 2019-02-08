@@ -42,14 +42,24 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
   //    critic has interacted with the candidate
   try {
     await db.query(`
-      INSERT INTO relationships
-        (critic_user_id, candidate_user_id, liked_${scene})
-        VALUES ($1, $2, $3)
+      INSERT INTO relationships (
+        critic_user_id,
+        candidate_user_id,
+        liked_${scene},
+        liked_${scene}_timestamp
+      )
+      VALUES (
+        $1,
+        $2,
+        $3,
+        CASE WHEN $3 THEN NOW() ELSE NULL END
+      )
       ON CONFLICT (critic_user_id, candidate_user_id)
       DO UPDATE
         SET
         liked_${scene} = $3,
-        last_swipe_timestamp = now()
+        last_swipe_timestamp = now(),
+        liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
     `, [userId, candidateUserId, liked]);
 
     // If the query succeeded, return success

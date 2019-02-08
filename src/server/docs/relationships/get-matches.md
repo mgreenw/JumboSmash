@@ -46,9 +46,11 @@ Provide the normal `Authorization` token in the request header.
                 },
                 "photoIds": [1, 2, 3]
             },
-            "scenes": [
-                "smash"
-            ]
+            "scenes": {
+                "smash": "2019-01-27 13:25:43.162-05",
+                "social": null,
+                "stone": null
+            }
         },
         {
             "userId": 8,
@@ -60,10 +62,11 @@ Provide the normal `Authorization` token in the request header.
                 },
                 "photoIds": [4, 5, 6]
             },
-            "scenes": [
-                "social",
-                "stone"
-            ]
+            "scenes": {
+                "smash": null,
+                "social": "2019-01-27 13:25:43.162-05",
+                "stone": null
+            }
         }
     ]
 }
