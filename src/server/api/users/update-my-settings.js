@@ -42,6 +42,21 @@ const schema = {
            "type": "boolean"
         }
       }
+    },
+    "activeScenes": {
+      "description": "The scenes which the user is active in",
+      "type": "object",
+      "properties": {
+        "smash": {
+          "type": "boolean"
+        },
+        "social": {
+           "type": "boolean"
+        },
+        "stone": {
+           "type": "boolean"
+        }
+      }
     }
   },
   "required": []
@@ -52,7 +67,12 @@ const schema = {
  * @api {patch} /api/users/me/settings
  *
  */
-const updateMySettings = async (userId: number, wantPronouns: Object, usePronouns: Object) => {
+const updateMySettings = async (
+  userId: number,
+  wantPronouns: Object,
+  usePronouns: Object,
+  activeScenes: Object,
+) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
   // field that relates to this value
@@ -63,6 +83,9 @@ const updateMySettings = async (userId: number, wantPronouns: Object, usePronoun
     use_he: usePronouns.he,
     use_she: usePronouns.she,
     use_they: usePronouns.they,
+    active_smash: activeScenes.smash,
+    active_social: activeScenes.social,
+    active_stone: activeScenes.stone,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
@@ -101,7 +124,12 @@ const updateMySettings = async (userId: number, wantPronouns: Object, usePronoun
 const handler = [
   apiUtils.validate(schema),
   apiUtils.asyncHandler(async (req: $Request) => {
-    return updateMySettings(req.user.id, req.body.wantPronouns || {}, req.body.usePronouns || {});
+    return updateMySettings(
+      req.user.id,
+      req.body.wantPronouns || {},
+      req.body.usePronouns || {},
+      req.body.activeScenes || {},
+    );
   }),
 ];
 

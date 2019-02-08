@@ -59,5 +59,14 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.wantPronouns.he).toBeDefined();
     expect(res.body.data.wantPronouns.she).toBeDefined();
     expect(res.body.data.wantPronouns.they).toBeDefined();
+
+    expect(res.body.data.activeScenes.smash).toBeDefined();
+    expect(res.body.data.activeScenes.social).toBeDefined();
+    expect(res.body.data.activeScenes.stone).toBeDefined();
+
+    // Default to false
+    expect(res.body.data.activeScenes.smash).toBe(false);
+    expect(res.body.data.activeScenes.social).toBe(false);
+    expect(res.body.data.activeScenes.stone).toBe(false);
   });
 });
