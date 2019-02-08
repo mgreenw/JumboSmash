@@ -6,6 +6,8 @@ const authRouter = require('./auth');
 const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
+const messagesRouter = require('./messages');
+
 const codes = require('./status-codes');
 const logger = require('../logger');
 
@@ -37,6 +39,7 @@ apiRouter.use(hasProfile);
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
+apiRouter.use('/messages', messagesRouter);
 
 // --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
