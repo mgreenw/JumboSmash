@@ -7,7 +7,7 @@ import { MY_PROFILE__ROUTE } from '../routes';
 import type { ServerProfile } from './GetMyProfile';
 
 const UPDATE_PROFILE__SUCCESS = 'UPDATE_PROFILE__SUCCESS';
-const CREATE_PROFILE__SUCCESS = 'CREATE_PROFILE__SUCCESS';
+const FINALIZE_PROFILE_SETUP__SUCCESS = 'FINALIZE_PROFILE_SETUP__SUCCESS';
 
 function updateOrCreateMyProfile(
   token: string,
@@ -23,7 +23,7 @@ function updateOrCreateMyProfile(
   )
     .then(response => {
       switch (response.status) {
-        case CREATE_PROFILE__SUCCESS:
+        case FINALIZE_PROFILE_SETUP__SUCCESS:
           return;
         case UPDATE_PROFILE__SUCCESS: {
           return;
