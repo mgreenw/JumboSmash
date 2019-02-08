@@ -80,11 +80,6 @@ const DefaultProfileOptions = {
   buildJSON: false,
 };
 
-<<<<<<< HEAD
-function profileSelectQuery(
-  userIdMatch: string,
-  options: typeof DefaultProfileOptions = DefaultProfileOptions,
-=======
 /*
 This function defines the select statement for the profile fields.
 It allows some options:
@@ -97,7 +92,6 @@ function profileSelectQuery(
   userIdMatch: string, /* The query paramater or other match for the user's profile to get.
                           e.g: $1 or they_profile.user_id */
   options: typeof DefaultProfileOptions = DefaultProfileOptions, // See options above
->>>>>>> master
 ) {
   const opts = {
     ...DefaultProfileOptions,
