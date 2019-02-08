@@ -14,7 +14,7 @@ import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { OnboardingLayout } from './Onboarding_Layout';
-import TermsAndCondition from 'mobile/assets/copy/termsAndConditions';
+import TermsAndConditions from 'mobile/assets/copy/termsAndConditions';
 
 type Props = {
   navigation: any,
@@ -57,7 +57,7 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
           <View style={{ flex: 1 }}>
             <ScrollView>
               <View style={{ paddingLeft: 38, paddingRight: 38 }}>
-                <TermsAndCondition />
+                <TermsAndConditions />
               </View>
               <View
                 style={{
