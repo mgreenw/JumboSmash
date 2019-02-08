@@ -1,11 +1,9 @@
+// development.js
 
-  // development.js
+const secrets = require('../secrets');
 
-  const secrets = require('../secrets');
-
-
-  module.exports = {
-    // secrets.get('sendgrid_api_key'),
-    "DOCKER_USERNAME": 'sperrys',
-    "DOCKER_PASSWORD": secrets.get("DOCKER_PASSWORD")
-  };
+module.exports = {
+  // secrets.get('sendgrid_api_key'),
+  DOCKER_USERNAME: 'sperrys',
+  DOCKER_PASSWORD: secrets.get('DOCKER_PASSWORD'),
+};
