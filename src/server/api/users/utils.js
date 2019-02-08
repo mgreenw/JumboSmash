@@ -131,14 +131,11 @@ function profileSelectQuery(
     `;
 }
 
-<<<<<<< HEAD
-=======
 /*
 This function allows the selection of a user's settings in a reusable way! Use it in a SELECT
 or RETURNING statement.
   - settingsTableAlias: the alias for the settings table for the user. E.g. user_setttings
 */
->>>>>>> master
 function settingsSelectQuery(settingsTableAlias: string = '') {
   const tableName = settingsTableAlias === '' ? '' : `${settingsTableAlias}.`;
 

@@ -33,7 +33,7 @@ const getConversation = async (
   // Get the most recent message id. If it exists, parse the number
   let mostRecentMessageId;
   if (mostRecentMessageIdStr) {
-    // Get the integer of the most recent message it
+    // Get the integer of the most recent message id
     mostRecentMessageId = Number.parseInt(mostRecentMessageIdStr, 10);
 
     // If it is invalid (not an int), fail.

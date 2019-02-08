@@ -114,4 +114,65 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.data[res.body.data.length - 1].fromClient).toBe(false);
     expect(res.body.data[0].messageId).toBeDefined();
   });
+
+  it('should fail on an invalid most recent message id (string)', async () => {
+    const res = await request(app)
+      .get(`/api/messages/${other.id}?most-recent-message-id=hahaduped`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
+  });
+
+  it('should fail on an invalid most recent message id (negative)', async () => {
+    const res = await request(app)
+      .get(`/api/messages/${other.id}?most-recent-message-id=-1`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
+  });
+
+  it('should sucessfully limit the response to 0 messages if the most recent message id is the last message', async () => {
+    const result = await db.query(`
+      SELECT id
+      FROM messages
+      WHERE sender_user_id = $1
+      ORDER BY timestamp
+      LIMIT 1
+    `, [other.id]);
+
+    const res = await request(app)
+      .get(`/api/messages/${other.id}?most-recent-message-id=${result.rows[0].id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.length).toBe(0);
+  });
+
+  it('should sucessfully limit the response to 1 message if the most recent message id is the penultimate message', async () => {
+    let res = await request(app)
+      .post(`/api/messages/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token)
+      .send({ content: 'hey to you too' });
+
+    // Gets the penultimate message id
+    const result = await db.query(`
+      SELECT id
+      FROM messages
+      WHERE sender_user_id = $1
+      ORDER BY timestamp
+    `, [other.id]);
+
+    res = await request(app)
+      .get(`/api/messages/${other.id}?most-recent-message-id=${result.rows[result.rowCount - 2].id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].messageId).toBe(result.rows[result.rowCount - 1].id);
+  });
 });

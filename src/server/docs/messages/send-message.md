@@ -66,7 +66,7 @@ Provide the normal `Authorization` token in the request header.
 
 **Code** : `400 BAD REQUEST`
 
-**Content**
+**Content Example**
 
 ```json
 {
