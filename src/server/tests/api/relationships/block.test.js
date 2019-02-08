@@ -29,7 +29,7 @@ describe('POST api/relationships/judge', () => {
       .get('/api/relationships/block')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('jjaffe01');
@@ -38,7 +38,7 @@ describe('POST api/relationships/judge', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should fail if blockedUserId is not a number or not a multiple of 1', async () => {
@@ -50,7 +50,7 @@ describe('POST api/relationships/judge', () => {
         blockedUserId: true,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.blockedUserId should be number');
 
     res = await request(app)
@@ -61,7 +61,7 @@ describe('POST api/relationships/judge', () => {
         blockedUserId: 9.3,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('data.blockedUserId should be multiple of 1');
   });
 
@@ -74,7 +74,7 @@ describe('POST api/relationships/judge', () => {
         blockedUserId: -1,
       });
     expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BLOCK__USER_NOT_FOUND);
+    expect(res.body.status).toBe(codes.BLOCK__USER_NOT_FOUND.status);
   });
 
   it('should allow a user without a profile setup to be blocked', async () => {
@@ -88,7 +88,7 @@ describe('POST api/relationships/judge', () => {
         blockedUserId: user.id,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.BLOCK__SUCCESS);
+    expect(res.body.status).toBe(codes.BLOCK__SUCCESS.status);
   });
 
   it('should allow a user with a profile to be blocked', async () => {
@@ -101,6 +101,6 @@ describe('POST api/relationships/judge', () => {
         blockedUserId: user.id,
       });
     expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.BLOCK__SUCCESS);
+    expect(res.body.status).toBe(codes.BLOCK__SUCCESS.status);
   });
 });

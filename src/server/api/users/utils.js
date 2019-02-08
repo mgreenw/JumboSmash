@@ -75,8 +75,88 @@ function getFieldTemplates(definedFields: Array<[string, any]>) {
   };
 }
 
+const DefaultProfileOptions = {
+  tableAlias: '',
+  buildJSON: false,
+};
+
+/*
+This function defines the select statement for the profile fields.
+It allows some options:
+  tableAlias: the name of the alias for the table in the query. Example: 'they_profile'
+  buildJSON: instead of returning teh fields directly, this builds the entire profile
+             into a JSON object which can then be named and returned as desired.
+             See "get-scene-candidates.js" for an example of this
+*/
+function profileSelectQuery(
+  userIdMatch: string, /* The query paramater or other match for the user's profile to get.
+                          e.g: $1 or they_profile.user_id */
+  options: typeof DefaultProfileOptions = DefaultProfileOptions, // See options above
+) {
+  const opts = {
+    ...DefaultProfileOptions,
+    ...options,
+  };
+  const tableName = opts.tableAlias === '' ? '' : `${opts.tableAlias}.`;
+
+  const fields = `
+    json_build_object(
+      'displayName', ${tableName}display_name,
+      'birthday', to_char(${tableName}birthday, 'YYYY-MM-DD'),
+      'bio', ${tableName}bio
+    )
+  `;
+
+  const photoIds = `
+    ARRAY(
+      SELECT id
+      FROM photos
+      WHERE user_id = ${userIdMatch}
+      ORDER BY index
+    )
+  `;
+
+  if (opts.buildJSON) {
+    return `
+      json_build_object(
+        'fields', ${fields},
+        'photoIds', ${photoIds}
+      )
+    `;
+  }
+
+  return `
+      ${fields} AS fields,
+      ${photoIds} AS "photoIds"
+    `;
+}
+
+/*
+This function allows the selection of a user's settings in a reusable way! Use it in a SELECT
+or RETURNING statement.
+  - settingsTableAlias: the alias for the settings table for the user. E.g. user_setttings
+*/
+function settingsSelectQuery(settingsTableAlias: string = '') {
+  const tableName = settingsTableAlias === '' ? '' : `${settingsTableAlias}.`;
+
+  return `
+    json_build_object(
+      'he', ${tableName}want_he,
+      'she', ${tableName}want_she,
+      'they', ${tableName}want_they
+    ) AS "wantPronouns",
+    json_build_object(
+      'he', ${tableName}use_he,
+      'she', ${tableName}use_she,
+      'they', ${tableName}use_they
+    ) AS "usePronouns"
+  `;
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
   getFieldTemplates,
+  profileSelectQuery,
+  settingsSelectQuery,
 };
