@@ -1,15 +1,10 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
+import { View } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { BirthdayInput } from 'mobile/components/shared/DigitInput';
-import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
-import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
+import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import validateBirthday from 'mobile/utils/ValidateBirthday';
 import validateName from 'mobile/utils/ValidateName';
@@ -27,15 +22,7 @@ type State = {
   errorMessageBirthday: string,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-class NameAgeScreen extends React.Component<Props, State> {
+export default class NameAgeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -52,43 +39,51 @@ class NameAgeScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state != prevState) {
+    if (this.state !== prevState) {
+      const { profile, settings } = this.state;
       const { navigation } = this.props;
-      navigation.state.params.onUpdateProfileSettings(this.state.profile, this.state.settings);
+      navigation.state.params.onUpdateProfileSettings(profile, settings);
     }
   }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
+    const { profile, settings } = this.state;
     navigation.navigate(routes.OnboardingMyGenders, {
-      profile: this.state.profile,
-      settings: this.state.settings,
-      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
+      profile,
+      settings,
+      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
         this.setState({
-          profile,
-          settings,
+          profile: newProfile,
+          settings: newSettings,
         });
       },
     });
   };
 
-  _onChangeName = name => {
-    this.setState((state, props) => ({
+  _onChangeName = (name: string) => {
+    this.setState(state => ({
       profile: {
-        ...this.state.profile,
-        displayName: name,
+        ...state.profile,
+        fields: {
+          ...state.profile.fields,
+          displayName: name,
+        },
       },
       errorMessageName: '',
     }));
   };
 
-  _onChangeBirthday = MMDDYY => {
+  _onChangeBirthday = (MMDDYY: string) => {
     const formatedBirthday = this._formatBirthday(MMDDYY);
-    this.setState((state, props) => ({
+    this.setState(state => ({
       unformatedBirthday: MMDDYY,
       profile: {
-        ...this.state.profile,
-        birthday: formatedBirthday,
+        ...state.profile,
+        fields: {
+          ...state.profile.fields,
+          birthday: formatedBirthday,
+        },
       },
       errorMessageBirthday: '',
     }));
@@ -96,8 +91,9 @@ class NameAgeScreen extends React.Component<Props, State> {
 
   _validateInputs = () => {
     // validate birthday to be the correct
-    const validBirthday = validateBirthday(this.state.profile.birthday);
-    const validName = validateName(this.state.profile.displayName);
+    const { profile } = this.state;
+    const validBirthday = validateBirthday(profile.fields.birthday);
+    const validName = validateName(profile.fields.displayName);
     if (!validBirthday) {
       this.setState({
         errorMessageBirthday: 'Invalid Birthday',
@@ -141,14 +137,17 @@ class NameAgeScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const {
+      profile, errorMessageName, errorMessageBirthday, unformatedBirthday,
+    } = this.state;
     const body = (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <PrimaryInput
-            value={this.state.profile.displayName}
+            value={profile.fields.displayName}
             label="Preferred Name"
             onChange={this._onChangeName}
-            error={this.state.errorMessageName}
+            error={errorMessageName}
             containerStyle={{ width: '100%' }}
             assistive=""
             autoCapitalize="words"
@@ -159,8 +158,8 @@ class NameAgeScreen extends React.Component<Props, State> {
           <BirthdayInput
             label="Birthday"
             assistive=""
-            error={this.state.errorMessageBirthday}
-            value={this.state.unformatedBirthday}
+            error={errorMessageBirthday}
+            value={unformatedBirthday}
             onChangeValue={this._onChangeBirthday}
             placeholder="MMDDYY"
           />
@@ -175,17 +174,12 @@ class NameAgeScreen extends React.Component<Props, State> {
         main
         progress={0}
         buttonDisabled={
-          this.state.profile.displayName == '' ||
-          this.state.profile.birthday == '' ||
-          this.state.errorMessageName != '' ||
-          this.state.errorMessageBirthday != ''
+          profile.fields.displayName === ''
+          || profile.fields.birthday === ''
+          || errorMessageName !== ''
+          || errorMessageBirthday !== ''
         }
       />
     );
   }
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(NameAgeScreen);

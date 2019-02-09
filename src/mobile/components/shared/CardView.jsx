@@ -21,7 +21,7 @@ import type { UserProfile } from 'mobile/reducers';
 import { isIphoneX } from 'mobile/utils/Platform';
 
 type Props = {
-  user: UserProfile,
+  profile: UserProfile,
   onMinimize: () => void,
 };
 
@@ -46,7 +46,7 @@ export default class CardView extends React.Component<Props> {
   scrollX = new Animated.Value(0); // this will be the scroll location of our ScrollView
 
   render() {
-    const { user, onMinimize } = this.props;
+    const { profile, onMinimize } = this.props;
     const position = Animated.divide(this.scrollX, width);
     return (
       <ScrollView
@@ -116,7 +116,7 @@ export default class CardView extends React.Component<Props> {
             }}
           >
             <Text style={{ fontSize: 28, textAlign: 'center' }}>
-              {`${user.displayName}, ${user.birthday}`}
+              {`${profile.fields.displayName}, ${profile.fields.birthday}`}
             </Text>
 
             <TouchableOpacity

@@ -1,18 +1,18 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Dimensions, View, StyleSheet, ImageBackground } from 'react-native';
+import {
+  Dimensions, View, StyleSheet, ImageBackground,
+} from 'react-native';
 import { connect } from 'react-redux';
-import { Input } from 'react-native-elements';
 import type { Dispatch } from 'redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
 import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GEMHeader from 'mobile/components/shared/Header';
-import type { ReduxState, UserProfile } from 'mobile/reducers';
+import type { ReduxState, UserProfile, ProfileFields } from 'mobile/reducers';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
-import { saveProfile } from 'mobile/actions/app/saveProfile';
+import { saveProfileFieldsAction } from 'mobile/actions/app/saveProfile';
 import NavigationService from 'mobile/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
 
@@ -29,26 +29,24 @@ const styles = StyleSheet.create({
   },
 });
 
-type navigationProps = {
-  navigation: any,
-};
+type NavigationProps = {};
 
-type reduxProps = {
+type ReduxProps = {
   profile: UserProfile,
 };
 
-type dispatchProps = {
-  saveProfile: (profile: UserProfile) => void,
+type DispatchProps = {
+  saveProfileFields: (fields: ProfileFields) => void,
 };
 
-type Props = reduxProps & navigationProps & dispatchProps;
+type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
-  editedProfile: UserProfile,
+  editedProfileFields: ProfileFields,
   errorMessageName: string,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Profile Edit');
   }
@@ -57,10 +55,10 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
-    saveProfile: (profile: UserProfile) => {
-      dispatch(saveProfile(profile));
+    saveProfileFields: (fields: ProfileFields) => {
+      dispatch(saveProfileFieldsAction(fields));
     },
   };
 }
@@ -69,24 +67,24 @@ class ProfileEditScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      editedProfile: props.profile,
+      editedProfileFields: props.profile.fields,
       errorMessageName: '',
     };
   }
 
   _onChangeBio = (bio: string) => {
-    this.setState(prevState => ({
-      editedProfile: {
-        ...prevState.editedProfile,
+    this.setState(state => ({
+      editedProfileFields: {
+        ...state.editedProfileFields,
         bio,
       },
     }));
   };
 
   _onChangeName = (displayName: string) => {
-    this.setState(prevState => ({
-      editedProfile: {
-        ...prevState.editedProfile,
+    this.setState(state => ({
+      editedProfileFields: {
+        ...state.editedProfileFields,
         displayName,
       },
     }));
@@ -94,15 +92,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
-    const { editedProfile } = this.state;
-    this.props.saveProfile(editedProfile);
+    const { editedProfileFields } = this.state;
+    const { saveProfileFields } = this.props;
+    saveProfileFields(editedProfileFields);
     NavigationService.back();
   };
-
-  // for refs
-  nameInput: Input;
-
-  bioInput: Input;
 
   render() {
     const { width } = Dimensions.get('window');
@@ -112,7 +106,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const containerWidth = width - 64;
     const imageWidth = (containerWidth - 15) / 2;
 
-    const { editedProfile, errorMessageName } = this.state;
+    const { editedProfileFields, errorMessageName } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Edit Profile" leftIconName="back" onLeftIconPress={this._onBack} />
@@ -123,15 +117,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
           />
           <KeyboardAwareScrollView extraScrollHeight={35}>
             <View style={[styles.profileBlock, { marginTop: 20 }]}>
-              <AddMultiPhotos
-                images={editedProfile.photoIds}
-                width={containerWidth}
-                imageWidth={imageWidth}
-              />
+              <AddMultiPhotos width={containerWidth} imageWidth={imageWidth} />
             </View>
             <View style={styles.profileBlock}>
               <PrimaryInput
-                value={editedProfile.displayName}
+                value={editedProfileFields.displayName}
                 label="Preferred Name"
                 onChange={this._onChangeName}
                 error={errorMessageName}
@@ -147,7 +137,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 }}
               >
                 <BioInput
-                  value={editedProfile.bio}
+                  value={editedProfileFields.bio}
                   onChangeText={this._onChangeBio}
                   label="About Me"
                 />

@@ -76,7 +76,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
     throw new Error('no photos in Profile Screen');
   }
   return {
-    displayName: reduxState.client.profile.displayName,
+    displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
     token: reduxState.token,
   };
