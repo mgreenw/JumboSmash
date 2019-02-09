@@ -7,7 +7,7 @@ import { MY_PROFILE__ROUTE } from '../routes';
 import type { ServerProfile } from './GetMyProfile';
 
 const UPDATE_PROFILE__SUCCESS = 'UPDATE_PROFILE__SUCCESS';
-const CREATE_PROFILE__SUCCESS = 'CREATE_PROFILE__SUCCESS';
+const FINALIZE_PROFILE_SETUP__SUCCESS = 'FINALIZE_PROFILE_SETUP__SUCCESS';
 
 function updateOrCreateMyProfile(
   token: string,
@@ -19,15 +19,11 @@ function updateOrCreateMyProfile(
 
     MY_PROFILE__ROUTE,
     token,
-    {
-      ...request,
-      image1Url:
-        'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-    },
+    request,
   )
     .then(response => {
       switch (response.status) {
-        case CREATE_PROFILE__SUCCESS:
+        case FINALIZE_PROFILE_SETUP__SUCCESS:
           return;
         case UPDATE_PROFILE__SUCCESS: {
           return;

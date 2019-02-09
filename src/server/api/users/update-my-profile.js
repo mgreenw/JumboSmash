@@ -4,7 +4,7 @@ import type { $Request } from 'express';
 
 const _ = require('lodash');
 
-const utils = require('./utils');
+const { validateProfile, profileSelectQuery, getFieldTemplates } = require('./utils');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
@@ -31,6 +31,8 @@ const schema = {
 };
 /* eslint-enable */
 
+const definedSelect = profileSelectQuery('$1');
+
 /**
  * @api {patch} /api/users/me/profile
  *
@@ -39,10 +41,9 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    utils.validateProfile(profile);
+    validateProfile(profile);
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.UPDATE_PROFILE__INVALID_REQUEST,
+    return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
       message: error,
     });
   }
@@ -60,29 +61,33 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // for a consistant ordering
   const definedFields = _.toPairs(_.omitBy(allFields, _.isUndefined));
 
+  let result;
+
   // If there is nothing to update, success!
   if (definedFields.length === 0) {
-    return apiUtils.status(201).json({
-      status: codes.UPDATE_PROFILE__SUCCESS,
-    });
+    result = await db.query(`
+      SELECT ${definedSelect}
+      FROM profiles
+      WHERE user_id = $1
+    `, [userId]);
+  } else {
+    // Generates a template and fields for a postgres query
+    const template = getFieldTemplates(definedFields);
+
+    // Update the profile in the database. Utilize fieldTemplates and the field
+    // length as the parameter templates. It is ok to construct the string like
+    // this because none of the values in the construction come from user input
+    const userParamIndex = template.fields.length + 1;
+    result = await db.query(`
+      UPDATE profiles
+      SET ${template.templateString}
+      WHERE user_id = $${userParamIndex}
+      RETURNING ${profileSelectQuery(`${userParamIndex}`)}
+    `, [...template.fields, userId]);
   }
 
-  // Generates a template and fields for a postgres query
-  const template = utils.getFieldTemplates(definedFields);
-
-  // Update the profile in the database. Utilize fieldTemplates and the field
-  // length as the parameter templates. It is ok to construct the string like
-  // this because none of the values in the construction come from user input
-  await db.query(`
-    UPDATE profiles
-    SET ${template.templateString}
-    WHERE user_id = $${template.fields.length + 1}`,
-  [...template.fields, userId]);
-
   // If there is an id returned, success!
-  return apiUtils.status(201).json({
-    status: codes.UPDATE_PROFILE__SUCCESS,
-  });
+  return apiUtils.status(codes.UPDATE_PROFILE__SUCCESS).data(result.rows[0]);
 };
 
 const handler = [

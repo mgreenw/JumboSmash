@@ -16,7 +16,7 @@ export type UploadPhotoInitiated_Action = {
 export type UploadPhotoCompleted_Action = {
   type: 'UPLOAD_PHOTO__COMPLETED',
   payload: {
-    photoId: number,
+    photoIds: number[],
   },
   meta: {},
 };
@@ -29,11 +29,11 @@ function initiate(): UploadPhotoInitiated_Action {
   };
 }
 
-function complete(photoId: number): UploadPhotoCompleted_Action {
+function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   return {
     type: 'UPLOAD_PHOTO__COMPLETED',
     payload: {
-      photoId,
+      photoIds,
     },
     meta: {},
   };
@@ -48,8 +48,8 @@ export function uploadPhotoAction(uri: string) {
       .then(payload => {
         uploadPhotoToS3(uri, payload).then(success => {
           if (success) {
-            confirmUpload(token).then(photoId => {
-              dispatch(complete(photoId));
+            confirmUpload(token).then(photoIds => {
+              dispatch(complete(photoIds));
             });
           } else {
             throw 'Error Uploading Photo';

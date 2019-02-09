@@ -15,10 +15,10 @@ function postVerificationCode(
   // TODO: fix the NODE_ENV issue
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
     webhook.send(`
-      ENV: *${NODE_ENV}*
-      code: *${verificationCode}*
-      utln: *${utln}*
+      code:  *${verificationCode}*
+      utln:  *${utln}*
       email: *${email}*
+      env:   *${NODE_ENV}*
     `);
   }
 }

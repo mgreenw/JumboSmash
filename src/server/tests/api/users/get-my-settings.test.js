@@ -21,7 +21,7 @@ describe('GET api/users/me/settings', () => {
       .get('/api/users/me/settings')
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('mgreen14');
@@ -30,7 +30,7 @@ describe('GET api/users/me/settings', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should return the settings of the current user', async () => {
@@ -47,17 +47,26 @@ describe('GET api/users/me/settings', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toBe(codes.GET_SETTINGS__SUCCESS);
-    expect(res.body.settings).toBeDefined();
+    expect(res.body.status).toBe(codes.GET_SETTINGS__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
 
-    expect(res.body.settings.usePronouns).toBeDefined();
-    expect(res.body.settings.wantPronouns).toBeDefined();
+    expect(res.body.data.usePronouns).toBeDefined();
+    expect(res.body.data.wantPronouns).toBeDefined();
 
-    expect(res.body.settings.usePronouns.he).toBeDefined();
-    expect(res.body.settings.usePronouns.she).toBeDefined();
-    expect(res.body.settings.usePronouns.they).toBeDefined();
-    expect(res.body.settings.wantPronouns.he).toBeDefined();
-    expect(res.body.settings.wantPronouns.she).toBeDefined();
-    expect(res.body.settings.wantPronouns.they).toBeDefined();
+    expect(res.body.data.usePronouns.he).toBeDefined();
+    expect(res.body.data.usePronouns.she).toBeDefined();
+    expect(res.body.data.usePronouns.they).toBeDefined();
+    expect(res.body.data.wantPronouns.he).toBeDefined();
+    expect(res.body.data.wantPronouns.she).toBeDefined();
+    expect(res.body.data.wantPronouns.they).toBeDefined();
+
+    expect(res.body.data.activeScenes.smash).toBeDefined();
+    expect(res.body.data.activeScenes.social).toBeDefined();
+    expect(res.body.data.activeScenes.stone).toBeDefined();
+
+    // Default to false
+    expect(res.body.data.activeScenes.smash).toBe(false);
+    expect(res.body.data.activeScenes.social).toBe(false);
+    expect(res.body.data.activeScenes.stone).toBe(false);
   });
 });

@@ -29,9 +29,7 @@ const confirmUpload = async (userId: number) => {
   `, [userId]);
 
   if (unconfirmedPhotoRes.rowCount === 0) {
-    return apiUtils.status(400).json({
-      status: codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO).noData();
   }
 
   const [{ uuid }] = unconfirmedPhotoRes.rows;
@@ -47,9 +45,7 @@ const confirmUpload = async (userId: number) => {
   try {
     await s3.headObject(s3Params).promise();
   } catch (error) {
-    return apiUtils.status(400).json({
-      status: codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__NO_UPLOAD_FOUND).noData();
   }
 
   // TRANSACTION: Insert the photo and delete its "unconfirmed" counterpart
@@ -71,20 +67,33 @@ const confirmUpload = async (userId: number) => {
     // Ensure there are only 3 or fewer photos
     const [{ photoCount }] = photosRes.rows;
     if (photoCount > 3) {
-      return apiUtils.status(400).json({
-        status: codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT,
-      });
+      return apiUtils.status(codes.CONFIRM_UPLOAD__NO_AVAILABLE_SLOT).noData();
     }
 
     // Insert the photo in the `photos` table, giving it the "next" index.
     const insertRes = await client.query(`
-      INSERT INTO photos
-      (user_id, index, uuid)
-      VALUES ($1, $2, $3)
-      RETURNING id
-    `, [userId, photoCount + 1, uuid]);
+      WITH inserted AS (
+        INSERT INTO photos
+        (user_id, index, uuid)
+        VALUES ($1, $2, $3)
+        RETURNING id
+      )
+      SELECT
+        array_cat(
+          ARRAY(
+            SELECT id
+            FROM photos
+            WHERE user_id = $4
+            ORDER BY index
+          ),
+          ARRAY(
+            SELECT id
+            FROM inserted
+          )
+        ) AS "photoIds"
+    `, [userId, photoCount + 1, uuid, userId]);
 
-    const photoId = insertRes.rows[0].id;
+    const [{ photoIds }] = insertRes.rows;
 
     // Delete the unconfirmed photo
     await client.query(`
@@ -96,10 +105,7 @@ const confirmUpload = async (userId: number) => {
     await client.query('COMMIT');
     client.release();
 
-    return apiUtils.status(200).json({
-      status: codes.CONFIRM_UPLOAD__SUCCESS,
-      photoId,
-    });
+    return apiUtils.status(codes.CONFIRM_UPLOAD__SUCCESS).data(photoIds);
   } catch (err) {
     // Rollback the transaction and release the client
     await client.query('ROLLBACK');

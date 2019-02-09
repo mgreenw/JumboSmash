@@ -14,7 +14,7 @@ function getMyPhotos(token: string): Promise<$ReadOnlyArray<number>> {
     .then(response => {
       switch (response.status) {
         case GET_MY_PHOTOS__SUCCESS:
-          return response.photoIds;
+          return response.data;
         default:
           throw { response };
       }

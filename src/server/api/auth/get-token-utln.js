@@ -13,8 +13,7 @@ const getTokenUtln = async (utln: string) => {
   // If the token is invalid, it will get caught upstream in the `authorized`
   // middleware. If it is valid, the request should include a `user` property
   // including the user's utln, which we will return here.
-  return apiUtils.status(200).json({
-    status: codes.AUTHORIZED,
+  return apiUtils.status(codes.AUTHORIZED).data({
     utln,
   });
 };

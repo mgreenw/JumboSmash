@@ -11,10 +11,12 @@ const PROFILE_SETUP_INCOMPLETE = 'PROFILE_SETUP_INCOMPLETE';
 // This is how we encode profiles on the server, which is the schema of the
 // profiles database
 export type ServerProfile = {
-  displayName: string,
-  birthday: string,
-  bio: string,
-  photos: Array<number>,
+  fields: {
+    displayName: string,
+    birthday: string,
+    bio: string,
+  },
+  photoIds: Array<number>
 };
 
 type request = {
@@ -22,12 +24,10 @@ type request = {
 };
 
 function parseProfile(apiResponse: ServerProfile): UserProfile {
-  const { displayName, birthday, bio, photos } = apiResponse;
+  const { fields, photoIds } = apiResponse;
   return {
-    displayName,
-    birthday,
-    bio,
-    photoIds: photos,
+    ...fields,
+    photoIds,
   };
 }
 
@@ -36,7 +36,7 @@ export default function getMyProfile(request: request): Promise<?UserProfile> {
     .then(response => {
       switch (response.status) {
         case GET_PROFILE__SUCCESS:
-          return parseProfile(response.profile);
+          return parseProfile(response.data);
 
         // on an incomplete profile, return a null UserProfile. We use this
         // to set profile to null in the Redux State
