@@ -20,7 +20,6 @@ export default function verify(request: request): Promise<login_response> {
   // a verification email, and return that email address.
   return apiRequest('POST', VERIFY__ROUTE, null, request)
     .then(response => {
-      console.log(response);
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
         case VERIFY__SUCCESS:
