@@ -72,6 +72,8 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   render() {
     const { width } = Dimensions.get('window');
     const { photoIds } = this.props;
+    const complete = photoIds.length > 0;
+
     // A bit of a hack, but we want pictures to look nice.
     // We have 22 padding via onboarding layout, plus an additional 40 here,
     // and  we want 20 padding between each
@@ -90,8 +92,9 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main
-        progress={0}
-        buttonDisabled={photoIds.length === 0}
+        progress={1}
+        progressComplete={complete}
+        buttonDisabled={!complete}
       />
     );
   }

@@ -62,6 +62,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
 
   render() {
     const { profile } = this.state;
+    const complete = profile.fields.bio !== '';
     const body = (
       <View
         style={{
@@ -85,7 +86,9 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="About Me"
         main
-        progress={0}
+        progress={2}
+        progressComplete={complete}
+        buttonDisabled={!complete}
       />
     );
   }
