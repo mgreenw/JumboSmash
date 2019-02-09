@@ -32,3 +32,7 @@
 * [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoId`
 * [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoId`
 * [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
+
+### Messages
+* [Get Conversation](messages/get-conversation) : `GET /api/messages:userId`
+* [Send Message](messages/send-message) : `POST /api/messages:userId`

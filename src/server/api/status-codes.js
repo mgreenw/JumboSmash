@@ -219,3 +219,24 @@ exports.REORDER_PHOTOS__MISMATCHED_IDS = {
   status: 'REORDER_PHOTOS__MISMATCHED_IDS',
   code: 400,
 };
+
+// MESSAGES
+// Send Message
+exports.SEND_MESSAGE__SUCCESS = {
+  status: 'SEND_MESSAGE__SUCCESS',
+  code: 201,
+};
+exports.SEND_MESSAGE__USER_NOT_FOUND = {
+  status: 'SEND_MESSAGE__USER_NOT_FOUND',
+  code: 400,
+};
+
+// Get Conversation
+exports.GET_CONVERSATION__SUCCESS = {
+  status: 'GET_CONVERSATION__SUCCESS',
+  code: 200,
+};
+exports.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID = {
+  status: 'GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID',
+  code: 400,
+};
