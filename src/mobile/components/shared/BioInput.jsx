@@ -67,7 +67,7 @@ export default class BioInput extends BaseInput {
             onChange={this._onChange}
             onFocus={this._onFocus}
             placeholderTextColor={Colors.Grey80}
-            placeholder="[Bio PlaceHolder]"
+            placeholder="Let everyone know how quirky you are"
             onChangeText={onChangeText}
             autoCorrect
             multiline
