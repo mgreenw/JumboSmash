@@ -9,7 +9,7 @@ import Popup from 'mobile/components/shared/Popup';
 import ProgressBar from 'react-native-progress/Bar';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
-import type { ReduxState, PhotoIds } from 'mobile/reducers/index';
+import type { ReduxState } from 'mobile/reducers/index';
 import { uploadPhotoAction } from 'mobile/actions/app/uploadPhoto';
 import { deletePhotoAction } from 'mobile/actions/app/deletePhoto';
 import { AddSinglePhoto } from './AddSinglePhoto';
@@ -17,7 +17,7 @@ import { AddSinglePhoto } from './AddSinglePhoto';
 type reduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
-  photoIds: PhotoIds,
+  photoIds: number[],
   token: ?string,
 };
 

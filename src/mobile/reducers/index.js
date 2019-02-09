@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 // Auth:
 import type {
@@ -23,8 +22,8 @@ import type {
   CreateProfileAndSettingsCompleted_Action,
 } from 'mobile/actions/app/createUser';
 import type {
-  SaveProfileInitiated_Action,
-  SaveProfileCompleted_Action,
+  SaveProfileFieldsInitiated_Action,
+  SaveProfileFieldsCompleted_Action,
 } from 'mobile/actions/app/saveProfile';
 import type { Unauthorized_Action, Error_Action } from 'mobile/actions/apiErrorHandler';
 import type {
@@ -36,8 +35,6 @@ import type {
   DeletePhotoCompleted_Action,
 } from 'mobile/actions/app/deletePhoto';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
-
-export type PhotoIds = $ReadOnlyArray<number>;
 
 // /////////////
 // USER TYPES:
@@ -53,17 +50,23 @@ export type UserSettings = {
   wantGenders: Genders,
 };
 
-export type UserProfile = {
+export type ProfileFields = {
   displayName: string,
   birthday: string,
   bio: string,
-  photoIds: PhotoIds,
+};
+
+export type UserProfile = {
+  fields: ProfileFields,
+  photoIds: number[],
 };
 
 type BaseUser = { userId: number, profile: UserProfile };
 export type Client = BaseUser & { settings: UserSettings };
 export type Candidate = BaseUser; // TODO: add scenes
-type User = Client | Candidate;
+
+// TODO: enable if needed. This is a conceptual type.
+// type User = Client | Candidate;
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
@@ -109,8 +112,8 @@ export type Action =
   | CreateProfileAndSettingsCompleted_Action
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
-  | SaveProfileInitiated_Action
-  | SaveProfileCompleted_Action
+  | SaveProfileFieldsInitiated_Action
+  | SaveProfileFieldsCompleted_Action
   | Unauthorized_Action
   | Error_Action
   | UploadPhotoCompleted_Action
@@ -309,7 +312,10 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
     }
 
     case 'SAVE_PROFILE__COMPLETED': {
-      const { profile } = action.payload;
+      const { fields } = action.payload;
+      if (!state.client) {
+        throw new Error('User null in reducer for SAVE_PROFILE__COMPLETED');
+      }
       return {
         ...state,
         inProgress: {
@@ -318,7 +324,10 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
         },
         client: {
           ...state.client,
-          profile,
+          profile: {
+            ...state.client.profile,
+            fields,
+          },
         },
       };
     }
@@ -345,7 +354,7 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
     // the ID for the new photo.
     case 'UPLOAD_PHOTO__COMPLETED': {
       if (!state.client) {
-        throw 'User null in reducer for UPLOAD_PHOTO__COMPLETED';
+        throw new Error('User null in reducer for UPLOAD_PHOTO__COMPLETED');
       }
       const { profile } = state.client;
       return {
@@ -376,7 +385,7 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
 
     case 'DELETE_PHOTO__COMPLETED': {
       if (!state.client) {
-        throw 'User null in reducer for DELETE_PHOTO__COMPLETED';
+        throw new Error('User null in reducer for DELETE_PHOTO__COMPLETED');
       }
       const { photoIds } = action.payload;
       return {
@@ -396,6 +405,7 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
     }
 
     default: {
+      // eslint-disable-next-line no-unused-expressions
       (action: empty); // ensures we have handled all cases
       return state;
     }

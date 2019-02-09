@@ -2,25 +2,25 @@
 /* eslint-disable */
 
 import type { Dispatch, GetState } from 'redux';
-import type { UserProfile } from 'mobile/reducers';
-import { updateMyProfile } from 'mobile/api/users/updateMyProfile';
+import type { ProfileFields } from 'mobile/reducers';
+import { updateMyProfileFields } from 'mobile/api/users/updateMyProfile';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
-export type SaveProfileInitiated_Action = {
+export type SaveProfileFieldsInitiated_Action = {
   type: 'SAVE_PROFILE__INITIATED',
   payload: {},
   meta: {},
 };
-export type SaveProfileCompleted_Action = {
+export type SaveProfileFieldsCompleted_Action = {
   type: 'SAVE_PROFILE__COMPLETED',
   payload: {
-    profile: UserProfile,
+    fields: ProfileFields,
   },
   meta: {},
 };
 
-function initiate(): SaveProfileInitiated_Action {
+function initiate(): SaveProfileFieldsInitiated_Action {
   return {
     type: 'SAVE_PROFILE__INITIATED',
     payload: {},
@@ -28,25 +28,25 @@ function initiate(): SaveProfileInitiated_Action {
   };
 }
 
-function complete(profile: UserProfile): SaveProfileCompleted_Action {
+function complete(fields: ProfileFields): SaveProfileFieldsCompleted_Action {
   return {
     type: 'SAVE_PROFILE__COMPLETED',
     payload: {
-      profile,
+      fields,
     },
     meta: {},
   };
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function saveProfile(profile: UserProfile) {
+export function saveProfileFieldsAction(fields: ProfileFields) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      updateMyProfile(token, profile)
-        .then(() => {
-          dispatch(complete(profile));
+      updateMyProfileFields(token, fields)
+        .then(newFields => {
+          dispatch(complete(newFields));
         })
         .catch(error => {
           dispatch(apiErrorHandler(error));
