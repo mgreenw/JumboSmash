@@ -73,12 +73,13 @@ class OnboardingStartScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {"Let's take 2 minutes to get your profile setup before you begin swiping."}
+            {"Let's get your profile setup before you begin swiping."}
           </Text>
         }
         onButtonPress={this._goToNextPage}
         title="Project Gem"
         firstScreen={true}
+        buttonText={"Roll 'Bos'"}
       />
     );
   }
