@@ -80,6 +80,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        section="profile"
         body={body}
         onButtonPress={this._goToNextPage}
         title="About Me"

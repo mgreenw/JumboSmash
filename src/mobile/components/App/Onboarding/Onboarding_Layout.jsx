@@ -23,6 +23,7 @@ type Props = {
   progress?: number,
   loading?: boolean,
   buttonDisabled?: boolean,
+  section: 'profile' | 'settings',
 };
 type State = {};
 
@@ -39,13 +40,14 @@ export class OnboardingLayout extends React.Component<Props, State> {
       body,
       buttonText,
       progress,
+      section,
       buttonDisabled,
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
           leftIconName={firstScreen ? undefined : 'back'}
-          title={'Profile Setup'}
+          title={section === 'settings' ? 'Settings' : 'Profile Setup'}
           loading={loading}
         />
         <KeyboardView waves={1}>

@@ -76,6 +76,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
             {"Let's get your profile setup before you begin swiping."}
           </Text>
         }
+        section={'profile'}
         onButtonPress={this._goToNextPage}
         title="Project Gem"
         firstScreen={true}

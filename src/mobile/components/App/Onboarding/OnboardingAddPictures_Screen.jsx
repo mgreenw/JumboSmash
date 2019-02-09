@@ -80,6 +80,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        section="profile"
         body={
           // AddMultiPhotos gets direct redux access due to constraints on
           // photo uploading. CreatMyProfile needs previously uploaded photos,

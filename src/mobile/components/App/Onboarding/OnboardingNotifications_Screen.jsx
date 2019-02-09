@@ -75,6 +75,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
     return (
       <OnboardingLayout
         body={body}
+        section={'settings'}
         onButtonPress={this._goToNextPage}
         title="Push Notifications"
         main={true}

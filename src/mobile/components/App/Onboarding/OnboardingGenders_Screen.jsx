@@ -98,6 +98,7 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     return (
       <OnboardingLayout
         body={body}
+        section="settings"
         onButtonPress={this._goToNextPage}
         title="Gender Identity"
         main

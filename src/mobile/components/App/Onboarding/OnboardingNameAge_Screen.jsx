@@ -168,6 +168,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     );
     return (
       <OnboardingLayout
+        section="profile"
         body={body}
         onButtonPress={this._onContinue}
         title="Name & Age"
