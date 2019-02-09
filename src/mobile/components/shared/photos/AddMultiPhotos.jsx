@@ -12,28 +12,28 @@ import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import { uploadPhotoAction } from 'mobile/actions/app/uploadPhoto';
 import { deletePhotoAction } from 'mobile/actions/app/deletePhoto';
-import { AddSinglePhoto } from './AddSinglePhoto';
+import AddSinglePhoto from './AddSinglePhoto';
 
-type reduxProps = {
+type ReduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
   photoIds: number[],
   token: ?string,
 };
 
-type dispatchProps = {
+type DispatchProps = {
   uploadPhoto: string => void,
   deletePhoto: number => void,
 };
 
-type proppyProps = {
+type ProppyProps = {
   imageWidth: number,
   width: number,
 };
 
-type Props = proppyProps & reduxProps & dispatchProps;
+type Props = ProppyProps & ReduxProps & DispatchProps;
 
-function mapStateToProps(reduxState: ReduxState): reduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Err: client null in AddMultiPhotos mapStateToProps');
   }
@@ -45,7 +45,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     uploadPhoto: (uri: string) => {
       dispatch(uploadPhotoAction(uri));
@@ -82,7 +82,10 @@ class AddMultiPhotos extends React.Component<Props> {
     }
   };
 
-  _onRemove = (photoId: number) => {
+  _onRemove = (photoId: ?number) => {
+    if (photoId === null || photoId === undefined) {
+      return;
+    }
     const { deletePhoto } = this.props;
     deletePhoto(photoId);
   };
@@ -127,9 +130,7 @@ class AddMultiPhotos extends React.Component<Props> {
               this._onAdd();
             }}
             onRemove={() => {
-              if (id1) {
-                this._onRemove(id1);
-              }
+              this._onRemove(id1);
             }}
             width={imageWidth}
           />
@@ -144,9 +145,7 @@ class AddMultiPhotos extends React.Component<Props> {
               this._onAdd();
             }}
             onRemove={() => {
-              if (id2) {
-                this._onRemove(id2);
-              }
+              this._onRemove(id2);
             }}
             width={imageWidth}
           />
@@ -161,9 +160,7 @@ class AddMultiPhotos extends React.Component<Props> {
               this._onAdd();
             }}
             onRemove={() => {
-              if (id3) {
-                this._onRemove(id3);
-              }
+              this._onRemove(id3);
             }}
             width={imageWidth}
           />
@@ -178,9 +175,7 @@ class AddMultiPhotos extends React.Component<Props> {
               this._onAdd();
             }}
             onRemove={() => {
-              if (id4) {
-                this._onRemove(id4);
-              }
+              this._onRemove(id4);
             }}
             width={imageWidth}
           />
