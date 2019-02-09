@@ -20,6 +20,7 @@ export default function verify(request: request): Promise<login_response> {
   // a verification email, and return that email address.
   return apiRequest('POST', VERIFY__ROUTE, null, request)
     .then(response => {
+      console.log(response);
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
         case VERIFY__SUCCESS:
@@ -30,17 +31,14 @@ export default function verify(request: request): Promise<login_response> {
         case VERIFY__BAD_CODE:
           return {
             statusCode: 'BAD_CODE',
-            token: response.data.token,
           };
         case VERIFY__EXPIRED_CODE:
           return {
             statusCode: 'EXPIRED_CODE',
-            token: response.data.token,
           };
         case VERIFY__NO_EMAIL_SENT:
           return {
             statusCode: 'NO_EMAIL_SENT',
-            token: response.data.token,
           };
         default:
           throw { response };
