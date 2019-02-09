@@ -70,22 +70,19 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      sendVerificationEmail_inProgress: newPropsSendVerificationEmail_inProgress,
-    } = this.props;
+    const { sendVerificationEmail_inProgress: sendingEmail } = this.props;
 
-    const {
-      sendVerificationEmail_inProgress: oldPropsSendVerificationEmail_inProgress,
-    } = prevProps;
-    if (
-      oldPropsSendVerificationEmail_inProgress !== newPropsSendVerificationEmail_inProgress
-      && !oldPropsSendVerificationEmail_inProgress
-    ) {
+    const { sendVerificationEmail_inProgress: wasSendingEmail } = prevProps;
+
+    // This logic determines that an email has been sent, because we maintain
+    // as an invariant that the progress of this action defaults to false.
+    if (sendingEmail !== wasSendingEmail && !sendingEmail) {
       const { sendVerificationEmail_response: response } = this.props;
       if (!response) {
         throw new Error('Error in Login: Send Verification Email complete but no response');
       }
-      switch (response.statusCode) {
+      const { statusCode } = response;
+      switch (statusCode) {
         case 'SUCCESS': {
           this._onSuccess(response.utln, response.email, false);
           break;
@@ -108,9 +105,8 @@ class SplashScreen extends React.Component<Props, State> {
           break;
         }
         default: {
-          throw new Error(
-            `Error in Login: unkown Send Verification Email Response: ${response.statusCode}`,
-          );
+          // eslint-disable-next-line no-unused-expressions
+          (statusCode: empty); // ensures we have handled all cases
         }
       }
     }
