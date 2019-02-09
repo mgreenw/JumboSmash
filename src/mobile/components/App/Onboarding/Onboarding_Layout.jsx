@@ -19,6 +19,7 @@ type Props = {
   buttonText?: string,
   firstScreen?: boolean,
   lastScreen?: boolean,
+  infoScreen?: boolean,
   progress?: number,
   loading?: boolean,
   buttonDisabled?: boolean,
@@ -31,6 +32,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
     const {
       firstScreen,
       lastScreen,
+      infoScreen,
       loading,
       onButtonPress,
       title,
@@ -59,7 +61,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View>
                   <Text
                     style={
-                      firstScreen || lastScreen
+                      firstScreen || lastScreen || infoScreen
                         ? textStyles.veganTitle
                         : textStyles.headline5StyleDemibold
                     }
@@ -71,8 +73,8 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: firstScreen || lastScreen ? 20 : 40,
-                  paddingRight: firstScreen || lastScreen ? 20 : 40,
+                  paddingLeft: firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingRight: firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -85,7 +87,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
                     onPress={onButtonPress}
-                    title={buttonText || 'continue'}
+                    title={buttonText || 'Continue'}
                     loading={loading}
                     disabled={buttonDisabled}
                   />
