@@ -1,34 +1,23 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View, TouchableOpacity, Image, Dimensions, Alert, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Text, View, Alert } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Permissions, ImagePicker } from 'expo';
-import Dialog, {
-  DialogTitle,
-  DialogContent,
-  DialogFooter,
-  DialogButton,
-  SlideAnimation,
-  ScaleAnimation,
-} from 'react-native-popup-dialog';
+import Popup from 'mobile/components/shared/Popup';
 import ProgressBar from 'react-native-progress/Bar';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
-import { uploadPhoto } from 'mobile/actions/app/uploadPhoto';
-import { deletePhoto } from 'mobile/actions/app/deletePhoto';
-import type { PhotoIds } from 'mobile/reducers/';
+import { uploadPhotoAction } from 'mobile/actions/app/uploadPhoto';
+import { deletePhotoAction } from 'mobile/actions/app/deletePhoto';
 import { AddSinglePhoto } from './AddSinglePhoto';
 
 type reduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
-  photoIds: PhotoIds,
+  photoIds: number[],
   token: ?string,
 };
 
@@ -38,16 +27,15 @@ type dispatchProps = {
 };
 
 type proppyProps = {
-  enableDeleteFirst?: boolean,
   imageWidth: number,
   width: number,
 };
 
 type Props = proppyProps & reduxProps & dispatchProps;
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): reduxProps {
   if (!reduxState.client) {
-    throw 'Err: client null in AddMultiPhotos mapStateToProps';
+    throw new Error('Err: client null in AddMultiPhotos mapStateToProps');
   }
   return {
     uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
@@ -57,20 +45,20 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     uploadPhoto: (uri: string) => {
-      dispatch(uploadPhoto(uri));
+      dispatch(uploadPhotoAction(uri));
     },
     deletePhoto: (photoId: number) => {
-      dispatch(deletePhoto(photoId));
+      dispatch(deletePhotoAction(photoId));
     },
   };
 }
 
 // TODO: consider https://github.com/expo/expo/issues/1423 solution for croppinng
 async function selectPhoto(): Promise<?string> {
-  const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
   if (status === 'granted') {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -88,31 +76,39 @@ async function selectPhoto(): Promise<?string> {
 class AddMultiPhotos extends React.Component<Props> {
   _onAdd = async () => {
     const newUri = await selectPhoto();
+    const { uploadPhoto } = this.props;
     if (newUri) {
-      this.props.uploadPhoto(newUri);
+      uploadPhoto(newUri);
     }
   };
 
   _onRemove = (photoId: number) => {
-    this.props.deletePhoto(photoId);
+    const { deletePhoto } = this.props;
+    deletePhoto(photoId);
   };
 
   render() {
     const {
       photoIds,
-      enableDeleteFirst,
       imageWidth,
       width,
       token,
       deletePhotoInProgress,
       uploadPhotoInProgress,
     } = this.props;
-    console.log(photoIds);
     const numImages = photoIds.length;
     const id1 = numImages > 0 ? photoIds[0] : null;
     const id2 = numImages > 1 ? photoIds[1] : null;
     const id3 = numImages > 2 ? photoIds[2] : null;
     const id4 = numImages > 3 ? photoIds[3] : null;
+
+    let popupMessage = '';
+
+    if (uploadPhotoInProgress) {
+      popupMessage = 'Uploading Photo';
+    } else if (deletePhotoInProgress) {
+      popupMessage = 'Deleting Photo';
+    }
 
     return (
       <View
@@ -126,7 +122,7 @@ class AddMultiPhotos extends React.Component<Props> {
             token={token}
             photoId={id1}
             disabled={false}
-            enableRemove={id2 != null || enableDeleteFirst === true}
+            enableRemove={id2 != null}
             onAdd={() => {
               this._onAdd();
             }}
@@ -189,57 +185,30 @@ class AddMultiPhotos extends React.Component<Props> {
             width={imageWidth}
           />
         </View>
-        <Dialog
-          dialogAnimation={new ScaleAnimation()}
-          width={1}
-          visible={uploadPhotoInProgress || deletePhotoInProgress}
-          actionsBordered
-          dialogStyle={{
-            /* This is a hack so that we can do a shadow over a wrapper */
-            backgroundColor: 'transparent',
-            padding: 18,
-          }}
-        >
-          <DialogContent
-            style={{
-              backgroundColor: Colors.White,
-              borderRadius: 8,
-              shadowColor: Colors.Black,
-              shadowOpacity: 1,
-              shadowRadius: 4,
-              shadowOffset: {
-                height: 2,
-                width: 0,
+        <Popup onTouchOutside={() => {}} visible={uploadPhotoInProgress || deletePhotoInProgress}>
+          <Text
+            style={[
+              textStyles.headline4StyleMedium,
+              {
+                color: Colors.Grapefruit,
+                textAlign: 'center',
+                paddingBottom: 20,
               },
-              padding: 20,
-            }}
+            ]}
           >
-            <View>
-              <Text
-                style={[
-                  textStyles.headline4StyleMedium,
-                  {
-                    color: Colors.Grapefruit,
-                    textAlign: 'center',
-                    paddingBottom: 20,
-                  },
-                ]}
-              >
-                {uploadPhotoInProgress ? 'Uploading Photo' : 'Deleting Photo'}
-              </Text>
-              <ProgressBar
-                progress={0.3}
-                height={10}
-                unfilledColor={Colors.IceBlue}
-                borderWidth={0}
-                color={Colors.Grapefruit}
-                indeterminate
-                borderRadius={6}
-                width={null}
-              />
-            </View>
-          </DialogContent>
-        </Dialog>
+            {popupMessage}
+          </Text>
+          <ProgressBar
+            progress={0.3}
+            height={10}
+            unfilledColor={Colors.IceBlue}
+            borderWidth={0}
+            color={Colors.Grapefruit}
+            indeterminate
+            borderRadius={6}
+            width={null}
+          />
+        </Popup>
       </View>
     );
   }

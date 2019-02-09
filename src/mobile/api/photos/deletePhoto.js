@@ -13,7 +13,7 @@ function deletePhotoApi(token: string, photoId: number): Promise<Array<number>> 
     .then(response => {
       switch (response.status) {
         case DELETE_PHOTO__SUCCESS:
-          return response.photos;
+          return response.data;
         case DELETE_PHOTO__NOT_FOUND:
           throw { response };
         case DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO:

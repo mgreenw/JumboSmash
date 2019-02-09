@@ -47,7 +47,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
           title={'Profile Setup'}
           loading={loading}
         />
-        <KeyboardView>
+        <KeyboardView waves={1}>
           <View style={{ paddingTop: 20 }}>
             {progress !== undefined && <OnboardingProgress progress={progress} maxProgress={4} />}
           </View>

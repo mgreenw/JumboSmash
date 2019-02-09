@@ -42,11 +42,26 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
     //TODO: enable notifications
   };
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state !== prevState) {
+      const { navigation } = this.props;
+      const { profile, settings } = this.state;
+      navigation.state.params.onUpdateProfileSettings(profile, settings);
+    }
+  }
+
   _goToNextPage = () => {
     const { navigation } = this.props;
+    const { profile, settings } = this.state;
     navigation.navigate(routes.OnboardingFinish, {
-      profile: this.state.profile,
-      settings: this.state.settings,
+      profile,
+      settings,
+      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+        this.setState({
+          profile: newProfile,
+          settings: newSettings,
+        });
+      },
     });
   };
 

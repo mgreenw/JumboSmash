@@ -1,6 +1,6 @@
-# Create My Profile
+# Finalize Profile setup
 
-Create a profile for the current user. Only allow this if a user has not yet created a profile. A user must have a confirmed uploaded photo to create a profile.
+Finalize the profile setup for the requesting user. Only allow this if a user has not yet created a profile. A user must have a confirmed uploaded photo to run this endpoint. The endpoint takes the profile "fields" and returns the finalized profile.
 
 **URL** : `/api/users/me/profile`
 
@@ -47,7 +47,17 @@ Provide the user's initial profile fields.
 
 ```json
 {
-    "status": "CREATE_PROFILE__SUCCESS",
+    "status": "FINALIZE_PROFILE_SETUP__SUCCESS",
+    "data": {
+        "fields": {
+            "displayName": "Max",
+            "birthday": "1999-01-27",
+            "bio": "Already has 2 friends so..."
+        },
+        "photoIds": [
+            1
+        ]
+    }
 }
 ```
 
@@ -60,7 +70,7 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__PROFILE_ALREADY_CREATED"
+    "status": "FINALIZE_PROFILE_SETUP__PROFILE_ALREADY_CREATED"
 }
 ```
 
@@ -73,7 +83,7 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "status": "FINALIZE_PROFILE_SETUP__INVALID_REQUEST",
     "message": "DISPLAY_NAME_TOO_LONG"
 }
 ```
@@ -87,7 +97,7 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "status": "FINALIZE_PROFILE_SETUP__INVALID_REQUEST",
     "message": "BIRTHDAY_NOT_VALID"
 }
 ```
@@ -101,7 +111,7 @@ Provide the user's initial profile fields.
 **Content** :
 ```json
 {
-    "status": "CREATE_PROFILE__INVALID_REQUEST",
+    "status": "FINALIZE_PROFILE_SETUP__INVALID_REQUEST",
     "message": "BIO_TOO_LONG"
 }
 ```
@@ -131,6 +141,6 @@ Provide the user's initial profile fields.
 
 ```json
 {
-    "status": "CREATE_PROFILE__PHOTO_REQUIRED"
+    "status": "FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED"
 }
 ```

@@ -36,7 +36,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  photos: ?$ReadOnlyArray<number>,
+  photoIds: ?(number[]),
 ): LoadAppCompleted_Action {
   DevTesting.log('load app complete; profile && settigs: ', profile, settings);
   return {
@@ -44,10 +44,12 @@ function complete(
     payload: {
       onboardingCompleted,
       profile: profile || {
-        bio: '',
-        birthday: '',
-        displayName: '',
-        photoIds: photos || [], // incase partial photo uploading in onboarding
+        fields: {
+          bio: '',
+          birthday: '',
+          displayName: '',
+        },
+        photoIds: photoIds || [], // incase partial photo uploading in onboarding
       },
       settings: settings || {
         useGenders: {

@@ -2,7 +2,7 @@
 
 const express = require('express');
 
-const createMyProfile = require('./create-my-profile');
+const finalizeProfileSetup = require('./finalize-profile-setup');
 const getMySettings = require('./get-my-settings');
 const updateMySettings = require('./update-my-settings');
 const getMyProfile = require('./get-my-profile');
@@ -15,7 +15,7 @@ const { hasProfile } = require('../utils').middleware;
 const usersRouter = express.Router();
 
 // AUTHENTICATED METHODS
-usersRouter.post('/me/profile', createMyProfile.handler);
+usersRouter.post('/me/profile', finalizeProfileSetup.handler);
 usersRouter.get('/me/settings', getMySettings.handler);
 usersRouter.patch('/me/settings', updateMySettings.handler);
 usersRouter.get('/me/photos', getMyPhotos.handler);

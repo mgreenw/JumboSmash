@@ -53,7 +53,7 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   const token = req.get('Authorization');
   if (token === undefined) {
     return res.status(400).json({
-      status: codes.BAD_REQUEST,
+      status: codes.BAD_REQUEST.status,
       message: 'Missing Authorization header.',
     });
   }
@@ -70,7 +70,7 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   // return with UNAUTHORIZED
   } catch (error) {
     return res.status(401).json({
-      status: codes.UNAUTHORIZED,
+      status: codes.UNAUTHORIZED.status,
     });
   }
 };
