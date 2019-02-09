@@ -82,7 +82,6 @@ describe('GET api/relationships/matches', () => {
     expect(res.body.data.length).toBe(1);
     const match = res.body.data[0];
     expect(match.userId).toBe(other.id);
-    expect(match.scenes).toEqual(['smash']);
 
     expect(match.scenes.smash).toBeDefined();
     expect(match.scenes.smash).not.toBeNull();
