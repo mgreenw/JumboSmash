@@ -131,7 +131,7 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onNotFound = () => {
-    this._utlnInputError('Could not find UTLN');
+    this._utlnInputError('Could not find username');
   };
 
   _onHelp = () => {
@@ -203,13 +203,13 @@ class SplashScreen extends React.Component<Props, State> {
                     flex: 1,
                     maxWidth: '60%',
                   }}
-                  source={ArthurUri} // TODO: investigate why mobile/ does not work
+                  source={ArthurUri}
                 />
                 <PrimaryInput
-                  label="UTLN"
+                  label="Tufts Username"
                   onChange={this._onInputChange}
                   error={errorMessageUtln}
-                  assistive="Ex: jjaffe01"
+                  assistive="Ex: amanac01"
                   containerStyle={{ width: '60%' }}
                   autoCapitalize="none"
                 />
