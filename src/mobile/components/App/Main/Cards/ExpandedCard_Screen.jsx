@@ -30,7 +30,7 @@ class Card extends React.Component<Props> {
     }
     if (token === null) {
       throw new Error(
-        'Error: Navigation Param of tokem is null in Expanded Card Screen',
+        'Error: Navigation Param of token is null in Expanded Card Screen',
       );
     }
   }

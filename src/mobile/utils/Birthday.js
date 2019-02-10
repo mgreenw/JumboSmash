@@ -9,7 +9,7 @@ export function validateBirthday(birthday: string) {
   const birthdayDate = new Date(birthday);
 
   // if this fails, this is an invalid date FORMAT
-  if (isNaN(birthdayDate)) {
+  if (Number.isNaN(birthdayDate)) {
     return false;
   }
 
@@ -24,8 +24,8 @@ export function getAge(birthday: string): number {
   const birthdayDate = new Date(birthday);
 
   // if this fails, this is an invalid date FORMAT
-  if (isNaN(birthdayDate)) {
-    return false;
+  if (Number.isNaN(birthdayDate)) {
+    throw new Error('Error getting age in years: Birthday is null');
   }
 
   return moment().diff(birthdayDate, 'years');
