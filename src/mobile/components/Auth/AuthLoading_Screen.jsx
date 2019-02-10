@@ -4,7 +4,7 @@
 import React from 'react';
 import { Image, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import { Font } from 'expo';
+import { Font, Asset } from 'expo';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import { loadAuth } from 'mobile/actions/auth/loadAuth';
@@ -47,6 +47,21 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps 
   };
 }
 
+// https://docs.expo.io/versions/v32.0.0/guides/preloading-and-caching-assets/
+function cacheImages(images) {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
+
+function cacheFonts(fonts) {
+  return fonts.map(font => Font.loadAsync(font));
+}
+
 // This component is the screen we see on initial app startup, as we are
 // loading the state of the app / determining if the user is already logged in.
 // If the user is logged in, we then navigate to App, otherwise to Auth.
@@ -54,20 +69,26 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-    Promise.all([
-      Font.loadAsync({
-        vegan: require('../../assets/fonts/Vegan-Regular.ttf'),
-      }),
-      Font.loadAsync({
-        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf'),
-      }),
-      Font.loadAsync({
-        gemicons: require('../../assets/icons/gemicons.ttf'),
-      }),
-      Font.loadAsync({
-        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf'),
-      }),
-    ])
+    this._loadAssets();
+  }
+
+  _loadAssets() {
+    const fonts = [
+      '../../assets/fonts/Vegan-Regular.ttf',
+      '../../assets/fonts/SourceSansPro-Regular.ttf',
+      '../../assets/icons/gemicons.ttf',
+      '../../assets/fonts/AvenirNext-Regular.ttf',
+    ];
+
+    const images = [
+      require('../../assets/waves/waves1/waves.png'),
+      require('../../assets/arthurIcon.png'),
+    ];
+
+    const imageAssets = cacheImages(images);
+    const fontAssets = cacheFonts(fonts);
+
+    Promise.all([...imageAssets, ...fontAssets])
       .then(results => {
         this.props.loadAuth();
       })
