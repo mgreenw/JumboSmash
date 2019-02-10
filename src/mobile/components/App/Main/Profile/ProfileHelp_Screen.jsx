@@ -12,7 +12,9 @@ import { textStyles } from 'mobile/styles/textStyles';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
-class ProfileHelp extends React.Component {
+type Props = {};
+
+class ProfileHelp extends React.Component<Props> {
   _onBack = () => {
     NavigationService.back();
   };
