@@ -1,26 +1,44 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
-import { Icon } from 'react-native-elements';
+import {
+  Text, View, TouchableOpacity, Image, Alert,
+} from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
+import EditPopup from './EditPopup';
 
 type Props = {
-  onAdd?: () => void,
-  onRemove?: () => void,
+  onAdd: () => void,
+  onRemove: () => void,
   enableRemove: boolean,
   width: number,
   photoId: ?number,
   token: ?string,
 };
 
-class AddSinglePhoto extends React.Component<Props> {
+type State = {
+  showEditPopup: boolean,
+};
+
+export default class AddSinglePhoto extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      showEditPopup: false,
+    };
+  }
+
+  _toggleEditPopup = (showEditPopup: boolean) => {
+    this.setState({ showEditPopup });
+  };
+
   render() {
-    const { onAdd, onRemove, width, photoId, token, enableRemove } = this.props;
+    const {
+      onAdd, onRemove, width, photoId, token, enableRemove,
+    } = this.props;
+    const { showEditPopup } = this.state;
     return (
       <View>
         <TouchableOpacity
@@ -37,7 +55,13 @@ class AddSinglePhoto extends React.Component<Props> {
             justifyContent: 'center',
           }}
           disabled={false}
-          onPress={photoId ? null : onAdd}
+          onPress={
+            photoId
+              ? () => {
+                this._toggleEditPopup(true);
+              }
+              : onAdd
+          }
         >
           {photoId ? (
             <Image
@@ -52,39 +76,38 @@ class AddSinglePhoto extends React.Component<Props> {
               source={{
                 uri: GET_PHOTO__ROUTE + photoId,
                 headers: {
-                  Authorization: token,
+                  Authorization: token || '', // TODO: better token handling
                 },
               }}
             />
           ) : (
-            <Text style={textStyles.headline6Style}>{photoId ? '' : 'add'}</Text>
+            <Text style={[textStyles.headline6Style, { textDecorationLine: 'underline' }]}>
+              {photoId ? '' : 'Add'}
+            </Text>
           )}
         </TouchableOpacity>
-        {enableRemove && photoId ? (
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              right: -8,
-              top: -8,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onPress={onRemove}
-          >
-            <View
-              style={{
-                backgroundColor: Colors.White,
-                width: 20,
-                height: 20,
-                position: 'absolute',
-              }}
-            />
-            <CustomIcon size={30} color={Colors.Offblack} name="delete-filled" />
-          </TouchableOpacity>
-        ) : null}
+        <EditPopup
+          visible={showEditPopup}
+          onDelete={() => {
+            this.setState(
+              { showEditPopup: false },
+              enableRemove
+                ? onRemove
+                : () => {
+                  Alert.alert("Plz don't delete your last photo everything will break :(");
+                },
+            );
+          }}
+          onReorder={() => {
+            this.setState({ showEditPopup: false }, () => {
+              Alert.alert('Reordering Not Implemented Yet. :(');
+            });
+          }}
+          onCancel={() => {
+            this._toggleEditPopup(false);
+          }}
+        />
       </View>
     );
   }
 }
-
-export { AddSinglePhoto };
