@@ -78,7 +78,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={(
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {'Your profile’s ready. Get in losers, we’re going smashing.'}
+            {'Your profile’s ready. \n\nGet in losers, we’re going smashing.'}
           </Text>
 )}
         onButtonPress={this._saveSettingsAndProfile}
