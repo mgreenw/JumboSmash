@@ -57,12 +57,10 @@ services:
 
   koh:
     image: sperrys/koh
-    ports:
-      - 3005:3005
     networks:
       - traefik-net
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     deploy:
       labels:
         - traefik.backend=koh
@@ -75,10 +73,8 @@ services:
   #
 
   server:
-    ports:
-      - 3001:3000
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     image: sperrys/server:secrets
     secrets:
       - db_pass
@@ -115,9 +111,7 @@ services:
   deployment:
     image: "sperrys/deploy:node"
     environment:
-      NODE_ENV: development
-    ports:
-      - 3004:3004
+      NODE_ENV: production
     networks:
       - traefik-net
     secrets:
