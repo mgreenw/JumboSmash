@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import { StyleSheet } from 'react-native';
 import { Colors } from './colors';
@@ -14,6 +13,11 @@ const buttonBase = {
 const buttonTitleBase = {
   paddingLeft: 30,
   paddingRight: 30,
+};
+
+const swipeButtonBase = {
+  position: 'absolute',
+  bottom: 20,
 };
 
 export const Arthur_Styles = StyleSheet.create({
@@ -99,5 +103,13 @@ export const Arthur_Styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     width: '100%',
+  },
+  swipeButton_dislike: {
+    ...swipeButtonBase,
+    left: 100,
+  },
+  swipeButton_like: {
+    ...swipeButtonBase,
+    right: 100,
   },
 });
