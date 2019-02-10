@@ -49,7 +49,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
   _goToNextPage = () => {
     const { navigation } = this.props;
     const { profile, settings } = this.state;
-    navigation.navigate(routes.OnboardingGenders, {
+    navigation.navigate(routes.OnboardingAddPictures, {
       profile,
       settings,
       onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
@@ -168,6 +168,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     );
     return (
       <OnboardingLayout
+        section="profile"
         body={body}
         onButtonPress={this._onContinue}
         title="Name & Age"

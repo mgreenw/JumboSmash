@@ -56,7 +56,7 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
   _goToNextPage = () => {
     const { navigation } = this.props;
     const { profile, settings } = this.state;
-    navigation.navigate(routes.OnboardingAddPictures, {
+    navigation.navigate(routes.OnboardingNotifications, {
       profile,
       settings,
       onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
@@ -98,6 +98,7 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     return (
       <OnboardingLayout
         body={body}
+        section="settings"
         onButtonPress={this._goToNextPage}
         title="Gender Identity"
         main

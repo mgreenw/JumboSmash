@@ -19,9 +19,11 @@ type Props = {
   buttonText?: string,
   firstScreen?: boolean,
   lastScreen?: boolean,
+  infoScreen?: boolean,
   progress?: number,
   loading?: boolean,
   buttonDisabled?: boolean,
+  section: 'profile' | 'settings',
 };
 type State = {};
 
@@ -31,19 +33,21 @@ export class OnboardingLayout extends React.Component<Props, State> {
     const {
       firstScreen,
       lastScreen,
+      infoScreen,
       loading,
       onButtonPress,
       title,
       body,
       buttonText,
       progress,
+      section,
       buttonDisabled,
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
           leftIconName={firstScreen ? undefined : 'back'}
-          title={'Profile Setup'}
+          title={section === 'settings' ? 'Settings' : 'Profile Setup'}
           loading={loading}
         />
         <KeyboardView waves={1}>
@@ -59,7 +63,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View>
                   <Text
                     style={
-                      firstScreen || lastScreen
+                      firstScreen || lastScreen || infoScreen
                         ? textStyles.veganTitle
                         : textStyles.headline5StyleDemibold
                     }
@@ -71,8 +75,8 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: firstScreen || lastScreen ? 20 : 40,
-                  paddingRight: firstScreen || lastScreen ? 20 : 40,
+                  paddingLeft: firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingRight: firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -85,7 +89,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
                     onPress={onButtonPress}
-                    title={buttonText || 'continue'}
+                    title={buttonText || 'Continue'}
                     loading={loading}
                     disabled={buttonDisabled}
                   />

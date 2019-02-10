@@ -1,9 +1,11 @@
 // @flow
+
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
+import { textStyles } from 'mobile/styles/textStyles';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
-import BioInput from 'mobile/components/shared/BioInput';
+import { Colors } from 'mobile/styles/colors';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
@@ -15,7 +17,7 @@ type State = {
   settings: UserSettings,
 };
 
-export default class OnboardingBioScreen extends React.Component<Props, State> {
+export default class OnboardingSettingsInfoScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -33,22 +35,10 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
     }
   }
 
-  _onBioUpdate = (bio: string) => {
-    this.setState(state => ({
-      profile: {
-        ...state.profile,
-        fields: {
-          ...state.profile.fields,
-          bio,
-        },
-      },
-    }));
-  };
-
   _goToNextPage = () => {
     const { navigation } = this.props;
     const { profile, settings } = this.state;
-    navigation.navigate(routes.OnboardingSettingsInfo, {
+    navigation.navigate(routes.OnboardingGenders, {
       profile,
       settings,
       onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
@@ -61,30 +51,34 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { profile } = this.state;
     const body = (
-      <View
-        style={{
-          maxHeight: 210,
-          marginBottom: 30,
-          width: '100%',
-        }}
-      >
-        <BioInput
-          placeholder="The real Tony Monaco"
-          onChangeText={this._onBioUpdate}
-          value={profile.fields.bio}
-        />
+      <View style={{ flex: 1, width: '100%' }}>
+        <Text style={textStyles.body1Style}>
+          {
+            'The next few questions will help us match you with the right people. We understand thatgender identity is a spectrum, and believe that the way you identify should be left up to you, so please interpret the following gender options however they make sense to you. For more information, check out our '
+          }
+          <Text
+            style={{ color: Colors.Grapefruit, textDecorationLine: 'underline' }}
+            onPress={() => {
+              Alert.alert('Not yet linked to gender statement screen');
+            }}
+          >
+            {'Statement on Gender'}
+          </Text>
+          .
+        </Text>
+        <Text style={textStyles.headline6Style}>
+          {'\nNone of the following information will be shown on your profile.'}
+        </Text>
       </View>
     );
-
     return (
       <OnboardingLayout
-        section="profile"
         body={body}
+        infoScreen
+        section="settings"
         onButtonPress={this._goToNextPage}
-        title="About Me"
-        main
+        title="JumboSmash"
         progress={0}
       />
     );

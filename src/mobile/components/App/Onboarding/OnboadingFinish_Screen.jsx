@@ -81,6 +81,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
             {'Your profile’s ready. \n\nGet in losers, we’re going smashing.'}
           </Text>
 )}
+        section="profile"
         onButtonPress={this._saveSettingsAndProfile}
         title="Project Gem"
         lastScreen
