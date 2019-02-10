@@ -27,7 +27,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     super(props);
     const { navigation } = this.props;
     const profile = navigation.getParam('profile', null);
-    const birthday = profile === null ? '' : profile.birthday;
+    const birthday = profile === null ? '' : profile.fields.birthday;
     const unformatedBirthday = birthday ? this._unformatBirthday(birthday) : '';
     this.state = {
       unformatedBirthday,
