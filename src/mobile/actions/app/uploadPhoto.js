@@ -40,7 +40,7 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function uploadPhoto(uri: string) {
+export function uploadPhotoAction(uri: string) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
