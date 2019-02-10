@@ -140,6 +140,10 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     const {
       profile, errorMessageName, errorMessageBirthday, unformatedBirthday,
     } = this.state;
+    const incomplete = profile.fields.displayName === ''
+      || profile.fields.birthday === ''
+      || errorMessageName !== ''
+      || errorMessageBirthday !== '';
     const body = (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
@@ -174,12 +178,8 @@ export default class NameAgeScreen extends React.Component<Props, State> {
         title="Name & Age"
         main
         progress={0}
-        buttonDisabled={
-          profile.fields.displayName === ''
-          || profile.fields.birthday === ''
-          || errorMessageName !== ''
-          || errorMessageBirthday !== ''
-        }
+        progressComplete={!incomplete}
+        buttonDisabled={incomplete}
       />
     );
   }
