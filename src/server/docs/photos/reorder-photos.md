@@ -1,4 +1,6 @@
-# Reorder Photos
+# Reorder Photos - DEPRICATED
+
+NOTE: This endpoint is currently depricated. If needed, we will update it with a better return value and a more transaction-like implentation.
 
 Reorder the photos of the current user. Provide between 2 and 4 ids in an array.
 
@@ -46,7 +48,7 @@ Type: `Array of Integers`
 ```json
 {
     "status": "REORDER_PHOTOS__SUCCESS",
-    "photos": [1, 2, 3]
+    "data": [1, 2, 3]
 
 }
 ```

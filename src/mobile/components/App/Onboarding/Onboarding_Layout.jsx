@@ -11,6 +11,7 @@ import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import OnboardingProgress from 'mobile/components/shared/OnboardingProgress';
 
 type Props = {
   body: React.Node,
@@ -19,9 +20,12 @@ type Props = {
   buttonText?: string,
   firstScreen?: boolean,
   lastScreen?: boolean,
+  infoScreen?: boolean,
   progress?: number,
+  progressComplete?: boolean,
   loading?: boolean,
   buttonDisabled?: boolean,
+  section: 'profile' | 'settings',
 };
 type State = {};
 
@@ -31,27 +35,39 @@ export class OnboardingLayout extends React.Component<Props, State> {
     const {
       firstScreen,
       lastScreen,
+      infoScreen,
       loading,
       onButtonPress,
       title,
       body,
       buttonText,
       progress,
+      section,
       buttonDisabled,
+      progressComplete,
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
           leftIconName={firstScreen ? undefined : 'back'}
-          title={'Profile Setup'}
+          title={section === 'settings' ? 'Settings' : 'Profile Setup'}
           loading={loading}
         />
-        <KeyboardView>
+        <KeyboardView waves={1}>
+          <View style={{ paddingTop: 20 }}>
+            {progress !== undefined && progressComplete !== undefined && (
+              <OnboardingProgress
+                progress={progress}
+                progressComplete={progressComplete}
+                maxProgress={section === 'settings' ? 1 : 2}
+              />
+            )}
+          </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 1,
+                  flex: 0.5,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
@@ -59,7 +75,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View>
                   <Text
                     style={
-                      firstScreen || lastScreen
+                      firstScreen || lastScreen || infoScreen
                         ? textStyles.veganTitle
                         : textStyles.headline5StyleDemibold
                     }
@@ -71,8 +87,8 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: firstScreen || lastScreen ? 20 : 40,
-                  paddingRight: firstScreen || lastScreen ? 20 : 40,
+                  paddingLeft: firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingRight: firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -85,7 +101,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 <View style={{ flex: 1 }}>
                   <PrimaryButton
                     onPress={onButtonPress}
-                    title={buttonText || 'continue'}
+                    title={buttonText || 'Continue'}
                     loading={loading}
                     disabled={buttonDisabled}
                   />

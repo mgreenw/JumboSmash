@@ -50,7 +50,7 @@ function complete(response: sendVerificationEmail_response): SendVerificationEma
   };
 }
 
-export function sendVerificationEmail(utln: string, forceResend: boolean) {
+export function sendVerificationEmailAction(utln: string, forceResend: boolean) {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {

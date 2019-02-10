@@ -45,16 +45,16 @@ async function createProfile(userId, body) {
     throw new Error('Invalid profile supplied to createUser');
   }
 
-  const photoId = await insertPhoto(userId, 1);
+  await insertPhoto(userId, 1);
 
   try {
     const result = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, bio, splash_photo_id)
-      VALUES ($1, $2, $3, $4, $5)
+      (user_id, display_name, birthday, bio)
+      VALUES ($1, $2, $3, $4)
       RETURNING user_id AS "userId"
     `,
-    [userId, displayName, birthday, bio, photoId]);
+    [userId, displayName, birthday, bio]);
     return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');

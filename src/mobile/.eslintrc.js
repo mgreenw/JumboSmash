@@ -20,5 +20,6 @@ module.exports = {
     'react/no-multi-comp': 'off',
     'no-underscore-dangle': 'off',
     'react/destructuring/assignment': 'off',
+    camelcase: 'off',
   },
 };

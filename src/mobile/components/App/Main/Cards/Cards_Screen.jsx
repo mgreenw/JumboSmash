@@ -54,23 +54,25 @@ let DATA: Array<Candidate> = [
   {
     userId: 1,
     profile: {
-      displayName: 'Anthony',
-      birthday: '21',
-      bio: 'BIO',
+      fields: {
+        displayName: 'Anthony',
+        birthday: '21',
+        bio: 'BIO',
+      },
       photoIds: [],
     },
   },
   {
     userId: 2,
-    profile: { displayName: 'Tony', birthday: '22', bio: 'BIO', photoIds: [] },
+    profile: { fields: { displayName: 'Tony', birthday: '22', bio: 'BIO' }, photoIds: [] },
   },
   {
     userId: 3,
-    profile: { displayName: 'Ant', birthday: '69', bio: 'BIO', photoIds: [] },
+    profile: { fields: { displayName: 'Ant', birthday: '69', bio: 'BIO' }, photoIds: [] },
   },
   {
     userId: 4,
-    profile: { displayName: 'T-dawg', birthday: '47', bio: 'BIO', photoIds: [] },
+    profile: { fields: { displayName: 'T-dawg', birthday: '47', bio: 'BIO' }, photoIds: [] },
   },
 ];
 
@@ -82,14 +84,14 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   }
 
-  _renderCard = (user: UserProfile, isTop: boolean) => {
+  _renderCard = (profile: UserProfile, isTop: boolean) => {
     const { navigation } = this.props;
     return (
       <PreviewCard
-        user={user}
+        profile={profile}
         onCardTap={() =>
           navigation.navigate(routes.ExpandedCard, {
-            user,
+            profile,
             onMinimize: () => navigation.pop(),
           })
         }
@@ -106,11 +108,11 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeRight = (user: Candidate) => {
-    DevTesting.log('Card liked: ' + user.profile.displayName);
+    DevTesting.log('Card liked: ' + user.profile.fields.displayName);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    DevTesting.log('Card disliked: ' + user.profile.displayName);
+    DevTesting.log('Card disliked: ' + user.profile.fields.displayName);
   };
 
   _onSwipeComplete = () => {

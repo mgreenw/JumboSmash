@@ -14,12 +14,12 @@ class Card extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
-    const user = navigation.getParam('user', null);
+    const profile = navigation.getParam('profile', null);
     const onMinimize = navigation.getParam('onMinimize', null);
     const token = navigation.getParam('token', null);
-    if (user === null) {
+    if (profile === null) {
       throw new Error(
-        'Error: Navigation Param of User is null in Expanded Card Screen',
+        'Error: Navigation Param of Profile is null in Expanded Card Screen',
       );
     }
 
@@ -41,7 +41,7 @@ class Card extends React.Component<Props> {
       <View style={{ display: 'flex', flex: 1 }}>
         <StatusBar hidden />
         <CardView
-          user={navigation.getParam('user')}
+          profile={navigation.getParam('profile')}
           onMinimize={navigation.getParam('onMinimize')}
           token={navigation.getParam('token')}
         />

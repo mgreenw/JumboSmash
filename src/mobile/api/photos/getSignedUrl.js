@@ -16,7 +16,7 @@ function getSignedUrl(token: string): Promise<SignedUrlPayload> {
     .then(response => {
       switch (response.status) {
         case SIGN_URL__SUCCESS:
-          return response.payload;
+          return response.data;
         default:
           throw { response };
       }

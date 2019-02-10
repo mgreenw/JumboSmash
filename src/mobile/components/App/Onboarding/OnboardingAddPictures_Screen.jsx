@@ -1,44 +1,38 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View, Dimensions } from 'react-native';
-import { connect } from 'react-redux';
-import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
-import type { ReduxState, PhotoIds } from 'mobile/reducers/index';
-import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
+import { Dimensions } from 'react-native';
+import type { UserSettings, UserProfile, ReduxState } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
+import { connect } from 'react-redux';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type NavigationProps = {
   navigation: any,
 };
 
-type ReduxProps = {
-  photoIds: PhotoIds,
-};
-
 type DispatchProps = {};
 
-type Props = NavigationProps & ReduxProps & DispatchProps;
+type ReduxProps = { photoIds: number[] };
+
+type Props = NavigationProps & DispatchProps & ReduxProps;
 
 type State = {
   profile: UserProfile,
   settings: UserSettings,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
-    throw 'Error: client is null in onboarding add photos';
+    throw new Error('client is null in Onboarding Photos');
   }
   return {
     photoIds: reduxState.client.profile.photoIds,
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
+function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
@@ -53,28 +47,33 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state != prevState) {
+    if (this.state !== prevState) {
       const { navigation } = this.props;
-      navigation.state.params.onUpdateProfileSettings(this.state.profile, this.state.settings);
+      const { profile, settings } = this.state;
+      navigation.state.params.onUpdateProfileSettings(profile, settings);
     }
   }
 
   _goToNextPage = () => {
     const { navigation } = this.props;
+    const { profile, settings } = this.state;
     navigation.navigate(routes.OnboardingBio, {
-      profile: this.state.profile,
-      settings: this.state.settings,
-      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
+      profile,
+      settings,
+      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
         this.setState({
-          profile,
-          settings,
+          profile: newProfile,
+          settings: newSettings,
         });
       },
     });
   };
 
   render() {
-    const { height, width } = Dimensions.get('window');
+    const { width } = Dimensions.get('window');
+    const { photoIds } = this.props;
+    const complete = photoIds.length > 0;
+
     // A bit of a hack, but we want pictures to look nice.
     // We have 22 padding via onboarding layout, plus an additional 40 here,
     // and  we want 20 padding between each
@@ -83,6 +82,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        section="profile"
         body={
           // AddMultiPhotos gets direct redux access due to constraints on
           // photo uploading. CreatMyProfile needs previously uploaded photos,
@@ -92,8 +92,9 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main
-        progress={0}
-        buttonDisabled={this.props.photoIds.length === 0}
+        progress={1}
+        progressComplete={complete}
+        buttonDisabled={!complete}
       />
     );
   }

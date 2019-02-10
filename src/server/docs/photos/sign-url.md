@@ -28,16 +28,16 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "SIGN_URL__SUCCESS",
-    "payload": {
+    "data": {
         "url": "https://s3.amazonaws.com/projectgem-dev",
         "fields": {
             "key": "photos/development/43a0fa39-bfd1-4afe-a5ab-f2a130219eb2",
             "bucket": "projectgem-dev",
             "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
-            "X-Amz-Credential": "AKIAIFDBBAE2RB3D6GQA/20190120/us-east-1/s3/aws4_request",
-            "X-Amz-Date": "20190120T011631Z",
-            "Policy": "eyJleHBpcmF0aW9uIjoiMjAxOS0wMS0yMFQwMToyNjozMVoiLCJjb25kaXRpb25zIjpbeyJhY2wiOiJhdXRoZW50aWNhdGVkLXJlYWQifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL2pwZWcifSxbImNvbnRlbnQtbGVuZ3RoLXJhbmdlIiwxLDUwMDAwMF0seyJrZXkiOiJwaG90b3MvZGV2ZWxvcG1lbnQvNDNhMGZhMzktYmZkMS00YWZlLWE1YWItZjJhMTMwMjE5ZWIyIn0seyJidWNrZXQiOiJwcm9qZWN0Z2VtLWRldiJ9LHsiWC1BbXotQWxnb3JpdGhtIjoiQVdTNC1ITUFDLVNIQTI1NiJ9LHsiWC1BbXotQ3JlZGVudGlhbCI6IkFLSUFJRkRCQkFFMlJCM0Q2R1FBLzIwMTkwMTIwL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IlgtQW16LURhdGUiOiIyMDE5MDEyMFQwMTE2MzFaIn1dfQ==",
-            "X-Amz-Signature": "b6e2e0b39ba25cc2d639a023f18ed8dc1516f23e48e029010eccfd2060c012da",
+            "X-Amz-Credential": "AKIAIFDBBAE2RB3D6GQA/20190202/us-east-1/s3/aws4_request",
+            "X-Amz-Date": "20190202T230311Z",
+            "Policy": "eyJleHBpcmF0aW9uIjoiMjAxOS0wMi0wMlQyMzoxMzoxMVoiLCJjb25kaXRpb25zIjpbeyJhY2wiOiJhdXRoZW50aWNhdGVkLXJlYWQifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL2pwZWcifSxbImNvbnRlbnQtbGVuZ3RoLXJhbmdlIiwxLDUwMDAwMF0seyJrZXkiOiJwaG90b3MvZGV2ZWxvcG1lbnQvNDNhMGZhMzktYmZkMS00YWZlLWE1YWItZjJhMTMwMjE5ZWIyIn0seyJidWNrZXQiOiJwcm9qZWN0Z2VtLWRldiJ9LHsiWC1BbXotQWxnb3JpdGhtIjoiQVdTNC1ITUFDLVNIQTI1NiJ9LHsiWC1BbXotQ3JlZGVudGlhbCI6IkFLSUFJRkRCQkFFMlJCM0Q2R1FBLzIwMTkwMjAyL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IlgtQW16LURhdGUiOiIyMDE5MDIwMlQyMzAzMTFaIn1dfQ==",
+            "X-Amz-Signature": "2f742f6cd47f2943d8128089bfce730823763d43145ba5d77ef7e8f1e2ee38fc",
             "acl": "authenticated-read"
         }
     }

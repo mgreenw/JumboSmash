@@ -33,10 +33,15 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_PROFILE__SUCCESS",
-    "profile": {
-        "displayName": "Max Greenwald",
-        "birthday": "1997-10-10",
-        "bio": "Cool"
+    "data": {
+        "fields": {
+            "displayName": "Max",
+            "birthday": "1999-01-27",
+            "bio": "Already has 2 friends so..."
+        },
+        "photoIds": [
+            14
+        ]
     }
 }
 ```

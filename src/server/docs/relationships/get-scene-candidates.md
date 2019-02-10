@@ -46,18 +46,17 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_SCENE_CANDIDATES__SUCCESS",
-    "candidates": [
-        {
-            "userId": 4,
-            "displayName": "Tony",
-            "birthday": "1996-11-13",
-            "bio": "The Real President",
-        },
+    "data": [
         {
             "userId": 2,
-            "displayName": "Monaco",
-            "birthday": "1997-08-12",
-            "bio": "Mr. President",
+            "profile": {
+                "fields": {
+                    "displayName": "Anthony",
+                    "birthday": "2019-02-19",
+                    "bio": "He is the president"
+                },
+                "photoIds": [1]
+            }
         }
     ]
 }

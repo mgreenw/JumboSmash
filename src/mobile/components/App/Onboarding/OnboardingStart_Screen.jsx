@@ -55,13 +55,14 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 
   _goToNextPage = () => {
     const { navigation } = this.props;
+    const { profile, settings } = this.state;
     navigation.navigate(routes.OnboardingTermsAndConditions, {
-      profile: this.state.profile,
-      settings: this.state.settings,
-      onUpdateProfileSettings: (profile: UserProfile, settings: UserSettings) => {
+      profile,
+      settings,
+      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
         this.setState({
-          profile,
-          settings,
+          profile: newProfile,
+          settings: newSettings,
         });
       },
     });
@@ -72,12 +73,14 @@ class OnboardingStartScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {"Let's take 2 minutes to get your profile setup before you begin swiping."}
+            {"Let's get your profile setup before you begin swiping."}
           </Text>
         }
+        section={'profile'}
         onButtonPress={this._goToNextPage}
         title="Project Gem"
         firstScreen={true}
+        buttonText={"Roll 'Bos'"}
       />
     );
   }

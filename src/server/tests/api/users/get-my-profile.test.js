@@ -21,7 +21,7 @@ describe('GET api/users/me/profile', () => {
       .get('/api/users/me/profile')
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
 
     const user = await dbUtils.createUser('mgreen14');
@@ -30,7 +30,7 @@ describe('GET api/users/me/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE);
+    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
   it('should return the profile of the current user', async () => {
@@ -47,11 +47,11 @@ describe('GET api/users/me/profile', () => {
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(200);
-    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS);
-    expect(res.body.profile).toBeDefined();
+    expect(res.body.status).toBe(codes.GET_PROFILE__SUCCESS.status);
+    expect(res.body.data).toBeDefined();
 
-    expect(res.body.profile.displayName).toBe(profile.displayName);
-    expect(res.body.profile.birthday).toBe(profile.birthday);
-    expect(res.body.profile.bio).toBe(profile.bio);
+    expect(res.body.data.fields.displayName).toBe(profile.displayName);
+    expect(res.body.data.fields.birthday).toBe(profile.birthday);
+    expect(res.body.data.fields.bio).toBe(profile.bio);
   });
 });

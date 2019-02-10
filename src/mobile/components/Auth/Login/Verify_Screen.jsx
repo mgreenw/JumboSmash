@@ -151,9 +151,11 @@ class SplashScreen extends React.Component<Props, State> {
     const alreadySent = navigation.getParam('alreadySent', false);
     const isLoading = this.props.login_inProgress;
 
-    const message = alreadySent
+    let message = alreadySent
       ? `Looks like you've already been sent an email to ${email}.`
       : `A verification code has been sent to ${email}.`;
+
+    message += ` Enter below to continue.`;
 
     return (
       <View style={{ flex: 1 }}>
@@ -201,7 +203,7 @@ class SplashScreen extends React.Component<Props, State> {
                         { textAlign: 'center', color: Colors.Grapefruit },
                       ]}
                     >
-                      {'COUNTDOWN' /* TODO: make countdown timer */}
+                      {'' /* TODO: make countdown timer */}
                     </Text>
                   </View>
                 </View>
@@ -221,7 +223,7 @@ class SplashScreen extends React.Component<Props, State> {
                 >
                   <PrimaryButton
                     onPress={this._onSubmit}
-                    title="submit"
+                    title="Submit"
                     disabled={isLoading || this.state.code.length !== NUM_DIGITS}
                     loading={isLoading}
                   />

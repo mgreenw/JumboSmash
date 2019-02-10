@@ -17,7 +17,7 @@ import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
 
 type Props = {
-  user: UserProfile,
+  profile: UserProfile,
   onMinimize: () => void,
   token: ?string
 };
