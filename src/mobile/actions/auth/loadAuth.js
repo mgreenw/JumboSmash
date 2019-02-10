@@ -35,7 +35,7 @@ function complete(token: string): LoadAuthCompleted_Action {
   };
 }
 
-export function loadAuth() {
+export default function loadAuthAction() {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
