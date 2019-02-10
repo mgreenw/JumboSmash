@@ -2,11 +2,11 @@
 
 import React from 'react';
 import {
-  TouchableOpacity, Text, View, Image,
+ TouchableOpacity, Text, View, Image 
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar } from 'react-native-elements';
-import type { ReduxState } from 'mobile/reducers/index';
+import type { ReduxState, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -42,7 +42,9 @@ class CardButton extends React.PureComponent<cardButtonProps> {
       >
         <View style={{ flexDirection: 'row' }}>
           <CustomIcon name={icon} size={26} color="black" />
-          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>{title}</Text>
+          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
+            {title}
+          </Text>
         </View>
         <CustomIcon
           name="back"
@@ -61,7 +63,12 @@ type navigationProps = {
 
 type dispatchProps = {};
 
-type reduxProps = { token: ?string, photoId: number, displayName: string };
+type reduxProps = {
+  token: ?string,
+  photoId: number,
+  displayName: string,
+  profile: UserProfile,
+};
 
 type Props = navigationProps & dispatchProps & reduxProps;
 
@@ -79,6 +86,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
     displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
     token: reduxState.token,
+    profile: reduxState.client.profile,
   };
 }
 
@@ -106,7 +114,9 @@ class ProfileScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { token, photoId, displayName } = this.props;
+    const {
+ token, photoId, displayName, navigation, profile 
+} = this.props;
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>
@@ -134,9 +144,18 @@ class ProfileScreen extends React.Component<Props, State> {
                     Authorization: token,
                   },
                 }}
+                onPress={() => navigation.navigate(routes.ExpandedCard, {
+                    profile,
+                    onMinimize: () => navigation.pop(),
+                    token,
+                  })
+                }
               />
               <Text
-                style={[textStyles.headline4StyleMedium, { textAlign: 'center', paddingTop: 10 }]}
+                style={[
+                  textStyles.headline4StyleMedium,
+                  { textAlign: 'center', paddingTop: 10 },
+                ]}
               >
                 {displayName}
               </Text>
@@ -162,8 +181,16 @@ class ProfileScreen extends React.Component<Props, State> {
               }}
               elevation={5}
             >
-              <CardButton title="Edit Profile" onPress={this._onProfileEditPress} icon="user" />
-              <CardButton title="Settings" onPress={this._onSettingsPress} icon="gear" />
+              <CardButton
+                title="Edit Profile"
+                onPress={this._onProfileEditPress}
+                icon="user"
+              />
+              <CardButton
+                title="Settings"
+                onPress={this._onSettingsPress}
+                icon="gear"
+              />
               <CardButton
                 title="Help & Contact"
                 onPress={this._onProfileHelpPress}
