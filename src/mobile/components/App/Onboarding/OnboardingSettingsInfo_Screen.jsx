@@ -79,7 +79,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<Props,
         section="settings"
         onButtonPress={this._goToNextPage}
         title="Project Gem"
-        progress={2}
+        progress={0}
       />
     );
   }
