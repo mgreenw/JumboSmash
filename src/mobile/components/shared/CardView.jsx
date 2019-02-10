@@ -87,7 +87,7 @@ export default class CardView extends React.Component<Props> {
                     width: 8,
                     backgroundColor: '#cccccc',
                     margin: 8,
-                    marginTop: -30,
+                    marginTop: -31.5,
                     borderRadius: 5,
                   }}
                 />
@@ -107,6 +107,7 @@ export default class CardView extends React.Component<Props> {
               width: 1,
             },
             borderRadius: 10,
+            marginTop: -10,
           }}
           elevation={5}
         >
