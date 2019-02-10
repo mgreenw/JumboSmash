@@ -1,37 +1,37 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Image, View } from 'react-native';
-import { StackNavigator } from 'react-navigation';
 import { Font, Asset } from 'expo';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
-import { loadAuth } from 'mobile/actions/auth/loadAuth';
+import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { routes } from 'mobile/components/Navigation';
 import DevTesting from 'mobile/utils/DevTesting';
 
-type reduxProps = {
+const ArthurIcon = require('../../assets/arthurIcon.png');
+const Waves1 = require('../../assets/waves/waves1/waves.png');
+
+type ReduxProps = {
   token: ?string,
   loadAuthInProgress: boolean,
   authLoaded: boolean,
 };
 
-type navigationProps = {
+type NavigationProps = {
   navigation: any,
 };
 
-type dispatchProps = {
+type DispatchProps = {
   loadAuth: void => void,
 };
 
-type Props = reduxProps & navigationProps & dispatchProps;
-
+type Props = ReduxProps & NavigationProps & DispatchProps;
 type State = {};
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
@@ -39,22 +39,21 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     loadAuth: () => {
-      dispatch(loadAuth());
+      dispatch(loadAuthAction());
     },
   };
 }
 
 // https://docs.expo.io/versions/v32.0.0/guides/preloading-and-caching-assets/
 function cacheImages(images) {
-  return images.map(image => {
+  return images.map((image) => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
-    } else {
-      return Asset.fromModule(image).downloadAsync();
     }
+    return Asset.fromModule(image).downloadAsync();
   });
 }
 
@@ -72,6 +71,22 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     this._loadAssets();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { navigation } = this.props;
+    const { token, authLoaded, loadAuthInProgress } = this.props;
+
+    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
+    // so we use it for determining if the load occured.
+    if (authLoaded && prevProps.loadAuthInProgress !== loadAuthInProgress) {
+      if (token) {
+        navigation.navigate(routes.AppSwitch, {});
+      } else {
+        navigation.navigate(routes.LoginStack);
+      }
+    }
+  }
+
+  /* eslint-disable */
   _loadAssets() {
     const fonts = [
       { vegan: require('../../assets/fonts/Vegan-Regular.ttf') },
@@ -86,37 +101,21 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf'),
       },
     ];
+    /* eslint-enable */
 
-    const images = [
-      require('../../assets/waves/waves1/waves.png'),
-      require('../../assets/arthurIcon.png'),
-    ];
+    const images = [Waves1, ArthurIcon];
 
     const imageAssets = cacheImages(images);
     const fontAssets = cacheFonts(fonts);
 
     Promise.all([...imageAssets, ...fontAssets])
-      .then(results => {
-        this.props.loadAuth();
+      .then(() => {
+        const { loadAuth } = this.props;
+        loadAuth();
       })
-      .catch(e => {
+      .catch((e) => {
         DevTesting.log('Error importing fonts:', e);
       });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { navigate } = this.props.navigation;
-    const { token, authLoaded, loadAuthInProgress } = this.props;
-
-    // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
-    // so we use it for determining if the load occured.
-    if (authLoaded && prevProps.loadAuthInProgress != loadAuthInProgress) {
-      if (token) {
-        navigate(routes.AppSwitch, {});
-      } else {
-        navigate(routes.LoginStack);
-      }
-    }
   }
 
   render() {
@@ -131,7 +130,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               width: null,
               height: null,
             }}
-            source={require('../../assets/arthurIcon.png')} // TODO: investigate why  mobile/ does not work
+            source={ArthurIcon} // TODO: investigate why  mobile/ does not work
           />
         </View>
         <View style={{ flex: 1 }} />
