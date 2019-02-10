@@ -6,7 +6,7 @@ import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { BirthdayInput } from 'mobile/components/shared/DigitInput';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
-import validateBirthday from 'mobile/utils/ValidateBirthday';
+import { validateBirthday } from 'mobile/utils/Birthday';
 import validateName from 'mobile/utils/ValidateName';
 import { OnboardingLayout } from './Onboarding_Layout';
 
@@ -52,7 +52,10 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingAddPictures, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings,
+      ) => {
         this.setState({
           profile: newProfile,
           settings: newSettings,
@@ -138,9 +141,12 @@ export default class NameAgeScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      profile, errorMessageName, errorMessageBirthday, unformatedBirthday,
+      profile,
+      errorMessageName,
+      errorMessageBirthday,
+      unformatedBirthday,
     } = this.state;
-    const incomplete = profile.fields.displayName === ''
+    const incomplete =      profile.fields.displayName === ''
       || profile.fields.birthday === ''
       || errorMessageName !== ''
       || errorMessageBirthday !== '';

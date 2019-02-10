@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import { createStackNavigator } from 'react-navigation';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
@@ -70,7 +69,7 @@ const ONBOARDING_BIO_ROUTE = 'ONBOARDING_BIO_ROUTE';
 const ONBOARDING_NOTIFICATIONS_ROUTE = 'ONBOARDING_NOTIFICATIONS_ROUTE';
 const ONBOARDING_FINISH_ROUTE = 'ONBOARDING_FINISH_ROUTE';
 const ONBOARDING_APP_LOAD = 'ONBOARDING_APP_LOAD';
-const ONBOARDING_TERMS_AND_CONDITIONS_ROUTE = 'ONBOARDING_TERMS_AND_CONDITIONS_ROUTE';
+const ONBOARDING_TERMS_AND_CONDITIONS_ROUTE =  'ONBOARDING_TERMS_AND_CONDITIONS_ROUTE';
 const ONBOARDING_SETTINGS_INFO_ROUTE = 'ONBOARDING_SETTINGS_INFO_ROUTE';
 
 const LOGIN_STACK = 'LOGIN_STACK';
@@ -142,6 +141,7 @@ const ProfileStack = createStackNavigator(
     SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
     PROFILE_EDIT_ROUTE: { screen: ProfileEdit },
     PROFILE_HELP_ROUTE: { screen: ProfileHelp },
+    EXPANDED_CARD_ROUTE: { screen: ExpandedCard },
   },
   {
     initialRouteName: PROFILE_ROUTE,
@@ -234,8 +234,7 @@ const AppSwitch = FluidNavigator(
   },
 );
 
-export const createRootNavigator = () =>
-  FluidNavigator(
+export const createRootNavigator = () => FluidNavigator(
     {
       APP_SWITCH: AppSwitch,
       AUTH_SWITCH: AuthSwitch,
