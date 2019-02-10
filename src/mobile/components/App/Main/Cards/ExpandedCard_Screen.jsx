@@ -5,49 +5,36 @@ import { View, StatusBar } from 'react-native';
 import CardView from 'mobile/components/shared/CardView';
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type Props = navigationProps;
 
-class Card extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    const { navigation } = this.props;
-    const profile = navigation.getParam('profile', null);
-    const onMinimize = navigation.getParam('onMinimize', null);
-    const token = navigation.getParam('token', null);
-    if (profile === null) {
-      throw new Error(
-        'Error: Navigation Param of Profile is null in Expanded Card Screen',
-      );
-    }
-
-    if (onMinimize === null) {
-      throw new Error(
-        'Error: Navigation Param of OnMinimize is null in Expanded Card Screen',
-      );
-    }
-    if (token === null) {
-      throw new Error(
-        'Error: Navigation Param of token is null in Expanded Card Screen',
-      );
-    }
-  }
-
-  render() {
-    const { navigation } = this.props;
-    return (
-      <View style={{ display: 'flex', flex: 1 }}>
-        <StatusBar hidden />
-        <CardView
-          profile={navigation.getParam('profile')}
-          onMinimize={navigation.getParam('onMinimize')}
-          token={navigation.getParam('token')}
-        />
-      </View>
+export default (props: Props) => {
+  const { navigation } = props;
+  const profile = navigation.getParam('profile', null);
+  const onMinimize = navigation.getParam('onMinimize', null);
+  const token = navigation.getParam('token', null);
+  if (profile === null) {
+    throw new Error(
+      'Error: Navigation Param of Profile is null in Expanded Card Screen',
     );
   }
-}
 
-export default Card;
+  if (onMinimize === null) {
+    throw new Error(
+      'Error: Navigation Param of OnMinimize is null in Expanded Card Screen',
+    );
+  }
+  if (token === null) {
+    throw new Error(
+      'Error: Navigation Param of token is null in Expanded Card Screen',
+    );
+  }
+  return (
+    <View style={{ display: 'flex', flex: 1 }}>
+      <StatusBar hidden />
+      <CardView profile={profile} onMinimize={onMinimize} token={token} />
+    </View>
+  );
+};

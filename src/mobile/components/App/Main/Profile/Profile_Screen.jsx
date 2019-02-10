@@ -22,7 +22,7 @@ const waves1 = require('../../../../assets/waves/waves1/waves.png');
 type cardButtonProps = {
   title: string,
   onPress: () => void,
-  icon: IconName
+  icon: IconName,
 };
 class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
@@ -58,7 +58,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
 }
 
 type navigationProps = {
-  navigation: any
+  navigation: any,
 };
 
 type dispatchProps = {};
@@ -67,7 +67,7 @@ type reduxProps = {
   token: ?string,
   photoId: number,
   displayName: string,
-  profile: UserProfile
+  profile: UserProfile,
 };
 
 type Props = navigationProps & dispatchProps & reduxProps;
@@ -117,7 +117,6 @@ class ProfileScreen extends React.Component<Props, State> {
     const {
  token, photoId, displayName, navigation, profile 
 } = this.props;
-    console.log(token);
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>

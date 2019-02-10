@@ -11,7 +11,7 @@ import validateName from 'mobile/utils/ValidateName';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any
+  navigation: any,
 };
 
 type State = {
@@ -19,7 +19,7 @@ type State = {
   profile: UserProfile,
   settings: UserSettings,
   errorMessageName: string,
-  errorMessageBirthday: string
+  errorMessageBirthday: string,
 };
 
 export default class NameAgeScreen extends React.Component<Props, State> {

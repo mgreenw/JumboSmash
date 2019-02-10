@@ -19,7 +19,7 @@ import { Colors } from 'mobile/styles/colors';
 type Props = {
   profile: UserProfile,
   onMinimize: () => void,
-  token: ?string
+  token: ?string,
 };
 
 const { width } = Dimensions.get('window');
