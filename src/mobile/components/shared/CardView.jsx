@@ -36,7 +36,6 @@ export default class CardView extends React.Component<Props> {
           backgroundColor: Colors.White,
           flex: 1,
         }}
-        contentContainerStyle={{ flex: 1 }}
       >
         {isIphoneX() && (
           <View style={{ height: 40, backgroundColor: '#fff' }} />
@@ -108,7 +107,6 @@ export default class CardView extends React.Component<Props> {
               width: 1,
             },
             borderRadius: 10,
-            marginTop: 20,
           }}
           elevation={5}
         >
@@ -130,7 +128,9 @@ export default class CardView extends React.Component<Props> {
               <Text style={{ fontSize: 28 }}>{'<'}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ paddingLeft: 25, paddingRight: 25 }}>
+          <View
+            style={{ paddingLeft: 25, paddingRight: 25, paddingBottom: 20 }}
+          >
             <Text style={{ textAlign: 'left', fontSize: 18 }}>
               {profile.fields.bio}
             </Text>
