@@ -74,10 +74,17 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
   _loadAssets() {
     const fonts = [
-      '../../assets/fonts/Vegan-Regular.ttf',
-      '../../assets/fonts/SourceSansPro-Regular.ttf',
-      '../../assets/icons/gemicons.ttf',
-      '../../assets/fonts/AvenirNext-Regular.ttf',
+      { vegan: require('../../assets/fonts/Vegan-Regular.ttf') },
+
+      {
+        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf'),
+      },
+      {
+        gemicons: require('../../assets/icons/gemicons.ttf'),
+      },
+      {
+        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf'),
+      },
     ];
 
     const images = [
