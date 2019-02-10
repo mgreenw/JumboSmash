@@ -176,10 +176,16 @@ class SwipingScreen extends React.Component<Props, State> {
               infinite={true}
               disableSwipe={false}
             />
-            <TouchableOpacity style={Arthur_Styles.swipeButton_dislike}>
+            <TouchableOpacity
+              onPress={() => this._onPressSwipeButton('left')}
+              style={Arthur_Styles.swipeButton_dislike}
+            >
               <CustomIcon name="delete-filled" size={65} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity style={Arthur_Styles.swipeButton_like}>
+            <TouchableOpacity
+              onPress={() => this._onPressSwipeButton('right')}
+              style={Arthur_Styles.swipeButton_like}
+            >
               <CustomIcon
                 name="heart-filled"
                 size={65}
