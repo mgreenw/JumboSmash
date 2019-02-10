@@ -13,7 +13,7 @@ const matchedScenesSelect = utils.scenes.map((scene) => {
     CASE
       me_critic.liked_${scene} AND they_critic.liked_${scene}
       WHEN true
-        THEN '${scene}'
+        THEN GREATEST(me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp)
         ELSE NULL
     END`;
 });
@@ -21,6 +21,8 @@ const matchedScenesSelect = utils.scenes.map((scene) => {
 const matchedScenesChecks = utils.scenes.map((scene) => {
   return `(me_critic.liked_${scene} AND they_critic.liked_${scene})`;
 });
+
+const scenes = utils.scenes.map(scene => `'${scene}'`).join(',');
 
 /**
  * @api {get} /api/relationships/matches
@@ -44,9 +46,9 @@ const getMatches = async (userId: number) => {
     SELECT
       they_profile.user_id as "userId",
       ${profileSelectQuery('they_profile.user_id', { tableAlias: 'they_profile', buildJSON: true })} AS profile,
-      array_remove(ARRAY[
+      json_object(ARRAY[${scenes}], ARRAY[
         ${matchedScenesSelect.join(',')}
-      ], NULL) AS scenes
+      ]::text[]) AS scenes
     FROM relationships me_critic
     JOIN relationships they_critic
       ON they_critic.candidate_user_id = ${userId}
