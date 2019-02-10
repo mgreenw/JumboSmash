@@ -28,7 +28,7 @@ export default class CardView extends React.Component<Props> {
   scrollX = new Animated.Value(0); // this will be the scroll location of our ScrollView
 
   render() {
-    const { user, onMinimize, token } = this.props;
+    const { profile, onMinimize, token } = this.props;
     const position = Animated.divide(this.scrollX, width);
     return (
       <ScrollView
@@ -58,7 +58,7 @@ export default class CardView extends React.Component<Props> {
               ])}
               scrollEventThrottle={16}
             >
-              {user.photoIds.map(photoId => (
+              {profile.photoIds.map(photoId => (
                 <Image
                   key={photoId}
                   style={{ width, height: width, resizeMode: 'contain' }}
@@ -73,7 +73,7 @@ export default class CardView extends React.Component<Props> {
             </ScrollView>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            {user.photoIds.map((photoId, i) => {
+            {profile.photoIds.map((photoId, i) => {
               const opacity = position.interpolate({
                 inputRange: [i - 1, i, i + 1],
                 outputRange: [0.4, 1, 0.4],
@@ -119,7 +119,9 @@ export default class CardView extends React.Component<Props> {
             }}
           >
             <Text style={{ fontSize: 28, textAlign: 'center' }}>
-              {`${user.displayName}, ${getAge(user.birthday)}`}
+              {`${profile.fields.displayName}, ${getAge(
+                profile.fields.birthday,
+              )}`}
             </Text>
             <TouchableOpacity
               style={{ position: 'absolute', right: 20 }}
@@ -129,7 +131,9 @@ export default class CardView extends React.Component<Props> {
             </TouchableOpacity>
           </View>
           <View style={{ paddingLeft: 25, paddingRight: 25 }}>
-            <Text style={{ textAlign: 'left', fontSize: 18 }}>{user.bio}</Text>
+            <Text style={{ textAlign: 'left', fontSize: 18 }}>
+              {profile.fields.bio}
+            </Text>
           </View>
         </View>
       </ScrollView>
