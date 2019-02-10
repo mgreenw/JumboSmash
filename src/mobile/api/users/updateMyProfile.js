@@ -1,36 +1,29 @@
 // @flow
 /* eslint-disable */
 
-import type { UserProfile } from 'mobile/reducers';
+import type { ProfileFields, UserProfile } from 'mobile/reducers';
 import { apiRequest } from '../utils/apiRequest';
 import { MY_PROFILE__ROUTE } from '../routes';
-import type { ServerProfile } from './GetMyProfile';
 
 const UPDATE_PROFILE__SUCCESS = 'UPDATE_PROFILE__SUCCESS';
-const CREATE_PROFILE__SUCCESS = 'CREATE_PROFILE__SUCCESS';
+const FINALIZE_PROFILE_SETUP__SUCCESS = 'FINALIZE_PROFILE_SETUP__SUCCESS';
 
-function updateOrCreateMyProfile(
+function updateOrCreateMyProfileFields(
   token: string,
-  request: UserProfile,
+  request: ProfileFields,
   method: 'PATCH' | 'POST',
-): Promise<void> {
-  return apiRequest(
-    method,
-
-    MY_PROFILE__ROUTE,
-    token,
-    {
-      ...request,
-      image1Url:
-        'https://static1.squarespace.com/static/55ba4b1be4b03f052fff1bf7/t/5a0a3ba04192029150cb2aeb/1510620084146/bubs-max.jpg?format=1000w',
-    },
-  )
+): Promise<ProfileFields> {
+  return apiRequest(method, MY_PROFILE__ROUTE, token, request)
     .then(response => {
       switch (response.status) {
-        case CREATE_PROFILE__SUCCESS:
-          return;
+        // We get back a UserProfile, but only care about the fields.
+        // TODO: have, serverside, only return the fields
+        case FINALIZE_PROFILE_SETUP__SUCCESS:
+          (response.data: UserProfile);
+          return response.data.fields;
         case UPDATE_PROFILE__SUCCESS: {
-          return;
+          (response.data: UserProfile);
+          return response.data.fields;
         }
         default:
           throw { response };
@@ -41,10 +34,16 @@ function updateOrCreateMyProfile(
     });
 }
 
-export function updateMyProfile(token: string, request: UserProfile): Promise<void> {
-  return updateOrCreateMyProfile(token, request, 'PATCH');
+export function updateMyProfileFields(
+  token: string,
+  request: ProfileFields,
+): Promise<ProfileFields> {
+  return updateOrCreateMyProfileFields(token, request, 'PATCH');
 }
 
-export function createMyProfile(token: string, request: UserProfile): Promise<void> {
-  return updateOrCreateMyProfile(token, request, 'POST');
+export function createMyProfileFields(
+  token: string,
+  request: ProfileFields,
+): Promise<ProfileFields> {
+  return updateOrCreateMyProfileFields(token, request, 'POST');
 }

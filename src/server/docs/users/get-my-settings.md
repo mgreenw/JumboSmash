@@ -29,16 +29,21 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_SETTINGS__SUCCESS",
-    "settings": {
+    "data": {
         "usePronouns": {
-            "he": true,
-            "she": true,
-            "they": true
+            "he": false,
+            "she": false,
+            "they": false
         },
         "wantPronouns": {
-            "he": true,
-            "she": true,
-            "they": true
+            "he": false,
+            "she": false,
+            "they": false
+        },
+        "activeScenes": {
+            "smash": true,
+            "social": false,
+            "stone": true
         }
     }
 }

@@ -75,6 +75,18 @@ Provide updated settings fields
 ```json
 {
     "status": "UPDATE_SETTINGS__SUCCESS",
+    "data": {
+        "wantPronouns": {
+            "he": false,
+            "she": true,
+            "they": false
+        },
+        "usePronouns": {
+            "he": false,
+            "she": false,
+            "they": false
+        }
+    }
 }
 ```
 

@@ -38,7 +38,7 @@ function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function deletePhoto(photoId: number) {
+export function deletePhotoAction(photoId: number) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());

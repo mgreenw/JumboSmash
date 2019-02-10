@@ -14,12 +14,12 @@ export type SignedUrlPayload = {
   fields: Object,
 };
 
-function confirmUpload(token: string): Promise<number> {
+function confirmUpload(token: string): Promise<number[]> {
   return apiRequest('GET', CONFIRM_PHOTO__ROUTE, token)
     .then(response => {
       switch (response.status) {
         case CONFIRM_UPLOAD__SUCCESS:
-          return response.photoId;
+          return response.data;
         case CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO:
           throw { response };
         case CONFIRM_UPLOAD__NO_UPLOAD_FOUND:

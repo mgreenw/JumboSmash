@@ -11,7 +11,7 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
     // table yet, which implies that they are not onboarded.
     if (!req.user.hasProfile) {
       return res.status(403).json({
-        status: codes.PROFILE_SETUP_INCOMPLETE,
+        status: codes.PROFILE_SETUP_INCOMPLETE.status,
       });
     }
 

@@ -1,70 +1,40 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import {
-  Text,
-  View,
-  ScrollView,
-  Image,
-  TouchableWithoutFeedback,
-  TouchableHighlight,
-  Dimensions,
-} from 'react-native';
-import { connect } from 'react-redux';
-import { styles } from 'mobile/styles/template';
-import { Button, Card as RneCard, Icon } from 'react-native-elements';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
-import type { UserProfile } from 'mobile/reducers';
+import { View, StatusBar } from 'react-native';
 import CardView from 'mobile/components/shared/CardView';
 
 type navigationProps = {
   navigation: any,
 };
 
-type reduxProps = {};
+type Props = navigationProps;
 
-type dispatchProps = {};
-
-type Props = reduxProps & navigationProps & dispatchProps;
-
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-class Card extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    const { navigation } = this.props;
-    const user = navigation.getParam('user', null);
-    const onMinimize = navigation.getParam('onMinimize', null);
-    if (user === null) {
-      {
-        throw 'Error: Navigation Param of User is null in Expanded Card Screen';
-      }
-    }
-
-    if (onMinimize === null) {
-      {
-        throw 'Error: Navigation Param of OnMinimize is null in Expanded Card Screen';
-      }
-    }
-  }
-
-  render() {
-    const { navigation } = this.props;
-    return (
-      <CardView user={navigation.getParam('user')} onMinimize={navigation.getParam('onMinimize')} />
+export default (props: Props) => {
+  const { navigation } = props;
+  const profile = navigation.getParam('profile', null);
+  const onMinimize = navigation.getParam('onMinimize', null);
+  const token = navigation.getParam('token', null);
+  if (profile === null) {
+    throw new Error(
+      'Error: Navigation Param of Profile is null in Expanded Card Screen',
     );
   }
-}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Card);
+  if (onMinimize === null) {
+    throw new Error(
+      'Error: Navigation Param of OnMinimize is null in Expanded Card Screen',
+    );
+  }
+  if (token === null) {
+    throw new Error(
+      'Error: Navigation Param of token is null in Expanded Card Screen',
+    );
+  }
+  return (
+    <View style={{ display: 'flex', flex: 1 }}>
+      <StatusBar hidden />
+      <CardView profile={profile} onMinimize={onMinimize} token={token} />
+    </View>
+  );
+};

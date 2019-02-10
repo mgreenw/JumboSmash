@@ -1,38 +1,43 @@
 // @flow
-/* eslint-disable */
-
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
 import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
-import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
+import type {
+  UserSettings, UserProfile, ReduxState, ProfileFields,
+} from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
+import { createUserAction } from 'mobile/actions/app/createUser';
 import { OnboardingLayout } from './Onboarding_Layout';
-import { createUser } from 'mobile/actions/app/createUser';
 
-type Props = {
+type NavigationProps = {
   navigation: any,
-  createUser: (profile: UserProfile, settings: UserSettings) => void,
+};
+
+type ReduxProps = {
   createUserInProgress: boolean,
 };
+type DispatchProps = {
+  createUser: (fields: ProfileFields, settings: UserSettings) => void,
+};
+type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   profile: UserProfile,
   settings: UserSettings,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     createUserInProgress: reduxState.inProgress.createUser,
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
-    createUser: (profile: UserProfile, settings: UserSettings) => {
-      dispatch(createUser(profile, settings));
+    createUser: (fields: ProfileFields, settings: UserSettings) => {
+      dispatch(createUserAction(fields, settings));
     },
   };
 }
@@ -47,36 +52,40 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.createUserInProgress != this.props.createUserInProgress) {
-      this.props.navigation.setParams({
-        headerLeft: this.props.createUserInProgress ? null : '',
+  componentDidUpdate(prevProps: Props) {
+    const { navigation, createUserInProgress } = this.props;
+    if (prevProps.createUserInProgress !== createUserInProgress) {
+      navigation.setParams({
+        headerLeft: createUserInProgress ? null : '',
       });
 
       // todo: watch for errors
-      if (!this.props.createUserInProgress) {
-        const { navigate } = this.props.navigation;
-        navigate(routes.OnboardingAppLoad, {});
+      if (!createUserInProgress) {
+        navigation.navigate(routes.OnboardingAppLoad, {});
       }
     }
   }
 
   _saveSettingsAndProfile = () => {
-    this.props.createUser(this.state.profile, this.state.settings);
+    const { profile, settings } = this.state;
+    const { createUser } = this.props;
+    createUser(profile.fields, settings);
   };
 
   render() {
+    const { createUserInProgress } = this.props;
     return (
       <OnboardingLayout
-        body={
+        body={(
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {'Your profile’s ready. Get in losers, we’re going smashing.'}
+            {'Your profile’s ready. \n\nGet in losers, we’re going smashing.'}
           </Text>
-        }
+)}
+        section="profile"
         onButtonPress={this._saveSettingsAndProfile}
         title="Project Gem"
-        lastScreen={true}
-        loading={this.props.createUserInProgress}
+        lastScreen
+        loading={createUserInProgress}
       />
     );
   }

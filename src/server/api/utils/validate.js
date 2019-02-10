@@ -21,7 +21,7 @@ const validate = (schema: Object) => {
     }
 
     return res.status(400).json({
-      status: codes.BAD_REQUEST,
+      status: codes.BAD_REQUEST.status,
       message: ajv.errorsText(validateSchema.errors),
     });
   };
