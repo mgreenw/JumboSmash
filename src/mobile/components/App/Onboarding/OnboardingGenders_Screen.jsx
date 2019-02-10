@@ -95,6 +95,11 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
         />
       </View>
     );
+
+    const { wantGenders, useGenders } = settings;
+    const lookingForSelected = wantGenders.male || wantGenders.female || wantGenders.nonBinary;
+    const identifySelected = useGenders.male || useGenders.female || useGenders.nonBinary;
+
     return (
       <OnboardingLayout
         body={body}
@@ -103,6 +108,7 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
         title="Gender Identity"
         main
         progress={0}
+        buttonDisabled={!identifySelected || !lookingForSelected}
       />
     );
   }
