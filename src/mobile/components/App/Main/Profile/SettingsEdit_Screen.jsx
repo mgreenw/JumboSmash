@@ -30,28 +30,28 @@ const styles = StyleSheet.create({
   },
 });
 
-type navigationProps = {
+type NavigationProps = {
   navigation: any,
 };
 
-type reduxProps = {
+type ReduxProps = {
   settings: UserSettings,
   logoutInProgress: boolean,
 };
 
-type dispatchProps = {
+type DispatchProps = {
   logout: () => void,
   saveSettings: (settings: UserSettings) => void,
 };
 
-type Props = navigationProps & reduxProps & dispatchProps;
+type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   editedSettings: UserSettings,
   showOnSmash: boolean, // temporary for UI testing
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
@@ -61,7 +61,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
   return {
     logout: () => {
       dispatch(logout());
@@ -132,13 +132,12 @@ class SettingsScreen extends React.Component<Props, State> {
             extraScrollHeight={35}
             style={{
               backgroundColor: 'transparent',
-              marginTop: 20,
             }}
           >
             <View
               style={[
                 styles.settingsBlock,
-                { flexDirection: 'row', justifyContent: 'space-between' },
+                { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
               ]}
             >
               <Text style={textStyles.headline6Style}>Show me on Smash</Text>
