@@ -1,11 +1,11 @@
 // @flow
-/* eslint-disable */
+import moment from 'moment';
 
 // See server/users/utils.js
 const minBirthday = new Date('01/01/1988');
 const maxBirthday = new Date('01/01/2001');
 
-export default function validateBirthday(birthday: string) {
+export function validateBirthday(birthday: string) {
   const birthdayDate = new Date(birthday);
 
   // if this fails, this is an invalid date FORMAT
@@ -18,4 +18,15 @@ export default function validateBirthday(birthday: string) {
     return false;
   }
   return true;
+}
+
+export function getAge(birthday: string): number {
+  const birthdayDate = new Date(birthday);
+
+  // if this fails, this is an invalid date FORMAT
+  if (isNaN(birthdayDate)) {
+    return false;
+  }
+
+  return moment().diff(birthdayDate, 'years');
 }
