@@ -37,8 +37,7 @@ import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
 // OnBoarding Screens
 import OnboardingStart from 'mobile/components/App/Onboarding/OnboardingStart_Screen';
 import OnboardingNameAge from 'mobile/components/App/Onboarding/OnboardingNameAge_Screen';
-import OnboardingMyGenders from 'mobile/components/App/Onboarding/OnboardingMyGenders_Screen';
-import OnboardingWantGenders from 'mobile/components/App/Onboarding/OnboardingWantGenders_Screen';
+import OnboardingGenders from 'mobile/components/App/Onboarding/OnboardingGenders_Screen';
 import OnboardingAddPictures from 'mobile/components/App/Onboarding/OnboardingAddPictures_Screen';
 import OnboardingBio from 'mobile/components/App/Onboarding/OnboardingBio_Screen';
 import OnboardingNotifications from 'mobile/components/App/Onboarding/OnboardingNotifications_Screen';
@@ -64,8 +63,7 @@ const AUTH_HELP_ROUTE = 'AUTH_HELP_ROUTE';
 
 const ONBOARDING_START_ROUTE = 'ONBOARDING_START_ROUTE';
 const ONBOARDING_NAME_AGE_ROUTE = 'ONBOARDING_NAME_AGE_ROUTE';
-const ONBOARDING_MY_PRONOUNS_ROUTE = 'ONBOARDING_MY_PRONOUNS_ROUTE';
-const ONBOARDING_WANT_PRONOUNS_ROUTE = 'ONBOARDING_WANT_PRONOUNS_ROUTE';
+const ONBOARDING_GENDERS_ROUTE = 'ONBOARDING_GENDERS_ROUTE';
 const ONBOARDING_ADD_PICTURES_ROUTE = 'ONBOARDING_ADD_PICTURES_ROUTE';
 const ONBOARDING_BIO_ROUTE = 'ONBOARDING_BIO_ROUTE';
 const ONBOARDING_NOTIFICATIONS_ROUTE = 'ONBOARDING_NOTIFICATIONS_ROUTE';
@@ -99,8 +97,7 @@ export const routes = {
   AuthHelp: AUTH_HELP_ROUTE,
   OnboardingStart: ONBOARDING_START_ROUTE,
   OnboardingNameAge: ONBOARDING_NAME_AGE_ROUTE,
-  OnboardingMyGenders: ONBOARDING_MY_PRONOUNS_ROUTE,
-  OnboardingWantGenders: ONBOARDING_WANT_PRONOUNS_ROUTE,
+  OnboardingGenders: ONBOARDING_GENDERS_ROUTE,
   OnboardingAddPictures: ONBOARDING_ADD_PICTURES_ROUTE,
   OnboardingBio: ONBOARDING_BIO_ROUTE,
   OnboardingNotifications: ONBOARDING_NOTIFICATIONS_ROUTE,
@@ -203,8 +200,7 @@ const OnboardingStack = FluidNavigator(
   {
     ONBOARDING_START_ROUTE: { screen: OnboardingStart },
     ONBOARDING_NAME_AGE_ROUTE: { screen: OnboardingNameAge },
-    ONBOARDING_MY_PRONOUNS_ROUTE: { screen: OnboardingMyGenders },
-    ONBOARDING_WANT_PRONOUNS_ROUTE: { screen: OnboardingWantGenders },
+    ONBOARDING_GENDERS_ROUTE: { screen: OnboardingGenders },
     ONBOARDING_ADD_PICTURES_ROUTE: { screen: OnboardingAddPictures },
     ONBOARDING_BIO_ROUTE: { screen: OnboardingBio },
     ONBOARDING_NOTIFICATIONS_ROUTE: { screen: OnboardingNotifications },

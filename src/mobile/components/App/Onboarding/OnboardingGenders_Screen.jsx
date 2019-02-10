@@ -17,7 +17,7 @@ type State = {
   settings: UserSettings,
 };
 
-export default class OnboardingMyGendersScreen extends React.Component<Props, State> {
+export default class OnboardingGendersScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -35,7 +35,7 @@ export default class OnboardingMyGendersScreen extends React.Component<Props, St
     }
   }
 
-  _onMyPronounChange = (genderIdentities: Genders) => {
+  _onMyGendersChange = (genderIdentities: Genders) => {
     this.setState(state => ({
       settings: {
         ...state.settings,
@@ -44,10 +44,19 @@ export default class OnboardingMyGendersScreen extends React.Component<Props, St
     }));
   };
 
+  _onWantGendersChange = (genderIdentities: Genders) => {
+    this.setState(state => ({
+      settings: {
+        ...state.settings,
+        wantGenders: genderIdentities,
+      },
+    }));
+  };
+
   _goToNextPage = () => {
     const { navigation } = this.props;
     const { profile, settings } = this.state;
-    navigation.navigate(routes.OnboardingWantGenders, {
+    navigation.navigate(routes.OnboardingAddPictures, {
       profile,
       settings,
       onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
@@ -63,18 +72,26 @@ export default class OnboardingMyGendersScreen extends React.Component<Props, St
     const { settings } = this.state;
     const body = (
       <View style={{ flex: 1, width: '100%' }}>
-        <Text style={[textStyles.subtitle1Style, { textAlign: 'center', paddingBottom: 30 }]}>
-          {
-            'JumboSmash uses your gender identity to determine who to show you to. It will never be shown on your profile.'
-          }
-        </Text>
         <Text style={[textStyles.headline5Style, { textAlign: 'center', paddingBottom: 15 }]}>
           {'I identify as:'}
         </Text>
         <GenderSelector
           defaultGenders={settings.useGenders}
-          onChange={this._onMyPronounChange}
+          onChange={this._onMyGendersChange}
           plural={false}
+        />
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: 'center', paddingBottom: 15, paddingTop: 25 },
+          ]}
+        >
+          {"I'm looking for:"}
+        </Text>
+        <GenderSelector
+          defaultGenders={settings.wantGenders}
+          onChange={this._onWantGendersChange}
+          plural
         />
       </View>
     );

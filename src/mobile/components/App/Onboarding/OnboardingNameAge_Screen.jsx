@@ -49,7 +49,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
   _goToNextPage = () => {
     const { navigation } = this.props;
     const { profile, settings } = this.state;
-    navigation.navigate(routes.OnboardingMyGenders, {
+    navigation.navigate(routes.OnboardingGenders, {
       profile,
       settings,
       onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
