@@ -44,7 +44,7 @@ apiRouter.use('/messages', messagesRouter);
 // --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
-  logger.error(err);
+  logger.error('Server Error: ', err);
   return res.status(500).json({
     status: codes.SERVER_ERROR,
   });
