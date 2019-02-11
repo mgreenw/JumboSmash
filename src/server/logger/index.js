@@ -6,9 +6,6 @@ const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
-/* eslint-disable no-param-reassign */
-/* eslint-enable */
-
 // Custom format that puts the timestamp before the message
 const timestampError = winston.format.combine(
   winston.format.timestamp({ format: 'ddd M/D/YY h:mm:ssA' }),
