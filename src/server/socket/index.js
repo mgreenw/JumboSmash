@@ -36,8 +36,14 @@ function init(server: Server) {
   io.on('connection', (socket) => {
     logger.info(`Connection via socket: ${JSON.stringify(socket.user, null, 2)}`);
 
+    socket.join(socket.user.id, (err) => {
+      if (err) {
+        logger.error('Socket failed to join room', err);
+      }
+    });
+
     socket.on('disconnect', () => {
-      logger.info('a user disconnected');
+      logger.info(`Socket disconnected: ${socket.user.id}`);
     });
   });
 }
