@@ -11,6 +11,7 @@ import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
 import NavigationService from 'mobile/NavigationService';
 import rootReducer from 'mobile/reducers';
 import { createRootNavigator } from 'mobile/components/Navigation';
+import Socket from './utils/Socket';
 
 const store = createStore(
   rootReducer,
@@ -21,6 +22,17 @@ const store = createStore(
     applyMiddleware(loggerMiddleware),
   ),
 );
+
+let { token: currToken } = store.getState();
+store.subscribe(() => {
+  const { token: newToken } = store.getState();
+  if (newToken !== currToken) {
+    console.log('token changed');
+    Socket.connect(newToken);
+  }
+  currToken = newToken;
+});
+
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
 
