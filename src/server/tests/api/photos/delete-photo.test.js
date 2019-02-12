@@ -118,7 +118,7 @@ describe('DELETE api/photos/:photoId', () => {
     expect(res.body.status).toBe(codes.DELETE_PHOTO__SUCCESS.status);
 
     photoRes = await db.query(`
-      SELECT index, id
+      SELECT row_number() over (order by index)::int AS index, id
       FROM photos
       WHERE user_id = $1
       ORDER BY index

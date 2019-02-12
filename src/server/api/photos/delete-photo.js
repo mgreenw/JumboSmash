@@ -4,7 +4,6 @@ import type { $Request } from 'express';
 
 const config = require('config');
 const aws = require('aws-sdk');
-const _ = require('lodash');
 
 const db = require('../../db');
 const apiUtils = require('../utils');
@@ -21,22 +20,6 @@ const bucket = config.get('s3_bucket');
  *
  */
 const deletePhoto = async (photoId: number, userId: number) => {
-  // On error, return a server error.
-  const photosRes = await db.query(`
-    SELECT id, uuid, index
-    FROM photos
-    WHERE user_id = $1
-    ORDER BY index
-  `, [userId]);
-
-  // First, ensure the photo exists in this list.
-  // Remove the photo that we want to delete from the photos
-  const photos = photosRes.rows;
-  const [photoToDelete] = _.remove(photos, photo => photo.id === photoId);
-  if (photoToDelete === undefined) {
-    return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).noData();
-  }
-
   // Transaction to delete the photo:
   const client = await db.connect();
   try {
@@ -44,43 +27,40 @@ const deletePhoto = async (photoId: number, userId: number) => {
     await client.query('BEGIN');
 
     // 1. Remove the photo from our database
-    await client.query(`
+    const deleteResult = await db.query(`
       DELETE FROM photos
-      WHERE
-        id = $1
-    `, [photoToDelete.id]);
+      WHERE id = $1 AND user_id = $2
+      RETURNING uuid
+    `, [photoId, userId]);
 
-    // Get an updated list of photos for the requesting user
-    const updatedPhotos = _.map(photos, (photo, index) => {
-      return `(${photo.id}, ${index + 1})`;
-    });
-
-    // 2. Update the photos for the requesting user. Only do if some photos exist
-    if (photos.length > 0) {
-      await client.query(`
-        UPDATE photos
-        SET index = updated_photos.index
-        FROM
-          (VALUES
-            ${updatedPhotos.join(',')}
-          ) AS updated_photos (id, index)
-        WHERE photos.id = updated_photos.id
-      `);
+    if (deleteResult.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).noData();
     }
 
     // 3. Delete the photo from S3
     const params = {
       Bucket: bucket,
-      Key: `photos/${NODE_ENV}/${photoToDelete.uuid}`,
+      Key: `photos/${NODE_ENV}/${deleteResult.rows[0].uuid}`,
     };
     await s3.deleteObject(params).promise();
+
+    const selectResult = await db.query(`
+      SELECT
+        ARRAY(
+          SELECT id
+          FROM photos
+          WHERE user_id = $1
+          ORDER BY index
+        ) AS "photoIds"
+    `, [userId]);
 
     // 4. Commit the transaction!
     await client.query('COMMIT');
 
-    return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data(
-      _.map(photos, photo => photo.id),
-    );
+    const [{ photoIds }] = selectResult.rows;
+
+    return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data(photoIds);
   } catch (err) {
     await client.query('ROLLBACK');
     throw err;
