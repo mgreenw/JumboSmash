@@ -1,10 +1,16 @@
-// @flow
-
 import type { IO } from 'socket.io-client';
 
+import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
 
 import { SERVER_ROUTE } from '../api/routes';
+
+// Ignore the annoying warning from the websocket connection options
+// Not bad at all and no way around it for now
+// https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
+YellowBox.ignoreWarnings([
+  'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?',
+]);
 
 class Socket {
   _socket: ?IO;
@@ -13,11 +19,14 @@ class Socket {
     this._socket = null;
   }
 
-  isInitialized() {
+  isConnected() {
     return this._socket !== null;
   }
 
   connect(token: string) {
+    if (this.isConnected()) {
+      this._socket.close();
+    }
     this._socket = io(
       SERVER_ROUTE,
       {

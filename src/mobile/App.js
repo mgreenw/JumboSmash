@@ -23,11 +23,11 @@ const store = createStore(
   ),
 );
 
+// On update of the token, reconnect the socket using the new token
 let { token: currToken } = store.getState();
 store.subscribe(() => {
   const { token: newToken } = store.getState();
-  if (newToken !== currToken) {
-    console.log('token changed');
+  if (newToken && newToken !== currToken) {
     Socket.connect(newToken);
   }
   currToken = newToken;
