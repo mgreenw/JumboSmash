@@ -7,6 +7,7 @@ const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
 const logger = require('../logger');
+const { getUser } = require('../api/auth/utils');
 
 const namespace = '/socket';
 
@@ -19,16 +20,21 @@ function init(server: Server) {
   });
   io.adapter(redisAdapter(config.get('redis')));
 
-  io.use((socket, next) => {
-    const { token } = socket.handshake.query;
-    logger.info(`TOKEN: ${token}`);
-    next();
+  /* eslint-disable no-param-reassign */
+  io.use(async (socket, next) => {
+    Promise.resolve(getUser(socket.handshake.query.token))
+      .then((user) => {
+        socket.user = user;
+        next();
+      })
+      .catch(next);
   });
+  /* eslint-enable no-param-reassign */
 
   logger.info(`Socket listening at ${namespace}`);
 
   io.on('connection', (socket) => {
-    logger.info('a user connected');
+    logger.info(`a user connected: ${socket.user.id}`);
 
     socket.on('disconnect', () => {
       logger.info('a user disconnected');

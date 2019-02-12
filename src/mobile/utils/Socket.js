@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import type { IO } from 'socket.io-client';
 
 import { YellowBox } from 'react-native';
