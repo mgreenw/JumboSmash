@@ -29,6 +29,8 @@ class Socket {
     if (this.isConnected()) {
       this._socket.close();
     }
+
+    // Connect the socket with the new token
     this._socket = io(
       SERVER_ROUTE,
       {

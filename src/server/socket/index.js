@@ -42,6 +42,10 @@ function init(server: Server) {
       }
     });
 
+    socket.on('error', (err) => {
+      logger.error('Socket Error', err);
+    });
+
     socket.on('disconnect', () => {
       logger.info(`Socket disconnected: ${socket.user.id}`);
     });
