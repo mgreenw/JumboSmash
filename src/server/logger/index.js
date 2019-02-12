@@ -7,9 +7,15 @@ const utils = require('../utils');
 const NODE_ENV = utils.getNodeEnv();
 
 // Custom format that puts the timestamp before the message
-const simpleTimestamp = winston.format.combine(
-  winston.format.timestamp(),
+const timestampError = winston.format.combine(
+  winston.format.timestamp({ format: 'ddd M/D/YY h:mm:ssA' }),
+  winston.format.errors({ stack: true }),
+  winston.format.colorize(),
   winston.format.printf((info) => {
+    if (info.stack) {
+      // The substring here removes the duplicate "error" from the message
+      return `${info.timestamp} ${info.level}: ${info.stack.substring(7)}`;
+    }
     return `${info.timestamp} ${info.level}: ${info.message}`;
   }),
 );
@@ -23,11 +29,11 @@ const logger = winston.createLogger({
     new winston.transports.File({
       filename: 'error.log',
       level: 'error',
-      format: simpleTimestamp,
+      format: timestampError,
     }),
     new winston.transports.File({
       filename: 'combined.log',
-      format: simpleTimestamp,
+      format: timestampError,
     }),
   ],
 });
@@ -35,10 +41,7 @@ const logger = winston.createLogger({
 // Don't log to the console in production.
 if (NODE_ENV !== 'production' && NODE_ENV !== 'testing') {
   logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple(),
-    ),
+    format: timestampError,
   }));
 }
 
