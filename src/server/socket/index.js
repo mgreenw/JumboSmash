@@ -34,7 +34,7 @@ function init(server: Server) {
   logger.info(`Socket listening at ${namespace}`);
 
   io.on('connection', (socket) => {
-    logger.info(`a user connected: ${socket.user.id}`);
+    logger.info(`Connection via socket: ${JSON.stringify(socket.user, null, 2)}`);
 
     socket.on('disconnect', () => {
       logger.info('a user disconnected');

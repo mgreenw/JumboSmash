@@ -28,13 +28,12 @@ function getUser(token: string): Promise<any> {
         }
 
         // Check if the user's token's uuid is valid
-        const user = result.rows[0];
-        if (user.tokenUUID === null || decoded.uuid !== user.tokenUUID) {
+        const { tokenUUID, ...user } = result.rows[0];
+        if (tokenUUID === null || decoded.uuid !== tokenUUID) {
           return reject();
         }
-
         // If a user exists, return the user!
-        return resolve(result.rows[0]);
+        return resolve(user);
 
         // If there is an unknown error, reject
       } catch (error) {
