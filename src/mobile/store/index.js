@@ -26,6 +26,6 @@ store.subscribe(() => {
   const { token: newToken } = store.getState();
   if (newToken && newToken !== currToken) {
     Socket.connect(newToken);
+    currToken = newToken;
   }
-  currToken = newToken;
 });

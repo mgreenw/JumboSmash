@@ -1,6 +1,4 @@
-/* eslint-disable */
-
-import type { IO } from 'socket.io-client';
+// @flow
 
 import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
@@ -14,49 +12,39 @@ YellowBox.ignoreWarnings([
   'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?',
 ]);
 
-class Socket {
-  _socket: ?IO;
+let _socket = null;
 
-  constructor() {
-    this._socket = null;
-  }
-
-  isConnected() {
-    return this._socket !== null;
-  }
-
-  connect(token: string) {
-    if (this.isConnected()) {
-      this._socket.close();
-    }
-
-    // Connect the socket with the new token
-    this._socket = io(
-      SERVER_ROUTE,
-      {
-        path: '/socket',
-        transports: ['websocket', 'polling'],
-        query: {
-          token,
-        },
-      },
-    );
-
-    this._socket.on('error', (err) => {
-      console.log('Connection error.');
-      console.log(err);
-    });
-
-    this._socket.on('connect', () => {
-      console.log('Connected to server.');
-    });
-
-    this._socket.on('disconnect', () => {
-      console.log('Disconnected from server.');
-    });
-  }
+export function isConnected() {
+  return _socket !== null;
 }
 
-const socket = new Socket();
+export function connect(token: string) {
+  if (_socket !== null) {
+    _socket.close();
+  }
 
-export default socket;
+  // Connect the socket with the new token
+  _socket = io(
+    SERVER_ROUTE,
+    {
+      path: '/socket',
+      transports: ['websocket', 'polling'],
+      query: {
+        token,
+      },
+    },
+  );
+
+  _socket.on('error', (err) => {
+    console.log('Connection error.');
+    console.log(err);
+  });
+
+  _socket.on('connect', () => {
+    console.log('Connected to server.');
+  });
+
+  _socket.on('disconnect', () => {
+    console.log('Disconnected from server.');
+  });
+}
