@@ -1,5 +1,7 @@
+// prettier-ignore
 {
   "presets": ["babel-preset-expo", "flow"],
+  "comments": false,
   "env": {
     "development": {
       "plugins": [

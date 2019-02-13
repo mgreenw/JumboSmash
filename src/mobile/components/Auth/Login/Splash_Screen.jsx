@@ -9,7 +9,7 @@ import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import { TertiaryButton } from 'mobile/components/shared/buttons/TertiaryButton';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { routes } from 'mobile/components/Navigation';
 import { KeyboardView } from 'mobile/components/shared/KeyboardView';
 import type { sendVerificationEmail_response } from 'mobile/actions/auth/sendVerificationEmail';

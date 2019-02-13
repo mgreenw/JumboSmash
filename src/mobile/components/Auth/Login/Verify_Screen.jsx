@@ -11,7 +11,7 @@ import type { ReduxState } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import { TertiaryButton } from 'mobile/components/shared/buttons/TertiaryButton';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { CodeInput } from 'mobile/components/shared/DigitInput';
 import { routes } from 'mobile/components/Navigation';
 import { KeyboardView } from 'mobile/components/shared/KeyboardView';
