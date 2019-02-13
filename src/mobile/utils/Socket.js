@@ -35,18 +35,20 @@ function connect(token: string) {
     },
   );
 
+  /* eslint-disable no-console */
   _socket.on('error', (err) => {
-    console.log('Connection error.');
+    console.log('Socket connection error.');
     console.log(err);
   });
 
   _socket.on('connect', () => {
-    console.log('Connected to server.');
+    console.log('Socket connected to server.');
   });
 
   _socket.on('disconnect', () => {
-    console.log('Disconnected from server.');
+    console.log('Socket disconnected from server.');
   });
+  /* eslint-enable */
 }
 
 export default {
