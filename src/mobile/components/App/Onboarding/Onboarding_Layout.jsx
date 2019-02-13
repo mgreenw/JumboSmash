@@ -10,7 +10,7 @@ import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
-import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import KeyboardView from 'mobile/components/shared/KeyboardView';
 import OnboardingProgress from 'mobile/components/shared/OnboardingProgress';
 
 type Props = {
@@ -55,13 +55,14 @@ export class OnboardingLayout extends React.Component<Props, State> {
         />
         <KeyboardView waves={1}>
           <View style={{ paddingTop: 20 }}>
-            {progress !== undefined && progressComplete !== undefined && (
-              <OnboardingProgress
-                progress={progress}
-                progressComplete={progressComplete}
-                maxProgress={section === 'settings' ? 1 : 2}
-              />
-            )}
+            {progress !== undefined &&
+              progressComplete !== undefined && (
+                <OnboardingProgress
+                  progress={progress}
+                  progressComplete={progressComplete}
+                  maxProgress={section === 'settings' ? 1 : 2}
+                />
+              )}
           </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
