@@ -14,11 +14,11 @@ YellowBox.ignoreWarnings([
 
 let _socket = null;
 
-export function isConnected() {
+function isConnected() {
   return _socket !== null;
 }
 
-export function connect(token: string) {
+function connect(token: string) {
   if (_socket !== null) {
     _socket.close();
   }
@@ -48,3 +48,8 @@ export function connect(token: string) {
     console.log('Disconnected from server.');
   });
 }
+
+export default {
+  isConnected,
+  connect,
+};
