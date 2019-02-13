@@ -43,9 +43,9 @@ class GenderToggle extends React.Component<GenderToggleProps, GenderToggleState>
         }}
         onPress={this.props.onPress}
       >
-        // TODO: get right text style
         <View
           style={{
+            /* TODO: get right text style */
             width: 20,
             height: 20,
             borderColor: Colors.AquaMarine,

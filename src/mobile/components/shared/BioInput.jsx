@@ -73,6 +73,7 @@ export default class BioInput extends BaseInput {
             multiline
             value={value}
             maxLength={MAX_LENGTH}
+            underlineColorAndroid={'transparent'}
           />
         </Animated.View>
         <View>
