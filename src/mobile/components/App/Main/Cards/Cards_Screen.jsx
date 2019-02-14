@@ -144,6 +144,11 @@ class SwipingScreen extends React.Component<Props, State> {
         </View>
       );
     }
+
+    if (sceneCandidates.smash === null || sceneCandidates.smash === undefined) {
+      throw new Error('Smash candidates is null or undefined');
+    }
+
     return (
       <Transition inline appear="scale">
         <View style={{ flex: 1 }}>
@@ -155,7 +160,7 @@ class SwipingScreen extends React.Component<Props, State> {
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}
-              data={sceneCandidates.smash || []}
+              data={sceneCandidates.smash}
               renderCard={this._renderCard}
               renderEmpty={this._renderEmpty}
               onSwipeStart={this._onSwipeStart}
