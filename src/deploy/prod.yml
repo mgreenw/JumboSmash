@@ -10,11 +10,10 @@ services:
       --acme 
       --acme.acmelogging="true"
       --acme.email="jumbosmash@gmail.com"
-      --acme.caServer="https://acme-staging-v02.api.letsencrypt.org/directory"
       --acme.entrypoint="https"
       --acme.storage="/acme.json"
       --acme.httpChallenge.entryPoint=http
-      --acme.onhostrule="true"
+      --acme.onhostrule=true
     ports:
       - 80:80
       - 443:443
@@ -69,7 +68,7 @@ services:
   #
 
   koh:
-    image: sperrys/koh
+    image: ecolwe/koh:0.0.2
     networks:
       - traefik-net
     environment:
@@ -78,7 +77,7 @@ services:
       labels:
         - traefik.backend=koh
         - traefik.frontend.entryPoints=http,https
-        - traefik.port=3005
+        - traefik.port=3001
         - traefik.frontend.rule=Host:koh.jumbosmash.com
         - traefik.backend.loadbalancer.stickiness=true
 
@@ -89,13 +88,11 @@ services:
   server:
     environment:
       NODE_ENV: production
-      image: maxgreenwald/projectgem:master
+    image: maxgreenwald/projectgem:0.0.1
     # secrets:
             #- db_pass
         #- sendgrid_api_key
         # - secret_key
-    links:
-      - redis # ensures that redis is a host that the container can find
     networks:
       - traefik-net
     deploy:
