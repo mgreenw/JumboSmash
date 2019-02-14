@@ -7,7 +7,7 @@ const { manifest } = Expo.Constants;
 
 // if in dev mode, use the same IP address as the hosting expo server. Otherwise,
 // use prod server.
-const SERVER_ROUTE =
+export const SERVER_ROUTE =
   typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev
     ? `http://${manifest.debuggerHost
         .split(':')

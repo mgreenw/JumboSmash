@@ -2,7 +2,7 @@
 
 const app = require('./app');
 const logger = require('./logger');
-
+const socket = require('./socket');
 const utils = require('./utils');
 
 const NODE_ENV = utils.getNodeEnv();
@@ -13,6 +13,8 @@ if (NODE_ENV === undefined) {
 }
 
 // Listen!
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
   logger.info('Listening on port 3000!');
 });
+
+socket.init(server);
