@@ -13,6 +13,7 @@ import DevTesting from 'mobile/utils/DevTesting';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
+const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type ReduxProps = {
   token: ?string,
@@ -103,7 +104,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     ];
     /* eslint-enable */
 
-    const images = [Waves1, ArthurIcon];
+    const images = [Waves1, ArthurIcon, WavesFullSCreen];
 
     const imageAssets = cacheImages(images);
     const fontAssets = cacheFonts(fonts);
