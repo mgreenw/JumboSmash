@@ -30,8 +30,7 @@ type navigationProps = {
 
 type reduxProps = {
   sceneCandidates: SceneCandidates,
-  getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
-  token: ?string
+  getSceneCandidatesInProgress: GetSceneCandidatesInProgress
 };
 
 type dispatchProps = { getSceneCandidates: (scene: Scene) => void };
@@ -45,8 +44,7 @@ type State = {
 function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     sceneCandidates: reduxState.sceneCandidates,
-    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
-    token: reduxState.token
+    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates
   };
 }
 
@@ -78,18 +76,16 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   _renderCard = (profile: UserProfile) => {
-    const { navigation, token } = this.props;
+    const { navigation } = this.props;
     return (
       <PreviewCard
         profile={profile}
         onCardTap={() =>
           navigation.navigate(routes.ExpandedCard, {
             profile,
-            onMinimize: () => navigation.pop(),
-            token
+            onMinimize: () => navigation.pop()
           })
         }
-        token={token}
       />
     );
   };

@@ -6,7 +6,6 @@ import {
   Text,
   View,
   ScrollView,
-  Image,
   TouchableWithoutFeedback,
   TouchableHighlight,
   Dimensions
@@ -19,11 +18,11 @@ import type { ReduxState } from 'mobile/reducers/index';
 import type { UserProfile } from 'mobile/reducers';
 import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
+import { Image } from 'mobile/components/shared/imageCacheFork';
 
 type Props = {
   profile: UserProfile,
-  onCardTap?: () => void,
-  token: ?string
+  onCardTap?: () => void
 };
 
 type State = {};
@@ -37,7 +36,7 @@ export default class PreviewCard extends React.Component<Props, State> {
   }
 
   render() {
-    const { profile, onCardTap, token } = this.props;
+    const { profile, onCardTap } = this.props;
     return (
       <View
         style={{
@@ -59,12 +58,7 @@ export default class PreviewCard extends React.Component<Props, State> {
               borderRadius: 20,
               resizeMode: 'contain'
             }}
-            source={{
-              uri: GET_PHOTO__ROUTE + profile.photoIds[0],
-              headers: {
-                Authorization: token
-              }
-            }}
+            uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
           />
         </View>
         <TouchableWithoutFeedback onPress={onCardTap}>
