@@ -15,11 +15,17 @@ import {
 import { connect } from 'react-redux';
 import { Button, Icon } from 'react-native-elements';
 import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  Candidate,
+  UserProfile,
+  SceneCandidates,
+  GetSceneCandidatesInProgress,
+} from 'mobile/reducers/index';
+import { getSceneCandidatesAction } from 'mobile/actions/app/getSceneCandidates';
 import { routes } from 'mobile/components/Navigation';
 import Deck from './Deck';
 import type { swipeDirection } from './Deck';
-import type { UserProfile, Candidate } from 'mobile/reducers';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -34,9 +40,13 @@ type navigationProps = {
   navigation: any,
 };
 
-type reduxProps = {};
+type reduxProps = {
+  sceneCandidates: SceneCandidates,
+  getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
+  token: ?string,
+};
 
-type dispatchProps = {};
+type dispatchProps = { getSceneCandidates: (scene: string) => void };
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
@@ -44,12 +54,23 @@ type State = {
   swipeGestureInProgress: boolean,
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+  return {
+    sceneCandidates: reduxState.sceneCandidates,
+    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
+    token: reduxState.token,
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
+  return {
+    getSceneCandidates: (scene: string) => {
+      dispatch(getSceneCandidatesAction(scene));
+    },
+  };
 }
 
 //TODO: remove b/c dummy
@@ -96,8 +117,27 @@ class SwipingScreen extends React.Component<Props, State> {
     };
   }
 
-  _renderCard = (profile: UserProfile, isTop: boolean) => {
-    const { navigation } = this.props;
+  componentWillMount() {
+    if (
+      !this.props.getSceneCandidatesInProgress.smash &&
+      this.props.sceneCandidates.smash === null
+    ) {
+      this.props.getSceneCandidates('smash');
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      !this.props.getSceneCandidatesInProgress.smash &&
+      this.props.sceneCandidates.smash === null &&
+      false
+    ) {
+      this.props.getSceneCandidates('smash');
+    }
+  }
+
+  _renderCard = (profile: UserProfile) => {
+    const { navigation, token } = this.props;
     return (
       <PreviewCard
         profile={profile}
@@ -105,8 +145,10 @@ class SwipingScreen extends React.Component<Props, State> {
           navigation.navigate(routes.ExpandedCard, {
             profile,
             onMinimize: () => navigation.pop(),
+            token,
           })
         }
+        token={token}
       />
     );
   };
@@ -154,7 +196,20 @@ class SwipingScreen extends React.Component<Props, State> {
   deck: ?Deck;
 
   render() {
-    const { navigation } = this.props;
+    const {
+      navigation,
+      sceneCandidates,
+      getSceneCandidatesInProgress,
+    } = this.props;
+    //If we are fetching scene candidates or haven't fetched any yet
+    //TODO: Show loading animation
+    if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
+      return (
+        <View>
+          <Text>LOADING</Text>
+        </View>
+      );
+    }
     return (
       <Transition inline appear={'scale'}>
         <View style={{ flex: 1 }}>
@@ -166,7 +221,7 @@ class SwipingScreen extends React.Component<Props, State> {
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}
-              data={DATA}
+              data={sceneCandidates.smash || []}
               renderCard={this._renderCard}
               renderEmpty={this._renderEmpty}
               onSwipeStart={this._onSwipeStart}

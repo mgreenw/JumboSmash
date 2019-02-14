@@ -17,13 +17,18 @@ import { Button, Card as RneCard, Icon } from 'react-native-elements';
 import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserProfile } from 'mobile/reducers';
+import { getAge } from 'mobile/utils/Birthday';
+import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 
 type Props = {
   profile: UserProfile,
   onCardTap?: () => void,
+  token: ?string,
 };
 
 type State = {};
+
+const { width } = Dimensions.get('window');
 
 export default class PreviewCard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -32,7 +37,7 @@ export default class PreviewCard extends React.Component<Props, State> {
   }
 
   render() {
-    const { profile, onCardTap } = this.props;
+    const { profile, onCardTap, token } = this.props;
     return (
       <View
         style={{
@@ -40,14 +45,25 @@ export default class PreviewCard extends React.Component<Props, State> {
           margin: 20,
         }}
       >
-        <View style={{ flex: 2 }}>
+        <View
+          style={{
+            flex: 2,
+            alignItems: 'center',
+          }}
+        >
           <Image
-            source={{
-              uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-            }}
+            key={profile.photoIds[0]}
             style={{
-              aspectRatio: 1,
+              width: width * 0.85,
+              height: width * 0.85,
               borderRadius: 20,
+              resizeMode: 'contain',
+            }}
+            source={{
+              uri: GET_PHOTO__ROUTE + profile.photoIds[0],
+              headers: {
+                Authorization: token,
+              },
             }}
           />
         </View>
@@ -67,9 +83,9 @@ export default class PreviewCard extends React.Component<Props, State> {
               shadowOpacity: 0.2,
             }}
           >
-            <Text style={{ fontSize: 28 }}>{`${profile.fields.displayName}, ${
-              profile.fields.birthday
-            }`}</Text>
+            <Text style={{ fontSize: 28 }}>{`${
+              profile.fields.displayName
+            }, ${getAge(profile.fields.birthday)}`}</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>

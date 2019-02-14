@@ -11,12 +11,18 @@ import type {
   LoginInitiated_Action,
   LoginCompleted_Action,
 } from 'mobile/actions/auth/login';
-import type { LogoutInitiated_Action, LogoutCompleted_Action } from 'mobile/actions/auth/logout';
+import type {
+  LogoutInitiated_Action,
+  LogoutCompleted_Action,
+} from 'mobile/actions/auth/logout';
 import type {
   LoadAuthCompleted_Action,
   LoadAuthInitiated_Action,
 } from 'mobile/actions/auth/loadAuth';
-import type { LoadAppCompleted_Action, LoadAppInitiated_Action } from 'mobile/actions/app/loadApp';
+import type {
+  LoadAppCompleted_Action,
+  LoadAppInitiated_Action,
+} from 'mobile/actions/app/loadApp';
 import type {
   CreateProfileAndSettingsInitiated_Action,
   CreateProfileAndSettingsCompleted_Action,
@@ -25,7 +31,10 @@ import type {
   SaveProfileFieldsInitiated_Action,
   SaveProfileFieldsCompleted_Action,
 } from 'mobile/actions/app/saveProfile';
-import type { Unauthorized_Action, Error_Action } from 'mobile/actions/apiErrorHandler';
+import type {
+  Unauthorized_Action,
+  Error_Action,
+} from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
   UploadPhotoCompleted_Action,
@@ -34,6 +43,10 @@ import type {
   DeletePhotoInitiated_Action,
   DeletePhotoCompleted_Action,
 } from 'mobile/actions/app/deletePhoto';
+import type {
+  GetSceneCandidatesInitiated_Action,
+  GetSceneCandidatesCompleted_Action,
+} from 'mobile/actions/app/getSceneCandidates';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 
 // /////////////
@@ -65,6 +78,18 @@ type BaseUser = { userId: number, profile: UserProfile };
 export type Client = BaseUser & { settings: UserSettings };
 export type Candidate = BaseUser; // TODO: add scenes
 
+export type SceneCandidates = {
+  smash: ?(Candidate[]),
+  social: ?(Candidate[]),
+  stone: ?(Candidate[]),
+};
+
+export type GetSceneCandidatesInProgress = {
+  smash: boolean,
+  social: boolean,
+  stone: boolean,
+};
+
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
 
@@ -73,6 +98,7 @@ export type ReduxState = {
   // app data:
   client: ?Client,
   token: ?string,
+  sceneCandidates: SceneCandidates,
 
   // action states:
   authLoaded: boolean,
@@ -85,6 +111,7 @@ export type ReduxState = {
     logout: boolean,
     login: boolean,
     loadApp: boolean,
+    getSceneCandidates: GetSceneCandidatesInProgress,
     createUser: boolean,
     saveProfile: boolean,
     uploadPhoto: boolean,
@@ -119,7 +146,9 @@ export type Action =
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
-  | DeletePhotoInitiated_Action;
+  | DeletePhotoInitiated_Action
+  | GetSceneCandidatesInitiated_Action
+  | GetSceneCandidatesCompleted_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -133,6 +162,11 @@ const defaultState: ReduxState = {
     logout: false,
     login: false,
     loadApp: false,
+    getSceneCandidates: {
+      smash: false,
+      social: false,
+      stone: false,
+    },
     createUser: false,
     saveProfile: false,
     uploadPhoto: false,
@@ -143,9 +177,17 @@ const defaultState: ReduxState = {
     login: null,
   },
   onboardingCompleted: false,
+  sceneCandidates: {
+    smash: null,
+    social: null,
+    stone: null,
+  },
 };
 
-export default function rootReducer(state: ReduxState = defaultState, action: Action): ReduxState {
+export default function rootReducer(
+  state: ReduxState = defaultState,
+  action: Action,
+): ReduxState {
   // Sanity check for our actions abiding FSA format.
   if (!isFSA(action)) {
     throw ('Err: Action is not FSA', action);
@@ -400,6 +442,38 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
             ...state.client.profile,
             photoIds,
           },
+        },
+      };
+    }
+
+    case 'GET_SCENE_CANDIDATES__INITIATED': {
+      const { scene } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: true,
+          },
+        },
+      };
+    }
+
+    case 'GET_SCENE_CANDIDATES__COMPLETED': {
+      const { candidates, scene } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: false,
+          },
+        },
+        sceneCandidates: {
+          ...state.sceneCandidates,
+          [scene]: candidates,
         },
       };
     }

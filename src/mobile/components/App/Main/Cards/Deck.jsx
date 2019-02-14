@@ -20,7 +20,7 @@ const LEFT = 'left';
 export type swipeDirection = 'left' | 'right';
 
 type Props = {
-  data: $ReadOnlyArray<Candidate>,
+  data: Candidate[],
   renderCard: (profile: UserProfile, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeStart: () => void,
@@ -69,7 +69,7 @@ export default class Deck extends React.Component<Props, State> {
             {
               swipeGestureInProgress: true,
             },
-            () => this.props.onSwipeStart(),
+            () => this.props.onSwipeStart()
           );
         }
         //set the position of the card to the position of the gesture
@@ -181,7 +181,11 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   render() {
-    return <View style={{ position: 'relative', flex: 1 }}>{this._renderCards()}</View>;
+    return (
+      <View style={{ position: 'relative', flex: 1 }}>
+        {this._renderCards()}
+      </View>
+    );
   }
 }
 
