@@ -300,7 +300,8 @@ function MultiDigitInput(
             )}
             <Animated.View
               style={{
-                height: HEIGHT,
+                /* needed on android because views clip children */
+                height: HEIGHT * 1.2,
                 transform: [{ translateX: shakeTranslateX }],
               }}
             >

@@ -18,7 +18,8 @@ export class PrimaryButton extends React.Component<Props> {
     return (
       <Button
         onPress={() => {
-          Keyboard.dismiss(); // in case a keyboard is up, buttons close them
+          /* in case a keyboard is up, buttons close them */
+          Keyboard.dismiss();
           this.props.onPress();
         }}
         title={this.props.title}

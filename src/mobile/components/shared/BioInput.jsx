@@ -61,6 +61,7 @@ export default class BioInput extends BaseInput {
               {
                 height: '100%',
                 padding: 9,
+                textAlignVertical: 'top',
               },
             ]}
             onBlur={this._onBlur}
@@ -73,6 +74,7 @@ export default class BioInput extends BaseInput {
             multiline
             value={value}
             maxLength={MAX_LENGTH}
+            underlineColorAndroid={'transparent'}
           />
         </Animated.View>
         <View>
