@@ -1,10 +1,11 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
+import {
+  Text, View, StyleSheet, Switch, ImageBackground,
+} from 'react-native';
 import { connect } from 'react-redux';
-import { logout } from 'mobile/actions/auth/logout';
+import { logout as logoutAction } from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
 import type { Genders, UserSettings, ReduxState } from 'mobile/reducers';
 import type { Dispatch } from 'redux';
@@ -16,6 +17,7 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
+import { saveSettingsAction } from 'mobile/actions/app/saveSettings';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -51,7 +53,7 @@ type State = {
   showOnSmash: boolean, // temporary for UI testing
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
@@ -61,13 +63,13 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     logout: () => {
-      dispatch(logout());
+      dispatch(logoutAction());
     },
-    saveSettings: () => {
-      // TODO
+    saveSettings: (settings: UserSettings) => {
+      dispatch(saveSettingsAction(settings));
     },
   };
 }
@@ -81,14 +83,10 @@ class SettingsScreen extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { navigation } = this.props;
-    if (!this.props.logoutInProgress && prevProps.logoutInProgress != this.props.logoutInProgress) {
-      // disable back button when performing a syncronous action.
-      navigation.setParams({
-        headerLeft: this.props.logoutInProgress ? null : '',
-      });
-
+    const { logoutInProgress } = this.props;
+    if (!logoutInProgress && prevProps.logoutInProgress !== logoutInProgress) {
       // For recieving the logout completion
       navigation.navigate(routes.Splash, {});
     }
@@ -113,13 +111,15 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    this.props.saveSettings(this.state.editedSettings);
+    const { saveSettings } = this.props;
+    const { editedSettings } = this.state;
+    saveSettings(editedSettings);
     NavigationService.back();
   };
 
   render() {
     const { showOnSmash, editedSettings } = this.state;
-    const { logoutInProgress } = this.props;
+    const { logoutInProgress, logout } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Edit Settings" leftIconName="back" onLeftIconPress={this._onBack} />
@@ -130,7 +130,7 @@ class SettingsScreen extends React.Component<Props, State> {
           />
           <KeyboardAwareScrollView
             extraScrollHeight={35}
-            enableOnAndroid={true}
+            enableOnAndroid
             style={{
               backgroundColor: 'transparent',
             }}
@@ -148,7 +148,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 onTintColor={Colors.AquaMarine}
                 trackColor={Colors.AquaMarine}
                 ios_backgroundColor={Colors.AquaMarine}
-                onValueChange={value => {
+                onValueChange={(value) => {
                   this.setState({
                     showOnSmash: value,
                   });
@@ -205,7 +205,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </View>
               <PrimaryButton
                 title="Log Out"
-                onPress={this.props.logout}
+                onPress={logout}
                 disabled={logoutInProgress}
                 loading={logoutInProgress}
               />

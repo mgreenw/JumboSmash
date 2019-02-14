@@ -8,12 +8,16 @@ import { mobileSettingsToServerSettings } from 'mobile/api/dataConversion';
 
 const UPDATE_MY_SETTINGS__SUCCESS = 'UPDATE_SETTINGS__SUCCESS';
 
-export default function updateMySettings(token: string, request: UserSettings): Promise<void> {
+export default function updateMySettings(
+  token: string,
+  request: UserSettings,
+): Promise<UserSettings> {
   return apiRequest('PATCH', MY_SETTINGS__ROUTE, token, mobileSettingsToServerSettings(request))
     .then(response => {
       switch (response.status) {
         case UPDATE_MY_SETTINGS__SUCCESS:
-          return;
+          (response.data: UserSettings);
+          return response.data;
         default:
           throw { response };
       }

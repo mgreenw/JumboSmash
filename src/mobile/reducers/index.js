@@ -34,6 +34,10 @@ import type {
   DeletePhotoInitiated_Action,
   DeletePhotoCompleted_Action,
 } from 'mobile/actions/app/deletePhoto';
+import type {
+  SaveSettingsInitiated_Action,
+  SaveSettingsCompleted_Action,
+} from 'mobile/actions/app/saveSettings';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 
 // /////////////
@@ -87,6 +91,7 @@ export type ReduxState = {
     loadApp: boolean,
     createUser: boolean,
     saveProfile: boolean,
+    saveSettings: boolean,
     uploadPhoto: boolean,
     deletePhoto: boolean,
   },
@@ -119,7 +124,9 @@ export type Action =
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
-  | DeletePhotoInitiated_Action;
+  | DeletePhotoInitiated_Action
+  | SaveSettingsInitiated_Action
+  | SaveSettingsCompleted_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -135,6 +142,7 @@ const defaultState: ReduxState = {
     loadApp: false,
     createUser: false,
     saveProfile: false,
+    saveSettings: false,
     uploadPhoto: false,
     deletePhoto: false,
   },
@@ -400,6 +408,33 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
             ...state.client.profile,
             photoIds,
           },
+        },
+      };
+    }
+
+    case 'SAVE_SETTINGS__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveSettings: true,
+        },
+      };
+    }
+
+    case 'SAVE_SETTINGS__COMPLETED': {
+      if (!state.client) {
+        throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
+      }
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false,
+        },
+        client: {
+          ...state.client,
+          settings: action.payload,
         },
       };
     }

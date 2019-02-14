@@ -14,9 +14,7 @@ export type SaveSettingsInitiated_Action = {
 };
 export type SaveSettingsCompleted_Action = {
   type: 'SAVE_SETTINGS__COMPLETED',
-  payload: {
-    settings: UserSettings,
-  },
+  payload: UserSettings,
   meta: {},
 };
 
@@ -31,20 +29,20 @@ function initiate(): SaveSettingsInitiated_Action {
 function complete(settings: UserSettings): SaveSettingsCompleted_Action {
   return {
     type: 'SAVE_SETTINGS__COMPLETED',
-    payload: { settings },
+    payload: settings,
     meta: {},
   };
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function saveSettings(token: string, settings: UserSettings) {
+export function saveSettingsAction(settings: UserSettings) {
   return function(dispatch: Dispatch, getState: GetState) {
     const { token } = getState();
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       updateMySettings(token, settings)
-        .then(() => {
-          dispatch(complete(settings));
+        .then(newSettings => {
+          dispatch(complete(newSettings));
         })
         .catch(error => {
           dispatch(apiErrorHandler(error));
