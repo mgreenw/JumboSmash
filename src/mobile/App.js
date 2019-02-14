@@ -8,6 +8,8 @@ import { createAppContainer } from '@react-navigation/native';
 import { loggerMiddleware } from 'mobile/reduxMiddleware/loggerMiddleware';
 import { tokenMiddleware } from 'mobile/reduxMiddleware/tokenMiddleware';
 import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
+import imageCacheMiddleware from 'mobile/reduxMiddleware/imageCacheMiddleware';
+
 import NavigationService from 'mobile/NavigationService';
 import rootReducer from 'mobile/reducers';
 import { createRootNavigator } from 'mobile/components/Navigation';
@@ -19,6 +21,7 @@ const store = createStore(
     applyMiddleware(errorMiddleware),
     applyMiddleware(tokenMiddleware),
     applyMiddleware(loggerMiddleware),
+    // applyMiddleware(imageCacheMiddleware),
   ),
 );
 const TopLevelNavigator = createRootNavigator();

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {
- TouchableOpacity, Text, View, Image 
+  TouchableOpacity, Text, View, Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Avatar } from 'react-native-elements';
@@ -42,9 +42,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
       >
         <View style={{ flexDirection: 'row' }}>
           <CustomIcon name={icon} size={26} color="black" />
-          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
-            {title}
-          </Text>
+          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>{title}</Text>
         </View>
         <CustomIcon
           name="back"
@@ -115,8 +113,8 @@ class ProfileScreen extends React.Component<Props, State> {
 
   render() {
     const {
- token, photoId, displayName, navigation, profile 
-} = this.props;
+      token, photoId, displayName, navigation, profile,
+    } = this.props;
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>
@@ -145,17 +143,14 @@ class ProfileScreen extends React.Component<Props, State> {
                   },
                 }}
                 onPress={() => navigation.navigate(routes.ExpandedCard, {
-                    profile,
-                    onMinimize: () => navigation.pop(),
-                    token,
-                  })
+                  profile,
+                  onMinimize: () => navigation.pop(),
+                  token,
+                })
                 }
               />
               <Text
-                style={[
-                  textStyles.headline4StyleMedium,
-                  { textAlign: 'center', paddingTop: 10 },
-                ]}
+                style={[textStyles.headline4StyleMedium, { textAlign: 'center', paddingTop: 10 }]}
               >
                 {displayName}
               </Text>
@@ -181,16 +176,8 @@ class ProfileScreen extends React.Component<Props, State> {
               }}
               elevation={5}
             >
-              <CardButton
-                title="Edit Profile"
-                onPress={this._onProfileEditPress}
-                icon="user"
-              />
-              <CardButton
-                title="Settings"
-                onPress={this._onSettingsPress}
-                icon="gear"
-              />
+              <CardButton title="Edit Profile" onPress={this._onProfileEditPress} icon="user" />
+              <CardButton title="Settings" onPress={this._onSettingsPress} icon="gear" />
               <CardButton
                 title="Help & Contact"
                 onPress={this._onProfileHelpPress}

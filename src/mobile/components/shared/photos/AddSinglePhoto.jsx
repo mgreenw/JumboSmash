@@ -2,8 +2,9 @@
 
 import React from 'react';
 import {
-  Text, View, TouchableOpacity, Image, Alert,
+  Text, View, TouchableOpacity, Alert,
 } from 'react-native';
+import { Image } from 'mobile/components/shared/imageCacheFork';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
@@ -72,9 +73,8 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 borderRadius: 8,
               }}
               resizeMode="contain"
-              loadingStyle={{ size: 'large', color: 'blue' }}
-              source={{
-                uri: GET_PHOTO__ROUTE + photoId,
+              uri={GET_PHOTO__ROUTE + photoId}
+              options={{
                 headers: {
                   Authorization: token || '', // TODO: better token handling
                 },
