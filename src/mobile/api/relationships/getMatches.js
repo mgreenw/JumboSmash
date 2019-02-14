@@ -1,8 +1,5 @@
 // @flow
 
-// NOTE: This should ONLY be used in onboarding, before a
-// profile has been completed. After that, use getMyProfile
-
 import type { Match } from 'mobile/reducers/';
 import { apiRequest } from '../utils/apiRequest';
 import { GET_MATCHES__ROUTE } from '../routes';
