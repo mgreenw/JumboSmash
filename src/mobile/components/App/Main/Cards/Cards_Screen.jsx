@@ -9,7 +9,8 @@ import type {
   Candidate,
   UserProfile,
   SceneCandidates,
-  GetSceneCandidatesInProgress
+  GetSceneCandidatesInProgress,
+  Scene
 } from 'mobile/reducers/index';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import { routes } from 'mobile/components/Navigation';
@@ -33,7 +34,7 @@ type reduxProps = {
   token: ?string
 };
 
-type dispatchProps = { getSceneCandidates: (scene: string) => void };
+type dispatchProps = { getSceneCandidates: (scene: Scene) => void };
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
@@ -51,7 +52,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
 
 function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
-    getSceneCandidates: (scene: string) => {
+    getSceneCandidates: (scene: Scene) => {
       dispatch(getSceneCandidatesAction(scene));
     }
   };

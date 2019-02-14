@@ -103,6 +103,8 @@ export type GetSceneCandidatesInProgress = {
   stone: boolean
 };
 
+export type Scene = 'smash' | 'social' | 'stone';
+
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
 

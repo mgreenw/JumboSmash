@@ -1,26 +1,26 @@
 // @flow
 
 import type { Dispatch, GetState } from 'redux';
-import type { Candidate } from 'mobile/reducers';
+import type { Candidate, Scene } from 'mobile/reducers';
 import getSceneCandidates from 'mobile/api/relationships/getSceneCandidates';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
 export type GetSceneCandidatesInitiated_Action = {
   type: 'GET_SCENE_CANDIDATES__INITIATED',
-  payload: { scene: string },
+  payload: { scene: Scene },
   meta: {}
 };
 export type GetSceneCandidatesCompleted_Action = {
   type: 'GET_SCENE_CANDIDATES__COMPLETED',
   payload: {
     candidates: Candidate[],
-    scene: string
+    scene: Scene
   },
   meta: {}
 };
 
-function initiate(scene: string): GetSceneCandidatesInitiated_Action {
+function initiate(scene: Scene): GetSceneCandidatesInitiated_Action {
   return {
     type: 'GET_SCENE_CANDIDATES__INITIATED',
     payload: { scene },
@@ -30,7 +30,7 @@ function initiate(scene: string): GetSceneCandidatesInitiated_Action {
 
 function complete(
   candidates: Candidate[],
-  scene: string
+  scene: Scene
 ): GetSceneCandidatesCompleted_Action {
   return {
     type: 'GET_SCENE_CANDIDATES__COMPLETED',
@@ -43,7 +43,7 @@ function complete(
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export default (scene: string) => (dispatch: Dispatch, getState: GetState) => {
+export default (scene: Scene) => (dispatch: Dispatch, getState: GetState) => {
   const { token } = getState();
   dispatch(initiate(scene));
   DevTesting.fakeLatency(() => {
