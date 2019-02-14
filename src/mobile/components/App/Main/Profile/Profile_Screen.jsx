@@ -5,7 +5,7 @@ import {
   TouchableOpacity, Text, View, Image,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Avatar } from 'react-native-elements';
+import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
@@ -15,7 +15,6 @@ import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 
 const waves1 = require('../../../../assets/waves/waves1/waves.png');
 
@@ -62,7 +61,6 @@ type navigationProps = {
 type dispatchProps = {};
 
 type reduxProps = {
-  token: ?string,
   photoId: number,
   displayName: string,
   profile: UserProfile,
@@ -83,7 +81,6 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
-    token: reduxState.token,
     profile: reduxState.client.profile,
   };
 }
@@ -113,7 +110,7 @@ class ProfileScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      token, photoId, displayName, navigation, profile,
+      photoId, displayName, navigation, profile,
     } = this.props;
     return (
       <Transition inline appear="left">
@@ -134,18 +131,11 @@ class ProfileScreen extends React.Component<Props, State> {
               }}
             >
               <Avatar
-                size="xlarge"
-                rounded
-                source={{
-                  uri: GET_PHOTO__ROUTE + photoId,
-                  headers: {
-                    Authorization: token,
-                  },
-                }}
+                size="Large"
+                photoId={photoId}
                 onPress={() => navigation.navigate(routes.ExpandedCard, {
                   profile,
                   onMinimize: () => navigation.pop(),
-                  token,
                 })
                 }
               />

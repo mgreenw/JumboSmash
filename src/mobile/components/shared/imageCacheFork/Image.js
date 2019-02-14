@@ -6,6 +6,8 @@ import { Image as RNImage, Animated, StyleSheet, View, Platform } from 'react-na
 import { BlurView } from 'expo';
 import { type ____ImageStyleProp_Internal as ImageStyle } from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 import type { ImageSourcePropType } from 'react-native/Libraries/Image/ImageSourcePropType';
+import { store } from 'mobile/store';
+import type { ReduxState } from 'mobile/reducers';
 
 import CacheManager, { type DownloadOptions } from './CacheManager';
 
@@ -13,7 +15,8 @@ type ImageProps = {
   style?: ImageStyle,
   defaultSource?: ImageSourcePropType,
   preview?: ImageSourcePropType,
-  options?: DownloadOptions,
+  // we override these with our specific ones always for tokens
+  // options?: ?DownloadOptions,
   uri: string,
   transitionDuration?: number,
   tint?: 'dark' | 'light',
@@ -37,8 +40,15 @@ export default class Image extends React.Component<ImageProps, ImageState> {
     intensity: new Animated.Value(100),
   };
 
-  async load({ uri, options = {} }: ImageProps): Promise<void> {
+  async load({ uri }: ImageProps): Promise<void> {
     if (uri) {
+      const state: ReduxState = store.getState();
+      const { token } = state;
+      const options = {
+        headers: {
+          Authorization: token || '',
+        },
+      };
       const path = await CacheManager.get(uri, options).getPath();
       if (this.mounted) {
         this.setState({ uri: path });

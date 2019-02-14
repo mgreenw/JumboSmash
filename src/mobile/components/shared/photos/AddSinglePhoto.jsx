@@ -16,7 +16,6 @@ type Props = {
   enableRemove: boolean,
   width: number,
   photoId: ?number,
-  token: ?string,
 };
 
 type State = {
@@ -37,7 +36,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
 
   render() {
     const {
-      onAdd, onRemove, width, photoId, token, enableRemove,
+      onAdd, onRemove, width, photoId, enableRemove,
     } = this.props;
     const { showEditPopup } = this.state;
     return (
@@ -74,11 +73,6 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
               }}
               resizeMode="contain"
               uri={GET_PHOTO__ROUTE + photoId}
-              options={{
-                headers: {
-                  Authorization: token || '', // TODO: better token handling
-                },
-              }}
             />
           ) : (
             <Text style={[textStyles.headline6Style, { textDecorationLine: 'underline' }]}>

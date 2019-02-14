@@ -11,8 +11,9 @@ import { routes } from 'mobile/components/Navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
-import { AvatarList } from 'mobile/components/shared/AvatarList';
-import { Avatar, ListItem } from 'react-native-elements';
+import AvatarList from 'mobile/components/shared/AvatarList';
+import Avatar from 'mobile/components/shared/Avatar';
+import { ListItem } from 'react-native-elements';
 
 type Props = {
   navigation: any,
@@ -59,13 +60,7 @@ class MessagingScreen extends React.Component<Props, State> {
             alignItems: 'center',
           }}
         >
-          <Avatar
-            size="large"
-            rounded
-            source={{
-              uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-            }}
-          />
+          <Avatar size="Small" photoId={10} onPress={() => {}} />
           <View
             style={{
               flex: 1,
