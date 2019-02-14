@@ -24,16 +24,13 @@ function connect(token: string) {
   }
 
   // Connect the socket with the new token
-  _socket = io(
-    SERVER_ROUTE,
-    {
-      path: '/socket',
-      transports: ['websocket', 'polling'],
-      query: {
-        token,
-      },
+  _socket = io(SERVER_ROUTE, {
+    path: '/socket',
+    transports: ['websocket', 'polling'],
+    query: {
+      token,
     },
-  );
+  });
 
   /* eslint-disable no-console */
   _socket.on('error', (err) => {

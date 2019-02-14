@@ -10,9 +10,10 @@ import type { ReduxState, Match } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
-import { AvatarList } from 'mobile/components/shared/AvatarList';
-import { Avatar } from 'react-native-elements';
 import getMatchesAction from 'mobile/actions/app/getMatches';
+import AvatarList from 'mobile/components/shared/AvatarList';
+import Avatar from 'mobile/components/shared/Avatar';
+import { ListItem } from 'react-native-elements';
 
 type NavigationProps = {
   navigation: any,

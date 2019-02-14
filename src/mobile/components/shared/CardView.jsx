@@ -2,24 +2,18 @@
 
 import React from 'react';
 import {
-  Text,
-  View,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
+  Text, View, ScrollView, TouchableOpacity, Dimensions, Animated,
 } from 'react-native';
 import type { UserProfile } from 'mobile/reducers/index';
 import { isIphoneX } from 'mobile/utils/Platform';
 import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
+import { Image } from 'mobile/components/shared/imageCacheFork';
 
 type Props = {
   profile: UserProfile,
   onMinimize: () => void,
-  token: ?string,
 };
 
 const { width } = Dimensions.get('window');
@@ -28,7 +22,7 @@ export default class CardView extends React.Component<Props> {
   scrollX = new Animated.Value(0); // this will be the scroll location of our ScrollView
 
   render() {
-    const { profile, onMinimize, token } = this.props;
+    const { profile, onMinimize } = this.props;
     const position = Animated.divide(this.scrollX, width);
     return (
       <ScrollView
@@ -37,9 +31,7 @@ export default class CardView extends React.Component<Props> {
           flex: 1,
         }}
       >
-        {isIphoneX() && (
-          <View style={{ height: 40, backgroundColor: '#fff' }} />
-        )}
+        {isIphoneX() && <View style={{ height: 40, backgroundColor: '#fff' }} />}
         <View
           style={{
             flex: 1,
@@ -52,21 +44,14 @@ export default class CardView extends React.Component<Props> {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              onScroll={Animated.event([
-                { nativeEvent: { contentOffset: { x: this.scrollX } } },
-              ])}
+              onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: this.scrollX } } }])}
               scrollEventThrottle={16}
             >
               {profile.photoIds.map(photoId => (
                 <Image
                   key={photoId}
-                  style={{ width, height: width, resizeMode: 'contain' }}
-                  source={{
-                    uri: GET_PHOTO__ROUTE + photoId,
-                    headers: {
-                      Authorization: token,
-                    },
-                  }}
+                  style={{ width, height: width }}
+                  uri={GET_PHOTO__ROUTE + photoId}
                 />
               ))}
             </ScrollView>
@@ -118,23 +103,14 @@ export default class CardView extends React.Component<Props> {
             }}
           >
             <Text style={{ fontSize: 28, textAlign: 'center' }}>
-              {`${profile.fields.displayName}, ${getAge(
-                profile.fields.birthday,
-              )}`}
+              {`${profile.fields.displayName}, ${getAge(profile.fields.birthday)}`}
             </Text>
-            <TouchableOpacity
-              style={{ position: 'absolute', right: 20 }}
-              onPress={onMinimize}
-            >
+            <TouchableOpacity style={{ position: 'absolute', right: 20 }} onPress={onMinimize}>
               <Text style={{ fontSize: 28 }}>{'<'}</Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{ paddingLeft: 25, paddingRight: 25, paddingBottom: 20 }}
-          >
-            <Text style={{ textAlign: 'left', fontSize: 18 }}>
-              {profile.fields.bio}
-            </Text>
+          <View style={{ paddingLeft: 25, paddingRight: 25, paddingBottom: 20 }}>
+            <Text style={{ textAlign: 'left', fontSize: 18 }}>{profile.fields.bio}</Text>
           </View>
         </View>
       </ScrollView>
