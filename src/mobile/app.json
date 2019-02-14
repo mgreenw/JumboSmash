@@ -7,7 +7,8 @@
     "slug": "projectgem-dev",
     "version": "0.0.1",
     "description": "Thru PR 204",
-    "githubUrl": "https://github.com/mgreenw/ProjectGEM"
+    "githubUrl": "https://github.com/mgreenw/ProjectGEM",
+    "icon": "./assets/AppStoreIcon.png"
   },
   "privacy": "unlisted"
 }

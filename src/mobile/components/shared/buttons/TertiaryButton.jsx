@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { View, Keyboard, Text } from 'react-native';
@@ -10,30 +9,22 @@ type Props = {
   title: string,
 };
 
-type State = {};
-
-export class TertiaryButton extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
-      <View style={{ height: 18 }}>
-        <Text
-          onPress={() => {
-            Keyboard.dismiss(); // in case a keyboard is up, buttons close them
-            this.props.onPress();
-          }}
-          value={this.props.title}
-          containerStyle={{ width: '100%' }}
-          style={[textStyles.body2Style, { textAlign: 'center', textDecorationLine: 'underline' }]}
-        >
-          {this.props.title}
-        </Text>
-        )}
-      </View>
-    );
-  }
-}
+export default (props: Props) => {
+  const { onPress, title } = props;
+  return (
+    <View style={{ height: 18 }}>
+      <Text
+        onPress={() => {
+          /* in case a keyboard is up, buttons close them */
+          Keyboard.dismiss();
+          onPress();
+        }}
+        value={title}
+        containerStyle={{ width: '100%' }}
+        style={[textStyles.body2Style, { textAlign: 'center', textDecorationLine: 'underline' }]}
+      >
+        {title}
+      </Text>
+    </View>
+  );
+};

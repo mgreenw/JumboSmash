@@ -4,49 +4,53 @@
 import type {
   sendVerificationEmail_response,
   SendVerificationEmailCompleted_Action,
-  SendVerificationEmailInitiated_Action,
+  SendVerificationEmailInitiated_Action
 } from 'mobile/actions/auth/sendVerificationEmail';
 import type {
   login_response,
   LoginInitiated_Action,
-  LoginCompleted_Action,
+  LoginCompleted_Action
 } from 'mobile/actions/auth/login';
 import type {
   LogoutInitiated_Action,
-  LogoutCompleted_Action,
+  LogoutCompleted_Action
 } from 'mobile/actions/auth/logout';
 import type {
   LoadAuthCompleted_Action,
-  LoadAuthInitiated_Action,
+  LoadAuthInitiated_Action
 } from 'mobile/actions/auth/loadAuth';
 import type {
   LoadAppCompleted_Action,
-  LoadAppInitiated_Action,
+  LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
   CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action,
+  CreateProfileAndSettingsCompleted_Action
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
-  SaveProfileFieldsCompleted_Action,
+  SaveProfileFieldsCompleted_Action
 } from 'mobile/actions/app/saveProfile';
 import type {
   Unauthorized_Action,
-  Error_Action,
+  Error_Action
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
-  UploadPhotoCompleted_Action,
+  UploadPhotoCompleted_Action
 } from 'mobile/actions/app/uploadPhoto';
 import type {
   DeletePhotoInitiated_Action,
-  DeletePhotoCompleted_Action,
+  DeletePhotoCompleted_Action
 } from 'mobile/actions/app/deletePhoto';
 import type {
   GetSceneCandidatesInitiated_Action,
-  GetSceneCandidatesCompleted_Action,
+  GetSceneCandidatesCompleted_Action
 } from 'mobile/actions/app/getSceneCandidates';
+import type {
+  GetMatchesInitiated_Action,
+  GetMatchesCompleted_Action
+} from 'mobile/actions/app/getMatches';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 
 // /////////////
@@ -55,39 +59,48 @@ import { isFSA } from 'mobile/utils/fluxStandardAction';
 export type Genders = {
   male: boolean,
   female: boolean,
-  nonBinary: boolean,
+  nonBinary: boolean
 };
 
 export type UserSettings = {
   useGenders: Genders,
-  wantGenders: Genders,
+  wantGenders: Genders
 };
 
 export type ProfileFields = {
   displayName: string,
   birthday: string,
-  bio: string,
+  bio: string
 };
 
 export type UserProfile = {
   fields: ProfileFields,
-  photoIds: number[],
+  photoIds: number[]
+};
+
+type SceneMatchTimes = {
+  smash: ?string,
+  social: ?string,
+  stone: ?string
 };
 
 type BaseUser = { userId: number, profile: UserProfile };
 export type Client = BaseUser & { settings: UserSettings };
-export type Candidate = BaseUser; // TODO: add scenes
+export type Candidate = BaseUser;
+export type Match = BaseUser & {
+  scenes: SceneMatchTimes
+};
 
 export type SceneCandidates = {
   smash: ?(Candidate[]),
   social: ?(Candidate[]),
-  stone: ?(Candidate[]),
+  stone: ?(Candidate[])
 };
 
 export type GetSceneCandidatesInProgress = {
   smash: boolean,
   social: boolean,
-  stone: boolean,
+  stone: boolean
 };
 
 // TODO: enable if needed. This is a conceptual type.
@@ -116,14 +129,17 @@ export type ReduxState = {
     saveProfile: boolean,
     uploadPhoto: boolean,
     deletePhoto: boolean,
+    getMatches: boolean
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
   response: {
     sendVerificationEmail: ?sendVerificationEmail_response,
-    login: ?login_response,
+    login: ?login_response
   },
+
+  matches: ?(Match[])
 };
 
 export type Action =
@@ -148,7 +164,9 @@ export type Action =
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | GetSceneCandidatesInitiated_Action
-  | GetSceneCandidatesCompleted_Action;
+  | GetSceneCandidatesCompleted_Action
+  | GetMatchesInitiated_Action
+  | GetMatchesCompleted_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -165,28 +183,30 @@ const defaultState: ReduxState = {
     getSceneCandidates: {
       smash: false,
       social: false,
-      stone: false,
+      stone: false
     },
     createUser: false,
     saveProfile: false,
     uploadPhoto: false,
     deletePhoto: false,
+    getMatches: false
   },
   response: {
     sendVerificationEmail: null,
-    login: null,
+    login: null
   },
   onboardingCompleted: false,
   sceneCandidates: {
     smash: null,
     social: null,
-    stone: null,
+    stone: null
   },
+  matches: null
 };
 
 export default function rootReducer(
   state: ReduxState = defaultState,
-  action: Action,
+  action: Action
 ): ReduxState {
   // Sanity check for our actions abiding FSA format.
   if (!isFSA(action)) {
@@ -200,8 +220,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          login: true,
-        },
+          login: true
+        }
       };
     }
 
@@ -212,12 +232,12 @@ export default function rootReducer(
         token: response ? response.token : null,
         inProgress: {
           ...state.inProgress,
-          login: false,
+          login: false
         },
         response: {
           ...state.response,
-          login: response,
-        },
+          login: response
+        }
       };
     }
 
@@ -227,8 +247,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          logout: true,
-        },
+          logout: true
+        }
       };
     }
 
@@ -239,8 +259,8 @@ export default function rootReducer(
         loggedIn: false,
         inProgress: {
           ...state.inProgress,
-          logout: false,
-        },
+          logout: false
+        }
       };
     }
 
@@ -250,8 +270,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          loadAuth: true,
-        },
+          loadAuth: true
+        }
       };
     }
 
@@ -263,8 +283,8 @@ export default function rootReducer(
         authLoaded: true,
         inProgress: {
           ...state.inProgress,
-          loadAuth: false,
-        },
+          loadAuth: false
+        }
       };
     }
 
@@ -275,8 +295,8 @@ export default function rootReducer(
         appLoaded: false,
         inProgress: {
           ...state.inProgress,
-          loadApp: true,
-        },
+          loadApp: true
+        }
       };
     }
 
@@ -288,13 +308,13 @@ export default function rootReducer(
         client: {
           userId: 0, // TODO: RETRIEVE THIS
           profile,
-          settings,
+          settings
         },
         inProgress: {
           ...state.inProgress,
-          loadApp: false,
+          loadApp: false
         },
-        onboardingCompleted,
+        onboardingCompleted
       };
     }
 
@@ -303,8 +323,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          createUser: true,
-        },
+          createUser: true
+        }
       };
     }
 
@@ -313,8 +333,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          createUser: false,
-        },
+          createUser: false
+        }
       };
     }
 
@@ -323,8 +343,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          sendVerificationEmail: true,
-        },
+          sendVerificationEmail: true
+        }
       };
     }
 
@@ -334,12 +354,12 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          sendVerificationEmail: false,
+          sendVerificationEmail: false
         },
         response: {
           ...state.response,
-          sendVerificationEmail: response,
-        },
+          sendVerificationEmail: response
+        }
       };
     }
 
@@ -348,8 +368,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: true,
-        },
+          saveProfile: true
+        }
       };
     }
 
@@ -362,15 +382,15 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: false,
+          saveProfile: false
         },
         client: {
           ...state.client,
           profile: {
             ...state.client.profile,
-            fields,
-          },
-        },
+            fields
+          }
+        }
       };
     }
 
@@ -387,8 +407,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          uploadPhoto: true,
-        },
+          uploadPhoto: true
+        }
       };
     }
 
@@ -403,15 +423,15 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          uploadPhoto: false,
+          uploadPhoto: false
         },
         client: {
           ...state.client,
           profile: {
             ...profile,
-            photoIds: action.payload.photoIds,
-          },
-        },
+            photoIds: action.payload.photoIds
+          }
+        }
       };
     }
 
@@ -420,8 +440,8 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          deletePhoto: true,
-        },
+          deletePhoto: true
+        }
       };
     }
 
@@ -434,15 +454,15 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          deletePhoto: false,
+          deletePhoto: false
         },
         client: {
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds,
-          },
-        },
+            photoIds
+          }
+        }
       };
     }
 
@@ -454,9 +474,18 @@ export default function rootReducer(
           ...state.inProgress,
           getSceneCandidates: {
             ...state.inProgress.getSceneCandidates,
-            [scene]: true,
-          },
-        },
+            [scene]: true
+          }
+        }
+      };
+    }
+    case 'GET_MATCHES__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: true
+        }
       };
     }
 
@@ -468,13 +497,23 @@ export default function rootReducer(
           ...state.inProgress,
           getSceneCandidates: {
             ...state.inProgress.getSceneCandidates,
-            [scene]: false,
-          },
+            [scene]: false
+          }
         },
         sceneCandidates: {
           ...state.sceneCandidates,
-          [scene]: candidates,
+          [scene]: candidates
+        }
+      };
+    }
+    case 'GET_MATCHES__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: false
         },
+        matches: action.payload
       };
     }
 

@@ -38,7 +38,6 @@ function complete(
   onboardingCompleted: boolean,
   photoIds: ?(number[]),
 ): LoadAppCompleted_Action {
-  DevTesting.log('load app complete; profile && settigs: ', profile, settings);
   return {
     type: 'LOAD_APP__COMPLETED',
     payload: {

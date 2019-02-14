@@ -7,7 +7,7 @@ const { manifest } = Expo.Constants;
 
 // if in dev mode, use the same IP address as the hosting expo server. Otherwise,
 // use prod server.
-const SERVER_ROUTE =
+export const SERVER_ROUTE =
   typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev
     ? `http://${manifest.debuggerHost
         .split(':')
@@ -65,7 +65,7 @@ export const GET_MY_PHOTOS__ROUTE = `${USERS_ROUTE + MY}/photos/`;
 export const GET_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
 export const DELETE_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
 
-// Relationships:
+// Candidates:
 const CANDIDATES = '/candidates/';
 const SMASH = 'smash';
 const SOCIAL = 'social';
@@ -78,3 +78,7 @@ export const SCENE_CANDIDATES__ROUTES = {
   social: SOCIAL_CANDIDATES__ROUTE,
   stone: STONE_CANDIDATES__ROUTE
 };
+
+// Matches
+const MATCHES = '/matches/';
+export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;
