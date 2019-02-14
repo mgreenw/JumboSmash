@@ -2,8 +2,9 @@
 
 import React from 'react';
 import {
-  Text, View, TouchableOpacity, Image, Alert,
+  Text, View, TouchableOpacity, Alert,
 } from 'react-native';
+import { Image } from 'mobile/components/shared/imageCacheFork';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
@@ -15,7 +16,6 @@ type Props = {
   enableRemove: boolean,
   width: number,
   photoId: ?number,
-  token: ?string,
 };
 
 type State = {
@@ -36,7 +36,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
 
   render() {
     const {
-      onAdd, onRemove, width, photoId, token, enableRemove,
+      onAdd, onRemove, width, photoId, enableRemove,
     } = this.props;
     const { showEditPopup } = this.state;
     return (
@@ -72,13 +72,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 borderRadius: 8,
               }}
               resizeMode="contain"
-              loadingStyle={{ size: 'large', color: 'blue' }}
-              source={{
-                uri: GET_PHOTO__ROUTE + photoId,
-                headers: {
-                  Authorization: token || '', // TODO: better token handling
-                },
-              }}
+              uri={GET_PHOTO__ROUTE + photoId}
             />
           ) : (
             <Text style={[textStyles.headline6Style, { textDecorationLine: 'underline' }]}>
