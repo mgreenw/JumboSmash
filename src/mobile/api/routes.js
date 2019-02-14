@@ -23,10 +23,12 @@ const API = '/api';
 const AUTH = '/auth';
 const USERS = '/users';
 const PHOTOS = '/photos';
+const RELATIONSHIPS = '/relationships';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
 const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
+const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
 
 // //////////////
 // AUTH ROUTES:
@@ -61,3 +63,7 @@ export const CONFIRM_PHOTO__ROUTE = PHOTOS_ROUTE + CONFIRM_PHOTO;
 export const GET_MY_PHOTOS__ROUTE = `${USERS_ROUTE + MY}/photos/`;
 export const GET_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
 export const DELETE_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
+
+// Matches
+const MATCHES = '/matches/';
+export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;

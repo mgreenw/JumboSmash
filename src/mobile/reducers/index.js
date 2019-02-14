@@ -34,6 +34,10 @@ import type {
   DeletePhotoInitiated_Action,
   DeletePhotoCompleted_Action,
 } from 'mobile/actions/app/deletePhoto';
+import type {
+  GetMatchesInitiated_Action,
+  GetMatchesCompleted_Action,
+} from 'mobile/actions/app/getMatches';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 
 // /////////////
@@ -61,9 +65,18 @@ export type UserProfile = {
   photoIds: number[],
 };
 
+type SceneMatchTimes = {
+  smash: ?string,
+  social: ?string,
+  stone: ?string,
+};
+
 type BaseUser = { userId: number, profile: UserProfile };
 export type Client = BaseUser & { settings: UserSettings };
-export type Candidate = BaseUser; // TODO: add scenes
+export type Candidate = BaseUser;
+export type Match = BaseUser & {
+  scenes: SceneMatchTimes,
+};
 
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
@@ -89,6 +102,7 @@ export type ReduxState = {
     saveProfile: boolean,
     uploadPhoto: boolean,
     deletePhoto: boolean,
+    getMatches: boolean,
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -97,6 +111,8 @@ export type ReduxState = {
     sendVerificationEmail: ?sendVerificationEmail_response,
     login: ?login_response,
   },
+
+  matches: ?(Match[]),
 };
 
 export type Action =
@@ -119,7 +135,9 @@ export type Action =
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
-  | DeletePhotoInitiated_Action;
+  | DeletePhotoInitiated_Action
+  | GetMatchesInitiated_Action
+  | GetMatchesCompleted_Action;
 
 const defaultState: ReduxState = {
   token: null,
@@ -137,12 +155,14 @@ const defaultState: ReduxState = {
     saveProfile: false,
     uploadPhoto: false,
     deletePhoto: false,
+    getMatches: false,
   },
   response: {
     sendVerificationEmail: null,
     login: null,
   },
   onboardingCompleted: false,
+  matches: null,
 };
 
 export default function rootReducer(state: ReduxState = defaultState, action: Action): ReduxState {
@@ -401,6 +421,27 @@ export default function rootReducer(state: ReduxState = defaultState, action: Ac
             photoIds,
           },
         },
+      };
+    }
+
+    case 'GET_MATCHES__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: true,
+        },
+      };
+    }
+
+    case 'GET_MATCHES__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: false,
+        },
+        matches: action.payload,
       };
     }
 
