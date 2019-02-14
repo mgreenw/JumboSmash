@@ -61,6 +61,7 @@ export default class BioInput extends BaseInput {
               {
                 height: '100%',
                 padding: 9,
+                textAlignVertical: 'top',
               },
             ]}
             onBlur={this._onBlur}

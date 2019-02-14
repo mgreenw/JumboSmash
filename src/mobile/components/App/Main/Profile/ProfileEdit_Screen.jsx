@@ -1,8 +1,8 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import {
-  Dimensions, View, StyleSheet, ImageBackground,
+  Dimensions, View, StyleSheet, ImageBackground, ScrollView, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
@@ -15,8 +15,21 @@ import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { saveProfileFieldsAction } from 'mobile/actions/app/saveProfile';
 import NavigationService from 'mobile/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
+import KeyboardView from 'mobile/components/shared/KeyboardView';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+
+const PlatformSpecificScrollView = (props: { children: React.Node }) => {
+  const { children } = props;
+  if (Platform.OS === 'ios') {
+    return <KeyboardAwareScrollView extraScrollHeight={35}>{children}</KeyboardAwareScrollView>;
+  }
+  return (
+    <KeyboardView waves={false} verticalOffset={50}>
+      <ScrollView>{children}</ScrollView>
+    </KeyboardView>
+  );
+};
 
 const styles = StyleSheet.create({
   profileBlock: {
@@ -115,7 +128,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
-          <KeyboardAwareScrollView extraScrollHeight={35}>
+          <PlatformSpecificScrollView>
             <View style={[styles.profileBlock, { marginTop: 20 }]}>
               <AddMultiPhotos width={containerWidth} imageWidth={imageWidth} />
             </View>
@@ -143,7 +156,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-          </KeyboardAwareScrollView>
+          </PlatformSpecificScrollView>
         </View>
       </View>
     );

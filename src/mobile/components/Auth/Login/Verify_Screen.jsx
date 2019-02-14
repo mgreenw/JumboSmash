@@ -14,7 +14,7 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { CodeInput } from 'mobile/components/shared/DigitInput';
 import { routes } from 'mobile/components/Navigation';
-import { KeyboardView } from 'mobile/components/shared/KeyboardView';
+import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { login_response } from 'mobile/actions/auth/login';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';

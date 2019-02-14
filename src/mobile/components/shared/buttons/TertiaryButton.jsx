@@ -15,7 +15,8 @@ export default (props: Props) => {
     <View style={{ height: 18 }}>
       <Text
         onPress={() => {
-          Keyboard.dismiss(); // in case a keyboard is up, buttons close them
+          /* in case a keyboard is up, buttons close them */
+          Keyboard.dismiss();
           onPress();
         }}
         value={title}
