@@ -119,8 +119,6 @@ export default class Hoshi extends BaseInput {
                     inputRange: [0, 1],
                     outputRange: [20, 14],
                   }),
-                  // Gah, what an abuse of a variable name.
-                  // TODO: make 'undnerlienAnim' be 'selectedAnim'
                   color: selectedAnim.interpolate({
                     inputRange: [0, 1],
                     outputRange: [
@@ -145,7 +143,6 @@ export default class Hoshi extends BaseInput {
             },
           ]}
         />
-        // animated underline
         <Animated.View
           style={[
             styles.border,

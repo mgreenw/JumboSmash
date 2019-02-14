@@ -2,25 +2,12 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createStore, compose, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { createAppContainer } from '@react-navigation/native';
-import { loggerMiddleware } from 'mobile/reduxMiddleware/loggerMiddleware';
-import { tokenMiddleware } from 'mobile/reduxMiddleware/tokenMiddleware';
-import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
-import NavigationService from 'mobile/NavigationService';
-import rootReducer from 'mobile/reducers';
-import { createRootNavigator } from 'mobile/components/Navigation';
 
-const store = createStore(
-  rootReducer,
-  compose(
-    applyMiddleware(thunkMiddleware),
-    applyMiddleware(errorMiddleware),
-    applyMiddleware(tokenMiddleware),
-    applyMiddleware(loggerMiddleware),
-  ),
-);
+import { createAppContainer } from '@react-navigation/native';
+import NavigationService from 'mobile/NavigationService';
+import { createRootNavigator } from 'mobile/components/Navigation';
+import { store } from './store';
+
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
 

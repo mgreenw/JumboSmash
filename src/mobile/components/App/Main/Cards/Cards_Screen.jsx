@@ -21,11 +21,14 @@ import Deck from './Deck';
 import type { swipeDirection } from './Deck';
 import type { UserProfile, Candidate } from 'mobile/reducers';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
+import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/NavigationService';
 import DevTesting from 'mobile/utils/DevTesting';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type navigationProps = {
   navigation: any,
@@ -64,15 +67,24 @@ let DATA: Array<Candidate> = [
   },
   {
     userId: 2,
-    profile: { fields: { displayName: 'Tony', birthday: '22', bio: 'BIO' }, photoIds: [] },
+    profile: {
+      fields: { displayName: 'Tony', birthday: '22', bio: 'BIO' },
+      photoIds: [],
+    },
   },
   {
     userId: 3,
-    profile: { fields: { displayName: 'Ant', birthday: '69', bio: 'BIO' }, photoIds: [] },
+    profile: {
+      fields: { displayName: 'Ant', birthday: '69', bio: 'BIO' },
+      photoIds: [],
+    },
   },
   {
     userId: 4,
-    profile: { fields: { displayName: 'T-dawg', birthday: '47', bio: 'BIO' }, photoIds: [] },
+    profile: {
+      fields: { displayName: 'T-dawg', birthday: '47', bio: 'BIO' },
+      photoIds: [],
+    },
   },
 ];
 
@@ -146,7 +158,11 @@ class SwipingScreen extends React.Component<Props, State> {
     return (
       <Transition inline appear={'scale'}>
         <View style={{ flex: 1 }}>
-          <GEMHeader title="PROJECTGEM" rightIconName="message" leftIconName="user" />
+          <GEMHeader
+            title="PROJECTGEM"
+            rightIconName="message"
+            leftIconName="user"
+          />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             <Deck
               ref={deck => (this.deck = deck)}
@@ -160,29 +176,22 @@ class SwipingScreen extends React.Component<Props, State> {
               infinite={true}
               disableSwipe={false}
             />
-
-            <TouchableHighlight
-              disabled={this.state.swipeGestureInProgress}
-              onPress={this._onSwipeDislike}
+            <TouchableOpacity
+              onPress={() => this._onPressSwipeButton('left')}
+              style={Arthur_Styles.swipeButton_dislike}
             >
-              <Image
-                source={{
-                  uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-                }}
-                style={styles.swipeButton_dislike}
-              />
-            </TouchableHighlight>
-            <TouchableHighlight
-              disabled={this.state.swipeGestureInProgress}
-              onPress={this._onSwipeLike}
+              <CustomIcon name="delete-filled" size={65} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this._onPressSwipeButton('right')}
+              style={Arthur_Styles.swipeButton_like}
             >
-              <Image
-                source={{
-                  uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-                }}
-                style={styles.swipeButton_like}
+              <CustomIcon
+                name="heart-filled"
+                size={65}
+                color={Colors.Grapefruit}
               />
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         </View>
       </Transition>
@@ -190,27 +199,7 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 }
 
-const swipeButtonBase = {
-  aspectRatio: 1,
-  borderRadius: 30,
-  height: 60,
-  width: 60,
-  position: 'absolute',
-  bottom: 20,
-};
-
-const styles = StyleSheet.create({
-  swipeButton_dislike: {
-    ...swipeButtonBase,
-    left: 100,
-  },
-  swipeButton_like: {
-    ...swipeButtonBase,
-    right: 100,
-  },
-});
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(SwipingScreen);

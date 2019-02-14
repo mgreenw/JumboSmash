@@ -39,9 +39,11 @@
     "pg": "^7.6.0",
     "request": "^2.88.0",
     "semver": "^5.6.0",
+    "socket.io": "^2.2.0",
+    "socket.io-redis": "^5.2.0",
     "uuid": "^3.3.2",
-    "winston": "^3.1.0",
-    "winston-transport": "^4.2.0"
+    "winston": "^3.2.0",
+    "winston-transport": "^4.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",

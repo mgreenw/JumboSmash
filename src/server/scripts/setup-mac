@@ -26,6 +26,8 @@ fi
 brew install postgresql@10
 brew services start postgres
 
+brew install redis
+
 echo "Creating Postgres User and DB"
 createuser jumbosmashdev
 createdb jumbosmash

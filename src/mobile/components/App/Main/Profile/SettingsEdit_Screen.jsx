@@ -130,6 +130,7 @@ class SettingsScreen extends React.Component<Props, State> {
           />
           <KeyboardAwareScrollView
             extraScrollHeight={35}
+            enableOnAndroid={true}
             style={{
               backgroundColor: 'transparent',
             }}
