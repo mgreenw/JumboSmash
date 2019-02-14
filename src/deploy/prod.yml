@@ -89,7 +89,7 @@ services:
   server:
     environment:
       NODE_ENV: production
-    image: maxgreenwald/projectgem:0.0.1
+      image: maxgreenwald/projectgem:master
     # secrets:
             #- db_pass
         #- sendgrid_api_key
