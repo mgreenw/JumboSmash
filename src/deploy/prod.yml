@@ -2,18 +2,27 @@ version: '3.3'
 
 services:
   reverse-proxy:
-    image: traefik # The official Traefik docker image
-    command: --api --docker --docker.swarmMode --docker.domain=jumbosmash.localhost --docker.watch --logLevel=DEBUG
+    image: traefik:alpine # The official Traefik docker image
+    command: |- 
+      --api --docker --docker.swarmMode --docker.domain=jumbosmash.com --docker.watch --logLevel=DEBUG
+      --entryPoints="Name:http Address::80 Redirect.EntryPoint:https"
+      --entryPoints="Name:https Address::443 TLS"
+      --acme 
+      --acme.acmelogging="true"
+      --acme.email="jumbosmash@gmail.com"
+      --acme.caServer="https://acme-staging-v02.api.letsencrypt.org/directory"
+      --acme.entrypoint="https"
+      --acme.storage="/acme.json"
+      --acme.httpChallenge.entryPoint=http
+      --acme.onhostrule="true"
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     networks:
       - traefik-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    configs:
-      - source: traefik-config
+      - /opt/traefik/acme.json:/acme.json
     deploy:
       placement:
         constraints:
@@ -25,28 +34,32 @@ services:
   #
 
   website:
-    image: sperrys/website:latest
+    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
     networks:
       - traefik-net
     deploy:
       labels:
+        - traefik.enable=true
         - traefik.tags=website,prod
+        - traefik.frontend.entryPoints=http,https
         - traefik.backend=website
         - traefik.frontend.rule=Host:jumbosmash.com
         - traefik.port=80
 
 
   #
-  #  arthur, (beta) Website Service
+  #  arthur, (beta) Webesite service
   #
 
   arthur:
-    image: sperrys/website
+    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
     networks:
       - traefik-net
     deploy:
       labels:
+        - traefik.enable=true
         - traefik.tags=website,test
+        - traefik.frontend.entryPoints=http,https
         - traefik.backend=arthur
         - traefik.frontend.rule=Host:arthur.jumbosmash.com
         - traefik.port=80
@@ -64,9 +77,10 @@ services:
     deploy:
       labels:
         - traefik.backend=koh
+        - traefik.frontend.entryPoints=http,https
         - traefik.port=3005
         - traefik.frontend.rule=Host:koh.jumbosmash.com
-        - traefik.backend.loadbalancer.sticky=true
+        - traefik.backend.loadbalancer.stickiness=true
 
   #
   #  Prod API Service
@@ -75,11 +89,11 @@ services:
   server:
     environment:
       NODE_ENV: production
-    image: sperrys/server:secrets
-    secrets:
-      - db_pass
-      - sendgrid_api_key
-      - secret_key
+    image: maxgreenwald/projectgem:0.0.1
+    # secrets:
+            #- db_pass
+        #- sendgrid_api_key
+        # - secret_key
     links:
       - redis # ensures that redis is a host that the container can find
     networks:
@@ -87,9 +101,10 @@ services:
     deploy:
       labels:
         - traefik.backend=server
+        - traefik.frontend.entryPoints=http,https
         - traefik.port=3000
         - traefik.frontend.rule=Host:server.jumbosmash.com
-        - traefik.backend.loadbalancer.sticky=true
+        - traefik.backend.loadbalancer.stickiness=true
 
   #
   # redis service
@@ -101,7 +116,7 @@ services:
       labels:
         - traefik.backend=redis
         - traefik.port=6379
-        - traefik.backend.loadbalancer.sticky=true
+        - traefik.backend.loadbalancer.stickiness=true
 
 
   #
@@ -109,36 +124,34 @@ services:
   #
 
   deployment:
-    image: "sperrys/deploy:node"
+    image: sperrys/deploy:node
     environment:
       NODE_ENV: production
     networks:
       - traefik-net
-    secrets:
-      - DOCKER_PASSWORD
+        #   secrets:
+        #  - DOCKER_PASSWORD
     volumes:
       - /usr/local/bin/docker:/usr/bin/docker
     deploy:
       labels:
+        - traefik.frontend.entryPoints=http,https
         - traefik.backend=deploy
         - traefik.port=3004
         - traefik.frontend.rule=Host:deploy.jumbosmash.com
 
 # https://docs.docker.com/engine/swarm/secrets/
-secrets:
-  db_pass:
-    external: true
-  sendgrid_api_key:
-    external: true
-  secret_key:
-    external: true
-  DOCKER_PASSWORD:
-    external: true
+#secrets:
+#  db_pass:
+#    external: true
+#  sendgrid_api_key:
+#    external: true
+#  secret_key:
+#    external: true
+#  DOCKER_PASSWORD:
+#    external: true
 
 
-networks:
+networks:  
   traefik-net:
     driver: overlay
-configs:
-  traefik-config:
-    file: config.toml
