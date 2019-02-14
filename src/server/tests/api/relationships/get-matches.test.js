@@ -22,6 +22,7 @@ describe('GET api/relationships/matches', () => {
     await db.query('DELETE from users');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
+    await db.query('DELETE from classmates');
   });
 
   it('must require the user to exist and have a profile setup', async () => {
@@ -179,5 +180,19 @@ describe('GET api/relationships/matches', () => {
     expect(res.body.data.length).toBe(2);
   });
 
-  // Check that a relationship with likes but also blocks does not get matched
+  it('should not get a match with a blocked user', async () => {
+    const person = await dbUtils.createUser('person04', true);
+    await dbUtils.createRelationship(me.id, person.id, true, true, true);
+    await dbUtils.createRelationship(person.id, me.id, true, true, true);
+    await dbUtils.banUser(person.id);
+    const res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
+    // We should not recieve a result for the banned one
+    expect(res.body.data.length).toBe(2);
+  });
 });

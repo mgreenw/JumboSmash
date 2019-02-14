@@ -61,6 +61,14 @@ async function createProfile(userId, body) {
   }
 }
 
+async function banUser(id) {
+  await db.query(`
+    UPDATE classmates
+    SET banned = true
+    WHERE id = $1
+  `, [id]);
+}
+
 async function createUser(utln, useDefaultProfile = false, profileBody = null) {
   const email = `${utln}@tufts.edu`;
 
@@ -174,4 +182,5 @@ module.exports = {
   signToken,
   createRelationship,
   insertPhoto,
+  banUser,
 };

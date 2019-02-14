@@ -55,8 +55,11 @@ const getMatches = async (userId: number) => {
       AND they_critic.critic_user_id = me_critic.candidate_user_id
     JOIN profiles they_profile
       ON they_profile.user_id = me_critic.candidate_user_id
+    JOIN classmates them
+      ON they_profile.user_id = them.id
     WHERE
-      me_critic.critic_user_id = ${userId}
+      NOT them.banned
+      AND me_critic.critic_user_id = ${userId}
       AND me_critic.candidate_user_id = they_critic.critic_user_id
       AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
       AND
