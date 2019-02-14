@@ -1,49 +1,36 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import {
-  Text,
-  View,
-  TouchableWithoutFeeback,
-  TouchableOpacity,
-  TouchableHighlight,
-  Image,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, Icon } from 'react-native-elements';
 import type { Dispatch } from 'redux';
 import type {
   ReduxState,
   Candidate,
   UserProfile,
   SceneCandidates,
-  GetSceneCandidatesInProgress,
+  GetSceneCandidatesInProgress
 } from 'mobile/reducers/index';
-import { getSceneCandidatesAction } from 'mobile/actions/app/getSceneCandidates';
+import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import { routes } from 'mobile/components/Navigation';
-import Deck from './Deck';
-import type { swipeDirection } from './Deck';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
-import NavigationService from 'mobile/NavigationService';
 import DevTesting from 'mobile/utils/DevTesting';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import type { swipeDirection } from './Deck';
+import Deck from './Deck';
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type reduxProps = {
   sceneCandidates: SceneCandidates,
   getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
-  token: ?string,
+  token: ?string
 };
 
 type dispatchProps = { getSceneCandidates: (scene: string) => void };
@@ -51,88 +38,41 @@ type dispatchProps = { getSceneCandidates: (scene: string) => void };
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean,
+  swipeGestureInProgress: boolean
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     sceneCandidates: reduxState.sceneCandidates,
     getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
-    token: reduxState.token,
+    token: reduxState.token
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     getSceneCandidates: (scene: string) => {
       dispatch(getSceneCandidatesAction(scene));
-    },
+    }
   };
 }
-
-//TODO: remove b/c dummy
-let DATA: Array<Candidate> = [
-  {
-    userId: 1,
-    profile: {
-      fields: {
-        displayName: 'Anthony',
-        birthday: '21',
-        bio: 'BIO',
-      },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 2,
-    profile: {
-      fields: { displayName: 'Tony', birthday: '22', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 3,
-    profile: {
-      fields: { displayName: 'Ant', birthday: '69', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 4,
-    profile: {
-      fields: { displayName: 'T-dawg', birthday: '47', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-];
 
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false,
+      swipeGestureInProgress: false
     };
   }
 
   componentWillMount() {
-    if (
-      !this.props.getSceneCandidatesInProgress.smash &&
-      this.props.sceneCandidates.smash === null
-    ) {
-      this.props.getSceneCandidates('smash');
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      !this.props.getSceneCandidatesInProgress.smash &&
-      this.props.sceneCandidates.smash === null &&
-      false
-    ) {
-      this.props.getSceneCandidates('smash');
+    const {
+      sceneCandidates,
+      getSceneCandidatesInProgress,
+      getSceneCandidates
+    } = this.props;
+    if (!getSceneCandidatesInProgress.smash && sceneCandidates.smash === null) {
+      getSceneCandidates('smash');
     }
   }
 
@@ -145,7 +85,7 @@ class SwipingScreen extends React.Component<Props, State> {
           navigation.navigate(routes.ExpandedCard, {
             profile,
             onMinimize: () => navigation.pop(),
-            token,
+            token
           })
         }
         token={token}
@@ -153,20 +93,18 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderEmpty = () => {
-    return <Text>Too picky</Text>;
-  };
+  _renderEmpty = () => <Text>Too picky</Text>;
 
   _onSwipeStart = () => {
     DevTesting.log('swiping');
   };
 
   _onSwipeRight = (user: Candidate) => {
-    DevTesting.log('Card liked: ' + user.profile.fields.displayName);
+    DevTesting.log(`Card liked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    DevTesting.log('Card disliked: ' + user.profile.fields.displayName);
+    DevTesting.log(`Card disliked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeComplete = () => {
@@ -180,7 +118,7 @@ class SwipingScreen extends React.Component<Props, State> {
       if (this.deck) {
         this.deck._forceSwipe(swipeDirection, 750);
       } else {
-        throw 'this.deck is null in Cards_Screen';
+        throw new Error('this.deck is null in Cards_Screen');
       }
     });
   };
@@ -196,13 +134,9 @@ class SwipingScreen extends React.Component<Props, State> {
   deck: ?Deck;
 
   render() {
-    const {
-      navigation,
-      sceneCandidates,
-      getSceneCandidatesInProgress,
-    } = this.props;
-    //If we are fetching scene candidates or haven't fetched any yet
-    //TODO: Show loading animation
+    const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
+    // If we are fetching scene candidates or haven't fetched any yet
+    // TODO: Show loading animation
     if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
       return (
         <View>
@@ -211,7 +145,7 @@ class SwipingScreen extends React.Component<Props, State> {
       );
     }
     return (
-      <Transition inline appear={'scale'}>
+      <Transition inline appear="scale">
         <View style={{ flex: 1 }}>
           <GEMHeader
             title="PROJECTGEM"
@@ -228,7 +162,7 @@ class SwipingScreen extends React.Component<Props, State> {
               onSwipeRight={this._onSwipeRight}
               onSwipeLeft={this._onSwipeLeft}
               onSwipeComplete={this._onSwipeComplete}
-              infinite={true}
+              infinite
               disableSwipe={false}
             />
             <TouchableOpacity

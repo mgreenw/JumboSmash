@@ -9,7 +9,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   TouchableHighlight,
-  Dimensions,
+  Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 import { styles } from 'mobile/styles/template';
@@ -23,7 +23,7 @@ import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 type Props = {
   profile: UserProfile,
   onCardTap?: () => void,
-  token: ?string,
+  token: ?string
 };
 
 type State = {};
@@ -42,13 +42,13 @@ export default class PreviewCard extends React.Component<Props, State> {
       <View
         style={{
           flex: 1,
-          margin: 20,
+          margin: 20
         }}
       >
         <View
           style={{
             flex: 2,
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           <Image
@@ -57,13 +57,13 @@ export default class PreviewCard extends React.Component<Props, State> {
               width: width * 0.85,
               height: width * 0.85,
               borderRadius: 20,
-              resizeMode: 'contain',
+              resizeMode: 'contain'
             }}
             source={{
               uri: GET_PHOTO__ROUTE + profile.photoIds[0],
               headers: {
-                Authorization: token,
-              },
+                Authorization: token
+              }
             }}
           />
         </View>
@@ -80,7 +80,7 @@ export default class PreviewCard extends React.Component<Props, State> {
               borderRadius: 20,
               shadowOffset: { width: 1, height: 2 },
               shadowColor: 'black',
-              shadowOpacity: 0.2,
+              shadowOpacity: 0.2
             }}
           >
             <Text style={{ fontSize: 28 }}>{`${
