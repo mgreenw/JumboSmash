@@ -53,8 +53,8 @@ export default class PreviewCard extends React.Component<Props, State> {
           <Image
             key={profile.photoIds[0]}
             style={{
-              width: width * 0.85,
-              height: width * 0.85,
+              width: width - 24,
+              height: width - 24,
               borderRadius: 20,
               resizeMode: 'contain'
             }}
