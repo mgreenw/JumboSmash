@@ -1,8 +1,10 @@
-// @flow
-
 import React from 'react';
 import {
-  Text, View, FlatList, TouchableOpacity, RefreshControl,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
@@ -16,16 +18,16 @@ import Avatar from 'mobile/components/shared/Avatar';
 import { ListItem } from 'react-native-elements';
 
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type ReduxProps = {
   matches: ?(Match[]),
-  getMatchesInProgress: boolean,
+  getMatchesInProgress: boolean
 };
 
 type DispatchProps = {
-  getMatches: () => void,
+  getMatches: () => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
@@ -35,7 +37,7 @@ type State = {};
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     matches: reduxState.matches,
-    getMatchesInProgress: reduxState.inProgress.getMatches,
+    getMatchesInProgress: reduxState.inProgress.getMatches
   };
 }
 
@@ -43,12 +45,12 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     getMatches: () => {
       dispatch(getMatchesAction());
-    },
+    }
   };
 }
 
 type Item = {
-  time: string,
+  time: string
 };
 
 const list = [
@@ -58,27 +60,30 @@ const list = [
   { time: '1d' },
   { time: '2d' },
   { time: '2d' },
-  { time: '3d' },
+  { time: '3d' }
 ];
 
 class MessagingScreen extends React.Component<Props, State> {
   keyExtractor = (item: Item, index: number) => `${index}`;
 
   renderItem = item => (
-    <TouchableOpacity style={{ height: 90, width: '100%', paddingHorizontal: 15 }}>
+    <TouchableOpacity
+      style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+    >
       <View
         style={{
           flex: 1,
           flexDirection: 'row',
           marginVertical: 11,
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         <Avatar
           size="large"
           rounded
           source={{
-            uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
+            uri:
+              'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
           }}
         />
         <View
@@ -87,22 +92,28 @@ class MessagingScreen extends React.Component<Props, State> {
             height: '100%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            paddingHorizontal: 15,
+            paddingHorizontal: 15
           }}
         >
           <Text style={textStyles.body1Style}>Name</Text>
-          <Text numberOfLines={2} style={[textStyles.subtitle1Style, { flex: 1 }]}>
-            Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula eget dolor.
+          <Text
+            numberOfLines={2}
+            style={[textStyles.subtitle1Style, { flex: 1 }]}
+          >
+            Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula
+            eget dolor.
           </Text>
         </View>
         <View
           style={{
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            height: '100%',
+            height: '100%'
           }}
         >
-          <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>{item.item.time}</Text>
+          <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
+            {item.item.time}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -121,9 +132,12 @@ class MessagingScreen extends React.Component<Props, State> {
               data={list}
               keyExtractor={this.keyExtractor}
               renderItem={this.renderItem}
-              refreshControl={
-                <RefreshControl refreshing={getMatchesInProgress} onRefresh={getMatches} />
-              }
+              refreshControl={(
+<RefreshControl
+                  refreshing={getMatchesInProgress}
+                  onRefresh={getMatches}
+                />
+)}
             />
           </View>
         </View>
@@ -134,5 +148,5 @@ class MessagingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(MessagingScreen);

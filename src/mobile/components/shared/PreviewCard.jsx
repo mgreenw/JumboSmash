@@ -6,10 +6,9 @@ import {
   Text,
   View,
   ScrollView,
-  Image,
   TouchableWithoutFeedback,
   TouchableHighlight,
-  Dimensions,
+  Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
 import { styles } from 'mobile/styles/template';
@@ -17,13 +16,18 @@ import { Button, Card as RneCard, Icon } from 'react-native-elements';
 import type { Dispatch } from 'redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserProfile } from 'mobile/reducers';
+import { getAge } from 'mobile/utils/Birthday';
+import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
+import { Image } from 'mobile/components/shared/imageCacheFork';
 
 type Props = {
   profile: UserProfile,
-  onCardTap?: () => void,
+  onCardTap?: () => void
 };
 
 type State = {};
+
+const { width } = Dimensions.get('window');
 
 export default class PreviewCard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -37,18 +41,24 @@ export default class PreviewCard extends React.Component<Props, State> {
       <View
         style={{
           flex: 1,
-          margin: 20,
+          margin: 20
         }}
       >
-        <View style={{ flex: 2 }}>
+        <View
+          style={{
+            flex: 2,
+            alignItems: 'center'
+          }}
+        >
           <Image
-            source={{
-              uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-            }}
+            key={profile.photoIds[0]}
             style={{
-              aspectRatio: 1,
+              width: width - 24,
+              height: width - 24,
               borderRadius: 20,
+              resizeMode: 'contain'
             }}
+            uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
           />
         </View>
         <TouchableWithoutFeedback onPress={onCardTap}>
@@ -64,12 +74,12 @@ export default class PreviewCard extends React.Component<Props, State> {
               borderRadius: 20,
               shadowOffset: { width: 1, height: 2 },
               shadowColor: 'black',
-              shadowOpacity: 0.2,
+              shadowOpacity: 0.2
             }}
           >
-            <Text style={{ fontSize: 28 }}>{`${profile.fields.displayName}, ${
-              profile.fields.birthday
-            }`}</Text>
+            <Text style={{ fontSize: 28 }}>{`${
+              profile.fields.displayName
+            }, ${getAge(profile.fields.birthday)}`}</Text>
           </View>
         </TouchableWithoutFeedback>
       </View>

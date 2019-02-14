@@ -1,5 +1,6 @@
 module.exports = {
-  extends: 'airbnb',
+  extends: ['airbnb', 'prettier'],
+  plugins: ['prettier'],
   parser: 'babel-eslint',
   env: {
     jest: true,
@@ -21,5 +22,6 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'react/destructuring/assignment': 'off',
     camelcase: 'off',
+    'prettier/prettier': ['error'],
   },
 };
