@@ -11,6 +11,7 @@ export type GetMatchesInitiated_Action = {
   payload: {},
   meta: {},
 };
+
 export type GetMatchesCompleted_Action = {
   type: 'GET_MATCHES__COMPLETED',
   payload: Match[],
