@@ -22,7 +22,8 @@ In `src/server`...
 2. If anything fails, look at the setup script and re-run the commands manually.
 3. `npm install`
 4. `npm run migrate up`
-5. `npm run dev` (this run script should check your environment and tell you if everything is properly setup)
+5. In a seperate teriminal, run `redis-server`. If you want to set it up to run in the background, run `brew services start redis`.
+6. `npm run dev` (this run script should check your environment and tell you if everything is properly setup)
 
 ### Ubuntu (Tested on 16.04)
 
@@ -58,6 +59,6 @@ psql -U postgres -d jumbosmash -c "CREATE EXTENSION IF NOT EXISTS citext;"
 npm install
 npm run migrate up
 
-# This run script should check your environment and tell you if everything is properly setup
+# This run script should check your environment and tell you if everything is properly setup.
 npm run dev
 ```
