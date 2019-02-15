@@ -163,7 +163,6 @@ export default class Deck extends React.Component<Props, State> {
     };
   }
 
-  // @flow-disable
   _renderCards(): React.Node[] {
     const { disableSwipe, renderCard, renderEmpty, data } = this.props;
     const { index, panResponder } = this.state;
