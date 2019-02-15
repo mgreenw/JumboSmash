@@ -79,3 +79,5 @@ typings/
 .DS_Store
 production.json
 .vscode
+
+/flow-typed
