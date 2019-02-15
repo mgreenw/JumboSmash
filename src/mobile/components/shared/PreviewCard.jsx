@@ -55,9 +55,9 @@ export default class PreviewCard extends React.Component<Props, State> {
             style={{
               width: width - 24,
               height: width - 24,
-              borderRadius: 20,
-              resizeMode: 'contain'
+              borderRadius: 20
             }}
+            resizeMode={'contain'}
             uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
           />
         </View>
