@@ -5,7 +5,7 @@ import React from 'react';
 import { Image, View, Text } from 'react-native';
 import { Font } from 'expo';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { Colors } from 'mobile/styles/colors';
@@ -16,15 +16,15 @@ import { routes } from 'mobile/components/Navigation';
 type reduxProps = {
   appLoaded: boolean,
   loadAppInProgress: boolean,
-  onboardingCompleted: boolean,
+  onboardingCompleted: boolean
 };
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type dispatchProps = {
-  loadApp: () => void,
+  loadApp: () => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -35,15 +35,18 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
-    onboardingCompleted: reduxState.onboardingCompleted,
+    onboardingCompleted: reduxState.onboardingCompleted
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     loadApp: () => {
       dispatch(loadApp());
-    },
+    }
   };
 }
 
@@ -57,7 +60,10 @@ class AppLoadingScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps, prevState) {
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (this.props.appLoaded && prevProps.loadAppInProgress != this.props.loadAppInProgress) {
+    if (
+      this.props.appLoaded &&
+      prevProps.loadAppInProgress != this.props.loadAppInProgress
+    ) {
       const { navigate } = this.props.navigation;
       if (!this.props.onboardingCompleted) {
         navigate(routes.OnboardingStack);
@@ -80,7 +86,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
             style={{
               flex: 1,
               width: null,
-              height: null,
+              height: null
             }}
             source={require('../../assets/arthurIcon.png')} // TODO: investigate why  mobile/ does not work
           />
@@ -91,7 +97,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
             justifyContent: 'center',
             alignItems: 'stretch',
             paddingLeft: 60,
-            paddingRight: 60,
+            paddingRight: 60
           }}
         >
           <ProgressBar
@@ -112,5 +118,5 @@ class AppLoadingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AppLoadingScreen);

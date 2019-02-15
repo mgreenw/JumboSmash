@@ -2,15 +2,24 @@
 
 import * as React from 'react';
 import {
-  Dimensions, View, StyleSheet, ImageBackground, ScrollView, Platform,
+  Dimensions,
+  View,
+  StyleSheet,
+  ImageBackground,
+  ScrollView,
+  Platform
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
 import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GEMHeader from 'mobile/components/shared/Header';
-import type { ReduxState, UserProfile, ProfileFields } from 'mobile/reducers';
+import type {
+  ReduxState,
+  UserProfile,
+  ProfileFields,
+  Dispatch
+} from 'mobile/reducers';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { saveProfileFieldsAction } from 'mobile/actions/app/saveProfile';
 import NavigationService from 'mobile/NavigationService';
@@ -22,7 +31,11 @@ const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScr
 const PlatformSpecificScrollView = (props: { children: React.Node }) => {
   const { children } = props;
   if (Platform.OS === 'ios') {
-    return <KeyboardAwareScrollView extraScrollHeight={35}>{children}</KeyboardAwareScrollView>;
+    return (
+      <KeyboardAwareScrollView extraScrollHeight={35}>
+        {children}
+      </KeyboardAwareScrollView>
+    );
   }
   return (
     <KeyboardView waves={false} verticalOffset={50}>
@@ -38,25 +51,25 @@ const styles = StyleSheet.create({
     paddingRight: 32,
     paddingTop: 20,
     marginBottom: 20,
-    paddingBottom: 20,
-  },
+    paddingBottom: 20
+  }
 });
 
 type NavigationProps = {};
 
 type ReduxProps = {
-  profile: UserProfile,
+  profile: UserProfile
 };
 
 type DispatchProps = {
-  saveProfileFields: (fields: ProfileFields) => void,
+  saveProfileFields: (fields: ProfileFields) => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
   editedProfileFields: ProfileFields,
-  errorMessageName: string,
+  errorMessageName: string
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -64,7 +77,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('Redux Client is null in Profile Edit');
   }
   return {
-    profile: reduxState.client.profile,
+    profile: reduxState.client.profile
   };
 }
 
@@ -72,7 +85,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     saveProfileFields: (fields: ProfileFields) => {
       dispatch(saveProfileFieldsAction(fields));
-    },
+    }
   };
 }
 
@@ -81,7 +94,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       editedProfileFields: props.profile.fields,
-      errorMessageName: '',
+      errorMessageName: ''
     };
   }
 
@@ -89,8 +102,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
     this.setState(state => ({
       editedProfileFields: {
         ...state.editedProfileFields,
-        bio,
-      },
+        bio
+      }
     }));
   };
 
@@ -98,8 +111,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
     this.setState(state => ({
       editedProfileFields: {
         ...state.editedProfileFields,
-        displayName,
-      },
+        displayName
+      }
     }));
   };
 
@@ -122,7 +135,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const { editedProfileFields, errorMessageName } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Edit Profile" leftIconName="back" onLeftIconPress={this._onBack} />
+        <GEMHeader
+          title="Edit Profile"
+          leftIconName="back"
+          onLeftIconPress={this._onBack}
+        />
         <View style={{ flex: 1 }}>
           <ImageBackground
             source={wavesFull}
@@ -146,7 +163,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 style={{
                   maxHeight: 210,
                   marginBottom: 30,
-                  width: '100%',
+                  width: '100%'
                 }}
               >
                 <BioInput
@@ -165,5 +182,5 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ProfileEditScreen);

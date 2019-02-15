@@ -4,9 +4,8 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { Font, Asset } from 'expo';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
-import type { ReduxState } from 'mobile/reducers/index';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { routes } from 'mobile/components/Navigation';
 import DevTesting from 'mobile/utils/DevTesting';
@@ -18,15 +17,15 @@ const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScr
 type ReduxProps = {
   token: ?string,
   loadAuthInProgress: boolean,
-  authLoaded: boolean,
+  authLoaded: boolean
 };
 
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type DispatchProps = {
-  loadAuth: void => void,
+  loadAuth: void => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
@@ -36,7 +35,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
-    authLoaded: reduxState.authLoaded,
+    authLoaded: reduxState.authLoaded
   };
 }
 
@@ -44,13 +43,13 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     loadAuth: () => {
       dispatch(loadAuthAction());
-    },
+    }
   };
 }
 
 // https://docs.expo.io/versions/v32.0.0/guides/preloading-and-caching-assets/
 function cacheImages(images) {
-  return images.map((image) => {
+  return images.map(image => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
     }
@@ -93,14 +92,14 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       { vegan: require('../../assets/fonts/Vegan-Regular.ttf') },
 
       {
-        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf'),
+        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf')
       },
       {
-        gemicons: require('../../assets/icons/gemicons.ttf'),
+        gemicons: require('../../assets/icons/gemicons.ttf')
       },
       {
-        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf'),
-      },
+        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf')
+      }
     ];
     /* eslint-enable */
 
@@ -114,7 +113,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         const { loadAuth } = this.props;
         loadAuth();
       })
-      .catch((e) => {
+      .catch(e => {
         DevTesting.log('Error importing fonts:', e);
       });
   }
@@ -129,7 +128,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             style={{
               flex: 1,
               width: null,
-              height: null,
+              height: null
             }}
             source={ArthurIcon} // TODO: investigate why  mobile/ does not work
           />
@@ -142,5 +141,5 @@ class AuthLoadingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AuthLoadingScreen);

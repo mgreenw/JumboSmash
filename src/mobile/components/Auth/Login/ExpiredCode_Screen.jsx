@@ -5,7 +5,7 @@ import React from 'react';
 import { Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { styles } from 'mobile/styles/auth';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -15,7 +15,7 @@ import GEMHeader from 'mobile/components/shared/Header';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {};
@@ -48,5 +48,5 @@ class ExpiredCodeScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ExpiredCodeScreen);

@@ -1,7 +1,6 @@
 // @flow
 
-import type { Dispatch } from 'mobile/reducers';
-import type { Candidate, Scene } from 'mobile/reducers';
+import type { Candidate, Scene, Dispatch } from 'mobile/reducers';
 import getSceneCandidates from 'mobile/api/relationships/getSceneCandidates';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -43,11 +42,10 @@ function complete(
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export default (scene: Scene) => (dispatch: Dispatch, getState: GetState) => {
-  const { token } = getState();
+export default (scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate(scene));
   DevTesting.fakeLatency(() => {
-    getSceneCandidates(token, scene)
+    getSceneCandidates(scene)
       .then(candidates => {
         dispatch(complete(candidates, scene));
       })

@@ -2,12 +2,12 @@
 /* eslint-disable */
 
 import type { login_response } from 'mobile/actions/auth/login';
-import { apiRequest } from '../utils/apiRequest';
+import apiRequest from '../utils/apiRequest';
 import { VERIFY__ROUTE } from '../routes';
 
 type request = {
   utln: string,
-  code: string,
+  code: string
 };
 
 const VERIFY__SUCCESS = 'VERIFY__SUCCESS';
@@ -18,26 +18,26 @@ const VERIFY__NO_EMAIL_SENT = 'VERIFY__NO_EMAIL_SENT';
 export default function verify(request: request): Promise<login_response> {
   // Send a request to the server to check if UTLN is valid. If it is, send
   // a verification email, and return that email address.
-  return apiRequest('POST', VERIFY__ROUTE, null, request)
+  return apiRequest('POST', VERIFY__ROUTE, request)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
         case VERIFY__SUCCESS:
           return {
             statusCode: 'SUCCESS',
-            token: response.data.token,
+            token: response.data.token
           };
         case VERIFY__BAD_CODE:
           return {
-            statusCode: 'BAD_CODE',
+            statusCode: 'BAD_CODE'
           };
         case VERIFY__EXPIRED_CODE:
           return {
-            statusCode: 'EXPIRED_CODE',
+            statusCode: 'EXPIRED_CODE'
           };
         case VERIFY__NO_EMAIL_SENT:
           return {
-            statusCode: 'NO_EMAIL_SENT',
+            statusCode: 'NO_EMAIL_SENT'
           };
         default:
           throw { response };

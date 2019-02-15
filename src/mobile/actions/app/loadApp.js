@@ -69,24 +69,19 @@ function complete(
 
 // TODO: catch errors, e.g. the common network timeout.
 export function loadApp() {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      getMyProfile({
-        token
-      })
+      getMyProfile()
         .then(profile => {
           // if profile is null, onboarding has not been completed, though
           // some photos may have been uploaded.
           if (profile === null) {
-            getMyPhotos(token).then(photoIds => {
+            getMyPhotos().then(photoIds => {
               dispatch(complete(null, null, false, photoIds));
             });
           } else {
-            getMySettings({
-              token
-            }).then(settings => {
+            getMySettings().then(settings => {
               dispatch(complete(profile, settings, true));
             });
           }

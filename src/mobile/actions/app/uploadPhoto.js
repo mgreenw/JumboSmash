@@ -41,14 +41,13 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
 
 // TODO: catch errors, e.g. the common network timeout.
 export function uploadPhotoAction(uri: string) {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
-    getSignedUrl(token)
+    getSignedUrl()
       .then(payload => {
         uploadPhotoToS3(uri, payload).then(success => {
           if (success) {
-            confirmUpload(token).then(photoIds => {
+            confirmUpload().then(photoIds => {
               dispatch(complete(photoIds));
             });
           } else {

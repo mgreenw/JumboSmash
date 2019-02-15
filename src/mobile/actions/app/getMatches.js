@@ -1,8 +1,7 @@
 // @flow
 
-import type { Dispatch } from 'mobile/reducers';
-import type { Match } from 'mobile/reducers';
-import { getMatches } from 'mobile/api/relationships/getMatches';
+import type { Dispatch, Match } from 'mobile/reducers';
+import getMatchesApi from 'mobile/api/relationships/getMatches';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
@@ -35,11 +34,10 @@ function complete(matches: Match[]): GetMatchesCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export default () => (dispatch: Dispatch, getState: GetState) => {
-  const { token } = getState();
+export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   DevTesting.fakeLatency(() => {
-    getMatches(token)
+    getMatchesApi()
       .then(matches => {
         dispatch(complete(matches));
       })

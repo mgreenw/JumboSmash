@@ -40,11 +40,10 @@ function complete(fields: ProfileFields): SaveProfileFieldsCompleted_Action {
 
 // TODO: catch errors, e.g. the common network timeout.
 export function saveProfileFieldsAction(fields: ProfileFields) {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      updateMyProfileFields(token, fields)
+      updateMyProfileFields(fields)
         .then(newFields => {
           dispatch(complete(newFields));
         })

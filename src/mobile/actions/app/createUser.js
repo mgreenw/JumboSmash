@@ -40,15 +40,14 @@ export function createUserAction(
   fields: ProfileFields,
   settings: UserSettings
 ) {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
       // Important that they occur in this order; we use a created profile
       // to determine that onboarding is done, so settings must be created first
-      updateMySettings(token, settings)
+      updateMySettings(settings)
         .then(() => {
-          createMyProfileFields(token, fields).then(() => {
+          createMyProfileFields(fields).then(() => {
             dispatch(complete());
           });
         })

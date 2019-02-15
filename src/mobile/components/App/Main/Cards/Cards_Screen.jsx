@@ -4,15 +4,15 @@
 import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
 import type {
   ReduxState,
   Candidate,
   UserProfile,
   SceneCandidates,
   GetSceneCandidatesInProgress,
-  Scene
-} from 'mobile/reducers/index';
+  Scene,
+  Dispatch
+} from 'mobile/reducers';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import { routes } from 'mobile/components/Navigation';
 import PreviewCard from 'mobile/components/shared/PreviewCard';

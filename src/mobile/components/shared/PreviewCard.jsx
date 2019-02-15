@@ -13,7 +13,7 @@ import {
 import { connect } from 'react-redux';
 import { styles } from 'mobile/styles/template';
 import { Button, Card as RneCard, Icon } from 'react-native-elements';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserProfile } from 'mobile/reducers';
 import { getAge } from 'mobile/utils/Birthday';
