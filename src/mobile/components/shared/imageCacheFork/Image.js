@@ -101,8 +101,8 @@ export default class Image extends React.Component<ImageProps, ImageState> {
           StyleSheet.flatten(style),
           (value, key) => propsToCopy.indexOf(key) !== -1
         ),
-        // $FlowFixMe
         (result, value, key) =>
+          // $FlowFixMe
           Object.assign(result, { [key]: value - (style.borderWidth || 0) })
       )
     ];
