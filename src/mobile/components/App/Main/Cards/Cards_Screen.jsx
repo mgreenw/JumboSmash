@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import type {
@@ -23,6 +23,8 @@ import DevTesting from 'mobile/utils/DevTesting';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { swipeDirection } from './Deck';
 import Deck from './Deck';
+
+const ArthurLoading = require('../../../../assets/arthurLoading.gif');
 
 type navigationProps = {
   navigation: any
@@ -132,22 +134,46 @@ class SwipingScreen extends React.Component<Props, State> {
 
   render() {
     const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
+    let renderedContent;
     // If we are fetching scene candidates or haven't fetched any yet
-    // TODO: Show loading animation
     if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
-      return (
-        <View>
-          <Text>LOADING</Text>
-        </View>
+      renderedContent = (
+        <Image
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            height: null,
+            width: null,
+            marginTop: 46,
+            marginBottom: 182
+          }}
+          source={ArthurLoading}
+        />
+      );
+    } else if (
+      sceneCandidates.smash === null ||
+      sceneCandidates.smash === undefined
+    ) {
+      throw new Error('Smash candidates is null or undefined');
+    } else {
+      renderedContent = (
+        <Deck
+          ref={deck => (this.deck = deck)}
+          data={sceneCandidates.smash}
+          renderCard={this._renderCard}
+          renderEmpty={this._renderEmpty}
+          onSwipeStart={this._onSwipeStart}
+          onSwipeRight={this._onSwipeRight}
+          onSwipeLeft={this._onSwipeLeft}
+          onSwipeComplete={this._onSwipeComplete}
+          infinite
+          disableSwipe={false}
+        />
       );
     }
 
-    if (sceneCandidates.smash === null || sceneCandidates.smash === undefined) {
-      throw new Error('Smash candidates is null or undefined');
-    }
-
     return (
-      <Transition inline appear="scale">
+      <Transition inline appear="left">
         <View style={{ flex: 1 }}>
           <GEMHeader
             title="PROJECTGEM"
@@ -155,18 +181,7 @@ class SwipingScreen extends React.Component<Props, State> {
             leftIconName="user"
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
-            <Deck
-              ref={deck => (this.deck = deck)}
-              data={sceneCandidates.smash}
-              renderCard={this._renderCard}
-              renderEmpty={this._renderEmpty}
-              onSwipeStart={this._onSwipeStart}
-              onSwipeRight={this._onSwipeRight}
-              onSwipeLeft={this._onSwipeLeft}
-              onSwipeComplete={this._onSwipeComplete}
-              infinite
-              disableSwipe={false}
-            />
+            {renderedContent}
             <TouchableOpacity
               onPress={() => this._onPressSwipeButton('left')}
               style={Arthur_Styles.swipeButton_dislike}
