@@ -1,6 +1,7 @@
 // @flow
+/* eslint react/no-unused-state: 0 */
 
-import React from 'react';
+import * as React from 'react';
 import {
   View,
   Animated,
@@ -14,7 +15,7 @@ import DevTesting from 'mobile/utils/DevTesting';
 
 const RIGHT = 'right';
 const LEFT = 'left';
-export type swipeDirection = 'left' | 'right';
+export type SwipeDirection = 'left' | 'right';
 
 type Props = {
   data: Candidate[],
@@ -118,7 +119,7 @@ export default class Deck extends React.Component<Props, State> {
     }
   }
 
-  _forceSwipe(swipeDirection: swipeDirection, duration: number) {
+  _forceSwipe(swipeDirection: SwipeDirection, duration: number) {
     const { position } = this.state;
     const x = swipeDirection === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
@@ -128,11 +129,15 @@ export default class Deck extends React.Component<Props, State> {
     }).start(() => this._onSwipeComplete(swipeDirection));
   }
 
-  _onSwipeComplete(swipeDirection: swipeDirection) {
+  _onSwipeComplete(swipeDirection: SwipeDirection) {
     const { onSwipeRight, onSwipeLeft, onSwipeComplete, data } = this.props;
     const { index, position } = this.state;
     const item = data[index];
-    swipeDirection === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
+    if (swipeDirection === RIGHT) {
+      onSwipeRight(item);
+    } else {
+      onSwipeLeft(item);
+    }
     position.setValue({ x: 0, y: 0 });
     onSwipeComplete();
     this.setState({ index: index + 1 });
@@ -158,7 +163,7 @@ export default class Deck extends React.Component<Props, State> {
     };
   }
 
-  _renderCards() {
+  _renderCards(): React.Node[] {
     const { disableSwipe, renderCard, renderEmpty, data } = this.props;
     const { index, panResponder } = this.state;
     if (index >= data.length) {
