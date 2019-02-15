@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch, GetState } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { Match } from 'mobile/reducers';
 import { getMatches } from 'mobile/api/relationships/getMatches';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
@@ -9,20 +9,20 @@ import DevTesting from '../../utils/DevTesting';
 export type GetMatchesInitiated_Action = {
   type: 'GET_MATCHES__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 
 export type GetMatchesCompleted_Action = {
   type: 'GET_MATCHES__COMPLETED',
   payload: Match[],
-  meta: {},
+  meta: {}
 };
 
 function initiate(): GetMatchesInitiated_Action {
   return {
     type: 'GET_MATCHES__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -30,7 +30,7 @@ function complete(matches: Match[]): GetMatchesCompleted_Action {
   return {
     type: 'GET_MATCHES__COMPLETED',
     payload: matches,
-    meta: {},
+    meta: {}
   };
 }
 
@@ -40,10 +40,10 @@ export default () => (dispatch: Dispatch, getState: GetState) => {
   dispatch(initiate());
   DevTesting.fakeLatency(() => {
     getMatches(token)
-      .then((matches) => {
+      .then(matches => {
         dispatch(complete(matches));
       })
-      .catch((error) => {
+      .catch(error => {
         dispatch(apiErrorHandler(error));
       });
   });

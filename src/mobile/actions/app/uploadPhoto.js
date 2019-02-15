@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch, GetState } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import DevTesting from 'mobile/utils/DevTesting';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import { getSignedUrl } from 'mobile/api/photos/getSignedUrl';
@@ -11,21 +11,21 @@ import { confirmUpload } from 'mobile/api/photos/confirmUpload';
 export type UploadPhotoInitiated_Action = {
   type: 'UPLOAD_PHOTO__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type UploadPhotoCompleted_Action = {
   type: 'UPLOAD_PHOTO__COMPLETED',
   payload: {
-    photoIds: number[],
+    photoIds: number[]
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): UploadPhotoInitiated_Action {
   return {
     type: 'UPLOAD_PHOTO__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -33,9 +33,9 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   return {
     type: 'UPLOAD_PHOTO__COMPLETED',
     payload: {
-      photoIds,
+      photoIds
     },
-    meta: {},
+    meta: {}
   };
 }
 

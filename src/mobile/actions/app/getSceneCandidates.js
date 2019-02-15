@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch, GetState } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { Candidate, Scene } from 'mobile/reducers';
 import getSceneCandidates from 'mobile/api/relationships/getSceneCandidates';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
