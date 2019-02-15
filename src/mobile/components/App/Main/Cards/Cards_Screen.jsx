@@ -1,4 +1,5 @@
 // @flow
+/* eslint react/no-unused-state: 0 */
 
 import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
@@ -21,7 +22,7 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import DevTesting from 'mobile/utils/DevTesting';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
-import type { swipeDirection } from './Deck';
+import type { SwipeDirection } from './Deck';
 import Deck from './Deck';
 
 type navigationProps = {
@@ -108,9 +109,7 @@ class SwipingScreen extends React.Component<Props, State> {
     this.setState({ swipeGestureInProgress: false });
   };
 
-  _onPressSwipeButton = (swipeDirection: swipeDirection) => {
-    const { swipeGestureInProgress } = this.state;
-
+  _onPressSwipeButton = (swipeDirection: SwipeDirection) => {
     this.setState({ swipeGestureInProgress: true }, () => {
       if (this.deck) {
         this.deck._forceSwipe(swipeDirection, 750);
