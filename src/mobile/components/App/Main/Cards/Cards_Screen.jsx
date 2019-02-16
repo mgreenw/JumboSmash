@@ -24,7 +24,8 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { swipeDirection } from './Deck';
 import Deck from './Deck';
 
-const ArthurLoading = require('../../../../assets/arthurLoading.gif');
+const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
+const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
 
 type navigationProps = {
   navigation: any
@@ -40,7 +41,8 @@ type dispatchProps = { getSceneCandidates: (scene: Scene) => void };
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean
+  swipeGestureInProgress: boolean,
+  loadingSource: string
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -62,19 +64,29 @@ class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false
+      swipeGestureInProgress: false,
+      loadingSource: ArthurLoadingImage
     };
   }
 
-  componentWillMount() {
-    const {
-      sceneCandidates,
-      getSceneCandidatesInProgress,
-      getSceneCandidates
-    } = this.props;
-    if (!getSceneCandidatesInProgress.smash && sceneCandidates.smash === null) {
-      getSceneCandidates('smash');
-    }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ loadingSource: ArthurLoadingGif }, () => {
+        const {
+          sceneCandidates,
+          getSceneCandidatesInProgress,
+          getSceneCandidates
+        } = this.props;
+        setTimeout(() => {
+          if (
+            !getSceneCandidatesInProgress.smash &&
+            sceneCandidates.smash === null
+          ) {
+            getSceneCandidates('smash');
+          }
+        }, 2000);
+      });
+    }, 1200);
   }
 
   _renderCard = (profile: UserProfile) => {
@@ -134,6 +146,7 @@ class SwipingScreen extends React.Component<Props, State> {
 
   render() {
     const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
+    const { loadingSource } = this.state;
     let renderedContent;
     // If we are fetching scene candidates or haven't fetched any yet
     if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
@@ -147,7 +160,7 @@ class SwipingScreen extends React.Component<Props, State> {
             marginTop: 46,
             marginBottom: 182
           }}
-          source={ArthurLoading}
+          source={loadingSource}
         />
       );
     } else if (
@@ -173,7 +186,7 @@ class SwipingScreen extends React.Component<Props, State> {
     }
 
     return (
-      <Transition inline appear="left">
+      <Transition inline appear="scale">
         <View style={{ flex: 1 }}>
           <GEMHeader
             title="PROJECTGEM"
