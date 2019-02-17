@@ -81,3 +81,7 @@ export const SCENE_CANDIDATES__ROUTES = {
 // Matches
 const MATCHES = '/matches/';
 export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;
+
+// Judge
+const JUDGE = '/judge/';
+export const JUDGE_SCENE_CANDIDATE__ROUTE = RELATIONSHIPS_ROUTE + JUDGE;

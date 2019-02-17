@@ -14,6 +14,7 @@ import type {
   Dispatch
 } from 'mobile/reducers';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
+import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import { routes } from 'mobile/components/Navigation';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
@@ -37,7 +38,14 @@ type reduxProps = {
   getSceneCandidatesInProgress: GetSceneCandidatesInProgress
 };
 
-type dispatchProps = { getSceneCandidates: (scene: Scene) => void };
+type dispatchProps = {
+  getSceneCandidates: (scene: Scene) => void,
+  judgeSceneCandidate: (
+    candidateUserId: number,
+    scene: Scene,
+    liked: boolean
+  ) => void
+};
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
@@ -57,6 +65,13 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     getSceneCandidates: (scene: Scene) => {
       dispatch(getSceneCandidatesAction(scene));
+    },
+    judgeSceneCandidate: (
+      candidateUserId: number,
+      scene: Scene,
+      liked: boolean
+    ) => {
+      dispatch(judgeSceneCandidateAction(candidateUserId, scene, liked));
     }
   };
 }
@@ -96,7 +111,7 @@ class SwipingScreen extends React.Component<Props, State> {
       <PreviewCard
         profile={profile}
         onCardTap={() =>
-          navigation.navigate(routes.ExpandedCard, {
+          navigation.navigate(routes.CardsExpandedCard, {
             profile,
             onMinimize: () => navigation.pop()
           })
@@ -112,10 +127,14 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeRight = (user: Candidate) => {
+    const { judgeSceneCandidate } = this.props;
+    judgeSceneCandidate(user.userId, 'smash', true);
     DevTesting.log(`Card liked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeLeft = (user: Candidate) => {
+    const { judgeSceneCandidate } = this.props;
+    judgeSceneCandidate(user.userId, 'smash', false);
     DevTesting.log(`Card disliked: ${user.profile.fields.displayName}`);
   };
 

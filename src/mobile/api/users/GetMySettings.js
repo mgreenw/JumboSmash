@@ -9,7 +9,6 @@ const GET_SETTINGS__SUCCESS = 'GET_SETTINGS__SUCCESS';
 export default function getMyProfile(): Promise<?UserSettings> {
   return apiRequest('GET', MY_SETTINGS__ROUTE)
     .then(response => {
-      console.log(response);
       switch (response.status) {
         case GET_SETTINGS__SUCCESS:
           return response.data;

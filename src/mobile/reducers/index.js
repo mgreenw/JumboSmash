@@ -55,6 +55,10 @@ import type {
   GetMatchesInitiated_Action,
   GetMatchesCompleted_Action
 } from 'mobile/actions/app/getMatches';
+import type {
+  JudgeSceneCandidateInitiated_Action,
+  JudgeSceneCandidateCompleted_Action
+} from 'mobile/actions/app/judgeSceneCandidate';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 
@@ -102,6 +106,12 @@ export type SceneCandidates = {
   stone: ?(Candidate[])
 };
 
+export type ExcludeSceneCandidateIds = {
+  smash: number[],
+  social: number[],
+  stone: number[]
+};
+
 export type GetSceneCandidatesInProgress = {
   smash: boolean,
   social: boolean,
@@ -118,7 +128,6 @@ export type ReduxState = {
   // app data:
   client: ?Client,
   token: ?string,
-  sceneCandidates: SceneCandidates,
 
   // action states:
   authLoaded: boolean,
@@ -147,6 +156,8 @@ export type ReduxState = {
     login: ?Login_Response
   },
 
+  sceneCandidates: SceneCandidates,
+  excludeSceneCandidateIds: ExcludeSceneCandidateIds,
   matches: ?(Match[])
 };
 
@@ -176,7 +187,9 @@ export type Action =
   | GetSceneCandidatesInitiated_Action
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
-  | GetMatchesCompleted_Action;
+  | GetMatchesCompleted_Action
+  | JudgeSceneCandidateInitiated_Action
+  | JudgeSceneCandidateCompleted_Action;
 
 export type GetState = () => ReduxState;
 
@@ -217,6 +230,11 @@ const defaultState: ReduxState = {
     smash: null,
     social: null,
     stone: null
+  },
+  excludeSceneCandidateIds: {
+    smash: [],
+    social: [],
+    stone: []
   },
   matches: null
 };
@@ -544,6 +562,35 @@ export default function rootReducer(
       };
     }
 
+    case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
+      const { candidateUserId, scene } = action.payload;
+      const currentSceneCandidates = state.sceneCandidates[scene];
+      if (
+        currentSceneCandidates === null ||
+        currentSceneCandidates === undefined
+      ) {
+        throw new Error(
+          'currentSceneCandidates is null in judge scene candidates'
+        );
+      }
+      const newSceneCandidates = currentSceneCandidates.filter(
+        c => c.userId !== candidateUserId
+      );
+      const newExcludeSceneCandidateIds = state.excludeSceneCandidateIds[scene];
+      newExcludeSceneCandidateIds.push(candidateUserId);
+      return {
+        ...state,
+        sceneCandidates: {
+          ...state.sceneCandidates,
+          [scene]: newSceneCandidates
+        },
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: newExcludeSceneCandidateIds
+        }
+      };
+    }
+
     case 'SAVE_SETTINGS__COMPLETED': {
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
@@ -557,6 +604,22 @@ export default function rootReducer(
         client: {
           ...state.client,
           settings: action.payload
+        }
+      };
+    }
+    case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
+      const { candidateUserId, scene } = action.payload;
+
+      const currentExcludeSceneCandidateIds =
+        state.excludeSceneCandidateIds[scene];
+      const newExcludeSceneCandidateIds = currentExcludeSceneCandidateIds.filter(
+        id => id !== candidateUserId
+      );
+      return {
+        ...state,
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: newExcludeSceneCandidateIds
         }
       };
     }
