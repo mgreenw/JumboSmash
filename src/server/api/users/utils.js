@@ -141,15 +141,15 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
 
   return `
     json_build_object(
-      'he', ${tableName}want_he,
-      'she', ${tableName}want_she,
-      'they', ${tableName}want_they
-    ) AS "wantPronouns",
+      'man', ${tableName}want_he,
+      'woman', ${tableName}want_she,
+      'nonBinary', ${tableName}want_they
+    ) AS "lookingForGenders",
     json_build_object(
-      'he', ${tableName}use_he,
-      'she', ${tableName}use_she,
-      'they', ${tableName}use_they
-    ) AS "usePronouns",
+      'man', ${tableName}use_he,
+      'woman', ${tableName}use_she,
+      'nonBinary', ${tableName}use_they
+    ) AS "identifyAsGenders",
     json_build_object(
       'smash', ${tableName}active_smash,
       'social', ${tableName}active_social,
