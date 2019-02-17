@@ -1,6 +1,6 @@
 // @flow
-
-import type { UserSettings, Dispatch } from 'mobile/reducers';
+import _ from 'lodash';
+import type { UserSettings, Dispatch, GetState } from 'mobile/reducers';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -33,7 +33,14 @@ function complete(settings: UserSettings): SaveSettingsCompleted_Action {
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export default (settings: UserSettings) => (dispatch: Dispatch) => {
+export default (settings: UserSettings) => (
+  dispatch: Dispatch,
+  getState: GetState
+) => {
+  const { client } = getState();
+  if (client && _.isEqual(client.settings, settings)) {
+    return;
+  }
   dispatch(initiate());
   DevTesting.fakeLatency(() => {
     updateMySettings(settings)

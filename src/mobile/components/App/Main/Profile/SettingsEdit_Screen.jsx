@@ -51,8 +51,7 @@ type DispatchProps = {
 type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
-  editedSettings: UserSettings,
-  showOnSmash: boolean // temporary for UI testing
+  editedSettings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -80,8 +79,7 @@ class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      editedSettings: props.settings,
-      showOnSmash: false
+      editedSettings: props.settings
     };
   }
 
@@ -112,6 +110,18 @@ class SettingsScreen extends React.Component<Props, State> {
     }));
   };
 
+  _onSmashSwitchChange = (smash: boolean) => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+        activeScenes: {
+          ...state.editedSettings.activeScenes,
+          smash
+        }
+      }
+    }));
+  };
+
   _onBack = () => {
     const { saveSettings } = this.props;
     const { editedSettings } = this.state;
@@ -120,7 +130,7 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { showOnSmash, editedSettings } = this.state;
+    const { editedSettings } = this.state;
     const { logoutInProgress, logout } = this.props;
     return (
       <View style={{ flex: 1 }}>
@@ -153,18 +163,14 @@ class SettingsScreen extends React.Component<Props, State> {
             >
               <Text style={textStyles.headline6Style}>Show me on Smash</Text>
               <Switch
-                value={showOnSmash}
+                value={editedSettings.activeScenes.smash}
                 tintColor={
                   Colors.AquaMarine /* TODO: investigate if this is deprecated */
                 }
                 onTintColor={Colors.AquaMarine}
                 trackColor={Colors.AquaMarine}
                 ios_backgroundColor={Colors.AquaMarine}
-                onValueChange={value => {
-                  this.setState({
-                    showOnSmash: value
-                  });
-                }}
+                onValueChange={this._onSmashSwitchChange}
               />
             </View>
             <View style={styles.settingsBlock}>

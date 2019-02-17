@@ -73,7 +73,12 @@ export type Genders = {
 
 export type UserSettings = {
   identifyAsGenders: Genders,
-  lookingForGenders: Genders
+  lookingForGenders: Genders,
+  activeScenes: {
+    smash: boolean,
+    social: boolean,
+    stone: boolean
+  }
 };
 
 export type ProfileFields = {
@@ -595,11 +600,12 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
+      console.log(action);
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: false
+          saveSettings: false
         },
         client: {
           ...state.client,
