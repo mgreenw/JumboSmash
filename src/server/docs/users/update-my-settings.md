@@ -15,51 +15,51 @@ are omitted will not be updated.
 
 Provide updated settings fields
 
-* `usePronouns`
+* `identifyAsGenders`
   * Type: `object`
-  * Description: The pronouns that the user uses
+  * Description: The genders that the user identifies as
   * Required: `false`
   * Properties:
-    * `he`
+    * `man`
       * Type: `boolean`
-      * Description: If the user uses the he series pronouns
+      * Description: If the user identifies as a man
       * Required: `false`
-    * `she`
+    * `woman`
       * Type: `boolean`
-      * Description: If the user uses the she series pronouns
+      * Description: If the user identifies as a woman
       * Required: `false`
-    * `they`
+    * `nonBinary`
       * Type: `boolean`
-      * Description: If the user uses the they series pronouns
+      * Description: If the user identifies as non-binary
       * Required: `false`
-* `wantPronouns`
+* `lookingForGenders`
   * Type: `object`
-  * Description: The pronouns that the user wants to match with in Smash
+  * Description: The genders that the user is looking for to match with on Smash
   * Required: `false`
   * Properties:
-    * `he`
+    * `man`
       * Type: `boolean`
-      * Description: If the user wants to match with users that use the `he` series.
+      * Description: If the user wants to match with men
       * Required: `false`
-    * `she`
+    * `woman`
       * Type: `boolean`
-      * Description: If the user wants to match with users that use the `she` series.
+      * Description: If the user wants to match with women
       * Required: `false`
-    * `they`
+    * `nonBinary`
       * Type: `boolean`
-      * Description: If the user wants to match with users that use the `they` series.
+      * Description: If the user wants to match with non-binary people.
       * Required: `false`
 
 **Request body example**
 
 ```json
 {
-    "wantPronouns": {
-        "he": false,
-        "they": true,
+    "lookingForGenders": {
+        "man": false,
+        "nonBinary": true,
     },
-    "usePronouns": {
-        "he": true,
+    "identifyAsGenders": {
+        "man": true,
     }
 }
 ```
@@ -76,15 +76,20 @@ Provide updated settings fields
 {
     "status": "UPDATE_SETTINGS__SUCCESS",
     "data": {
-        "wantPronouns": {
-            "he": false,
-            "she": true,
-            "they": false
+        "lookingForGenders": {
+            "man": false,
+            "woman": false,
+            "nonBinary": false
         },
-        "usePronouns": {
-            "he": false,
-            "she": false,
-            "they": false
+        "identifyAsGenders": {
+            "man": false,
+            "woman": false,
+            "nonBinary": false
+        },
+        "activeScenes": {
+            "smash": false,
+            "social": false,
+            "stone": false
         }
     }
 }
@@ -101,6 +106,6 @@ Provide updated settings fields
 ```json
 {
     "status": "BAD_REQUEST",
-    "message": "usesPronouns should be of expected type 'object'"
+    "message": "identifyAsGenders should be of expected type 'object'"
 }
 ```
