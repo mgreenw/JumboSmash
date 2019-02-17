@@ -6,8 +6,7 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  RefreshControl,
-  Alert
+  RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
@@ -139,7 +138,7 @@ class MessagingScreen extends React.Component<Props> {
     return (
       <Transition inline appear="right">
         <View style={{ flex: 1 }}>
-          <GEMHeader title="Messages" leftIconName="cards" />
+          <GEMHeader title="Messages" leftIconName="cards" borderBottom />
           <View style={{ flex: 1 }}>
             <FlatList
               ListHeaderComponent={<NewMatchesList matches={matches} />}

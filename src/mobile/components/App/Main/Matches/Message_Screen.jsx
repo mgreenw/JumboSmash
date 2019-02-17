@@ -1,13 +1,14 @@
 // @flow
 
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { Alert, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
+import { routes } from 'mobile/components/Navigation';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -45,6 +46,7 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
+    const { navigation } = this.props;
     const { match } = this.state;
     return (
       <Transition inline appear="right">
@@ -57,16 +59,27 @@ class MessagingScreen extends React.Component<Props, State> {
               onRightIconPress={() => {
                 Alert.alert('this should be report and stuff?');
               }}
+              borderBottom
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <Avatar
-              size={'Large'}
-              onPress={() => {
-                Alert.alert('foo doo bar di doo');
-              }}
-              photoId={match.profile.photoIds[0]}
-            />
+          <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(routes.ExpandedCard, {
+                  profile: match.profile,
+                  onMinimize: () => navigation.goBack()
+                })
+              }
+            >
+              <Avatar
+                size={'Large'}
+                onPress={() => {
+                  Alert.alert('foo doo bar di doo');
+                }}
+                photoId={match.profile.photoIds[0]}
+                border
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </Transition>

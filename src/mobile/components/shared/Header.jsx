@@ -16,7 +16,8 @@ type Props = {
   onLeftIconPress?: () => void,
   onRightIconPress?: () => void,
   title: string,
-  loading?: boolean
+  loading?: boolean,
+  borderBottom?: boolean
 };
 /* eslint-enable */
 
@@ -28,8 +29,31 @@ export default (props: Props) => {
     onLeftIconPress,
     onRightIconPress,
     title,
-    loading
+    loading,
+    borderBottom
   } = props;
+
+  const LeftIcon = (
+    <HeaderIcon
+      name={leftIconName}
+      disabled={loading}
+      onPress={onLeftIconPress}
+    />
+  );
+
+  const RightIcon = (
+    <HeaderIcon
+      name={rightIconName}
+      disabled={loading}
+      onPress={onRightIconPress}
+    />
+  );
+
+  const Title = (
+    <View>
+      <Text style={textStyles.headline5Style}>{title}</Text>
+    </View>
+  );
 
   return (
     <View
@@ -40,26 +64,10 @@ export default (props: Props) => {
       <Header
         placement="center"
         backgroundColor="transparent"
-        leftComponent={(
-<HeaderIcon
-            name={leftIconName}
-            disabled={loading}
-            onPress={onLeftIconPress}
-          />
-)}
-        rightComponent={(
-<HeaderIcon
-            name={rightIconName}
-            disabled={loading}
-            onPress={onRightIconPress}
-          />
-)}
-        centerComponent={(
-<View>
-            <Text style={textStyles.headline5Style}>{title}</Text>
-          </View>
-)}
-        outerContainerStyles={{ borderBottomWidth: 0 }}
+        leftComponent={LeftIcon}
+        rightComponent={RightIcon}
+        centerComponent={Title}
+        outerContainerStyles={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />
       <StatusBar barStyle="dark-content" />
     </View>

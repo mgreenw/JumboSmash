@@ -160,7 +160,8 @@ const ProfileStack = createStackNavigator(
 const MatchesStack = createStackNavigator(
   {
     MATCHES_ROUTE: { screen: Matches },
-    MESSAGE_ROUTE: { screen: Message }
+    MESSAGE_ROUTE: { screen: Message },
+    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: MATCHES_ROUTE,

@@ -1,10 +1,9 @@
 // @flow
 
 import React from 'react';
-import { View, Text, FlatList, Alert } from 'react-native';
+import { View, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
 import type { Match } from 'mobile/reducers';
 import { textStyles } from 'mobile/styles/textStyles';
-import { Colors } from 'mobile/styles/colors';
 import Avatar, { MediumWidth } from './Avatar';
 
 type Props = {
@@ -16,24 +15,16 @@ const keyExtractor = (match: Match, index: number) => `${index}`;
 export default class extends React.Component<Props> {
   renderMatchListItem = ({ item: match }: { item: Match }) => {
     return (
-      <View
+      <TouchableOpacity
+        onPress={() => {
+          Alert.alert('Hey you pressed me');
+        }}
         style={{
-          flex: 1,
-          marginHorizontal: 15,
-          borderWidth: 4,
-          borderRadius: 100,
-          borderColor: Colors.AquaMarine
+          marginHorizontal: 15
         }}
       >
-        <Avatar
-          size="Medium"
-          rounded
-          photoId={match.profile.photoIds[0]}
-          onPress={() => {
-            Alert.alert('Hey you pressed me');
-          }}
-        />
-      </View>
+        <Avatar size="Medium" photoId={match.profile.photoIds[0]} border />
+      </TouchableOpacity>
     );
   };
 
