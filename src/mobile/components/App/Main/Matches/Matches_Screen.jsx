@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import {
   Text,
@@ -12,7 +14,7 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
-import AvatarList from 'mobile/components/shared/AvatarList';
+import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
 
 type NavigationProps = {};
@@ -27,8 +29,6 @@ type DispatchProps = {
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
-
-type State = {};
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
@@ -45,78 +45,67 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   };
 }
 
-type Item = {
-  time: string
-};
+class MessagingScreen extends React.Component<Props> {
+  keyExtractor = (item: Match, index: number) => `${index}`;
 
-const list = [
-  { time: '4h' },
-  { time: '6h' },
-  { time: '6h' },
-  { time: '1d' },
-  { time: '2d' },
-  { time: '2d' },
-  { time: '3d' }
-];
-
-class MessagingScreen extends React.Component<Props, State> {
-  keyExtractor = (item: Item, index: number) => `${index}`;
-
-  renderItem = item => (
-    <TouchableOpacity
-      style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
-    >
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-          marginVertical: 11,
-          alignItems: 'center'
-        }}
+  renderMatchListItem = ({ item: match }: { item: Match }) => {
+    return (
+      <TouchableOpacity
+        style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
       >
-        <Avatar
-          size="large"
-          rounded
-          source={{
-            uri:
-              'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
-          }}
-        />
         <View
           style={{
             flex: 1,
-            height: '100%',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            paddingHorizontal: 15
+            flexDirection: 'row',
+            marginVertical: 11,
+            alignItems: 'center'
           }}
         >
-          <Text style={textStyles.body1Style}>Name</Text>
-          <Text
-            numberOfLines={2}
-            style={[textStyles.subtitle1Style, { flex: 1 }]}
+          <Avatar size="Small" rounded photoId={6} onPress={() => {}} />
+          <View
+            style={{
+              flex: 1,
+              height: '100%',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              paddingHorizontal: 15
+            }}
           >
-            Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula
-            eget dolor.
-          </Text>
+            <Text style={textStyles.body1Style}>
+              {match.profile.fields.displayName}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={[textStyles.subtitle1Style, { flex: 1 }]}
+            >
+              Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula
+              eget dolor.
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              height: '100%'
+            }}
+          >
+            <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
+              {'foo'}
+            </Text>
+          </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            height: '100%'
-          }}
-        >
-          <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
-            {item.item.time}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   render() {
     const { getMatchesInProgress, getMatches, matches } = this.props;
+    const refreshComponent = (
+      <RefreshControl
+        refreshing={getMatchesInProgress}
+        onRefresh={getMatches}
+      />
+    );
 
     return (
       <Transition inline appear="right">
@@ -124,16 +113,11 @@ class MessagingScreen extends React.Component<Props, State> {
           <GEMHeader title="Messages" leftIconName="cards" />
           <View style={{ flex: 1 }}>
             <FlatList
-              ListHeaderComponent={<AvatarList matches={matches} />}
-              data={list}
+              ListHeaderComponent={<NewMatchesList matches={matches} />}
+              data={matches}
               keyExtractor={this.keyExtractor}
-              renderItem={this.renderItem}
-              refreshControl={
-                <RefreshControl
-                  refreshing={getMatchesInProgress}
-                  onRefresh={getMatches}
-                />
-              }
+              renderItem={this.renderMatchListItem}
+              refreshControl={refreshComponent}
             />
           </View>
         </View>
