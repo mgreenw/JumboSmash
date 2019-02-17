@@ -46,6 +46,26 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 }
 
 class MessagingScreen extends React.Component<Props> {
+  // return a render list function so we can display this IN the flatlist
+  renderGenesisText = (hasNewMatches: boolean) => () => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          marginHorizontal: 5,
+          paddingHorizontal: 15,
+          marginVertical: 20
+        }}
+      >
+        <Text style={textStyles.headline5Style}>
+          {hasNewMatches
+            ? 'Why so shy? Click on a match to start chatting!'
+            : 'No matches, no messages! Get swiping to start sliding into those dm’s.'}
+        </Text>
+      </View>
+    );
+  };
+
   keyExtractor = (item: Match, index: number) => `${index}`;
 
   renderMatchListItem = ({ item: match }: { item: Match }) => {
@@ -114,9 +134,13 @@ class MessagingScreen extends React.Component<Props> {
           <View style={{ flex: 1 }}>
             <FlatList
               ListHeaderComponent={<NewMatchesList matches={matches} />}
-              data={matches}
+              data={matches || [1]}
               keyExtractor={this.keyExtractor}
-              renderItem={this.renderMatchListItem}
+              renderItem={
+                matches
+                  ? this.renderMatchListItem
+                  : this.renderGenesisText(false)
+              }
               refreshControl={refreshComponent}
             />
           </View>
