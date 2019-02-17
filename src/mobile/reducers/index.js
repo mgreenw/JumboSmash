@@ -52,6 +52,7 @@ import type {
   GetMatchesCompleted_Action
 } from 'mobile/actions/app/getMatches';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
+import type { Dispatch as ReduxDispatch } from 'redux';
 
 // /////////////
 // USER TYPES:
@@ -169,6 +170,12 @@ export type Action =
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
   | GetMatchesCompleted_Action;
+
+export type GetState = () => ReduxState;
+
+// eslint-disable-next-line no-use-before-define
+export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
+export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
   token: null,

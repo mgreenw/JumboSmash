@@ -2,11 +2,17 @@
 /* eslint-disable */
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Image as RNImage, Animated, StyleSheet, View, Platform } from 'react-native';
+import {
+  Image as RNImage,
+  Animated,
+  StyleSheet,
+  View,
+  Platform
+} from 'react-native';
 import { BlurView } from 'expo';
 import { type ____ImageStyleProp_Internal as ImageStyle } from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 import type { ImageSourcePropType } from 'react-native/Libraries/Image/ImageSourcePropType';
-import { store } from 'mobile/store';
+import store from 'mobile/store';
 import type { ReduxState } from 'mobile/reducers';
 
 import CacheManager, { type DownloadOptions } from './CacheManager';
@@ -19,12 +25,12 @@ type ImageProps = {
   // options?: ?DownloadOptions,
   uri: string,
   transitionDuration?: number,
-  tint?: 'dark' | 'light',
+  tint?: 'dark' | 'light'
 };
 
 type ImageState = {
   uri: ?string,
-  intensity: Animated.Value,
+  intensity: Animated.Value
 };
 
 export default class Image extends React.Component<ImageProps, ImageState> {
@@ -32,12 +38,12 @@ export default class Image extends React.Component<ImageProps, ImageState> {
 
   static defaultProps = {
     transitionDuration: 300,
-    tint: 'dark',
+    tint: 'dark'
   };
 
   state = {
     uri: undefined,
-    intensity: new Animated.Value(100),
+    intensity: new Animated.Value(100)
   };
 
   async load({ uri }: ImageProps): Promise<void> {
@@ -46,8 +52,8 @@ export default class Image extends React.Component<ImageProps, ImageState> {
       const { token } = state;
       const options = {
         headers: {
-          Authorization: token || '',
-        },
+          Authorization: token || ''
+        }
       };
       const path = await CacheManager.get(uri, options).getPath();
       if (this.mounted) {
@@ -69,7 +75,7 @@ export default class Image extends React.Component<ImageProps, ImageState> {
       Animated.timing(intensity, {
         duration: transitionDuration,
         toValue: 0,
-        useNativeDriver: Platform.OS === 'android',
+        useNativeDriver: Platform.OS === 'android'
       }).start();
     }
   }
@@ -86,21 +92,29 @@ export default class Image extends React.Component<ImageProps, ImageState> {
     const isImageReady = !!uri;
     const opacity = intensity.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, 0.5],
+      outputRange: [0, 0.5]
     });
     const computedStyle = [
       StyleSheet.absoluteFill,
       _.transform(
-        _.pickBy(StyleSheet.flatten(style), (value, key) => propsToCopy.indexOf(key) !== -1),
-        // $FlowFixMe
-        (result, value, key) => Object.assign(result, { [key]: value - (style.borderWidth || 0) }),
-      ),
+        _.pickBy(
+          StyleSheet.flatten(style),
+          (value, key) => propsToCopy.indexOf(key) !== -1
+        ),
+        (result, value, key) =>
+          // $FlowFixMe
+          Object.assign(result, { [key]: value - (style.borderWidth || 0) })
+      )
     ];
     return (
       <View {...{ style }}>
-        {hasDefaultSource &&
-          !hasPreview &&
-          !isImageReady && <RNImage source={defaultSource} style={computedStyle} {...otherProps} />}
+        {hasDefaultSource && !hasPreview && !isImageReady && (
+          <RNImage
+            source={defaultSource}
+            style={computedStyle}
+            {...otherProps}
+          />
+        )}
         {hasPreview && (
           <RNImage
             source={preview}
@@ -109,17 +123,20 @@ export default class Image extends React.Component<ImageProps, ImageState> {
             blurRadius={Platform.OS === 'android' ? 0.5 : 0}
           />
         )}
-        {isImageReady && <RNImage source={{ uri }} style={computedStyle} {...otherProps} />}
-        {hasPreview &&
-          Platform.OS === 'ios' && (
-            <AnimatedBlurView style={computedStyle} {...{ intensity, tint }} />
-          )}
-        {hasPreview &&
-          Platform.OS === 'android' && (
-            <Animated.View
-              style={[computedStyle, { backgroundColor: tint === 'dark' ? black : white, opacity }]}
-            />
-          )}
+        {isImageReady && (
+          <RNImage source={{ uri }} style={computedStyle} {...otherProps} />
+        )}
+        {hasPreview && Platform.OS === 'ios' && (
+          <AnimatedBlurView style={computedStyle} {...{ intensity, tint }} />
+        )}
+        {hasPreview && Platform.OS === 'android' && (
+          <Animated.View
+            style={[
+              computedStyle,
+              { backgroundColor: tint === 'dark' ? black : white, opacity }
+            ]}
+          />
+        )}
       </View>
     );
   }
@@ -132,6 +149,6 @@ const propsToCopy = [
   'borderBottomLeftRadius',
   'borderBottomRightRadius',
   'borderTopLeftRadius',
-  'borderTopRightRadius',
+  'borderTopRightRadius'
 ];
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
