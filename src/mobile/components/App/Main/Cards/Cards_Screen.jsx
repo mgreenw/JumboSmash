@@ -2,7 +2,7 @@
 /* eslint react/no-unused-state: 0 */
 
 import React from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type {
   ReduxState,
@@ -17,14 +17,13 @@ import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import { routes } from 'mobile/components/Navigation';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
-import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { Colors } from 'mobile/styles/colors';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import DevTesting from 'mobile/utils/DevTesting';
-import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import NavigationService from 'mobile/NavigationService';
 import type { SwipeDirection } from './Deck';
 import Deck from './Deck';
+import SwipeButtons from './SwipeButtons';
 
 const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
@@ -50,7 +49,7 @@ type dispatchProps = {
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean,
+  swipeInProgress: boolean,
   loadingSource: string
 };
 
@@ -80,7 +79,7 @@ class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false,
+      swipeInProgress: false,
       loadingSource: ArthurLoadingImage
     };
   }
@@ -107,13 +106,25 @@ class SwipingScreen extends React.Component<Props, State> {
 
   _renderCard = (profile: UserProfile) => {
     const { navigation } = this.props;
+    // this._onPressSwipeButton is wrapped in a timeout so it isn't called until we finish going back to the deck view. This makes the animation look much smoother
     return (
       <PreviewCard
         profile={profile}
         onCardTap={() =>
           navigation.navigate(routes.CardsExpandedCard, {
             profile,
-            onMinimize: () => navigation.pop()
+            onMinimize: () => navigation.pop(),
+            swipeButtons: (
+              <SwipeButtons
+                disabled={false}
+                onPress={(swipeDirection: SwipeDirection) => {
+                  NavigationService.back();
+                  setTimeout(() => {
+                    this._onPressSwipeButton(swipeDirection);
+                  }, 750);
+                }}
+              />
+            )
           })
         }
       />
@@ -139,17 +150,21 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeComplete = () => {
-    this.setState({ swipeGestureInProgress: false });
+    this.setState({ swipeInProgress: false });
   };
 
   _onPressSwipeButton = (swipeDirection: SwipeDirection) => {
-    this.setState({ swipeGestureInProgress: true }, () => {
-      if (this.deck) {
-        this.deck._forceSwipe(swipeDirection, 750);
-      } else {
-        throw new Error('this.deck is null in Cards_Screen');
-      }
-    });
+    const { swipeInProgress } = this.state;
+    // Check if swipe is alredy in progress. Prevents user from breaking stuff by spamming the swipe buttons
+    if (!swipeInProgress) {
+      this.setState({ swipeInProgress: true }, () => {
+        if (this.deck) {
+          this.deck._forceSwipe(swipeDirection, 750);
+        } else {
+          throw new Error('this.deck is null in Cards_Screen');
+        }
+      });
+    }
   };
 
   _onSwipeLike = () => {
@@ -165,9 +180,11 @@ class SwipingScreen extends React.Component<Props, State> {
   render() {
     const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
     const { loadingSource } = this.state;
+    const isLoading =
+      getSceneCandidatesInProgress.smash || sceneCandidates.smash === null;
     let renderedContent;
     // If we are fetching scene candidates or haven't fetched any yet
-    if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
+    if (isLoading) {
       renderedContent = (
         <Image
           resizeMode="contain"
@@ -198,7 +215,7 @@ class SwipingScreen extends React.Component<Props, State> {
           onSwipeLeft={this._onSwipeLeft}
           onSwipeComplete={this._onSwipeComplete}
           infinite
-          disableSwipe={false}
+          disableSwipe={isLoading}
         />
       );
     }
@@ -213,22 +230,12 @@ class SwipingScreen extends React.Component<Props, State> {
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             {renderedContent}
-            <TouchableOpacity
-              onPress={() => this._onPressSwipeButton('left')}
-              style={Arthur_Styles.swipeButton_dislike}
-            >
-              <CustomIcon name="delete-filled" size={65} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => this._onPressSwipeButton('right')}
-              style={Arthur_Styles.swipeButton_like}
-            >
-              <CustomIcon
-                name="heart-filled"
-                size={65}
-                color={Colors.Grapefruit}
-              />
-            </TouchableOpacity>
+            <SwipeButtons
+              disabled={isLoading}
+              onPress={(swipeDirection: SwipeDirection) =>
+                this._onPressSwipeButton(swipeDirection)
+              }
+            />
           </View>
         </View>
       </Transition>

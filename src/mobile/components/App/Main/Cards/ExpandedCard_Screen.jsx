@@ -14,6 +14,7 @@ export default (props: Props) => {
   const { navigation } = props;
   const profile = navigation.getParam('profile', null);
   const onMinimize = navigation.getParam('onMinimize', null);
+  const swipeButtons = navigation.getParam('swipeButtons', null);
   if (profile === null) {
     throw new Error(
       'Error: Navigation Param of Profile is null in Expanded Card Screen'
@@ -29,7 +30,12 @@ export default (props: Props) => {
   return (
     <View style={{ display: 'flex', flex: 1 }}>
       <StatusBar hidden />
-      <CardView profile={profile} onMinimize={onMinimize} />
+      <CardView
+        profile={profile}
+        onMinimize={onMinimize}
+        swipeButtons={swipeButtons}
+      />
+      {swipeButtons}
     </View>
   );
 };

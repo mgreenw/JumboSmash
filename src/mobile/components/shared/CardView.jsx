@@ -61,6 +61,7 @@ export default class CardView extends React.Component<Props> {
                   key={photoId}
                   style={{ width, height: width }}
                   uri={GET_PHOTO__ROUTE + photoId}
+                  resizeMode="contain"
                 />
               ))}
             </ScrollView>
@@ -91,7 +92,7 @@ export default class CardView extends React.Component<Props> {
         </View>
         <View
           style={{
-            flex: 1,
+            height: '100%',
             backgroundColor: Colors.White,
             shadowColor: '#6F6F6F',
             shadowOpacity: 0.57,
