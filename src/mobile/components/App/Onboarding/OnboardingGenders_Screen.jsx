@@ -9,21 +9,24 @@ import { GenderSelector } from 'mobile/components/shared/GenderSelector';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
-export default class OnboardingGendersScreen extends React.Component<Props, State> {
+export default class OnboardingGendersScreen extends React.Component<
+  Props,
+  State
+> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -39,8 +42,8 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     this.setState(state => ({
       settings: {
         ...state.settings,
-        useGenders: genderIdentities,
-      },
+        identifyAsGenders: genderIdentities
+      }
     }));
   };
 
@@ -48,8 +51,8 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     this.setState(state => ({
       settings: {
         ...state.settings,
-        wantGenders: genderIdentities,
-      },
+        lookingForGenders: genderIdentities
+      }
     }));
   };
 
@@ -59,12 +62,15 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     navigation.navigate(routes.OnboardingNotifications, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -72,33 +78,44 @@ export default class OnboardingGendersScreen extends React.Component<Props, Stat
     const { settings } = this.state;
     const body = (
       <View style={{ flex: 1, width: '100%' }}>
-        <Text style={[textStyles.headline5Style, { textAlign: 'center', paddingBottom: 15 }]}>
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: 'center', paddingBottom: 15 }
+          ]}
+        >
           {'I identify as:'}
         </Text>
         <GenderSelector
-          defaultGenders={settings.useGenders}
+          defaultGenders={settings.identifyAsGenders}
           onChange={this._onMyGendersChange}
           plural={false}
         />
         <Text
           style={[
             textStyles.headline5Style,
-            { textAlign: 'center', paddingBottom: 15, paddingTop: 25 },
+            { textAlign: 'center', paddingBottom: 15, paddingTop: 25 }
           ]}
         >
           {"I'm looking for:"}
         </Text>
         <GenderSelector
-          defaultGenders={settings.wantGenders}
+          defaultGenders={settings.lookingForGenders}
           onChange={this._onWantGendersChange}
           plural
         />
       </View>
     );
 
-    const { wantGenders, useGenders } = settings;
-    const lookingForSelected = wantGenders.male || wantGenders.female || wantGenders.nonBinary;
-    const identifySelected = useGenders.male || useGenders.female || useGenders.nonBinary;
+    const { lookingForGenders, identifyAsGenders } = settings;
+    const lookingForSelected =
+      lookingForGenders.man ||
+      lookingForGenders.woman ||
+      lookingForGenders.nonBinary;
+    const identifySelected =
+      identifyAsGenders.man ||
+      identifyAsGenders.woman ||
+      identifyAsGenders.nonBinary;
     const complete = identifySelected && lookingForSelected;
     return (
       <OnboardingLayout

@@ -1,13 +1,16 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-import logout from 'mobile/actions/auth/logout';
+import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
-import type { Genders, UserSettings, ReduxState } from 'mobile/reducers';
-import type { Dispatch } from 'mobile/reducers';
+import type {
+  Genders,
+  UserSettings,
+  ReduxState,
+  Dispatch
+} from 'mobile/reducers';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
@@ -16,6 +19,7 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
+import saveSettingsAction from 'mobile/actions/app/saveSettings';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -51,7 +55,7 @@ type State = {
   showOnSmash: boolean // temporary for UI testing
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
@@ -61,16 +65,13 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     logout: () => {
-      dispatch(logout());
+      dispatch(logoutAction());
     },
-    saveSettings: () => {
-      // TODO
+    saveSettings: (settings: UserSettings) => {
+      dispatch(saveSettingsAction(settings));
     }
   };
 }
@@ -84,48 +85,43 @@ class SettingsScreen extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { navigation } = this.props;
-    if (
-      !this.props.logoutInProgress &&
-      prevProps.logoutInProgress != this.props.logoutInProgress
-    ) {
-      // disable back button when performing a syncronous action.
-      navigation.setParams({
-        headerLeft: this.props.logoutInProgress ? null : ''
-      });
-
+    const { logoutInProgress } = this.props;
+    if (!logoutInProgress && prevProps.logoutInProgress !== logoutInProgress) {
       // For recieving the logout completion
       navigation.navigate(routes.Splash, {});
     }
   }
 
-  _onUseGendersChange = (useGenders: Genders) => {
+  _onIdentifyAsGendersChange = (identifyAsGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        useGenders
+        identifyAsGenders
       }
     }));
   };
 
-  _onWantGendersChange = (wantGenders: Genders) => {
+  _onWantGendersChange = (lookingForGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        wantGenders
+        lookingForGenders
       }
     }));
   };
 
   _onBack = () => {
-    this.props.saveSettings(this.state.editedSettings);
+    const { saveSettings } = this.props;
+    const { editedSettings } = this.state;
+    saveSettings(editedSettings);
     NavigationService.back();
   };
 
   render() {
     const { showOnSmash, editedSettings } = this.state;
-    const { logoutInProgress } = this.props;
+    const { logoutInProgress, logout } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -140,7 +136,7 @@ class SettingsScreen extends React.Component<Props, State> {
           />
           <KeyboardAwareScrollView
             extraScrollHeight={35}
-            enableOnAndroid={true}
+            enableOnAndroid
             style={{
               backgroundColor: 'transparent'
             }}
@@ -191,8 +187,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 {'I identify as:'}
               </Text>
               <GenderSelector
-                defaultGenders={editedSettings.useGenders}
-                onChange={this._onUseGendersChange}
+                defaultGenders={editedSettings.identifyAsGenders}
+                onChange={this._onIdentifyAsGendersChange}
                 plural={false}
               />
               <Text
@@ -201,10 +197,10 @@ class SettingsScreen extends React.Component<Props, State> {
                   { textAlign: 'center', padding: 10 }
                 ]}
               >
-                {'I identify as:'}
+                {"I'm looking for:"}
               </Text>
               <GenderSelector
-                defaultGenders={editedSettings.wantGenders}
+                defaultGenders={editedSettings.lookingForGenders}
                 onChange={this._onWantGendersChange}
                 plural
               />
@@ -233,7 +229,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </View>
               <PrimaryButton
                 title="Log Out"
-                onPress={this.props.logout}
+                onPress={logout}
                 disabled={logoutInProgress}
                 loading={logoutInProgress}
               />

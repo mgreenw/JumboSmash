@@ -64,15 +64,15 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantPronouns: {
-          he: true,
-          she: true,
-          they: true,
+        lookingForGenders: {
+          man: true,
+          woman: true,
+          nonBinary: true,
         },
-        usePronouns: {
-          he: true,
-          she: true,
-          they: true,
+        identifyAsGenders: {
+          man: true,
+          woman: true,
+          nonBinary: true,
         },
         activeScenes: {
           smash: true,
@@ -83,12 +83,12 @@ describe('GET api/users/me/settings', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
 
-    expect(res.body.data.usePronouns.he).toBe(true);
-    expect(res.body.data.usePronouns.she).toBe(true);
-    expect(res.body.data.usePronouns.they).toBe(true);
-    expect(res.body.data.wantPronouns.he).toBe(true);
-    expect(res.body.data.wantPronouns.she).toBe(true);
-    expect(res.body.data.wantPronouns.they).toBe(true);
+    expect(res.body.data.identifyAsGenders.man).toBe(true);
+    expect(res.body.data.identifyAsGenders.woman).toBe(true);
+    expect(res.body.data.identifyAsGenders.nonBinary).toBe(true);
+    expect(res.body.data.lookingForGenders.man).toBe(true);
+    expect(res.body.data.lookingForGenders.woman).toBe(true);
+    expect(res.body.data.lookingForGenders.nonBinary).toBe(true);
     expect(res.body.data.activeScenes.smash).toBe(true);
     expect(res.body.data.activeScenes.social).toBe(true);
     expect(res.body.data.activeScenes.stone).toBe(true);
@@ -106,15 +106,15 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantPronouns: {
-          he: true,
-          she: true,
-          they: 'true',
+        lookingForGenders: {
+          man: true,
+          woman: true,
+          nonBinary: 'true',
         },
-        usePronouns: {
-          he: true,
-          she: true,
-          they: true,
+        identifyAsGenders: {
+          man: true,
+          woman: true,
+          nonBinary: true,
         },
         activeScenes: {
           smash: true,
@@ -138,12 +138,12 @@ describe('GET api/users/me/settings', () => {
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
       .send({
-        wantPronouns: {
-          he: true,
-          they: true,
+        lookingForGenders: {
+          man: true,
+          nonBinary: true,
         },
-        usePronouns: {
-          he: true,
+        identifyAsGenders: {
+          man: true,
         },
         activeScenes: {
           smash: true,
@@ -152,22 +152,22 @@ describe('GET api/users/me/settings', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
 
-    expect(res.body.data.usePronouns).toBeDefined();
-    expect(res.body.data.wantPronouns).toBeDefined();
+    expect(res.body.data.identifyAsGenders).toBeDefined();
+    expect(res.body.data.lookingForGenders).toBeDefined();
 
-    expect(res.body.data.usePronouns.he).toBeDefined();
-    expect(res.body.data.usePronouns.she).toBeDefined();
-    expect(res.body.data.usePronouns.they).toBeDefined();
-    expect(res.body.data.wantPronouns.he).toBeDefined();
-    expect(res.body.data.wantPronouns.she).toBeDefined();
-    expect(res.body.data.wantPronouns.they).toBeDefined();
+    expect(res.body.data.identifyAsGenders.man).toBeDefined();
+    expect(res.body.data.identifyAsGenders.woman).toBeDefined();
+    expect(res.body.data.identifyAsGenders.nonBinary).toBeDefined();
+    expect(res.body.data.lookingForGenders.man).toBeDefined();
+    expect(res.body.data.lookingForGenders.woman).toBeDefined();
+    expect(res.body.data.lookingForGenders.nonBinary).toBeDefined();
 
-    expect(res.body.data.usePronouns.he).toBe(true);
-    expect(res.body.data.usePronouns.she).toBe(false);
-    expect(res.body.data.usePronouns.they).toBe(false);
-    expect(res.body.data.wantPronouns.he).toBe(true);
-    expect(res.body.data.wantPronouns.she).toBe(false);
-    expect(res.body.data.wantPronouns.they).toBe(true);
+    expect(res.body.data.identifyAsGenders.man).toBe(true);
+    expect(res.body.data.identifyAsGenders.woman).toBe(false);
+    expect(res.body.data.identifyAsGenders.nonBinary).toBe(false);
+    expect(res.body.data.lookingForGenders.man).toBe(true);
+    expect(res.body.data.lookingForGenders.woman).toBe(false);
+    expect(res.body.data.lookingForGenders.nonBinary).toBe(true);
     expect(res.body.data.activeScenes.smash).toBe(true);
     expect(res.body.data.activeScenes.social).toBe(false);
     expect(res.body.data.activeScenes.stone).toBe(false);

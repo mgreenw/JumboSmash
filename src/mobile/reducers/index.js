@@ -44,6 +44,10 @@ import type {
   DeletePhotoCompleted_Action
 } from 'mobile/actions/app/deletePhoto';
 import type {
+  SaveSettingsInitiated_Action,
+  SaveSettingsCompleted_Action
+} from 'mobile/actions/app/saveSettings';
+import type {
   GetSceneCandidatesInitiated_Action,
   GetSceneCandidatesCompleted_Action
 } from 'mobile/actions/app/getSceneCandidates';
@@ -62,14 +66,14 @@ import type { Dispatch as ReduxDispatch } from 'redux';
 // USER TYPES:
 // /////////////
 export type Genders = {
-  male: boolean,
-  female: boolean,
+  man: boolean,
+  woman: boolean,
   nonBinary: boolean
 };
 
 export type UserSettings = {
-  useGenders: Genders,
-  wantGenders: Genders
+  identifyAsGenders: Genders,
+  lookingForGenders: Genders
 };
 
 export type ProfileFields = {
@@ -139,6 +143,7 @@ export type ReduxState = {
     getSceneCandidates: GetSceneCandidatesInProgress,
     createUser: boolean,
     saveProfile: boolean,
+    saveSettings: boolean,
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean
@@ -177,6 +182,8 @@ export type Action =
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
+  | SaveSettingsInitiated_Action
+  | SaveSettingsCompleted_Action
   | GetSceneCandidatesInitiated_Action
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
@@ -209,6 +216,7 @@ const defaultState: ReduxState = {
     },
     createUser: false,
     saveProfile: false,
+    saveSettings: false,
     uploadPhoto: false,
     deletePhoto: false,
     getMatches: false
@@ -544,6 +552,16 @@ export default function rootReducer(
       };
     }
 
+    case 'SAVE_SETTINGS__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveSettings: true
+        }
+      };
+    }
+
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
       const { candidateUserId, scene } = action.payload;
       const currentSceneCandidates = state.sceneCandidates[scene];
@@ -573,6 +591,22 @@ export default function rootReducer(
       };
     }
 
+    case 'SAVE_SETTINGS__COMPLETED': {
+      if (!state.client) {
+        throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
+      }
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false
+        },
+        client: {
+          ...state.client,
+          settings: action.payload
+        }
+      };
+    }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
       const { candidateUserId, scene } = action.payload;
 
