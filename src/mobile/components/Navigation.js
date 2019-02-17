@@ -24,14 +24,19 @@ import AuthHelp from 'mobile/components/Auth/Login/AuthHelp_Screen';
 import AppLoading from 'mobile/components/App/AppLoading_Screen';
 
 // Main App Screens
+// Profile
 import Profile from 'mobile/components/App/Main/Profile/Profile_Screen';
 import ProfileEdit from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
 import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen';
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 
+// Cards
 import Cards from 'mobile/components/App/Main/Cards/Cards_Screen';
 import ExpandedCard from 'mobile/components/App/Main/Cards/ExpandedCard_Screen';
+
+// Messages & Matches
 import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
+import Message from 'mobile/components/App/Main/Matches/Message_Screen';
 
 // OnBoarding Screens
 import OnboardingStart from 'mobile/components/App/Onboarding/OnboardingStart_Screen';
@@ -44,13 +49,17 @@ import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_S
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
 
-const PROFILE_ROUTE = 'PROFILE_ROUTE';
 const MATCHES_ROUTE = 'MATCHES_ROUTE';
+const MESSAGE_ROUTE = 'MESSAGE_ROUTE';
+
 const CARDS_ROUTE = 'CARDS_ROUTE';
 const EXPANDED_CARD_ROUTE = 'EXPANDED_CARD_ROUTE';
+
+const PROFILE_ROUTE = 'PROFILE_ROUTE';
 const SETTINGS_EDIT_ROUTE = 'SETTINGS_EDIT_ROUTE';
 const PROFILE_EDIT_ROUTE = 'PROFILE_EDIT_ROUTE';
 const PROFILE_HELP_ROUTE = 'PROFILE_HELP_ROUTE';
+
 const CARDS_STACK = 'CARDS_STACK';
 const PROFILE_STACK = 'PROFILE_STACK';
 const MATCHES_STACK = 'MATCHES_STACK';
@@ -84,6 +93,7 @@ const AUTH_SWITCH = 'AUTH_SWITCH';
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
+  Message: MESSAGE_ROUTE,
   Cards: CARDS_ROUTE,
   SettingsEdit: SETTINGS_EDIT_ROUTE,
   ProfileEdit: PROFILE_EDIT_ROUTE,
@@ -149,7 +159,9 @@ const ProfileStack = createStackNavigator(
 
 const MatchesStack = createStackNavigator(
   {
-    MATCHES_ROUTE: { screen: Matches }
+    MATCHES_ROUTE: { screen: Matches },
+    MESSAGE_ROUTE: { screen: Message },
+    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: MATCHES_ROUTE,
