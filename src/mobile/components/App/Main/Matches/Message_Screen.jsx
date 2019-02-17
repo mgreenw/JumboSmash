@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Alert, View, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -9,6 +9,7 @@ import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
 import { routes } from 'mobile/components/Navigation';
+import { textStyles } from 'mobile/styles/textStyles';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -73,13 +74,17 @@ class MessagingScreen extends React.Component<Props, State> {
             >
               <Avatar
                 size={'Large'}
-                onPress={() => {
-                  Alert.alert('foo doo bar di doo');
-                }}
                 photoId={match.profile.photoIds[0]}
                 border
               />
             </TouchableOpacity>
+            <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
+              <Text
+                style={[textStyles.headline5Style, { textAlign: 'center' }]}
+              >
+                {'Late-night Espresso’s run? ;)'}
+              </Text>
+            </View>
           </View>
         </View>
       </Transition>
