@@ -8,7 +8,7 @@ import { Image } from './imageCacheFork';
 type Props = {
   photoId: number,
   size: 'Large' | 'Medium' | 'Small',
-  onPress: () => void,
+  onPress: () => void
 };
 
 const LargeWidth = 135;
@@ -25,7 +25,10 @@ export default (props: Props) => {
   } else if (size === 'Small') {
     width = SmallWidth;
   }
-  const preview = { uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg' };
+  const preview = {
+    uri:
+      'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
+  };
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -33,8 +36,8 @@ export default (props: Props) => {
         {
           backgroundColor: 'transparent',
           borderRadius: width / 2,
-          width,
-        },
+          width
+        }
       ]}
     >
       <Image
@@ -43,7 +46,7 @@ export default (props: Props) => {
           height: width,
           width,
           borderRadius: width / 2,
-          overflow: 'hidden',
+          overflow: 'hidden'
         }}
         {...{ preview }}
       />
