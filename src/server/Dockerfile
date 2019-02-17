@@ -9,7 +9,7 @@ FROM node:8.12-alpine
 WORKDIR /home/src/app
 
 COPY ./package* ./
-RUN apk update && apk add python make g++
+RUN apk update && apk add python make g++ vim
 RUN npm install --prod
 # RUN npm install --prod && npm cache clean
 COPY --from=builder /home/src/app/dist .
