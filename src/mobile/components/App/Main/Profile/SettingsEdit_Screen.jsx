@@ -94,7 +94,7 @@ class SettingsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onidentifyAsGendersChange = (identifyAsGenders: Genders) => {
+  _onIdentifyAsGendersChange = (identifyAsGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
@@ -188,7 +188,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </Text>
               <GenderSelector
                 defaultGenders={editedSettings.identifyAsGenders}
-                onChange={this._onidentifyAsGendersChange}
+                onChange={this._onIdentifyAsGendersChange}
                 plural={false}
               />
               <Text
