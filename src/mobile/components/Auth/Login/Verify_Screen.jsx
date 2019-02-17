@@ -1,13 +1,10 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
-import verify from 'mobile/api/auth/verify';
-import { login } from 'mobile/actions/auth/login';
-import type { Dispatch } from 'mobile/reducers';
-import type { ReduxState } from 'mobile/reducers/index';
+import loginAction from 'mobile/actions/auth/login';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
@@ -15,7 +12,7 @@ import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { CodeInput } from 'mobile/components/shared/DigitInput';
 import { routes } from 'mobile/components/Navigation';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
-import type { login_response } from 'mobile/actions/auth/login';
+import type { Login_Response } from 'mobile/actions/auth/login';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 
@@ -23,14 +20,12 @@ const NUM_DIGITS = 6;
 
 type State = {
   code: string,
-  validCode: boolean,
-  errorMessageCode: string,
-  verifyUtlnInProgress: boolean
+  errorMessageCode: string
 };
 
 type reduxProps = {
   login_inProgress: boolean,
-  login_response: ?login_response
+  login_response: ?Login_Response
 };
 type navigationProps = {
   navigation: any
@@ -41,20 +36,17 @@ type dispatchProps = {
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     login_inProgress: reduxState.inProgress.login,
     login_response: reduxState.response.login
   };
 }
 
-function mapDispatchToProps(
-  dispatch: Dispatch,
-  ownProps: Props
-): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     login: (utln, code) => {
-      dispatch(login(utln, code));
+      dispatch(loginAction(utln, code));
     }
   };
 }
@@ -64,28 +56,27 @@ class SplashScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       code: '',
-      validCode: true,
-      errorMessageCode: '',
-      verifyUtlnInProgress: false
+      errorMessageCode: ''
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.login_inProgress != this.props.login_inProgress) {
-      if (!this.props.login_inProgress && this.props.login_response) {
-        const { navigate } = this.props.navigation;
-        if (this.props.login_response.statusCode === 'SUCCESS') {
-          navigate(routes.AppSwitch, {});
+  componentDidUpdate(prevProps: Props) {
+    const { login_inProgress, login_response, navigation } = this.props;
+    if (prevProps.login_inProgress !== login_inProgress) {
+      if (!login_inProgress && !!login_response) {
+        if (login_response.statusCode === 'SUCCESS') {
+          navigation.navigate(routes.AppSwitch, {});
         } else {
           // TODO: more verbose errors
-          this._codeInputError(this.props.login_response.statusCode);
+          this._codeInputError(login_response.statusCode);
         }
       }
     }
   }
 
   _validateUtln = () => {
-    if (this.state.code == '') {
+    const { code } = this.state;
+    if (code === '') {
       this._codeInputError('Required');
       return false;
     }
@@ -94,22 +85,21 @@ class SplashScreen extends React.Component<Props, State> {
 
   _codeInputError = (errorMessage: string) => {
     this.setState({
-      validCode: false,
       errorMessageCode: errorMessage
     });
   };
 
   _onExpiredCode = (utln: string, email: string) => {
-    const { navigate } = this.props.navigation;
-    navigate(routes.ExpiredCode, {
-      utln: utln,
-      email: email
+    const { navigation } = this.props;
+    navigation.navigate(routes.ExpiredCode, {
+      utln,
+      email
     });
   };
 
   _onHelp = () => {
-    const { navigate } = this.props.navigation;
-    navigate(routes.AuthHelp, {});
+    const { navigation } = this.props;
+    navigation.navigate(routes.AuthHelp, {});
   };
 
   // When we submit, a few things happen.
@@ -127,6 +117,8 @@ class SplashScreen extends React.Component<Props, State> {
     if (!this._validateUtln()) {
       return;
     }
+    const { code } = this.state;
+    const { login } = this.props;
     const { navigation } = this.props;
     const utln = navigation.getParam('utln', null);
     const email = navigation.getParam('email', null);
@@ -135,24 +127,24 @@ class SplashScreen extends React.Component<Props, State> {
     }
     this.setState(
       {
-        validCode: true,
         errorMessageCode: ''
       },
       () => {
-        this.props.login(utln, this.state.code);
+        login(utln, code);
       }
     );
   };
 
   _onChangeText = (text: string) => {
-    this.setState({ code: text, validCode: true, errorMessageCode: '' });
+    this.setState({ code: text, errorMessageCode: '' });
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, login_inProgress } = this.props;
+    const { code, errorMessageCode } = this.state;
     const email = navigation.getParam('email', '');
     const alreadySent = navigation.getParam('alreadySent', false);
-    const isLoading = this.props.login_inProgress;
+    const isLoading = login_inProgress;
 
     let message = alreadySent
       ? `Looks like you've already been sent an email to ${email}.`
@@ -195,12 +187,12 @@ class SplashScreen extends React.Component<Props, State> {
                   }}
                 >
                   <CodeInput
-                    value={this.state.code}
+                    value={code}
                     onChangeValue={this._onChangeText}
                     maxLength={NUM_DIGITS}
                     primaryColor={Colors.Black}
                     errorColor={Colors.Grapefruit}
-                    error={this.state.errorMessageCode}
+                    error={errorMessageCode}
                     assistive={'Make sure to check your spam folder!'}
                   />
                   <View style={{ padding: 20 }}>
@@ -231,9 +223,7 @@ class SplashScreen extends React.Component<Props, State> {
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="Submit"
-                    disabled={
-                      isLoading || this.state.code.length !== NUM_DIGITS
-                    }
+                    disabled={isLoading || code.length !== NUM_DIGITS}
                     loading={isLoading}
                   />
                   <TertiaryButton

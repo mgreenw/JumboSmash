@@ -11,7 +11,7 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { routes } from 'mobile/components/Navigation';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
-import type { sendVerificationEmail_response } from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
 import Popup from 'mobile/components/shared/Popup';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -21,7 +21,7 @@ const ArthurUri = require('../../../assets/arthurIcon.png');
 
 type reduxProps = {
   sendVerificationEmail_inProgress: boolean,
-  sendVerificationEmail_response: ?sendVerificationEmail_response
+  sendVerificationEmail_response: ?SendVerificationEmail_Response
 };
 
 type navigationProps = {

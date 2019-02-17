@@ -33,7 +33,6 @@ function complete(matches: Match[]): GetMatchesCompleted_Action {
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   DevTesting.fakeLatency(() => {

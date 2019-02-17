@@ -1,10 +1,9 @@
 // @flow
-/* eslint-disable */
 
-import apiRequest from '../utils/apiRequest';
-import { MY_SETTINGS__ROUTE } from '../routes';
 import type { UserSettings } from 'mobile/reducers';
 import { mobileSettingsToServerSettings } from 'mobile/api/dataConversion';
+import { MY_SETTINGS__ROUTE } from '../routes';
+import apiRequest from '../utils/apiRequest';
 
 const UPDATE_MY_SETTINGS__SUCCESS = 'UPDATE_SETTINGS__SUCCESS';
 

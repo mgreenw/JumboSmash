@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import apiRequest from '../utils/apiRequest';
 import { DELETE_PHOTO__ROUTE } from '../routes';
@@ -9,7 +8,9 @@ const DELETE_PHOTO__NOT_FOUND = 'DELETE_PHOTO__NOT_FOUND';
 const DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO =
   'DELETE_PHOTO__CANNOT_DELETE_LAST_PHOTO';
 
-function deletePhotoApi(photoId: number): Promise<Array<number>> {
+export default function deletePhotoApi(
+  photoId: number
+): Promise<Array<number>> {
   return apiRequest('DELETE', DELETE_PHOTO__ROUTE + photoId)
     .then(response => {
       switch (response.status) {
@@ -27,5 +28,3 @@ function deletePhotoApi(photoId: number): Promise<Array<number>> {
       throw { error };
     });
 }
-
-export { deletePhotoApi };

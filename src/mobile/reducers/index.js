@@ -2,12 +2,12 @@
 
 // Auth:
 import type {
-  sendVerificationEmail_response,
+  SendVerificationEmail_Response,
   SendVerificationEmailCompleted_Action,
   SendVerificationEmailInitiated_Action
 } from 'mobile/actions/auth/sendVerificationEmail';
 import type {
-  login_response,
+  Login_Response,
   LoginInitiated_Action,
   LoginCompleted_Action
 } from 'mobile/actions/auth/login';
@@ -138,8 +138,8 @@ export type ReduxState = {
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
   response: {
-    sendVerificationEmail: ?sendVerificationEmail_response,
-    login: ?login_response
+    sendVerificationEmail: ?SendVerificationEmail_Response,
+    login: ?Login_Response
   },
 
   matches: ?(Match[])

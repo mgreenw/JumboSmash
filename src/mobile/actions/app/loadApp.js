@@ -1,13 +1,10 @@
 // @flow
-/* eslint-disable */
 
-import type { Dispatch } from 'mobile/reducers';
-import type { UserSettings, UserProfile } from 'mobile/reducers';
+import type { UserSettings, UserProfile, Dispatch } from 'mobile/reducers';
 import getMyProfile from 'mobile/api/users/GetMyProfile';
 import getMySettings from 'mobile/api/users/GetMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import { getMyPhotos } from 'mobile/api/users/GetMyPhotos';
-import DevTesting from '../../utils/DevTesting';
+import getMyPhotos from 'mobile/api/users/GetMyPhotos';
 
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
@@ -67,28 +64,23 @@ function complete(
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export function loadApp() {
-  return function(dispatch: Dispatch) {
-    dispatch(initiate());
-    DevTesting.fakeLatency(() => {
-      getMyProfile()
-        .then(profile => {
-          // if profile is null, onboarding has not been completed, though
-          // some photos may have been uploaded.
-          if (profile === null) {
-            getMyPhotos().then(photoIds => {
-              dispatch(complete(null, null, false, photoIds));
-            });
-          } else {
-            getMySettings().then(settings => {
-              dispatch(complete(profile, settings, true));
-            });
-          }
-        })
-        .catch(error => {
-          dispatch(apiErrorHandler(error));
+export default () => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  getMyProfile()
+    .then(profile => {
+      // if profile is null, onboarding has not been completed, though
+      // some photos may have been uploaded.
+      if (profile === null) {
+        getMyPhotos().then(photoIds => {
+          dispatch(complete(null, null, false, photoIds));
         });
+      } else {
+        getMySettings().then(settings => {
+          dispatch(complete(profile, settings, true));
+        });
+      }
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
     });
-  };
-}
+};

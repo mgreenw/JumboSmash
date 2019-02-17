@@ -11,7 +11,7 @@ import type {
   Dispatch
 } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
-import { createUserAction } from 'mobile/actions/app/createUser';
+import createUserAction from 'mobile/actions/app/createUser';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type NavigationProps = {

@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import apiRequest from '../utils/apiRequest';
 import { CONFIRM_PHOTO__ROUTE } from '../routes';
@@ -15,7 +14,7 @@ export type SignedUrlPayload = {
   fields: Object
 };
 
-function confirmUpload(): Promise<number[]> {
+export default function confirmUpload(): Promise<number[]> {
   return apiRequest('GET', CONFIRM_PHOTO__ROUTE)
     .then(response => {
       switch (response.status) {
@@ -35,5 +34,3 @@ function confirmUpload(): Promise<number[]> {
       throw { error };
     });
 }
-
-export { confirmUpload };

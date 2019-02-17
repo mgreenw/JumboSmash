@@ -1,7 +1,6 @@
 // @flow
-/* eslint-disable */
 
-import type { UserSettings, Genders } from 'mobile/reducers';
+import type { UserSettings } from 'mobile/reducers';
 import { serverSettingsToMobileSettings } from 'mobile/api/dataConversion';
 import apiRequest from '../utils/apiRequest';
 import { MY_SETTINGS__ROUTE } from '../routes';

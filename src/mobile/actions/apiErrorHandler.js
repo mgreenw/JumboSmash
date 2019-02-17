@@ -4,24 +4,29 @@ import { UNAUTHORIZED, SERVER_ERROR } from 'mobile/api/sharedResponseCodes';
 import DevTesting from 'mobile/utils/DevTesting';
 
 export type Unauthorized_Action = {
-  type: 'UNAUTHORIZED',
+  type: 'UNAUTHORIZED'
 };
 
 export type Error_Action = {
-  type: 'SERVER_ERROR',
+  type: 'SERVER_ERROR'
 };
 
 // eslint-disable-next-line
-export function apiErrorHandler(reject: empty): Unauthorized_Action | Error_Action {
+export function apiErrorHandler(
+  reject: empty
+): Unauthorized_Action | Error_Action {
   DevTesting.log('Api Error Handler: ', reject);
   if (reject.error.err === UNAUTHORIZED) {
     return {
-      type: 'UNAUTHORIZED',
+      type: 'UNAUTHORIZED'
     };
   }
-  if (reject.error.response !== undefined && reject.error.response.status === SERVER_ERROR) {
+  if (
+    reject.error.response !== undefined &&
+    reject.error.response.status === SERVER_ERROR
+  ) {
     return {
-      type: 'SERVER_ERROR',
+      type: 'SERVER_ERROR'
     };
   }
   throw reject;

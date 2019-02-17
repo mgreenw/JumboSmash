@@ -1,13 +1,12 @@
 // @flow
-/* eslint-disable */
 
 // Self contained API file for sendVerificationEmail.
 // NOTE: must be kept in sync with send-verifcation-email.js
-import type { sendVerificationEmail_response } from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import apiRequest from '../utils/apiRequest';
 import { SEND_VERIFCATION_EMAIL__ROUTE } from '../routes';
 
-type request = {
+type Request = {
   utln: string,
   forceResend?: boolean
 };
@@ -28,8 +27,8 @@ const NO_EMAIL = 'NO EMAIL FOR THIS RESPONSE CODE';
 const NO_CLASS_YEAR = 'NO CLASS YEAR FOR THIS RESPONSE CODE';
 
 export default function sendVerificationEmail(
-  request: request
-): Promise<sendVerificationEmail_response> {
+  request: Request
+): Promise<SendVerificationEmail_Response> {
   return apiRequest('POST', SEND_VERIFCATION_EMAIL__ROUTE, request)
     .then(response => {
       // We use this to ASSERT what the type of the response is.
