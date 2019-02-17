@@ -1,34 +1,34 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import { AsyncStorage } from 'react-native';
 import verify from 'mobile/api/auth/verify';
 import DevTesting from '../../utils/DevTesting';
 
 export type login_response = {
   statusCode: 'SUCCESS' | 'BAD_CODE' | 'EXPIRED_CODE' | 'NO_EMAIL_SENT',
-  token?: string,
+  token?: string
 };
 
 export type LoginInitiated_Action = {
   type: 'LOGIN_INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type LoginCompleted_Action = {
   type: 'LOGIN_COMPLETED',
   payload: {
-    response: login_response,
+    response: login_response
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): LoginInitiated_Action {
   return {
     type: 'LOGIN_INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -36,9 +36,9 @@ function complete(response: login_response): LoginCompleted_Action {
   return {
     type: 'LOGIN_COMPLETED',
     payload: {
-      response,
+      response
     },
-    meta: {},
+    meta: {}
   };
 }
 

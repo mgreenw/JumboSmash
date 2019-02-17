@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import verify from 'mobile/api/auth/verify';
 import { login } from 'mobile/actions/auth/login';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -25,18 +25,18 @@ type State = {
   code: string,
   validCode: boolean,
   errorMessageCode: string,
-  verifyUtlnInProgress: boolean,
+  verifyUtlnInProgress: boolean
 };
 
 type reduxProps = {
   login_inProgress: boolean,
-  login_response: ?login_response,
+  login_response: ?login_response
 };
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 type dispatchProps = {
-  login: (utln: string, code: string) => void,
+  login: (utln: string, code: string) => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -44,15 +44,18 @@ type Props = reduxProps & navigationProps & dispatchProps;
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
   return {
     login_inProgress: reduxState.inProgress.login,
-    login_response: reduxState.response.login,
+    login_response: reduxState.response.login
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): dispatchProps {
   return {
     login: (utln, code) => {
       dispatch(login(utln, code));
-    },
+    }
   };
 }
 
@@ -63,7 +66,7 @@ class SplashScreen extends React.Component<Props, State> {
       code: '',
       validCode: true,
       errorMessageCode: '',
-      verifyUtlnInProgress: false,
+      verifyUtlnInProgress: false
     };
   }
 
@@ -92,7 +95,7 @@ class SplashScreen extends React.Component<Props, State> {
   _codeInputError = (errorMessage: string) => {
     this.setState({
       validCode: false,
-      errorMessageCode: errorMessage,
+      errorMessageCode: errorMessage
     });
   };
 
@@ -100,7 +103,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { navigate } = this.props.navigation;
     navigate(routes.ExpiredCode, {
       utln: utln,
-      email: email,
+      email: email
     });
   };
 
@@ -133,11 +136,11 @@ class SplashScreen extends React.Component<Props, State> {
     this.setState(
       {
         validCode: true,
-        errorMessageCode: '',
+        errorMessageCode: ''
       },
       () => {
         this.props.login(utln, this.state.code);
-      },
+      }
     );
   };
 
@@ -159,13 +162,17 @@ class SplashScreen extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title={'Verification'} leftIconName={'back'} loading={isLoading} />
+        <GEMHeader
+          title={'Verification'}
+          leftIconName={'back'}
+          loading={isLoading}
+        />
         <KeyboardView waves={1}>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 2,
+                  flex: 2
                 }}
               >
                 <View
@@ -173,7 +180,7 @@ class SplashScreen extends React.Component<Props, State> {
                     flex: 1,
                     alignItems: 'center',
                     paddingLeft: 50,
-                    paddingRight: 50,
+                    paddingRight: 50
                   }}
                 >
                   <View style={{ paddingTop: 20 }}>
@@ -184,7 +191,7 @@ class SplashScreen extends React.Component<Props, State> {
                   style={{
                     width: '100%',
                     paddingLeft: 40,
-                    paddingRight: 40,
+                    paddingRight: 40
                   }}
                 >
                   <CodeInput
@@ -200,7 +207,7 @@ class SplashScreen extends React.Component<Props, State> {
                     <Text
                       style={[
                         textStyles.headline6Style,
-                        { textAlign: 'center', color: Colors.Grapefruit },
+                        { textAlign: 'center', color: Colors.Grapefruit }
                       ]}
                     >
                       {'' /* TODO: make countdown timer */}
@@ -211,23 +218,28 @@ class SplashScreen extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row',
+                  flexDirection: 'row'
                 }}
               >
                 <View style={{ flex: 1 }} />
                 <View
                   style={{
                     flex: 1,
-                    justifyContent: 'space-around',
+                    justifyContent: 'space-around'
                   }}
                 >
                   <PrimaryButton
                     onPress={this._onSubmit}
                     title="Submit"
-                    disabled={isLoading || this.state.code.length !== NUM_DIGITS}
+                    disabled={
+                      isLoading || this.state.code.length !== NUM_DIGITS
+                    }
                     loading={isLoading}
                   />
-                  <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Touble?"
+                  />
                 </View>
                 <View style={{ flex: 1 }} />
               </View>
@@ -241,5 +253,5 @@ class SplashScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(SplashScreen);

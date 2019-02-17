@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch, GetState } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { UserSettings, UserProfile } from 'mobile/reducers';
 import getMyProfile from 'mobile/api/users/GetMyProfile';
 import getMySettings from 'mobile/api/users/GetMySettings';
@@ -12,23 +12,23 @@ import DevTesting from '../../utils/DevTesting';
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type LoadAppCompleted_Action = {
   type: 'LOAD_APP__COMPLETED',
   payload: {
     onboardingCompleted: boolean,
     profile: UserProfile,
-    settings: UserSettings,
+    settings: UserSettings
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): LoadAppInitiated_Action {
   return {
     type: 'LOAD_APP__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -36,7 +36,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  photoIds: ?(number[]),
+  photoIds: ?(number[])
 ): LoadAppCompleted_Action {
   return {
     type: 'LOAD_APP__COMPLETED',
@@ -46,47 +46,42 @@ function complete(
         fields: {
           bio: '',
           birthday: '',
-          displayName: '',
+          displayName: ''
         },
-        photoIds: photoIds || [], // incase partial photo uploading in onboarding
+        photoIds: photoIds || [] // incase partial photo uploading in onboarding
       },
       settings: settings || {
         useGenders: {
           male: false,
           female: false,
-          nonBinary: false,
+          nonBinary: false
         },
         wantGenders: {
           male: false,
           female: false,
-          nonBinary: false,
-        },
-      },
+          nonBinary: false
+        }
+      }
     },
-    meta: {},
+    meta: {}
   };
 }
 
 // TODO: catch errors, e.g. the common network timeout.
 export function loadApp() {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      getMyProfile({
-        token,
-      })
+      getMyProfile()
         .then(profile => {
           // if profile is null, onboarding has not been completed, though
           // some photos may have been uploaded.
           if (profile === null) {
-            getMyPhotos(token).then(photoIds => {
+            getMyPhotos().then(photoIds => {
               dispatch(complete(null, null, false, photoIds));
             });
           } else {
-            getMySettings({
-              token,
-            }).then(settings => {
+            getMySettings().then(settings => {
               dispatch(complete(profile, settings, true));
             });
           }

@@ -7,19 +7,15 @@ import {
   RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
-import type { ReduxState, Match } from 'mobile/reducers/index';
+import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
 import AvatarList from 'mobile/components/shared/AvatarList';
 import Avatar from 'mobile/components/shared/Avatar';
-import { ListItem } from 'react-native-elements';
 
-type NavigationProps = {
-  navigation: any
-};
+type NavigationProps = {};
 
 type ReduxProps = {
   matches: ?(Match[]),
@@ -132,12 +128,12 @@ class MessagingScreen extends React.Component<Props, State> {
               data={list}
               keyExtractor={this.keyExtractor}
               renderItem={this.renderItem}
-              refreshControl={(
-<RefreshControl
+              refreshControl={
+                <RefreshControl
                   refreshing={getMatchesInProgress}
                   onRefresh={getMatches}
                 />
-)}
+              }
             />
           </View>
         </View>

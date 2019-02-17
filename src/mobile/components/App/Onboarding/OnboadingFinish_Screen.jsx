@@ -3,34 +3,37 @@ import React from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
 import type {
-  UserSettings, UserProfile, ReduxState, ProfileFields,
+  UserSettings,
+  UserProfile,
+  ReduxState,
+  ProfileFields,
+  Dispatch
 } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import { createUserAction } from 'mobile/actions/app/createUser';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type ReduxProps = {
-  createUserInProgress: boolean,
+  createUserInProgress: boolean
 };
 type DispatchProps = {
-  createUser: (fields: ProfileFields, settings: UserSettings) => void,
+  createUser: (fields: ProfileFields, settings: UserSettings) => void
 };
 type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
-    createUserInProgress: reduxState.inProgress.createUser,
+    createUserInProgress: reduxState.inProgress.createUser
   };
 }
 
@@ -38,7 +41,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     createUser: (fields: ProfileFields, settings: UserSettings) => {
       dispatch(createUserAction(fields, settings));
-    },
+    }
   };
 }
 
@@ -48,7 +51,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -56,7 +59,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     const { navigation, createUserInProgress } = this.props;
     if (prevProps.createUserInProgress !== createUserInProgress) {
       navigation.setParams({
-        headerLeft: createUserInProgress ? null : '',
+        headerLeft: createUserInProgress ? null : ''
       });
 
       // todo: watch for errors
@@ -76,11 +79,11 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     const { createUserInProgress } = this.props;
     return (
       <OnboardingLayout
-        body={(
+        body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
             {'Your profile’s ready. \n\nGet in losers, we’re going smashing.'}
           </Text>
-)}
+        }
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}
         title="Project Gem"
@@ -93,5 +96,5 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(OnboardingFinishScreen);

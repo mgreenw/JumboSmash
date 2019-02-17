@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 import type { SignedUrlPayload } from 'mobile/api/photos/getSignedUrl';
-import { apiRequest } from '../utils/apiRequest';
+import apiRequest from '../utils/apiRequest';
 import { GET_SIGN_URL__ROUTE } from '../routes';
 
 // Uploads a photo to S3 via the signed photo payload we recieve from

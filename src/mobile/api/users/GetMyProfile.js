@@ -2,18 +2,14 @@
 /* eslint-disable */
 
 import type { UserProfile } from 'mobile/reducers';
-import { apiRequest } from '../utils/apiRequest';
+import apiRequest from '../utils/apiRequest';
 import { MY_PROFILE__ROUTE } from '../routes';
 
 const GET_PROFILE__SUCCESS = 'GET_PROFILE__SUCCESS';
 const PROFILE_SETUP_INCOMPLETE = 'PROFILE_SETUP_INCOMPLETE';
 
-type request = {
-  token: string,
-};
-
-export default function getMyProfile(request: request): Promise<?UserProfile> {
-  return apiRequest('GET', MY_PROFILE__ROUTE, request.token)
+export default function getMyProfile(): Promise<?UserProfile> {
+  return apiRequest('GET', MY_PROFILE__ROUTE)
     .then(response => {
       switch (response.status) {
         case GET_PROFILE__SUCCESS:
@@ -28,6 +24,6 @@ export default function getMyProfile(request: request): Promise<?UserProfile> {
       }
     })
     .catch(error => {
-      throw { error, request };
+      throw { error };
     });
 }

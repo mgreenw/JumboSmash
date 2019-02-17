@@ -97,6 +97,7 @@ export default class Image extends React.Component<ImageProps, ImageState> {
     const computedStyle = [
       StyleSheet.absoluteFill,
       _.transform(
+        // $FlowFixMe
         _.pickBy(
           StyleSheet.flatten(style),
           (value, key) => propsToCopy.indexOf(key) !== -1

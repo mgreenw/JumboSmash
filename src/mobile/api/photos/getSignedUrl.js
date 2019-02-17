@@ -1,18 +1,18 @@
 // @flow
 /* eslint-disable */
 
-import { apiRequest } from '../utils/apiRequest';
+import apiRequest from '../utils/apiRequest';
 import { GET_SIGN_URL__ROUTE } from '../routes';
 
 const SIGN_URL__SUCCESS = 'SIGN_URL__SUCCESS';
 
 export type SignedUrlPayload = {
   url: string,
-  fields: Object,
+  fields: Object
 };
 
-function getSignedUrl(token: string): Promise<SignedUrlPayload> {
-  return apiRequest('GET', GET_SIGN_URL__ROUTE, token)
+function getSignedUrl(): Promise<SignedUrlPayload> {
+  return apiRequest('GET', GET_SIGN_URL__ROUTE)
     .then(response => {
       switch (response.status) {
         case SIGN_URL__SUCCESS:

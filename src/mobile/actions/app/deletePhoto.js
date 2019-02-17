@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch, GetState } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import DevTesting from 'mobile/utils/DevTesting';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import { deletePhotoApi } from 'mobile/api/photos/deletePhoto';
@@ -9,21 +9,21 @@ import { deletePhotoApi } from 'mobile/api/photos/deletePhoto';
 export type DeletePhotoInitiated_Action = {
   type: 'DELETE_PHOTO__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type DeletePhotoCompleted_Action = {
   type: 'DELETE_PHOTO__COMPLETED',
   payload: {
-    photoIds: Array<number>,
+    photoIds: Array<number>
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): DeletePhotoInitiated_Action {
   return {
     type: 'DELETE_PHOTO__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -31,18 +31,17 @@ function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
   return {
     type: 'DELETE_PHOTO__COMPLETED',
     payload: {
-      photoIds,
+      photoIds
     },
-    meta: {},
+    meta: {}
   };
 }
 
 // TODO: catch errors, e.g. the common network timeout.
 export function deletePhotoAction(photoId: number) {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
+  return function(dispatch: Dispatch) {
     dispatch(initiate());
-    deletePhotoApi(token, photoId)
+    deletePhotoApi(photoId)
       .then(newPhotoIds => {
         dispatch(complete(newPhotoIds));
       })
