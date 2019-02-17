@@ -94,20 +94,20 @@ class SettingsScreen extends React.Component<Props, State> {
     }
   }
 
-  _onUseGendersChange = (useGenders: Genders) => {
+  _onidentifyAsGendersChange = (identifyAsGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        useGenders
+        identifyAsGenders
       }
     }));
   };
 
-  _onWantGendersChange = (wantGenders: Genders) => {
+  _onWantGendersChange = (lookingForGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        wantGenders
+        lookingForGenders
       }
     }));
   };
@@ -187,8 +187,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 {'I identify as:'}
               </Text>
               <GenderSelector
-                defaultGenders={editedSettings.useGenders}
-                onChange={this._onUseGendersChange}
+                defaultGenders={editedSettings.identifyAsGenders}
+                onChange={this._onidentifyAsGendersChange}
                 plural={false}
               />
               <Text
@@ -200,7 +200,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 {'I identify as:'}
               </Text>
               <GenderSelector
-                defaultGenders={editedSettings.wantGenders}
+                defaultGenders={editedSettings.lookingForGenders}
                 onChange={this._onWantGendersChange}
                 plural
               />

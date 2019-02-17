@@ -14,21 +14,24 @@ import type { Genders } from 'mobile/reducers/';
 type GenderSelectorProps = {
   defaultGenders: Genders,
   onChange: (genders: Genders) => void,
-  plural: boolean,
+  plural: boolean
 };
 
 type GenderSelectorState = {
-  genders: Genders,
+  genders: Genders
 };
 
 type GenderToggleProps = {
   title: string,
   onPress: () => void,
-  selected: boolean,
+  selected: boolean
 };
 type GenderToggleState = {};
 
-class GenderToggle extends React.Component<GenderToggleProps, GenderToggleState> {
+class GenderToggle extends React.Component<
+  GenderToggleProps,
+  GenderToggleState
+> {
   render() {
     return (
       <TouchableOpacity
@@ -39,7 +42,7 @@ class GenderToggle extends React.Component<GenderToggleProps, GenderToggleState>
           borderColor: Colors.AquaMarine,
           flex: 1,
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
         onPress={this.props.onPress}
       >
@@ -56,7 +59,9 @@ class GenderToggle extends React.Component<GenderToggleProps, GenderToggleState>
             paddingTop: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: this.props.selected ? Colors.AquaMarine : Colors.White,
+            backgroundColor: this.props.selected
+              ? Colors.AquaMarine
+              : Colors.White
           }}
         >
           <CustomIcon name="check" size={12} color={Colors.White} />
@@ -67,17 +72,23 @@ class GenderToggle extends React.Component<GenderToggleProps, GenderToggleState>
   }
 }
 
-export class GenderSelector extends React.Component<GenderSelectorProps, GenderSelectorState> {
+export class GenderSelector extends React.Component<
+  GenderSelectorProps,
+  GenderSelectorState
+> {
   constructor(props: GenderSelectorProps) {
     super(props);
     this.state = {
-      genders: this.props.defaultGenders,
+      genders: this.props.defaultGenders
     };
   }
 
   // Check via a deep comparison equality check if anything has changed in the
   // genders. If so, call the onChange.
-  componentDidUpdate(prevProps: GenderSelectorProps, prevState: GenderSelectorState) {
+  componentDidUpdate(
+    prevProps: GenderSelectorProps,
+    prevState: GenderSelectorState
+  ) {
     if (!_.isEqual(prevState.genders, this.state.genders)) {
       this.props.onChange(this.state.genders);
     }
@@ -93,11 +104,11 @@ export class GenderSelector extends React.Component<GenderSelectorProps, GenderS
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                female: !prevState.genders.female,
-              },
+                woman: !prevState.genders.woman
+              }
             }));
           }}
-          selected={this.state.genders.female}
+          selected={this.state.genders.woman}
         />
         <View style={styles.spacer} />
         <GenderToggle
@@ -106,8 +117,8 @@ export class GenderSelector extends React.Component<GenderSelectorProps, GenderS
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                nonBinary: !prevState.genders.nonBinary,
-              },
+                nonBinary: !prevState.genders.nonBinary
+              }
             }));
           }}
           selected={this.state.genders.nonBinary}
@@ -119,11 +130,11 @@ export class GenderSelector extends React.Component<GenderSelectorProps, GenderS
             this.setState(prevState => ({
               genders: {
                 ...prevState.genders,
-                male: !prevState.genders.male,
-              },
+                man: !prevState.genders.man
+              }
             }));
           }}
-          selected={this.state.genders.male}
+          selected={this.state.genders.man}
         />
       </View>
     );
@@ -132,9 +143,9 @@ export class GenderSelector extends React.Component<GenderSelectorProps, GenderS
 
 const styles = StyleSheet.create({
   rowContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   spacer: {
-    width: 10,
-  },
+    width: 10
+  }
 });

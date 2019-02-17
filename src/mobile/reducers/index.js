@@ -62,14 +62,14 @@ import type { Dispatch as ReduxDispatch } from 'redux';
 // USER TYPES:
 // /////////////
 export type Genders = {
-  male: boolean,
-  female: boolean,
+  man: boolean,
+  woman: boolean,
   nonBinary: boolean
 };
 
 export type UserSettings = {
-  useGenders: Genders,
-  wantGenders: Genders
+  identifyAsGenders: Genders,
+  lookingForGenders: Genders
 };
 
 export type ProfileFields = {

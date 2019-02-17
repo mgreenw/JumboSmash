@@ -48,14 +48,14 @@ function complete(
         photoIds: photoIds || [] // incase partial photo uploading in onboarding
       },
       settings: settings || {
-        useGenders: {
-          male: false,
-          female: false,
+        identifyAsGenders: {
+          man: false,
+          woman: false,
           nonBinary: false
         },
-        wantGenders: {
-          male: false,
-          female: false,
+        lookingForGenders: {
+          man: false,
+          woman: false,
           nonBinary: false
         }
       }
