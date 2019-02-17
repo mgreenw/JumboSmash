@@ -1,10 +1,8 @@
 // @flow
-/* eslint-disable */
 
 import type { Dispatch } from 'mobile/reducers';
-import DevTesting from 'mobile/utils/DevTesting';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import { deletePhotoApi } from 'mobile/api/photos/deletePhoto';
+import deletePhotoApi from 'mobile/api/photos/deletePhoto';
 
 export type DeletePhotoInitiated_Action = {
   type: 'DELETE_PHOTO__INITIATED',
@@ -36,17 +34,13 @@ function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
     meta: {}
   };
 }
-
-// TODO: catch errors, e.g. the common network timeout.
-export function deletePhotoAction(photoId: number) {
-  return function(dispatch: Dispatch) {
-    dispatch(initiate());
-    deletePhotoApi(photoId)
-      .then(newPhotoIds => {
-        dispatch(complete(newPhotoIds));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  };
-}
+export default (photoId: number) => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  deletePhotoApi(photoId)
+    .then(newPhotoIds => {
+      dispatch(complete(newPhotoIds));
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
+    });
+};

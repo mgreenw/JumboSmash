@@ -4,7 +4,7 @@
 import React from 'react';
 import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-import { logout } from 'mobile/actions/auth/logout';
+import logout from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
 import type { Genders, UserSettings, ReduxState } from 'mobile/reducers';
 import type { Dispatch } from 'mobile/reducers';

@@ -24,6 +24,7 @@ module.exports = {
     camelcase: 'off',
     'prettier/prettier': ['error'],
     'react/require-default-props': 'off',
-    'no-return-assign': 'off'
+    'no-return-assign': 'off',
+    'react/jsx-curly-brace-presence': 'off'
   }
 };

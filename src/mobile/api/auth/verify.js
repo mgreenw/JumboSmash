@@ -1,11 +1,10 @@
 // @flow
-/* eslint-disable */
 
-import type { login_response } from 'mobile/actions/auth/login';
+import type { Login_Response } from 'mobile/actions/auth/login';
 import apiRequest from '../utils/apiRequest';
 import { VERIFY__ROUTE } from '../routes';
 
-type request = {
+type Request = {
   utln: string,
   code: string
 };
@@ -15,7 +14,7 @@ const VERIFY__BAD_CODE = 'VERIFY__BAD_CODE';
 const VERIFY__EXPIRED_CODE = 'VERIFY__EXPIRED_CODE';
 const VERIFY__NO_EMAIL_SENT = 'VERIFY__NO_EMAIL_SENT';
 
-export default function verify(request: request): Promise<login_response> {
+export default function verify(request: Request): Promise<Login_Response> {
   // Send a request to the server to check if UTLN is valid. If it is, send
   // a verification email, and return that email address.
   return apiRequest('POST', VERIFY__ROUTE, request)

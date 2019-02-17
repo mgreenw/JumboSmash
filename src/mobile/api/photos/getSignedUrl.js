@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import apiRequest from '../utils/apiRequest';
 import { GET_SIGN_URL__ROUTE } from '../routes';
@@ -11,7 +10,7 @@ export type SignedUrlPayload = {
   fields: Object
 };
 
-function getSignedUrl(): Promise<SignedUrlPayload> {
+export default function getSignedUrl(): Promise<SignedUrlPayload> {
   return apiRequest('GET', GET_SIGN_URL__ROUTE)
     .then(response => {
       switch (response.status) {
@@ -25,5 +24,3 @@ function getSignedUrl(): Promise<SignedUrlPayload> {
       throw { error };
     });
 }
-
-export { getSignedUrl };

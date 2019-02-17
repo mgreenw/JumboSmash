@@ -41,7 +41,6 @@ function complete(
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
 export default (scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate(scene));
   DevTesting.fakeLatency(() => {

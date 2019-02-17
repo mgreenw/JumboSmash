@@ -1,8 +1,7 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch } from 'mobile/reducers';
-import type { UserSettings } from 'mobile/reducers';
+import type { UserSettings, Dispatch } from 'mobile/reducers';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';

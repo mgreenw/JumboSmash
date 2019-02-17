@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import type { UserProfile } from 'mobile/reducers';
 import apiRequest from '../utils/apiRequest';

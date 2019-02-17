@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import type { ProfileFields, UserProfile } from 'mobile/reducers';
 import apiRequest from '../utils/apiRequest';
@@ -18,9 +17,12 @@ function updateOrCreateMyProfileFields(
         // We get back a UserProfile, but only care about the fields.
         // TODO: have, serverside, only return the fields
         case FINALIZE_PROFILE_SETUP__SUCCESS:
+          // These eslint disables are so we can use Flow to assert the types of the responses.
+          // eslint-disable-next-line no-unused-expressions
           (response.data: UserProfile);
           return response.data.fields;
         case UPDATE_PROFILE__SUCCESS: {
+          // eslint-disable-next-line no-unused-expressions
           (response.data: UserProfile);
           return response.data.fields;
         }

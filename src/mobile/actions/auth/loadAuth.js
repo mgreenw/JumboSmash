@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import type { Dispatch } from 'mobile/reducers';
 import { AsyncStorage } from 'react-native';
@@ -33,18 +32,16 @@ function complete(token: string): LoadAuthCompleted_Action {
   };
 }
 
-export default function loadAuthAction() {
-  return function(dispatch: Dispatch) {
-    dispatch(initiate());
-    DevTesting.fakeLatency(() => {
-      AsyncStorage.multiGet(['token'])
-        .then(stores => {
-          const token = stores[0][1];
-          dispatch(complete(token));
-        })
-        .catch(error => {
-          dispatch(apiErrorHandler(error));
-        });
-    });
-  };
-}
+export default () => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  DevTesting.fakeLatency(() => {
+    AsyncStorage.multiGet(['token'])
+      .then(stores => {
+        const token = stores[0][1];
+        dispatch(complete(token));
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
+  });
+};

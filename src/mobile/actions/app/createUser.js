@@ -1,8 +1,5 @@
 // @flow
-/* eslint-disable */
-
-import type { Dispatch } from 'mobile/reducers';
-import type { ProfileFields, UserSettings } from 'mobile/reducers';
+import type { ProfileFields, UserSettings, Dispatch } from 'mobile/reducers';
 import { createMyProfileFields } from 'mobile/api/users/updateMyProfile';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
@@ -35,25 +32,21 @@ function complete(): CreateProfileAndSettingsCompleted_Action {
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export function createUserAction(
-  fields: ProfileFields,
-  settings: UserSettings
-) {
-  return function(dispatch: Dispatch) {
-    dispatch(initiate());
-    DevTesting.fakeLatency(() => {
-      // Important that they occur in this order; we use a created profile
-      // to determine that onboarding is done, so settings must be created first
-      updateMySettings(settings)
-        .then(() => {
-          createMyProfileFields(fields).then(() => {
-            dispatch(complete());
-          });
-        })
-        .catch(error => {
-          dispatch(apiErrorHandler(error));
+export default (fields: ProfileFields, settings: UserSettings) => (
+  dispatch: Dispatch
+) => {
+  dispatch(initiate());
+  DevTesting.fakeLatency(() => {
+    // Important that they occur in this order; we use a created profile
+    // to determine that onboarding is done, so settings must be created first
+    updateMySettings(settings)
+      .then(() => {
+        createMyProfileFields(fields).then(() => {
+          dispatch(complete());
         });
-    });
-  };
-}
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
+  });
+};
