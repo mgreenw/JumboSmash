@@ -600,7 +600,6 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
-      console.log(action);
       return {
         ...state,
         inProgress: {
