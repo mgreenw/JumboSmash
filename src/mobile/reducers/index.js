@@ -546,7 +546,15 @@ export default function rootReducer(
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
       const { candidateUserId, scene } = action.payload;
-      const currentSceneCandidates = state.sceneCandidates[scene] || [];
+      const currentSceneCandidates = state.sceneCandidates[scene];
+      if (
+        currentSceneCandidates === null ||
+        currentSceneCandidates === undefined
+      ) {
+        throw new Error(
+          'currentSceneCandidates is null in judge scene candidates'
+        );
+      }
       const newSceneCandidates = currentSceneCandidates.filter(
         c => c.userId !== candidateUserId
       );
