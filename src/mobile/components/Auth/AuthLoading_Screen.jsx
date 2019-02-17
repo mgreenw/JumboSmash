@@ -11,6 +11,8 @@ import { routes } from 'mobile/components/Navigation';
 import DevTesting from 'mobile/utils/DevTesting';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
+const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
+const ArthurLoadingImage = require('../../assets/arthurLoading.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -103,7 +105,13 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     ];
     /* eslint-enable */
 
-    const images = [Waves1, ArthurIcon, WavesFullSCreen];
+    const images = [
+      Waves1,
+      ArthurIcon,
+      WavesFullSCreen,
+      ArthurLoadingImage,
+      ArthurLoadingGif
+    ];
 
     const imageAssets = cacheImages(images);
     const fontAssets = cacheFonts(fonts);

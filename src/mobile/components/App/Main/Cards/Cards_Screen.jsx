@@ -2,7 +2,7 @@
 /* eslint react/no-unused-state: 0 */
 
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type {
   ReduxState,
@@ -25,6 +25,9 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { SwipeDirection } from './Deck';
 import Deck from './Deck';
 
+const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
+const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
+
 type navigationProps = {
   navigation: any
 };
@@ -39,7 +42,8 @@ type dispatchProps = { getSceneCandidates: (scene: Scene) => void };
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean
+  swipeGestureInProgress: boolean,
+  loadingSource: string
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -61,19 +65,29 @@ class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false
+      swipeGestureInProgress: false,
+      loadingSource: ArthurLoadingImage
     };
   }
 
-  componentWillMount() {
-    const {
-      sceneCandidates,
-      getSceneCandidatesInProgress,
-      getSceneCandidates
-    } = this.props;
-    if (!getSceneCandidatesInProgress.smash && sceneCandidates.smash === null) {
-      getSceneCandidates('smash');
-    }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ loadingSource: ArthurLoadingGif }, () => {
+        const {
+          sceneCandidates,
+          getSceneCandidatesInProgress,
+          getSceneCandidates
+        } = this.props;
+        setTimeout(() => {
+          if (
+            !getSceneCandidatesInProgress.smash &&
+            sceneCandidates.smash === null
+          ) {
+            getSceneCandidates('smash');
+          }
+        }, 2000);
+      });
+    }, 1200);
   }
 
   _renderCard = (profile: UserProfile) => {
@@ -131,18 +145,43 @@ class SwipingScreen extends React.Component<Props, State> {
 
   render() {
     const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
+    const { loadingSource } = this.state;
+    let renderedContent;
     // If we are fetching scene candidates or haven't fetched any yet
-    // TODO: Show loading animation
     if (getSceneCandidatesInProgress.smash || sceneCandidates.smash === null) {
-      return (
-        <View>
-          <Text>LOADING</Text>
-        </View>
+      renderedContent = (
+        <Image
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            height: null,
+            width: null,
+            marginTop: 46,
+            marginBottom: 182
+          }}
+          source={loadingSource}
+        />
       );
-    }
-
-    if (sceneCandidates.smash === null || sceneCandidates.smash === undefined) {
+    } else if (
+      sceneCandidates.smash === null ||
+      sceneCandidates.smash === undefined
+    ) {
       throw new Error('Smash candidates is null or undefined');
+    } else {
+      renderedContent = (
+        <Deck
+          ref={deck => (this.deck = deck)}
+          data={sceneCandidates.smash}
+          renderCard={this._renderCard}
+          renderEmpty={this._renderEmpty}
+          onSwipeStart={this._onSwipeStart}
+          onSwipeRight={this._onSwipeRight}
+          onSwipeLeft={this._onSwipeLeft}
+          onSwipeComplete={this._onSwipeComplete}
+          infinite
+          disableSwipe={false}
+        />
+      );
     }
 
     return (
@@ -154,18 +193,7 @@ class SwipingScreen extends React.Component<Props, State> {
             leftIconName="user"
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
-            <Deck
-              ref={deck => (this.deck = deck)}
-              data={sceneCandidates.smash}
-              renderCard={this._renderCard}
-              renderEmpty={this._renderEmpty}
-              onSwipeStart={this._onSwipeStart}
-              onSwipeRight={this._onSwipeRight}
-              onSwipeLeft={this._onSwipeLeft}
-              onSwipeComplete={this._onSwipeComplete}
-              infinite
-              disableSwipe={false}
-            />
+            {renderedContent}
             <TouchableOpacity
               onPress={() => this._onPressSwipeButton('left')}
               style={Arthur_Styles.swipeButton_dislike}
