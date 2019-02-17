@@ -9,6 +9,7 @@ import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
 import { routes } from 'mobile/components/Navigation';
+import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 
 type NavigationProps = {
@@ -66,9 +67,9 @@ class MessagingScreen extends React.Component<Props, State> {
           <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate(routes.ExpandedCard, {
+                navigation.navigate(routes.MatchesExpandedCard, {
                   profile: match.profile,
-                  onMinimize: () => navigation.goBack()
+                  onMinimize: NavigationService.back
                 })
               }
             >

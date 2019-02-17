@@ -53,7 +53,9 @@ const MATCHES_ROUTE = 'MATCHES_ROUTE';
 const MESSAGE_ROUTE = 'MESSAGE_ROUTE';
 
 const CARDS_ROUTE = 'CARDS_ROUTE';
-const EXPANDED_CARD_ROUTE = 'EXPANDED_CARD_ROUTE';
+const PROFILE_EXPANDED_CARD_ROUTE = 'PROFILE_EXPANDED_CARD_ROUTE';
+const CARDS_EXPANDED_CARD_ROUTE = 'CARDS_EXPANDED_CARD_ROUTE';
+const MATCHES_EXPANDED_CARD_ROUTE = 'MATCHES_EXPANDED_CARD_ROUTE';
 
 const PROFILE_ROUTE = 'PROFILE_ROUTE';
 const SETTINGS_EDIT_ROUTE = 'SETTINGS_EDIT_ROUTE';
@@ -99,7 +101,9 @@ export const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   ProfileHelp: PROFILE_HELP_ROUTE,
   CardsStack: CARDS_STACK,
-  ExpandedCard: EXPANDED_CARD_ROUTE,
+  ProfileExpandedCard: PROFILE_EXPANDED_CARD_ROUTE,
+  MatchesExpandedCard: MATCHES_EXPANDED_CARD_ROUTE,
+  CardsExpandedCard: CARDS_EXPANDED_CARD_ROUTE,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
   Splash: SPLASH_ROUTE,
@@ -135,7 +139,7 @@ const removeHeader = {
 const CardsStack = createStackNavigator(
   {
     CARDS_ROUTE: { screen: Cards },
-    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
+    CARDS_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: CARDS_ROUTE,
@@ -149,7 +153,7 @@ const ProfileStack = createStackNavigator(
     SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
     PROFILE_EDIT_ROUTE: { screen: ProfileEdit },
     PROFILE_HELP_ROUTE: { screen: ProfileHelp },
-    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
+    PROFILE_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: PROFILE_ROUTE,
@@ -161,7 +165,7 @@ const MatchesStack = createStackNavigator(
   {
     MATCHES_ROUTE: { screen: Matches },
     MESSAGE_ROUTE: { screen: Message },
-    EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
+    MATCHES_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: MATCHES_ROUTE,

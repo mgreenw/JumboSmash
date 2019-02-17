@@ -96,7 +96,7 @@ class SwipingScreen extends React.Component<Props, State> {
       <PreviewCard
         profile={profile}
         onCardTap={() =>
-          navigation.navigate(routes.ExpandedCard, {
+          navigation.navigate(routes.CardsExpandedCard, {
             profile,
             onMinimize: () => navigation.pop()
           })
