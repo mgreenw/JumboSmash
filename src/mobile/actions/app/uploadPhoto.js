@@ -1,31 +1,29 @@
 // @flow
-/* eslint-disable */
 
-import type { Dispatch, GetState } from 'redux';
-import DevTesting from 'mobile/utils/DevTesting';
+import type { Dispatch } from 'mobile/reducers';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import { getSignedUrl } from 'mobile/api/photos/getSignedUrl';
-import { uploadPhotoToS3 } from 'mobile/api/photos/uploadPhoto';
-import { confirmUpload } from 'mobile/api/photos/confirmUpload';
+import getSignedUrl from 'mobile/api/photos/getSignedUrl';
+import uploadPhotoToS3 from 'mobile/api/photos/uploadPhoto';
+import confirmUploadAction from 'mobile/api/photos/confirmUpload';
 
 export type UploadPhotoInitiated_Action = {
   type: 'UPLOAD_PHOTO__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type UploadPhotoCompleted_Action = {
   type: 'UPLOAD_PHOTO__COMPLETED',
   payload: {
-    photoIds: number[],
+    photoIds: number[]
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): UploadPhotoInitiated_Action {
   return {
     type: 'UPLOAD_PHOTO__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -33,31 +31,28 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   return {
     type: 'UPLOAD_PHOTO__COMPLETED',
     payload: {
-      photoIds,
+      photoIds
     },
-    meta: {},
+    meta: {}
   };
 }
 
 // TODO: catch errors, e.g. the common network timeout.
-export function uploadPhotoAction(uri: string) {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
-    dispatch(initiate());
-    getSignedUrl(token)
-      .then(payload => {
-        uploadPhotoToS3(uri, payload).then(success => {
-          if (success) {
-            confirmUpload(token).then(photoIds => {
-              dispatch(complete(photoIds));
-            });
-          } else {
-            throw 'Error Uploading Photo';
-          }
-        });
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
+export default (uri: string) => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  getSignedUrl()
+    .then(payload => {
+      uploadPhotoToS3(uri, payload).then(success => {
+        if (success) {
+          confirmUploadAction().then(photoIds => {
+            dispatch(complete(photoIds));
+          });
+        } else {
+          throw new Error('Error Uploading Photo');
+        }
       });
-  };
-}
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
+    });
+};

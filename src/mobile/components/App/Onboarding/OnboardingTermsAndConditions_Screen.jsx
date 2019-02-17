@@ -5,7 +5,7 @@ import React from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
@@ -17,21 +17,24 @@ import { OnboardingLayout } from './Onboarding_Layout';
 import TermsAndConditions from 'mobile/assets/copy/termsAndConditions';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
-export default class OnboardingTermsAndConditionsScreen extends React.Component<Props, State> {
+export default class OnboardingTermsAndConditionsScreen extends React.Component<
+  Props,
+  State
+> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -49,19 +52,26 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
     navigation.navigate(routes.OnboardingNameAge, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <GEMHeader leftIconName="back" title="Terms & Conditions" loading={false} />
+        <GEMHeader
+          leftIconName="back"
+          title="Terms & Conditions"
+          loading={false}
+        />
         <Transition inline appear="horizontal">
           <View style={{ flex: 1 }}>
             <ScrollView>
@@ -73,7 +83,7 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
                   flex: 1,
                   flexDirection: 'row',
                   paddingTop: 35,
-                  paddingBottom: 35,
+                  paddingBottom: 35
                 }}
               >
                 <View style={{ flex: 1 }} />

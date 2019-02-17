@@ -1,16 +1,15 @@
 // @flow
-/* eslint-disable */
 
 // NOTE: This should ONLY be used in onboarding, before a
 // profile has been completed. After that, use getMyProfile
 
-import { apiRequest } from '../utils/apiRequest';
+import apiRequest from '../utils/apiRequest';
 import { GET_MY_PHOTOS__ROUTE } from '../routes';
 
 const GET_MY_PHOTOS__SUCCESS = 'GET_MY_PHOTOS__SUCCESS';
 
-function getMyPhotos(token: string): Promise<number[]> {
-  return apiRequest('GET', GET_MY_PHOTOS__ROUTE, token)
+export default function getMyPhotos(): Promise<number[]> {
+  return apiRequest('GET', GET_MY_PHOTOS__ROUTE)
     .then(response => {
       switch (response.status) {
         case GET_MY_PHOTOS__SUCCESS:
@@ -23,5 +22,3 @@ function getMyPhotos(token: string): Promise<number[]> {
       throw { error };
     });
 }
-
-export { getMyPhotos };

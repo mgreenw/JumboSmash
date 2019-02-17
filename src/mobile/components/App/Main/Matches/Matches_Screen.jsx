@@ -1,94 +1,125 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { Text, View, FlatList, TouchableOpacity } from 'react-native';
+import {
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl
+} from 'react-native';
 import { connect } from 'react-redux';
-import { styles } from 'mobile/styles/template';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
-import { AvatarList } from 'mobile/components/shared/AvatarList';
-import { Avatar, ListItem } from 'react-native-elements';
+import getMatchesAction from 'mobile/actions/app/getMatches';
+import NewMatchesList from 'mobile/components/shared/NewMatchesList';
+import Avatar from 'mobile/components/shared/Avatar';
+import type { NavigationScreenProp } from 'react-navigation';
+import { routes } from 'mobile/components/Navigation';
 
-type Props = {
-  navigation: any,
+type NavigationProps = {
+  navigation: NavigationScreenProp<any>
 };
 
-type State = {};
-
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
-}
-
-type item = {
-  time: string,
+type ReduxProps = {
+  matches: ?(Match[]),
+  getMatchesInProgress: boolean
 };
-const list = [
-  { time: '4h' },
-  { time: '6h' },
-  { time: '6h' },
-  { time: '1d' },
-  { time: '2d' },
-  { time: '2d' },
-  { time: '3d' },
-];
 
-class MessagingScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
+type DispatchProps = {
+  getMatches: () => void
+};
 
-  keyExtractor = (item: item, index: number) => '' + index;
+type Props = ReduxProps & NavigationProps & DispatchProps;
 
-  renderItem = item => {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  return {
+    matches: reduxState.matches,
+    getMatchesInProgress: reduxState.inProgress.getMatches
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+  return {
+    getMatches: () => {
+      dispatch(getMatchesAction());
+    }
+  };
+}
+
+class MessagingScreen extends React.Component<Props> {
+  // return a render list function so we can display this IN the flatlist
+  renderGenesisText = (hasNewMatches: boolean) => () => {
     return (
-      <TouchableOpacity style={{ height: 90, width: '100%', paddingHorizontal: 15 }}>
+      <View
+        style={{
+          width: '100%',
+          marginHorizontal: 5,
+          paddingHorizontal: 15,
+          marginVertical: 20
+        }}
+      >
+        <Text style={textStyles.headline5Style}>
+          {hasNewMatches
+            ? 'Why so shy? Click on a match to start chatting!'
+            : 'No matches, no messages! Get swiping to start sliding into those dm’s.'}
+        </Text>
+      </View>
+    );
+  };
+
+  keyExtractor = (item: Match, index: number) => `${index}`;
+
+  renderMatchListItem = ({ item: match }: { item: Match }) => {
+    const { navigation } = this.props;
+    return (
+      <TouchableOpacity
+        style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+        onPress={() => {
+          navigation.navigate(routes.Message, { match });
+        }}
+      >
         <View
           style={{
             flex: 1,
             flexDirection: 'row',
             marginVertical: 11,
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
-          <Avatar
-            size="large"
-            rounded
-            source={{
-              uri: 'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg',
-            }}
-          />
+          <Avatar size="Small" rounded photoId={6} onPress={() => {}} />
           <View
             style={{
               flex: 1,
               height: '100%',
               flexDirection: 'column',
               justifyContent: 'flex-start',
-              paddingHorizontal: 15,
+              paddingHorizontal: 15
             }}
           >
-            <Text style={textStyles.body1Style}>{'Name'}</Text>
+            <Text style={textStyles.body1Style}>
+              {match.profile.fields.displayName}
+            </Text>
             <Text
               numberOfLines={2}
               style={[textStyles.subtitle1Style, { flex: 1 }]}
-            >{`Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula eget dolor.`}</Text>
+            >
+              Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula
+              eget dolor.
+            </Text>
           </View>
           <View
             style={{
               flexDirection: 'column',
               justifyContent: 'flex-start',
-              height: '100%',
+              height: '100%'
             }}
           >
-            <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>{item.item.time}</Text>
+            <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
+              {'foo'}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -96,19 +127,29 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   render() {
-    // this is the navigator we passed in from App.js
-    const { navigate } = this.props.navigation;
+    const { getMatchesInProgress, getMatches, matches } = this.props;
+    const refreshComponent = (
+      <RefreshControl
+        refreshing={getMatchesInProgress}
+        onRefresh={getMatches}
+      />
+    );
 
     return (
-      <Transition inline appear={'right'}>
+      <Transition inline appear="right">
         <View style={{ flex: 1 }}>
-          <GEMHeader title="Messages" leftIconName={'cards'} />
+          <GEMHeader title="Messages" leftIconName="cards" borderBottom />
           <View style={{ flex: 1 }}>
             <FlatList
-              ListHeaderComponent={<AvatarList />}
-              data={list}
+              ListHeaderComponent={<NewMatchesList matches={matches} />}
+              data={matches || [1]}
               keyExtractor={this.keyExtractor}
-              renderItem={this.renderItem}
+              renderItem={
+                matches
+                  ? this.renderMatchListItem
+                  : this.renderGenesisText(false)
+              }
+              refreshControl={refreshComponent}
             />
           </View>
         </View>
@@ -119,5 +160,5 @@ class MessagingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(MessagingScreen);

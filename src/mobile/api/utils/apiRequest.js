@@ -1,28 +1,29 @@
 // @flow
-/* eslint-disable */
 
-import DevTesting from 'mobile/utils/DevTesting';
+import store from 'mobile/store';
 import { timeout } from './timeout';
 import { UNAUTHORIZED } from '../sharedResponseCodes';
 
-type method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
-export function apiRequest(
-  method: method,
+type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
+export default function apiRequest(
+  method: Method,
   route: string,
-  auth: ?string,
-  request: ?Object,
+  request: ?Object
 ): Promise<Object> {
+  const { token } = store.getState();
+  const auth = token || 'NO_TOKEN';
   return timeout(
     30000,
+    // eslint-disable-next-line no-undef
     fetch(route, {
       method,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization: auth || 'NO_TOKEN',
+        Authorization: auth
       },
-      body: request && JSON.stringify(request),
-    }),
+      body: request && JSON.stringify(request)
+    })
   )
     .then(response => response.json())
     .then(response => {

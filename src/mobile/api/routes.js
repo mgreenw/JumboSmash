@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable */
 
 import Expo from 'expo';
 
@@ -23,17 +22,20 @@ const API = '/api';
 const AUTH = '/auth';
 const USERS = '/users';
 const PHOTOS = '/photos';
+const RELATIONSHIPS = '/relationships';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
 const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
+const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
 
 // //////////////
 // AUTH ROUTES:
 // //////////////
 
 const SEND_VERIFCATION_EMAIL = '/send-verification-email/';
-export const SEND_VERIFCATION_EMAIL__ROUTE = AUTH_ROUTE + SEND_VERIFCATION_EMAIL;
+export const SEND_VERIFCATION_EMAIL__ROUTE =
+  AUTH_ROUTE + SEND_VERIFCATION_EMAIL;
 
 const GET_TOKEN_UTLN = '/get-token-utln/';
 export const GET_TOKEN_UTLN__ROUTE = AUTH_ROUTE + GET_TOKEN_UTLN;
@@ -61,3 +63,21 @@ export const CONFIRM_PHOTO__ROUTE = PHOTOS_ROUTE + CONFIRM_PHOTO;
 export const GET_MY_PHOTOS__ROUTE = `${USERS_ROUTE + MY}/photos/`;
 export const GET_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
 export const DELETE_PHOTO__ROUTE = `${PHOTOS_ROUTE}/`;
+
+// Candidates:
+const CANDIDATES = '/candidates/';
+const SMASH = 'smash';
+const SOCIAL = 'social';
+const STONE = 'stone';
+const SMASH_CANDIDATES__ROUTE = RELATIONSHIPS_ROUTE + CANDIDATES + SMASH;
+const SOCIAL_CANDIDATES__ROUTE = RELATIONSHIPS_ROUTE + CANDIDATES + SOCIAL;
+const STONE_CANDIDATES__ROUTE = RELATIONSHIPS_ROUTE + CANDIDATES + STONE;
+export const SCENE_CANDIDATES__ROUTES = {
+  smash: SMASH_CANDIDATES__ROUTE,
+  social: SOCIAL_CANDIDATES__ROUTE,
+  stone: STONE_CANDIDATES__ROUTE
+};
+
+// Matches
+const MATCHES = '/matches/';
+export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;

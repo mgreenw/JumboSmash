@@ -5,14 +5,13 @@ import { Text, Image, View } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { routes } from 'mobile/components/Navigation';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
-import type { sendVerificationEmail_response } from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
 import Popup from 'mobile/components/shared/Popup';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -22,15 +21,15 @@ const ArthurUri = require('../../../assets/arthurIcon.png');
 
 type reduxProps = {
   sendVerificationEmail_inProgress: boolean,
-  sendVerificationEmail_response: ?sendVerificationEmail_response,
+  sendVerificationEmail_response: ?SendVerificationEmail_Response
 };
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type dispatchProps = {
-  sendVerificationEmail: (utln: string) => void,
+  sendVerificationEmail: (utln: string) => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -38,22 +37,23 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  showPopup: boolean,
+  showPopup: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
-    sendVerificationEmail_inProgress: reduxState.inProgress.sendVerificationEmail,
-    sendVerificationEmail_response: reduxState.response.sendVerificationEmail,
+    sendVerificationEmail_inProgress:
+      reduxState.inProgress.sendVerificationEmail,
+    sendVerificationEmail_response: reduxState.response.sendVerificationEmail
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     // no need for force resend here.
-    sendVerificationEmail: (utln) => {
+    sendVerificationEmail: utln => {
       dispatch(sendVerificationEmailAction(utln, false));
-    },
+    }
   };
 }
 
@@ -65,7 +65,7 @@ class SplashScreen extends React.Component<Props, State> {
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      showPopup: error != null,
+      showPopup: error != null
     };
   }
 
@@ -79,7 +79,9 @@ class SplashScreen extends React.Component<Props, State> {
     if (sendingEmail !== wasSendingEmail && !sendingEmail) {
       const { sendVerificationEmail_response: response } = this.props;
       if (!response) {
-        throw new Error('Error in Login: Send Verification Email complete but no response');
+        throw new Error(
+          'Error in Login: Send Verification Email complete but no response'
+        );
       }
       const { statusCode } = response;
       switch (statusCode) {
@@ -119,14 +121,14 @@ class SplashScreen extends React.Component<Props, State> {
     navigation.navigate(routes.Verify, {
       utln,
       email,
-      alreadySent,
+      alreadySent
     });
   };
 
   _onNot2019 = (classYear: string) => {
     const { navigation } = this.props;
     navigation.navigate(routes.Not2019, {
-      classYear,
+      classYear
     });
   };
 
@@ -146,18 +148,18 @@ class SplashScreen extends React.Component<Props, State> {
     if (this._validateUtln()) {
       this.setState(
         {
-          errorMessageUtln: '',
+          errorMessageUtln: ''
         },
         () => {
           sendVerificationEmail(utln);
-        },
+        }
       );
     }
   };
 
   _utlnInputError = (errorMessage: string) => {
     this.setState({
-      errorMessageUtln: errorMessage,
+      errorMessageUtln: errorMessage
     });
   };
 
@@ -177,7 +179,7 @@ class SplashScreen extends React.Component<Props, State> {
     if (lowerCaseUtln !== oldUtln && !oldUtln) {
       this.setState({
         errorMessageUtln: '',
-        utln: lowerCaseUtln,
+        utln: lowerCaseUtln
       });
     } else {
       this.setState({ utln: lowerCaseUtln });
@@ -201,7 +203,7 @@ class SplashScreen extends React.Component<Props, State> {
                   resizeMode="contain"
                   style={{
                     flex: 1,
-                    maxWidth: '60%',
+                    maxWidth: '60%'
                   }}
                   source={ArthurUri}
                 />
@@ -217,14 +219,14 @@ class SplashScreen extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row',
+                  flexDirection: 'row'
                 }}
               >
                 <View style={{ flex: 1 }} />
                 <View
                   style={{
                     flex: 1,
-                    justifyContent: 'space-around',
+                    justifyContent: 'space-around'
                   }}
                 >
                   <PrimaryButton
@@ -233,7 +235,10 @@ class SplashScreen extends React.Component<Props, State> {
                     disabled={sendVerificationEmail_inProgress || utln === ''}
                     loading={sendVerificationEmail_inProgress}
                   />
-                  <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Touble?"
+                  />
                 </View>
                 <View style={{ flex: 1 }} />
               </View>
@@ -251,8 +256,8 @@ class SplashScreen extends React.Component<Props, State> {
               textStyles.headline4StyleMedium,
               {
                 color: Colors.Grapefruit,
-                textAlign: 'center',
-              },
+                textAlign: 'center'
+              }
             ]}
           >
             {'Your session has expired, please login again!'}
@@ -265,5 +270,5 @@ class SplashScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(SplashScreen);

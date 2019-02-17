@@ -1,19 +1,20 @@
 module.exports = {
-  extends: 'airbnb',
+  extends: ['airbnb', 'prettier'],
+  plugins: ['prettier'],
   parser: 'babel-eslint',
   env: {
     jest: true,
-    es6: true,
+    es6: true
   },
   settings: {
     'import/resolver': {
       'babel-module': {
         root: ['./'],
         alias: {
-          mobile: './',
-        },
-      },
-    },
+          mobile: './'
+        }
+      }
+    }
   },
   rules: {
     'prefer-destructuring': 'off',
@@ -21,5 +22,9 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'react/destructuring/assignment': 'off',
     camelcase: 'off',
-  },
+    'prettier/prettier': ['error'],
+    'react/require-default-props': 'off',
+    'no-return-assign': 'off',
+    'react/jsx-curly-brace-presence': 'off'
+  }
 };

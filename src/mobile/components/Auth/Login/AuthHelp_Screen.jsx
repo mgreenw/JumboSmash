@@ -5,7 +5,7 @@ import React from 'react';
 import { Text, View, Image, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { styles } from 'mobile/styles/auth';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -15,7 +15,7 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import AuthLayout from 'mobile/components/Auth/Login/Layout';
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type Props = navigationProps;

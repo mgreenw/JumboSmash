@@ -8,27 +8,26 @@ import { Permissions, ImagePicker } from 'expo';
 import Popup from 'mobile/components/shared/Popup';
 import ProgressBar from 'react-native-progress/Bar';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
-import { uploadPhotoAction } from 'mobile/actions/app/uploadPhoto';
-import { deletePhotoAction } from 'mobile/actions/app/deletePhoto';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import uploadPhotoAction from 'mobile/actions/app/uploadPhoto';
+import deletePhotoAction from 'mobile/actions/app/deletePhoto';
 import AddSinglePhoto from './AddSinglePhoto';
 
 type ReduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
   photoIds: number[],
-  token: ?string,
+  token: ?string
 };
 
 type DispatchProps = {
   uploadPhoto: string => void,
-  deletePhoto: number => void,
+  deletePhoto: number => void
 };
 
 type ProppyProps = {
   imageWidth: number,
-  width: number,
+  width: number
 };
 
 type Props = ProppyProps & ReduxProps & DispatchProps;
@@ -41,7 +40,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
     deletePhotoInProgress: reduxState.inProgress.deletePhoto,
     photoIds: reduxState.client.profile.photoIds,
-    token: reduxState.token,
+    token: reduxState.token
   };
 }
 
@@ -52,7 +51,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     },
     deletePhoto: (photoId: number) => {
       dispatch(deletePhotoAction(photoId));
-    },
+    }
   };
 }
 
@@ -62,7 +61,7 @@ async function selectPhoto(): Promise<?string> {
   if (status === 'granted') {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [1, 1]
     });
     if (result.cancelled) {
       return null;
@@ -97,7 +96,7 @@ class AddMultiPhotos extends React.Component<Props> {
       width,
       token,
       deletePhotoInProgress,
-      uploadPhotoInProgress,
+      uploadPhotoInProgress
     } = this.props;
     const numImages = photoIds.length;
     const id1 = numImages > 0 ? photoIds[0] : null;
@@ -117,7 +116,7 @@ class AddMultiPhotos extends React.Component<Props> {
       <View
         style={{
           width,
-          height: width,
+          height: width
         }}
       >
         <View style={{ top: 0, left: 0, position: 'absolute' }}>
@@ -180,15 +179,18 @@ class AddMultiPhotos extends React.Component<Props> {
             width={imageWidth}
           />
         </View>
-        <Popup onTouchOutside={() => {}} visible={uploadPhotoInProgress || deletePhotoInProgress}>
+        <Popup
+          onTouchOutside={() => {}}
+          visible={uploadPhotoInProgress || deletePhotoInProgress}
+        >
           <Text
             style={[
               textStyles.headline4StyleMedium,
               {
                 color: Colors.Grapefruit,
                 textAlign: 'center',
-                paddingBottom: 20,
-              },
+                paddingBottom: 20
+              }
             ]}
           >
             {popupMessage}
@@ -211,5 +213,5 @@ class AddMultiPhotos extends React.Component<Props> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AddMultiPhotos);

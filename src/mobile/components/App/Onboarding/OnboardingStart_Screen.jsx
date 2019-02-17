@@ -5,7 +5,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
@@ -14,11 +14,11 @@ import NavigationService from 'mobile/NavigationService';
 
 type ReduxProps = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type DispatchProps = {};
@@ -27,7 +27,7 @@ type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -36,11 +36,14 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   }
   return {
     profile: reduxState.client.profile,
-    settings: reduxState.client.settings,
+    settings: reduxState.client.settings
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): DispatchProps {
   return {};
 }
 
@@ -49,7 +52,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       profile: props.profile,
-      settings: props.settings,
+      settings: props.settings
     };
   }
 
@@ -59,12 +62,15 @@ class OnboardingStartScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingTermsAndConditions, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -88,5 +94,5 @@ class OnboardingStartScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(OnboardingStartScreen);
