@@ -32,7 +32,6 @@ type Props = {
 type State = {
   panResponder: any,
   position: AnimatedValueXY,
-  index: number,
   swipeGestureInProgress: boolean
 };
 
@@ -107,16 +106,8 @@ export default class Deck extends React.Component<Props, State> {
     this.state = {
       panResponder,
       position,
-      index: 0,
       swipeGestureInProgress: false
     };
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    const { data } = this.props;
-    if (nextProps.data !== data) {
-      this.setState({ index: 0 });
-    }
   }
 
   _forceSwipe(swipeDirection: SwipeDirection, duration: number) {
@@ -131,8 +122,8 @@ export default class Deck extends React.Component<Props, State> {
 
   _onSwipeComplete(swipeDirection: SwipeDirection) {
     const { onSwipeRight, onSwipeLeft, onSwipeComplete, data } = this.props;
-    const { index, position } = this.state;
-    const item = data[index];
+    const { position } = this.state;
+    const item = data[0];
     if (swipeDirection === RIGHT) {
       onSwipeRight(item);
     } else {
@@ -140,7 +131,6 @@ export default class Deck extends React.Component<Props, State> {
     }
     position.setValue({ x: 0, y: 0 });
     onSwipeComplete();
-    this.setState({ index: index + 1 });
   }
 
   _resetPosition() {
@@ -165,17 +155,17 @@ export default class Deck extends React.Component<Props, State> {
 
   _renderCards(): React.Node[] {
     const { disableSwipe, renderCard, renderEmpty, data } = this.props;
-    const { index, panResponder } = this.state;
-    if (index >= data.length) {
+    const { panResponder } = this.state;
+    if (data.length === 0) {
       return renderEmpty();
     }
 
     return data
       .map((user, i) => {
-        if (i < index) {
+        if (i < 0) {
           return null;
         }
-        if (i === index && !disableSwipe) {
+        if (i === 0 && !disableSwipe) {
           return (
             <Animated.View
               key={user.userId}
@@ -189,7 +179,7 @@ export default class Deck extends React.Component<Props, State> {
 
         return (
           <View key={user.userId} style={styles.cardStyle}>
-            {renderCard(user.profile, i === index)}
+            {renderCard(user.profile, i === 0)}
           </View>
         );
       })
