@@ -6,7 +6,8 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
@@ -16,8 +17,12 @@ import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
 import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
+import type { NavigationScreenProp } from 'react-navigation';
+import { routes } from 'mobile/components/Navigation';
 
-type NavigationProps = {};
+type NavigationProps = {
+  navigation: NavigationScreenProp<any>
+};
 
 type ReduxProps = {
   matches: ?(Match[]),
@@ -69,9 +74,13 @@ class MessagingScreen extends React.Component<Props> {
   keyExtractor = (item: Match, index: number) => `${index}`;
 
   renderMatchListItem = ({ item: match }: { item: Match }) => {
+    const { navigation } = this.props;
     return (
       <TouchableOpacity
         style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+        onPress={() => {
+          navigation.navigate(routes.Message, { match });
+        }}
       >
         <View
           style={{

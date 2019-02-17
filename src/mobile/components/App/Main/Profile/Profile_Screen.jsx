@@ -1,9 +1,7 @@
 // @flow
 
 import React from 'react';
-import {
-  TouchableOpacity, Text, View, Image,
-} from 'react-native';
+import { TouchableOpacity, Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
@@ -21,7 +19,7 @@ const waves1 = require('../../../../assets/waves/waves1/waves.png');
 type cardButtonProps = {
   title: string,
   onPress: () => void,
-  icon: IconName,
+  icon: IconName
 };
 class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
@@ -36,12 +34,14 @@ class CardButton extends React.PureComponent<cardButtonProps> {
           justifyContent: 'space-between',
           alignItems: 'center',
           paddingLeft: 60,
-          paddingRight: 60,
+          paddingRight: 60
         }}
       >
         <View style={{ flexDirection: 'row' }}>
           <CustomIcon name={icon} size={26} color="black" />
-          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>{title}</Text>
+          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
+            {title}
+          </Text>
         </View>
         <CustomIcon
           name="back"
@@ -55,7 +55,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
 }
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type dispatchProps = {};
@@ -63,7 +63,7 @@ type dispatchProps = {};
 type reduxProps = {
   photoId: number,
   displayName: string,
-  profile: UserProfile,
+  profile: UserProfile
 };
 
 type Props = navigationProps & dispatchProps & reduxProps;
@@ -81,7 +81,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
-    profile: reduxState.client.profile,
+    profile: reduxState.client.profile
   };
 }
 
@@ -109,16 +109,14 @@ class ProfileScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      photoId, displayName, navigation, profile,
-    } = this.props;
+    const { photoId, displayName, navigation, profile } = this.props;
     return (
       <Transition inline appear="left">
         <View style={{ flex: 1 }}>
           <GEMHeader title="Profile" rightIconName="cards" />
           <View
             style={{
-              flex: 1,
+              flex: 1
             }}
           >
             <View
@@ -127,20 +125,24 @@ class ProfileScreen extends React.Component<Props, State> {
                 justifyContent: 'space-evenly',
                 alignItems: 'center',
                 paddingTop: 20,
-                paddingBottom: 20,
+                paddingBottom: 20
               }}
             >
               <Avatar
                 size="Large"
                 photoId={photoId}
-                onPress={() => navigation.navigate(routes.ExpandedCard, {
-                  profile,
-                  onMinimize: () => navigation.pop(),
-                })
+                onPress={() =>
+                  navigation.navigate(routes.ExpandedCard, {
+                    profile,
+                    onMinimize: () => navigation.pop()
+                  })
                 }
               />
               <Text
-                style={[textStyles.headline4StyleMedium, { textAlign: 'center', paddingTop: 10 }]}
+                style={[
+                  textStyles.headline4StyleMedium,
+                  { textAlign: 'center', paddingTop: 10 }
+                ]}
               >
                 {displayName}
               </Text>
@@ -160,14 +162,22 @@ class ProfileScreen extends React.Component<Props, State> {
                 shadowRadius: 2,
                 shadowOffset: {
                   height: -1,
-                  width: 1,
+                  width: 1
                 },
-                borderRadius: 10,
+                borderRadius: 10
               }}
               elevation={5}
             >
-              <CardButton title="Edit Profile" onPress={this._onProfileEditPress} icon="user" />
-              <CardButton title="Settings" onPress={this._onSettingsPress} icon="gear" />
+              <CardButton
+                title="Edit Profile"
+                onPress={this._onProfileEditPress}
+                icon="user"
+              />
+              <CardButton
+                title="Settings"
+                onPress={this._onSettingsPress}
+                icon="gear"
+              />
               <CardButton
                 title="Help & Contact"
                 onPress={this._onProfileHelpPress}
@@ -183,5 +193,5 @@ class ProfileScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ProfileScreen);
