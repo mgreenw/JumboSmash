@@ -9,7 +9,7 @@ import { SERVER_ROUTE } from '../api/routes';
 // Not bad at all and no way around it for now
 // https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
 YellowBox.ignoreWarnings([
-  'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?',
+  'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
 ]);
 
 let _socket = null;
@@ -28,12 +28,12 @@ function connect(token: string) {
     path: '/socket',
     transports: ['websocket', 'polling'],
     query: {
-      token,
-    },
+      token
+    }
   });
 
   /* eslint-disable no-console */
-  _socket.on('error', (err) => {
+  _socket.on('error', err => {
     console.log('Socket connection error.');
     console.log(err);
   });
@@ -50,5 +50,5 @@ function connect(token: string) {
 
 export default {
   isConnected,
-  connect,
+  connect
 };

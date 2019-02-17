@@ -11,9 +11,9 @@ type Props = {
   onPress: () => void
 };
 
-const LargeWidth = 135;
-const MediumWidth = 75;
-const SmallWidth = 70;
+export const LargeWidth = 135;
+export const MediumWidth = 75;
+export const SmallWidth = 70;
 
 export default (props: Props) => {
   const { photoId, size, onPress } = props;
