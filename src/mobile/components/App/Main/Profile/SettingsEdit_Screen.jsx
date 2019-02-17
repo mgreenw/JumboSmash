@@ -197,7 +197,7 @@ class SettingsScreen extends React.Component<Props, State> {
                   { textAlign: 'center', padding: 10 }
                 ]}
               >
-                {'I identify as:'}
+                {"I'm looking for:'}
               </Text>
               <GenderSelector
                 defaultGenders={editedSettings.lookingForGenders}
