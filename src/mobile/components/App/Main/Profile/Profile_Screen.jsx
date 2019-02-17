@@ -130,7 +130,7 @@ class ProfileScreen extends React.Component<Props, State> {
             >
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate(routes.ExpandedCard, {
+                  navigation.navigate(routes.ProfileExpandedCard, {
                     profile,
                     onMinimize: () => navigation.pop()
                   })
