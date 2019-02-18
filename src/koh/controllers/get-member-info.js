@@ -30,7 +30,7 @@ const memberSelect = `
 const getUserInfo = async (req: $Request, res: $Response) => {
   const email = addrs.parseOneAddress(req.params.email.toLowerCase());
 
-  if (email.domain !== 'tufts.edu') {
+  if (!email || email.domain !== 'tufts.edu') {
     return res.status(404).json({
       status: codes.GET_MEMBER_INFO__NOT_FOUND,
     });
@@ -88,7 +88,12 @@ const getUserInfo = async (req: $Request, res: $Response) => {
     'tuftsEduMajor',
   ];
 
-  const query = email.local.contains('.')
+  // If the email local piece has a dot, then it is not a utln. I know, this sucks,
+  // but I think it's the best way to do it. If the length is greater than 8, then it must
+  // be the full email as well.
+
+  // NOTE: The ldap search query is case-INsensitive. This is great for us :)
+  const query = email.local.includes('.') || email.local.length > 8
     ? `mail=${email.address}`
     : `uid=${email.local}`;
 
@@ -98,9 +103,9 @@ const getUserInfo = async (req: $Request, res: $Response) => {
     if (searchResult.entries.length === 0) {
       await db.query(`
         INSERT INTO MEMBERS
-        (email, exists)
-        VALUES ($1, false)
-      `, [email.address]);
+        (utln, email, exists)
+        VALUES ($1, $2, false)
+      `, [email.local, email.address]);
 
       return res.status(404).json({
         status: codes.GET_MEMBER_INFO__NOT_FOUND,
