@@ -51,7 +51,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   swipeInProgress: boolean,
-  loadingSource: string
+  loadingSource: string,
+  currentScene: Scene
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -81,28 +82,24 @@ class SwipingScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       swipeInProgress: false,
-      loadingSource: ArthurLoadingImage
+      loadingSource: ArthurLoadingImage,
+      currentScene: 'smash'
     };
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ loadingSource: ArthurLoadingGif }, () => {
-        const {
-          sceneCandidates,
-          getSceneCandidatesInProgress,
-          getSceneCandidates
-        } = this.props;
-        setTimeout(() => {
-          if (
-            !getSceneCandidatesInProgress.smash &&
-            sceneCandidates.smash === null
-          ) {
-            getSceneCandidates('smash');
-          }
-        }, 2000);
-      });
-    }, 1200);
+    this._showLoadingAndFetchCandidates();
+  }
+
+  componentDidUpdate(_, prevState: State) {
+    const { sceneCandidates } = this.props;
+    const { currentScene } = this.state;
+    if (
+      prevState.currentScene !== currentScene &&
+      sceneCandidates[currentScene] === null
+    ) {
+      this._showLoadingAndFetchCandidates();
+    }
   }
 
   _renderCard = (profile: UserProfile) => {
@@ -140,13 +137,15 @@ class SwipingScreen extends React.Component<Props, State> {
 
   _onSwipeRight = (user: Candidate) => {
     const { judgeSceneCandidate } = this.props;
-    judgeSceneCandidate(user.userId, 'smash', true);
+    const { currentScene } = this.state;
+    judgeSceneCandidate(user.userId, currentScene, true);
     DevTesting.log(`Card liked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeLeft = (user: Candidate) => {
     const { judgeSceneCandidate } = this.props;
-    judgeSceneCandidate(user.userId, 'smash', false);
+    const { currentScene } = this.state;
+    judgeSceneCandidate(user.userId, currentScene, false);
     DevTesting.log(`Card disliked: ${user.profile.fields.displayName}`);
   };
 
@@ -176,13 +175,35 @@ class SwipingScreen extends React.Component<Props, State> {
     this._onPressSwipeButton('left');
   };
 
+  _showLoadingAndFetchCandidates() {
+    setTimeout(() => {
+      this.setState({ loadingSource: ArthurLoadingGif }, () => {
+        const {
+          sceneCandidates,
+          getSceneCandidatesInProgress,
+          getSceneCandidates
+        } = this.props;
+        setTimeout(() => {
+          const { currentScene } = this.state;
+          if (
+            !getSceneCandidatesInProgress[currentScene] &&
+            sceneCandidates[currentScene] === null
+          ) {
+            getSceneCandidates(currentScene);
+          }
+        }, 2000);
+      });
+    }, 1200);
+  }
+
   deck: ?Deck;
 
   render() {
     const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
-    const { loadingSource } = this.state;
+    const { loadingSource, currentScene } = this.state;
     const isLoading =
-      getSceneCandidatesInProgress.smash || sceneCandidates.smash === null;
+      getSceneCandidatesInProgress[currentScene] ||
+      sceneCandidates[currentScene] === null;
     let renderedContent;
     // If we are fetching scene candidates or haven't fetched any yet
     if (isLoading) {
@@ -200,15 +221,15 @@ class SwipingScreen extends React.Component<Props, State> {
         />
       );
     } else if (
-      sceneCandidates.smash === null ||
-      sceneCandidates.smash === undefined
+      sceneCandidates[currentScene] === null ||
+      sceneCandidates[currentScene] === undefined
     ) {
-      throw new Error('Smash candidates is null or undefined');
+      throw new Error(`${currentScene} candidates is null or undefined`);
     } else {
       renderedContent = (
         <Deck
           ref={deck => (this.deck = deck)}
-          data={sceneCandidates.smash}
+          data={sceneCandidates[currentScene]}
           renderCard={this._renderCard}
           renderEmpty={this._renderEmpty}
           onSwipeStart={this._onSwipeStart}
@@ -224,7 +245,12 @@ class SwipingScreen extends React.Component<Props, State> {
     const sceneSelector = (
       <SceneSelector
         startIndex={1}
-        onPress={value => console.log(`Call onPress with value: ${value}`)}
+        onPress={scene =>
+          this.setState({
+            currentScene: scene,
+            loadingSource: ArthurLoadingImage
+          })
+        }
         disabled={false}
       />
     );
