@@ -13,6 +13,7 @@ describe('GET api/relationships/matches', () => {
     await db.query('DELETE from users');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
+    await db.query('DELETE from messages');
 
     me = await dbUtils.createUser('mgreen01', true);
   });
@@ -23,6 +24,7 @@ describe('GET api/relationships/matches', () => {
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE from classmates');
+    await db.query('DELETE from messages');
   });
 
   it('must require the user to exist and have a profile setup', async () => {
@@ -156,9 +158,11 @@ describe('GET api/relationships/matches', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
     expect(res.body.data.length).toBe(2);
+
+    // NOTE: this tests ordering by 'last match date' if messages are null
     const personMatch = (res.body.data[0].id === person.id)
-      ? res.body.data[0]
-      : res.body.data[1];
+      ? res.body.data[1]
+      : res.body.data[0];
     expect(personMatch.userId).toBe(person.id);
     expect(personMatch.scenes.smash).not.toBeNull();
     expect(personMatch.scenes.social).not.toBeNull();
@@ -194,5 +198,37 @@ describe('GET api/relationships/matches', () => {
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
     // We should not recieve a result for the banned one
     expect(res.body.data.length).toBe(2);
+  });
+
+  it('should return the most recent message between the users', async () => {
+    let res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+    const matchIds = res.body.data.map((match) => {
+      expect(match.mostRecentMessage).toBeNull();
+      return match.userId;
+    });
+
+
+    res = await request(app)
+      .post(`/api/messages/${matchIds[0]}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .send({ content: 'hey' });
+
+    res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+
+    // User should be at the end of the list now
+    const message = res.body.data[res.body.data.length - 1].mostRecentMessage;
+    expect(message.content).toBe('hey');
+    expect(message.messageId).toBeDefined();
+    expect(message.timestamp).toBeDefined();
+    expect(message.fromClient).toBeTruthy();
+
+    expect(res.body.data[0].mostRecentMessage).toBeNull();
   });
 });
