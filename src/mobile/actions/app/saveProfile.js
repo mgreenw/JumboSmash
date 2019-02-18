@@ -1,6 +1,6 @@
 // @flow
-
-import type { ProfileFields, Dispatch } from 'mobile/reducers';
+import _ from 'lodash';
+import type { ProfileFields, Dispatch, GetState } from 'mobile/reducers';
 import { updateMyProfileFields } from 'mobile/api/users/updateMyProfile';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
@@ -35,7 +35,14 @@ function complete(fields: ProfileFields): SaveProfileFieldsCompleted_Action {
   };
 }
 
-export default (fields: ProfileFields) => (dispatch: Dispatch) => {
+export default (fields: ProfileFields) => (
+  dispatch: Dispatch,
+  getState: GetState
+) => {
+  const { client } = getState();
+  if (client && _.isEqual(client.profile.fields, fields)) {
+    return;
+  }
   dispatch(initiate());
   updateMyProfileFields(fields)
     .then(newFields => {

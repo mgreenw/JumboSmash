@@ -57,6 +57,12 @@ function complete(
           man: false,
           woman: false,
           nonBinary: false
+        },
+        // start all selected true untill we add to onboarding
+        activeScenes: {
+          smash: true,
+          social: true,
+          stone: true
         }
       }
     },

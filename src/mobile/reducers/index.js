@@ -73,7 +73,12 @@ export type Genders = {
 
 export type UserSettings = {
   identifyAsGenders: Genders,
-  lookingForGenders: Genders
+  lookingForGenders: Genders,
+  activeScenes: {
+    smash: boolean,
+    social: boolean,
+    stone: boolean
+  }
 };
 
 export type ProfileFields = {
@@ -599,7 +604,7 @@ export default function rootReducer(
         ...state,
         inProgress: {
           ...state.inProgress,
-          saveProfile: false
+          saveSettings: false
         },
         client: {
           ...state.client,
