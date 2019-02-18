@@ -27,10 +27,7 @@ export default function uploadPhotoToS3(
   );
   return fetch(payload.url, {
     method: 'POST',
-    body: formdata,
-    headers: {
-      'Content-Type': 'image/jpeg'
-    }
+    body: formdata
   })
     .then(response => response.status === 204)
     .catch(err => false);
