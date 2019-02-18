@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import { Platform, View, Text, StatusBar } from 'react-native';
 import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -10,6 +10,8 @@ import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import HeaderIcon from './HeaderIcon';
 
 /* eslint-disable react/require-default-props */
+
+// centerComponent overrides title
 type Props = {
   leftIconName?: IconName,
   rightIconName?: IconName,
@@ -17,7 +19,8 @@ type Props = {
   onRightIconPress?: () => void,
   title: string,
   loading?: boolean,
-  borderBottom?: boolean
+  borderBottom?: boolean,
+  centerComponent?: React.Node
 };
 /* eslint-enable */
 
@@ -30,7 +33,8 @@ export default (props: Props) => {
     onRightIconPress,
     title,
     loading,
-    borderBottom
+    borderBottom,
+    centerComponent
   } = props;
 
   const LeftIcon = (
@@ -66,7 +70,7 @@ export default (props: Props) => {
         backgroundColor="transparent"
         leftComponent={LeftIcon}
         rightComponent={RightIcon}
-        centerComponent={Title}
+        centerComponent={centerComponent || Title}
         outerContainerStyles={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />
       <StatusBar barStyle="dark-content" />
