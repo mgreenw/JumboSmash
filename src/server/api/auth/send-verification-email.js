@@ -65,6 +65,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
       logger.info(`Already sent code: ${code.code}`);
       return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT).data({
         email: code.email,
+        utln: memberInfo.utln,
       });
     }
   }
@@ -127,6 +128,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   // Send a success response to the client
   return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
     email: memberInfo.email,
+    utln: memberInfo.utln,
   });
 };
 

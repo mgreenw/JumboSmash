@@ -14,9 +14,9 @@ Send a verification email to the user with the given UTLN.
 
 Provide the user's Tufts utln. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`.
 
-* `utln`
+* `email`
   * Type: `string`
-  * Description: 8 character Tufts UTLN
+  * Description: The user's Tufts email. Can be first.last@tufts.edu OR utln@tufts.edu
   * Required: `true`
 * `forceResend`
   * Type: `boolean`
@@ -27,7 +27,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ```json
 {
-    "utln": "mgreen14"
+    "email": "mgreen14@tufts.edu"
 }
 ```
 
@@ -37,7 +37,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ```json
 {
-    "utln": "mgreen14",
+    "utln": "max.greenwald@tufts.edu",
     "forceResend": true
 }
 ```
@@ -53,7 +53,10 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 ```json
 {
     "status": "SEND_VERIFICATION_EMAIL__SUCCESS",
-    "email": "Max.Greenwald@tufts.edu"
+    "data": {
+        "email": "Max.Greenwald@tufts.edu",
+        "utln": "mgreen14"
+    }
 }
 ```
 
@@ -68,7 +71,10 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 ```json
 {
     "status": "SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT",
-    "email": "Max.Greenwald@tufts.edu"
+    "data": {
+        "email": "Max.Greenwald@tufts.edu",
+        "utln": "mgreen14"
+    }
 }
 ```
 
@@ -83,7 +89,9 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 ```json
 {
     "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_2019",
-    "classYear": "20"
+    "data": {
+        "classYear": "20"
+    }
 }
 ```
 
@@ -110,8 +118,10 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 ```json
 {
     "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD",
-    "classYear": "19",
-    "college": "THE FLETCHER SCHOOL"
+    "data": {
+        "classYear": "19",
+        "college": "THE FLETCHER SCHOOL"
+    }
 }
 ```
 
