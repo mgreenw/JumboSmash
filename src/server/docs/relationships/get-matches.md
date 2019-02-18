@@ -50,6 +50,12 @@ Provide the normal `Authorization` token in the request header.
                 "smash": "2019-01-27 13:25:43.162-05",
                 "social": null,
                 "stone": null
+            },
+            "mostRecentMessage": {
+                "messageId": 2,
+                "content": "Well hello there",
+                "timestamp": "2019-02-17T16:01:08.078696",
+                "fromClient": false
             }
         },
         {
@@ -66,7 +72,8 @@ Provide the normal `Authorization` token in the request header.
                 "smash": null,
                 "social": "2019-01-27 13:25:43.162-05",
                 "stone": null
-            }
+            },
+            "mostRecentMessage": null
         }
     ]
 }
