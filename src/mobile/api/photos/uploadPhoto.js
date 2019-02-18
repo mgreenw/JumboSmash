@@ -12,7 +12,14 @@ export default function uploadPhotoToS3(
   uri: string,
   payload: SignedUrlPayload
 ): Promise<boolean> {
+  console.log(uri);
   const formdata = new FormData();
+
+  const uriParts = uri.split('.');
+  const fileType = uriParts[uriParts.length - 1];
+  console.log({ uriParts });
+  console.log({ fileType });
+
   formdata.append('Content-Type', 'image/jpeg'); // MUST be first
   for (const f in payload.fields) {
     const field = f;
@@ -27,10 +34,7 @@ export default function uploadPhotoToS3(
   );
   return fetch(payload.url, {
     method: 'POST',
-    body: formdata,
-    headers: {
-      'Content-Type': 'image/jpeg'
-    }
+    body: formdata
   })
     .then(response => response.status === 204)
     .catch(err => false);
