@@ -2,7 +2,7 @@
 
 Get the current user's matches across all scenes. Exclude any blocked users
 in either direction, and include a list of the scenes in which the users are matched.
-Return the result as an unordered list. The results are ordered by 1) most recent messages, with no messages coming first then 2) for the matches with no messages, by the date of the most recent match with the user.
+The results are ordered by 1) most recent messages, with no messages coming first then 2) for the matches with no messages, by the date of the most recent match with the user.
 
 **URL** : `/api/relationships/matches`
 
