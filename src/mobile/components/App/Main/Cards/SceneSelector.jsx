@@ -11,10 +11,6 @@ type Props = {
   onPress: (scene: Scene) => void
 };
 
-type State = {
-  selected: number
-};
-
 const SCENES = [
   { label: '🐘', value: 'social' },
   { label: '🍑', value: 'smash' }
@@ -22,18 +18,16 @@ const SCENES = [
 
 const WIDTH = 40 * SCENES.length;
 
-export default class SceneSelector extends Component<Props, State> {
+export default class SceneSelector extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      selected: props.startIndex
-    };
-    this.animatedValue = new Animated.Value(props.startIndex / SCENES.length);
+    this.selectedSceneHorizontalPosition = new Animated.Value(
+      props.startIndex / SCENES.length
+    );
   }
 
-  animate = (value: AnimatedValue, last: AnimatedValue) => {
-    this.animatedValue.setValue(last);
-    Animated.timing(this.animatedValue, {
+  animate = (value: AnimatedValue) => {
+    Animated.timing(this.selectedSceneHorizontalPosition, {
       toValue: value,
       duration: 100,
       easing: Easing.cubic,
@@ -43,13 +37,11 @@ export default class SceneSelector extends Component<Props, State> {
 
   toggleItem = (index: number) => {
     const { onPress } = this.props;
-    const { selected } = this.state;
-    this.animate(index / SCENES.length, selected / SCENES.length);
+    this.animate(index / SCENES.length);
     onPress(SCENES[index].value);
-    this.setState({ selected: index });
   };
 
-  animatedValue: AnimatedValue;
+  selectedSceneHorizontalPosition: AnimatedValue;
 
   render() {
     const renderedScenes = SCENES.map((scene, index) => (
@@ -100,10 +92,12 @@ export default class SceneSelector extends Component<Props, State> {
                 width: WIDTH / SCENES.length,
                 transform: [
                   {
-                    translateX: this.animatedValue.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, WIDTH]
-                    })
+                    translateX: this.selectedSceneHorizontalPosition.interpolate(
+                      {
+                        inputRange: [0, 1],
+                        outputRange: [0, WIDTH]
+                      }
+                    )
                   }
                 ],
                 borderRadius: 25,

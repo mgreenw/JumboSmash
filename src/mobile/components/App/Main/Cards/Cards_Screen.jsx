@@ -96,7 +96,7 @@ class SwipingScreen extends React.Component<Props, State> {
     const { currentScene } = this.state;
     if (
       prevState.currentScene !== currentScene &&
-      sceneCandidates[currentScene] === null
+      !sceneCandidates[currentScene]
     ) {
       this._showLoadingAndFetchCandidates();
     }

@@ -10,6 +10,8 @@ import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import HeaderIcon from './HeaderIcon';
 
 /* eslint-disable react/require-default-props */
+
+// centerComponent overrides title
 type Props = {
   leftIconName?: IconName,
   rightIconName?: IconName,
