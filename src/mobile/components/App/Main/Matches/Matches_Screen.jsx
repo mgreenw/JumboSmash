@@ -89,7 +89,7 @@ class MessagingScreen extends React.Component<Props> {
             alignItems: 'center'
           }}
         >
-          <Avatar size="Small" rounded photoId={6} onPress={() => {}} />
+          <Avatar size="Small" photoId={match.profile.photoIds[0]} />
           <View
             style={{
               flex: 1,
