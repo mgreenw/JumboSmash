@@ -25,6 +25,7 @@ import DevTesting from 'mobile/utils/DevTesting';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { SwipeDirection } from './Deck';
 import Deck from './Deck';
+import SceneSelector from './SceneSelector';
 
 const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
@@ -203,6 +204,14 @@ class SwipingScreen extends React.Component<Props, State> {
       );
     }
 
+    const sceneSelector = (
+      <SceneSelector
+        startIndex={1}
+        onPress={value => console.log(`Call onPress with value: ${value}`)}
+        disabled={false}
+      />
+    );
+
     return (
       <Transition inline appear="scale">
         <View style={{ flex: 1 }}>
@@ -210,6 +219,7 @@ class SwipingScreen extends React.Component<Props, State> {
             title="PROJECTGEM"
             rightIconName="message"
             leftIconName="user"
+            centerComponent={sceneSelector}
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             {renderedContent}
