@@ -8,6 +8,7 @@ import type {
   ReduxState,
   Candidate,
   UserProfile,
+  UserSettings,
   SceneCandidates,
   GetSceneCandidatesInProgress,
   Scene,
@@ -19,8 +20,11 @@ import { routes } from 'mobile/components/Navigation';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import DevTesting from 'mobile/utils/DevTesting';
 import NavigationService from 'mobile/NavigationService';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
 import type { SwipeDirection } from './Deck';
 import Deck from './Deck';
 import SceneSelector from './SceneSelector';
@@ -35,7 +39,8 @@ type navigationProps = {
 
 type reduxProps = {
   sceneCandidates: SceneCandidates,
-  getSceneCandidatesInProgress: GetSceneCandidatesInProgress
+  getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
+  clientSettings: UserSettings
 };
 
 type dispatchProps = {
@@ -56,9 +61,13 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
+  if (!reduxState.client) {
+    throw new Error('client is null in Cards Screen');
+  }
   return {
     sceneCandidates: reduxState.sceneCandidates,
-    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates
+    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
+    clientSettings: reduxState.client.settings
   };
 }
 
@@ -75,6 +84,10 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
       dispatch(judgeSceneCandidateAction(candidateUserId, scene, liked));
     }
   };
+}
+
+function capitalizeFirstLetter(string: string) {
+  return string[0].toUpperCase() + string.slice(1);
 }
 
 class SwipingScreen extends React.Component<Props, State> {
@@ -196,17 +209,108 @@ class SwipingScreen extends React.Component<Props, State> {
     }, 1200);
   }
 
+  _renderNotActiveInScene() {
+    const { currentScene } = this.state;
+    return (
+      <View
+        style={{
+          flex: 1,
+          marginVertical: 60,
+          marginHorizontal: 42,
+          alignItems: 'center'
+        }}
+      >
+        <View
+          style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+            Welcome to
+          </Text>
+          <Text
+            style={[
+              textStyles.jumboSmashStyle,
+              { fontSize: 40, padding: 15, textAlign: 'center' }
+            ]}
+          >
+            {` Jumbo${capitalizeFirstLetter(currentScene)}`}
+          </Text>
+        </View>
+        <View
+          style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <View
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              borderWidth: 3,
+              borderColor: Colors.Grapefruit,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ fontSize: 69 }}>🍑</Text>
+          </View>
+        </View>
+        <View
+          style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
+            This is where you can match with people to get ~frisky~
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 2
+          }}
+        >
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 4 }}>
+            <PrimaryButton
+              onPress={() => NavigationService.navigate(routes.SettingsEdit)}
+              title="Go to settings"
+              loading={false}
+              disabled={false}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
+        </View>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
+            {`You won’t be shown in Jumbo${capitalizeFirstLetter(currentScene)}
+unless you turn it on in Settings.`}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   deck: ?Deck;
 
   render() {
-    const { sceneCandidates, getSceneCandidatesInProgress } = this.props;
+    const {
+      sceneCandidates,
+      getSceneCandidatesInProgress,
+      clientSettings
+    } = this.props;
     const { loadingSource, currentScene } = this.state;
+
     const isLoading =
       getSceneCandidatesInProgress[currentScene] ||
       sceneCandidates[currentScene] === null;
+
+    const isActiveInScene = clientSettings.activeScenes[currentScene] === true;
+
     let renderedContent;
-    // If we are fetching scene candidates or haven't fetched any yet
-    if (isLoading) {
+
+    if (!isActiveInScene) {
+      renderedContent = this._renderNotActiveInScene();
+    } else if (isLoading) {
       renderedContent = (
         <Image
           resizeMode="contain"
@@ -266,12 +370,14 @@ class SwipingScreen extends React.Component<Props, State> {
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
             {renderedContent}
-            <SwipeButtons
-              disabled={isLoading}
-              onPress={(swipeDirection: SwipeDirection) =>
-                this._onPressSwipeButton(swipeDirection)
-              }
-            />
+            {isActiveInScene && (
+              <SwipeButtons
+                disabled={isLoading}
+                onPress={(swipeDirection: SwipeDirection) =>
+                  this._onPressSwipeButton(swipeDirection)
+                }
+              />
+            )}
           </View>
         </View>
       </Transition>
