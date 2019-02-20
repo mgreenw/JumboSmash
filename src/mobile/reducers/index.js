@@ -134,7 +134,7 @@ export type Message = {
   messageId: number,
   content: string,
   timestamp: string,
-  fromClient: string
+  fromClient: boolean
 };
 
 // TODO: enable if needed. This is a conceptual type.
