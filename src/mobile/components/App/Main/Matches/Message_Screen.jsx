@@ -72,11 +72,11 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
       ? conversation
           .map(message => {
             return {
-              _id: message.messageId,
+              _id: message.messageId.toString(),
               text: message.content,
               createdAt: new Date(),
               user: {
-                _id: message.fromClient ? 1 : 2,
+                _id: message.fromClient ? '1' : '2',
                 name: message.fromClient ? 'A' : 'B'
               }
             };
