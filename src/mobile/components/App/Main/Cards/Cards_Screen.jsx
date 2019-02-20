@@ -265,7 +265,11 @@ class SwipingScreen extends React.Component<Props, State> {
           </View>
         </View>
         <View
-          style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}
+          style={{
+            flex: 2.5,
+            justifyContent: 'flex-start',
+            alignItems: 'center'
+          }}
         >
           <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
             {SCENES[currentScene].description}
