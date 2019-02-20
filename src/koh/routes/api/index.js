@@ -7,4 +7,4 @@ const getMemberInfo = require('../../controllers/get-member-info');
 
 module.exports = apiRouter;
 
-apiRouter.get('/member-info/:utln', getMemberInfo);
+apiRouter.get('/member-info/:email', getMemberInfo);
