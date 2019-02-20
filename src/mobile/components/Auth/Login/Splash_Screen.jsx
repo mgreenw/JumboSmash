@@ -86,11 +86,21 @@ class SplashScreen extends React.Component<Props, State> {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
-          this._onSuccess(response.requestEmail, response.responseEmail, false);
+          this._onSuccess(
+            response.requestEmail,
+            response.responseEmail,
+            response.utln,
+            false
+          );
           break;
         }
         case 'ALREADY_SENT': {
-          this._onSuccess(response.requestEmail, response.responseEmail, true);
+          this._onSuccess(
+            response.requestEmail,
+            response.responseEmail,
+            response.utln,
+            true
+          );
           break;
         }
         case 'WRONG_CLASS_YEAR': {
@@ -119,12 +129,14 @@ class SplashScreen extends React.Component<Props, State> {
   _onSuccess = (
     requestEmail: string,
     responseEmail: string,
+    utln: string,
     alreadySent: boolean
   ) => {
     const { navigation } = this.props;
     navigation.navigate(routes.Verify, {
       requestEmail,
       responseEmail,
+      utln,
       alreadySent
     });
   };

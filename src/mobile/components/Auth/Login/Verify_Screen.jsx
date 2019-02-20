@@ -121,7 +121,7 @@ class SplashScreen extends React.Component<Props, State> {
     const { login } = this.props;
     const { navigation } = this.props;
     const utln = navigation.getParam('utln', null);
-    const email = navigation.getParam('email', null);
+    const email = navigation.getParam('responseEmail', null);
     if (!utln || !email) {
       throw ('Error in Verify Screen: utln or email null: ', utln, email);
     }

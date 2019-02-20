@@ -17,7 +17,8 @@ export type SendVerificationEmail_Response = {
   statusCode: StatusCode,
   requestEmail: string,
   responseEmail: string,
-  classYear: string
+  classYear: string,
+  utln: string
 };
 
 export type SendVerificationEmailCompleted_Action = {
