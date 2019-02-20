@@ -25,6 +25,7 @@ type Props = {
   onSwipeRight: (user: Candidate) => void,
   onSwipeLeft: (user: Candidate) => void,
   onSwipeComplete: () => void,
+  onCardTap: (profile: UserProfile) => void,
   disableSwipe: boolean,
   infinite?: boolean
 };
@@ -80,8 +81,10 @@ export default class Deck extends React.Component<Props, State> {
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
       onPanResponderRelease: (_, gesture) => {
+        const { swipeGestureInProgress } = this.state;
+        const { data, onCardTap, disableSwipe } = this.props;
         // If the deck should not be swipeable then return
-        if (props.disableSwipe) {
+        if (disableSwipe) {
           return;
         }
 
@@ -93,6 +96,9 @@ export default class Deck extends React.Component<Props, State> {
           this._forceSwipe(LEFT, 500);
         } else {
           DevTesting.log('Swipe dismissed');
+          if (!swipeGestureInProgress) {
+            onCardTap(data[0].profile);
+          }
           this._resetPosition();
         }
 

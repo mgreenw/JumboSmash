@@ -3,6 +3,7 @@
 import React from 'react';
 import { View, StatusBar } from 'react-native';
 import CardView from 'mobile/components/shared/CardView';
+import { isIphoneX } from 'mobile/utils/Platform';
 
 type navigationProps = {
   navigation: any
@@ -27,9 +28,13 @@ export default (props: Props) => {
     );
   }
 
+  const iphoneX = isIphoneX();
+
   return (
     <View style={{ display: 'flex', flex: 1 }}>
-      <StatusBar hidden />
+      <StatusBar hidden={!iphoneX} />
+      {iphoneX && <View style={{ height: 40, backgroundColor: '#fff' }} />}
+
       <CardView
         profile={profile}
         onMinimize={onMinimize}
