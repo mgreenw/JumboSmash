@@ -122,6 +122,18 @@ class SettingsScreen extends React.Component<Props, State> {
     }));
   };
 
+  _onSocialSwitchChange = (social: boolean) => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+        activeScenes: {
+          ...state.editedSettings.activeScenes,
+          social
+        }
+      }
+    }));
+  };
+
   _onBack = () => {
     const { saveSettings } = this.props;
     const { editedSettings } = this.state;
@@ -151,27 +163,47 @@ class SettingsScreen extends React.Component<Props, State> {
               backgroundColor: 'transparent'
             }}
           >
-            <View
-              style={[
-                styles.settingsBlock,
-                {
+            <View style={[styles.settingsBlock, { marginTop: 20 }]}>
+              <View
+                style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  marginTop: 20
-                }
-              ]}
-            >
-              <Text style={textStyles.headline6Style}>Show me on Smash</Text>
-              <Switch
-                value={editedSettings.activeScenes.smash}
-                tintColor={
-                  Colors.AquaMarine /* TODO: investigate if this is deprecated */
-                }
-                onTintColor={Colors.AquaMarine}
-                trackColor={Colors.AquaMarine}
-                ios_backgroundColor={Colors.AquaMarine}
-                onValueChange={this._onSmashSwitchChange}
-              />
+                  paddingBottom: 15
+                }}
+              >
+                <Text style={textStyles.headline6Style}>Show me on Smash</Text>
+                <Switch
+                  value={editedSettings.activeScenes.smash}
+                  tintColor={
+                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                  }
+                  onTintColor={Colors.AquaMarine}
+                  trackColor={Colors.AquaMarine}
+                  ios_backgroundColor={Colors.AquaMarine}
+                  onValueChange={this._onSmashSwitchChange}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingTop: 15,
+                  borderTopWidth: 1,
+                  borderColor: Colors.Grey80
+                }}
+              >
+                <Text style={textStyles.headline6Style}>Show me on Social</Text>
+                <Switch
+                  value={editedSettings.activeScenes.social}
+                  tintColor={
+                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                  }
+                  onTintColor={Colors.AquaMarine}
+                  trackColor={Colors.AquaMarine}
+                  ios_backgroundColor={Colors.AquaMarine}
+                  onValueChange={this._onSocialSwitchChange}
+                />
+              </View>
             </View>
             <View style={styles.settingsBlock}>
               <Text

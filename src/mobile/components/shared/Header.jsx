@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Platform, View, Text, StatusBar } from 'react-native';
 import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
+import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
 
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
@@ -59,10 +60,19 @@ export default (props: Props) => {
     </View>
   );
 
+  let paddingTop;
+  if (isIphoneX()) {
+    paddingTop = 20;
+  } else if (Platform.OS === 'ios') {
+    paddingTop = 0;
+  } else {
+    paddingTop = Constants.statusBarHeight;
+  }
+
   return (
     <View
       style={{
-        paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight
+        paddingTop
       }}
     >
       <Header
