@@ -10,7 +10,6 @@ import {
   Animated
 } from 'react-native';
 import type { UserProfile } from 'mobile/reducers/index';
-import { isIphoneX } from 'mobile/utils/Platform';
 import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
@@ -36,9 +35,6 @@ export default class CardView extends React.Component<Props> {
           flex: 1
         }}
       >
-        {isIphoneX() && (
-          <View style={{ height: 40, backgroundColor: '#fff' }} />
-        )}
         <View
           style={{
             flex: 1,
