@@ -17,7 +17,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline2Style: {
@@ -31,7 +31,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline3Style: {
@@ -45,11 +45,11 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   jumboSmashStyle: {
-    fontFamily: 'VeganStylePersonalUse',
+    fontFamily: 'vegan',
 
     fontSize: 40,
 
@@ -61,7 +61,7 @@ export const textStyles = StyleSheet.create({
 
     textAlign: 'center',
 
-    color: Colors.Grapefruit,
+    color: Colors.Grapefruit
   },
 
   headline4StyleMedium: {
@@ -75,7 +75,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline4Style: {
@@ -89,7 +89,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline4StyleDemibold: {
@@ -103,7 +103,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline4StyleSwiping: {
@@ -119,7 +119,7 @@ export const textStyles = StyleSheet.create({
 
     textAlign: 'center',
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline5StyleDemibold: {
@@ -133,7 +133,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline5Style: {
@@ -147,7 +147,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline5StyleCondensed: {
@@ -163,7 +163,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   headline6Style: {
@@ -177,7 +177,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   body1StyleSemibold: {
@@ -191,7 +191,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   body1Style: {
@@ -205,7 +205,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   subtitle1StyleSemibold: {
@@ -219,7 +219,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.AquaMarine,
+    color: Colors.AquaMarine
   },
 
   subtitle1Style: {
@@ -233,7 +233,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   messageCountStyle: {
@@ -249,7 +249,7 @@ export const textStyles = StyleSheet.create({
 
     textAlign: 'center',
 
-    color: Colors.White,
+    color: Colors.White
   },
 
   buttonStyleSemibold: {
@@ -263,7 +263,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   body2Style: {
@@ -277,7 +277,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   subtitle2Style: {
@@ -291,7 +291,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   captionStyle: {
@@ -305,7 +305,7 @@ export const textStyles = StyleSheet.create({
 
     letterSpacing: 0,
 
-    color: Colors.Black,
+    color: Colors.Black
   },
 
   // Not in Zeplin styleguide, but part of the style:
@@ -314,6 +314,6 @@ export const textStyles = StyleSheet.create({
     fontFamily: 'vegan',
     fontSize: 45,
     padding: 15,
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });
