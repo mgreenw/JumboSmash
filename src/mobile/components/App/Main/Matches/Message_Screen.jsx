@@ -6,16 +6,10 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet
+  ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import type {
-  ReduxState,
-  Dispatch,
-  Match,
-  Message
-} from 'mobile/reducers/index';
+import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
@@ -26,19 +20,6 @@ import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
-
-const styles = StyleSheet.create({
-  footerContainer: {
-    marginTop: 5,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#aaa'
-  }
-});
 
 type GiftedChatUser = {
   _id: string,
@@ -83,8 +64,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (match === null || match === undefined) {
     throw new Error('Match null or undefined in Messaging Screen');
   }
-  console.log('get conversation:', reduxState.inProgress.getConversation);
-  console.log('conversations:', reduxState.conversations);
   const { userId } = match;
   const conversation = reduxState.conversations[userId];
   return {
@@ -145,6 +124,8 @@ class MessagingScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { getConversation_inProgress } = this.props;
     if (prevProps.getConversation_inProgress && !getConversation_inProgress) {
+      // We're doing this safely
+      /* eslint-disable-next-line react/no-did-update-set-state */
       this.setState({
         messagesLoaded: true
       });
@@ -152,7 +133,6 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   onSend = (messages: GiftedChatMessage[] = []) => {
-    console.log('sending messages:', messages);
     if (messages.length !== 1) {
       throw new Error('tried to send more than one message. WTF??');
     }
@@ -189,16 +169,8 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
+  // for when we have typing text
   renderFooter = () => {
-    // TODO via socket:
-    // const { typingText } = this.state;
-    // if (typingText) {
-    //   return (
-    //     <View style={styles.footerContainer}>
-    //       <Text style={styles.footerText}>{typingText}</Text>
-    //     </View>
-    //   );
-    // }
     return null;
   };
 

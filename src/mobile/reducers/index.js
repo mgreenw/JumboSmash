@@ -702,7 +702,6 @@ export default function rootReducer(
         state.conversations
       );
       conversations_updated[userId] = messages;
-      console.log('new conversations:', conversations_updated);
       return {
         ...state,
         inProgress: {
