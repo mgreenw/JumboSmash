@@ -25,6 +25,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
+    "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "ldapjs": "^1.0.2",
     "lodash": "^4.17.11",

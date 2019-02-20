@@ -86,11 +86,11 @@ class SplashScreen extends React.Component<Props, State> {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
-          this._onSuccess(response.utln, response.email, false);
+          this._onSuccess(response.requestEmail, response.responseEmail, false);
           break;
         }
         case 'ALREADY_SENT': {
-          this._onSuccess(response.utln, response.email, true);
+          this._onSuccess(response.requestEmail, response.responseEmail, true);
           break;
         }
         case 'WRONG_CLASS_YEAR': {
@@ -116,11 +116,15 @@ class SplashScreen extends React.Component<Props, State> {
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
-  _onSuccess = (utln: string, email: string, alreadySent: boolean) => {
+  _onSuccess = (
+    requestEmail: string,
+    responseEmail: string,
+    alreadySent: boolean
+  ) => {
     const { navigation } = this.props;
     navigation.navigate(routes.Verify, {
-      utln,
-      email,
+      requestEmail,
+      responseEmail,
       alreadySent
     });
   };
@@ -133,7 +137,7 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onNotFound = () => {
-    this._utlnInputError('Could not find username');
+    this._utlnInputError('Could not find email');
   };
 
   _onHelp = () => {
@@ -208,10 +212,10 @@ class SplashScreen extends React.Component<Props, State> {
                   source={ArthurUri}
                 />
                 <PrimaryInput
-                  label="Tufts Username"
+                  label="Tufts Email"
                   onChange={this._onInputChange}
                   error={errorMessageUtln}
-                  assistive="Ex: amanac01"
+                  assistive="Ex: anthony.monaco@tufts.edu"
                   containerStyle={{ width: '60%' }}
                   autoCapitalize="none"
                 />

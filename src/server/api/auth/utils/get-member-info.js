@@ -4,10 +4,10 @@ const request = require('request');
 const config = require('config');
 
 // Use Koh to get a member's info given a utln.
-const getMemberInfo = (utln: string): Promise<any> => {
+const getMemberInfo = (email: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     // Make the request to Koh.
-    request(`${config.get('koh_host')}/api/member-info/${utln}`, (err, res, body) => {
+    request(`${config.get('koh_host')}/api/member-info/${email}`, (err, res, body) => {
       // If there is an error or no response, reject
       if (err) return reject(err);
       if (!res) return reject(new Error('No response from koh.'));

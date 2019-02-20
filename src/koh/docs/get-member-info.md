@@ -69,6 +69,19 @@ Get the information about a community member based on their UTLN.
 **Content** :
 ```json
 {
-    "status": "MEMBER_INFO__NOT_FOUND"
+    "status": "GET_MEMBER_INFO__NOT_FOUND"
+}
+```
+
+### OR
+
+**Condition** : The email format is bad or otherwise does not contain '@tufts.edu'
+
+**Code** : `404 NOT FOUND`
+
+**Content** :
+```json
+{
+    "status": "GET_MEMBER_INFO__NOT_TUFTS_EMAIL"
 }
 ```
