@@ -32,7 +32,7 @@ const getUserInfo = async (req: $Request, res: $Response) => {
 
   if (!email || email.domain !== 'tufts.edu') {
     return res.status(404).json({
-      status: codes.GET_MEMBER_INFO__NOT_FOUND,
+      status: codes.GET_MEMBER_INFO__NOT_TUFTS_EMAIL,
     });
   }
 
