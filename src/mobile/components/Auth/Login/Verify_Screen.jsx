@@ -142,13 +142,13 @@ class SplashScreen extends React.Component<Props, State> {
   render() {
     const { navigation, login_inProgress } = this.props;
     const { code, errorMessageCode } = this.state;
-    const email = navigation.getParam('email', '');
-    const alreadySent = navigation.getParam('alreadySent', false);
+    const responseEmail: string = navigation.getParam('responseEmail', '');
+    const alreadySent: boolean = navigation.getParam('alreadySent', false);
     const isLoading = login_inProgress;
 
     let message = alreadySent
-      ? `Looks like you've already been sent an email to ${email}.`
-      : `A verification code has been sent to ${email}.`;
+      ? `Looks like you've already been sent an email to ${responseEmail}.`
+      : `A verification code has been sent to ${responseEmail}.`;
 
     message += ` Enter below to continue.`;
 
