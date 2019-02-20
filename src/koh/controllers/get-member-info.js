@@ -2,6 +2,8 @@
 
 import type { $Request, $Response } from 'express';
 
+const addrs = require('email-addresses');
+
 const db = require('../db');
 const ldap = require('./utils/ldap');
 const utils = require('./utils');
@@ -26,15 +28,30 @@ const memberSelect = `
  *
  */
 const getUserInfo = async (req: $Request, res: $Response) => {
-  const utln = req.params.utln.toLowerCase();
+  const email = addrs.parseOneAddress(req.params.email.toLowerCase());
+
+  if (!email || email.domain !== 'tufts.edu') {
+    return res.status(404).json({
+      status: codes.GET_MEMBER_INFO__NOT_TUFTS_EMAIL,
+    });
+  }
 
   // First, check to see if the member is already in the database
   try {
-    const result = await db.query(`
+    let result = await db.query(`
       SELECT ${memberSelect}
       FROM members
-      WHERE utln = $1
-      `, [utln]);
+      WHERE LOWER(email) = $1
+      `, [email.address]);
+
+    // If no result, try to search for the utln
+    if (result.rowCount === 0) {
+      result = await db.query(`
+        SELECT ${memberSelect}
+        FROM members
+        WHERE utln = $1
+      `, [email.local]);
+    }
 
     // Check if the db query returned any results
     if (result.rowCount > 0) {
@@ -71,15 +88,24 @@ const getUserInfo = async (req: $Request, res: $Response) => {
     'tuftsEduMajor',
   ];
 
+  // If the email local piece has a dot, then it is not a utln. I know, this sucks,
+  // but I think it's the best way to do it. If the length is greater than 8, then it must
+  // be the full email as well.
+
+  // NOTE: The ldap search query is case-INsensitive. This is great for us :)
+  const query = email.local.includes('.') || email.local.length > 8
+    ? `mail=${email.address}`
+    : `uid=${email.local}`;
+
   try {
     // If ldap does not have a result, return "NOT FOUND"
-    const searchResult = await ldap.search(`uid=${utln}`, attributes);
+    const searchResult = await ldap.search(query, attributes);
     if (searchResult.entries.length === 0) {
       await db.query(`
         INSERT INTO MEMBERS
-        (utln, exists)
-        VALUES ($1, false)
-      `, [utln]);
+        (utln, email, exists)
+        VALUES ($1, $2, false)
+      `, [email.local, email.address]);
 
       return res.status(404).json({
         status: codes.GET_MEMBER_INFO__NOT_FOUND,

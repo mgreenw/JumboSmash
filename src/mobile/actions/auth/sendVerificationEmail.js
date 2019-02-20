@@ -15,9 +15,10 @@ type StatusCode =
 
 export type SendVerificationEmail_Response = {
   statusCode: StatusCode,
-  utln: string,
-  email: string,
-  classYear: string
+  requestEmail: string,
+  responseEmail: string,
+  classYear: string,
+  utln: string
 };
 
 export type SendVerificationEmailCompleted_Action = {
@@ -53,13 +54,13 @@ function complete(
 }
 
 export function sendVerificationEmailAction(
-  utln: string,
+  email: string,
   forceResend: boolean
 ) {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      sendVerificationEmail_api({ utln, forceResend })
+      sendVerificationEmail_api({ email, forceResend })
         .then(response => {
           dispatch(complete(response));
         })

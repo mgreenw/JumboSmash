@@ -4,7 +4,9 @@ const app = require('../../../app');
 
 const db = require('../../../db');
 
+const GOOD_EMAIL = 'jchun03@tufts.edu';
 const GOOD_UTLN = 'jchun03';
+const GOOD_EMAIL2 = 'Ronald.Zampolin@tufts.edu';
 const GOOD_UTLN2 = 'rzampo01';
 const BAD_CODE = '123456';
 describe('api/auth/verify', () => {
@@ -24,7 +26,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN,
+          email: GOOD_EMAIL,
         },
       )
       .set('Accept', 'application/json')
@@ -32,13 +34,14 @@ describe('api/auth/verify', () => {
 
     expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res.body.data.email).toContain('Jasmin.Chun@tufts.edu');
+    const { utln } = res.body.data;
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [utln]);
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -137,7 +140,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
         },
       )
       .set('Accept', 'application/json')
@@ -232,7 +235,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
@@ -264,7 +267,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
@@ -297,7 +300,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
