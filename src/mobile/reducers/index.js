@@ -125,6 +125,13 @@ export type GetSceneCandidatesInProgress = {
 
 export type Scene = 'smash' | 'social' | 'stone';
 
+export type Message = {
+  messageId: number,
+  content: string,
+  timestamp: string,
+  fromClient: string
+};
+
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
 
