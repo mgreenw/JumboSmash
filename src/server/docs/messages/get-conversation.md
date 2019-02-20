@@ -48,7 +48,7 @@ Provide the normal `Authorization` token in the request header.
             "messageId": 13,
             "content": "aoeuaoeu",
             "timestamp": "2019-01-27T16:53:43.337Z",
-            "fromClint": true
+            "fromClient": true
         },
         {
             "messageId": 14,
