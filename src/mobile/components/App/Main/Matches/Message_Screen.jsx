@@ -82,7 +82,6 @@ class MessagingScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { getConversation_inProgress } = this.props;
     if (prevProps.getConversation_inProgress && !getConversation_inProgress) {
-      console.log('we ready');
       this.setState({
         messagesLoaded: true
       });
