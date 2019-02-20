@@ -1,6 +1,6 @@
 # Send Verification Email
 
-Send a verification email to the user with the given UTLN.
+Send a verification email to the user with the given tufts email.
 
 **URL** : `/api/auth/send-verification-email`
 
@@ -12,7 +12,7 @@ Send a verification email to the user with the given UTLN.
 
 **Request body fields**
 
-Provide the user's Tufts utln. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`.
+Provide the user's Tufts email. If the user would like to resend the email because they did not receieve it, include `forceResend` set to `true`.
 
 * `email`
   * Type: `string`
@@ -23,7 +23,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
   * Description: Force email resend if possible
   * Required: `false`
 
-**Request body example** Only UTLN
+**Request body example** Only email
 
 ```json
 {
@@ -33,7 +33,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Request body example** UTLN and forceResend
+**Request body example** Email and forceResend
 
 ```json
 {
@@ -44,7 +44,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ## Success Response
 
-**Condition** : If the utln is a valid Tufts UTLN and an email has been sent to the user.
+**Condition** : If the email is a valid Tufts email and an email has been sent to the user.
 
 **Code** : `200 OK`
 
@@ -62,7 +62,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Condition** : If the utln is a valid Tufts UTLN and an email has already been sent to the user. No `forceResend` was found in the request body.
+**Condition** : If the email is a valid Tufts email and an email has already been sent to the user. No `forceResend` was found in the request body.
 
 **Code** : `200 OK`
 
@@ -81,7 +81,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ## Error Responses
 
-**Condition** : The UTLN is valid but not in the Class of 2019
+**Condition** : The email is valid but not in the Class of 2019
 
 **Code** : `400 BAD REQUEST`
 
@@ -97,7 +97,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Condition** : The UTLN is valid but the member is not a student
+**Condition** : The email is valid but the member is not a student
 
 **Code** : `400 BAD REQUEST`
 
@@ -110,7 +110,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Condition** : The UTLN is valid but the member is not an undergraduate
+**Condition** : The email is valid but the member is not an undergraduate
 
 **Code** : `400 BAD REQUEST`
 
@@ -127,7 +127,7 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 
 ### OR
 
-**Condition** : The UTLN is invalid (not found in the White Pages)
+**Condition** : The email is invalid (not found in the White Pages)
 
 **Code** : `400 BAD REQUEST`
 
@@ -149,6 +149,6 @@ Provide the user's Tufts utln. If the user would like to resend the email becaus
 ```json
 {
     "status": "BAD_REQUEST",
-    "message": "data should have required property 'utln'"
+    "message": "data should have required property 'email'"
 }
 ```
