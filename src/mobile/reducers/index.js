@@ -663,7 +663,7 @@ export default function rootReducer(
       const inProgressConversations_updated: {
         [userId: number]: boolean
       } = Object.assign({}, state.inProgress.getConversation);
-      inProgressConversations_updated[userId] = false;
+      inProgressConversations_updated[userId] = true;
 
       return {
         ...state,
