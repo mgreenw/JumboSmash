@@ -7,7 +7,7 @@
     "password": "tonysmash2019"
   },
   "secret": "ohhhhhnoooo!!",
-  "koh_host": "http://localhost:3001",
+  "koh_host": "http://koh.jumbosmash.com",
   "s3_bucket": "projectgem-dev",
   "redis": {
     "host": "localhost",

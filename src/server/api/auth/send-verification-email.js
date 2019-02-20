@@ -41,7 +41,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
 
   //  If the member info is null (not found), error that it was not found.
   if (!memberInfo) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND).noData();
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
   }
 
   const oldCodeResults = await db.query(
@@ -72,12 +72,12 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
 
   // Ensure the member is a student
   if (!memberInfo.classYear) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT).noData();
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT).noData();
   }
 
   // Check that the student is in A&S or E
   if (!_.includes(['A&S', 'E'], memberInfo.college)) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD).data({
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_UNDERGRAD).data({
       college: memberInfo.college,
       classYear: memberInfo.classYear,
     });
@@ -85,7 +85,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
 
   // Ensure user is in the Class of 2019
   if (memberInfo.classYear !== '19') {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019).data({
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019).data({
       classYear: memberInfo.classYear,
     });
   }

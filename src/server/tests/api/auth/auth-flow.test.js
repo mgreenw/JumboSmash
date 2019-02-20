@@ -5,9 +5,9 @@ const app = require('../../../app');
 const db = require('../../../db');
 
 const GOOD_EMAIL = 'jchun03@tufts.edu';
-const GOOD_UTLN = 'jchun03';
+const GOOD_EMAIL = 'jchun03';
 const GOOD_EMAIL2 = 'Ronald.Zampolin@tufts.edu';
-const GOOD_UTLN2 = 'rzampo01';
+const GOOD_EMAIL2 = 'rzampo01';
 const BAD_CODE = '123456';
 describe('api/auth/verify', () => {
   beforeAll(async () => {
@@ -59,7 +59,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: BAD_CODE,
         },
       )
@@ -82,7 +82,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln: GOOD_EMAIL,
           code: BAD_CODE,
         },
       )
@@ -95,7 +95,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln: GOOD_EMAIL,
           code: BAD_CODE,
         },
       )
@@ -108,7 +108,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln: GOOD_EMAIL,
           code: BAD_CODE,
         },
       )
@@ -117,12 +117,12 @@ describe('api/auth/verify', () => {
 
     expect(req3.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL]);
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln: GOOD_EMAIL,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -153,7 +153,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: BAD_CODE,
         },
       )
@@ -166,7 +166,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: BAD_CODE,
         },
       )
@@ -175,12 +175,12 @@ describe('api/auth/verify', () => {
 
     expect(verifyRes2.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL2]);
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -202,7 +202,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: BAD_CODE,
         },
       )
@@ -211,12 +211,12 @@ describe('api/auth/verify', () => {
 
     expect(res1.body.status).toEqual(codes.VERIFY__BAD_CODE.status);
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL2]);
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -245,12 +245,12 @@ describe('api/auth/verify', () => {
     expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL2]);
     return request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -277,12 +277,12 @@ describe('api/auth/verify', () => {
     expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
-    let codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    let codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL2]);
     let res = await request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: codeForGoodUtln.rows[0].code,
         },
       )
@@ -310,12 +310,12 @@ describe('api/auth/verify', () => {
     expect(res1.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res1.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
 
-    codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_EMAIL2]);
     res = await request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN2,
+          utln: GOOD_EMAIL2,
           code: codeForGoodUtln.rows[0].code,
         },
       )

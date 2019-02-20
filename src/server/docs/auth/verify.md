@@ -16,7 +16,7 @@ Provide the user's Tufts utln and the 6 digit numeric code that was sent to thei
 
 * `utln`
   * Type: `string`
-  * Description: 8 character Tufts UTLN
+  * Description: 8 character Tufts EMAIL
   * Required: `true`
 * `code`
   * Type: `string`
