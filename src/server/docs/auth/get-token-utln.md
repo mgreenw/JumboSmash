@@ -36,7 +36,7 @@ Provide the normal `Authorization` token in the request header.
 
 ## Error Responses
 
-**Condition** : If the token is expired, invalid, or does not match the UTLN.
+**Condition** : If the token is expired, invalid, or does not match the EMAIL.
 
 **Code** : `401 UNAUTHORIZED`
 

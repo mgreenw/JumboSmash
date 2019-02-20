@@ -8,8 +8,8 @@ const db = require('../../../db');
 Cases:
 1. Should enforce utln field
 2. Should fail given an invalid utln
-3. Should fail given a UTLN that is not in the class of 2019
-4. Should succeed given a valid UTLN
+3. Should fail given a EMAIL that is not in the class of 2019
+4. Should succeed given a valid EMAIL
 5. Should respond with TOKEN_ALREADY_SENT if the token was already sent
 6. Should resend the email if forceResend is true
 7. Should not resend the email if forceResend is included but not True
@@ -54,7 +54,7 @@ describe('api/auth/send-verification-email', () => {
     expect(res.body.message).toContain('data.email should match format "email"');
   });
 
-  it('should fail given a UTLN that does not exist', () => {
+  it('should fail given a EMAIL that does not exist', () => {
     return request(app)
       .post('/api/auth/send-verification-email')
       .send(
@@ -65,7 +65,7 @@ describe('api/auth/send-verification-email', () => {
       .set('Accept', 'application/json')
       .expect(400)
       .then((res) => {
-        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND.status);
+        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND.status);
       });
   });
 
@@ -79,7 +79,7 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019.status);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019.status);
     expect(res.body.data.classYear).toBe('20');
   });
 
@@ -93,7 +93,7 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT.status);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT.status);
   });
 
   it('should fail given an email that is a current GRADUATE student in the class of 2019', async () => {
@@ -106,7 +106,7 @@ describe('api/auth/send-verification-email', () => {
       )
       .set('Accept', 'application/json')
       .expect(400);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD.status);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_UNDERGRAD.status);
     expect(res.body.data.college).toBeDefined();
     expect(res.body.data.classYear).toBe('19');
   });

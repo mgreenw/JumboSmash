@@ -15,7 +15,7 @@ const schema = {
   "type": "object",
   "properties": {
     "utln": {
-      "description": "The user's Tufts UTLN. Must be from the Class of 2019",
+      "description": "The user's Tufts utln. Must be from the Class of 2019",
       "type": "string"
     },
     "code": {

@@ -88,7 +88,7 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 **Content Example** :
 ```json
 {
-    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_2019",
+    "status": "SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019",
     "data": {
         "classYear": "20"
     }
@@ -104,7 +104,7 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 **Content Example** :
 ```json
 {
-    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT"
+    "status": "SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT"
 }
 ```
 
@@ -117,7 +117,7 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 **Content Example** :
 ```json
 {
-    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD",
+    "status": "SEND_VERIFICATION_EMAIL__EMAIL_NOT_UNDERGRAD",
     "data": {
         "classYear": "19",
         "college": "THE FLETCHER SCHOOL"
@@ -134,7 +134,7 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 **Content** :
 ```json
 {
-    "status": "SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND"
+    "status": "SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND"
 }
 ```
 
