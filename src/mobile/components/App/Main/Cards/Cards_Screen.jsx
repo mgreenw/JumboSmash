@@ -33,6 +33,26 @@ import SwipeButtons from './SwipeButtons';
 const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
 
+const SCENES = {
+  smash: {
+    display: 'JumboSmash',
+    icon: '🍑',
+    description: 'This is where you can match with people to get ~frisky~'
+  },
+  social: {
+    display: 'JumboSocial',
+    icon: '🐘',
+    description:
+      'This is where you can match with people for hanging out - from study buddies to a night out on the town.'
+  },
+  stone: {
+    display: 'JumboStone',
+    icon: '🍀',
+    description:
+      'This is where you can match with people to get blazed out of your mind'
+  }
+};
+
 type navigationProps = {
   navigation: any
 };
@@ -84,10 +104,6 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
       dispatch(judgeSceneCandidateAction(candidateUserId, scene, liked));
     }
   };
-}
-
-function capitalizeFirstLetter(string: string) {
-  return string[0].toUpperCase() + string.slice(1);
 }
 
 class SwipingScreen extends React.Component<Props, State> {
@@ -228,7 +244,7 @@ class SwipingScreen extends React.Component<Props, State> {
               { fontSize: 40, padding: 15, textAlign: 'center' }
             ]}
           >
-            {` Jumbo${capitalizeFirstLetter(currentScene)}`}
+            {SCENES[currentScene].display}
           </Text>
         </View>
         <View
@@ -245,14 +261,14 @@ class SwipingScreen extends React.Component<Props, State> {
               alignItems: 'center'
             }}
           >
-            <Text style={{ fontSize: 69 }}>🍑</Text>
+            <Text style={{ fontSize: 69 }}>{SCENES[currentScene].icon}</Text>
           </View>
         </View>
         <View
-          style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}
+          style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}
         >
           <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
-            This is where you can match with people to get ~frisky~
+            {SCENES[currentScene].description}
           </Text>
         </View>
         <View
@@ -278,7 +294,7 @@ class SwipingScreen extends React.Component<Props, State> {
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
           <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-            {`You won’t be shown in Jumbo${capitalizeFirstLetter(currentScene)}
+            {`You won’t be shown in ${SCENES[currentScene].display}
 unless you turn it on in Settings.`}
           </Text>
         </View>
@@ -370,9 +386,7 @@ unless you turn it on in Settings.`}
             {isActiveInScene && (
               <SwipeButtons
                 disabled={isLoading}
-                onPress={(swipeDirection: SwipeDirection) =>
-                  this._onPressSwipeButton(swipeDirection)
-                }
+                onPress={this._onPressSwipeButton}
               />
             )}
           </View>
