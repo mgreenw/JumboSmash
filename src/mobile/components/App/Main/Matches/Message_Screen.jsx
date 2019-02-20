@@ -9,7 +9,12 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  Dispatch,
+  Match,
+  Message
+} from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
@@ -24,7 +29,8 @@ type NavigationProps = {
 };
 
 type ReduxProps = {
-  getConversation_inProgress: boolean
+  getConversation_inProgress: boolean,
+  messages: Message[]
 };
 
 type DispatchProps = {
@@ -45,9 +51,10 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     throw new Error('Match null or undefined in Messaging Screen');
   }
   console.log('get conversation:', reduxState.inProgress.getConversation);
+  const { userId } = match;
   return {
-    getConversation_inProgress:
-      reduxState.inProgress.getConversation[match.userId]
+    getConversation_inProgress: reduxState.inProgress.getConversation[userId],
+    messages: reduxState.conversations[userId]
   };
 }
 
@@ -87,6 +94,14 @@ class MessagingScreen extends React.Component<Props, State> {
       });
     }
   }
+
+  _renderContent = () => {
+    const { messages } = this.props;
+    if (messages === null || messages === undefined) {
+      return this._renderGenisis();
+    }
+    return <View />;
+  };
 
   _renderGenisis = () => {
     const { navigation } = this.props;
@@ -129,7 +144,7 @@ class MessagingScreen extends React.Component<Props, State> {
             />
           </View>
           {messagesLoaded ? (
-            this._renderGenisis()
+            this._renderContent()
           ) : (
             <View
               style={{
