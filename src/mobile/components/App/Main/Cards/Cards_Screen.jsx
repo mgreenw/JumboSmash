@@ -103,30 +103,7 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   _renderCard = (profile: UserProfile) => {
-    const { navigation } = this.props;
-    // this._onPressSwipeButton is wrapped in a timeout so it isn't called until we finish going back to the deck view. This makes the animation look much smoother
-    return (
-      <PreviewCard
-        profile={profile}
-        onCardTap={() =>
-          navigation.navigate(routes.CardsExpandedCard, {
-            profile,
-            onMinimize: () => navigation.pop(),
-            swipeButtons: (
-              <SwipeButtons
-                disabled={false}
-                onPress={(swipeDirection: SwipeDirection) => {
-                  NavigationService.back();
-                  setTimeout(() => {
-                    this._onPressSwipeButton(swipeDirection);
-                  }, 750);
-                }}
-              />
-            )
-          })
-        }
-      />
-    );
+    return <PreviewCard profile={profile} />;
   };
 
   _renderEmpty = () => <Text>Too picky</Text>;
@@ -173,6 +150,25 @@ class SwipingScreen extends React.Component<Props, State> {
 
   _onSwipeDislike = () => {
     this._onPressSwipeButton('left');
+  };
+
+  _onCardTap = (profile: UserProfile) => {
+    const { navigation } = this.props;
+    navigation.navigate(routes.CardsExpandedCard, {
+      profile,
+      onMinimize: () => navigation.pop(),
+      swipeButtons: (
+        <SwipeButtons
+          disabled={false}
+          onPress={(swipeDirection: SwipeDirection) => {
+            NavigationService.back();
+            setTimeout(() => {
+              this._onPressSwipeButton(swipeDirection);
+            }, 750);
+          }}
+        />
+      )
+    });
   };
 
   _showLoadingAndFetchCandidates() {
@@ -236,6 +232,7 @@ class SwipingScreen extends React.Component<Props, State> {
           onSwipeRight={this._onSwipeRight}
           onSwipeLeft={this._onSwipeLeft}
           onSwipeComplete={this._onSwipeComplete}
+          onCardTap={this._onCardTap}
           infinite
           disableSwipe={isLoading}
         />
