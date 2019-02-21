@@ -1,7 +1,13 @@
 // @flow
 
 import React from 'react';
-import { Alert, View, Text, TouchableOpacity } from 'react-native';
+import {
+  Alert,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator
+} from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -11,27 +17,45 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { routes } from 'mobile/components/Navigation';
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
+import getConversationAction from 'mobile/actions/app/getConversation';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
 
-type ReduxProps = {};
+type ReduxProps = {
+  getConversation_inProgress: boolean
+};
 
-type DispatchProps = {};
+type DispatchProps = {
+  getConversation: (userId: number, mostRecentMessageId?: number) => void
+};
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
-  match: Match
+  match: Match,
+  messagesLoaded: boolean
 };
 
-function mapStateToProps(reduxState: ReduxState): ReduxProps {
-  return {};
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+  const { navigation } = ownProps;
+  const match: ?Match = navigation.getParam('match', null);
+  if (match === null || match === undefined) {
+    throw new Error('Match null or undefined in Messaging Screen');
+  }
+  return {
+    getConversation_inProgress:
+      reduxState.inProgress.getConversation[match.userId]
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
-  return {};
+  return {
+    getConversation: (userId: number, mostRecentMessageId?: number) => {
+      dispatch(getConversationAction(userId, mostRecentMessageId));
+    }
+  };
 }
 
 class MessagingScreen extends React.Component<Props, State> {
@@ -43,13 +67,52 @@ class MessagingScreen extends React.Component<Props, State> {
       throw new Error('Match null or undefined in Messaging Screen');
     }
     this.state = {
-      match
+      match,
+      messagesLoaded: false
     };
   }
 
-  render() {
+  componentDidMount() {
+    const { match } = this.state;
+    const { getConversation } = this.props;
+    getConversation(match.userId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { getConversation_inProgress } = this.props;
+    if (prevProps.getConversation_inProgress && !getConversation_inProgress) {
+      this.setState({
+        messagesLoaded: true
+      });
+    }
+  }
+
+  _renderGenisis = () => {
     const { navigation } = this.props;
     const { match } = this.state;
+    return (
+      <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(routes.MatchesExpandedCard, {
+              profile: match.profile,
+              onMinimize: NavigationService.back
+            })
+          }
+        >
+          <Avatar size={'Large'} photoId={match.profile.photoIds[0]} border />
+        </TouchableOpacity>
+        <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
+          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+            {'Late-night Espresso’s run? ;)'}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  render() {
+    const { messagesLoaded } = this.state;
     return (
       <Transition inline appear="right">
         <View style={{ flex: 1 }}>
@@ -64,29 +127,19 @@ class MessagingScreen extends React.Component<Props, State> {
               borderBottom
             />
           </View>
-          <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(routes.MatchesExpandedCard, {
-                  profile: match.profile,
-                  onMinimize: NavigationService.back
-                })
-              }
+          {messagesLoaded ? (
+            this._renderGenisis()
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center'
+              }}
             >
-              <Avatar
-                size={'Large'}
-                photoId={match.profile.photoIds[0]}
-                border
-              />
-            </TouchableOpacity>
-            <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
-              <Text
-                style={[textStyles.headline5Style, { textAlign: 'center' }]}
-              >
-                {'Late-night Espresso’s run? ;)'}
-              </Text>
+              <ActivityIndicator />
             </View>
-          </View>
+          )}
         </View>
       </Transition>
     );
