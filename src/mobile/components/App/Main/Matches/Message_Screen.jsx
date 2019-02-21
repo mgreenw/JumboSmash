@@ -44,7 +44,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (match === null || match === undefined) {
     throw new Error('Match null or undefined in Messaging Screen');
   }
-  console.log('get conversation:', reduxState.inProgress.getConversation);
   return {
     getConversation_inProgress:
       reduxState.inProgress.getConversation[match.userId]
