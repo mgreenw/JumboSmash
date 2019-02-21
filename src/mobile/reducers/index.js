@@ -508,14 +508,16 @@ export default function rootReducer(
 
     case 'GET_SCENE_CANDIDATES__INITIATED': {
       const { scene } = action.payload;
+      const getSceneCandidatesInProgress_updated = Object.assign(
+        {},
+        state.inProgress.getSceneCandidates
+      );
+      getSceneCandidatesInProgress_updated[scene] = true;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: {
-            ...state.inProgress.getSceneCandidates,
-            [scene]: true
-          }
+          getSceneCandidates: getSceneCandidatesInProgress_updated
         }
       };
     }
@@ -531,19 +533,21 @@ export default function rootReducer(
 
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
+      const getSceneCandidatesInProgress_updated = Object.assign(
+        {},
+        state.inProgress.getSceneCandidates
+      );
+      getSceneCandidatesInProgress_updated[scene] = false;
+
+      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
+      sceneCandidates_updated[scene] = candidates;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: {
-            ...state.inProgress.getSceneCandidates,
-            [scene]: false
-          }
+          getSceneCandidates: getSceneCandidatesInProgress_updated
         },
-        sceneCandidates: {
-          ...state.sceneCandidates,
-          [scene]: candidates
-        }
+        sceneCandidates: sceneCandidates_updated
       };
     }
     case 'GET_MATCHES__COMPLETED': {
@@ -578,21 +582,20 @@ export default function rootReducer(
           'currentSceneCandidates is null in judge scene candidates'
         );
       }
-      const newSceneCandidates = currentSceneCandidates.filter(
+      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
+      sceneCandidates_updated[scene] = currentSceneCandidates.filter(
         c => c.userId !== candidateUserId
       );
-      const newExcludeSceneCandidateIds = state.excludeSceneCandidateIds[scene];
-      newExcludeSceneCandidateIds.push(candidateUserId);
+
+      const excludeSceneCandidateIds_updated = Object.assign(
+        {},
+        state.excludeSceneCandidateIds
+      );
+      excludeSceneCandidateIds_updated[scene].push(candidateUserId);
       return {
         ...state,
-        sceneCandidates: {
-          ...state.sceneCandidates,
-          [scene]: newSceneCandidates
-        },
-        excludeSceneCandidateIds: {
-          ...state.excludeSceneCandidateIds,
-          [scene]: newExcludeSceneCandidateIds
-        }
+        sceneCandidates: sceneCandidates_updated,
+        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
       };
     }
 
@@ -614,18 +617,18 @@ export default function rootReducer(
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
       const { candidateUserId, scene } = action.payload;
-
       const currentExcludeSceneCandidateIds =
         state.excludeSceneCandidateIds[scene];
-      const newExcludeSceneCandidateIds = currentExcludeSceneCandidateIds.filter(
-        id => id !== candidateUserId
+      const excludeSceneCandidateIds_updated = Object.assign(
+        {},
+        state.excludeSceneCandidateIds
       );
+      excludeSceneCandidateIds_updated[
+        scene
+      ] = currentExcludeSceneCandidateIds.filter(id => id !== candidateUserId);
       return {
         ...state,
-        excludeSceneCandidateIds: {
-          ...state.excludeSceneCandidateIds,
-          [scene]: newExcludeSceneCandidateIds
-        }
+        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
       };
     }
 
