@@ -43,7 +43,7 @@ type ReduxProps = {
 };
 
 type DispatchProps = {
-  getConversation: (userId: number, mostRecentMessageId?: string) => void,
+  getConversation: (userId: number, mostRecentMessageId?: number) => void,
   sendMessage: (
     userId: number,
     messageId: string,
@@ -88,7 +88,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
-    getConversation: (userId: number, mostRecentMessageId?: string) => {
+    getConversation: (userId: number, mostRecentMessageId?: number) => {
       dispatch(getConversationAction(userId, mostRecentMessageId));
     },
     sendMessage: (
