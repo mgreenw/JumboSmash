@@ -40,7 +40,7 @@ function init(server: Server) {
   io.on('connection', (socket) => {
     logger.info(`Connection via socket: ${JSON.stringify(socket.user, null, 2)}`);
 
-    socket.join(socket.user.id, (err) => {
+    socket.join(socket.user.id.toString(), (err) => {
       if (err) {
         logger.error('Socket failed to join room', err);
       }
@@ -58,4 +58,6 @@ function init(server: Server) {
 
 module.exports = {
   init,
+  io,
+  sendUpdateToUser,
 };

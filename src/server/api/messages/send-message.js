@@ -5,6 +5,7 @@ import type { $Request } from 'express';
 const db = require('../../db');
 const codes = require('../status-codes');
 const apiUtils = require('../utils');
+const { sendUpdateToUser } = require('../../socket');
 
 /* eslint-disable */
 const schema = {
@@ -35,7 +36,7 @@ const schema = {
  */
 const sendMessage = async (
   senderUserId: number,
-  receieverUserId: number,
+  receiverUserId: number,
   content: string,
   unconfirmedMessageUuid: string,
 ) => {
@@ -51,7 +52,7 @@ const sendMessage = async (
         unconfirmed_message_uuid AS "unconfirmedMessageUuid",
         true AS "fromClient",
         null AS "previousMessageId"
-    `, [content, senderUserId, receieverUserId, unconfirmedMessageUuid]);
+    `, [content, senderUserId, receiverUserId, unconfirmedMessageUuid]);
 
     const [message] = messageResult.rows;
 
@@ -65,11 +66,22 @@ const sendMessage = async (
       )
       ORDER BY timestamp desc
       LIMIT 1
-    `, [senderUserId, receieverUserId, message.timestamp]);
+    `, [senderUserId, receiverUserId, message.timestamp]);
 
     if (previousMessageResult.rowCount > 0) {
       message.previousMessageId = previousMessageResult.rows[0].id;
     }
+
+    const messageForReceiver = {
+      ...message,
+      fromClient: false,
+    };
+
+    // Send the message over the socket!
+    sendUpdateToUser(receiverUserId, {
+      type: 'NEW_MESSAGE',
+      data: messageForReceiver,
+    });
 
     return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data(message);
   } catch (err) {
