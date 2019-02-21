@@ -20,7 +20,6 @@ const getConversation = async (
       id AS "messageId",
       content,
       timestamp,
-      unconfirmed_message_uuid AS "unconfirmedMessageUuid",
       (sender_user_id = $1) AS "fromClient"
     FROM messages
     WHERE (

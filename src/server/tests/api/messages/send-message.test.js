@@ -1,5 +1,4 @@
 const request = require('supertest');
-const uuidv4 = require('uuid/v4');
 
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
@@ -31,7 +30,7 @@ describe('POST api/messages/:userId', () => {
     let res = await request(app)
       .post('/api/messages/1')
       .set('Accept', 'application/json')
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+      .send({ content: 'hey' });
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
@@ -41,7 +40,7 @@ describe('POST api/messages/:userId', () => {
       .post('/api/messages/1')
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
-      .send({ content: 'hey there', unconfirmedMessageUuid: uuidv4() });
+      .send({ content: 'hey there' });
     expect(res.statusCode).toBe(403);
     expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
@@ -57,7 +56,7 @@ describe('POST api/messages/:userId', () => {
       .post(`/api/messages/${id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+      .send({ content: 'hey' });
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.SEND_MESSAGE__USER_NOT_FOUND.status);
   });
@@ -67,7 +66,7 @@ describe('POST api/messages/:userId', () => {
       .post('/api/messages/not-an-integer')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+      .send({ content: 'hey' });
     expect(res.statusCode).toBe(404);
   });
 
@@ -76,68 +75,11 @@ describe('POST api/messages/:userId', () => {
       .post(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+      .send({ content: 'hey' });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
     expect(res.body.data).toBeDefined();
-    expect(res.body.data.message.fromClient).toBe(true);
-    expect(res.body.data.message.messageId).toBeDefined();
-    // The first message should have no prev message id
-    expect(res.body.data.previousMessageId).toBeNull();
-  });
-
-  it('should fail if the unconfirmed message uuid is not provided', async () => {
-    const res = await request(app)
-      .post(`/api/messages/${other.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .send({ content: 'hey' });
-    expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
-    expect(res.body.message).toContain("data should have required property 'unconfirmedMessageUuid'");
-  });
-
-  it('should fail if the unconfirmed message uuid is not a valid uuid/v4', async () => {
-    const res = await request(app)
-      .post(`/api/messages/${other.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: 'heyjacob-itsmax-thisisntauuid-youduped' });
-    expect(res.statusCode).toBe(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
-    expect(res.body.message).toContain('data.unconfirmedMessageUuid should match format "uuid"');
-  });
-
-  it('should return the provided unconfirmedMessageUuid', async () => {
-    const uuid = uuidv4();
-    const res = await request(app)
-      .post(`/api/messages/${other.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuid });
-    expect(res.statusCode).toBe(201);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
-    expect(res.body.data.message.unconfirmedMessageUuid).toBe(uuid);
-  });
-
-  it('should return the id of the previous message', async () => {
-    let res = await request(app)
-      .post(`/api/messages/${other.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
-    expect(res.statusCode).toBe(201);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
-    const { messageId } = res.body.data.message;
-
-    res = await request(app)
-      .post(`/api/messages/${me.id}`)
-      .set('Accept', 'application/json')
-      .set('Authorization', other.token)
-      .send({ content: 'hey back', unconfirmedMessageUuid: uuidv4() });
-
-    expect(res.statusCode).toBe(201);
-    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
-    expect(res.body.data.previousMessageId).toBe(messageId);
+    expect(res.body.data.fromClient).toBe(true);
+    expect(res.body.data.messageId).toBeDefined();
   });
 });
