@@ -49,8 +49,7 @@ const sendMessage = async (
         timestamp,
         content,
         unconfirmed_message_uuid AS "unconfirmedMessageUuid",
-        true AS "fromClient",
-        null AS "previousMessageId"
+        true AS "fromClient"
     `, [content, senderUserId, receieverUserId, unconfirmedMessageUuid]);
 
     const [message] = messageResult.rows;
@@ -67,11 +66,15 @@ const sendMessage = async (
       LIMIT 1
     `, [senderUserId, receieverUserId, message.timestamp]);
 
+    let previousMessageId = null;
     if (previousMessageResult.rowCount > 0) {
-      message.previousMessageId = previousMessageResult.rows[0].id;
+      previousMessageId = previousMessageResult.rows[0].id;
     }
 
-    return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data(message);
+    return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data({
+      message,
+      previousMessageId,
+    });
   } catch (err) {
     // This checks that the error was not caused due to a duplicate message_uuid_key
     // This is not important from a design standpoint but will be catch bugs in testing
