@@ -63,6 +63,10 @@ import type {
   GetConversationInitiated_Action,
   GetConversationCompleted_Action
 } from 'mobile/actions/app/getConversation';
+import type {
+  SendMessageInitiated_Action,
+  SendMessageCompleted_Action
+} from 'mobile/actions/app/sendMessage';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
@@ -168,7 +172,12 @@ export type ReduxState = {
     getMatches: boolean,
 
     // map of userID's to conversation fetches in progress
-    getConversation: { [userId: number]: boolean }
+    getConversation: { [userId: number]: boolean },
+
+    // map of GiftedChatMessageId's to maps of messageId's to status
+    // This is an INTERNAL representation of message Id's for retry
+    // attempts on sending messages.
+    sendMessage: { [userId: number]: { [messageId: string]: boolean } }
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -216,7 +225,9 @@ export type Action =
   | JudgeSceneCandidateInitiated_Action
   | JudgeSceneCandidateCompleted_Action
   | GetConversationInitiated_Action
-  | GetConversationCompleted_Action;
+  | GetConversationCompleted_Action
+  | SendMessageInitiated_Action
+  | SendMessageCompleted_Action;
 
 export type GetState = () => ReduxState;
 
@@ -247,7 +258,8 @@ const defaultState: ReduxState = {
     uploadPhoto: false,
     deletePhoto: false,
     getMatches: false,
-    getConversation: {}
+    getConversation: {},
+    sendMessage: {}
   },
   response: {
     sendVerificationEmail: null,
@@ -697,6 +709,52 @@ export default function rootReducer(
           getConversation: inProgressConversations_updated
         },
         conversations: conversations_updated
+      };
+    }
+
+    case 'SEND_MESSAGE__INITIATED': {
+      const { recieverUserId, messageId } = action.payload;
+
+      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // but because it is accessed within an object, the spread operator
+      // will return an empty array if so.
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendMessage: {
+            ...state.inProgress.sendMessage,
+            [recieverUserId]: {
+              ...state.inProgress.sendMessage[recieverUserId],
+              [messageId]: true
+            }
+          }
+        }
+      };
+    }
+
+    case 'SEND_MESSAGE__COMPLETED': {
+      const { recieverUserId, messageId, message } = action.payload;
+
+      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // but because it is accessed within an object, the spread operator
+      // will return an empty array if so.
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendMessage: {
+            ...state.inProgress.sendMessage,
+            [recieverUserId]: {
+              ...state.inProgress.sendMessage[recieverUserId],
+              [messageId]: false
+            }
+          }
+        },
+        conversations: {
+          ...state.conversations,
+          [recieverUserId]: [...state.conversations[recieverUserId], message]
+        }
       };
     }
 
