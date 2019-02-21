@@ -34,5 +34,5 @@
 * [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
 
 ### Messages
-* [Get Conversation](messages/get-conversation) : `GET /api/messages:userId`
-* [Send Message](messages/send-message) : `POST /api/messages:userId`
+* [Get Conversation](messages/get-conversation.md) : `GET /api/messages:userId`
+* [Send Message](messages/send-message.md) : `POST /api/messages:userId`
