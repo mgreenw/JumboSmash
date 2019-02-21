@@ -1,4 +1,5 @@
 const request = require('supertest');
+const uuidv4 = require('uuid/v4');
 
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
@@ -64,7 +65,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey' });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
@@ -102,7 +103,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
-      .send({ content: 'hey to you too' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
 
     res = await request(app)
       .get(`/api/messages/${other.id}`)
@@ -156,7 +157,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
-      .send({ content: 'hey to you too' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
 
     // Gets the penultimate message id
     const result = await db.query(`

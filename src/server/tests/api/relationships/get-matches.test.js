@@ -1,4 +1,5 @@
 const request = require('supertest');
+const uuidv4 = require('uuid/v4');
 const codes = require('../../../api/status-codes');
 
 const app = require('../../../app');
@@ -215,7 +216,7 @@ describe('GET api/relationships/matches', () => {
       .post(`/api/messages/${matchIds[0]}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey' });
+      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
 
     res = await request(app)
       .get('/api/relationships/matches')
