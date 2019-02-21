@@ -117,7 +117,7 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this._showLoadingAndFetchCandidates();
+    this._showLoadingAndFetchCandidates(1200);
   }
 
   componentDidUpdate(_, prevState: State) {
@@ -127,7 +127,7 @@ class SwipingScreen extends React.Component<Props, State> {
       prevState.currentScene !== currentScene &&
       !sceneCandidates[currentScene]
     ) {
-      this._showLoadingAndFetchCandidates();
+      this._showLoadingAndFetchCandidates(300);
     }
   }
 
@@ -135,7 +135,36 @@ class SwipingScreen extends React.Component<Props, State> {
     return <PreviewCard profile={profile} />;
   };
 
-  _renderEmpty = () => <Text>Too picky</Text>;
+  _renderEmpty = () => {
+    const { getSceneCandidates } = this.props;
+    const { currentScene } = this.state;
+
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <View style={{ flex: 1 }} />
+        <View style={{ flex: 5 }}>
+          <PrimaryButton
+            onPress={() =>
+              this.setState({ loadingSource: ArthurLoadingGif }, () =>
+                getSceneCandidates(currentScene)
+              )
+            }
+            title="Load more candidates"
+            loading={false}
+            disabled={false}
+          />
+        </View>
+        <View style={{ flex: 1 }} />
+      </View>
+    );
+  };
 
   _onSwipeStart = () => {
     DevTesting.log('swiping');
@@ -200,7 +229,7 @@ class SwipingScreen extends React.Component<Props, State> {
     });
   };
 
-  _showLoadingAndFetchCandidates() {
+  _showLoadingAndFetchCandidates(initialTimeout: number) {
     setTimeout(() => {
       this.setState({ loadingSource: ArthurLoadingGif }, () => {
         const {
@@ -218,7 +247,7 @@ class SwipingScreen extends React.Component<Props, State> {
           }
         }, 2000);
       });
-    }, 1200);
+    }, initialTimeout);
   }
 
   _renderNotActiveInScene() {
