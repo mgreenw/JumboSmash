@@ -9,7 +9,12 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  Dispatch,
+  Match,
+  GiftedChatMessage
+} from 'mobile/reducers/index';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
@@ -21,34 +26,18 @@ import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 
-type GiftedChatUser = {
-  _id: string,
-  name: string
-};
-
-type GiftedChatMessage = {
-  _id: string,
-  text: string,
-  createdAt: Date,
-  user: GiftedChatUser
-};
-
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
 
 type ReduxProps = {
   getConversation_inProgress: boolean,
-  messages: ?(GiftedChatMessage[])
+  messages: GiftedChatMessage[]
 };
 
 type DispatchProps = {
   getConversation: (userId: number, mostRecentMessageId?: number) => void,
-  sendMessage: (
-    userId: number,
-    messageId: string,
-    messageContent: string
-  ) => void
+  sendMessage: (userId: number, message: GiftedChatMessage) => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
@@ -65,24 +54,46 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     throw new Error('Match null or undefined in Messaging Screen');
   }
   const { userId } = match;
-  const conversation = reduxState.conversations[userId];
+
+  const confirmedConversation = reduxState.confirmedConversations[userId];
+  const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
+  const unsentMessages = unconfirmedConversation
+    ? unconfirmedConversation.allIds
+        .map(uuid => {
+          const message = unconfirmedConversation.byId[uuid];
+          return {
+            ...message,
+            createdAt: null,
+            sent: false
+          };
+        })
+        .reverse()
+    : [];
+
+  const sentMessages = confirmedConversation
+    ? confirmedConversation.allIds
+        .map(id => {
+          // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
+          const message = confirmedConversation.byId[id];
+          return {
+            _id: message.messageId.toString(),
+            text: message.content,
+            createdAt: Date.parse(message.timestamp),
+            user: {
+              _id: message.fromClient ? '1' : '2',
+              name: message.fromClient ? 'A' : 'B'
+            },
+            sent: true
+          };
+        })
+        .reverse()
+    : [];
+
+  const messages = unsentMessages.concat(sentMessages);
+
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
-    messages: conversation
-      ? conversation
-          .map(message => {
-            return {
-              _id: message.messageId.toString(),
-              text: message.content,
-              createdAt: new Date(),
-              user: {
-                _id: message.fromClient ? '1' : '2',
-                name: message.fromClient ? 'A' : 'B'
-              }
-            };
-          })
-          .reverse()
-      : null
+    messages
   };
 }
 
@@ -91,12 +102,8 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     getConversation: (userId: number, mostRecentMessageId?: number) => {
       dispatch(getConversationAction(userId, mostRecentMessageId));
     },
-    sendMessage: (
-      userId: number,
-      messageId: string,
-      messageContent: string
-    ) => {
-      dispatch(sendMessageAction(userId, messageId, messageContent));
+    sendMessage: (userId: number, message: GiftedChatMessage) => {
+      dispatch(sendMessageAction(userId, message));
     }
   };
 }
@@ -139,7 +146,7 @@ class MessagingScreen extends React.Component<Props, State> {
     const message = messages[0];
     const { sendMessage } = this.props;
     const { match } = this.state;
-    sendMessage(match.userId, message._id, message.text);
+    sendMessage(match.userId, message);
   };
 
   renderBubble = props => {
@@ -184,7 +191,7 @@ class MessagingScreen extends React.Component<Props, State> {
         messages={messages}
         onSend={this.onSend}
         user={{
-          _id: 1 // sent messages should have same user._id
+          _id: '1' // sent messages should have same user._id
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
