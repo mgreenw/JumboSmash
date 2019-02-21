@@ -8,16 +8,16 @@ const GET_CONVERSATION__SUCCESS = 'GET_CONVERSATION__SUCCESS';
 const GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID =
   'GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID';
 
-function getConversationUrl(userId: number, mostRecentMessageId?: string) {
+function getConversationUrl(userId: number, mostRecentMessageId?: number) {
   const queryParams = mostRecentMessageId
     ? `?most-recent-message-id=${mostRecentMessageId}`
     : '';
   return GET_CONVERSATION + userId + queryParams;
 }
 
-export default function judgeSceneCandidate(
+export default function getConversation(
   userId: number,
-  mostRecentMessageId?: string
+  mostRecentMessageId?: number
 ): Promise<Message[]> {
   const url = getConversationUrl(userId, mostRecentMessageId);
   return apiRequest('GET', url)
