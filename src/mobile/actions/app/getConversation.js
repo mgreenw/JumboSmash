@@ -37,7 +37,7 @@ function complete(
   };
 }
 
-export default (userId: number, mostRecentMessageId?: string) => (
+export default (userId: number, mostRecentMessageId?: number) => (
   dispatch: Dispatch
 ) => {
   dispatch(initiate(userId));

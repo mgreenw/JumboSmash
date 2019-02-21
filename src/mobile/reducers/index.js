@@ -134,7 +134,7 @@ export type Message = {
   messageId: number,
   content: string,
   timestamp: string,
-  fromClient: string
+  fromClient: boolean
 };
 
 // TODO: enable if needed. This is a conceptual type.
@@ -657,7 +657,7 @@ export default function rootReducer(
     //    1. Ensure that our redux state is always immutable
     //    2. Flow type every step of the copying process.
     case 'GET_CONVERSATION__INITIATED': {
-      const userId = action.payload.userId;
+      const { userId } = action.payload;
 
       // Copy the original conversations-in-progress map
       const inProgressConversations_updated: {
