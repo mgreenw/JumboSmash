@@ -68,7 +68,7 @@ services:
   #
 
   koh:
-    image: ecolwe/koh:0.0.2
+    image: kohthefacestealer/koh:0.0.4
     networks:
       - traefik-net
     environment:
