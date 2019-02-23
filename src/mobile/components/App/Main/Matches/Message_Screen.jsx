@@ -15,7 +15,6 @@ import type {
   Match,
   GiftedChatMessage
 } from 'mobile/reducers/index';
-import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -231,34 +230,32 @@ class MessagingScreen extends React.Component<Props, State> {
   render() {
     const { messagesLoaded } = this.state;
     return (
-      <Transition inline appear="right">
-        <View style={{ flex: 1 }}>
-          <View>
-            <GEMHeader
-              title="Messages"
-              leftIconName="back"
-              rightIconName="heart-filled"
-              onRightIconPress={() => {
-                Alert.alert('this should be report and stuff?');
-              }}
-              borderBottom
-            />
-          </View>
-          {messagesLoaded ? (
-            this._renderContent()
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <ActivityIndicator />
-            </View>
-          )}
+      <View style={{ flex: 1 }}>
+        <View>
+          <GEMHeader
+            title="Messages"
+            leftIconName="back"
+            rightIconName="heart-filled"
+            onRightIconPress={() => {
+              Alert.alert('this should be report and stuff?');
+            }}
+            borderBottom
+          />
         </View>
-      </Transition>
+        {messagesLoaded ? (
+          this._renderContent()
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ActivityIndicator />
+          </View>
+        )}
+      </View>
     );
   }
 }
