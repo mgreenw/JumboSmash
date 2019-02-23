@@ -57,6 +57,9 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
+
+  // Map over unsent messages, mark createdAt as null (as not sent yet)
+  // and mark sent as false (as not sent yet)
   const unsentMessages = unconfirmedConversation
     ? unconfirmedConversation.allIds
         .map(uuid => {
@@ -70,6 +73,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
+  // map over messages, convert to a GiftedMessage
   const sentMessages = confirmedConversation
     ? confirmedConversation.allIds
         .map(id => {

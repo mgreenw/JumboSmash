@@ -737,10 +737,8 @@ export default function rootReducer(
 
     case 'GET_CONVERSATION__COMPLETED': {
       const { userId, messages } = action.payload;
-
-      // TODO: appened to existing lists for both message order and message by ids.
-
       // TODO: ensure 'result' for array order is preserved
+      // pretty sure it's preserved via testing, but not sure via their docs
       const { result: orderedIds, entities } = normalize(messages, [
         ConfirmedMessagesSchema
       ]);
@@ -765,12 +763,12 @@ export default function rootReducer(
     }
 
     case 'SEND_MESSAGE__INITIATED': {
-      const { recieverUserId, giftedChatMessage } = action.payload;
+      const { receiverUserId, giftedChatMessage } = action.payload;
 
       // Initialize to an empty object in case this is the first time sending a message
       // for a fresh store so that we can destructure with defaults.
       const unsentMessages =
-        state.unconfirmedConversations[recieverUserId] || {};
+        state.unconfirmedConversations[receiverUserId] || {};
       const { byId = {}, allIds = [] } = unsentMessages;
       const uuid = giftedChatMessage._id;
 
@@ -780,15 +778,15 @@ export default function rootReducer(
           ...state.inProgress,
           sendMessage: {
             ...state.inProgress.sendMessage,
-            [recieverUserId]: {
-              ...state.inProgress.sendMessage[recieverUserId],
+            [receiverUserId]: {
+              ...state.inProgress.sendMessage[receiverUserId],
               [uuid]: true
             }
           }
         },
         unconfirmedConversations: {
           ...state.unconfirmedConversations,
-          [recieverUserId]: {
+          [receiverUserId]: {
             byId: {
               ...byId,
               [uuid]: giftedChatMessage
@@ -800,15 +798,15 @@ export default function rootReducer(
     }
 
     case 'SEND_MESSAGE__COMPLETED': {
-      const { recieverUserId, previousMessageId, message } = action.payload;
+      const { receiverUserId, previousMessageId, message } = action.payload;
       const { messageId: id, unconfirmedMessageUuid: uuid } = message;
 
       // remove the sent message from the unsent list
       const newUnsentMessageOrder = state.unconfirmedConversations[
-        recieverUserId
+        receiverUserId
       ].allIds.filter(i => i !== uuid);
 
-      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
       // will return an empty array if so.
       return {
@@ -817,28 +815,28 @@ export default function rootReducer(
           ...state.inProgress,
           sendMessage: {
             ...state.inProgress.sendMessage,
-            [recieverUserId]: {
-              ...state.inProgress.sendMessage[recieverUserId],
+            [receiverUserId]: {
+              ...state.inProgress.sendMessage[receiverUserId],
               [uuid]: false
             }
           }
         },
         confirmedConversations: {
           ...state.confirmedConversations,
-          [recieverUserId]: {
+          [receiverUserId]: {
             byId: {
-              ...state.confirmedConversations[recieverUserId].byId,
+              ...state.confirmedConversations[receiverUserId].byId,
               [id]: message
             },
-            allIds: [...state.confirmedConversations[recieverUserId].allIds, id]
+            allIds: [...state.confirmedConversations[receiverUserId].allIds, id]
           }
         },
         // Must have values because initialized on Send Message Initiate
         // TODO: consider deleting the message from unconfirmed byIds. (For invarients?)
         unconfirmedConversations: {
           ...state.unconfirmedConversations,
-          [recieverUserId]: {
-            ...state.unconfirmedConversations[recieverUserId],
+          [receiverUserId]: {
+            ...state.unconfirmedConversations[receiverUserId],
             allIds: newUnsentMessageOrder
           }
         }
