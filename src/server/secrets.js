@@ -1,6 +1,5 @@
 // secrets.js
 const fs = require('fs');
-const logger = require('./logger');
 
 // logger commented out because of recursive config call
 
@@ -10,8 +9,7 @@ function get(secret) {
     // https://docs.docker.com/engine/swarm/secrets/#how-docker-manages-secrets
     return fs.readFileSync(`/run/secrets/${secret}`, 'utf8').trim();
   } catch (error) {
-    logger.error(`Failed to get secret ${secret}`, error);
-    throw error;
+    throw new Error(`Failed to get secret ${secret}`);
   }
 }
 
