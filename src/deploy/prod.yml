@@ -47,7 +47,7 @@ services:
 
 
   #
-  #  arthur, (beta) Webesite service
+  #  arthur, (beta) Website service
   #
 
   arthur:
