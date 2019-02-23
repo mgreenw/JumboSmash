@@ -59,6 +59,15 @@ import type {
   JudgeSceneCandidateInitiated_Action,
   JudgeSceneCandidateCompleted_Action
 } from 'mobile/actions/app/judgeSceneCandidate';
+import type {
+  GetConversationInitiated_Action,
+  GetConversationCompleted_Action
+} from 'mobile/actions/app/getConversation';
+import type {
+  SendMessageInitiated_Action,
+  SendMessageCompleted_Action
+} from 'mobile/actions/app/sendMessage';
+
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 
@@ -125,8 +134,17 @@ export type GetSceneCandidatesInProgress = {
 
 export type Scene = 'smash' | 'social' | 'stone';
 
+export type Message = {
+  messageId: number,
+  content: string,
+  timestamp: string,
+  fromClient: boolean
+};
+
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
+
+type Conversations = { [userId: number]: Message[] };
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
@@ -151,7 +169,15 @@ export type ReduxState = {
     saveSettings: boolean,
     uploadPhoto: boolean,
     deletePhoto: boolean,
-    getMatches: boolean
+    getMatches: boolean,
+
+    // map of userID's to conversation fetches in progress
+    getConversation: { [userId: number]: boolean },
+
+    // map of GiftedChatMessageId's to maps of messageId's to status
+    // This is an INTERNAL representation of message Id's for retry
+    // attempts on sending messages.
+    sendMessage: { [userId: number]: { [messageId: string]: boolean } }
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -163,7 +189,10 @@ export type ReduxState = {
 
   sceneCandidates: SceneCandidates,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
-  matches: ?(Match[])
+  matches: ?(Match[]),
+
+  // map of userID's to messages
+  conversations: Conversations
 };
 
 export type Action =
@@ -194,7 +223,11 @@ export type Action =
   | GetMatchesInitiated_Action
   | GetMatchesCompleted_Action
   | JudgeSceneCandidateInitiated_Action
-  | JudgeSceneCandidateCompleted_Action;
+  | JudgeSceneCandidateCompleted_Action
+  | GetConversationInitiated_Action
+  | GetConversationCompleted_Action
+  | SendMessageInitiated_Action
+  | SendMessageCompleted_Action;
 
 export type GetState = () => ReduxState;
 
@@ -224,7 +257,9 @@ const defaultState: ReduxState = {
     saveSettings: false,
     uploadPhoto: false,
     deletePhoto: false,
-    getMatches: false
+    getMatches: false,
+    getConversation: {},
+    sendMessage: {}
   },
   response: {
     sendVerificationEmail: null,
@@ -241,6 +276,7 @@ const defaultState: ReduxState = {
     social: [],
     stone: []
   },
+  conversations: {},
   matches: null
 };
 
@@ -508,14 +544,16 @@ export default function rootReducer(
 
     case 'GET_SCENE_CANDIDATES__INITIATED': {
       const { scene } = action.payload;
+      const getSceneCandidatesInProgress_updated = Object.assign(
+        {},
+        state.inProgress.getSceneCandidates
+      );
+      getSceneCandidatesInProgress_updated[scene] = true;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: {
-            ...state.inProgress.getSceneCandidates,
-            [scene]: true
-          }
+          getSceneCandidates: getSceneCandidatesInProgress_updated
         }
       };
     }
@@ -531,19 +569,21 @@ export default function rootReducer(
 
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
+      const getSceneCandidatesInProgress_updated = Object.assign(
+        {},
+        state.inProgress.getSceneCandidates
+      );
+      getSceneCandidatesInProgress_updated[scene] = false;
+
+      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
+      sceneCandidates_updated[scene] = candidates;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: {
-            ...state.inProgress.getSceneCandidates,
-            [scene]: false
-          }
+          getSceneCandidates: getSceneCandidatesInProgress_updated
         },
-        sceneCandidates: {
-          ...state.sceneCandidates,
-          [scene]: candidates
-        }
+        sceneCandidates: sceneCandidates_updated
       };
     }
     case 'GET_MATCHES__COMPLETED': {
@@ -578,21 +618,20 @@ export default function rootReducer(
           'currentSceneCandidates is null in judge scene candidates'
         );
       }
-      const newSceneCandidates = currentSceneCandidates.filter(
+      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
+      sceneCandidates_updated[scene] = currentSceneCandidates.filter(
         c => c.userId !== candidateUserId
       );
-      const newExcludeSceneCandidateIds = state.excludeSceneCandidateIds[scene];
-      newExcludeSceneCandidateIds.push(candidateUserId);
+
+      const excludeSceneCandidateIds_updated = Object.assign(
+        {},
+        state.excludeSceneCandidateIds
+      );
+      excludeSceneCandidateIds_updated[scene].push(candidateUserId);
       return {
         ...state,
-        sceneCandidates: {
-          ...state.sceneCandidates,
-          [scene]: newSceneCandidates
-        },
-        excludeSceneCandidateIds: {
-          ...state.excludeSceneCandidateIds,
-          [scene]: newExcludeSceneCandidateIds
-        }
+        sceneCandidates: sceneCandidates_updated,
+        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
       };
     }
 
@@ -614,17 +653,110 @@ export default function rootReducer(
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
       const { candidateUserId, scene } = action.payload;
-
       const currentExcludeSceneCandidateIds =
         state.excludeSceneCandidateIds[scene];
-      const newExcludeSceneCandidateIds = currentExcludeSceneCandidateIds.filter(
-        id => id !== candidateUserId
+      const excludeSceneCandidateIds_updated = Object.assign(
+        {},
+        state.excludeSceneCandidateIds
       );
+      excludeSceneCandidateIds_updated[
+        scene
+      ] = currentExcludeSceneCandidateIds.filter(id => id !== candidateUserId);
       return {
         ...state,
-        excludeSceneCandidateIds: {
-          ...state.excludeSceneCandidateIds,
-          [scene]: newExcludeSceneCandidateIds
+        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
+      };
+    }
+
+    // The conversation reducers have some special stuff going on to:
+    //    1. Ensure that our redux state is always immutable
+    //    2. Flow type every step of the copying process.
+    case 'GET_CONVERSATION__INITIATED': {
+      const { userId } = action.payload;
+
+      // Copy the original conversations-in-progress map
+      const inProgressConversations_updated: {
+        [userId: number]: boolean
+      } = Object.assign({}, state.inProgress.getConversation);
+      inProgressConversations_updated[userId] = true;
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getConversation: inProgressConversations_updated
+        }
+      };
+    }
+
+    case 'GET_CONVERSATION__COMPLETED': {
+      const userId = action.payload.userId;
+      const messages = action.payload.messages;
+
+      // Copy the original conversations-in-progress map
+      const inProgressConversations_updated: {
+        [userId: number]: boolean
+      } = Object.assign({}, state.inProgress.getConversation);
+      inProgressConversations_updated[userId] = false;
+
+      // Copy the original conversations map
+      const conversations_updated: Conversations = Object.assign(
+        {},
+        state.conversations
+      );
+      conversations_updated[userId] = messages;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getConversation: inProgressConversations_updated
+        },
+        conversations: conversations_updated
+      };
+    }
+
+    case 'SEND_MESSAGE__INITIATED': {
+      const { recieverUserId, messageId } = action.payload;
+
+      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // but because it is accessed within an object, the spread operator
+      // will return an empty array if so.
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendMessage: {
+            ...state.inProgress.sendMessage,
+            [recieverUserId]: {
+              ...state.inProgress.sendMessage[recieverUserId],
+              [messageId]: true
+            }
+          }
+        }
+      };
+    }
+
+    case 'SEND_MESSAGE__COMPLETED': {
+      const { recieverUserId, messageId, message } = action.payload;
+
+      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // but because it is accessed within an object, the spread operator
+      // will return an empty array if so.
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendMessage: {
+            ...state.inProgress.sendMessage,
+            [recieverUserId]: {
+              ...state.inProgress.sendMessage[recieverUserId],
+              [messageId]: false
+            }
+          }
+        },
+        conversations: {
+          ...state.conversations,
+          [recieverUserId]: [...state.conversations[recieverUserId], message]
         }
       };
     }
