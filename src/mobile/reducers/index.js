@@ -67,6 +67,7 @@ import type {
   SendMessageInitiated_Action,
   SendMessageCompleted_Action
 } from 'mobile/actions/app/sendMessage';
+import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
@@ -134,17 +135,63 @@ export type GetSceneCandidatesInProgress = {
 
 export type Scene = 'smash' | 'social' | 'stone';
 
+// For normalizer:
+const ConfirmedMessagesSchema = new schema.Entity(
+  'messages',
+  {},
+  { idAttribute: 'messageId' }
+);
+
 export type Message = {
   messageId: number,
   content: string,
   timestamp: string,
-  fromClient: boolean
+  fromClient: boolean,
+  unconfirmedMessageUuid: string
+};
+
+type GiftedChatUser = {
+  _id: string,
+  name: string
+};
+
+export type GiftedChatMessage = {
+  _id: string,
+  text: string,
+  createdAt: ?Date | number, // optional & accepts ducktyped date numbers
+  user: GiftedChatUser
 };
 
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
 
-type Conversations = { [userId: number]: Message[] };
+// --------- //
+// MESSAGES:
+// --------- //
+
+// Follows: https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
+
+// Keyed by server ID
+type ConfirmedMessages = {
+  byId: {
+    [Id: number]: Message
+  },
+  allIds: number[] // Id's in order
+};
+
+// Keyed by client generated ID. Fine, because client only
+// has unconfirmedMessages they generated ID's for then.
+type UnconfirmedMessages = {
+  byId: {
+    [UUID: string]: GiftedChatMessage
+  },
+  allIds: string[] // UUIDS in order
+};
+
+type ConfirmedConversations = { [userId: number]: ConfirmedMessages };
+type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
+
+// --------- //
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {
@@ -171,13 +218,10 @@ export type ReduxState = {
     deletePhoto: boolean,
     getMatches: boolean,
 
-    // map of userID's to conversation fetches in progress
-    getConversation: { [userId: number]: boolean },
+    sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
 
-    // map of GiftedChatMessageId's to maps of messageId's to status
-    // This is an INTERNAL representation of message Id's for retry
-    // attempts on sending messages.
-    sendMessage: { [userId: number]: { [messageId: string]: boolean } }
+    // map of userID's to conversation fetches in progress
+    getConversation: { [userId: number]: boolean }
   },
 
   // Unfortunately, we really need case analysis for a few calls that we
@@ -192,7 +236,11 @@ export type ReduxState = {
   matches: ?(Match[]),
 
   // map of userID's to messages
-  conversations: Conversations
+  confirmedConversations: ConfirmedConversations,
+
+  // Located outside of inProgress for convienence,
+  // because of how different this works compared to other reducers
+  unconfirmedConversations: UnconfirmedConversations
 };
 
 export type Action =
@@ -276,7 +324,8 @@ const defaultState: ReduxState = {
     social: [],
     stone: []
   },
-  conversations: {},
+  confirmedConversations: {},
+  unconfirmedConversations: {},
   matches: null
 };
 
@@ -690,56 +739,77 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const userId = action.payload.userId;
-      const messages = action.payload.messages;
+      const { userId, messages } = action.payload;
+      // TODO: ensure 'result' for array order is preserved
+      // pretty sure it's preserved via testing, but not sure via their docs
+      const { result: orderedIds, entities } = normalize(messages, [
+        ConfirmedMessagesSchema
+      ]);
 
-      // Copy the original conversations-in-progress map
-      const inProgressConversations_updated: {
-        [userId: number]: boolean
-      } = Object.assign({}, state.inProgress.getConversation);
-      inProgressConversations_updated[userId] = false;
-
-      // Copy the original conversations map
-      const conversations_updated: Conversations = Object.assign(
-        {},
-        state.conversations
-      );
-      conversations_updated[userId] = messages;
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getConversation: inProgressConversations_updated
+          getConversation: {
+            ...state.inProgress.getConversation,
+            [userId]: false
+          }
         },
-        conversations: conversations_updated
+        confirmedConversations: {
+          ...state.confirmedConversations,
+          [userId]: {
+            allIds: orderedIds,
+            byId: entities.messages
+          }
+        }
       };
     }
 
     case 'SEND_MESSAGE__INITIATED': {
-      const { recieverUserId, messageId } = action.payload;
+      const { receiverUserId, giftedChatMessage } = action.payload;
 
-      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
-      // but because it is accessed within an object, the spread operator
-      // will return an empty array if so.
+      // Initialize to an empty object in case this is the first time sending a message
+      // for a fresh store so that we can destructure with defaults.
+      const unsentMessages =
+        state.unconfirmedConversations[receiverUserId] || {};
+      const { byId = {}, allIds = [] } = unsentMessages;
+      const uuid = giftedChatMessage._id;
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
           sendMessage: {
             ...state.inProgress.sendMessage,
-            [recieverUserId]: {
-              ...state.inProgress.sendMessage[recieverUserId],
-              [messageId]: true
+            [receiverUserId]: {
+              ...state.inProgress.sendMessage[receiverUserId],
+              [uuid]: true
             }
+          }
+        },
+        unconfirmedConversations: {
+          ...state.unconfirmedConversations,
+          [receiverUserId]: {
+            byId: {
+              ...byId,
+              [uuid]: giftedChatMessage
+            },
+            allIds: [...allIds, uuid]
           }
         }
       };
     }
 
     case 'SEND_MESSAGE__COMPLETED': {
-      const { recieverUserId, messageId, message } = action.payload;
+      const { receiverUserId, previousMessageId, message } = action.payload;
+      const { messageId: id, unconfirmedMessageUuid: uuid } = message;
 
-      // NOTE: state.inProgress.sendMessage[recieverUserId] CAN be undefined,
+      // remove the sent message from the unsent list
+      const newUnsentMessageOrder = state.unconfirmedConversations[
+        receiverUserId
+      ].allIds.filter(i => i !== uuid);
+
+      // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
       // will return an empty array if so.
       return {
@@ -748,15 +818,30 @@ export default function rootReducer(
           ...state.inProgress,
           sendMessage: {
             ...state.inProgress.sendMessage,
-            [recieverUserId]: {
-              ...state.inProgress.sendMessage[recieverUserId],
-              [messageId]: false
+            [receiverUserId]: {
+              ...state.inProgress.sendMessage[receiverUserId],
+              [uuid]: false
             }
           }
         },
-        conversations: {
-          ...state.conversations,
-          [recieverUserId]: [...state.conversations[recieverUserId], message]
+        confirmedConversations: {
+          ...state.confirmedConversations,
+          [receiverUserId]: {
+            byId: {
+              ...state.confirmedConversations[receiverUserId].byId,
+              [id]: message
+            },
+            allIds: [...state.confirmedConversations[receiverUserId].allIds, id]
+          }
+        },
+        // Must have values because initialized on Send Message Initiate
+        // TODO: consider deleting the message from unconfirmed byIds. (For invarients?)
+        unconfirmedConversations: {
+          ...state.unconfirmedConversations,
+          [receiverUserId]: {
+            ...state.unconfirmedConversations[receiverUserId],
+            allIds: newUnsentMessageOrder
+          }
         }
       };
     }

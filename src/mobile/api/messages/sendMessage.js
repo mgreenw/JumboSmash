@@ -8,10 +8,12 @@ const SEND_MESSAGE__SUCCESS = 'SEND_MESSAGE__SUCCESS';
 
 export default function sendMessage(
   userId: number,
-  content: string
-): Promise<Message> {
+  content: string,
+  unconfirmedMessageUuid: string
+): Promise<{ message: Message, previousMessageId: number }> {
   return apiRequest('POST', SEND_MESSAGE__ROUTE + userId, {
-    content
+    content,
+    unconfirmedMessageUuid
   })
     .then(response => {
       switch (response.status) {
