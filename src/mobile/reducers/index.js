@@ -111,21 +111,9 @@ type SceneMatchTimes = {|
 type BaseUser = {| userId: number, profile: UserProfile |};
 export type Client = {| ...BaseUser, settings: UserSettings |};
 export type Candidate = BaseUser;
+export type Match = {| ...BaseUser, scenes: SceneMatchTimes |};
 
-// Eventually we want BaseUser to be profileId also. To not break EVERYTHING, we do this increntally.
-type BaseUserNew = {| userId: number, profileId: number |};
-export type Match = {|
-  ...BaseUserNew,
-  mostRecentMessageId: number,
-  scenes: SceneMatchTimes
-|};
-
-type Matches = {|
-  byId: {
-    [Id: number]: Match
-  },
-  allIds: number[] // Id's in order
-|};
+type Matches = Match[];
 
 export type SceneCandidates = {|
   smash: ?(Candidate[]),
@@ -152,25 +140,6 @@ const ConfirmedMessageSchema = new schema.Entity(
   'messages',
   {},
   { idAttribute: 'messageId' }
-);
-
-// NOTE: because profiles have their ID's in the parent object,
-// we assume that when accessing the object we can access parent.userId.
-const ProfileSchema = new schema.Entity(
-  'profiles',
-  {},
-  {
-    idAttribute: (_, parent) => parent.userId
-  }
-);
-
-const MatchSchema = new schema.Entity(
-  'matches',
-  {
-    profile: ProfileSchema,
-    mostRecentMessage: ConfirmedMessageSchema
-  },
-  { idAttribute: 'userId' }
 );
 
 export type Message = {|
@@ -678,40 +647,13 @@ export default function rootReducer(
     }
 
     case 'GET_MATCHES__COMPLETED': {
-      const { payload: matches } = action;
-
-      // split between messaged and non-messaged matcehs
-      const index = matches.findIndex(m => m.mostRecentMessage === null);
-
-      const { result: orderedIds, entities: normalizedData } = normalize<
-        number[],
-        {|
-          matches: { [userId: number]: Match },
-          messages: { [messagedId: number]: Message },
-          profiles: { [userId: number]: any }
-        |}
-      >(matches, [MatchSchema]);
-
-      const messagedMatchIds = orderedIds.slice(0, index);
-      const unmessagedMatchIds = orderedIds.slice(index + 1);
-
-      const { byId = {} } = state.matches || {};
-
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
           getMatches: false
         },
-        matches: {
-          byId: {
-            ...byId,
-            ...normalizedData.matches
-          },
-          allIds: orderedIds
-        },
-        messagedMatchIds,
-        unmessagedMatchIds
+        matches: action.payload
       };
     }
 

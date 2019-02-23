@@ -25,7 +25,6 @@ type NavigationProps = {
 
 type ReduxProps = {
   matches: ?(Match[]),
-  messages: string,
   getMatchesInProgress: boolean
 };
 
