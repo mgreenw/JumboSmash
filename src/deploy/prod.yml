@@ -88,7 +88,7 @@ services:
   server:
     environment:
       NODE_ENV: production
-    image: maxgreenwald/projectgem:0.0.1
+    image: maxgreenwald/projectgem:0.0.3
     secrets:
       - POSTGRES_HOST
       - POSTGRES_DATABASE
@@ -114,6 +114,8 @@ services:
 
   redis:
     image: redis
+    networks:
+       - traefik-net
     deploy:
       labels:
         - traefik.backend=redis
