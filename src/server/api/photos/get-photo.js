@@ -3,8 +3,8 @@
 import type { $Request, $Response, $Next } from 'express';
 
 const config = require('config');
-const aws = require('aws-sdk');
 
+const aws = require('../../aws');
 const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');

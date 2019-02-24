@@ -11,12 +11,12 @@
 /* eslint-disable no-console */
 
 const readline = require('readline');
-const aws = require('aws-sdk');
 const config = require('config');
 /* eslint-disable-next-line */
 const Chance = require('chance'); // It's a dev dependency...duh
 const chance = new Chance();
 
+const aws = require('../aws');
 const db = require('../db');
 const utils = require('../utils');
 
