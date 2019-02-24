@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
-const apiUtils = require('../utils');
+const { asyncHandler, status, userIsBanned } = require('../utils');
 const codes = require('../status-codes');
 
 /**
@@ -15,6 +15,12 @@ const getConversation = async (
   matchUserId: number,
   mostRecentMessageIdStr: ?string = undefined,
 ) => {
+  // If the user is banned, return an emtpy array (which is the default
+  // if the user couldn't be found otherwise)
+  if (await userIsBanned(matchUserId)) {
+    return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+  }
+
   let query = `
     SELECT
       id AS "messageId",
@@ -39,7 +45,7 @@ const getConversation = async (
 
     // If it is invalid (not an int), fail.
     if (Number.isNaN(mostRecentMessageId) || mostRecentMessageId <= 0) {
-      return apiUtils.status(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID).noData();
+      return status(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID).noData();
     }
 
     // Add the "most recent" part of the query
@@ -61,11 +67,11 @@ const getConversation = async (
     [userId, matchUserId],
   );
 
-  return apiUtils.status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
+  return status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
 };
 
 const handler = [
-  apiUtils.asyncHandler(async (req: $Request) => {
+  asyncHandler(async (req: $Request) => {
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
   }),
 ];

@@ -7,11 +7,13 @@ const dbUtils = require('../../utils/db');
 const utils = require('./utils');
 
 let me = {};
+let photoId;
 
 describe('GET api/photos/:photoId', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE from classmates');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE from photos');
@@ -22,7 +24,8 @@ describe('GET api/photos/:photoId', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE from classmates');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE from photos');
@@ -69,8 +72,10 @@ describe('GET api/photos/:photoId', () => {
     expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS.status);
     expect(Number.isInteger(res.body.data[0]) && res.body.data[0] > 0).toBeTruthy();
 
+    photoId = res.body.data[res.body.data.length - 1];
+
     res = await request(app)
-      .get(`/api/photos/${res.body.data[res.body.data.length - 1]}`)
+      .get(`/api/photos/${photoId}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json')
       .redirects(1);
@@ -80,5 +85,17 @@ describe('GET api/photos/:photoId', () => {
     expect(res.header['content-type']).toBe('image/jpeg');
 
     await utils.deletePhoto(key);
+  });
+
+  it('should fail if the user is banned', async () => {
+    await dbUtils.banUser(me.id);
+    const person = await dbUtils.createUser('person04', true);
+
+    const res = await request(app)
+      .get(`/api/photos/${photoId}`)
+      .set('Authorization', person.token)
+      .set('Accept', 'application/json');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.GET_PHOTO__NOT_FOUND.status);
   });
 });

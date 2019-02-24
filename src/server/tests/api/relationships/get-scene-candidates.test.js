@@ -33,7 +33,7 @@ const meSettings = {
 describe('GET api/relationships/candidates/:scene', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
 
@@ -83,7 +83,7 @@ describe('GET api/relationships/candidates/:scene', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE FROM classmates');

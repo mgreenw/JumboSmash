@@ -12,12 +12,12 @@ const BAD_CODE = '123456';
 describe('api/auth/verify', () => {
   beforeAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM classmates');
   });
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM classmates');
   });
 
   // Normal case: send-verification-email and verify should succeed
