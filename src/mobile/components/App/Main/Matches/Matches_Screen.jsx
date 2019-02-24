@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
-import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
@@ -136,24 +135,20 @@ class MessagingScreen extends React.Component<Props> {
     );
 
     return (
-      <Transition inline appear="right">
+      <View style={{ flex: 1 }}>
+        <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         <View style={{ flex: 1 }}>
-          <GEMHeader title="Messages" leftIconName="cards" borderBottom />
-          <View style={{ flex: 1 }}>
-            <FlatList
-              ListHeaderComponent={<NewMatchesList matches={matches} />}
-              data={matches || [1]}
-              keyExtractor={this.keyExtractor}
-              renderItem={
-                matches
-                  ? this.renderMatchListItem
-                  : this.renderGenesisText(false)
-              }
-              refreshControl={refreshComponent}
-            />
-          </View>
+          <FlatList
+            ListHeaderComponent={<NewMatchesList matches={matches} />}
+            data={matches || [1]}
+            keyExtractor={this.keyExtractor}
+            renderItem={
+              matches ? this.renderMatchListItem : this.renderGenesisText(false)
+            }
+            refreshControl={refreshComponent}
+          />
         </View>
-      </Transition>
+      </View>
     );
   }
 }
