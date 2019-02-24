@@ -1,6 +1,9 @@
 // @flow
 
-import { createStackNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createMaterialTopTabNavigator
+} from 'react-navigation';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 
 // ////////
@@ -175,16 +178,20 @@ const MatchesStack = createStackNavigator(
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
-const MainContentSwitch = FluidNavigator(
+const MainContentSwitch = createMaterialTopTabNavigator(
   {
     CARDS_STACK: CardsStack,
     PROFILE_STACK: ProfileStack,
     MATCHES_STACK: MatchesStack
   },
   {
-    mode: 'card',
     initialRouteName: CARDS_STACK,
-    ...removeHeader
+    animationEnabled: true,
+    order: [PROFILE_STACK, CARDS_STACK, MATCHES_STACK],
+
+    // $FlowFixMe -- this is a hack but we want our own tab bar
+    tabBarComponent: null,
+    lazy: false // render all at once
   }
 );
 

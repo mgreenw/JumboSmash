@@ -153,24 +153,22 @@ class MessagingScreen extends React.Component<Props> {
     );
 
     return (
-      <Transition inline appear="right">
+      <View style={{ flex: 1 }}>
+        <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         <View style={{ flex: 1 }}>
-          <GEMHeader title="Messages" leftIconName="cards" borderBottom />
-          <View style={{ flex: 1 }}>
-            <FlatList
-              ListHeaderComponent={null}
-              data={messagedMatchIds || [1]}
-              keyExtractor={this.keyExtractor}
-              renderItem={
-                messagedMatchIds
-                  ? this.renderMatchListItem
-                  : this.renderGenesisText(false)
-              }
-              refreshControl={refreshComponent}
-            />
-          </View>
+          <FlatList
+            ListHeaderComponent={null}
+            data={messagedMatchIds || [1]}
+            keyExtractor={this.keyExtractor}
+            renderItem={
+              messagedMatchIds
+                ? this.renderMatchListItem
+                : this.renderGenesisText(false)
+            }
+            refreshControl={refreshComponent}
+          />
         </View>
-      </Transition>
+      </View>
     );
   }
 }
