@@ -91,76 +91,77 @@ export type UserSettings = {
   }
 };
 
-export type ProfileFields = {
+export type ProfileFields = {|
   displayName: string,
   birthday: string,
   bio: string
-};
+|};
 
-export type UserProfile = {
+export type UserProfile = {|
   fields: ProfileFields,
   photoIds: number[]
-};
+|};
 
-type SceneMatchTimes = {
+type SceneMatchTimes = {|
   smash: ?string,
   social: ?string,
   stone: ?string
-};
+|};
 
-type BaseUser = { userId: number, profile: UserProfile };
-export type Client = BaseUser & { settings: UserSettings };
+type BaseUser = {| userId: number, profile: UserProfile |};
+export type Client = {| ...BaseUser, settings: UserSettings |};
 export type Candidate = BaseUser;
-export type Match = BaseUser & {
-  scenes: SceneMatchTimes
-};
+export type Match = {| ...BaseUser, scenes: SceneMatchTimes |};
 
-export type SceneCandidates = {
+type Matches = Match[];
+
+export type SceneCandidates = {|
   smash: ?(Candidate[]),
   social: ?(Candidate[]),
   stone: ?(Candidate[])
-};
+|};
 
-export type ExcludeSceneCandidateIds = {
+export type ExcludeSceneCandidateIds = {|
   smash: number[],
   social: number[],
   stone: number[]
-};
+|};
 
-export type GetSceneCandidatesInProgress = {
+export type GetSceneCandidatesInProgress = {|
   smash: boolean,
   social: boolean,
   stone: boolean
-};
+|};
 
 export type Scene = 'smash' | 'social' | 'stone';
 
 // For normalizer:
-const ConfirmedMessagesSchema = new schema.Entity(
+const ConfirmedMessageSchema = new schema.Entity(
   'messages',
   {},
   { idAttribute: 'messageId' }
 );
 
-export type Message = {
+export type Message = {|
   messageId: number,
   content: string,
   timestamp: string,
   fromClient: boolean,
   unconfirmedMessageUuid: string
-};
+|};
 
-type GiftedChatUser = {
+type GiftedChatUser = {|
   _id: string,
   name: string
-};
+|};
 
-export type GiftedChatMessage = {
+export type GiftedChatMessage = {|
   _id: string,
   text: string,
   createdAt: ?Date | number, // optional & accepts ducktyped date numbers
-  user: GiftedChatUser
-};
+  user: GiftedChatUser,
+  sent: boolean
+|};
 
 // TODO: enable if needed. This is a conceptual type.
 // type User = Client | Candidate;
@@ -172,21 +173,21 @@ export type GiftedChatMessage = {
 // Follows: https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape
 
 // Keyed by server ID
-type ConfirmedMessages = {
-  byId: {
+type ConfirmedMessages = {|
+  byId: {|
     [Id: number]: Message
-  },
+  |},
   allIds: number[] // Id's in order
-};
+|};
 
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
-type UnconfirmedMessages = {
+type UnconfirmedMessages = {|
   byId: {
     [UUID: string]: GiftedChatMessage
   },
   allIds: string[] // UUIDS in order
-};
+|};
 
 type ConfirmedConversations = { [userId: number]: ConfirmedMessages };
 type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
@@ -194,7 +195,7 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 // --------- //
 
 // TODO: seperate state into profile, meta, API responses, etc.
-export type ReduxState = {
+export type ReduxState = {|
   // app data:
   client: ?Client,
   token: ?string,
@@ -204,7 +205,7 @@ export type ReduxState = {
   appLoaded: boolean,
   onboardingCompleted: boolean,
 
-  inProgress: {
+  inProgress: {|
     loadAuth: boolean,
     sendVerificationEmail: boolean,
     logout: boolean,
@@ -222,26 +223,32 @@ export type ReduxState = {
 
     // map of userID's to conversation fetches in progress
     getConversation: { [userId: number]: boolean }
-  },
+  |},
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
-  response: {
+  response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
     login: ?Login_Response
-  },
+  |},
 
   sceneCandidates: SceneCandidates,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
-  matches: ?(Match[]),
 
   // map of userID's to messages
   confirmedConversations: ConfirmedConversations,
 
   // Located outside of inProgress for convienence,
   // because of how different this works compared to other reducers
-  unconfirmedConversations: UnconfirmedConversations
-};
+  unconfirmedConversations: UnconfirmedConversations,
+
+  // map of all profiles loaded
+  profiles: { [userId: number]: UserProfile },
+
+  matches: ?Matches,
+  messagedMatchIds: ?(number[]),
+  unmessagedMatchIds: ?(number[])
+|};
 
 export type Action =
   | LoginInitiated_Action
@@ -286,7 +293,6 @@ export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 const defaultState: ReduxState = {
   token: null,
   client: null,
-  loggedIn: false,
   authLoaded: false,
   appLoaded: false,
   inProgress: {
@@ -326,7 +332,12 @@ const defaultState: ReduxState = {
   },
   confirmedConversations: {},
   unconfirmedConversations: {},
-  matches: null
+  profiles: {},
+
+  // before loaded
+  matches: null,
+  messagedMatchIds: null,
+  unmessagedMatchIds: null
 };
 
 export default function rootReducer(
@@ -381,7 +392,6 @@ export default function rootReducer(
       return {
         ...state,
         token: null,
-        loggedIn: false,
         inProgress: {
           ...state.inProgress,
           logout: false
@@ -593,11 +603,10 @@ export default function rootReducer(
 
     case 'GET_SCENE_CANDIDATES__INITIATED': {
       const { scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = Object.assign(
-        {},
-        state.inProgress.getSceneCandidates
-      );
-      getSceneCandidatesInProgress_updated[scene] = true;
+      const getSceneCandidatesInProgress_updated = {
+        ...state.inProgress.getSceneCandidates,
+        [scene]: true
+      };
       return {
         ...state,
         inProgress: {
@@ -606,6 +615,28 @@ export default function rootReducer(
         }
       };
     }
+
+    case 'GET_SCENE_CANDIDATES__COMPLETED': {
+      const { candidates, scene } = action.payload;
+      const getSceneCandidatesInProgress_updated = {
+        ...state.inProgress.getSceneCandidates,
+        [scene]: false
+      };
+
+      const sceneCandidates_updated = {
+        ...state.sceneCandidates,
+        [scene]: candidates
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getSceneCandidates: getSceneCandidatesInProgress_updated
+        },
+        sceneCandidates: sceneCandidates_updated
+      };
+    }
+
     case 'GET_MATCHES__INITIATED': {
       return {
         ...state,
@@ -616,25 +647,6 @@ export default function rootReducer(
       };
     }
 
-    case 'GET_SCENE_CANDIDATES__COMPLETED': {
-      const { candidates, scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = Object.assign(
-        {},
-        state.inProgress.getSceneCandidates
-      );
-      getSceneCandidatesInProgress_updated[scene] = false;
-
-      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
-      sceneCandidates_updated[scene] = candidates;
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          getSceneCandidates: getSceneCandidatesInProgress_updated
-        },
-        sceneCandidates: sceneCandidates_updated
-      };
-    }
     case 'GET_MATCHES__COMPLETED': {
       return {
         ...state,
@@ -667,16 +679,19 @@ export default function rootReducer(
           'currentSceneCandidates is null in judge scene candidates'
         );
       }
-      const sceneCandidates_updated = Object.assign({}, state.sceneCandidates);
-      sceneCandidates_updated[scene] = currentSceneCandidates.filter(
-        c => c.userId !== candidateUserId
-      );
 
-      const excludeSceneCandidateIds_updated = Object.assign(
-        {},
-        state.excludeSceneCandidateIds
-      );
-      excludeSceneCandidateIds_updated[scene].push(candidateUserId);
+      const sceneCandidates_updated = {
+        ...state.sceneCandidates,
+        [scene]: currentSceneCandidates.filter(
+          c => c.userId !== candidateUserId
+        )
+      };
+
+      const excludeSceneCandidateIds_updated = {
+        ...state.excludeSceneCandidateIds,
+        [scene]: [...state.excludeSceneCandidateIds[scene], candidateUserId]
+      };
+
       return {
         ...state,
         sceneCandidates: sceneCandidates_updated,
@@ -704,13 +719,14 @@ export default function rootReducer(
       const { candidateUserId, scene } = action.payload;
       const currentExcludeSceneCandidateIds =
         state.excludeSceneCandidateIds[scene];
-      const excludeSceneCandidateIds_updated = Object.assign(
-        {},
-        state.excludeSceneCandidateIds
-      );
-      excludeSceneCandidateIds_updated[
-        scene
-      ] = currentExcludeSceneCandidateIds.filter(id => id !== candidateUserId);
+
+      const excludeSceneCandidateIds_updated = {
+        ...state.excludeSceneCandidateIds,
+        [scene]: currentExcludeSceneCandidateIds.filter(
+          id => id !== candidateUserId
+        )
+      };
+
       return {
         ...state,
         excludeSceneCandidateIds: excludeSceneCandidateIds_updated
@@ -743,7 +759,7 @@ export default function rootReducer(
       // TODO: ensure 'result' for array order is preserved
       // pretty sure it's preserved via testing, but not sure via their docs
       const { result: orderedIds, entities } = normalize(messages, [
-        ConfirmedMessagesSchema
+        ConfirmedMessageSchema
       ]);
 
       return {
