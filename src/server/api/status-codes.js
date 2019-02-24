@@ -244,3 +244,21 @@ exports.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID = {
   status: 'GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID',
   code: 400,
 };
+
+
+// META
+// Report User
+exports.REPORT_USER__SUCCESS = {
+  status: 'REPORT_USER__SUCCESS',
+  code: 200,
+};
+exports.REPORT_USER__NOT_FOUND = {
+  status: 'REPORT_USER__NOT_FOUND',
+  code: 404,
+};
+
+// Send Feedback
+exports.SEND_FEEDBACK__SUCCESS = {
+  status: 'SEND_FEEDBACK__SUCCESS',
+  code: 200,
+};
