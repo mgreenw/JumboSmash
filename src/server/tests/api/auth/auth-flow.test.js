@@ -334,4 +334,33 @@ describe('api/auth/verify', () => {
     expect(res.statusCode).toBe(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
   });
+
+  it('should allow the tester@jumbosmash.com user to login with verification code 654321', async () => {
+    let res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          email: 'tester@jumbosmash.com',
+        },
+      );
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toBe('tester@jumbosmash.com');
+    expect(res.body.data.utln).toBe('tester');
+
+    res = await request(app)
+      .post('/api/auth/verify')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          utln: 'tester',
+          code: '654321',
+        },
+      );
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
+  });
 });
