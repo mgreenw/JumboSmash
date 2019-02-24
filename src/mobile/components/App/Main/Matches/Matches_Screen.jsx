@@ -16,7 +16,6 @@ import type {
   UserProfile,
   ConfirmedMessages
 } from 'mobile/reducers/index';
-import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
@@ -34,7 +33,6 @@ type ReduxProps = {
   profileMap: { [userId: number]: UserProfile },
   conversationMap: { [userId: number]: ConfirmedMessages },
   messagedMatchIds: ?(number[]),
-  unmessagedMatchIds: ?(number[]),
   getMatchesInProgress: boolean
 };
 
@@ -50,7 +48,6 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     profileMap: reduxState.profiles,
     conversationMap: reduxState.confirmedConversations,
     messagedMatchIds: reduxState.messagedMatchIds,
-    unmessagedMatchIds: reduxState.unmessagedMatchIds,
     getMatchesInProgress: reduxState.inProgress.getMatches
   };
 }
@@ -157,7 +154,7 @@ class MessagingScreen extends React.Component<Props> {
         <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         <View style={{ flex: 1 }}>
           <FlatList
-            ListHeaderComponent={null}
+            ListHeaderComponent={<NewMatchesList />}
             data={messagedMatchIds || [1]}
             keyExtractor={this.keyExtractor}
             renderItem={
