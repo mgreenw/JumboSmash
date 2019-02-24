@@ -5,12 +5,13 @@
     "privacy": "unlisted",
     "name": "ProjectGEM-dev",
     "slug": "projectgem-dev",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Thru PR 204",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
     "android": {
-      "package": "com.jumbosmash.mobile"
+      "package": "com.jumbosmash.mobile",
+      "permissions": []
     },
     "ios": {
       "bundleIdentifier": "com.jumbosmash.mobile"
