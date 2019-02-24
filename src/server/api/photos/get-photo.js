@@ -31,6 +31,9 @@ const getSignedUrl = async (params): Promise<string> => {
 const getPhoto = async (photoId: number) => {
   // Get the photo by id
   // NOTE: the join here ensures that the user is not banned.
+  // This allows for blocked users to get the other user's photos.
+  // This is ok because they will most likely already have them locally cached
+  // so it is not a security risk.
   const photoRes = await db.query(`
     SELECT uuid
     FROM photos

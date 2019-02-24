@@ -4,7 +4,7 @@ import type { $Request } from 'express';
 
 const db = require('../../db');
 const { profileSelectQuery } = require('./utils');
-const { userIsBanned, asyncHandler, status } = require('../utils');
+const { canAccessUserData, asyncHandler, status } = require('../utils');
 const codes = require('../status-codes');
 
 /* eslint-disable */
@@ -25,11 +25,6 @@ const getProfile = async (userId: number) => {
     return status(codes.GET_PROFILE__BAD_USER_ID).noData();
   }
 
-  // Ensure the user is not banned
-  if (await userIsBanned(userId)) {
-    return status(codes.GET_PROFILE__PROFILE_NOT_FOUND).noData();
-  }
-
   // Try to get the user from the profiles table
   const result = await db.query(`
     SELECT ${profileSelectQuery('$1')}
@@ -48,7 +43,15 @@ const getProfile = async (userId: number) => {
 
 const handler = [
   asyncHandler(async (req: $Request) => {
-    return getProfile(parseInt(req.params.userId, 10));
+    // Ensure the user is not banned. This happens here so the logic
+    // of getProfile does not need to take banning into account, it just
+    // gets the profile!
+    const requestedProfileUserId = parseInt(req.params.userId, 10);
+    if (!(await canAccessUserData(requestedProfileUserId, req.user.id))) {
+      return status(codes.GET_PROFILE__PROFILE_NOT_FOUND).noData();
+    }
+
+    return getProfile(requestedProfileUserId);
   }),
 ];
 

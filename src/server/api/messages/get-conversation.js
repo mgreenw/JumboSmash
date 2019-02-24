@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
-const { asyncHandler, status, userIsBanned } = require('../utils');
+const { asyncHandler, status, canAccessUserData } = require('../utils');
 const codes = require('../status-codes');
 
 /**
@@ -15,12 +15,6 @@ const getConversation = async (
   matchUserId: number,
   mostRecentMessageIdStr: ?string = undefined,
 ) => {
-  // If the user is banned, return an emtpy array (which is the default
-  // if the user couldn't be found otherwise)
-  if (await userIsBanned(matchUserId)) {
-    return status(codes.GET_CONVERSATION__SUCCESS).data([]);
-  }
-
   let query = `
     SELECT
       id AS "messageId",
@@ -72,6 +66,12 @@ const getConversation = async (
 
 const handler = [
   asyncHandler(async (req: $Request) => {
+    // If the user is banned, return an emtpy array (which is the default
+    // if the user couldn't be found otherwise)
+    if (!(await canAccessUserData(req.params.userId, req.user.id))) {
+      return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+    }
+
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
   }),
 ];
