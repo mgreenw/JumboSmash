@@ -53,7 +53,7 @@ describe('api/auth/verify', () => {
           code: codeForGoodUtln.rows[0].code,
         },
       )
-      .set('Accept', 'application/json')
+      .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
