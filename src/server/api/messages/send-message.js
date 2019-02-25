@@ -5,7 +5,7 @@ import type { $Request } from 'express';
 const db = require('../../db');
 const codes = require('../status-codes');
 const apiUtils = require('../utils');
-const { sendUpdateToUser } = require('../../socket');
+const Socket = require('../../socket');
 
 /* eslint-disable */
 const schema = {
@@ -72,15 +72,10 @@ const sendMessage = async (
       previousMessageId = previousMessageResult.rows[0].id;
     }
 
-    const messageForReceiver = {
+    // Send the message over the socket!
+    Socket.sendNewMessageNotification(receiverUserId, {
       ...message,
       fromClient: false,
-    };
-
-    // Send the message over the socket!
-    sendUpdateToUser(receiverUserId, {
-      type: 'NEW_MESSAGE',
-      data: messageForReceiver,
     });
 
     return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data({
