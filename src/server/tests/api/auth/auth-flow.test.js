@@ -20,12 +20,19 @@ describe('api/auth/verify', () => {
       (utln)
       VALUES ('mgreen14'), ('jjaffe01')
     `);
+
+    await db.query(`
+      INSERT INTO testers
+      (utln)
+      VALUES ('jchun03'), ('rzampo01')
+    `);
   });
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
     await db.query('DELETE FROM users');
     await db.query('DELETE FROM admins');
+    await db.query('DELETE FROM testers');
   });
 
   // Normal case: send-verification-email and verify should succeed
