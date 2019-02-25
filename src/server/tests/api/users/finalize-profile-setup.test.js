@@ -9,12 +9,12 @@ const { profileErrorMessages } = require('../../../api/users/utils');
 describe('POST api/users/me/profile', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   it('should fail if the auth token is not a valid JSON WEB token', async () => {
