@@ -1,6 +1,7 @@
 // @flow
 
-import type { Dispatch, Match } from 'mobile/reducers';
+import type { Dispatch } from 'mobile/reducers';
+import type { ServerMatch } from 'mobile/api/serverTypes';
 import getMatchesApi from 'mobile/api/relationships/getMatches';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -13,7 +14,7 @@ export type GetMatchesInitiated_Action = {
 
 export type GetMatchesCompleted_Action = {
   type: 'GET_MATCHES__COMPLETED',
-  payload: Match[],
+  payload: ServerMatch[],
   meta: {}
 };
 
@@ -25,7 +26,7 @@ function initiate(): GetMatchesInitiated_Action {
   };
 }
 
-function complete(matches: Match[]): GetMatchesCompleted_Action {
+function complete(matches: ServerMatch[]): GetMatchesCompleted_Action {
   return {
     type: 'GET_MATCHES__COMPLETED',
     payload: matches,
