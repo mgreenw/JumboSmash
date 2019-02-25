@@ -4,7 +4,7 @@ import type { $Request } from 'express';
 
 const db = require('../../db');
 const codes = require('../status-codes');
-const apiUtils = require('../utils');
+const { status, asyncHandler, validate, canAccessUserData } = require('../utils');
 const Socket = require('../../socket');
 
 /* eslint-disable */
@@ -78,7 +78,7 @@ const sendMessage = async (
       fromClient: false,
     });
 
-    return apiUtils.status(codes.SEND_MESSAGE__SUCCESS).data({
+    return status(codes.SEND_MESSAGE__SUCCESS).data({
       message,
       previousMessageId,
     });
@@ -86,12 +86,12 @@ const sendMessage = async (
     // This checks that the error was not caused due to a duplicate message_uuid_key
     // This is not important from a design standpoint but will be catch bugs in testing
     if (err.code === '23505' && err.constraint === 'messages_unconfirmed_message_uuid_key') {
-      return apiUtils.status(codes.SEND_MESSAGE__DUPLICATE_UNCONFIRMED_MESSAGE_UUID).noData();
+      return status(codes.SEND_MESSAGE__DUPLICATE_UNCONFIRMED_MESSAGE_UUID).noData();
     }
     // Check if the error was due to the fact that the other user does not
     // exist. If so, return a regular error
     if (err.code === '23503' && err.constraint === 'messages_receiver_user_id_fkey') {
-      return apiUtils.status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
+      return status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
     }
 
     throw err;
@@ -99,8 +99,15 @@ const sendMessage = async (
 };
 
 const handler = [
-  apiUtils.validate(schema),
-  apiUtils.asyncHandler(async (req: $Request) => {
+  validate(schema),
+  asyncHandler(async (req: $Request) => {
+    // Ensure the user can access the other user's data
+    const canSendMessage = await canAccessUserData(req.params.userId, req.user.id);
+    if (!canSendMessage) {
+      return status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
+    }
+
+    // If the user can send the message, go for it!
     return sendMessage(
       req.user.id,
       req.params.userId,

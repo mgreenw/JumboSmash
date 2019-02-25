@@ -7,9 +7,9 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
-const { UNAUTHORIZED } = require('../api/status-codes');
-const logger = require('../logger');
-const { getUser } = require('../api/auth/utils');
+const { UNAUTHORIZED } = require('./api/status-codes');
+const logger = require('./logger');
+const { getUser } = require('./api/auth/utils');
 
 const namespace = '/socket';
 

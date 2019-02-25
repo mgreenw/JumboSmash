@@ -2,10 +2,12 @@
 
 import type { $Request } from 'express';
 
-const apiUtils = require('../utils');
+const { status, validate, asyncHandler, canAccessUserData } = require('../utils');
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const logger = require('../../logger');
+const Socket = require('../../socket');
 
 /* eslint-disable */
 const schema = {
@@ -26,6 +28,29 @@ const schema = {
   "required": ["candidateUserId", "scene", "liked"]
 };
 /* eslint-enable */
+
+async function checkMatch(userId: number, candidateUserId: number, scene: string) {
+  try {
+    const matchedResult = await db.query(`
+      SELECT r_critic.liked_${scene} AS critic, r_candidate.liked_${scene} AS candidate, COALESCE(r_critic.liked_${scene}, false) AND COALESCE(r_candidate.liked_${scene}, false) AS matched
+      FROM relationships r_critic
+      LEFT JOIN relationships r_candidate
+        ON r_candidate.critic_user_id = r_critic.candidate_user_id
+        AND r_candidate.candidate_user_id = r_critic.critic_user_id
+      WHERE r_critic.critic_user_id = $1 AND r_critic.candidate_user_id = $2
+    `, [userId, candidateUserId]);
+
+    // Check if the users are matched
+    const matched = matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
+    if (matched) {
+      // TODO: Make this object have the same shape as a real match
+      Socket.sendNewMatchNotification(userId, { userId: candidateUserId, scene });
+      Socket.sendNewMatchNotification(candidateUserId, { userId, scene })
+    }
+  } catch (error) {
+    logger.error('Failed to check for match', error);
+  }
+}
 
 /**
  * @api {post} /api/relationships/judge
@@ -62,14 +87,18 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
     `, [userId, candidateUserId, liked]);
 
+    if (liked) {
+      checkMatch(userId, candidateUserId, scene);
+    }
+
     // If the query succeeded, return success
-    return apiUtils.status(codes.JUDGE__SUCCESS).noData();
+    return status(codes.JUDGE__SUCCESS).noData();
   } catch (err) {
     // If the query failed due to a voilation of the candidate_user_id fkey
     // into the profiles table, return a more specific error. See here:
     // https://www.postgresql.org/docs/10/errcodes-appendix.html
     if (err.code === '23503' && err.constraint === 'relationships_candidate_user_id_fkey') {
-      return apiUtils.status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+      return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
     }
 
     throw err;
@@ -77,8 +106,13 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
 };
 
 const handler = [
-  apiUtils.validate(schema),
-  apiUtils.asyncHandler(async (req: $Request) => {
+  validate(schema),
+  asyncHandler(async (req: $Request) => {
+    const canJudge = await canAccessUserData(req.body.candidateUserId, req.user.id);
+    if (!canJudge) {
+      return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+    }
+
     return judge(req.user.id, req.body.scene, req.body.candidateUserId, req.body.liked);
   }),
 ];

@@ -47,7 +47,13 @@ function connect(token: string) {
   });
 
   _socket.on('NEW_MESSAGE', data => {
-    console.log('received', data);
+    console.log('NEW_MESSAGE:', data);
+  });
+
+  _socket.on('NEW_MATCH', data => {
+    // NOTE: the schema of data will be changing soon, please do not rely
+    // on it. The query is somewhat complicated
+    console.log('NEW_MATCH:', data);
   });
   /* eslint-enable */
 }
