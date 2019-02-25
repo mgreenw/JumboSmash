@@ -4,7 +4,12 @@ import type { $Request } from 'express';
 
 const db = require('../../db');
 const codes = require('../status-codes');
-const { status, asyncHandler, validate, canAccessUserData } = require('../utils');
+const {
+  status,
+  asyncHandler,
+  validate,
+  canAccessUserData,
+} = require('../utils');
 const Socket = require('../../socket');
 
 /* eslint-disable */

@@ -2,7 +2,12 @@
 
 import type { $Request } from 'express';
 
-const { status, validate, asyncHandler, canAccessUserData } = require('../utils');
+const {
+  status,
+  validate,
+  asyncHandler,
+  canAccessUserData,
+} = require('../utils');
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
@@ -45,7 +50,7 @@ async function checkMatch(userId: number, candidateUserId: number, scene: string
     if (matched) {
       // TODO: Make this object have the same shape as a real match
       Socket.sendNewMatchNotification(userId, { userId: candidateUserId, scene });
-      Socket.sendNewMatchNotification(candidateUserId, { userId, scene })
+      Socket.sendNewMatchNotification(candidateUserId, { userId, scene });
     }
   } catch (error) {
     logger.error('Failed to check for match', error);

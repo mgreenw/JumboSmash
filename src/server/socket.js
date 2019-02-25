@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-underscore-dangle */
 
 import type { Server } from 'express';
 import type { SocketIO } from 'socket.io';
@@ -15,6 +16,7 @@ const namespace = '/socket';
 
 class Socket {
   _io: ?SocketIO;
+
   constructor() {
     this._io = null;
   }
@@ -27,7 +29,6 @@ class Socket {
   }
 
   init(server: Server) {
-
     const _io = initSocket(server, {
       path: namespace,
       transports: ['websocket', 'polling'], // Only enable polling as a backup
