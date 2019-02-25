@@ -24,7 +24,7 @@ describe('api/auth/verify', () => {
     await db.query(`
       INSERT INTO testers
       (utln)
-      VALUES ('jchun03'), ('rzampo01')
+      VALUES ('jchun03'), ('rzampo01'), ('mgreen14'), ('jjaffe01')
     `);
   });
 
@@ -359,9 +359,9 @@ describe('api/auth/verify', () => {
           email: 'mgreen14@tufts.edu',
         },
       )
-      .set('Accept', 'application/json')
-      .expect(200);
+      .set('Accept', 'application/json');
 
+    expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res.body.data.email).toContain('Max.Greenwald@tufts.edu');
     const { utln } = res.body.data;
@@ -376,9 +376,11 @@ describe('api/auth/verify', () => {
         },
       )
       .set('Accept', 'application/json');
+
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
+
 
     const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
     expect(result.rows[0].isAdmin).toBeTruthy();
