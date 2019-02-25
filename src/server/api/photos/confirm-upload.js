@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const config = require('config');
-const aws = require('aws-sdk');
+const aws = require('../../aws');
 
 const db = require('../../db');
 const apiUtils = require('../utils');

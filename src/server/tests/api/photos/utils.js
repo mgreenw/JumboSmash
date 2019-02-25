@@ -2,7 +2,7 @@ const request = require('request');
 const fs = require('fs');
 
 const config = require('config');
-const aws = require('aws-sdk');
+const aws = require('../../../aws');
 
 const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
