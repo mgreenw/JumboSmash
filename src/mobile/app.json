@@ -5,8 +5,8 @@
     "privacy": "unlisted",
     "name": "ProjectGEM-dev",
     "slug": "projectgem-dev",
-    "version": "0.1.1",
-    "description": "Thru PR 204",
+    "version": "0.1.2",
+    "description": "Thru PR 374",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
     "android": {
