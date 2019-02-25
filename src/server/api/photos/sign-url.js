@@ -3,9 +3,9 @@
 import type { $Request } from 'express';
 
 const config = require('config');
-const aws = require('aws-sdk');
 const uuidv4 = require('uuid/v4');
 
+const aws = require('../../aws');
 const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');

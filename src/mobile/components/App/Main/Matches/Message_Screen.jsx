@@ -13,7 +13,8 @@ import type {
   ReduxState,
   Dispatch,
   Match,
-  GiftedChatMessage
+  GiftedChatMessage,
+  UserProfile
 } from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
@@ -31,6 +32,7 @@ type NavigationProps = {
 
 type ReduxProps = {
   getConversation_inProgress: boolean,
+  profileMap: { [userId: number]: UserProfile },
   messages: GiftedChatMessage[]
 };
 
@@ -96,7 +98,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
-    messages
+    messages,
+    profileMap: reduxState.profiles
   };
 }
 
@@ -204,19 +207,20 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _renderGenisis = () => {
-    const { navigation } = this.props;
+    const { navigation, profileMap } = this.props;
     const { match } = this.state;
+    const profile = profileMap[match.userId];
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate(routes.MatchesExpandedCard, {
-              profile: match.profile,
+              profile,
               onMinimize: NavigationService.back
             })
           }
         >
-          <Avatar size={'Large'} photoId={match.profile.photoIds[0]} border />
+          <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
