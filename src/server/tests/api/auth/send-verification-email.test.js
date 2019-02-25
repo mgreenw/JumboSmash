@@ -31,7 +31,7 @@ describe('api/auth/send-verification-email', () => {
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE FROM testers');
   });
 

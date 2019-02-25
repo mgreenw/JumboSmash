@@ -13,7 +13,7 @@ let me = {};
 describe('PATCH api/photos/reorder', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE from photos');
@@ -24,7 +24,7 @@ describe('PATCH api/photos/reorder', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
     await db.query('DELETE from photos');
