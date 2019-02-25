@@ -37,6 +37,7 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
+  pgm.dropView('users');
   pgm.createView('users', { replace: true }, `
     SELECT
       id,
