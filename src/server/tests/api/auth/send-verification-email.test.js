@@ -20,9 +20,19 @@ describe('api/auth/send-verification-email', () => {
   const PROFESSOR_EMAIL = 'Stephanie.khoury@tufts.edu';
   const NON_UNDERGRAD_EMAIL = 'aho02@tufts.edu';
 
+  beforeAll(async () => {
+    // BETA-only: assume these users are beta testerts
+    await db.query(`
+      INSERT INTO testers
+      (utln)
+      VALUES ('jjaffe01'), ('skhour01'), ('aho02'), ('dfier01')
+    `);
+  });
+
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM classmates');
+    await db.query('DELETE FROM testers');
   });
 
   it('should require email field', () => {

@@ -12,7 +12,7 @@ let userNoProfile = null;
 describe('GET api/users/:userId/profile', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
 
     // Create a user with a profile
     user = await dbUtils.createUser('mgreen15');
@@ -37,7 +37,7 @@ describe('GET api/users/:userId/profile', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   it('must require the requesting user to exist and have a profile setup', async () => {
@@ -106,6 +106,18 @@ describe('GET api/users/:userId/profile', () => {
   it('should error if the user does not exist', async () => {
     const res = await request(app)
       .get('/api/users/99999999/profile')
+      .set('Authorization', user.token)
+      .set('Accept', 'application/json')
+      .expect(404);
+    expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
+  });
+
+  it('should fail if the user is banned', async () => {
+    const person = await dbUtils.createUser('person04', true);
+    await dbUtils.banUser(person.id);
+
+    const res = await request(app)
+      .get(`/api/users/${person.id}/profile`)
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .expect(404);
