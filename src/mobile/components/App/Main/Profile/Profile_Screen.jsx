@@ -7,7 +7,6 @@ import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
@@ -111,82 +110,80 @@ class ProfileScreen extends React.Component<Props, State> {
   render() {
     const { photoId, displayName, navigation, profile } = this.props;
     return (
-      <Transition inline appear="left">
-        <View style={{ flex: 1 }}>
-          <GEMHeader title="Profile" rightIconName="cards" />
+      <View style={{ flex: 1 }}>
+        <GEMHeader title="Profile" rightIconName="cards" />
+        <View
+          style={{
+            flex: 1
+          }}
+        >
           <View
             style={{
-              flex: 1
+              flex: 1,
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              paddingTop: 20,
+              paddingBottom: 20
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                paddingTop: 20,
-                paddingBottom: 20
-              }}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(routes.ProfileExpandedCard, {
+                  profile,
+                  onMinimize: () => navigation.pop()
+                })
+              }
             >
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(routes.ProfileExpandedCard, {
-                    profile,
-                    onMinimize: () => navigation.pop()
-                  })
-                }
-              >
-                <Avatar size="Large" photoId={photoId} />
-              </TouchableOpacity>
-              <Text
-                style={[
-                  textStyles.headline4StyleMedium,
-                  { textAlign: 'center', paddingTop: 10 }
-                ]}
-              >
-                {displayName}
-              </Text>
-              <Image
-                resizeMode="stretch"
-                source={waves1}
-                style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
-              />
-            </View>
-            <View
-              style={{
-                flex: 2,
-                justifyContent: 'space-evenly',
-                backgroundColor: Colors.White,
-                shadowColor: '#6F6F6F',
-                shadowOpacity: 0.57,
-                shadowRadius: 2,
-                shadowOffset: {
-                  height: -1,
-                  width: 1
-                },
-                borderRadius: 10
-              }}
-              elevation={5}
+              <Avatar size="Large" photoId={photoId} />
+            </TouchableOpacity>
+            <Text
+              style={[
+                textStyles.headline4StyleMedium,
+                { textAlign: 'center', paddingTop: 10 }
+              ]}
             >
-              <CardButton
-                title="Edit Profile"
-                onPress={this._onProfileEditPress}
-                icon="user"
-              />
-              <CardButton
-                title="Settings"
-                onPress={this._onSettingsPress}
-                icon="gear"
-              />
-              <CardButton
-                title="Help & Contact"
-                onPress={this._onProfileHelpPress}
-                icon="life-ring"
-              />
-            </View>
+              {displayName}
+            </Text>
+            <Image
+              resizeMode="stretch"
+              source={waves1}
+              style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
+            />
+          </View>
+          <View
+            style={{
+              flex: 2,
+              justifyContent: 'space-evenly',
+              backgroundColor: Colors.White,
+              shadowColor: '#6F6F6F',
+              shadowOpacity: 0.57,
+              shadowRadius: 2,
+              shadowOffset: {
+                height: -1,
+                width: 1
+              },
+              borderRadius: 10
+            }}
+            elevation={5}
+          >
+            <CardButton
+              title="Edit Profile"
+              onPress={this._onProfileEditPress}
+              icon="user"
+            />
+            <CardButton
+              title="Settings"
+              onPress={this._onSettingsPress}
+              icon="gear"
+            />
+            <CardButton
+              title="Help & Contact"
+              onPress={this._onProfileHelpPress}
+              icon="life-ring"
+            />
           </View>
         </View>
-      </Transition>
+      </View>
     );
   }
 }

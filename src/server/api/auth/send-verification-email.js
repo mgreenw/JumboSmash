@@ -37,6 +37,25 @@ const schema = {
  */
 
 const sendVerificationEmail = async (email: string, forceResend: boolean) => {
+  // If the email is the testers, email, return immediately
+  if (email === 'tester@jumbosmash.com') {
+    const utln = 'tester';
+    const expirationDate = new Date(new Date().getTime() + 10 * 60000);
+    await db.query(`
+      INSERT INTO verification_codes
+      (utln, code, expiration, email)
+      VALUES($1, $2, $3, $4)
+      ON CONFLICT (utln) DO UPDATE
+      SET (code, expiration, email)
+        = ($2, $3, $4)
+      RETURNING id
+    `, [utln, '654321', expirationDate, email]);
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
+      email,
+      utln: 'tester',
+    });
+  }
+
   const memberInfo = await authUtils.getMemberInfo(email);
 
   //  If the member info is null (not found), error that it was not found.
@@ -44,6 +63,19 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
   }
 
+  // Beta-specific code. Should be removed or put behind a beta flag in the future
+  const testerResults = await db.query(`
+    SELECT id
+    FROM testers
+    WHERE utln = $1
+  `, [memberInfo.utln]);
+
+  // Don't allow not-tester users
+  if (testerResults.rowCount === 0) {
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
+  }
+
+  // Back to the regular functionality!
   const oldCodeResults = await db.query(
     'SELECT code, email, email_sends, last_email_send, expiration, attempts FROM verification_codes WHERE utln = $1',
     [memberInfo.utln],

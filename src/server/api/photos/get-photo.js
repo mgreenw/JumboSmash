@@ -3,8 +3,8 @@
 import type { $Request, $Response, $Next } from 'express';
 
 const config = require('config');
-const aws = require('aws-sdk');
 
+const aws = require('../../aws');
 const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
@@ -30,10 +30,15 @@ const getSignedUrl = async (params): Promise<string> => {
  */
 const getPhoto = async (photoId: number) => {
   // Get the photo by id
+  // NOTE: the join here ensures that the user is not banned.
+  // This allows for blocked users to get the other user's photos.
+  // This is ok because they will most likely already have them locally cached
+  // so it is not a security risk.
   const photoRes = await db.query(`
     SELECT uuid
     FROM photos
-    WHERE id = $1
+    JOIN users ON photos.user_id = users.id
+    WHERE photos.id = $1
   `, [photoId]);
 
   // If it does not exist, error.

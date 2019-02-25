@@ -20,6 +20,7 @@ import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButto
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
+import Collapsible from 'react-native-collapsible';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -33,6 +34,22 @@ const styles = StyleSheet.create({
     paddingBottom: 20
   }
 });
+
+const Spacer = () => {
+  return (
+    <View style={{ width: '100%', alignItems: 'center' }}>
+      <View
+        style={{
+          paddingTop: 8,
+          marginBottom: 4,
+          borderTopWidth: 1,
+          width: '80%',
+          borderColor: Colors.Grey80
+        }}
+      />
+    </View>
+  );
+};
 
 type NavigationProps = {
   navigation: any
@@ -164,35 +181,32 @@ class SettingsScreen extends React.Component<Props, State> {
             }}
           >
             <View style={[styles.settingsBlock, { marginTop: 20 }]}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingBottom: 15
-                }}
-              >
-                <Text style={textStyles.headline6Style}>Show me on Smash</Text>
-                <Switch
-                  value={editedSettings.activeScenes.smash}
-                  tintColor={
-                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'JumboSocial 🐘'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSocial is where you can match with people for hanging out.'
                   }
-                  onTintColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
-                  ios_backgroundColor={Colors.AquaMarine}
-                  onValueChange={this._onSmashSwitchChange}
-                />
+                </Text>
               </View>
+              <Spacer />
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  paddingTop: 15,
-                  borderTopWidth: 1,
-                  borderColor: Colors.Grey80
+                  alignItems: 'center',
+                  paddingBottom: 15,
+                  paddingLeft: 10
                 }}
               >
-                <Text style={textStyles.headline6Style}>Show me on Social</Text>
+                <Text style={textStyles.body1Style}>Show me on Social</Text>
                 <Switch
                   value={editedSettings.activeScenes.social}
                   tintColor={
@@ -205,46 +219,101 @@ class SettingsScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-            <View style={styles.settingsBlock}>
-              <Text
-                style={[textStyles.headline6Style, { textAlign: 'center' }]}
+            <View style={[styles.settingsBlock]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'JumboSmash 🍑'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSmash is where you can get it on. You know what this is.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingBottom: 20,
+                  alignItems: 'center',
+                  paddingLeft: 10
+                }}
               >
-                {'Gender Preferences'}
-              </Text>
-              <Text style={[textStyles.body2Style, { padding: 10 }]}>
-                {
-                  'Your gender preferences help determine who you’ll be shown to and who to show to you for JumboSmash. Your preferences will never be shown on your profile. '
-                }
-              </Text>
-              <Text
-                style={[
-                  textStyles.headline6Style,
-                  { textAlign: 'center', paddingBottom: 10 }
-                ]}
-              >
-                {'I identify as:'}
-              </Text>
-              <GenderSelector
-                defaultGenders={editedSettings.identifyAsGenders}
-                onChange={this._onIdentifyAsGendersChange}
-                plural={false}
-              />
-              <Text
-                style={[
-                  textStyles.headline6Style,
-                  { textAlign: 'center', padding: 10 }
-                ]}
-              >
-                {"I'm looking for:"}
-              </Text>
-              <GenderSelector
-                defaultGenders={editedSettings.lookingForGenders}
-                onChange={this._onWantGendersChange}
-                plural
-              />
+                <Text style={textStyles.body1Style}>Show me on Smash</Text>
+                <Switch
+                  value={editedSettings.activeScenes.smash}
+                  tintColor={
+                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                  }
+                  onTintColor={Colors.AquaMarine}
+                  trackColor={Colors.AquaMarine}
+                  ios_backgroundColor={Colors.AquaMarine}
+                  onValueChange={this._onSmashSwitchChange}
+                />
+              </View>
+              <Collapsible collapsed={!editedSettings.activeScenes.smash}>
+                <Spacer />
+                <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
+                  {'Gender Preferences'}
+                </Text>
+                <Text style={[textStyles.body2Style, { padding: 10 }]}>
+                  {
+                    'This helps JumboSmash match you with the right people. For more information, check out our Statement on Gender. None of the following information will be shown on your profile. '
+                  }
+                </Text>
+                <Spacer />
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    { textAlign: 'center', paddingBottom: 10 }
+                  ]}
+                >
+                  {'I identify as:'}
+                </Text>
+                <GenderSelector
+                  defaultGenders={editedSettings.identifyAsGenders}
+                  onChange={this._onIdentifyAsGendersChange}
+                  plural={false}
+                />
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    { textAlign: 'center', padding: 10 }
+                  ]}
+                >
+                  {"I'm looking for:"}
+                </Text>
+                <GenderSelector
+                  defaultGenders={editedSettings.lookingForGenders}
+                  onChange={this._onWantGendersChange}
+                  plural
+                />
+              </Collapsible>
             </View>
 
             <View style={styles.settingsBlock}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'Safety & Legal'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'Resources, information, and terms and conditions related to usage of JumboSmash'
+                  }
+                </Text>
+              </View>
+              <Spacer />
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"

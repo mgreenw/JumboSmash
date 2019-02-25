@@ -167,7 +167,7 @@ async function deleteProfile(userId) {
 
 async function deleteUser(userId) {
   await db.query(`
-    DELETE from users
+    DELETE FROM classmates
     WHERE id = $1
   `,
   [userId]);

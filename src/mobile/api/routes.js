@@ -23,11 +23,13 @@ const AUTH = 'auth/';
 const USERS = 'users/';
 const PHOTOS = 'photos/';
 const RELATIONSHIPS = 'relationships/';
+const MESSAGES = 'messages/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
 const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
 const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
+const MESSAGES_ROUTE = SERVER_ROUTE + API + MESSAGES;
 
 // //////////////
 // AUTH ROUTES:
@@ -85,3 +87,7 @@ export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;
 // Judge
 const JUDGE = 'judge/';
 export const JUDGE_SCENE_CANDIDATE__ROUTE = RELATIONSHIPS_ROUTE + JUDGE;
+
+// Messages
+export const GET_CONVERSATION = MESSAGES_ROUTE;
+export const SEND_MESSAGE__ROUTE = MESSAGES_ROUTE;

@@ -10,6 +10,7 @@ import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import type { Genders } from 'mobile/reducers/';
+import { Haptic } from 'expo';
 
 type GenderSelectorProps = {
   defaultGenders: Genders,
@@ -44,7 +45,10 @@ class GenderToggle extends React.Component<
           justifyContent: 'center',
           alignItems: 'center'
         }}
-        onPress={this.props.onPress}
+        onPress={() => {
+          Haptic.selection();
+          this.props.onPress();
+        }}
       >
         <View
           style={{
