@@ -13,12 +13,18 @@ async function canAccessUserData(
     WHERE id = $1
   `, [requestedUserId]);
 
-  if (bannedResult.rowCount === 0 || bannedResult.rows[0].banned === true) {
-    return false;
-  }
+  // Ensure the user exists
+  const requestedUserExists = bannedResult.rowCount !== 0;
+  if (!requestedUserExists) return false;
 
+  // Ensure the user is not banned
+  const requestedUserIsBanned = bannedResult.rows[0].banned === true;
+  if (requestedUserIsBanned) return false;
+
+  // If there is no requsting user id, we are done!
   if (!requestingUserId) return true;
 
+  // Check if either user blocks the other
   const blockedResult = await db.query(`
     SELECT COALESCE(r_critic.blocked OR r_candidate.blocked, false) AS blocked
     FROM relationships r_critic
@@ -29,8 +35,8 @@ async function canAccessUserData(
   `, [requestingUserId, requestedUserId]);
 
   // If there is not a block in either direction, then the data can be accessed
-  if (blockedResult.rowCount === 0) return true;
-  return blockedResult.rows[0].blocked !== true;
+  if (blockedResult.rowCount === 0) return true; // If no relationship, no block exists
+  return blockedResult.rows[0].blocked !== true; // No block --> User can access data
 }
 
 module.exports = canAccessUserData;
