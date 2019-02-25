@@ -1,19 +1,38 @@
 // @flow
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { View, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
-import type { Match } from 'mobile/reducers';
+import type { Match, ReduxState, UserProfile } from 'mobile/reducers';
 import { textStyles } from 'mobile/styles/textStyles';
 import Avatar, { MediumWidth } from './Avatar';
 
-type Props = {
-  matches: ?(Match[])
-};
+type ReduxProps = {|
+  unmessagedMatchIds: ?(number[]),
+  profileMap: { [userId: number]: UserProfile }
+|};
+
+type DispatchProps = {};
+
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  return {
+    unmessagedMatchIds: reduxState.unmessagedMatchIds,
+    profileMap: reduxState.profiles
+  };
+}
+
+function mapDispatchToProps(): DispatchProps {
+  return {};
+}
+
+type Props = ReduxProps & DispatchProps;
 
 const keyExtractor = (match: Match, index: number) => `${index}`;
 
-export default class extends React.Component<Props> {
-  renderMatchListItem = ({ item: match }: { item: Match }) => {
+class NewMatchesList extends React.Component<Props> {
+  renderMatchListItem = ({ item: profileId }: { item: number }) => {
+    const { profileMap } = this.props;
+    const profile = profileMap[profileId];
     return (
       <TouchableOpacity
         onPress={() => {
@@ -23,7 +42,7 @@ export default class extends React.Component<Props> {
           marginHorizontal: 15
         }}
       >
-        <Avatar size="Medium" photoId={match.profile.photoIds[0]} border />
+        <Avatar size="Medium" photoId={profile.photoIds[0]} border />
       </TouchableOpacity>
     );
   };
@@ -49,19 +68,19 @@ export default class extends React.Component<Props> {
   };
 
   render() {
-    const { matches } = this.props;
+    const { unmessagedMatchIds } = this.props;
     return (
       <View>
         <View>
           <Text style={[textStyles.subtitle1Style, { paddingLeft: 15 }]}>
             New Matches
           </Text>
-          {matches === null || matches === undefined ? (
+          {unmessagedMatchIds === null || unmessagedMatchIds === undefined ? (
             this.renderGenesisText()
           ) : (
             <FlatList
               style={{ paddingTop: 12, paddingBottom: 12 }}
-              data={matches}
+              data={unmessagedMatchIds}
               keyExtractor={keyExtractor}
               renderItem={this.renderMatchListItem}
               horizontal
@@ -81,3 +100,8 @@ export default class extends React.Component<Props> {
     );
   }
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(NewMatchesList);
