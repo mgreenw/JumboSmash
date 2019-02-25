@@ -376,4 +376,33 @@ describe('api/auth/verify', () => {
     const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
     expect(result.rows[0].isAdmin).toBeTruthy();
   });
+
+  it('should allow the tester@jumbosmash.com user to login with verification code 654321', async () => {
+    let res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          email: 'tester@jumbosmash.com',
+        },
+      );
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toBe('tester@jumbosmash.com');
+    expect(res.body.data.utln).toBe('tester');
+
+    res = await request(app)
+      .post('/api/auth/verify')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          utln: 'tester',
+          code: '654321',
+        },
+      );
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
+  });
 });
