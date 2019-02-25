@@ -34,10 +34,31 @@ const schema = {
 };
 /* eslint-enable */
 
+async function sendMatchNotification(userId: number, matchUserId: number, scene) {
+
+  const matchResult = await db.query(`
+    ${utils.matchQuery}
+    AND me_critic.candidate_user_id = $2
+    LIMIT 1
+  `, [userId, matchUserId]);
+
+  if (matchResult.rowCount === 0) {
+    logger.error('No match found in attempt to send notification.');
+    return;
+  }
+
+  const [match] = matchResult.rows;
+  Socket.sendNewMatchNotification(userId, { match, scene });
+}
+
 async function checkMatch(userId: number, candidateUserId: number, scene: string) {
   try {
     const matchedResult = await db.query(`
-      SELECT r_critic.liked_${scene} AS critic, r_candidate.liked_${scene} AS candidate, COALESCE(r_critic.liked_${scene}, false) AND COALESCE(r_candidate.liked_${scene}, false) AS matched
+      SELECT
+        COALESCE(
+          r_critic.liked_${scene}, false) AND COALESCE(r_candidate.liked_${scene},
+          false
+        ) AS matched
       FROM relationships r_critic
       LEFT JOIN relationships r_candidate
         ON r_candidate.critic_user_id = r_critic.candidate_user_id
@@ -48,9 +69,10 @@ async function checkMatch(userId: number, candidateUserId: number, scene: string
     // Check if the users are matched
     const matched = matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
     if (matched) {
-      // TODO: Make this object have the same shape as a real match
-      Socket.sendNewMatchNotification(userId, { userId: candidateUserId, scene });
-      Socket.sendNewMatchNotification(candidateUserId, { userId, scene });
+      await Promise.all([
+        sendMatchNotification(userId, candidateUserId, scene),
+        sendMatchNotification(candidateUserId, userId, scene),
+      ]);
     }
   } catch (error) {
     logger.error('Failed to check for match', error);
