@@ -1,6 +1,7 @@
 // @flow
 
 const { Expo } = require('expo-server-sdk');
+const _ = require('lodash');
 
 const db = require('./db');
 const logger = require('./logger');
@@ -26,7 +27,6 @@ async function sendNotifications(notifications: Notification[]) {
 
   // Get the push token for each user in question and map them to the correct
   // notification
-  console.log('before', Object.keys(notificationMap));
   (await db.query(`
     SELECT expo_push_token AS "expoPushToken", id AS "userId"
     FROM users
@@ -68,7 +68,7 @@ async function sendNotifications(notifications: Notification[]) {
       });
 
       const generateValueTemplate = (startIndex: number): string => {
-        return `($${startIndex}, $${startIndex + 1}, $${startIndex + 2})`;
+        return `($${startIndex + 1}, $${startIndex + 2}, $${startIndex + 3})`;
       };
 
       const template = chunk.map((notificaiton, index) => generateValueTemplate(index * 3)).join(',');
@@ -76,17 +76,14 @@ async function sendNotifications(notifications: Notification[]) {
         return [notification[0], notification[1].ticketId, notification[1].to];
       });
 
-      console.log(template);
-      console.log(params);
-
       // Sweet! These have been sent, add them to the database
       await db.query(`
         INSERT INTO notifications
         (user_id, ticket_id, expo_push_token)
         VALUES ${template}
-      `, params.flat());
+      `, _.flatten(params));
 
-      logger.info(`Successfully sent ${chunk.length} notifications`);
+      logger.info(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
 
       // NOTE: If a ticket contains an error code in ticket.details.error, you
       // must handle it appropriately. The error codes are listed in the Expo

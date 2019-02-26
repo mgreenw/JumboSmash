@@ -84,10 +84,19 @@ const sendMessage = async (
       fromClient: false,
     });
 
+    const [{ displayName }] = (await db.query(`
+      SELECT display_name AS "displayName"
+      FROM profiles
+      WHERE user_id = $1
+    `, [senderUserId])).rows;
+
     Expo.sendNotifications([{
       userId: receiverUserId,
       sound: 'default',
-      body: `New Message: ${content}`,
+      body: `${displayName}: ${content}`,
+      data: {
+        senderUserId,
+      },
     }]);
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
