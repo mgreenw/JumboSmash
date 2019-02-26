@@ -109,7 +109,7 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
 const handler = [
   apiUtils.validate(schema),
   apiUtils.asyncHandler(async (req: $Request) => {
-    return verify(req.body.utln, req.body.code);
+    return verify(req.body.utln, req.body.code, req.body.expoPushToken);
   }),
 ];
 
