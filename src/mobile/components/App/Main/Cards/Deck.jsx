@@ -1,15 +1,13 @@
 // @flow
-/* eslint-disable */
+/* eslint react/no-unused-state: 0 */
 
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   View,
   Animated,
   PanResponder,
   Dimensions,
-  StyleSheet,
-  LayoutAnimation,
-  UIManager,
+  StyleSheet
 } from 'react-native';
 import type { AnimatedValueXY, Node } from 'react-native';
 import type { UserProfile, Candidate } from 'mobile/reducers';
@@ -17,30 +15,37 @@ import DevTesting from 'mobile/utils/DevTesting';
 
 const RIGHT = 'right';
 const LEFT = 'left';
-export type swipeDirection = 'left' | 'right';
+export type SwipeDirection = 'left' | 'right';
 
 type Props = {
-  data: $ReadOnlyArray<Candidate>,
+  data: Candidate[],
   renderCard: (profile: UserProfile, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeStart: () => void,
   onSwipeRight: (user: Candidate) => void,
   onSwipeLeft: (user: Candidate) => void,
   onSwipeComplete: () => void,
+  onCardTap: (profile: UserProfile) => void,
   disableSwipe: boolean,
-  infinite?: boolean,
+  infinite?: boolean
 };
 
 type State = {
   panResponder: any,
   position: AnimatedValueXY,
-  index: number,
-  swipeGestureInProgress: boolean,
+  swipeGestureInProgress: boolean
 };
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.4 * SCREEN_WIDTH;
 const TAP_THRESHOLD = 5;
+
+const styles = StyleSheet.create({
+  cardStyle: {
+    position: 'absolute',
+    width: '100%'
+  }
+});
 
 export default class Deck extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -53,12 +58,12 @@ export default class Deck extends React.Component<Props, State> {
       onMoveShouldSetPanResponder: () => false,
       onMoveShouldSetResponderCapture: () => true,
       onPanResponderMove: (_, gesture) => {
-        //If the deck should not be swipeable then return
-        if (this.props.disableSwipe) {
+        // If the deck should not be swipeable then return
+        if (props.disableSwipe) {
           return;
         }
-        //If the magnitude of the distance of the gesture is greater than the tap threshold
-        //then the user is swiping
+        // If the magnitude of the distance of the gesture is greater than the tap threshold
+        // then the user is swiping
         if (
           gesture.dx < -TAP_THRESHOLD ||
           gesture.dx > TAP_THRESHOLD ||
@@ -67,73 +72,77 @@ export default class Deck extends React.Component<Props, State> {
         ) {
           this.setState(
             {
-              swipeGestureInProgress: true,
+              swipeGestureInProgress: true
             },
-            () => this.props.onSwipeStart(),
+            () => props.onSwipeStart()
           );
         }
-        //set the position of the card to the position of the gesture
+        // set the position of the card to the position of the gesture
         position.setValue({ x: gesture.dx, y: gesture.dy });
       },
       onPanResponderRelease: (_, gesture) => {
-        //If the deck should not be swipeable then return
-        if (this.props.disableSwipe) {
+        const { swipeGestureInProgress } = this.state;
+        const { data, onCardTap, disableSwipe } = this.props;
+        // If the deck should not be swipeable then return
+        if (disableSwipe) {
           return;
         }
 
-        //If the magnitude of the distance of the gesture is greater than trigger the swipe animation
-        //otherwise reset the card to the original position
+        // If the magnitude of the distance of the gesture is greater than trigger the swipe animation
+        // otherwise reset the card to the original position
         if (gesture.dx > SWIPE_THRESHOLD) {
           this._forceSwipe(RIGHT, 500);
         } else if (gesture.dx < -SWIPE_THRESHOLD) {
           this._forceSwipe(LEFT, 500);
         } else {
           DevTesting.log('Swipe dismissed');
+          if (!swipeGestureInProgress) {
+            onCardTap(data[0].profile);
+          }
           this._resetPosition();
         }
 
-        //The gesture is over so reset to false
+        // The gesture is over so reset to false
         this.setState({
-          swipeGestureInProgress: false,
+          swipeGestureInProgress: false
         });
-      },
+      }
     });
 
     this.state = {
       panResponder,
       position,
-      index: 0,
-      swipeGestureInProgress: false,
+      swipeGestureInProgress: false
     };
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.data !== this.props.data) {
-      this.setState({ index: 0 });
-    }
-  }
-
-  _forceSwipe(swipeDirection: swipeDirection, duration: number) {
+  _forceSwipe(swipeDirection: SwipeDirection, duration: number) {
+    const { position } = this.state;
     const x = swipeDirection === RIGHT ? SCREEN_WIDTH : -SCREEN_WIDTH;
 
-    Animated.timing(this.state.position, {
+    Animated.timing(position, {
       toValue: { x: x * 2, y: swipeDirection === RIGHT ? -x : x },
-      duration: duration,
+      duration
     }).start(() => this._onSwipeComplete(swipeDirection));
   }
 
-  _onSwipeComplete(swipeDirection: swipeDirection) {
-    const { onSwipeRight, onSwipeLeft, data } = this.props;
-    const item = data[this.state.index];
-    swipeDirection === RIGHT ? onSwipeRight(item) : onSwipeLeft(item);
-    this.state.position.setValue({ x: 0, y: 0 });
-    this.props.onSwipeComplete();
-    this.setState({ index: this.state.index + 1 });
+  _onSwipeComplete(swipeDirection: SwipeDirection) {
+    const { onSwipeRight, onSwipeLeft, onSwipeComplete, data } = this.props;
+    const { position } = this.state;
+    const item = data[0];
+    if (swipeDirection === RIGHT) {
+      onSwipeRight(item);
+    } else {
+      onSwipeLeft(item);
+    }
+    position.setValue({ x: 0, y: 0 });
+    onSwipeComplete();
   }
 
   _resetPosition() {
-    Animated.spring(this.state.position, {
-      toValue: { x: 0, y: 0 },
+    const { position } = this.state;
+    Animated.spring(position, {
+      toValue: { x: 0, y: 0 }
     }).start();
   }
 
@@ -141,39 +150,42 @@ export default class Deck extends React.Component<Props, State> {
     const { position } = this.state;
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2],
-      outputRange: ['-30deg', '0deg', '30deg'],
+      outputRange: ['-30deg', '0deg', '30deg']
     });
 
     return {
-      ...this.state.position.getLayout(),
-      transform: [{ rotate }],
+      ...position.getLayout(),
+      transform: [{ rotate }]
     };
   }
 
-  _renderCards() {
-    if (this.state.index >= this.props.data.length) {
-      return this.props.renderEmpty();
+  _renderCards(): React.Node[] {
+    const { disableSwipe, renderCard, renderEmpty, data } = this.props;
+    const { panResponder } = this.state;
+    if (data.length === 0) {
+      return renderEmpty();
     }
 
-    return this.props.data
+    return data
       .map((user, i) => {
-        if (i < this.state.index) {
+        if (i < 0) {
           return null;
-        } else if (i === this.state.index && !this.props.disableSwipe) {
+        }
+        if (i === 0 && !disableSwipe) {
           return (
             <Animated.View
               key={user.userId}
               style={[this._getCardStyle(), styles.cardStyle]}
-              {...this.state.panResponder.panHandlers}
+              {...panResponder.panHandlers}
             >
-              {this.props.renderCard(user.profile, true)}
+              {renderCard(user.profile, true)}
             </Animated.View>
           );
         }
 
         return (
           <View key={user.userId} style={styles.cardStyle}>
-            {this.props.renderCard(user.profile, i === this.state.index)}
+            {renderCard(user.profile, i === 0)}
           </View>
         );
       })
@@ -181,13 +193,10 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   render() {
-    return <View style={{ position: 'relative', flex: 1 }}>{this._renderCards()}</View>;
+    return (
+      <View style={{ position: 'relative', flex: 1 }}>
+        {this._renderCards()}
+      </View>
+    );
   }
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    position: 'absolute',
-    width: '100%',
-  },
-});

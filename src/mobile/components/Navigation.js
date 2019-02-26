@@ -1,6 +1,9 @@
 // @flow
 
-import { createStackNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createMaterialTopTabNavigator
+} from 'react-navigation';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 
 // ////////
@@ -24,14 +27,19 @@ import AuthHelp from 'mobile/components/Auth/Login/AuthHelp_Screen';
 import AppLoading from 'mobile/components/App/AppLoading_Screen';
 
 // Main App Screens
+// Profile
 import Profile from 'mobile/components/App/Main/Profile/Profile_Screen';
 import ProfileEdit from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
 import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen';
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 
+// Cards
 import Cards from 'mobile/components/App/Main/Cards/Cards_Screen';
 import ExpandedCard from 'mobile/components/App/Main/Cards/ExpandedCard_Screen';
+
+// Messages & Matches
 import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
+import Message from 'mobile/components/App/Main/Matches/Message_Screen';
 
 // OnBoarding Screens
 import OnboardingStart from 'mobile/components/App/Onboarding/OnboardingStart_Screen';
@@ -44,13 +52,19 @@ import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_S
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
 
-const PROFILE_ROUTE = 'PROFILE_ROUTE';
 const MATCHES_ROUTE = 'MATCHES_ROUTE';
+const MESSAGE_ROUTE = 'MESSAGE_ROUTE';
+
 const CARDS_ROUTE = 'CARDS_ROUTE';
-const EXPANDED_CARD_ROUTE = 'EXPANDED_CARD_ROUTE';
+const PROFILE_EXPANDED_CARD_ROUTE = 'PROFILE_EXPANDED_CARD_ROUTE';
+const CARDS_EXPANDED_CARD_ROUTE = 'CARDS_EXPANDED_CARD_ROUTE';
+const MATCHES_EXPANDED_CARD_ROUTE = 'MATCHES_EXPANDED_CARD_ROUTE';
+
+const PROFILE_ROUTE = 'PROFILE_ROUTE';
 const SETTINGS_EDIT_ROUTE = 'SETTINGS_EDIT_ROUTE';
 const PROFILE_EDIT_ROUTE = 'PROFILE_EDIT_ROUTE';
 const PROFILE_HELP_ROUTE = 'PROFILE_HELP_ROUTE';
+
 const CARDS_STACK = 'CARDS_STACK';
 const PROFILE_STACK = 'PROFILE_STACK';
 const MATCHES_STACK = 'MATCHES_STACK';
@@ -69,7 +83,8 @@ const ONBOARDING_BIO_ROUTE = 'ONBOARDING_BIO_ROUTE';
 const ONBOARDING_NOTIFICATIONS_ROUTE = 'ONBOARDING_NOTIFICATIONS_ROUTE';
 const ONBOARDING_FINISH_ROUTE = 'ONBOARDING_FINISH_ROUTE';
 const ONBOARDING_APP_LOAD = 'ONBOARDING_APP_LOAD';
-const ONBOARDING_TERMS_AND_CONDITIONS_ROUTE =  'ONBOARDING_TERMS_AND_CONDITIONS_ROUTE';
+const ONBOARDING_TERMS_AND_CONDITIONS_ROUTE =
+  'ONBOARDING_TERMS_AND_CONDITIONS_ROUTE';
 const ONBOARDING_SETTINGS_INFO_ROUTE = 'ONBOARDING_SETTINGS_INFO_ROUTE';
 
 const LOGIN_STACK = 'LOGIN_STACK';
@@ -83,12 +98,15 @@ const AUTH_SWITCH = 'AUTH_SWITCH';
 export const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
+  Message: MESSAGE_ROUTE,
   Cards: CARDS_ROUTE,
   SettingsEdit: SETTINGS_EDIT_ROUTE,
   ProfileEdit: PROFILE_EDIT_ROUTE,
   ProfileHelp: PROFILE_HELP_ROUTE,
   CardsStack: CARDS_STACK,
-  ExpandedCard: EXPANDED_CARD_ROUTE,
+  ProfileExpandedCard: PROFILE_EXPANDED_CARD_ROUTE,
+  MatchesExpandedCard: MATCHES_EXPANDED_CARD_ROUTE,
+  CardsExpandedCard: CARDS_EXPANDED_CARD_ROUTE,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
   Splash: SPLASH_ROUTE,
@@ -112,27 +130,24 @@ export const routes = {
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
   AppSwitch: APP_SWITCH,
-  AuthSwitch: AUTH_SWITCH,
+  AuthSwitch: AUTH_SWITCH
 };
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
 
 const removeHeader = {
-  headerMode: 'none',
-  navigationOptions: {
-    headerVisible: false,
-  },
+  headerMode: 'none'
 };
 
 const CardsStack = createStackNavigator(
   {
     CARDS_ROUTE: { screen: Cards },
-    EXPANDED_CARD_ROUTE: { screen: ExpandedCard },
+    CARDS_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: CARDS_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 const ProfileStack = createStackNavigator(
@@ -141,37 +156,43 @@ const ProfileStack = createStackNavigator(
     SETTINGS_EDIT_ROUTE: { screen: SettingsEdit },
     PROFILE_EDIT_ROUTE: { screen: ProfileEdit },
     PROFILE_HELP_ROUTE: { screen: ProfileHelp },
-    EXPANDED_CARD_ROUTE: { screen: ExpandedCard },
+    PROFILE_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: PROFILE_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 const MatchesStack = createStackNavigator(
   {
     MATCHES_ROUTE: { screen: Matches },
+    MESSAGE_ROUTE: { screen: Message },
+    MATCHES_EXPANDED_CARD_ROUTE: { screen: ExpandedCard }
   },
   {
     initialRouteName: MATCHES_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
-const MainContentSwitch = FluidNavigator(
+const MainContentSwitch = createMaterialTopTabNavigator(
   {
     CARDS_STACK: CardsStack,
     PROFILE_STACK: ProfileStack,
-    MATCHES_STACK: MatchesStack,
+    MATCHES_STACK: MatchesStack
   },
   {
-    mode: 'card',
     initialRouteName: CARDS_STACK,
-    ...removeHeader,
-  },
+    animationEnabled: true,
+    order: [PROFILE_STACK, CARDS_STACK, MATCHES_STACK],
+
+    // $FlowFixMe -- this is a hack but we want our own tab bar
+    tabBarComponent: null,
+    lazy: false // render all at once
+  }
 );
 
 const LoginStack = FluidNavigator(
@@ -180,23 +201,23 @@ const LoginStack = FluidNavigator(
     VERIFY_ROUTE: { screen: Verify },
     EXPIRED_CODE_ROUTE: { screen: ExpiredCode },
     NOT2019_ROUTE: { screen: Not2019 },
-    AUTH_HELP_ROUTE: { screen: AuthHelp },
+    AUTH_HELP_ROUTE: { screen: AuthHelp }
   },
   {
     initialRouteName: SPLASH_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 const AuthSwitch = FluidNavigator(
   {
     LOGIN_STACK: LoginStack,
-    AUTH_LOADING_ROUTE: { screen: AuthLoading },
+    AUTH_LOADING_ROUTE: { screen: AuthLoading }
   },
   {
     initialRouteName: AUTH_LOADING_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 const OnboardingStack = FluidNavigator(
@@ -210,37 +231,38 @@ const OnboardingStack = FluidNavigator(
     ONBOARDING_FINISH_ROUTE: { screen: OnboardingFinish },
     ONBOARDING_APP_LOAD: { screen: AppLoading },
     ONBOARDING_TERMS_AND_CONDITIONS_ROUTE: {
-      screen: OnboardingTermsAndConditions,
+      screen: OnboardingTermsAndConditions
     },
     ONBOARDING_SETTINGS_INFO_ROUTE: {
-      screen: OnboardingSettingsInfo,
-    },
+      screen: OnboardingSettingsInfo
+    }
   },
   {
     initialRouteName: ONBOARDING_START_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
 const AppSwitch = FluidNavigator(
   {
     MAIN_SWITCH: MainContentSwitch,
     ONBOARDING_STACK: OnboardingStack,
-    APP_LOADING_ROUTE: { screen: AppLoading },
+    APP_LOADING_ROUTE: { screen: AppLoading }
   },
   {
     initialRouteName: APP_LOADING_ROUTE,
-    ...removeHeader,
-  },
+    ...removeHeader
+  }
 );
 
-export const createRootNavigator = () => FluidNavigator(
+export const createRootNavigator = () =>
+  FluidNavigator(
     {
       APP_SWITCH: AppSwitch,
-      AUTH_SWITCH: AuthSwitch,
+      AUTH_SWITCH: AuthSwitch
     },
     {
       initialRouteName: AUTH_SWITCH,
-      ...removeHeader,
-    },
+      ...removeHeader
+    }
   );

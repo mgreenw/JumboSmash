@@ -16,9 +16,10 @@ const codes = require('../status-codes');
 const schema = {
   type: 'object',
   properties: {
-    utln: {
-      description: "The user's Tufts UTLN. Must be from the Class of 2019",
+    email: {
+      description: "The user's Tufts email. Must be from the Class of 2019. May be first.last@tufts.edu or utln@tufs.edu",
       type: 'string',
+      format: 'email',
     },
     forceResend: {
       description:
@@ -26,7 +27,7 @@ const schema = {
       type: 'boolean',
     },
   },
-  required: ['utln'],
+  required: ['email'],
 };
 /* eslint-enable */
 
@@ -35,10 +36,49 @@ const schema = {
  *
  */
 
-const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
+const sendVerificationEmail = async (email: string, forceResend: boolean) => {
+  // If the email is the testers, email, return immediately
+  if (email === 'tester@jumbosmash.com') {
+    const utln = 'tester';
+    const expirationDate = new Date(new Date().getTime() + 10 * 60000);
+    await db.query(`
+      INSERT INTO verification_codes
+      (utln, code, expiration, email)
+      VALUES($1, $2, $3, $4)
+      ON CONFLICT (utln) DO UPDATE
+      SET (code, expiration, email)
+        = ($2, $3, $4)
+      RETURNING id
+    `, [utln, '654321', expirationDate, email]);
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
+      email,
+      utln: 'tester',
+    });
+  }
+
+  const memberInfo = await authUtils.getMemberInfo(email);
+
+  //  If the member info is null (not found), error that it was not found.
+  if (!memberInfo) {
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
+  }
+
+  // Beta-specific code. Should be removed or put behind a beta flag in the future
+  const testerResults = await db.query(`
+    SELECT id
+    FROM testers
+    WHERE utln = $1
+  `, [memberInfo.utln]);
+
+  // Don't allow not-tester users
+  if (testerResults.rowCount === 0) {
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
+  }
+
+  // Back to the regular functionality!
   const oldCodeResults = await db.query(
     'SELECT code, email, email_sends, last_email_send, expiration, attempts FROM verification_codes WHERE utln = $1',
-    [utln],
+    [memberInfo.utln],
   );
 
   // Get the number of email sends if an email has already been sent.
@@ -57,26 +97,19 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
       logger.info(`Already sent code: ${code.code}`);
       return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT).data({
         email: code.email,
+        utln: memberInfo.utln,
       });
     }
   }
 
-  // Get the member info for the UTLN from Koh.
-  const memberInfo = await authUtils.getMemberInfo(utln);
-
-  //  If the member info is null (not found), error that it was not found.
-  if (!memberInfo) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_FOUND).noData();
-  }
-
   // Ensure the member is a student
   if (!memberInfo.classYear) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_STUDENT).noData();
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT).noData();
   }
 
   // Check that the student is in A&S or E
   if (!_.includes(['A&S', 'E'], memberInfo.college)) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_UNDERGRAD).data({
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_UNDERGRAD).data({
       college: memberInfo.college,
       classYear: memberInfo.classYear,
     });
@@ -84,7 +117,7 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
 
   // Ensure user is in the Class of 2019
   if (memberInfo.classYear !== '19') {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__UTLN_NOT_2019).data({
+    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019).data({
       classYear: memberInfo.classYear,
     });
   }
@@ -102,7 +135,7 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
   await db.query(
     'INSERT INTO verification_codes (utln, code, expiration, attempts, email) VALUES($1, $2, $3, 0, $4) ON CONFLICT (utln) DO UPDATE SET (code, expiration, last_email_send, email_sends, attempts, email) = ($5, $6, now(), $7, 0, $8) RETURNING id',
     [
-      utln,
+      memberInfo.utln,
       verificationCode,
       expirationDate,
       memberInfo.email,
@@ -122,18 +155,19 @@ const sendVerificationEmail = async (utln: string, forceResend: boolean) => {
     html: `<p>Enter this code: ${verificationCode}</p>`,
   });
 
-  slack.postVerificationCode(verificationCode, utln, memberInfo.email);
+  slack.postVerificationCode(verificationCode, memberInfo.utln, memberInfo.email);
 
   // Send a success response to the client
   return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
     email: memberInfo.email,
+    utln: memberInfo.utln,
   });
 };
 
 const handler = [
   apiUtils.validate(schema),
   apiUtils.asyncHandler(async (req: $Request) => {
-    return sendVerificationEmail(req.body.utln, req.body.forceResend);
+    return sendVerificationEmail(req.body.email, req.body.forceResend);
   }),
 ];
 

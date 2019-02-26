@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
-const apiUtils = require('../utils');
+const { asyncHandler, status, canAccessUserData } = require('../utils');
 const codes = require('../status-codes');
 
 /**
@@ -20,6 +20,7 @@ const getConversation = async (
       id AS "messageId",
       content,
       timestamp,
+      unconfirmed_message_uuid AS "unconfirmedMessageUuid",
       (sender_user_id = $1) AS "fromClient"
     FROM messages
     WHERE (
@@ -38,7 +39,7 @@ const getConversation = async (
 
     // If it is invalid (not an int), fail.
     if (Number.isNaN(mostRecentMessageId) || mostRecentMessageId <= 0) {
-      return apiUtils.status(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID).noData();
+      return status(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID).noData();
     }
 
     // Add the "most recent" part of the query
@@ -60,11 +61,17 @@ const getConversation = async (
     [userId, matchUserId],
   );
 
-  return apiUtils.status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
+  return status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
 };
 
 const handler = [
-  apiUtils.asyncHandler(async (req: $Request) => {
+  asyncHandler(async (req: $Request) => {
+    // If the user is banned, return an emtpy array (which is the default
+    // if the user couldn't be found otherwise)
+    if (!(await canAccessUserData(req.params.userId, req.user.id))) {
+      return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+    }
+
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
   }),
 ];

@@ -54,6 +54,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
+    "chance": "^1.0.18",
     "eslint": "^5.8.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-flowtype": "^2.50.3",

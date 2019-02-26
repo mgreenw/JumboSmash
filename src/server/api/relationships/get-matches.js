@@ -22,6 +22,10 @@ const matchedScenesChecks = utils.scenes.map((scene) => {
   return `(me_critic.liked_${scene} AND they_critic.liked_${scene})`;
 });
 
+const sceneTimestampList = utils.scenes.map((scene) => {
+  return `me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp`;
+});
+
 const scenes = utils.scenes.map(scene => `'${scene}'`).join(',');
 
 /**
@@ -48,23 +52,48 @@ const getMatches = async (userId: number) => {
       ${profileSelectQuery('they_profile.user_id', { tableAlias: 'they_profile', buildJSON: true })} AS profile,
       json_object(ARRAY[${scenes}], ARRAY[
         ${matchedScenesSelect.join(',')}
-      ]::text[]) AS scenes
+      ]::text[]) AS scenes,
+      CASE WHEN most_recent_message.message_id IS NULL
+      THEN NULL
+      ELSE json_build_object(
+        'messageId', most_recent_message.message_id,
+        'content', most_recent_message.content,
+        'timestamp', most_recent_message.timestamp,
+        'fromClient', most_recent_message.from_client
+      ) END AS "mostRecentMessage"
     FROM relationships me_critic
     JOIN relationships they_critic
-      ON they_critic.candidate_user_id = ${userId}
+      ON they_critic.candidate_user_id = $1
       AND they_critic.critic_user_id = me_critic.candidate_user_id
     JOIN profiles they_profile
       ON they_profile.user_id = me_critic.candidate_user_id
     JOIN classmates them
       ON they_profile.user_id = them.id
+    LEFT JOIN (
+      SELECT DISTINCT ON (other_user_id) *
+      FROM (
+        SELECT
+          id AS message_id,
+          content,
+          timestamp,
+          (sender_user_id = $1) AS from_client,
+          CASE WHEN sender_user_id = $1 THEN receiver_user_id ELSE sender_user_id END AS other_user_id
+        FROM   messages
+        WHERE  $1 in (sender_user_id, receiver_user_id)
+        ) most_recent_messages
+      ORDER BY other_user_id, timestamp DESC
+    ) AS most_recent_message ON most_recent_message.other_user_id = they_profile.user_id
     WHERE
       NOT them.banned
-      AND me_critic.critic_user_id = ${userId}
+      AND me_critic.critic_user_id = $1
       AND me_critic.candidate_user_id = they_critic.critic_user_id
       AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
       AND
         (${matchedScenesChecks.join(' OR ')})
-  `);
+    ORDER BY
+      most_recent_message.timestamp NULLS FIRST,
+      GREATEST(${sceneTimestampList.join(',')}) DESC
+  `, [userId]);
 
   return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(result.rows);
 };

@@ -2,10 +2,7 @@
 
 Get the current user's matches across all scenes. Exclude any blocked users
 in either direction, and include a list of the scenes in which the users are matched.
-Return the result as an unordered list. NOTE: The ordering of the result will most likely change
-with messaging, such that the results will be order in the order of matches with no messages, which
-will be ordered by the date of the match (aka the most recent swipe date) followed by the order
-of most recent message.
+The results are ordered by 1) most recent messages, with no messages coming first then 2) for the matches with no messages, by the date of the most recent match with the user.
 
 **URL** : `/api/relationships/matches`
 
@@ -50,6 +47,12 @@ Provide the normal `Authorization` token in the request header.
                 "smash": "2019-01-27 13:25:43.162-05",
                 "social": null,
                 "stone": null
+            },
+            "mostRecentMessage": {
+                "messageId": 2,
+                "content": "Well hello there",
+                "timestamp": "2019-02-17T16:01:08.078696",
+                "fromClient": false
             }
         },
         {
@@ -66,7 +69,8 @@ Provide the normal `Authorization` token in the request header.
                 "smash": null,
                 "social": "2019-01-27 13:25:43.162-05",
                 "stone": null
-            }
+            },
+            "mostRecentMessage": null
         }
     ]
 }

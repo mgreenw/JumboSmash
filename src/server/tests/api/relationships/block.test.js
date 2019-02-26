@@ -10,7 +10,7 @@ let me = {};
 describe('POST api/relationships/judge', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
 
@@ -19,7 +19,7 @@ describe('POST api/relationships/judge', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE from relationships');
   });

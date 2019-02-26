@@ -3,11 +3,11 @@ version: '3.3'
 services:
   reverse-proxy:
     image: traefik:alpine # The official Traefik docker image
-    command: |- 
+    command: |-
       --api --docker --docker.swarmMode --docker.domain=jumbosmash.com --docker.watch --logLevel=DEBUG
       --entryPoints="Name:http Address::80 Redirect.EntryPoint:https"
       --entryPoints="Name:https Address::443 TLS"
-      --acme 
+      --acme
       --acme.acmelogging="true"
       --acme.email="jumbosmash@gmail.com"
       --acme.entrypoint="https"
@@ -47,7 +47,7 @@ services:
 
 
   #
-  #  arthur, (beta) Webesite service
+  #  arthur, (beta) Website service
   #
 
   arthur:
@@ -68,7 +68,7 @@ services:
   #
 
   koh:
-    image: ecolwe/koh:0.0.2
+    image: kohthefacestealer/koh:0.0.4
     networks:
       - traefik-net
     environment:
@@ -88,11 +88,16 @@ services:
   server:
     environment:
       NODE_ENV: production
-    image: maxgreenwald/projectgem:0.0.1
-    # secrets:
-            #- db_pass
-        #- sendgrid_api_key
-        # - secret_key
+    image: maxgreenwald/projectgem:0.0.3
+    secrets:
+      - POSTGRES_HOST
+      - POSTGRES_DATABASE
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - SECRET
+      - SENDGRID_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     networks:
       - traefik-net
     deploy:
@@ -109,6 +114,8 @@ services:
 
   redis:
     image: redis
+    networks:
+       - traefik-net
     deploy:
       labels:
         - traefik.backend=redis
@@ -138,17 +145,24 @@ services:
         - traefik.frontend.rule=Host:deploy.jumbosmash.com
 
 # https://docs.docker.com/engine/swarm/secrets/
-#secrets:
-#  db_pass:
-#    external: true
-#  sendgrid_api_key:
-#    external: true
-#  secret_key:
-#    external: true
-#  DOCKER_PASSWORD:
-#    external: true
+secrets:
+  POSTGRES_HOST:
+    external: true
+  POSTGRES_DATABASE:
+    external: true
+  POSTGRES_USER:
+    external: true
+  POSTGRES_PASSWORD:
+    external: true
+  SECRET:
+    external: true
+  SENDGRID_API_KEY:
+    external: true
+  AWS_ACCESS_KEY_ID:
+    external: true
+  AWS_SECRET_ACCESS_KEY:
+    external: true
 
-
-networks:  
+networks:
   traefik-net:
     driver: overlay

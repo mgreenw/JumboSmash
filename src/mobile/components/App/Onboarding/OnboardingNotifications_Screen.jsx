@@ -5,19 +5,19 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
@@ -34,7 +34,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -56,19 +56,23 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingFinish, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
   render() {
     const body = (
       <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-        We use push notifications to let you know when you have a new match or message.
+        We use push notifications to let you know when you have a new match or
+        message.
       </Text>
     );
 
@@ -88,5 +92,5 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(OnboardingNotificationsScreen);

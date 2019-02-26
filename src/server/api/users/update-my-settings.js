@@ -13,32 +13,32 @@ const db = require('../../db');
 const schema = {
   "type": "object",
   "properties": {
-    "wantPronouns": {
+    "lookingForGenders": {
       "description": "The set of pronouns the user wants to match with in Smash",
       "type": "object",
       "properties": {
-        "she": {
+        "woman": {
           "type": "boolean"
         },
-        "he": {
+        "man": {
            "type": "boolean"
         },
-        "they": {
+        "nonBinary": {
            "type": "boolean"
         }
       }
     },
-    "usePronouns": {
+    "identifyAsGenders": {
       "description": "The set of pronouns the user uses",
       "type": "object",
       "properties": {
-        "she": {
+        "woman": {
           "type": "boolean"
         },
-        "he": {
+        "man": {
            "type": "boolean"
         },
-        "they": {
+        "nonBinary": {
            "type": "boolean"
         }
       }
@@ -69,20 +69,20 @@ const schema = {
  */
 const updateMySettings = async (
   userId: number,
-  wantPronouns: Object,
-  usePronouns: Object,
+  lookingForGenders: Object,
+  indentifyAsGenders: Object,
   activeScenes: Object,
 ) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
   // field that relates to this value
   const allFields = {
-    want_he: wantPronouns.he,
-    want_she: wantPronouns.she,
-    want_they: wantPronouns.they,
-    use_he: usePronouns.he,
-    use_she: usePronouns.she,
-    use_they: usePronouns.they,
+    want_he: lookingForGenders.man,
+    want_she: lookingForGenders.woman,
+    want_they: lookingForGenders.nonBinary,
+    use_he: indentifyAsGenders.man,
+    use_she: indentifyAsGenders.woman,
+    use_they: indentifyAsGenders.nonBinary,
     active_smash: activeScenes.smash,
     active_social: activeScenes.social,
     active_stone: activeScenes.stone,
@@ -126,8 +126,8 @@ const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
     return updateMySettings(
       req.user.id,
-      req.body.wantPronouns || {},
-      req.body.usePronouns || {},
+      req.body.lookingForGenders || {},
+      req.body.identifyAsGenders || {},
       req.body.activeScenes || {},
     );
   }),

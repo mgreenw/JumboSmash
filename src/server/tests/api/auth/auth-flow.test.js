@@ -4,27 +4,44 @@ const app = require('../../../app');
 
 const db = require('../../../db');
 
+const GOOD_EMAIL = 'jchun03@tufts.edu';
 const GOOD_UTLN = 'jchun03';
+const GOOD_EMAIL2 = 'Ronald.Zampolin@tufts.edu';
 const GOOD_UTLN2 = 'rzampo01';
 const BAD_CODE = '123456';
 describe('api/auth/verify', () => {
   beforeAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM classmates');
+    await db.query('DELETE FROM admins');
+
+    await db.query(`
+      INSERT INTO admins
+      (utln)
+      VALUES ('mgreen14'), ('jjaffe01')
+    `);
+
+    await db.query(`
+      INSERT INTO testers
+      (utln)
+      VALUES ('jchun03'), ('rzampo01'), ('mgreen14'), ('jjaffe01')
+    `);
   });
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM users');
+    await db.query('DELETE FROM admins');
+    await db.query('DELETE FROM classmates');
+    await db.query('DELETE FROM testers');
   });
 
   // Normal case: send-verification-email and verify should succeed
   it('basic success: should succeed for 1st verify attempt', async () => {
-    const res = await request(app)
+    let res = await request(app)
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN,
+          email: GOOD_EMAIL,
         },
       )
       .set('Accept', 'application/json')
@@ -32,22 +49,24 @@ describe('api/auth/verify', () => {
 
     expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
     expect(res.body.data.email).toContain('Jasmin.Chun@tufts.edu');
+    const { utln } = res.body.data;
 
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN]);
-    return request(app)
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [utln]);
+    res = await request(app)
       .post('/api/auth/verify')
       .send(
         {
-          utln: GOOD_UTLN,
+          utln,
           code: codeForGoodUtln.rows[0].code,
         },
       )
-      .set('Accept', 'application/json')
-      .expect(200)
-      .then((res2) => {
-        expect(res2.body.status).toEqual(codes.VERIFY__SUCCESS.status);
-        expect(res2.body.data.token).toBeDefined();
-      });
+      .set('Accept', 'application/json');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
+
+    const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
+    expect(result.rows[0].isAdmin).toBeFalsy();
   });
 
   // Tests VERIFY__NO_EMAIL_SENT
@@ -137,7 +156,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
         },
       )
       .set('Accept', 'application/json')
@@ -232,7 +251,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
@@ -264,7 +283,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
@@ -297,7 +316,7 @@ describe('api/auth/verify', () => {
       .post('/api/auth/send-verification-email')
       .send(
         {
-          utln: GOOD_UTLN2,
+          email: GOOD_EMAIL2,
           forceResend: true,
         },
       )
@@ -330,5 +349,69 @@ describe('api/auth/verify', () => {
 
     expect(res.statusCode).toBe(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+  });
+
+  it('should set the is_admin flag for users in the admin table', async () => {
+    let res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          email: 'mgreen14@tufts.edu',
+        },
+      )
+      .set('Accept', 'application/json');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toContain('Max.Greenwald@tufts.edu');
+    const { utln } = res.body.data;
+
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [utln]);
+    res = await request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln,
+          code: codeForGoodUtln.rows[0].code,
+        },
+      )
+      .set('Accept', 'application/json');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
+
+
+    const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
+    expect(result.rows[0].isAdmin).toBeTruthy();
+  });
+
+  it('should allow the tester@jumbosmash.com user to login with verification code 654321', async () => {
+    let res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          email: 'tester@jumbosmash.com',
+        },
+      );
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toBe('tester@jumbosmash.com');
+    expect(res.body.data.utln).toBe('tester');
+
+    res = await request(app)
+      .post('/api/auth/verify')
+      .set('Accept', 'application/json')
+      .send(
+        {
+          utln: 'tester',
+          code: '654321',
+        },
+      );
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
+    expect(res.body.data.token).toBeDefined();
   });
 });

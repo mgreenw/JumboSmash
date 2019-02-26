@@ -1,34 +1,31 @@
 // @flow
-/* eslint-disable */
 
-import type { Dispatch, GetState } from 'redux';
-import type { UserSettings, UserProfile } from 'mobile/reducers';
+import type { UserSettings, UserProfile, Dispatch } from 'mobile/reducers';
 import getMyProfile from 'mobile/api/users/GetMyProfile';
 import getMySettings from 'mobile/api/users/GetMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import { getMyPhotos } from 'mobile/api/users/GetMyPhotos';
-import DevTesting from '../../utils/DevTesting';
+import getMyPhotos from 'mobile/api/users/GetMyPhotos';
 
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 export type LoadAppCompleted_Action = {
   type: 'LOAD_APP__COMPLETED',
   payload: {
     onboardingCompleted: boolean,
     profile: UserProfile,
-    settings: UserSettings,
+    settings: UserSettings
   },
-  meta: {},
+  meta: {}
 };
 
 function initiate(): LoadAppInitiated_Action {
   return {
     type: 'LOAD_APP__INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
@@ -36,9 +33,8 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  photoIds: ?(number[]),
+  photoIds: ?(number[])
 ): LoadAppCompleted_Action {
-  DevTesting.log('load app complete; profile && settigs: ', profile, settings);
   return {
     type: 'LOAD_APP__COMPLETED',
     payload: {
@@ -47,54 +43,50 @@ function complete(
         fields: {
           bio: '',
           birthday: '',
-          displayName: '',
+          displayName: ''
         },
-        photoIds: photoIds || [], // incase partial photo uploading in onboarding
+        photoIds: photoIds || [] // incase partial photo uploading in onboarding
       },
       settings: settings || {
-        useGenders: {
-          male: false,
-          female: false,
-          nonBinary: false,
+        identifyAsGenders: {
+          man: false,
+          woman: false,
+          nonBinary: false
         },
-        wantGenders: {
-          male: false,
-          female: false,
-          nonBinary: false,
+        lookingForGenders: {
+          man: false,
+          woman: false,
+          nonBinary: false
         },
-      },
+        // start all selected true untill we add to onboarding
+        activeScenes: {
+          smash: true,
+          social: true,
+          stone: true
+        }
+      }
     },
-    meta: {},
+    meta: {}
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export function loadApp() {
-  return function(dispatch: Dispatch, getState: GetState) {
-    const { token } = getState();
-    dispatch(initiate());
-    DevTesting.fakeLatency(() => {
-      getMyProfile({
-        token,
-      })
-        .then(profile => {
-          // if profile is null, onboarding has not been completed, though
-          // some photos may have been uploaded.
-          if (profile === null) {
-            getMyPhotos(token).then(photoIds => {
-              dispatch(complete(null, null, false, photoIds));
-            });
-          } else {
-            getMySettings({
-              token,
-            }).then(settings => {
-              dispatch(complete(profile, settings, true));
-            });
-          }
-        })
-        .catch(error => {
-          dispatch(apiErrorHandler(error));
+export default () => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  getMyProfile()
+    .then(profile => {
+      // if profile is null, onboarding has not been completed, though
+      // some photos may have been uploaded.
+      if (profile === null) {
+        getMyPhotos().then(photoIds => {
+          dispatch(complete(null, null, false, photoIds));
         });
+      } else {
+        getMySettings().then(settings => {
+          dispatch(complete(profile, settings, true));
+        });
+      }
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
     });
-  };
-}
+};

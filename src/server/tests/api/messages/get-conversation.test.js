@@ -1,4 +1,5 @@
 const request = require('supertest');
+const uuidv4 = require('uuid/v4');
 
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
@@ -11,7 +12,7 @@ let other = {};
 describe('GET api/messages/:userId', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE from classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE FROM messages');
 
@@ -21,7 +22,7 @@ describe('GET api/messages/:userId', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE FROM messages');
   });
@@ -45,14 +46,14 @@ describe('GET api/messages/:userId', () => {
 
   it('should not accept an invalid most recent message id', async () => {
     let res = await request(app)
-      .get('/api/messages/9?most-recent-message-id=aaoeu')
+      .get(`/api/messages/${other.id}?most-recent-message-id=aaoeu`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
 
     res = await request(app)
-      .get('/api/messages/9?most-recent-message-id=-44')
+      .get(`/api/messages/${other.id}?most-recent-message-id=-44`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
@@ -64,7 +65,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ content: 'hey' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey' });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
@@ -102,7 +103,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
-      .send({ content: 'hey to you too' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
 
     res = await request(app)
       .get(`/api/messages/${other.id}`)
@@ -156,7 +157,7 @@ describe('GET api/messages/:userId', () => {
       .post(`/api/messages/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
-      .send({ content: 'hey to you too' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
 
     // Gets the penultimate message id
     const result = await db.query(`
@@ -174,5 +175,26 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data.length).toBe(1);
     expect(res.body.data[0].messageId).toBe(result.rows[result.rowCount - 1].id);
+  });
+
+  it('should return an empty array if the other user is banned', async () => {
+    const person = await dbUtils.createUser('person04', true);
+
+    let res = await request(app)
+      .post(`/api/messages/${person.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey I will ban you' });
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
+
+    await dbUtils.banUser(person.id);
+
+    res = await request(app)
+      .get(`/api/messages/${person.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.length).toBe(0);
   });
 });

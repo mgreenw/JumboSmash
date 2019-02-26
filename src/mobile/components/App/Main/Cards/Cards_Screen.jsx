@@ -1,118 +1,169 @@
 // @flow
-/* eslint-disable */
+/* eslint react/no-unused-state: 0 */
 
 import React from 'react';
-import {
-  Text,
-  View,
-  TouchableWithoutFeeback,
-  TouchableOpacity,
-  TouchableHighlight,
-  Image,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Button, Icon } from 'react-native-elements';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  Candidate,
+  UserProfile,
+  UserSettings,
+  SceneCandidates,
+  GetSceneCandidatesInProgress,
+  Scene,
+  Dispatch
+} from 'mobile/reducers';
+import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
+import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import { routes } from 'mobile/components/Navigation';
-import Deck from './Deck';
-import type { swipeDirection } from './Deck';
-import type { UserProfile, Candidate } from 'mobile/reducers';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
-import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { textStyles } from 'mobile/styles/textStyles';
-import { Colors } from 'mobile/styles/colors';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
-import NavigationService from 'mobile/NavigationService';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import DevTesting from 'mobile/utils/DevTesting';
-import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import NavigationService from 'mobile/NavigationService';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
+import type { SwipeDirection } from './Deck';
+import Deck from './Deck';
+import SceneSelector from './SceneSelector';
+import SwipeButtons from './SwipeButtons';
 
-type navigationProps = {
-  navigation: any,
+const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
+const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
+
+const SCENES = {
+  smash: {
+    display: 'JumboSmash',
+    icon: '🍑',
+    description: 'This is where you can match with people to get ~frisky~'
+  },
+  social: {
+    display: 'JumboSocial',
+    icon: '🐘',
+    description:
+      'This is where you can match with people for hanging out - from study buddies to a night out on the town.'
+  },
+  stone: {
+    display: 'JumboStone',
+    icon: '🍀',
+    description:
+      'This is where you can match with people to get blazed out of your mind'
+  }
 };
 
-type reduxProps = {};
+type navigationProps = {
+  navigation: any
+};
 
-type dispatchProps = {};
+type reduxProps = {
+  sceneCandidates: SceneCandidates,
+  getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
+  clientSettings: UserSettings
+};
+
+type dispatchProps = {
+  getSceneCandidates: (scene: Scene) => void,
+  judgeSceneCandidate: (
+    candidateUserId: number,
+    scene: Scene,
+    liked: boolean
+  ) => void
+};
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
-  swipeGestureInProgress: boolean,
+  swipeInProgress: boolean,
+  loadingSource: string,
+  currentScene: Scene
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props) {
-  return {};
+function mapStateToProps(reduxState: ReduxState): reduxProps {
+  if (!reduxState.client) {
+    throw new Error('client is null in Cards Screen');
+  }
+  return {
+    sceneCandidates: reduxState.sceneCandidates,
+    getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
+    clientSettings: reduxState.client.settings
+  };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
-  return {};
+function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
+  return {
+    getSceneCandidates: (scene: Scene) => {
+      dispatch(getSceneCandidatesAction(scene));
+    },
+    judgeSceneCandidate: (
+      candidateUserId: number,
+      scene: Scene,
+      liked: boolean
+    ) => {
+      dispatch(judgeSceneCandidateAction(candidateUserId, scene, liked));
+    }
+  };
 }
-
-//TODO: remove b/c dummy
-let DATA: Array<Candidate> = [
-  {
-    userId: 1,
-    profile: {
-      fields: {
-        displayName: 'Anthony',
-        birthday: '21',
-        bio: 'BIO',
-      },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 2,
-    profile: {
-      fields: { displayName: 'Tony', birthday: '22', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 3,
-    profile: {
-      fields: { displayName: 'Ant', birthday: '69', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-  {
-    userId: 4,
-    profile: {
-      fields: { displayName: 'T-dawg', birthday: '47', bio: 'BIO' },
-      photoIds: [],
-    },
-  },
-];
 
 class SwipingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      swipeGestureInProgress: false,
+      swipeInProgress: false,
+      loadingSource: ArthurLoadingImage,
+      currentScene: 'smash'
     };
   }
 
-  _renderCard = (profile: UserProfile, isTop: boolean) => {
-    const { navigation } = this.props;
-    return (
-      <PreviewCard
-        profile={profile}
-        onCardTap={() =>
-          navigation.navigate(routes.ExpandedCard, {
-            profile,
-            onMinimize: () => navigation.pop(),
-          })
-        }
-      />
-    );
+  componentDidMount() {
+    this._showLoadingAndFetchCandidates(1200);
+  }
+
+  componentDidUpdate(_, prevState: State) {
+    const { sceneCandidates } = this.props;
+    const { currentScene } = this.state;
+    if (
+      prevState.currentScene !== currentScene &&
+      !sceneCandidates[currentScene]
+    ) {
+      this._showLoadingAndFetchCandidates(300);
+    }
+  }
+
+  _renderCard = (profile: UserProfile) => {
+    return <PreviewCard profile={profile} />;
   };
 
   _renderEmpty = () => {
-    return <Text>Too picky</Text>;
+    const { getSceneCandidates } = this.props;
+    const { currentScene } = this.state;
+
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row'
+        }}
+      >
+        <View style={{ flex: 1 }} />
+        <View style={{ flex: 5 }}>
+          <PrimaryButton
+            onPress={() =>
+              this.setState({ loadingSource: ArthurLoadingGif }, () =>
+                getSceneCandidates(currentScene)
+              )
+            }
+            title="Load more candidates"
+            loading={false}
+            disabled={false}
+          />
+        </View>
+        <View style={{ flex: 1 }} />
+      </View>
+    );
   };
 
   _onSwipeStart = () => {
@@ -120,27 +171,35 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onSwipeRight = (user: Candidate) => {
-    DevTesting.log('Card liked: ' + user.profile.fields.displayName);
+    const { judgeSceneCandidate } = this.props;
+    const { currentScene } = this.state;
+    judgeSceneCandidate(user.userId, currentScene, true);
+    DevTesting.log(`Card liked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeLeft = (user: Candidate) => {
-    DevTesting.log('Card disliked: ' + user.profile.fields.displayName);
+    const { judgeSceneCandidate } = this.props;
+    const { currentScene } = this.state;
+    judgeSceneCandidate(user.userId, currentScene, false);
+    DevTesting.log(`Card disliked: ${user.profile.fields.displayName}`);
   };
 
   _onSwipeComplete = () => {
-    this.setState({ swipeGestureInProgress: false });
+    this.setState({ swipeInProgress: false });
   };
 
-  _onPressSwipeButton = (swipeDirection: swipeDirection) => {
-    const { swipeGestureInProgress } = this.state;
-
-    this.setState({ swipeGestureInProgress: true }, () => {
-      if (this.deck) {
-        this.deck._forceSwipe(swipeDirection, 750);
-      } else {
-        throw 'this.deck is null in Cards_Screen';
-      }
-    });
+  _onPressSwipeButton = (swipeDirection: SwipeDirection) => {
+    const { swipeInProgress } = this.state;
+    // Check if swipe is alredy in progress. Prevents user from breaking stuff by spamming the swipe buttons
+    if (!swipeInProgress) {
+      this.setState({ swipeInProgress: true }, () => {
+        if (this.deck) {
+          this.deck._forceSwipe(swipeDirection, 750);
+        } else {
+          throw new Error('this.deck is null in Cards_Screen');
+        }
+      });
+    }
   };
 
   _onSwipeLike = () => {
@@ -151,47 +210,218 @@ class SwipingScreen extends React.Component<Props, State> {
     this._onPressSwipeButton('left');
   };
 
+  _onCardTap = (profile: UserProfile) => {
+    const { navigation } = this.props;
+    navigation.navigate(routes.CardsExpandedCard, {
+      profile,
+      onMinimize: () => navigation.pop(),
+      swipeButtons: (
+        <SwipeButtons
+          disabled={false}
+          onPress={(swipeDirection: SwipeDirection) => {
+            NavigationService.back();
+            setTimeout(() => {
+              this._onPressSwipeButton(swipeDirection);
+            }, 750);
+          }}
+        />
+      )
+    });
+  };
+
+  _showLoadingAndFetchCandidates(initialTimeout: number) {
+    setTimeout(() => {
+      this.setState({ loadingSource: ArthurLoadingGif }, () => {
+        const {
+          sceneCandidates,
+          getSceneCandidatesInProgress,
+          getSceneCandidates
+        } = this.props;
+        setTimeout(() => {
+          const { currentScene } = this.state;
+          if (
+            !getSceneCandidatesInProgress[currentScene] &&
+            sceneCandidates[currentScene] === null
+          ) {
+            getSceneCandidates(currentScene);
+          }
+        }, 2000);
+      });
+    }, initialTimeout);
+  }
+
+  _renderNotActiveInScene() {
+    const { currentScene } = this.state;
+    return (
+      <View
+        style={{
+          flex: 1,
+          marginVertical: 60,
+          marginHorizontal: 42,
+          alignItems: 'center'
+        }}
+      >
+        <View
+          style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+            Welcome to
+          </Text>
+          <Text
+            style={[
+              textStyles.jumboSmashStyle,
+              { fontSize: 40, padding: 15, textAlign: 'center' }
+            ]}
+          >
+            {SCENES[currentScene].display}
+          </Text>
+        </View>
+        <View
+          style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <View
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              borderWidth: 3,
+              borderColor: Colors.Grapefruit,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ fontSize: 69 }}>{SCENES[currentScene].icon}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flex: 2.5,
+            justifyContent: 'flex-start',
+            alignItems: 'center'
+          }}
+        >
+          <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
+            {SCENES[currentScene].description}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 2
+          }}
+        >
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 4 }}>
+            <PrimaryButton
+              onPress={() => NavigationService.navigate(routes.SettingsEdit)}
+              title="Go to settings"
+              loading={false}
+              disabled={false}
+            />
+          </View>
+          <View style={{ flex: 1 }} />
+        </View>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
+            {`You won’t be shown in ${SCENES[currentScene].display}
+unless you turn it on in Settings.`}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   deck: ?Deck;
 
   render() {
-    const { navigation } = this.props;
+    const {
+      sceneCandidates,
+      getSceneCandidatesInProgress,
+      clientSettings
+    } = this.props;
+    const { loadingSource, currentScene } = this.state;
+
+    const isLoading =
+      getSceneCandidatesInProgress[currentScene] ||
+      sceneCandidates[currentScene] === null;
+
+    const isActiveInScene = clientSettings.activeScenes[currentScene] === true;
+
+    let renderedContent;
+
+    if (!isActiveInScene) {
+      renderedContent = this._renderNotActiveInScene();
+    } else if (isLoading) {
+      renderedContent = (
+        <Image
+          resizeMode="contain"
+          style={{
+            flex: 1,
+            height: null,
+            width: null,
+            marginTop: 46,
+            marginBottom: 182
+          }}
+          source={loadingSource}
+        />
+      );
+    } else if (
+      sceneCandidates[currentScene] === null ||
+      sceneCandidates[currentScene] === undefined
+    ) {
+      throw new Error(`${currentScene} candidates is null or undefined`);
+    } else {
+      renderedContent = (
+        <Deck
+          ref={deck => (this.deck = deck)}
+          data={sceneCandidates[currentScene]}
+          renderCard={this._renderCard}
+          renderEmpty={this._renderEmpty}
+          onSwipeStart={this._onSwipeStart}
+          onSwipeRight={this._onSwipeRight}
+          onSwipeLeft={this._onSwipeLeft}
+          onSwipeComplete={this._onSwipeComplete}
+          onCardTap={this._onCardTap}
+          infinite
+          disableSwipe={isLoading}
+        />
+      );
+    }
+
+    const sceneSelector = (
+      <SceneSelector
+        startIndex={1}
+        onPress={scene =>
+          this.setState({
+            currentScene: scene,
+            loadingSource: ArthurLoadingImage
+          })
+        }
+        disabled={false}
+      />
+    );
+
     return (
-      <Transition inline appear={'scale'}>
+      <Transition inline appear="scale">
         <View style={{ flex: 1 }}>
           <GEMHeader
             title="PROJECTGEM"
             rightIconName="message"
             leftIconName="user"
+            centerComponent={sceneSelector}
           />
           <View style={{ backgroundColor: 'white', flex: 1 }}>
-            <Deck
-              ref={deck => (this.deck = deck)}
-              data={DATA}
-              renderCard={this._renderCard}
-              renderEmpty={this._renderEmpty}
-              onSwipeStart={this._onSwipeStart}
-              onSwipeRight={this._onSwipeRight}
-              onSwipeLeft={this._onSwipeLeft}
-              onSwipeComplete={this._onSwipeComplete}
-              infinite={true}
-              disableSwipe={false}
-            />
-            <TouchableOpacity
-              onPress={() => this._onPressSwipeButton('left')}
-              style={Arthur_Styles.swipeButton_dislike}
-            >
-              <CustomIcon name="delete-filled" size={65} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => this._onPressSwipeButton('right')}
-              style={Arthur_Styles.swipeButton_like}
-            >
-              <CustomIcon
-                name="heart-filled"
-                size={65}
-                color={Colors.Grapefruit}
+            {renderedContent}
+            {isActiveInScene && (
+              <SwipeButtons
+                disabled={isLoading}
+                onPress={this._onPressSwipeButton}
               />
-            </TouchableOpacity>
+            )}
           </View>
         </View>
       </Transition>

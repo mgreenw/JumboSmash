@@ -1,9 +1,7 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
-import type { UserProfile, Candidate } from 'mobile/reducers';
+import { TouchableOpacity, Keyboard } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import NavigationService from 'mobile/NavigationService';
@@ -12,20 +10,21 @@ import { routes } from 'mobile/components/Navigation';
 type Props = {
   name: ?IconName,
   disabled?: boolean,
-  onPress?: () => void,
+  onPress?: () => void
 };
 
 type State = {};
 
-export class HeaderIcon extends React.Component<Props, State> {
+export default class HeaderIcon extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevProps.disabled != this.props.disabled) {
-      const opacity = this.props.disabled ? 0.2 : 1;
+  componentDidUpdate(prevProps: Props) {
+    const { disabled } = this.props;
+    if (prevProps.disabled !== disabled) {
+      const opacity = disabled ? 0.2 : 1;
       this.iconTouchableOpacity.setOpacityTo(opacity);
     }
   }
@@ -53,7 +52,7 @@ export class HeaderIcon extends React.Component<Props, State> {
         };
       }
       default:
-        throw ('Could not parse icon name: ', name);
+        throw new Error(`Could not parse icon name: ${name}`);
     }
   };
 
@@ -61,10 +60,9 @@ export class HeaderIcon extends React.Component<Props, State> {
   iconTouchableOpacity: TouchableOpacity;
 
   render() {
+    const { name, disabled, onPress: onPressProp } = this.props;
     const onPress =
-      this.props.name && !this.props.disabled
-        ? this.props.onPress || this._inferOnPress(this.props.name)
-        : () => {};
+      name && !disabled ? onPressProp || this._inferOnPress(name) : () => {};
     // TODO: make this styling via a style sheet, and better!
     return (
       <TouchableOpacity
@@ -75,7 +73,7 @@ export class HeaderIcon extends React.Component<Props, State> {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          opacity: this.props.disabled ? 0.2 : 1,
+          opacity: disabled ? 0.2 : 1
         }}
         onPress={() => {
           Keyboard.dismiss(); // in case a keyboard is up, buttons close them
@@ -83,9 +81,9 @@ export class HeaderIcon extends React.Component<Props, State> {
         }}
       >
         <CustomIcon
-          name={this.props.name || 'user'}
+          name={name || 'user'}
           size={26}
-          color={this.props.name ? 'black' : 'transparent'}
+          color={name ? 'black' : 'transparent'}
         />
       </TouchableOpacity>
     );

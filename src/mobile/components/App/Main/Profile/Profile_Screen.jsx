@@ -1,28 +1,24 @@
 // @flow
 
 import React from 'react';
-import {
- TouchableOpacity, Text, View, Image 
-} from 'react-native';
+import { TouchableOpacity, Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Avatar } from 'react-native-elements';
+import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 
 const waves1 = require('../../../../assets/waves/waves1/waves.png');
 
 type cardButtonProps = {
   title: string,
   onPress: () => void,
-  icon: IconName,
+  icon: IconName
 };
 class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
@@ -37,7 +33,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
           justifyContent: 'space-between',
           alignItems: 'center',
           paddingLeft: 60,
-          paddingRight: 60,
+          paddingRight: 60
         }}
       >
         <View style={{ flexDirection: 'row' }}>
@@ -58,16 +54,15 @@ class CardButton extends React.PureComponent<cardButtonProps> {
 }
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type dispatchProps = {};
 
 type reduxProps = {
-  token: ?string,
   photoId: number,
   displayName: string,
-  profile: UserProfile,
+  profile: UserProfile
 };
 
 type Props = navigationProps & dispatchProps & reduxProps;
@@ -85,8 +80,7 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
-    token: reduxState.token,
-    profile: reduxState.client.profile,
+    profile: reduxState.client.profile
   };
 }
 
@@ -114,97 +108,87 @@ class ProfileScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const {
- token, photoId, displayName, navigation, profile 
-} = this.props;
+    const { photoId, displayName, navigation, profile } = this.props;
     return (
-      <Transition inline appear="left">
-        <View style={{ flex: 1 }}>
-          <GEMHeader title="Profile" rightIconName="cards" />
+      <View style={{ flex: 1 }}>
+        <GEMHeader title="Profile" rightIconName="cards" />
+        <View
+          style={{
+            flex: 1
+          }}
+        >
           <View
             style={{
               flex: 1,
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+              paddingTop: 20,
+              paddingBottom: 20
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-evenly',
-                alignItems: 'center',
-                paddingTop: 20,
-                paddingBottom: 20,
-              }}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(routes.ProfileExpandedCard, {
+                  profile,
+                  onMinimize: () => navigation.pop()
+                })
+              }
             >
-              <Avatar
-                size="xlarge"
-                rounded
-                source={{
-                  uri: GET_PHOTO__ROUTE + photoId,
-                  headers: {
-                    Authorization: token,
-                  },
-                }}
-                onPress={() => navigation.navigate(routes.ExpandedCard, {
-                    profile,
-                    onMinimize: () => navigation.pop(),
-                    token,
-                  })
-                }
-              />
-              <Text
-                style={[
-                  textStyles.headline4StyleMedium,
-                  { textAlign: 'center', paddingTop: 10 },
-                ]}
-              >
-                {displayName}
-              </Text>
-              <Image
-                resizeMode="stretch"
-                source={waves1}
-                style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
-              />
-            </View>
-            <View
-              style={{
-                flex: 2,
-                justifyContent: 'space-evenly',
-                backgroundColor: Colors.White,
-                shadowColor: '#6F6F6F',
-                shadowOpacity: 0.57,
-                shadowRadius: 2,
-                shadowOffset: {
-                  height: -1,
-                  width: 1,
-                },
-                borderRadius: 10,
-              }}
-              elevation={5}
+              <Avatar size="Large" photoId={photoId} />
+            </TouchableOpacity>
+            <Text
+              style={[
+                textStyles.headline4StyleMedium,
+                { textAlign: 'center', paddingTop: 10 }
+              ]}
             >
-              <CardButton
-                title="Edit Profile"
-                onPress={this._onProfileEditPress}
-                icon="user"
-              />
-              <CardButton
-                title="Settings"
-                onPress={this._onSettingsPress}
-                icon="gear"
-              />
-              <CardButton
-                title="Help & Contact"
-                onPress={this._onProfileHelpPress}
-                icon="life-ring"
-              />
-            </View>
+              {displayName}
+            </Text>
+            <Image
+              resizeMode="stretch"
+              source={waves1}
+              style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
+            />
+          </View>
+          <View
+            style={{
+              flex: 2,
+              justifyContent: 'space-evenly',
+              backgroundColor: Colors.White,
+              shadowColor: '#6F6F6F',
+              shadowOpacity: 0.57,
+              shadowRadius: 2,
+              shadowOffset: {
+                height: -1,
+                width: 1
+              },
+              borderRadius: 10
+            }}
+            elevation={5}
+          >
+            <CardButton
+              title="Edit Profile"
+              onPress={this._onProfileEditPress}
+              icon="user"
+            />
+            <CardButton
+              title="Settings"
+              onPress={this._onSettingsPress}
+              icon="gear"
+            />
+            <CardButton
+              title="Help & Contact"
+              onPress={this._onProfileHelpPress}
+              icon="life-ring"
+            />
           </View>
         </View>
-      </Transition>
+      </View>
     );
   }
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ProfileScreen);

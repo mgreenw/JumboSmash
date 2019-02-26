@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { createAppContainer } from '@react-navigation/native';
 import NavigationService from 'mobile/NavigationService';
 import { createRootNavigator } from 'mobile/components/Navigation';
-import { store } from './store';
+import store from './store';
 
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);

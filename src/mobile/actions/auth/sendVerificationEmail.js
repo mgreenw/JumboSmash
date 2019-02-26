@@ -1,60 +1,66 @@
 // @flow
 /* eslint-disable */
 
-import type { Dispatch } from 'redux';
+import type { Dispatch } from 'mobile/reducers';
 import sendVerificationEmail_api from 'mobile/api/auth/sendVerificationEmail';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
-type sendVerificationEmail_statusCode =
+type StatusCode =
   | 'SUCCESS'
   | 'ALREADY_SENT'
   | 'WRONG_CLASS_YEAR'
   | 'NOT_STUDENT'
   | 'NOT_FOUND';
 
-export type sendVerificationEmail_response = {
-  statusCode: sendVerificationEmail_statusCode,
-  utln: string,
-  email: string,
+export type SendVerificationEmail_Response = {
+  statusCode: StatusCode,
+  requestEmail: string,
+  responseEmail: string,
   classYear: string,
+  utln: string
 };
 
 export type SendVerificationEmailCompleted_Action = {
   type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
   payload: {
-    response: sendVerificationEmail_response,
+    response: SendVerificationEmail_Response
   },
-  meta: {},
+  meta: {}
 };
 
 export type SendVerificationEmailInitiated_Action = {
   type: 'SEND_VERIFICATION_EMAIL_INITIATED',
   payload: {},
-  meta: {},
+  meta: {}
 };
 
 function initiate(): SendVerificationEmailInitiated_Action {
   return {
     type: 'SEND_VERIFICATION_EMAIL_INITIATED',
     payload: {},
-    meta: {},
+    meta: {}
   };
 }
 
-function complete(response: sendVerificationEmail_response): SendVerificationEmailCompleted_Action {
+function complete(
+  response: SendVerificationEmail_Response
+): SendVerificationEmailCompleted_Action {
   return {
     type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
     payload: { response },
-    meta: {},
+    meta: {}
   };
 }
 
-export function sendVerificationEmailAction(utln: string, forceResend: boolean) {
+export function sendVerificationEmailAction(
+  email: string,
+  forceResend: boolean
+) {
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      sendVerificationEmail_api({ utln, forceResend })
+      sendVerificationEmail_api({ email, forceResend })
         .then(response => {
           dispatch(complete(response));
         })

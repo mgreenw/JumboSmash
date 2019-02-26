@@ -2,15 +2,12 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const aws = require('aws-sdk');
 
 const logger = require('./logger');
 const api = require('./api');
 
 const app = express();
 app.use(bodyParser.json());
-
-aws.config.region = 'us-east-1';
 
 // Log each incoming request
 app.use((req, res, next) => {

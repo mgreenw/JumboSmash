@@ -1,68 +1,71 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Image, View, Text } from 'react-native';
-import { Font } from 'expo';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
-import type { ReduxState } from 'mobile/reducers/index';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { Colors } from 'mobile/styles/colors';
 import ProgressBar from 'react-native-progress/Bar';
-import { loadApp } from 'mobile/actions/app/loadApp';
+import loadAppAction from 'mobile/actions/app/loadApp';
 import { routes } from 'mobile/components/Navigation';
+
+const ArthurIcon = require('../../assets/arthurIcon.png');
 
 type reduxProps = {
   appLoaded: boolean,
   loadAppInProgress: boolean,
-  onboardingCompleted: boolean,
+  onboardingCompleted: boolean
 };
 
 type navigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type dispatchProps = {
-  loadApp: () => void,
+  loadApp: () => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {};
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): reduxProps {
+function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     appLoaded: reduxState.appLoaded,
     loadAppInProgress: reduxState.inProgress.loadApp,
-    onboardingCompleted: reduxState.onboardingCompleted,
+    onboardingCompleted: reduxState.onboardingCompleted
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): dispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     loadApp: () => {
-      dispatch(loadApp());
-    },
+      dispatch(loadAppAction());
+    }
   };
 }
 
 class AppLoadingScreen extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {};
-    this.props.loadApp();
+  componentDidMount() {
+    const { loadApp } = this.props;
+    loadApp();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props) {
+    const {
+      appLoaded,
+      loadAppInProgress,
+      navigation,
+      onboardingCompleted
+    } = this.props;
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (this.props.appLoaded && prevProps.loadAppInProgress != this.props.loadAppInProgress) {
-      const { navigate } = this.props.navigation;
-      if (!this.props.onboardingCompleted) {
-        navigate(routes.OnboardingStack);
+    if (appLoaded && prevProps.loadAppInProgress !== loadAppInProgress) {
+      if (!onboardingCompleted) {
+        navigation.navigate(routes.OnboardingStack);
       } else {
-        navigate(routes.MainSwitch, {});
+        navigation.navigate(routes.MainSwitch, {});
       }
     }
   }
@@ -80,9 +83,9 @@ class AppLoadingScreen extends React.Component<Props, State> {
             style={{
               flex: 1,
               width: null,
-              height: null,
+              height: null
             }}
-            source={require('../../assets/arthurIcon.png')} // TODO: investigate why  mobile/ does not work
+            source={ArthurIcon}
           />
         </View>
         <View
@@ -91,7 +94,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
             justifyContent: 'center',
             alignItems: 'stretch',
             paddingLeft: 60,
-            paddingRight: 60,
+            paddingRight: 60
           }}
         >
           <ProgressBar
@@ -112,5 +115,5 @@ class AppLoadingScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AppLoadingScreen);

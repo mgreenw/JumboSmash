@@ -30,20 +30,20 @@ Provide the normal `Authorization` token in the request header.
 {
     "status": "GET_SETTINGS__SUCCESS",
     "data": {
-        "usePronouns": {
-            "he": false,
-            "she": false,
-            "they": false
+        "lookingForGenders": {
+            "man": false,
+            "woman": false,
+            "nonBinary": false
         },
-        "wantPronouns": {
-            "he": false,
-            "she": false,
-            "they": false
+        "identifyAsGenders": {
+            "man": false,
+            "woman": false,
+            "nonBinary": false
         },
         "activeScenes": {
-            "smash": true,
+            "smash": false,
             "social": false,
-            "stone": true
+            "stone": false
         }
     }
 }

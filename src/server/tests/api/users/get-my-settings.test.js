@@ -8,12 +8,12 @@ const dbUtils = require('../../utils/db');
 describe('GET api/users/me/settings', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   it('must require the user to exist and have a profile setup', async () => {
@@ -50,15 +50,15 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.status).toBe(codes.GET_SETTINGS__SUCCESS.status);
     expect(res.body.data).toBeDefined();
 
-    expect(res.body.data.usePronouns).toBeDefined();
-    expect(res.body.data.wantPronouns).toBeDefined();
+    expect(res.body.data.identifyAsGenders).toBeDefined();
+    expect(res.body.data.lookingForGenders).toBeDefined();
 
-    expect(res.body.data.usePronouns.he).toBeDefined();
-    expect(res.body.data.usePronouns.she).toBeDefined();
-    expect(res.body.data.usePronouns.they).toBeDefined();
-    expect(res.body.data.wantPronouns.he).toBeDefined();
-    expect(res.body.data.wantPronouns.she).toBeDefined();
-    expect(res.body.data.wantPronouns.they).toBeDefined();
+    expect(res.body.data.identifyAsGenders.man).toBeDefined();
+    expect(res.body.data.identifyAsGenders.woman).toBeDefined();
+    expect(res.body.data.identifyAsGenders.nonBinary).toBeDefined();
+    expect(res.body.data.lookingForGenders.man).toBeDefined();
+    expect(res.body.data.lookingForGenders.woman).toBeDefined();
+    expect(res.body.data.lookingForGenders.nonBinary).toBeDefined();
 
     expect(res.body.data.activeScenes.smash).toBeDefined();
     expect(res.body.data.activeScenes.social).toBeDefined();

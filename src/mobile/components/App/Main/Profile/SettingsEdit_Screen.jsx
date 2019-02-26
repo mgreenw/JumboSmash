@@ -1,13 +1,16 @@
 // @flow
-/* eslint-disable */
 
 import React from 'react';
 import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-import { logout } from 'mobile/actions/auth/logout';
+import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
-import type { Genders, UserSettings, ReduxState } from 'mobile/reducers';
-import type { Dispatch } from 'redux';
+import type {
+  Genders,
+  UserSettings,
+  ReduxState,
+  Dispatch
+} from 'mobile/reducers';
 import { routes } from 'mobile/components/Navigation';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
@@ -16,6 +19,8 @@ import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
+import saveSettingsAction from 'mobile/actions/app/saveSettings';
+import Collapsible from 'react-native-collapsible';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -26,49 +31,64 @@ const styles = StyleSheet.create({
     paddingRight: 18,
     paddingTop: 20,
     marginBottom: 20,
-    paddingBottom: 20,
-  },
+    paddingBottom: 20
+  }
 });
 
+const Spacer = () => {
+  return (
+    <View style={{ width: '100%', alignItems: 'center' }}>
+      <View
+        style={{
+          paddingTop: 8,
+          marginBottom: 4,
+          borderTopWidth: 1,
+          width: '80%',
+          borderColor: Colors.Grey80
+        }}
+      />
+    </View>
+  );
+};
+
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type ReduxProps = {
   settings: UserSettings,
-  logoutInProgress: boolean,
+  logoutInProgress: boolean
 };
 
 type DispatchProps = {
   logout: () => void,
-  saveSettings: (settings: UserSettings) => void,
+  saveSettings: (settings: UserSettings) => void
 };
 
 type Props = NavigationProps & ReduxProps & DispatchProps;
 
 type State = {
-  editedSettings: UserSettings,
-  showOnSmash: boolean, // temporary for UI testing
+  editedSettings: UserSettings
 };
 
-function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
   return {
     logoutInProgress: reduxState.inProgress.logout,
-    settings: reduxState.client.settings,
+    settings: reduxState.client.settings
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, ownProps: Props): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     logout: () => {
-      dispatch(logout());
+      dispatch(logoutAction());
     },
-    saveSettings: () => {
-      // TODO
-    },
+    saveSettings: (settings: UserSettings) => {
+      dispatch(saveSettingsAction(settings));
+    }
   };
 }
 
@@ -76,53 +96,78 @@ class SettingsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      editedSettings: props.settings,
-      showOnSmash: false,
+      editedSettings: props.settings
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { navigation } = this.props;
-    if (!this.props.logoutInProgress && prevProps.logoutInProgress != this.props.logoutInProgress) {
-      // disable back button when performing a syncronous action.
-      navigation.setParams({
-        headerLeft: this.props.logoutInProgress ? null : '',
-      });
-
+    const { logoutInProgress } = this.props;
+    if (!logoutInProgress && prevProps.logoutInProgress !== logoutInProgress) {
       // For recieving the logout completion
       navigation.navigate(routes.Splash, {});
     }
   }
 
-  _onUseGendersChange = (useGenders: Genders) => {
+  _onIdentifyAsGendersChange = (identifyAsGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        useGenders,
-      },
+        identifyAsGenders
+      }
     }));
   };
 
-  _onWantGendersChange = (wantGenders: Genders) => {
+  _onWantGendersChange = (lookingForGenders: Genders) => {
     this.setState(state => ({
       editedSettings: {
         ...state.editedSettings,
-        wantGenders,
-      },
+        lookingForGenders
+      }
+    }));
+  };
+
+  _onSmashSwitchChange = (smash: boolean) => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+        activeScenes: {
+          ...state.editedSettings.activeScenes,
+          smash
+        }
+      }
+    }));
+  };
+
+  _onSocialSwitchChange = (social: boolean) => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+        activeScenes: {
+          ...state.editedSettings.activeScenes,
+          social
+        }
+      }
     }));
   };
 
   _onBack = () => {
-    this.props.saveSettings(this.state.editedSettings);
+    const { saveSettings } = this.props;
+    const { editedSettings } = this.state;
+    saveSettings(editedSettings);
     NavigationService.back();
   };
 
   render() {
-    const { showOnSmash, editedSettings } = this.state;
-    const { logoutInProgress } = this.props;
+    const { editedSettings } = this.state;
+    const { logoutInProgress, logout } = this.props;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Edit Settings" leftIconName="back" onLeftIconPress={this._onBack} />
+        <GEMHeader
+          title="Edit Settings"
+          leftIconName="back"
+          onLeftIconPress={this._onBack}
+        />
         <View style={{ flex: 1 }}>
           <ImageBackground
             source={wavesFull}
@@ -130,59 +175,145 @@ class SettingsScreen extends React.Component<Props, State> {
           />
           <KeyboardAwareScrollView
             extraScrollHeight={35}
-            enableOnAndroid={true}
+            enableOnAndroid
             style={{
-              backgroundColor: 'transparent',
+              backgroundColor: 'transparent'
             }}
           >
-            <View
-              style={[
-                styles.settingsBlock,
-                { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
-              ]}
-            >
-              <Text style={textStyles.headline6Style}>Show me on Smash</Text>
-              <Switch
-                value={showOnSmash}
-                tintColor={Colors.AquaMarine /* TODO: investigate if this is deprecated */}
-                onTintColor={Colors.AquaMarine}
-                trackColor={Colors.AquaMarine}
-                ios_backgroundColor={Colors.AquaMarine}
-                onValueChange={value => {
-                  this.setState({
-                    showOnSmash: value,
-                  });
+            <View style={[styles.settingsBlock, { marginTop: 20 }]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'JumboSocial 🐘'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSocial is where you can match with people for hanging out.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingBottom: 15,
+                  paddingLeft: 10
                 }}
-              />
+              >
+                <Text style={textStyles.body1Style}>Show me on Social</Text>
+                <Switch
+                  value={editedSettings.activeScenes.social}
+                  tintColor={
+                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                  }
+                  onTintColor={Colors.AquaMarine}
+                  trackColor={Colors.AquaMarine}
+                  ios_backgroundColor={Colors.AquaMarine}
+                  onValueChange={this._onSocialSwitchChange}
+                />
+              </View>
             </View>
-            <View style={styles.settingsBlock}>
-              <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
-                {'Gender Preferences'}
-              </Text>
-              <Text style={[textStyles.body2Style, { padding: 10 }]}>
-                {
-                  'Your gender preferences help determine who you’ll be shown to and who to show to you for JumboSmash. Your preferences will never be shown on your profile. '
-                }
-              </Text>
-              <Text style={[textStyles.headline6Style, { textAlign: 'center', paddingBottom: 10 }]}>
-                {'I identify as:'}
-              </Text>
-              <GenderSelector
-                defaultGenders={editedSettings.useGenders}
-                onChange={this._onUseGendersChange}
-                plural={false}
-              />
-              <Text style={[textStyles.headline6Style, { textAlign: 'center', padding: 10 }]}>
-                {'I identify as:'}
-              </Text>
-              <GenderSelector
-                defaultGenders={editedSettings.wantGenders}
-                onChange={this._onWantGendersChange}
-                plural
-              />
+            <View style={[styles.settingsBlock]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'JumboSmash 🍑'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSmash is where you can get it on. You know what this is.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingBottom: 20,
+                  alignItems: 'center',
+                  paddingLeft: 10
+                }}
+              >
+                <Text style={textStyles.body1Style}>Show me on Smash</Text>
+                <Switch
+                  value={editedSettings.activeScenes.smash}
+                  tintColor={
+                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
+                  }
+                  onTintColor={Colors.AquaMarine}
+                  trackColor={Colors.AquaMarine}
+                  ios_backgroundColor={Colors.AquaMarine}
+                  onValueChange={this._onSmashSwitchChange}
+                />
+              </View>
+              <Collapsible collapsed={!editedSettings.activeScenes.smash}>
+                <Spacer />
+                <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
+                  {'Gender Preferences'}
+                </Text>
+                <Text style={[textStyles.body2Style, { padding: 10 }]}>
+                  {
+                    'This helps JumboSmash match you with the right people. For more information, check out our Statement on Gender. None of the following information will be shown on your profile. '
+                  }
+                </Text>
+                <Spacer />
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    { textAlign: 'center', paddingBottom: 10 }
+                  ]}
+                >
+                  {'I identify as:'}
+                </Text>
+                <GenderSelector
+                  defaultGenders={editedSettings.identifyAsGenders}
+                  onChange={this._onIdentifyAsGendersChange}
+                  plural={false}
+                />
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    { textAlign: 'center', padding: 10 }
+                  ]}
+                >
+                  {"I'm looking for:"}
+                </Text>
+                <GenderSelector
+                  defaultGenders={editedSettings.lookingForGenders}
+                  onChange={this._onWantGendersChange}
+                  plural
+                />
+              </Collapsible>
             </View>
 
             <View style={styles.settingsBlock}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'Safety & Legal'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'Resources, information, and terms and conditions related to usage of JumboSmash'
+                  }
+                </Text>
+              </View>
+              <Spacer />
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"
@@ -205,7 +336,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </View>
               <PrimaryButton
                 title="Log Out"
-                onPress={this.props.logout}
+                onPress={logout}
                 disabled={logoutInProgress}
                 loading={logoutInProgress}
               />
@@ -219,5 +350,5 @@ class SettingsScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(SettingsScreen);

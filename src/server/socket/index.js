@@ -6,6 +6,7 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
+const { UNAUTHORIZED } = require('../api/status-codes');
 const logger = require('../logger');
 const { getUser } = require('../api/auth/utils');
 
@@ -27,7 +28,10 @@ function init(server: Server) {
         socket.user = user;
         next();
       })
-      .catch(next);
+      .catch(() => {
+        // A caught error from getUser means the token is invalid.
+        next(new Error(UNAUTHORIZED.status));
+      });
   });
   /* eslint-enable no-param-reassign */
 
