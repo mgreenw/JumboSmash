@@ -69,11 +69,17 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
     [new Date()],
   );
 
+  const isAdmin = (await db.query(`
+    SELECT id
+    FROM admins
+    WHERE utln = $1
+  `, [utln])).rowCount > 0;
+
   // Check if a user exists for this utln.
   const tokenUUID = uuid();
   result = await db.query(`
     INSERT INTO users
-      (utln, email, token_uuid, expo_push_token)
+      (utln, email, token_uuid, is_admin, expo_push_token)
       VALUES ($1, $2, $3, $4)
     ON CONFLICT (utln)
       DO UPDATE
@@ -81,7 +87,7 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
           successful_logins = users.successful_logins + EXCLUDED.successful_logins,
           token_uuid = $3
     RETURNING id
-  `, [utln, verification.email, tokenUUID, expoPushToken]);
+  `, [utln, verification.email, tokenUUID, isAdmin, expoPushToken]);
 
   // Get the user from the query results
   const user = result.rows[0];

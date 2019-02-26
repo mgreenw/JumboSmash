@@ -789,7 +789,7 @@ export default function rootReducer(
       );
 
       const unmessagedMatchIds = orderedIds.slice(0, index);
-      const messagedMatchIds = orderedIds.slice(index + 1).reverse();
+      const messagedMatchIds = orderedIds.slice(index).reverse();
 
       const confirmedConversations = updateMostRecentConversations(
         state,
