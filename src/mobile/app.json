@@ -11,7 +11,7 @@
     "icon": "./assets/AppStoreIcon.png",
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 3,
+      "versionCode": 4,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
