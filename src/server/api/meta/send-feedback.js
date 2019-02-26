@@ -11,7 +11,7 @@ const schema = {
   "type": "object",
   "properties": {
     "message": {
-      "description": "The description of why the user was blocked.",
+      "description": "The feedback.",
       "type": "string",
     }
   },

@@ -17,7 +17,7 @@ const schema = {
       "multipleOf": 1 // This asserts that the javascript number is an integer
     },
     "message": {
-      "description": "The description of why the user was blocked.",
+      "description": "The description of why the user was reported.",
       "type": "string",
     }
   },
