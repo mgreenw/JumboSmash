@@ -80,12 +80,14 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
   result = await db.query(`
     INSERT INTO users
       (utln, email, token_uuid, is_admin, expo_push_token)
-      VALUES ($1, $2, $3, $4)
+      VALUES ($1, $2, $3, $4, $5)
     ON CONFLICT (utln)
       DO UPDATE
         SET
           successful_logins = users.successful_logins + EXCLUDED.successful_logins,
-          token_uuid = $3
+          token_uuid = $3,
+          is_admin = $4,
+          expo_push_token = $5
     RETURNING id
   `, [utln, verification.email, tokenUUID, isAdmin, expoPushToken]);
 
