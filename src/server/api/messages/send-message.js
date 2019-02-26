@@ -11,6 +11,7 @@ const {
   canAccessUserData,
 } = require('../utils');
 const Socket = require('../../socket');
+const Expo = require('../../expo');
 
 /* eslint-disable */
 const schema = {
@@ -82,6 +83,12 @@ const sendMessage = async (
       ...message,
       fromClient: false,
     });
+
+    Expo.sendNotifications([{
+      userId: receiverUserId,
+      sound: 'default',
+      body: `New Message: ${content}`,
+    }]);
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
       message,
