@@ -35,7 +35,6 @@ const schema = {
 /* eslint-enable */
 
 async function sendMatchNotification(userId: number, matchUserId: number, scene) {
-
   const matchResult = await db.query(`
     ${utils.matchQuery}
     AND me_critic.candidate_user_id = $2
