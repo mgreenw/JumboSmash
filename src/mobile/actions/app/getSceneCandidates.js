@@ -1,7 +1,7 @@
 // @flow
 
 import type { Candidate, Scene, Dispatch } from 'mobile/reducers';
-import getSceneCandidates from 'mobile/api/relationships/getSceneCandidates';
+import getSceneCandidatesApi from 'mobile/api/relationships/getSceneCandidates';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
@@ -41,15 +41,21 @@ function complete(
   };
 }
 
-export default (scene: Scene) => (dispatch: Dispatch) => {
-  dispatch(initiate(scene));
-  DevTesting.fakeLatency(() => {
-    getSceneCandidates(scene)
-      .then(candidates => {
-        dispatch(complete(candidates, scene));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+const getSceneCandidates = (scene: Scene) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate(scene));
+    DevTesting.fakeLatency(() => {
+      getSceneCandidatesApi(scene)
+        .then(candidates => {
+          dispatch(complete(candidates, scene));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default getSceneCandidates;

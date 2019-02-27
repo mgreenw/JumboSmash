@@ -32,23 +32,25 @@ function complete(settings: UserSettings): SaveSettingsCompleted_Action {
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export default (settings: UserSettings) => (
-  dispatch: Dispatch,
-  getState: GetState
-) => {
-  const { client } = getState();
-  if (client && _.isEqual(client.settings, settings)) {
-    return;
+const saveSettings = (settings: UserSettings) => {
+  function thunk(dispatch: Dispatch, getState: GetState) {
+    const { client } = getState();
+    if (client && _.isEqual(client.settings, settings)) {
+      return;
+    }
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
+      updateMySettings(settings)
+        .then(newSettings => {
+          dispatch(complete(newSettings));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
   }
-  dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    updateMySettings(settings)
-      .then(newSettings => {
-        dispatch(complete(newSettings));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default saveSettings;

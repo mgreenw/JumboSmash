@@ -1,6 +1,6 @@
 // @flow
 import type { Scene, Dispatch } from 'mobile/reducers';
-import judgeSceneCandidate from 'mobile/api/relationships/judgeSceneCandidate';
+import judgeSceneCandidateApi from 'mobile/api/relationships/judgeSceneCandidate';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type JudgeSceneCandidateInitiated_Action = {
@@ -36,15 +36,23 @@ function complete(
   };
 }
 
-export default (candidateUserId: number, scene: Scene, liked: boolean) => (
-  dispatch: Dispatch
+const judgeSceneCandidate = (
+  candidateUserId: number,
+  scene: Scene,
+  liked: boolean
 ) => {
-  dispatch(initiate(candidateUserId, scene));
-  judgeSceneCandidate(candidateUserId, scene, liked)
-    .then(() => {
-      dispatch(complete(candidateUserId, scene));
-    })
-    .catch(error => {
-      dispatch(apiErrorHandler(error));
-    });
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate(candidateUserId, scene));
+    judgeSceneCandidateApi(candidateUserId, scene, liked)
+      .then(() => {
+        dispatch(complete(candidateUserId, scene));
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default judgeSceneCandidate;

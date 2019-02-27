@@ -34,15 +34,21 @@ function complete(matches: ServerMatch[]): GetMatchesCompleted_Action {
   };
 }
 
-export default () => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    getMatchesApi()
-      .then(matches => {
-        dispatch(complete(matches));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+const getMatches = () => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
+      getMatchesApi()
+        .then(matches => {
+          dispatch(complete(matches));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default getMatches;

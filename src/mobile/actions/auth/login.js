@@ -42,23 +42,29 @@ function complete(response: Login_Response): LoginCompleted_Action {
 }
 
 // TODO: consider error handling on the multiSet.
-export default (utln: string, code: string) => (dispatch: Dispatch) => {
-  dispatch(initiate());
+const login = (utln: string, code: string) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
 
-  DevTesting.fakeLatency(() => {
-    verify({ utln, code }).then(response => {
-      const token = response.token;
-      // should be non-null, should be non-empty
-      if (token) {
-        AsyncStorage.multiSet([['token', token]]).then(errors => {
-          if (errors) {
-            DevTesting.log('Error in storing token:', errors);
-          }
+    DevTesting.fakeLatency(() => {
+      verify({ utln, code }).then(response => {
+        const token = response.token;
+        // should be non-null, should be non-empty
+        if (token) {
+          AsyncStorage.multiSet([['token', token]]).then(errors => {
+            if (errors) {
+              DevTesting.log('Error in storing token:', errors);
+            }
+            dispatch(complete(response));
+          });
+        } else {
           dispatch(complete(response));
-        });
-      } else {
-        dispatch(complete(response));
-      }
+        }
+      });
     });
-  });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default login;

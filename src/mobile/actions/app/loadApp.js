@@ -70,23 +70,29 @@ function complete(
   };
 }
 
-export default () => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  getMyProfile()
-    .then(profile => {
-      // if profile is null, onboarding has not been completed, though
-      // some photos may have been uploaded.
-      if (profile === null) {
-        getMyPhotos().then(photoIds => {
-          dispatch(complete(null, null, false, photoIds));
-        });
-      } else {
-        getMySettings().then(settings => {
-          dispatch(complete(profile, settings, true));
-        });
-      }
-    })
-    .catch(error => {
-      dispatch(apiErrorHandler(error));
-    });
+const loadApp = () => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    getMyProfile()
+      .then(profile => {
+        // if profile is null, onboarding has not been completed, though
+        // some photos may have been uploaded.
+        if (profile === null) {
+          getMyPhotos().then(photoIds => {
+            dispatch(complete(null, null, false, photoIds));
+          });
+        } else {
+          getMySettings().then(settings => {
+            dispatch(complete(profile, settings, true));
+          });
+        }
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default loadApp;

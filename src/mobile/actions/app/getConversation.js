@@ -1,7 +1,7 @@
 // @flow
 
 import type { Message, Dispatch } from 'mobile/reducers';
-import getConversation from 'mobile/api/messages/getConversation';
+import getConversationApi from 'mobile/api/messages/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
@@ -37,17 +37,21 @@ function complete(
   };
 }
 
-export default (userId: number, mostRecentMessageId?: number) => (
-  dispatch: Dispatch
-) => {
-  dispatch(initiate(userId));
-  DevTesting.fakeLatency(() => {
-    getConversation(userId, mostRecentMessageId)
-      .then(messages => {
-        dispatch(complete(userId, messages));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+const getConversation = (userId: number, mostRecentMessageId?: number) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate(userId));
+    DevTesting.fakeLatency(() => {
+      getConversationApi(userId, mostRecentMessageId)
+        .then(messages => {
+          dispatch(complete(userId, messages));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default getConversation;

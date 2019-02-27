@@ -37,22 +37,27 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export default (uri: string) => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  getSignedUrl()
-    .then(payload => {
-      uploadPhotoToS3(uri, payload).then(success => {
-        if (success) {
-          confirmUploadAction().then(photoIds => {
-            dispatch(complete(photoIds));
-          });
-        } else {
-          throw new Error('Error Uploading Photo');
-        }
+const uploadPhoto = (uri: string) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    getSignedUrl()
+      .then(payload => {
+        uploadPhotoToS3(uri, payload).then(success => {
+          if (success) {
+            confirmUploadAction().then(photoIds => {
+              dispatch(complete(photoIds));
+            });
+          } else {
+            throw new Error('Error Uploading Photo');
+          }
+        });
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
       });
-    })
-    .catch(error => {
-      dispatch(apiErrorHandler(error));
-    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default uploadPhoto;

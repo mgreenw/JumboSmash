@@ -32,16 +32,22 @@ function complete(token: string): LoadAuthCompleted_Action {
   };
 }
 
-export default () => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    AsyncStorage.multiGet(['token'])
-      .then(stores => {
-        const token = stores[0][1];
-        dispatch(complete(token));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+const loadAuth = () => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
+      AsyncStorage.multiGet(['token'])
+        .then(stores => {
+          const token = stores[0][1];
+          dispatch(complete(token));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default loadAuth;

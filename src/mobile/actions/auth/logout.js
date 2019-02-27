@@ -34,11 +34,17 @@ function complete(): LogoutCompleted_Action {
 // We log a user out by removing their token; there's no way to invalidate
 // a token's session, so we just remove their access to that session.
 // We don't care if a key didn't exist, as this will still be logged out.
-export default () => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    AsyncStorage.multiRemove(['token']).then(() => {
-      dispatch(complete());
+const logout = () => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
+      AsyncStorage.multiRemove(['token']).then(() => {
+        dispatch(complete());
+      });
     });
-  });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default logout;

@@ -2,7 +2,7 @@
 import type { Dispatch, Message, GiftedChatMessage } from 'mobile/reducers';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
-import sendMessage from '../../api/messages/sendMessage';
+import sendMessageApi from '../../api/messages/sendMessage';
 
 export type SendMessageInitiated_Action = {
   type: 'SEND_MESSAGE__INITIATED',
@@ -45,19 +45,28 @@ function complete(
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
-export default (
+const saveMessage = (
   receiverUserId: number,
   giftedChatMessage: GiftedChatMessage
-) => (dispatch: Dispatch) => {
-  dispatch(initiate(receiverUserId, giftedChatMessage));
-  DevTesting.fakeLatency(() => {
-    sendMessage(receiverUserId, giftedChatMessage.text, giftedChatMessage._id)
-      .then(({ message, previousMessageId }) => {
-        dispatch(complete(receiverUserId, message, previousMessageId));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate(receiverUserId, giftedChatMessage));
+    DevTesting.fakeLatency(() => {
+      sendMessageApi(
+        receiverUserId,
+        giftedChatMessage.text,
+        giftedChatMessage._id
+      )
+        .then(({ message, previousMessageId }) => {
+          dispatch(complete(receiverUserId, message, previousMessageId));
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
+        });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default saveMessage;

@@ -34,13 +34,19 @@ function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
     meta: {}
   };
 }
-export default (photoId: number) => (dispatch: Dispatch) => {
-  dispatch(initiate());
-  deletePhotoApi(photoId)
-    .then(newPhotoIds => {
-      dispatch(complete(newPhotoIds));
-    })
-    .catch(error => {
-      dispatch(apiErrorHandler(error));
-    });
+const deletePhoto = (photoId: number) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    deletePhotoApi(photoId)
+      .then(newPhotoIds => {
+        dispatch(complete(newPhotoIds));
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default deletePhoto;

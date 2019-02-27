@@ -32,21 +32,25 @@ function complete(): CreateProfileAndSettingsCompleted_Action {
   };
 }
 
-export default (fields: ProfileFields, settings: UserSettings) => (
-  dispatch: Dispatch
-) => {
-  dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    // Important that they occur in this order; we use a created profile
-    // to determine that onboarding is done, so settings must be created first
-    updateMySettings(settings)
-      .then(() => {
-        createMyProfileFields(fields).then(() => {
-          dispatch(complete());
+const createUser = (fields: ProfileFields, settings: UserSettings) => {
+  function thunk(dispatch: Dispatch) {
+    dispatch(initiate());
+    DevTesting.fakeLatency(() => {
+      // Important that they occur in this order; we use a created profile
+      // to determine that onboarding is done, so settings must be created first
+      updateMySettings(settings)
+        .then(() => {
+          createMyProfileFields(fields).then(() => {
+            dispatch(complete());
+          });
+        })
+        .catch(error => {
+          dispatch(apiErrorHandler(error));
         });
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+    });
+  }
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default createUser;

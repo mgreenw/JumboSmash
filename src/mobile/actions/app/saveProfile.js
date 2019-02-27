@@ -35,20 +35,23 @@ function complete(fields: ProfileFields): SaveProfileFieldsCompleted_Action {
   };
 }
 
-export default (fields: ProfileFields) => (
-  dispatch: Dispatch,
-  getState: GetState
-) => {
-  const { client } = getState();
-  if (client && _.isEqual(client.profile.fields, fields)) {
-    return;
+const saveProfile = (fields: ProfileFields) => {
+  function thunk(dispatch: Dispatch, getState: GetState) {
+    const { client } = getState();
+    if (client && _.isEqual(client.profile.fields, fields)) {
+      return;
+    }
+    dispatch(initiate());
+    updateMyProfileFields(fields)
+      .then(newFields => {
+        dispatch(complete(newFields));
+      })
+      .catch(error => {
+        dispatch(apiErrorHandler(error));
+      });
   }
-  dispatch(initiate());
-  updateMyProfileFields(fields)
-    .then(newFields => {
-      dispatch(complete(newFields));
-    })
-    .catch(error => {
-      dispatch(apiErrorHandler(error));
-    });
+  thunk.interceptInOffline = true;
+  return thunk;
 };
+
+export default saveProfile;
