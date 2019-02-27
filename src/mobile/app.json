@@ -5,13 +5,13 @@
     "privacy": "unlisted",
     "name": "ProjectGEM-dev",
     "slug": "projectgem-dev",
-    "version": "0.1.5",
+    "version": "0.1.7",
     "description": "Initial app store deployments",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 3,
+      "versionCode": 5,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {

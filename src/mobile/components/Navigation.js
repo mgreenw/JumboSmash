@@ -150,6 +150,12 @@ const CardsStack = createStackNavigator(
   }
 );
 
+CardsStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const ProfileStack = createStackNavigator(
   {
     PROFILE_ROUTE: { screen: Profile },
@@ -164,6 +170,12 @@ const ProfileStack = createStackNavigator(
   }
 );
 
+ProfileStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const MatchesStack = createStackNavigator(
   {
     MATCHES_ROUTE: { screen: Matches },
@@ -175,6 +187,12 @@ const MatchesStack = createStackNavigator(
     ...removeHeader
   }
 );
+
+MatchesStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
 
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
@@ -195,6 +213,12 @@ const MainContentSwitch = createMaterialTopTabNavigator(
   }
 );
 
+MainContentSwitch.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const LoginStack = FluidNavigator(
   {
     SPLASH_ROUTE: { screen: Splash },
@@ -209,6 +233,12 @@ const LoginStack = FluidNavigator(
   }
 );
 
+LoginStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const AuthSwitch = FluidNavigator(
   {
     LOGIN_STACK: LoginStack,
@@ -219,6 +249,12 @@ const AuthSwitch = FluidNavigator(
     ...removeHeader
   }
 );
+
+AuthSwitch.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
 
 const OnboardingStack = FluidNavigator(
   {
@@ -243,6 +279,12 @@ const OnboardingStack = FluidNavigator(
   }
 );
 
+OnboardingStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const AppSwitch = FluidNavigator(
   {
     MAIN_SWITCH: MainContentSwitch,
@@ -255,6 +297,12 @@ const AppSwitch = FluidNavigator(
   }
 );
 
+AppSwitch.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 export const createRootNavigator = () =>
   FluidNavigator(
     {
@@ -266,3 +314,9 @@ export const createRootNavigator = () =>
       ...removeHeader
     }
   );
+
+createRootNavigator.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
