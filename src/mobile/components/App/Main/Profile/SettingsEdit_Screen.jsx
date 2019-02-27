@@ -21,6 +21,7 @@ import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
+import { Constants } from 'expo';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -334,12 +335,18 @@ class SettingsScreen extends React.Component<Props, State> {
                   loading={false}
                 />
               </View>
-              <PrimaryButton
-                title="Log Out"
-                onPress={logout}
-                disabled={logoutInProgress}
-                loading={logoutInProgress}
-              />
+              <View style={{ paddingBottom: 20 }}>
+                <PrimaryButton
+                  title="Log Out"
+                  onPress={logout}
+                  disabled={logoutInProgress}
+                  loading={logoutInProgress}
+                />
+              </View>
+              <Spacer />
+              <Text style={[{ textAlign: 'center' }, textStyles.body2Style]}>
+                {`version ${Constants.manifest.version}`}
+              </Text>
             </View>
           </KeyboardAwareScrollView>
         </View>
