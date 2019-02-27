@@ -3,8 +3,9 @@
 const { Expo } = require('expo-server-sdk');
 const _ = require('lodash');
 
-const db = require('./db');
-const logger = require('./logger');
+const db = require('../db');
+const logger = require('../logger');
+const notificationReceiptQueue = require('./receipt-queue');
 
 const expo = new Expo();
 
@@ -13,6 +14,7 @@ type Notification = {
   sound: 'default' | null,
   body: string,
   data?: Object,
+  badge?: number,
 };
 
 // Note: You cannot send more than one notification per user using this method.
@@ -83,6 +85,9 @@ async function sendNotifications(notifications: Notification[]) {
         VALUES ${template}
       `, _.flatten(params));
 
+      const ticketIds = chunk.map(notification => notification[1].ticketId);
+      notificationReceiptQueue.add(ticketIds, { delay: 900000 }); // Delay by 15 minutes
+
       logger.info(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
 
       // NOTE: If a ticket contains an error code in ticket.details.error, you
@@ -96,6 +101,4 @@ async function sendNotifications(notifications: Notification[]) {
   }
 }
 
-module.exports = {
-  sendNotifications,
-};
+module.exports = sendNotifications;

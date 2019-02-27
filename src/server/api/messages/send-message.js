@@ -97,6 +97,7 @@ const sendMessage = async (
       data: {
         senderUserId,
       },
+      badge: 1, // TODO: make this dynamic with the number of unread messages
     }]);
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
