@@ -27,8 +27,7 @@ async function sendNotifications(notifications: Notification[]) {
     notificationMap[userId] = rest;
   });
 
-  // Get the push token for each user in question and map them to the correct
-  // notification
+  // Get the push token for each user in question and map them to the correct notification
   (await db.query(`
     SELECT expo_push_token AS "expoPushToken", id AS "userId"
     FROM users
@@ -58,42 +57,44 @@ async function sendNotifications(notifications: Notification[]) {
     }
   });
 
+  // Seperate the notifications into groups of 100
   const chunks = expo.chunkPushNotifications(Object.entries(notificationMap));
+
   /* eslint-disable no-restricted-syntax */
   /* eslint-disable no-await-in-loop */
+  // For each chunk of 100, send the notifications and add them to the database
   for (const chunk of chunks) {
     try {
+      // Remote the userId from the notification and send them!
       const justNotifications = chunk.map(notificationWithUserId => notificationWithUserId[1]);
       const ticketChunk = await expo.sendPushNotificationsAsync(justNotifications);
+
+      // For each, set the ticket id from the response
       ticketChunk.forEach((ticket, index) => {
         chunk[index][1].ticketId = ticket.id;
       });
 
+      // Dynamically generate the insert query
       const generateValueTemplate = (startIndex: number): string => {
         return `($${startIndex + 1}, $${startIndex + 2}, $${startIndex + 3})`;
       };
-
       const template = chunk.map((notificaiton, index) => generateValueTemplate(index * 3)).join(',');
       const params = chunk.map((notification) => {
         return [notification[0], notification[1].ticketId, notification[1].to];
       });
 
-      // Sweet! These have been sent, add them to the database
+      // Insert the sent notifications into the database
       await db.query(`
         INSERT INTO notifications
         (user_id, ticket_id, expo_push_token)
         VALUES ${template}
       `, _.flatten(params));
 
+      // Queue this set of notifications for receipt retrieval
       const ticketIds = chunk.map(notification => notification[1].ticketId);
       notificationReceiptQueue.add(ticketIds, { delay: 900000 }); // Delay by 15 minutes
 
       logger.info(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
-
-      // NOTE: If a ticket contains an error code in ticket.details.error, you
-      // must handle it appropriately. The error codes are listed in the Expo
-      // documentation:
-      // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
     } catch (error) {
       logger.error('Failed to send notifications', error);
       logger.error(chunk);
