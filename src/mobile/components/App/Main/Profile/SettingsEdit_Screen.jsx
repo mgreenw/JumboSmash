@@ -345,7 +345,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </View>
               <Spacer />
               <Text style={[{ textAlign: 'center' }, textStyles.body2Style]}>
-                {`version ${Constants.manifest.version}`}
+                {`Version ${Constants.manifest.version}`}
               </Text>
             </View>
           </KeyboardAwareScrollView>
