@@ -9,7 +9,7 @@ const notificationReceiptQueue = require('./receipt-queue');
 
 const expo = new Expo();
 
-type Notification = {
+export type Notification = {
   userId: number,
   sound: 'default' | null,
   body: string,

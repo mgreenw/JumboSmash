@@ -1,6 +1,9 @@
 // @flow
 
 import type { $Request } from 'express';
+import type { Notification } from '../../expo/send-notifications';
+
+const _ = require('lodash');
 
 const {
   status,
@@ -13,6 +16,7 @@ const codes = require('../status-codes');
 const db = require('../../db');
 const logger = require('../../logger');
 const Socket = require('../../socket');
+const Expo = require('../../expo');
 
 /* eslint-disable */
 const schema = {
@@ -34,7 +38,17 @@ const schema = {
 };
 /* eslint-enable */
 
-async function sendMatchNotification(userId: number, matchUserId: number, scene) {
+const emojis = {
+  smash: String.fromCodePoint(0x1F351),
+  social: String.fromCodePoint(0x1F418),
+  stone: String.fromCodePoint(0x1F343),
+};
+
+async function sendMatchNotification(
+  userId: number,
+  matchUserId: number,
+  scene: string,
+): Promise<Notification[]> {
   const matchResult = await db.query(`
     ${utils.matchQuery}
     AND me_critic.candidate_user_id = $2
@@ -43,11 +57,24 @@ async function sendMatchNotification(userId: number, matchUserId: number, scene)
 
   if (matchResult.rowCount === 0) {
     logger.error('No match found in attempt to send notification.');
-    return;
+    return [];
   }
 
   const [match] = matchResult.rows;
+
+  // Send the notification over socket
   Socket.sendNewMatchNotification(userId, { match, scene });
+
+  // Return the push notification information
+  return [{
+    userId,
+    sound: 'default',
+    body: `You have a new match! ${emojis[scene]}`,
+    data: {
+      userId,
+    },
+    badge: 1, // TODO: make this dynamic with the number of unread messages
+  }];
 }
 
 async function checkMatch(userId: number, candidateUserId: number, scene: string) {
@@ -68,10 +95,11 @@ async function checkMatch(userId: number, candidateUserId: number, scene: string
     // Check if the users are matched
     const matched = matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
     if (matched) {
-      await Promise.all([
+      const notifications = _.flatten(await Promise.all([
         sendMatchNotification(userId, candidateUserId, scene),
         sendMatchNotification(candidateUserId, userId, scene),
-      ]);
+      ]));
+      Expo.sendNotifications(notifications);
     }
   } catch (error) {
     logger.error('Failed to check for match', error);
