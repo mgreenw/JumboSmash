@@ -56,7 +56,18 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     });
   }
 
-  const memberInfo = await authUtils.getMemberInfo(email);
+  const memberInfoResponse = await authUtils.getMemberInfo(email);
+  let memberInfo = null;
+  switch (memberInfoResponse.status) {
+    case 'GET_MEMBER_INFO__SUCCESS':
+      return resolve(memberInfoResponse.member);
+    case 'GET_MEMBER_INFO__NOT_FOUND':
+      return resolve(null);
+    case 'GET_MEMBER_INFO__NOT_TUFTS_EMAIL':
+      return resolve(null);
+    default:
+      return reject(new Error('Koh: No status found in result body.'));
+  }
 
   //  If the member info is null (not found), error that it was not found.
   if (!memberInfo) {
