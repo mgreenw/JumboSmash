@@ -34,7 +34,7 @@ const schema = {
 };
 /* eslint-enable */
 
-async function sendMatchNotification(userId: number, matchUserId: number, scene) {
+async function sendMatchSocketNotification(userId: number, matchUserId: number, scene) {
   const matchResult = await db.query(`
     ${utils.matchQuery}
     AND me_critic.candidate_user_id = $2
@@ -50,12 +50,17 @@ async function sendMatchNotification(userId: number, matchUserId: number, scene)
   Socket.sendNewMatchNotification(userId, { match, scene });
 }
 
-async function checkMatch(userId: number, candidateUserId: number, scene: string) {
+async function checkMatch(
+  userId: number,
+  candidateUserId: number,
+  scene: string,
+): Promise<boolean> {
   try {
     const matchedResult = await db.query(`
       SELECT
         COALESCE(
-          r_critic.liked_${scene}, false) AND COALESCE(r_candidate.liked_${scene},
+          r_critic.liked_${scene},
+          false) AND COALESCE(r_candidate.liked_${scene},
           false
         ) AS matched
       FROM relationships r_critic
@@ -66,15 +71,10 @@ async function checkMatch(userId: number, candidateUserId: number, scene: string
     `, [userId, candidateUserId]);
 
     // Check if the users are matched
-    const matched = matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
-    if (matched) {
-      await Promise.all([
-        sendMatchNotification(userId, candidateUserId, scene),
-        sendMatchNotification(candidateUserId, userId, scene),
-      ]);
-    }
+    return matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
   } catch (error) {
     logger.error('Failed to check for match', error);
+    throw error;
   }
 }
 
@@ -114,7 +114,14 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
     `, [userId, candidateUserId, liked]);
 
     if (liked) {
-      checkMatch(userId, candidateUserId, scene);
+      checkMatch(userId, candidateUserId, scene).then(async (matched) => {
+        if (matched) {
+          await Promise.all([
+            sendMatchSocketNotification(userId, candidateUserId, scene),
+            sendMatchSocketNotification(candidateUserId, userId, scene),
+          ]);
+        }
+      });
     }
 
     // If the query succeeded, return success
