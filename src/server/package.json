@@ -22,7 +22,8 @@
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "release": "release-it"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -62,6 +63,7 @@
     "jest": "^23.6.0",
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
+    "release-it": "^10.2.0",
     "supertest": "^3.3.0"
   },
   "jest": {
