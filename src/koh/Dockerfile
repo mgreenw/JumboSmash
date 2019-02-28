@@ -32,5 +32,5 @@ COPY --from=builder /home/src/app/dist .
 # NOTE: npm run start does not specifiy a NODE_ENV. This must be specified
 # elsewhere, either in a docker-compose.yml file or when running
 # the docker container directly
-EXPOSE 3000
+EXPOSE 3001
 CMD ["npm", "run", "start"]
