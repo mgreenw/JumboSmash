@@ -1,26 +1,70 @@
 // @flow
 const { IncomingWebhook } = require('@slack/client');
 
-const url = 'https://hooks.slack.com/services/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';
-const webhook = new IncomingWebhook(url);
 const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
-function postVerificationCode(
+const verificationCodes = new IncomingWebhook('https://hooks.slack.com/services/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');
+exports.postVerificationCode = (
   verificationCode: string,
   utln: string,
   email: string,
-) {
-  // TODO: fix the NODE_ENV issue
+) => {
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
-    webhook.send(`
+    verificationCodes.send(`
       code:  *${verificationCode}*
       utln:  *${utln}*
       email: *${email}*
       env:   *${NODE_ENV}*
     `);
   }
-}
+};
 
-exports.postVerificationCode = postVerificationCode;
+const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
+exports.postReport = (
+  reportingUserId: number,
+  reportedUserId: number,
+  message: string,
+) => {
+  // TODO: Send an email as a backup in case slack fails to send the report.
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+    reporting.send(`
+A new report was filed.
+
+Reporting User: *${reportingUserId}*
+Reported User: *${reportedUserId}*
+Environment:   *${NODE_ENV}*
+
+${'```'}${message}${'```'}`);
+  }
+};
+
+const feedback = new IncomingWebhook('https://hooks.slack.com/services/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');
+exports.postFeedback = (
+  userId: number,
+  message: string,
+  reasonCode: string,
+) => {
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+    feedback.send(`
+---------------------------
+We've got some more feedback!
+
+User ID: ${userId}
+Environment:   *${NODE_ENV}*
+
+Reason Code: ${reasonCode}
+Message:
+${'```'}${message}${'```'}`);
+  }
+};
+
+const server = new IncomingWebhook('https://hooks.slack.com/services/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');
+exports.postServerUpdate = (
+  message: string,
+) => {
+  if (NODE_ENV === 'staging' || NODE_ENV === 'production') {
+    server.send(message);
+  }
+};
