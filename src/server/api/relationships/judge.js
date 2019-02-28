@@ -44,7 +44,7 @@ const emojis = {
   stone: String.fromCodePoint(0x1F343),
 };
 
-async function sendMatchNotification(
+async function sendMatchSocketNotification(
   userId: number,
   matchUserId: number,
   scene: string,
@@ -77,12 +77,17 @@ async function sendMatchNotification(
   }];
 }
 
-async function checkMatch(userId: number, candidateUserId: number, scene: string) {
+async function checkMatch(
+  userId: number,
+  candidateUserId: number,
+  scene: string,
+): Promise<boolean> {
   try {
     const matchedResult = await db.query(`
       SELECT
         COALESCE(
-          r_critic.liked_${scene}, false) AND COALESCE(r_candidate.liked_${scene},
+          r_critic.liked_${scene},
+          false) AND COALESCE(r_candidate.liked_${scene},
           false
         ) AS matched
       FROM relationships r_critic
@@ -92,17 +97,11 @@ async function checkMatch(userId: number, candidateUserId: number, scene: string
       WHERE r_critic.critic_user_id = $1 AND r_critic.candidate_user_id = $2
     `, [userId, candidateUserId]);
 
-    // Check if the users are matched
-    const matched = matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
-    if (matched) {
-      const notifications = _.flatten(await Promise.all([
-        sendMatchNotification(userId, candidateUserId, scene),
-        sendMatchNotification(candidateUserId, userId, scene),
-      ]));
-      Expo.sendNotifications(notifications);
-    }
+    // Return true if
+    return matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
   } catch (error) {
     logger.error('Failed to check for match', error);
+    throw error;
   }
 }
 
@@ -141,8 +140,19 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
     `, [userId, candidateUserId, liked]);
 
+    // Send notifications!
     if (liked) {
-      checkMatch(userId, candidateUserId, scene);
+      checkMatch(userId, candidateUserId, scene).then(async (matched) => {
+        if (matched) {
+          // Send the notifications over socket. This function returns the push notification
+          // object for each match. We send the push notifications together in one go
+          const notifications = _.flatten(await Promise.all([
+            sendMatchSocketNotification(userId, candidateUserId, scene),
+            sendMatchSocketNotification(candidateUserId, userId, scene),
+          ]));
+          Expo.sendNotifications(notifications);
+        }
+      });
     }
 
     // If the query succeeded, return success

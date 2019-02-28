@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const db = require('../../../db');
 const logger = require('../../../logger');
 
+const AuthenticationError = require('./authentication-error');
+
 function getUser(token: string): Promise<any> {
   return new Promise((resolve, reject) => {
     jwt.verify(token, config.get('secret'), async (err, decoded) => {
@@ -30,13 +32,13 @@ function getUser(token: string): Promise<any> {
 
         // If no user exists with that id, fail
         if (result.rowCount === 0) {
-          return reject(new Error('User does not exist'));
+          return reject(new AuthenticationError('User does not exist'));
         }
 
         // Check if the user's token's uuid is valid
         const { tokenUUID, ...user } = result.rows[0];
         if (tokenUUID === null || decoded.uuid !== tokenUUID) {
-          return reject(new Error('User token invalid'));
+          return reject(new AuthenticationError('User token invalid'));
         }
         // If a user exists, return the user!
         return resolve(user);
