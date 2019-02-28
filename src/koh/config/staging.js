@@ -4,10 +4,10 @@ const secrets = require('../secrets');
 
 module.exports = {
   db: {
-    host: 'projectgem.ccpusbgks0bo.us-east-1.rds.amazonaws.com',
+    host: secrets.get("POSTGRES_HOST"),
     port: 5432,
-    database: 'koh_staging',
-    user: 'koh_staging_user',
-    password: secrets.get('POSTGRES_KOH_STAGE_PASSWORD'),
+    database: secrets.get("KOH_POSTGRES_DATABASE"),
+    user: secrets.get("KOH_POSTGRES_USER"),
+    password: secrets.get('KOH_POSTGRES_PASSWORD'),
   },
 };
