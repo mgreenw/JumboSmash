@@ -6,9 +6,9 @@ module.exports = {
   db: {
     host: secrets.get('POSTGRES_HOST'),
     port: 5432,
-    database: secrets.get('POSTGRES_DATABASE'),
-    user: secrets.get('POSTGRES_USER'),
-    password: secrets.get('POSTGRES_PASSWORD'),
+    database: secrets.get('SERVER_POSTGRES_DATABASE'),
+    user: secrets.get('SERVER_POSTGRES_USER'),
+    password: secrets.get('SERVER_POSTGRES_PASSWORD'),
   },
   secret: secrets.get('SECRET'),
   sendgrid_api_key: secrets.get('SENDGRID_API_KEY'),
