@@ -2,6 +2,7 @@ language: generic
 sudo: required
 services:
 - docker
+- redis-server
 jobs:
   include:
   - stage: website
