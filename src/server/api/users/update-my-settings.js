@@ -57,6 +57,10 @@ const schema = {
            "type": "boolean"
         }
       }
+    },
+    "expoPushToken": {
+      "description": "The push notification token from expo",
+      "type": "string"
     }
   },
   "required": []
@@ -72,6 +76,7 @@ const updateMySettings = async (
   lookingForGenders: Object,
   indentifyAsGenders: Object,
   activeScenes: Object,
+  expoPushToken: ?string,
 ) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
@@ -86,6 +91,7 @@ const updateMySettings = async (
     active_smash: activeScenes.smash,
     active_social: activeScenes.social,
     active_stone: activeScenes.stone,
+    expo_push_token: expoPushToken,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
@@ -129,6 +135,7 @@ const handler = [
       req.body.lookingForGenders || {},
       req.body.identifyAsGenders || {},
       req.body.activeScenes || {},
+      req.body.expoPushToken,
     );
   }),
 ];

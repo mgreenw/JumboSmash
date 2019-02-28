@@ -21,6 +21,10 @@ const schema = {
     "code": {
       "description": "The 6-digit code the user was sent in an email",
       "type": "string"
+    },
+    "expoPushToken": {
+      "description": "The push notification token from expo",
+      "type": "string"
     }
   },
   "required": ["utln", "code"]
@@ -31,7 +35,7 @@ const schema = {
  * @api {post} /api/auth/verify/
  * Verify a user with their verification hacodesh
  */
-const verify = async (utln: string, code: number) => {
+const verify = async (utln: string, code: number, expoPushToken: ?string) => {
   // Get the user's id and hashed password. Return
   let result = await db.query(`
     UPDATE verification_codes
@@ -75,15 +79,17 @@ const verify = async (utln: string, code: number) => {
   const tokenUUID = uuid();
   result = await db.query(`
     INSERT INTO users
-      (utln, email, token_uuid, is_admin)
-      VALUES ($1, $2, $3, $4)
+      (utln, email, token_uuid, is_admin, expo_push_token)
+      VALUES ($1, $2, $3, $4, $5)
     ON CONFLICT (utln)
       DO UPDATE
         SET
           successful_logins = users.successful_logins + EXCLUDED.successful_logins,
-          token_uuid = $3
+          token_uuid = $3,
+          is_admin = $4,
+          expo_push_token = $5
     RETURNING id
-  `, [utln, verification.email, tokenUUID, isAdmin]);
+  `, [utln, verification.email, tokenUUID, isAdmin, expoPushToken]);
 
   // Get the user from the query results
   const user = result.rows[0];
@@ -105,7 +111,7 @@ const verify = async (utln: string, code: number) => {
 const handler = [
   apiUtils.validate(schema),
   apiUtils.asyncHandler(async (req: $Request) => {
-    return verify(req.body.utln, req.body.code);
+    return verify(req.body.utln, req.body.code, req.body.expoPushToken);
   }),
 ];
 
