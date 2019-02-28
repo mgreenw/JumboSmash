@@ -137,4 +137,23 @@ describe('POST api/relationships/report', () => {
     const [{ blocked }] = (await db.query('SELECT blocked FROM relationships WHERE critic_user_id = $1 AND candidate_user_id = $2', [me.id, user.id])).rows;
     expect(blocked).toBeTruthy();
   });
+
+  it('should not block the user if requested', async () => {
+    const user = await dbUtils.createUser('testu35', true);
+    const res = await request(app)
+      .post('/api/relationships/report')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json')
+      .send({
+        userId: user.id,
+        message: 'Bad person',
+        reasonCode: 'GOOD_REASON',
+        block: false,
+      });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.REPORT__SUCCESS.status);
+
+    const [{ blocked }] = (await db.query('SELECT blocked FROM relationships WHERE critic_user_id = $1 AND candidate_user_id = $2', [me.id, user.id])).rows;
+    expect(blocked).toBeFalsy();
+  });
 });
