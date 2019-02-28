@@ -5,7 +5,7 @@ const express = require('express');
 const getSceneCandidates = require('./get-scene-candidates');
 const getMatches = require('./get-matches');
 const judge = require('./judge');
-const block = require('./block');
+const report = require('./report');
 
 const relationshipsRouter = express.Router();
 
@@ -13,6 +13,6 @@ const relationshipsRouter = express.Router();
 relationshipsRouter.get('/candidates/:scene', getSceneCandidates.handler);
 relationshipsRouter.get('/matches', getMatches.handler);
 relationshipsRouter.post('/judge', judge.handler);
-relationshipsRouter.post('/block', block.handler);
+relationshipsRouter.post('/report', report.handler);
 
 module.exports = relationshipsRouter;

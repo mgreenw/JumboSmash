@@ -1,8 +1,8 @@
-# Report User
+# Report
 
-Send a report about another user.
+Send a report about another user. Optionally block the user at the same time
 
-**URL** : `/api/meta/report`
+**URL** : `/api/relationships/report`
 
 **Method** : `POST`
 
@@ -20,13 +20,23 @@ Send a report about another user.
   * Type: `string`
   * Description: The message content to include in the report.
   * Required: `true`
+* `reasonCode`
+  * Type: `string` (< 100 chars)
+  * Description: A standardized reason why the user is reported
+  * Required: `true`
+* `block`
+  * Type: `boolean`
+  * Description: Whether or not to block the user
+  * Required: `true`
 
 **Request body example**
 
 ```json
 {
 	"userId": 7,
-	"message": "I am reporting this user because...",
+    "message": "I am reporting this user because...",
+    "reasonCode": "TOO_OLD",
+    "block": true
 }
 ```
 
@@ -40,7 +50,7 @@ Send a report about another user.
 
 ```json
 {
-    "status": "REPORT_USER__SUCCESS",
+    "status": "REPORT__SUCCESS",
 }
 ```
 
@@ -53,7 +63,7 @@ Send a report about another user.
 **Content** :
 ```json
 {
-    "status": "REPORT_USER__NOT_FOUND"
+    "status": "REPORT__USER_NOT_FOUND"
 }
 ```
 
