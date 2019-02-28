@@ -22,6 +22,8 @@ const getMemberInfo = (email: string): Promise<any> => {
           return resolve(bodyJson.member);
         case 'GET_MEMBER_INFO__NOT_FOUND':
           return resolve(null);
+        case 'GET_MEMBER_INFO__NOT_TUFTS_EMAIL':
+          return resolve(null);
         default:
           return reject(new Error('Koh: No status found in result body.'));
       }
