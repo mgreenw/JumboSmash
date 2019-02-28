@@ -89,7 +89,7 @@ const sendMessage = async (
     });
   } catch (err) {
     // This checks that the error was not caused due to a duplicate message_uuid_key
-    // This is not important from a design standpoint but will be catch bugs in testing
+    // This is not important from a design standpoint but will catch bugs in testing
     if (err.code === '23505' && err.constraint === 'messages_unconfirmed_message_uuid_key') {
       return status(codes.SEND_MESSAGE__DUPLICATE_UNCONFIRMED_MESSAGE_UUID).noData();
     }
