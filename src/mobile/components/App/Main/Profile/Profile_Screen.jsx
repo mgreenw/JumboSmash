@@ -12,7 +12,6 @@ import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import { Constants } from 'expo';
 
 const waves1 = require('../../../../assets/waves/waves1/waves.png');
 
@@ -145,7 +144,6 @@ class ProfileScreen extends React.Component<Props, State> {
             >
               {displayName}
             </Text>
-            <Text>{`version ${Constants.manifest.version}`}</Text>
             <Image
               resizeMode="stretch"
               source={waves1}
