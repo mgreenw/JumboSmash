@@ -147,10 +147,9 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   );
 
   // Create the verification url and send the email!
-  // TODO: Enable sending emails again, ensure they work.
   mail.send({
     to: memberInfo.email,
-    from: 'jumbosmash19@gmail.com',
+    from: 'beta@jumbosmash.com',
     subject: 'JumboSmash Email Verification',
     html: `<p>Enter this code: ${verificationCode}</p>`,
   });

@@ -7,9 +7,9 @@
   "ascent": 850,
   "glyphs": [
     {
-      "uid": "b86afa1ae54df5f59a44b1ea0dc3a08c",
+      "uid": "faa849bebaddbd33ddbdd3d86246c761",
       "css": "add",
-      "code": 59403,
+      "code": 59392,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -21,9 +21,23 @@
       ]
     },
     {
-      "uid": "6169288a0a075ff714f0e9aab8afb459",
+      "uid": "f9075e1d9860b93973d68b91468fc4df",
+      "css": "back",
+      "code": 59393,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M758.8 923.7C776.3 941.2 776.3 969.5 758.8 986.9L758.8 986.9C741.3 1004.4 713 1004.4 695.6 986.9L241.2 532.5C232.5 523.8 228.1 512.3 228.1 500.9 228.1 489.4 232.5 478 241.2 469.3L695.6 14.9C713.1-2.6 741.4-2.6 758.8 14.9L758.8 14.9C776.3 32.4 776.3 60.7 758.8 78.1L336 500.9 758.8 923.7Z",
+        "width": 1000
+      },
+      "search": [
+        "back"
+      ]
+    },
+    {
+      "uid": "9a583144062939d1540bb0ca29550f9e",
       "css": "cards",
-      "code": 59404,
+      "code": 59394,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -31,13 +45,13 @@
         "width": 1000
       },
       "search": [
-        "cards"
+        "cards2"
       ]
     },
     {
-      "uid": "7500b294e8966812034f2350d1fd3a70",
+      "uid": "162c707b78c1d4b8de167aa8a861e1a5",
       "css": "check",
-      "code": 59405,
+      "code": 59395,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -49,9 +63,9 @@
       ]
     },
     {
-      "uid": "08f1b40538680f32a71d485fed2557f7",
+      "uid": "9b5ab4abbf3aa8e5472c40f3eef68652",
       "css": "delete-filled",
-      "code": 59406,
+      "code": 59396,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -59,13 +73,13 @@
         "width": 1000
       },
       "search": [
-        "delete"
+        "close2"
       ]
     },
     {
-      "uid": "7d9425ae3f4123b434954d108d80c183",
+      "uid": "e08c792d62dd95a4cc1a96b6aa837cab",
       "css": "heart-filled",
-      "code": 59407,
+      "code": 59397,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -77,9 +91,9 @@
       ]
     },
     {
-      "uid": "3999aa78c432193b6b57672889e346cb",
+      "uid": "a9cc5e614f5c0430e57bae8cb0755e2c",
       "css": "life-ring",
-      "code": 59408,
+      "code": 59398,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -87,13 +101,13 @@
         "width": 1000
       },
       "search": [
-        "help life ring"
+        "help"
       ]
     },
     {
-      "uid": "ca69f3004206f272cd8fe697cd68c8e6",
+      "uid": "88aa3c8f0e5e0123f67a140e11e3470d",
       "css": "message",
-      "code": 59409,
+      "code": 59399,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -105,9 +119,23 @@
       ]
     },
     {
-      "uid": "1bcbbea8f039b77cbb79e374beb69932",
+      "uid": "28b313d5c352553e3d081dffa2140cf7",
+      "css": "send",
+      "code": 59400,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M962.8 2.8A26.4 26.4 0 0 1 992 6.8 23.4 23.4 0 0 1 998.8 31.6L588 986.4A26 26 0 0 1 567.9 1000 27.8 27.8 0 0 1 547 989.7L364.3 636.4 14.7 454.6A23.4 23.4 0 0 1 0 433.1 22 22 0 0 1 12.9 412ZM374.4 588.2L867.6 96.9 78.8 433.1ZM565.3 921.6L905.7 129.4 411.8 624.7Z",
+        "width": 1000
+      },
+      "search": [
+        "paper-plane-2"
+      ]
+    },
+    {
+      "uid": "cd22b2bb58702097717994a772bf5979",
       "css": "user",
-      "code": 59410,
+      "code": 59401,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -115,13 +143,13 @@
         "width": 1000
       },
       "search": [
-        "user"
+        "profile"
       ]
     },
     {
-      "uid": "1b55117a39be859ae76da34c08bddf51",
+      "uid": "488771898b9a386373a719c3e65cb089",
       "css": "gear",
-      "code": 59411,
+      "code": 59402,
       "src": "custom_icons",
       "selected": true,
       "svg": {
@@ -129,21 +157,21 @@
         "width": 1000
       },
       "search": [
-        "gear"
+        "settings"
       ]
     },
     {
-      "uid": "713e5fd33b46100e77eff9be145afc20",
-      "css": "back",
-      "code": 59412,
+      "uid": "b32493dc70c05b02692fe60b7a5bdbbf",
+      "css": "ellipsis",
+      "code": 59403,
       "src": "custom_icons",
       "selected": true,
       "svg": {
-        "path": "M758.8 923.7C776.3 941.2 776.3 969.5 758.8 986.9L758.8 986.9C741.3 1004.4 713 1004.4 695.6 986.9L241.2 532.5C232.5 523.8 228.1 512.3 228.1 500.9 228.1 489.4 232.5 478 241.2 469.3L695.6 14.9C713.1-2.6 741.4-2.6 758.8 14.9L758.8 14.9C776.3 32.4 776.3 60.7 758.8 78.1L336 500.9 758.8 923.7Z",
+        "path": "M260 500.4C260 571.9 201.9 630 130.4 630S0.7 571.9 0.7 500.4 58.9 370.7 130.4 370.7 260 428.9 260 500.4ZM630 500.4C630 428.9 571.9 370.7 500.4 370.7S370.7 428.9 370.7 500.4 428.9 630 500.4 630 630 572.2 630 500.4ZM1000 500.4C1000 428.9 941.9 370.7 870.4 370.7S740.7 428.9 740.7 500.4 798.9 630 870.4 630 1000 572.2 1000 500.4Z",
         "width": 1000
       },
       "search": [
-        "back"
+        "meatball"
       ]
     }
   ]

@@ -1,44 +1,40 @@
 // @flow
 
 import React from 'react';
-import {
-  Text, View, TouchableOpacity, Alert,
-} from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'mobile/components/shared/imageCacheFork';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
-import EditPopup from './EditPopup';
+import ActionSheet from '../ActionSheet';
 
 type Props = {
   onAdd: () => void,
   onRemove: () => void,
   enableRemove: boolean,
   width: number,
-  photoId: ?number,
+  photoId: ?number
 };
 
 type State = {
-  showEditPopup: boolean,
+  showActionSheet: boolean
 };
 
 export default class AddSinglePhoto extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      showEditPopup: false,
+      showActionSheet: false
     };
   }
 
-  _toggleEditPopup = (showEditPopup: boolean) => {
-    this.setState({ showEditPopup });
+  _toggleActionSheet = (showActionSheet: boolean) => {
+    this.setState({ showActionSheet });
   };
 
   render() {
-    const {
-      onAdd, onRemove, width, photoId, enableRemove,
-    } = this.props;
-    const { showEditPopup } = this.state;
+    const { onAdd, onRemove, width, photoId, enableRemove } = this.props;
+    const { showActionSheet } = this.state;
     return (
       <View>
         <TouchableOpacity
@@ -52,14 +48,14 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
             borderStyle: 'dashed',
             borderRadius: 3,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
           disabled={false}
           onPress={
             photoId
               ? () => {
-                this._toggleEditPopup(true);
-              }
+                  this._toggleActionSheet(true);
+                }
               : onAdd
           }
         >
@@ -69,36 +65,57 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 flex: 1,
                 height: width,
                 width,
-                borderRadius: 8,
+                borderRadius: 8
               }}
               resizeMode="contain"
               uri={GET_PHOTO__ROUTE + photoId}
             />
           ) : (
-            <Text style={[textStyles.headline6Style, { textDecorationLine: 'underline' }]}>
+            <Text
+              style={[
+                textStyles.headline6Style,
+                { textDecorationLine: 'underline' }
+              ]}
+            >
               {photoId ? '' : 'Add'}
             </Text>
           )}
         </TouchableOpacity>
-        <EditPopup
-          visible={showEditPopup}
-          onDelete={() => {
-            this.setState(
-              { showEditPopup: false },
-              enableRemove
-                ? onRemove
-                : () => {
-                  Alert.alert("Plz don't delete your last photo everything will break :(");
-                },
-            );
-          }}
-          onReorder={() => {
-            this.setState({ showEditPopup: false }, () => {
-              Alert.alert('Reordering Not Implemented Yet. :(');
-            });
-          }}
-          onCancel={() => {
-            this._toggleEditPopup(false);
+        <ActionSheet
+          visible={showActionSheet}
+          options={[
+            {
+              text: 'Reorder Photo',
+              onPress: () => {
+                this.setState({ showActionSheet: false }, () => {
+                  Alert.alert('Reordering Not Implemented Yet. :(');
+                });
+              }
+            },
+            {
+              text: 'Delete Photo',
+              textStyle: {
+                color: Colors.Grapefruit
+              },
+              onPress: () => {
+                this.setState(
+                  { showActionSheet: false },
+                  enableRemove
+                    ? onRemove
+                    : () => {
+                        Alert.alert(
+                          "Plz don't delete your last photo everything will break :("
+                        );
+                      }
+                );
+              }
+            }
+          ]}
+          cancel={{
+            text: 'Cancel',
+            onPress: () => {
+              this._toggleActionSheet(false);
+            }
           }}
         />
       </View>

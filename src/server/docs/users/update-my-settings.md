@@ -49,8 +49,12 @@ Provide updated settings fields
       * Type: `boolean`
       * Description: If the user wants to match with non-binary people.
       * Required: `false`
+* `expoPushToken`
+  * Type: `string`
+  * Description: The push token that expo gives on mobile
+  * Required: `false`
 
-**Request body example**
+**Request body examples**
 
 ```json
 {
@@ -61,6 +65,23 @@ Provide updated settings fields
     "identifyAsGenders": {
         "man": true,
     }
+}
+```
+
+### OR
+
+```json
+{
+    "lookingForGenders": {
+        "man": true,
+        "nonBinary": true,
+        "woman": true
+    },
+    "identifyAsGenders": {
+        "man": true,
+        "nonBinary": true
+    },
+    "expoPushToken": "thisisatokenitreallyisipromise"
 }
 ```
 
