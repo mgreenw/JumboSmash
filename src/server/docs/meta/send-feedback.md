@@ -16,12 +16,17 @@ Send a report about another user.
   * Type: `string`
   * Description: The feedback message to send
   * Required: `true`
+* `reasonCode`
+  * Type: `string`
+  * Description: The standardized reason code for the feedback. Must be < 100 chars
+  * Required: `true`
 
 **Request body example**
 
 ```json
 {
-	"message": "Here is some helpful feedback!!",
+    "message": "Here is some helpful feedback!!",
+    "reasonCode": "BAD_APP"
 }
 ```
 
