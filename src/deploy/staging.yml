@@ -136,7 +136,15 @@ services:
 secrets:
    SENDGRID_API_KEY:
     external: true
+   KOH_POSTGRES_DATABASE:
+     external: true
+   KOH_POSTGRES_USER:
+    external: true
    KOH_POSTGRES_PASSWORD:
+    external: true
+   SERVER_POSTGRES_DATABASE:
+    external: true
+   SERVER_POSTGRES_USER:
     external: true
    SERVER_POSTGRES_PASSWORD:
     external: true
