@@ -239,7 +239,7 @@ class MessagingScreen extends React.Component<Props, State> {
           <GEMHeader
             title="Messages"
             leftIconName="back"
-            rightIconName="heart-filled"
+            rightIconName="ellipsis"
             onRightIconPress={() => {
               Alert.alert('this should be report and stuff?');
             }}

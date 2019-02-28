@@ -2,10 +2,17 @@
 
 import type { $Request } from 'express';
 
-const apiUtils = require('../utils');
+const {
+  status,
+  validate,
+  asyncHandler,
+  canAccessUserData,
+} = require('../utils');
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const logger = require('../../logger');
+const Socket = require('../../socket');
 
 /* eslint-disable */
 const schema = {
@@ -26,6 +33,50 @@ const schema = {
   "required": ["candidateUserId", "scene", "liked"]
 };
 /* eslint-enable */
+
+async function sendMatchSocketNotification(userId: number, matchUserId: number, scene) {
+  const matchResult = await db.query(`
+    ${utils.matchQuery}
+    AND me_critic.candidate_user_id = $2
+    LIMIT 1
+  `, [userId, matchUserId]);
+
+  if (matchResult.rowCount === 0) {
+    logger.error('No match found in attempt to send notification.');
+    return;
+  }
+
+  const [match] = matchResult.rows;
+  Socket.sendNewMatchNotification(userId, { match, scene });
+}
+
+async function checkMatch(
+  userId: number,
+  candidateUserId: number,
+  scene: string,
+): Promise<boolean> {
+  try {
+    const matchedResult = await db.query(`
+      SELECT
+        COALESCE(
+          r_critic.liked_${scene},
+          false) AND COALESCE(r_candidate.liked_${scene},
+          false
+        ) AS matched
+      FROM relationships r_critic
+      LEFT JOIN relationships r_candidate
+        ON r_candidate.critic_user_id = r_critic.candidate_user_id
+        AND r_candidate.candidate_user_id = r_critic.critic_user_id
+      WHERE r_critic.critic_user_id = $1 AND r_critic.candidate_user_id = $2
+    `, [userId, candidateUserId]);
+
+    // Check if the users are matched
+    return matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
+  } catch (error) {
+    logger.error('Failed to check for match', error);
+    throw error;
+  }
+}
 
 /**
  * @api {post} /api/relationships/judge
@@ -62,14 +113,25 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
     `, [userId, candidateUserId, liked]);
 
+    if (liked) {
+      checkMatch(userId, candidateUserId, scene).then(async (matched) => {
+        if (matched) {
+          await Promise.all([
+            sendMatchSocketNotification(userId, candidateUserId, scene),
+            sendMatchSocketNotification(candidateUserId, userId, scene),
+          ]);
+        }
+      });
+    }
+
     // If the query succeeded, return success
-    return apiUtils.status(codes.JUDGE__SUCCESS).noData();
+    return status(codes.JUDGE__SUCCESS).noData();
   } catch (err) {
     // If the query failed due to a voilation of the candidate_user_id fkey
     // into the profiles table, return a more specific error. See here:
     // https://www.postgresql.org/docs/10/errcodes-appendix.html
     if (err.code === '23503' && err.constraint === 'relationships_candidate_user_id_fkey') {
-      return apiUtils.status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+      return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
     }
 
     throw err;
@@ -77,8 +139,13 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
 };
 
 const handler = [
-  apiUtils.validate(schema),
-  apiUtils.asyncHandler(async (req: $Request) => {
+  validate(schema),
+  asyncHandler(async (req: $Request) => {
+    const canJudge = await canAccessUserData(req.body.candidateUserId, req.user.id);
+    if (!canJudge) {
+      return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+    }
+
     return judge(req.user.id, req.body.scene, req.body.candidateUserId, req.body.liked);
   }),
 ];

@@ -45,6 +45,14 @@ function connect(token: string) {
   _socket.on('disconnect', () => {
     console.log('Socket disconnected from server.');
   });
+
+  _socket.on('NEW_MESSAGE', data => {
+    console.log('NEW_MESSAGE:', data);
+  });
+
+  _socket.on('NEW_MATCH', data => {
+    console.log('NEW_MATCH:', data);
+  });
   /* eslint-enable */
 }
 
