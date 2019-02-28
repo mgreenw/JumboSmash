@@ -22,7 +22,7 @@ import getMatchesAction from 'mobile/actions/app/getMatches';
 import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>

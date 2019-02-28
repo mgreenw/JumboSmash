@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import type { Match, ReduxState, UserProfile } from 'mobile/reducers';
 import { textStyles } from 'mobile/styles/textStyles';
-import { routes } from 'mobile/components/Navigation';
-import NavigationActions from 'mobile/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+import NavigationActions from 'mobile/components/navigation/NavigationService';
 import Avatar, { MediumWidth } from './Avatar';
 
 type ReduxProps = {|

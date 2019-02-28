@@ -4,8 +4,8 @@ import React from 'react';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import NavigationService from 'mobile/NavigationService';
-import { routes } from 'mobile/components/Navigation';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 
 type Props = {
   name: ?IconName,
