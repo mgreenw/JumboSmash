@@ -8,11 +8,14 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
-const { UNAUTHORIZED } = require('./api/status-codes');
+const { UNAUTHORIZED, SERVER_ERROR } = require('./api/status-codes');
 const logger = require('./logger');
-const { getUser } = require('./api/auth/utils');
+const { getUser, AuthenticationError } = require('./api/auth/utils');
 
 const namespace = '/socket';
+
+const NEW_MESSAGE = 'NEW_MESSAGE';
+const NEW_MATCH = 'NEW_MATCH';
 
 class Socket {
   _io: ?SocketIO;
@@ -42,9 +45,14 @@ class Socket {
           socket.user = user;
           next();
         })
-        .catch(() => {
+        .catch((error) => {
           // A caught error from getUser means the token is invalid.
-          next(new Error(UNAUTHORIZED.status));
+          if (error instanceof AuthenticationError) {
+            return next(new Error(UNAUTHORIZED.status));
+          }
+
+          logger.error('Error authenticating user', error);
+          return next(new Error(SERVER_ERROR.status));
         });
     });
     /* eslint-enable no-param-reassign */
@@ -82,11 +90,11 @@ class Socket {
   }
 
   sendNewMessageNotification(userId: number, message: Object) {
-    this._notify(userId, 'NEW_MESSAGE', message);
+    this._notify(userId, NEW_MESSAGE, message);
   }
 
   sendNewMatchNotification(userId: number, match: Object) {
-    this._notify(userId, 'NEW_MATCH', match);
+    this._notify(userId, NEW_MATCH, match);
   }
 }
 
