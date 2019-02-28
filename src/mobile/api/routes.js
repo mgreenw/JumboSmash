@@ -1,8 +1,8 @@
 // @flow
 
-import Expo from 'expo';
+import { Constants } from 'expo';
 
-const { manifest } = Expo.Constants;
+const manifest = Constants.manifest;
 
 // if in dev mode, use the same IP address as the hosting expo server. Otherwise,
 // use prod server.
