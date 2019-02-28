@@ -28,22 +28,22 @@ services:
           - node.role == manager
 
 
-    #
-    #  arthur, (beta) Website service
-    #
+  #
+  #  arthur, (beta) Website service
+  #
 
-    arthur:
-      image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
-      networks:
-        - traefik-net
-      deploy:
-        labels:
-          - traefik.enable=true
-          - traefik.tags=website,test
-          - traefik.frontend.entryPoints=http,https
-          - traefik.backend=arthur
-          - traefik.frontend.rule=Host:arthur.jumbosmash.com
-          - traefik.port=80
+  arthur:
+    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
+    networks:
+      - traefik-net
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.tags=website,test
+        - traefik.frontend.entryPoints=http,https
+        - traefik.backend=arthur
+        - traefik.frontend.rule=Host:arthur.jumbosmash.com
+        - traefik.port=80
 
   #
   #  Staging Koh Service
@@ -57,7 +57,7 @@ services:
       NODE_ENV: staging
     secrets:
       - POSTGRES_HOST
-      - KOH_POSTGRESS_DATABASE
+      - KOH_POSTGRES_DATABASE
       - KOH_POSTGRES_USER
       - KOH_POSTGRES_PASSWORD
     deploy:
