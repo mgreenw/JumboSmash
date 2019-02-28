@@ -2,7 +2,7 @@
   "git": {
     "tagName": "server-${version}",
     "tagAnnotation": "Release server ${version}",
-    "commitMessage": "Release serer ${version}"
+    "commitMessage": "Release server ${version}"
   },
   "github": {
     "release": true,
