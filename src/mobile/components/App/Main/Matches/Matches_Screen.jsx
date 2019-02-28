@@ -33,6 +33,7 @@ type ReduxProps = {
   profileMap: { [userId: number]: UserProfile },
   conversationMap: { [userId: number]: ConfirmedMessages },
   messagedMatchIds: ?(number[]),
+  newMatchIds: ?(number[]),
   getMatchesInProgress: boolean
 };
 
@@ -48,7 +49,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     profileMap: reduxState.profiles,
     conversationMap: reduxState.confirmedConversations,
     messagedMatchIds: reduxState.messagedMatchIds,
-    getMatchesInProgress: reduxState.inProgress.getMatches
+    getMatchesInProgress: reduxState.inProgress.getMatches,
+    newMatchIds: reduxState.unmessagedMatchIds
   };
 }
 
@@ -141,7 +143,14 @@ class MessagingScreen extends React.Component<Props> {
   };
 
   render() {
-    const { getMatchesInProgress, getMatches, messagedMatchIds } = this.props;
+    const {
+      getMatchesInProgress,
+      getMatches,
+      messagedMatchIds,
+      newMatchIds
+    } = this.props;
+    const renderGensis = !messagedMatchIds || messagedMatchIds.length === 0;
+    const hasNewMatches = !!(newMatchIds && newMatchIds.length > 0);
     const refreshComponent = (
       <RefreshControl
         refreshing={getMatchesInProgress}
@@ -149,18 +158,21 @@ class MessagingScreen extends React.Component<Props> {
       />
     );
 
+    // we need to show one element to actually render the genesis text AS the element
+    const data = renderGensis ? [1] : messagedMatchIds;
+
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         <View style={{ flex: 1 }}>
           <FlatList
             ListHeaderComponent={<NewMatchesList />}
-            data={messagedMatchIds || [1]}
+            data={data}
             keyExtractor={this.keyExtractor}
             renderItem={
-              messagedMatchIds
-                ? this.renderMatchListItem
-                : this.renderGenesisText(false)
+              renderGensis
+                ? this.renderGenesisText(hasNewMatches)
+                : this.renderMatchListItem
             }
             refreshControl={refreshComponent}
           />

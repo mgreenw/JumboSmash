@@ -127,6 +127,7 @@ export default class CardView extends React.Component<Props> {
               {profile.fields.bio}
             </Text>
           </View>
+          <View style={{ height: 80 }} />
         </View>
       </ScrollView>
     );
