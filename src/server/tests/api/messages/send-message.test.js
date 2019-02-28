@@ -12,7 +12,7 @@ let other = {};
 describe('POST api/messages/:userId', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE FROM messages');
 
@@ -22,7 +22,7 @@ describe('POST api/messages/:userId', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE FROM messages');
   });

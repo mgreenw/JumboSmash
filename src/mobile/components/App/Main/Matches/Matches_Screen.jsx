@@ -9,7 +9,13 @@ import {
   RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { ReduxState, Match, Dispatch } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  Match,
+  Dispatch,
+  UserProfile,
+  ConfirmedMessages
+} from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import getMatchesAction from 'mobile/actions/app/getMatches';
@@ -23,7 +29,11 @@ type NavigationProps = {
 };
 
 type ReduxProps = {
-  matches: ?(Match[]),
+  matchMap: { [userId: number]: Match },
+  profileMap: { [userId: number]: UserProfile },
+  conversationMap: { [userId: number]: ConfirmedMessages },
+  messagedMatchIds: ?(number[]),
+  newMatchIds: ?(number[]),
   getMatchesInProgress: boolean
 };
 
@@ -35,8 +45,12 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
-    matches: reduxState.matches,
-    getMatchesInProgress: reduxState.inProgress.getMatches
+    matchMap: reduxState.matches.byId,
+    profileMap: reduxState.profiles,
+    conversationMap: reduxState.confirmedConversations,
+    messagedMatchIds: reduxState.messagedMatchIds,
+    getMatchesInProgress: reduxState.inProgress.getMatches,
+    newMatchIds: reduxState.unmessagedMatchIds
   };
 }
 
@@ -69,10 +83,14 @@ class MessagingScreen extends React.Component<Props> {
     );
   };
 
-  keyExtractor = (item: Match, index: number) => `${index}`;
+  keyExtractor = (item: number) => `${item}`;
 
-  renderMatchListItem = ({ item: match }: { item: Match }) => {
-    const { navigation } = this.props;
+  renderMatchListItem = ({ item: userId }: { item: number }) => {
+    const { navigation, matchMap, profileMap, conversationMap } = this.props;
+    const match = matchMap[userId];
+    const profile = profileMap[userId];
+    const mostRecentMessage =
+      conversationMap[userId].byId[match.mostRecentMessage];
     return (
       <TouchableOpacity
         style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
@@ -88,7 +106,7 @@ class MessagingScreen extends React.Component<Props> {
             alignItems: 'center'
           }}
         >
-          <Avatar size="Small" photoId={match.profile.photoIds[0]} />
+          <Avatar size="Small" photoId={profile.photoIds[0]} />
           <View
             style={{
               flex: 1,
@@ -99,14 +117,13 @@ class MessagingScreen extends React.Component<Props> {
             }}
           >
             <Text style={textStyles.body1Style}>
-              {match.profile.fields.displayName}
+              {profile.fields.displayName}
             </Text>
             <Text
               numberOfLines={2}
               style={[textStyles.subtitle1Style, { flex: 1 }]}
             >
-              Lorem ipsum dolor sit amet, adipiscing elit. Aenean commodo ligula
-              eget dolor.
+              {mostRecentMessage.content}
             </Text>
           </View>
           <View
@@ -117,7 +134,7 @@ class MessagingScreen extends React.Component<Props> {
             }}
           >
             <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
-              {'foo'}
+              {mostRecentMessage.timestamp}
             </Text>
           </View>
         </View>
@@ -126,7 +143,14 @@ class MessagingScreen extends React.Component<Props> {
   };
 
   render() {
-    const { getMatchesInProgress, getMatches, matches } = this.props;
+    const {
+      getMatchesInProgress,
+      getMatches,
+      messagedMatchIds,
+      newMatchIds
+    } = this.props;
+    const renderGensis = !messagedMatchIds || messagedMatchIds.length === 0;
+    const hasNewMatches = !!(newMatchIds && newMatchIds.length > 0);
     const refreshComponent = (
       <RefreshControl
         refreshing={getMatchesInProgress}
@@ -134,16 +158,21 @@ class MessagingScreen extends React.Component<Props> {
       />
     );
 
+    // we need to show one element to actually render the genesis text AS the element
+    const data = renderGensis ? [1] : messagedMatchIds;
+
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         <View style={{ flex: 1 }}>
           <FlatList
-            ListHeaderComponent={<NewMatchesList matches={matches} />}
-            data={matches || [1]}
+            ListHeaderComponent={<NewMatchesList />}
+            data={data}
             keyExtractor={this.keyExtractor}
             renderItem={
-              matches ? this.renderMatchListItem : this.renderGenesisText(false)
+              renderGensis
+                ? this.renderGenesisText(hasNewMatches)
+                : this.renderMatchListItem
             }
             refreshControl={refreshComponent}
           />

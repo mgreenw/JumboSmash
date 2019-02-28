@@ -8,12 +8,12 @@ const dbUtils = require('../../utils/db');
 describe('GET api/users/me/settings', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
   });
 
   it('must require the user to exist and have a profile setup', async () => {

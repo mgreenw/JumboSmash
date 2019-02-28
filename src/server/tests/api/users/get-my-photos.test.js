@@ -11,7 +11,7 @@ let me = {};
 describe('GET api/users/me/photos', () => {
   // Setup
   beforeAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE FROM photos');
 
     me = await dbUtils.createUser('mgreen99');
@@ -19,7 +19,7 @@ describe('GET api/users/me/photos', () => {
 
   // Teardown
   afterAll(async () => {
-    await db.query('DELETE from users');
+    await db.query('DELETE FROM classmates');
     await db.query('DELETE FROM photos');
   });
 
