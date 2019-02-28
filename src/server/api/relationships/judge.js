@@ -97,7 +97,7 @@ async function checkMatch(
       WHERE r_critic.critic_user_id = $1 AND r_critic.candidate_user_id = $2
     `, [userId, candidateUserId]);
 
-    // Return true if
+    // Check if the users are matched
     return matchedResult.rowCount > 0 && matchedResult.rows[0].matched === true;
   } catch (error) {
     logger.error('Failed to check for match', error);

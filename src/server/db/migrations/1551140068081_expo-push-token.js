@@ -28,6 +28,7 @@ exports.up = (pgm) => {
     FROM classmates
     WHERE NOT banned
   `);
+<<<<<<< HEAD
   pgm.createType('notification_status', ['pending', 'ok', 'error']);
   pgm.createTable('notifications', {
     id: 'id',
@@ -65,6 +66,11 @@ exports.up = (pgm) => {
 exports.down = (pgm) => {
   pgm.dropTable('notifications');
   pgm.dropType('notification_status');
+=======
+};
+
+exports.down = (pgm) => {
+>>>>>>> master
   pgm.dropView('users');
   pgm.createView('users', { replace: true }, `
     SELECT

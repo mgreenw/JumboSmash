@@ -143,13 +143,13 @@ exports.JUDGE__CANDIDATE_NOT_FOUND = {
   code: 400,
 };
 
-// Block
-exports.BLOCK__SUCCESS = {
-  status: 'BLOCK__SUCCESS',
+// Report
+exports.REPORT__SUCCESS = {
+  status: 'REPORT__SUCCESS',
   code: 200,
 };
-exports.BLOCK__USER_NOT_FOUND = {
-  status: 'BLOCK__USER_NOT_FOUND',
+exports.REPORT__USER_NOT_FOUND = {
+  status: 'REPORT__USER_NOT_FOUND',
   code: 400,
 };
 
@@ -243,4 +243,13 @@ exports.GET_CONVERSATION__SUCCESS = {
 exports.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID = {
   status: 'GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID',
   code: 400,
+};
+
+
+// META
+
+// Send Feedback
+exports.SEND_FEEDBACK__SUCCESS = {
+  status: 'SEND_FEEDBACK__SUCCESS',
+  code: 200,
 };

@@ -2,14 +2,17 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import type { Match, ReduxState, UserProfile } from 'mobile/reducers';
 import { textStyles } from 'mobile/styles/textStyles';
+import { routes } from 'mobile/components/Navigation';
+import NavigationActions from 'mobile/NavigationService';
 import Avatar, { MediumWidth } from './Avatar';
 
 type ReduxProps = {|
   unmessagedMatchIds: ?(number[]),
-  profileMap: { [userId: number]: UserProfile }
+  profileMap: { [userId: number]: UserProfile },
+  matchMap: { [userId: number]: Match }
 |};
 
 type DispatchProps = {};
@@ -17,7 +20,8 @@ type DispatchProps = {};
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     unmessagedMatchIds: reduxState.unmessagedMatchIds,
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    matchMap: reduxState.matches.byId
   };
 }
 
@@ -30,13 +34,14 @@ type Props = ReduxProps & DispatchProps;
 const keyExtractor = (match: Match, index: number) => `${index}`;
 
 class NewMatchesList extends React.Component<Props> {
-  renderMatchListItem = ({ item: profileId }: { item: number }) => {
-    const { profileMap } = this.props;
-    const profile = profileMap[profileId];
+  renderMatchListItem = ({ item: userId }: { item: number }) => {
+    const { profileMap, matchMap } = this.props;
+    const match = matchMap[userId];
+    const profile = profileMap[userId];
     return (
       <TouchableOpacity
         onPress={() => {
-          Alert.alert('Hey you pressed me');
+          NavigationActions.navigate(routes.Message, { match });
         }}
         style={{
           marginHorizontal: 15

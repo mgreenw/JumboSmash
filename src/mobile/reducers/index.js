@@ -788,12 +788,18 @@ export default function rootReducer(
         serverMatches
       );
 
-      const unmessagedMatchIds = orderedIds.slice(0, index);
-      const messagedMatchIds = orderedIds.slice(index).reverse();
+      // If we don't have any messages yet then the index of findIndex will be -1
+      const noMessages = index === -1;
+      const unmessagedMatchIds = noMessages
+        ? orderedIds
+        : orderedIds.slice(0, index);
+      const messagedMatchIds = noMessages
+        ? []
+        : orderedIds.slice(index).reverse();
 
       const confirmedConversations = updateMostRecentConversations(
         state,
-        normalizedData.mostRecentMessages
+        normalizedData.mostRecentMessages || {}
       );
 
       const updatedMatches = updateMatches(
