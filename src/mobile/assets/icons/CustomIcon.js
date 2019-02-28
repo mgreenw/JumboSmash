@@ -21,4 +21,7 @@ export type IconName =
   | 'gear'
   | 'check'
   | 'delete-filled'
-  | 'heart-filled';
+  | 'heart-filled'
+  | 'ellipsis'
+  | 'add'
+  | ' send';
