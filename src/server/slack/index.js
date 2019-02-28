@@ -44,6 +44,7 @@ const feedback = new IncomingWebhook('https://hooks.slack.com/services/TCR3CCRDL
 exports.postFeedback = (
   userId: number,
   message: string,
+  reasonCode: string,
 ) => {
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
     feedback.send(`
@@ -53,6 +54,7 @@ We've got some more feedback!
 User ID: ${userId}
 Environment:   *${NODE_ENV}*
 
+Reason Code: ${reasonCode}
 Message:
 ${'```'}${message}${'```'}`);
   }

@@ -13,9 +13,14 @@ const schema = {
     "message": {
       "description": "The feedback.",
       "type": "string",
+    },
+    "reasonCode": {
+      "description": "The standized reason string",
+      "type": "string",
+      "maxLength": 100
     }
   },
-  "required": ["message"]
+  "required": ["message", "reasonCode"]
 };
 /* eslint-enable */
 
@@ -26,9 +31,10 @@ const schema = {
 const sendFeedback = async (
   userId: number,
   message: string,
+  reasonCode: string,
 ) => {
   // Post the message and return
-  slack.postFeedback(userId, message);
+  slack.postFeedback(userId, message, reasonCode);
   return status(SEND_FEEDBACK__SUCCESS).noData();
 };
 
@@ -38,6 +44,7 @@ const handler = [
     return sendFeedback(
       req.user.id,
       req.body.message,
+      req.body.reasonCode,
     );
   }),
 ];
