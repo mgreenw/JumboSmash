@@ -9,6 +9,8 @@ import type { SwipeDirection } from './Deck';
 
 const { width } = Dimensions.get('window');
 
+const iconHeight = 65;
+
 type Props = {
   disabled: boolean,
   onPress: (swipeDirection: SwipeDirection) => void
@@ -42,30 +44,30 @@ export default (props: Props) => {
         <TouchableOpacity
           onPress={() => onPress('left')}
           style={{
-            height: 65,
-            width: 65,
-            borderRadius: 65 / 2,
+            height: iconHeight,
+            width: iconHeight,
+            borderRadius: iconHeight / 2,
             backgroundColor: 'white'
           }}
         >
           <CustomIcon
             name="delete-filled"
-            size={65}
+            size={iconHeight}
             color={disabled ? 'gray' : 'black'}
           />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => onPress('right')}
           style={{
-            height: 65,
-            width: 65,
-            borderRadius: 65 / 2,
+            height: iconHeight,
+            width: iconHeight,
+            borderRadius: iconHeight / 2,
             backgroundColor: 'white'
           }}
         >
           <CustomIcon
             name="heart-filled"
-            size={65}
+            size={iconHeight}
             color={disabled ? 'gray' : Colors.Grapefruit}
           />
         </TouchableOpacity>
