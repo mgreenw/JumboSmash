@@ -3,9 +3,9 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import type { Store as ReduxStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { loggerMiddleware } from 'mobile/reduxMiddleware/loggerMiddleware';
-import { tokenMiddleware } from 'mobile/reduxMiddleware/tokenMiddleware';
-import { errorMiddleware } from 'mobile/reduxMiddleware/errorMiddleware';
+import loggerMiddleware from 'mobile/reduxMiddleware/loggerMiddleware';
+import tokenMiddleware from 'mobile/reduxMiddleware/tokenMiddleware';
+import errorMiddleware from 'mobile/reduxMiddleware/errorMiddleware';
 import rootReducer from 'mobile/reducers';
 import Socket from 'mobile/utils/Socket';
 import type { ReduxState, Action } from 'mobile/reducers';

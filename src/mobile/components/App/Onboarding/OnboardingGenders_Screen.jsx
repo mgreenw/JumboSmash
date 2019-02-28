@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
 import { OnboardingLayout } from './Onboarding_Layout';
 

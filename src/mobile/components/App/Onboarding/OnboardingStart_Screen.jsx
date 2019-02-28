@@ -8,9 +8,9 @@ import { textStyles } from 'mobile/styles/textStyles';
 import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import type { UserSettings, UserProfile, Genders } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import { OnboardingLayout } from './Onboarding_Layout';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 type ReduxProps = {
   profile: UserProfile,

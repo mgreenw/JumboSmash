@@ -11,13 +11,13 @@ import type {
   ReduxState,
   Dispatch
 } from 'mobile/reducers';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';

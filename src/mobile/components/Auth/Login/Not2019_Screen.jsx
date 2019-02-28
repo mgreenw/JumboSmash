@@ -9,7 +9,7 @@ import { styles } from 'mobile/styles/auth';
 import type { Dispatch } from 'mobile/reducers';
 import type { ReduxState } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 
 type Props = {
   navigation: any

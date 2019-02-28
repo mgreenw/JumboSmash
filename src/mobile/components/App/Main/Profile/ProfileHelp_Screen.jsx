@@ -1,13 +1,11 @@
 // @flow
 
 import React from 'react';
-import {
- Text, View, ImageBackground, Linking 
-} from 'react-native';
+import { Text, View, ImageBackground, Linking } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -41,7 +39,7 @@ class ProfileHelp extends React.Component<Props> {
               paddingTop: 20,
               marginBottom: 20,
               paddingBottom: 20,
-              marginTop: 20,
+              marginTop: 20
             }}
           >
             <View style={{ marginBottom: 30, alignItems: 'center' }}>

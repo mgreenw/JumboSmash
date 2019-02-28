@@ -19,8 +19,8 @@ import type {
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
-import { routes } from 'mobile/components/Navigation';
-import NavigationService from 'mobile/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';

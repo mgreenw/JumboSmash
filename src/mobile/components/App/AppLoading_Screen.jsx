@@ -8,7 +8,7 @@ import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { Colors } from 'mobile/styles/colors';
 import ProgressBar from 'react-native-progress/Bar';
 import loadAppAction from 'mobile/actions/app/loadApp';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 

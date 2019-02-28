@@ -10,7 +10,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { CodeInput } from 'mobile/components/shared/DigitInput';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { Login_Response } from 'mobile/actions/auth/login';
 import { Transition } from 'react-navigation-fluid-transitions';
