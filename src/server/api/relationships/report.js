@@ -31,7 +31,7 @@ const schema = {
       "description": "Whether to block the reported user or not"
     }
   },
-  "required": ["reportedUserId", "message", "reasonCode", "block"]
+  "required": ["userId", "message", "reasonCode", "block"]
 };
 /* eslint-enable */
 
@@ -39,7 +39,7 @@ const schema = {
  * @api {post} /api/relationships/report
  *
  */
-const reportUser = async (
+const report = async (
   reportingUserId: number,
   reportedUserId: number,
   message: string,
@@ -96,7 +96,7 @@ ${message}`;
 const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
-    return reportUser(
+    return report(
       req.user.id,
       req.body.userId,
       req.body.message,
@@ -108,5 +108,5 @@ const handler = [
 
 module.exports = {
   handler,
-  apply: reportUser,
+  apply: report,
 };

@@ -36,7 +36,7 @@ Reporting User: *${reportingUserId}*
 Reported User: *${reportedUserId}*
 Environment:   *${NODE_ENV}*
 
-${'```'}$${message}${'```'}`);
+${'```'}${message}${'```'}`);
   }
 };
 
