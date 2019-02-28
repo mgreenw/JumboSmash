@@ -60,13 +60,14 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   let memberInfo = null;
   switch (memberInfoResponse.status) {
     case 'GET_MEMBER_INFO__SUCCESS':
-      return resolve(memberInfoResponse.member);
+      memberInfo = memberInfoResponse.member;
+      break;
     case 'GET_MEMBER_INFO__NOT_FOUND':
-      return resolve(null);
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
     case 'GET_MEMBER_INFO__NOT_TUFTS_EMAIL':
-      return resolve(null);
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL).noData();
     default:
-      return reject(new Error('Koh: No status found in result body.'));
+      throw new Error('Koh: No status found in result body.');
   }
 
   //  If the member info is null (not found), error that it was not found.
