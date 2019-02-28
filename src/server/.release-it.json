@@ -1,9 +1,12 @@
 {
   "git": {
-    "tagName": "server-${version}"
+    "tagName": "server-${version}",
+    "tagAnnotation": "Release server ${version}",
+    "commitMessage": "Release serer ${version}"
   },
   "github": {
-    "release": false
+    "release": true,
+    "releaseName": "Release server ${version}"
   },
   "npm": {
     "publish": false
