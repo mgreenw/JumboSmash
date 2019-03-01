@@ -147,10 +147,10 @@ class SplashScreen extends React.Component<Props, State> {
     const isLoading = login_inProgress;
 
     let message = alreadySent
-      ? `Looks like you've already been sent an email to ${responseEmail}.`
-      : `A verification code has been sent to ${responseEmail}.`;
+      ? `Congrats on graduating! Looks like a verification code already been sent to ${responseEmail}.`
+      : `Congrats on graduating! A verification code has been sent to ${responseEmail} Enter it below to start using JumboSmash.`;
 
-    message += ` Enter below to continue.`;
+    message += ` Enter it below to continue.`;
 
     return (
       <View style={{ flex: 1 }}>
@@ -183,7 +183,8 @@ class SplashScreen extends React.Component<Props, State> {
                   style={{
                     width: '100%',
                     paddingLeft: 40,
-                    paddingRight: 40
+                    paddingRight: 40,
+                    paddingTop: 10
                   }}
                 >
                   <CodeInput
@@ -195,16 +196,6 @@ class SplashScreen extends React.Component<Props, State> {
                     error={errorMessageCode}
                     assistive={'Make sure to check your spam folder!'}
                   />
-                  <View style={{ padding: 20 }}>
-                    <Text
-                      style={[
-                        textStyles.headline6Style,
-                        { textAlign: 'center', color: Colors.Grapefruit }
-                      ]}
-                    >
-                      {'' /* TODO: make countdown timer */}
-                    </Text>
-                  </View>
                 </View>
               </View>
               <View
