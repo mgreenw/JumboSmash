@@ -4,6 +4,8 @@ import type { $Request, $Response, $Next } from 'express';
 
 const codes = require('../../status-codes');
 
+const { version } = require('../../../utils');
+
 // Middleware to check if the user is authenticated
 const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
   try {
@@ -12,6 +14,7 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
     if (!req.user.hasProfile) {
       return res.status(403).json({
         status: codes.PROFILE_SETUP_INCOMPLETE.status,
+        version,
       });
     }
 
@@ -22,6 +25,7 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
     // the 'onboarded' middleware
     return res.status(500).json({
       status: 'SERVER_ERROR',
+      version,
     });
   }
 };
