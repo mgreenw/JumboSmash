@@ -164,15 +164,15 @@ class SplashScreen extends React.Component<Props, State> {
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 2
+                  flex: 2,
+                  paddingLeft: 40,
+                  paddingRight: 40
                 }}
               >
                 <View
                   style={{
                     flex: 1,
-                    alignItems: 'center',
-                    paddingLeft: 50,
-                    paddingRight: 50
+                    alignItems: 'center'
                   }}
                 >
                   <View style={{ paddingTop: 20 }}>
@@ -182,8 +182,6 @@ class SplashScreen extends React.Component<Props, State> {
                 <View
                   style={{
                     width: '100%',
-                    paddingLeft: 40,
-                    paddingRight: 40,
                     paddingTop: 10
                   }}
                 >
