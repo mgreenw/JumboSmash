@@ -214,7 +214,7 @@ class SplashScreen extends React.Component<Props, State> {
           <Transition inline appear="horizontal">
             <View style={{ flex: 1 }}>
               <View style={{ flex: 2, alignItems: 'center' }}>
-                <Text style={Arthur_Styles.title}>Project Gem</Text>
+                <Text style={Arthur_Styles.title}>JumboSmash</Text>
                 <Image
                   resizeMode="contain"
                   style={{
