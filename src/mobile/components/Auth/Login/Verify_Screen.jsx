@@ -70,8 +70,7 @@ class SplashScreen extends React.Component<Props, State> {
         } else if (statusCode === 'BAD_CODE') {
           this._codeInputError('Incorrect verification code');
         } else if (statusCode === 'EXPIRED_CODE') {
-          const responseEmail = navigation.getParam('responseEmail', '');
-          this._onExpiredCode(responseEmail);
+          this._codeInputError('Incorrect verification code');
         } else {
           // TODO: more verbose errors
           this._codeInputError(statusCode);
@@ -95,9 +94,10 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
-  _onExpiredCode = (email: string) => {
+  _onExpiredCode = (utln: string, email: string) => {
     const { navigation } = this.props;
     navigation.navigate(routes.ExpiredCode, {
+      utln,
       email
     });
   };
