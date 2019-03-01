@@ -67,11 +67,18 @@ import type {
   SendMessageInitiated_Action,
   SendMessageCompleted_Action
 } from 'mobile/actions/app/sendMessage';
+import type {
+  SummonPopup_Action,
+  DismissPopup_Action
+} from 'mobile/actions/popup';
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
+
+// For global popups
+export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
 
 // /////////////
 // USER TYPES:
@@ -300,7 +307,10 @@ export type ReduxState = {|
 
   matches: Matches,
   messagedMatchIds: ?(number[]),
-  unmessagedMatchIds: ?(number[])
+  unmessagedMatchIds: ?(number[]),
+
+  // Global Error Popup
+  popupErrorCode: ?PopupCode
 |};
 
 export type Action =
@@ -335,7 +345,9 @@ export type Action =
   | GetConversationInitiated_Action
   | GetConversationCompleted_Action
   | SendMessageInitiated_Action
-  | SendMessageCompleted_Action;
+  | SendMessageCompleted_Action
+  | SummonPopup_Action
+  | DismissPopup_Action;
 
 export type GetState = () => ReduxState;
 
@@ -393,7 +405,10 @@ const defaultState: ReduxState = {
     allIds: []
   },
   messagedMatchIds: null,
-  unmessagedMatchIds: null
+  unmessagedMatchIds: null,
+
+  // Global Error Popup
+  popupErrorCode: null
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -1023,6 +1038,16 @@ export default function rootReducer(
           }
         }
       };
+    }
+
+    // TODO: trivially make these their own slice reducer
+    case 'SUMMON_POPUP': {
+      const { code: popupErrorCode } = action.payload;
+      return { ...state, popupErrorCode };
+    }
+
+    case 'DISMISS_POPUP': {
+      return { ...state, popupErrorCode: null };
     }
 
     default: {

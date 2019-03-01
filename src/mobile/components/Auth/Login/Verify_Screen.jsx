@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import loginAction from 'mobile/actions/auth/login';
-import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import type { ReduxState, Dispatch, PopupCode } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
@@ -15,6 +15,8 @@ import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { Login_Response } from 'mobile/actions/auth/login';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
+import { summonPopup as summonPopupAction } from 'mobile/actions/popup';
+import NavigationService from '../../navigation/NavigationService';
 
 const NUM_DIGITS = 6;
 
@@ -31,7 +33,8 @@ type navigationProps = {
   navigation: any
 };
 type dispatchProps = {
-  login: (utln: string, code: string) => void
+  login: (utln: string, code: string) => void,
+  summonPopup: (code: PopupCode) => void
 };
 
 type Props = reduxProps & navigationProps & dispatchProps;
@@ -47,6 +50,9 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
   return {
     login: (utln, code) => {
       dispatch(loginAction(utln, code));
+    },
+    summonPopup: code => {
+      dispatch(summonPopupAction(code));
     }
   };
 }
@@ -70,7 +76,7 @@ class SplashScreen extends React.Component<Props, State> {
         } else if (statusCode === 'BAD_CODE') {
           this._codeInputError('Incorrect verification code');
         } else if (statusCode === 'EXPIRED_CODE') {
-          this._codeInputError('Incorrect verification code');
+          this._onExpiredCode();
         } else {
           // TODO: more verbose errors
           this._codeInputError(statusCode);
@@ -94,12 +100,10 @@ class SplashScreen extends React.Component<Props, State> {
     });
   };
 
-  _onExpiredCode = (utln: string, email: string) => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.ExpiredCode, {
-      utln,
-      email
-    });
+  _onExpiredCode = () => {
+    const { summonPopup } = this.props;
+    summonPopup('EXPIRED_VERIFY_CODE');
+    NavigationService.reset();
   };
 
   _onHelp = () => {
