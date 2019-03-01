@@ -87,7 +87,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
         infoScreen
         section="settings"
         onButtonPress={this._goToNextPage}
-        title="Project Gem"
+        title="JumboSmash"
         progress={0}
       />
     );
