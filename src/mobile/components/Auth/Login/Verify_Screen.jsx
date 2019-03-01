@@ -210,28 +210,21 @@ class SplashScreen extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row'
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  width: '100%'
                 }}
               >
-                <View style={{ flex: 1 }} />
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'space-around'
-                  }}
-                >
-                  <PrimaryButton
-                    onPress={this._onSubmit}
-                    title="Submit"
-                    disabled={isLoading || code.length !== NUM_DIGITS}
-                    loading={isLoading}
-                  />
-                  <TertiaryButton
-                    onPress={this._onHelp}
-                    title="Having Touble?"
-                  />
-                </View>
-                <View style={{ flex: 1 }} />
+                <PrimaryButton
+                  onPress={this._onSubmit}
+                  title="Verify"
+                  disabled={isLoading || code.length !== NUM_DIGITS}
+                  loading={isLoading}
+                />
+                <TertiaryButton
+                  onPress={this._onHelp}
+                  title="Having Trouble?"
+                />
               </View>
             </View>
           </Transition>
