@@ -13,12 +13,17 @@ async function signToken(userId) {
     `,
   [tokenUUID, userId]);
 
-  return jwt.sign({
+  const token = jwt.sign({
     userId,
     uuid: tokenUUID,
   }, config.secret, {
     expiresIn: 31540000, // expires in 365 days
   });
+
+  return {
+    token,
+    tokenUUID,
+  };
 }
 
 async function insertPhoto(userId, index = 1, photoUUID = uuid()) {
@@ -93,7 +98,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
       return {
         id,
-        token: await signToken(id),
+        ...(await signToken(id)),
         profile: {
           userId: profile,
           ...body,
@@ -103,7 +108,7 @@ async function createUser(utln, useDefaultProfile = false, profileBody = null) {
 
     return {
       id,
-      token: await signToken(id),
+      ...(await signToken(id)),
     };
   } catch (error) {
     throw new Error('Failed to insert user');
