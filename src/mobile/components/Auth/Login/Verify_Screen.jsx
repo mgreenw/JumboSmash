@@ -147,10 +147,10 @@ class SplashScreen extends React.Component<Props, State> {
     const isLoading = login_inProgress;
 
     let message = alreadySent
-      ? `Looks like you've already been sent an email to ${responseEmail}.`
-      : `A verification code has been sent to ${responseEmail}.`;
+      ? `Congrats on graduating! Looks like a verification code already been sent to ${responseEmail}.`
+      : `Congrats on graduating! A verification code has been sent to ${responseEmail} Enter it below to start using JumboSmash.`;
 
-    message += ` Enter below to continue.`;
+    message += ` Enter it below to continue.`;
 
     return (
       <View style={{ flex: 1 }}>
@@ -164,15 +164,15 @@ class SplashScreen extends React.Component<Props, State> {
             <View style={{ flex: 1 }}>
               <View
                 style={{
-                  flex: 2
+                  flex: 2,
+                  paddingLeft: 40,
+                  paddingRight: 40
                 }}
               >
                 <View
                   style={{
                     flex: 1,
-                    alignItems: 'center',
-                    paddingLeft: 50,
-                    paddingRight: 50
+                    alignItems: 'center'
                   }}
                 >
                   <View style={{ paddingTop: 20 }}>
@@ -182,8 +182,7 @@ class SplashScreen extends React.Component<Props, State> {
                 <View
                   style={{
                     width: '100%',
-                    paddingLeft: 40,
-                    paddingRight: 40
+                    paddingTop: 10
                   }}
                 >
                   <CodeInput
@@ -195,43 +194,26 @@ class SplashScreen extends React.Component<Props, State> {
                     error={errorMessageCode}
                     assistive={'Make sure to check your spam folder!'}
                   />
-                  <View style={{ padding: 20 }}>
-                    <Text
-                      style={[
-                        textStyles.headline6Style,
-                        { textAlign: 'center', color: Colors.Grapefruit }
-                      ]}
-                    >
-                      {'' /* TODO: make countdown timer */}
-                    </Text>
-                  </View>
                 </View>
               </View>
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row'
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  width: '100%'
                 }}
               >
-                <View style={{ flex: 1 }} />
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'space-around'
-                  }}
-                >
-                  <PrimaryButton
-                    onPress={this._onSubmit}
-                    title="Submit"
-                    disabled={isLoading || code.length !== NUM_DIGITS}
-                    loading={isLoading}
-                  />
-                  <TertiaryButton
-                    onPress={this._onHelp}
-                    title="Having Touble?"
-                  />
-                </View>
-                <View style={{ flex: 1 }} />
+                <PrimaryButton
+                  onPress={this._onSubmit}
+                  title="Verify"
+                  disabled={isLoading || code.length !== NUM_DIGITS}
+                  loading={isLoading}
+                />
+                <TertiaryButton
+                  onPress={this._onHelp}
+                  title="Having Trouble?"
+                />
               </View>
             </View>
           </Transition>
