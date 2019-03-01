@@ -460,7 +460,7 @@ describe('api/auth/verify', () => {
     }, 'NOT_THE_REAL_SECRET', {
       expiresIn: 31540000, // expires in 365 days
     });
-    let res = await request(app)
+    const res = await request(app)
       .get('/api/users/me/settings')
       .set('Authorization', token)
       .send(
