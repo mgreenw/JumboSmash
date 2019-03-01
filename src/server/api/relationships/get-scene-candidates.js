@@ -87,7 +87,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
 
   `, [userId, excludedUsers]);
 
-  return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data(result.rows);
+  return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data(_.shuffle(result.rows));
 };
 
 const handler = [
