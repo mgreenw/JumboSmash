@@ -1,5 +1,6 @@
 // @flow
 
+const _ = require('lodash');
 const secrets = require('../secrets');
 
 module.exports = {
@@ -21,5 +22,11 @@ module.exports = {
   redis: {
     host: 'gem_redis',
     port: 6379,
+  },
+  google: {
+    /* eslint-disable no-useless-escape */
+    private_key: _.replace(secrets.get('GOOGLE_PRIVATE_KEY'), new RegExp('\\\\n', '\g'), '\n'),
+    client_email: 'projectgem-server@projectgem.iam.gserviceaccount.com',
+    project_id: 'projectgem',
   },
 };
