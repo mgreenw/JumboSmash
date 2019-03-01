@@ -70,7 +70,7 @@ class SplashScreen extends React.Component<Props, State> {
         } else if (statusCode === 'BAD_CODE') {
           this._codeInputError('Incorrect verification code');
         } else if (statusCode === 'EXPIRED_CODE') {
-          this._codeInputError('Incorrect verification code');
+          this._codeInputError('Expired verification code');
         } else {
           // TODO: more verbose errors
           this._codeInputError(statusCode);
