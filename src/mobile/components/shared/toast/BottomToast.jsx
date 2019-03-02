@@ -5,19 +5,20 @@ import { connect } from 'react-redux';
 import type {
   ReduxState,
   Dispatch,
+  BottomToast,
   BottomToastCode
 } from 'mobile/reducers/index';
 
 type ReduxProps = {
-  bottomToastCode: ?BottomToastCode
+  bottomToast: BottomToast
 };
 type DispatchProps = {};
 type Props = ReduxProps & DispatchProps;
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
-  const { bottomToastCode } = reduxState;
+  const { bottomToast } = reduxState;
   return {
-    bottomToastCode
+    bottomToast
   };
 }
 
@@ -27,9 +28,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 
 class SettingsToast extends React.Component<Props> {
   componentDidUpdate(prevProps) {
-    const { bottomToastCode } = this.props;
-    if (bottomToastCode && bottomToastCode !== prevProps.bottomToastCode) {
-      this.showToast(bottomToastCode);
+    const { bottomToast } = this.props;
+    if (bottomToast.code && bottomToast.id !== prevProps.bottomToast.id) {
+      this.showToast(bottomToast.code);
     }
   }
 

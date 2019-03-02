@@ -1,6 +1,7 @@
 // @flow
 
 // Auth:
+import uuidv4 from 'uuid/v4';
 import type {
   SendVerificationEmail_Response,
   SendVerificationEmailCompleted_Action,
@@ -84,6 +85,26 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE';
+export type BottomToast = {
+  id: number,
+  code: ?BottomToastCode
+};
+
+export type NewMatchToastCode = 'NEW_MATCH';
+export type NewMatchToast = {
+  id: number,
+  code: ?NewMatchToastCode,
+  profileId?: number
+};
+
+export type NewMessageToatCode = 'NEW_MESSAGE';
+export type NewMessageToat = {
+  id: number,
+  code: ?NewMatchToastCode,
+  messageId?: number
+};
+
+export type TopToast = NewMatchToast | NewMessageToat;
 
 // /////////////
 // USER TYPES:
@@ -318,7 +339,8 @@ export type ReduxState = {|
   popupErrorCode: ?PopupCode,
 
   // Toast
-  bottomToastCode: ?BottomToastCode
+  bottomToast: BottomToast,
+  topToast: TopToast
 |};
 
 export type Action =
@@ -419,7 +441,14 @@ const defaultState: ReduxState = {
   popupErrorCode: null,
 
   // Toasts
-  bottomToastCode: null
+  bottomToast: {
+    id: 0,
+    code: null
+  },
+  topToast: {
+    id: 0,
+    code: null
+  }
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -893,6 +922,10 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_SETTINGS__SUCCESS'
+      };
       return {
         ...state,
         inProgress: {
@@ -903,7 +936,7 @@ export default function rootReducer(
           ...state.client,
           settings: action.payload
         },
-        bottomToastCode: 'SAVE_SETTINGS__SUCCESS'
+        bottomToast
       };
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
