@@ -81,7 +81,7 @@ export default (props: Props) => {
         leftComponent={LeftIcon}
         rightComponent={RightIcon}
         centerComponent={centerComponent || Title}
-        outerContainerStyles={{ borderBottomWidth: borderBottom ? 1 : 0 }}
+        containerStyle={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />
       <StatusBar barStyle="dark-content" />
     </View>

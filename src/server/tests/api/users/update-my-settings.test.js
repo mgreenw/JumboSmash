@@ -1,4 +1,5 @@
 const request = require('supertest');
+const uuidv4 = require('uuid/v4');
 const codes = require('../../../api/status-codes');
 
 const app = require('../../../app');
@@ -30,7 +31,7 @@ describe('GET api/users/me/settings', () => {
     const res = await request(app)
       .patch('/api/users/me/settings')
       .set('Accept', 'application/json')
-      .set('Authorization', await dbUtils.signToken(1))
+      .set('Authorization', (await dbUtils.signToken(1)).token)
       .send({})
       .expect(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
@@ -133,6 +134,7 @@ describe('GET api/users/me/settings', () => {
       bio: 'Likes green eggs and ham',
       birthday: '1996-05-14',
     });
+    const token = uuidv4();
     const res = await request(app)
       .patch('/api/users/me/settings')
       .set('Accept', 'application/json')
@@ -148,6 +150,7 @@ describe('GET api/users/me/settings', () => {
         activeScenes: {
           smash: true,
         },
+        expoPushToken: token,
       });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
@@ -171,5 +174,8 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.activeScenes.smash).toBe(true);
     expect(res.body.data.activeScenes.social).toBe(false);
     expect(res.body.data.activeScenes.stone).toBe(false);
+
+    const tokenRes = await db.query('SELECT expo_push_token FROM classmates WHERE id = $1 LIMIT 1', [user.id]);
+    expect(tokenRes.rows[0].expo_push_token).toBe(token);
   });
 });

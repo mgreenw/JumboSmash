@@ -56,7 +56,19 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     });
   }
 
-  const memberInfo = await authUtils.getMemberInfo(email);
+  const memberInfoResponse = await authUtils.getMemberInfo(email);
+  let memberInfo = null;
+  switch (memberInfoResponse.status) {
+    case 'GET_MEMBER_INFO__SUCCESS':
+      memberInfo = memberInfoResponse.member;
+      break;
+    case 'GET_MEMBER_INFO__NOT_FOUND':
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
+    case 'GET_MEMBER_INFO__NOT_TUFTS_EMAIL':
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL).noData();
+    default:
+      throw new Error('Koh: No status found in result body.');
+  }
 
   //  If the member info is null (not found), error that it was not found.
   if (!memberInfo) {
@@ -147,10 +159,9 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   );
 
   // Create the verification url and send the email!
-  // TODO: Enable sending emails again, ensure they work.
   mail.send({
     to: memberInfo.email,
-    from: 'jumbosmash19@gmail.com',
+    from: 'beta@jumbosmash.com',
     subject: 'JumboSmash Email Verification',
     html: `<p>Enter this code: ${verificationCode}</p>`,
   });

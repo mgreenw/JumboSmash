@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
+    "@babel/preset-flow": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.13.0",
     "eslint-config-airbnb": "^17.1.0",
@@ -14,16 +15,15 @@
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-native": "^3.6.0",
     "flow-bin": "^0.93.0",
-    "jest-expo": "~27.0.0",
-    "react-native-scripts": "1.14.0",
+    "jest-expo": "~32.0.0",
     "react-test-renderer": "16.3.1"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "./node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "react-native-scripts start",
-    "eject": "react-native-scripts eject",
-    "android": "react-native-scripts android",
-    "ios": "react-native-scripts ios",
+    "start": "expo start",
+    "eject": "expo eject",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "test": "jest"
   },
   "jest": {
@@ -33,14 +33,15 @@
     "@react-navigation/native": "^3.1.4",
     "babel-plugin-module-resolver": "^3.1.1",
     "crypto-js": "^3.1.9-1",
-    "expo": "^27.0.1",
+    "expo": "^32.0.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "normalizr": "^3.3.0",
     "prettier": "^1.16.4",
-    "react": "16.3.1",
-    "react-native": "~0.55.2",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-collapsible": "^1.4.0",
+    "react-native-easy-toast": "^1.2.0",
     "react-native-elements": "^1.0.0-beta",
     "react-native-expo-image-cache": "^3.2.0",
     "react-native-gifted-chat": "^0.7.2",
@@ -49,10 +50,11 @@
     "react-native-progress": "^3.5.0",
     "react-native-textinput-effects": "^0.4.2",
     "react-navigation": "^3.0.7",
-    "react-navigation-fluid-transitions": "^0.2.74",
+    "react-navigation-fluid-transitions": "^0.3.1",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "uuid": "^3.3.2"
   }
 }

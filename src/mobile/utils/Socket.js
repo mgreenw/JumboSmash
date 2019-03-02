@@ -2,6 +2,7 @@
 
 import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
+import store from 'mobile/store';
 
 import { SERVER_ROUTE } from '../api/routes';
 

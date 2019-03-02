@@ -16,13 +16,13 @@ import type {
 } from 'mobile/reducers';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import DevTesting from 'mobile/utils/DevTesting';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import type { SwipeDirection } from './Deck';

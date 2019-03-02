@@ -1,8 +1,12 @@
 const request = require('supertest');
+const uuidv4 = require('uuid/v4');
+const jwt = require('jsonwebtoken');
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
 
 const db = require('../../../db');
+
+const dbUtils = require('../../utils/db');
 
 const GOOD_EMAIL = 'jchun03@tufts.edu';
 const GOOD_UTLN = 'jchun03';
@@ -413,5 +417,60 @@ describe('api/auth/verify', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
+  });
+
+  it('should add the expo push token, if possible', async () => {
+    let res = await request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          email: GOOD_EMAIL2,
+          forceResend: true,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    expect(res.body.status).toEqual(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
+    expect(res.body.data.email).toContain('Ronald.Zampolin@tufts.edu');
+
+    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    const token = uuidv4();
+    res = await request(app)
+      .post('/api/auth/verify')
+      .send(
+        {
+          utln: GOOD_UTLN2,
+          code: codeForGoodUtln.rows[0].code,
+          expoPushToken: token,
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(200);
+
+    const tokenRes = await db.query('SELECT expo_push_token FROM classmates WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
+    expect(tokenRes.rows[0].expo_push_token).toBe(token);
+  });
+
+  it('should return UNAUTHENTICATED if the token is generated with a bad secret', async () => {
+    const me = await dbUtils.createUser('mgreen99', true);
+    const token = jwt.sign({
+      userId: me.id,
+      uuid: me.tokenUUID,
+    }, 'NOT_THE_REAL_SECRET', {
+      expiresIn: 31540000, // expires in 365 days
+    });
+    const res = await request(app)
+      .get('/api/users/me/settings')
+      .set('Authorization', token)
+      .send(
+        {
+          email: GOOD_EMAIL2,
+        },
+      )
+      .set('Accept', 'application/json');
+
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+    expect(res.statusCode).toBe(401);
   });
 });

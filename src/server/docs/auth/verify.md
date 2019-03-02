@@ -22,6 +22,10 @@ Provide the user's Tufts utln and the 6 digit numeric code that was sent to thei
   * Type: `string`
   * Description: 6 digit numeric code sent to the user's email.
   * Required: `true`
+* `expoPushToken`
+  * Type: `string`
+  * Description: The push token that expo gives on mobile
+  * Required: `false`
 
 **Request body example**
 
@@ -29,6 +33,16 @@ Provide the user's Tufts utln and the 6 digit numeric code that was sent to thei
 {
     "utln": "mgreen14",
     "code": 26405
+}
+```
+
+### OR
+
+```json
+{
+    "utln": "mgreen14",
+    "code": 26405,
+    "expoPushToken": "xasonetuhaoesuntaohexnahbqe;suntadoeu"
 }
 ```
 

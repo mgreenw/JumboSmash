@@ -7,9 +7,14 @@ const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
 const messagesRouter = require('./messages');
+const metaRouter = require('./meta');
 
 const codes = require('./status-codes');
 const logger = require('../logger');
+const slack = require('../slack');
+const utils = require('../utils');
+
+const NODE_ENV = utils.getNodeEnv();
 
 const { authenticated, hasProfile } = require('./utils').middleware;
 
@@ -32,6 +37,7 @@ apiRouter.use(authenticated);
 // authentication or onboarding, they may use the middleware directly.
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/photos', photosRouter);
+apiRouter.use('/meta', metaRouter);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
@@ -45,8 +51,15 @@ apiRouter.use('/messages', messagesRouter);
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
   logger.error('Server Error: ', err);
+  slack.postServerUpdate(`SERVER ERROR
+    Environment: *${NODE_ENV}*
+
+    ${err.message}
+    ${err.stack}
+  `);
   return res.status(500).json({
-    status: codes.SERVER_ERROR,
+    status: codes.SERVER_ERROR.status,
+    version: utils.version,
   });
 });
 

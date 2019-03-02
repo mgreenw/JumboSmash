@@ -3,7 +3,8 @@
 import type { $Request, $Response, $Next } from 'express';
 
 const codes = require('../../status-codes');
-const { getUser } = require('../../auth/utils');
+const { getUser, AuthenticationError } = require('../../auth/utils');
+const { version } = require('../../../utils');
 
 // Middleware to check if the user is authenticated
 const authenticated = async (req: $Request, res: $Response, next: $Next) => {
@@ -13,6 +14,7 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
     return res.status(400).json({
       status: codes.BAD_REQUEST.status,
       message: 'Missing Authorization header.',
+      version,
     });
   }
 
@@ -27,9 +29,13 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   // If there is an error getting the user (like the user does not exist),
   // return with UNAUTHORIZED
   } catch (error) {
-    return res.status(401).json({
-      status: codes.UNAUTHORIZED.status,
-    });
+    if (error instanceof AuthenticationError) {
+      return res.status(401).json({
+        status: codes.UNAUTHORIZED.status,
+        version,
+      });
+    }
+    return next(error);
   }
 };
 

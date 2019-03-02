@@ -140,6 +140,19 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 
 ### OR
 
+**Condition** : The email is a valid email but does not belong to a Tufts student.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL"
+}
+```
+
+### OR
+
 **Condition** : If the required fields are not supplied.
 
 **Code** : `400 BAD REQUEST`

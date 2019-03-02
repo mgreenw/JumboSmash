@@ -1,5 +1,6 @@
 // @flow
 import { NavigationActions } from 'react-navigation';
+import routes from './routes';
 
 let _navigator;
 
@@ -20,8 +21,8 @@ function back() {
   _navigator.dispatch(NavigationActions.back());
 }
 
-function reset(error: 'UNAUTHORIZED' | 'SERVER_ERROR') {
-  navigate('SPLASH_ROUTE', { error });
+function reset() {
+  navigate(routes.Splash);
 }
 
 // add other navigation functions that you need and export them

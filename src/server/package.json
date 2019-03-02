@@ -1,6 +1,6 @@
 {
   "name": "jumbosmash-server",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.12.0",
@@ -22,9 +22,11 @@
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "release": "release-it"
   },
   "dependencies": {
+    "@google-cloud/logging-winston": "^0.11.0",
     "@sendgrid/mail": "^6.3.1",
     "@slack/client": "^4.8.0",
     "ajv": "^6.5.4",
@@ -32,6 +34,7 @@
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "config": "^2.0.1",
+    "expo-server-sdk": "^3.1.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
@@ -62,6 +65,7 @@
     "jest": "^23.6.0",
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
+    "release-it": "^10.2.0",
     "supertest": "^3.3.0"
   },
   "jest": {

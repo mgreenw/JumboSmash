@@ -2,17 +2,17 @@
 import React from 'react';
 import { View } from 'react-native';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import BioInput from 'mobile/components/shared/BioInput';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 export default class OnboardingBioScreen extends React.Component<Props, State> {
@@ -21,7 +21,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -39,9 +39,9 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
         ...state.profile,
         fields: {
           ...state.profile.fields,
-          bio,
-        },
-      },
+          bio
+        }
+      }
     }));
   };
 
@@ -51,12 +51,15 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingSettingsInfo, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -68,7 +71,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
         style={{
           maxHeight: 210,
           marginBottom: 30,
-          width: '100%',
+          width: '100%'
         }}
       >
         <BioInput
