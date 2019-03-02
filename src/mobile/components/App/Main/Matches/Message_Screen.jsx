@@ -18,10 +18,16 @@ import type {
 } from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
+import ActionSheet from 'mobile/components/shared/ActionSheet';
+import Popup from 'mobile/components/shared/Popup';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { NavigationScreenProp } from 'react-navigation';
 import { routes } from 'mobile/components/Navigation';
 import NavigationService from 'mobile/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
@@ -45,7 +51,11 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
   match: Match,
-  messagesLoaded: boolean
+  messagesLoaded: boolean,
+  showActionSheet: boolean,
+  showPopup: boolean,
+  block: boolean,
+  selectedReasons: boolean[]
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -114,6 +124,16 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   };
 }
 
+const COMMON_REASONS = [
+  'Made me uncomfortable',
+  'Abusive or threatening',
+  'Inappropriate content',
+  'Bad offline behavior'
+];
+
+const BLOCK_REASONS = [...COMMON_REASONS, 'No reason'];
+const REPORT_REASONS = [...COMMON_REASONS, 'Spam or scam'];
+
 class MessagingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -124,7 +144,11 @@ class MessagingScreen extends React.Component<Props, State> {
     }
     this.state = {
       match,
-      messagesLoaded: false
+      messagesLoaded: false,
+      showActionSheet: false,
+      showPopup: false,
+      block: false,
+      selectedReasons: []
     };
   }
 
@@ -144,6 +168,14 @@ class MessagingScreen extends React.Component<Props, State> {
       });
     }
   }
+
+  _toggleActionSheet = (showActionSheet: boolean) => {
+    this.setState({ showActionSheet });
+  };
+
+  _toggleShowPopup = (showPopup: boolean, block: boolean) => {
+    this.setState({ showPopup, block });
+  };
 
   onSend = (messages: GiftedChatMessage[] = []) => {
     if (messages.length !== 1) {
@@ -231,6 +263,123 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
+  _renderActionSheet() {
+    const { showActionSheet } = this.state;
+    return (
+      <ActionSheet
+        visible={showActionSheet}
+        options={[
+          {
+            text: 'Block',
+            onPress: () => {
+              this._toggleActionSheet(false);
+              this._toggleShowPopup(true, true);
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          },
+          {
+            text: 'Report',
+            onPress: () => {
+              this._toggleActionSheet(false);
+              this._toggleShowPopup(true, false);
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          }
+        ]}
+        cancel={{
+          text: 'Cancel',
+          onPress: () => {
+            this._toggleActionSheet(false);
+          }
+        }}
+      />
+    );
+  }
+
+  _renderPopup() {
+    const { showPopup, match, block, selectedReasons } = this.state;
+    const { profileMap } = this.props;
+    const profile = profileMap[match.profile];
+    const displayName = profile.fields.displayName;
+
+    const reasons = block ? BLOCK_REASONS : REPORT_REASONS;
+
+    return (
+      <Popup
+        visible={showPopup}
+        onTouchOutside={() => this._toggleShowPopup(false, false)}
+      >
+        <Text
+          style={[
+            textStyles.headline4StyleMedium,
+            {
+              color: Colors.Grapefruit,
+              textAlign: 'center'
+            }
+          ]}
+        >
+          {block ? 'Block' : 'Report'}
+        </Text>
+        <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
+          {`Help keep JumboSmash safe by telling the team why you’re ${
+            block ? 'blocking' : 'reporting'
+          } ${displayName}.`}
+        </Text>
+        {reasons.map((reason, i) => {
+          const checked = selectedReasons[i];
+          return (
+            <View style={{ flexDirection: 'row', marginTop: 22 }} key={reason}>
+              <TouchableOpacity
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderColor: Colors.AquaMarine,
+                  borderWidth: 2,
+                  borderRadius: 32,
+                  paddingTop: 1.5,
+                  marginRight: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: checked ? Colors.AquaMarine : Colors.White
+                }}
+                onPress={() => {
+                  const newSelectedReasons = selectedReasons;
+                  newSelectedReasons[i] = !checked;
+                  this.setState({ selectedReasons: newSelectedReasons });
+                }}
+              >
+                <CustomIcon name="check" size={16} color={Colors.White} />
+              </TouchableOpacity>
+              <Text style={textStyles.headline6Style}>{reason}</Text>
+            </View>
+          );
+        })}
+        <View style={{ flexDirection: 'row', marginTop: 31 }}>
+          <View style={{ flex: 1, paddingRight: 30 }}>
+            <SecondaryButton
+              onPress={() => this._toggleShowPopup(false, false)}
+              title="Cancel"
+              loading={false}
+              disabled={false}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <PrimaryButton
+              onPress={() => console.log('Pressed block/report')}
+              title={block ? 'Block' : 'Report'}
+              loading={false}
+              disabled={false}
+            />
+          </View>
+        </View>
+      </Popup>
+    );
+  }
+
   render() {
     const { messagesLoaded } = this.state;
     return (
@@ -240,9 +389,7 @@ class MessagingScreen extends React.Component<Props, State> {
             title="Messages"
             leftIconName="back"
             rightIconName="ellipsis"
-            onRightIconPress={() => {
-              Alert.alert('this should be report and stuff?');
-            }}
+            onRightIconPress={() => this._toggleActionSheet(true)}
             borderBottom
           />
         </View>
@@ -259,6 +406,8 @@ class MessagingScreen extends React.Component<Props, State> {
             <ActivityIndicator />
           </View>
         )}
+        {this._renderActionSheet()}
+        {this._renderPopup()}
       </View>
     );
   }
