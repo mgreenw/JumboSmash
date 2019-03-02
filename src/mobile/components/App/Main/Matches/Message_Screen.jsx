@@ -187,10 +187,10 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _renderContent = () => {
+  _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
     if (messages === null || messages === undefined) {
-      return this._renderGenisis();
+      return this._renderGenisis(profile);
     }
     return (
       <GiftedChat
@@ -206,20 +206,19 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderGenisis = () => {
-    const { navigation, profileMap } = this.props;
-    const { match } = this.state;
-    const profile = profileMap[match.userId];
+  _goToProfile = (profile: UserProfile) => {
+    console.log('go to profile');
+    const { navigation } = this.props;
+    navigation.navigate(routes.MatchesExpandedCard, {
+      profile,
+      onMinimize: NavigationService.back
+    });
+  };
+
+  _renderGenisis = (profile: UserProfile) => {
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(routes.MatchesExpandedCard, {
-              profile,
-              onMinimize: NavigationService.back
-            })
-          }
-        >
+        <TouchableOpacity onPress={this._goToProfile}>
           <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
@@ -232,22 +231,26 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { profileMap } = this.props;
+    const { match } = this.state;
+    const profile = profileMap[match.userId];
     const { messagesLoaded } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <View>
           <GEMHeader
-            title="Messages"
+            title={profile.fields.displayName}
             leftIconName="back"
             rightIconName="ellipsis"
             onRightIconPress={() => {
               Alert.alert('this should be report and stuff?');
             }}
             borderBottom
+            onTitlePress={() => this._goToProfile(profile)}
           />
         </View>
         {messagesLoaded ? (
-          this._renderContent()
+          this._renderContent(profile)
         ) : (
           <View
             style={{
