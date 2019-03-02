@@ -15,6 +15,9 @@ app.use((req, res, next) => {
     ? JSON.stringify(req.body, null, 2)
     : '';
 
+  // Log all incoming api requests!
+  // The httpRequest allows Google Stackdriver to parse and display the
+  // information about the API request, so we include it here.
   logger.info(`${req.method} ${req.url} ${body}`, {
     httpRequest: {
       status: res.statusCode,

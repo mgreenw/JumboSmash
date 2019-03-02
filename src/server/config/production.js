@@ -23,6 +23,9 @@ module.exports = {
     host: 'gem_redis',
     port: 6379,
   },
+  // These keys are used for Google Stackdriver, which we use for their logging service
+  // The weird replace below removes all newlines from the private key which were
+  // causing it to fail.
   google: {
     /* eslint-disable no-useless-escape */
     private_key: _.replace(secrets.get('GOOGLE_PRIVATE_KEY'), new RegExp('\\\\n', '\g'), '\n'),
