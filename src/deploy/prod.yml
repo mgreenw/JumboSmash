@@ -9,7 +9,7 @@ services:
       --entryPoints="Name:https Address::443 TLS"
       --acme
       --acme.acmelogging="true"
-      --acme.email="jumbosmash@gmail.com"
+      --acme.email="jumbosmash19@gmail.com"
       --acme.entrypoint="https"
       --acme.storage="/acme.json"
       --acme.httpChallenge.entryPoint=http
@@ -51,14 +51,14 @@ services:
   #
 
   koh:
-    image: kohthefacestealer/koh:0.0.5
+    image: kohthefacestealer/koh:0.0.6
     networks:
       - traefik-net
     environment:
       NODE_ENV: production
     secrets:
       - POSTGRES_HOST
-      - KOH_POSTGRESS_DATABASE
+      - KOH_POSTGRES_DATABASE
       - KOH_POSTGRES_USER
       - KOH_POSTGRES_PASSWORD
     deploy:
@@ -74,7 +74,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:0.0.3
+    image: maxgreenwald/projectgem:0.0.5
     environment:
       NODE_ENV: production
     secrets:
@@ -147,6 +147,7 @@ secrets:
   KOH_POSTGRES_USER:
     external: true
   KOH_POSTGRES_PASSWORD:
+    external: true
   SECRET:
     external: true
   SENDGRID_API_KEY:
