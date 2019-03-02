@@ -29,25 +29,24 @@ services:
 
 
   #
-  #  Prod Website Service
+  #  arthur, (beta) Website service
   #
 
-  website:
+  arthur:
     image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
     networks:
       - traefik-net
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.tags=website,prod
+        - traefik.tags=website,test
         - traefik.frontend.entryPoints=http,https
-        - traefik.backend=website
-        - traefik.frontend.rule=Host:jumbosmash.com
+        - traefik.backend=arthur
+        - traefik.frontend.rule=Host:arthur.jumbosmash.com
         - traefik.port=80
 
-
   #
-  #  Prod Koh Service
+  #  Staging Koh Service
   #
 
   koh:
@@ -55,7 +54,7 @@ services:
     networks:
       - traefik-net
     environment:
-      NODE_ENV: production
+      NODE_ENV: staging
     secrets:
       - POSTGRES_HOST
       - KOH_POSTGRES_DATABASE
@@ -66,17 +65,18 @@ services:
         - traefik.backend=koh
         - traefik.frontend.entryPoints=http,https
         - traefik.port=3001
-        - traefik.frontend.rule=Host:koh.jumbosmash.com
+        - traefik.frontend.rule=Host:stagingkoh.jumbosmash.com
         - traefik.backend.loadbalancer.stickiness=true
 
+
   #
-  #  Prod API Service
+  #  Staging API Service
   #
 
   server:
     image: maxgreenwald/projectgem:0.0.5
     environment:
-      NODE_ENV: production
+      NODE_ENV: staging
     secrets:
       - POSTGRES_HOST
       - SERVER_POSTGRES_DATABASE
@@ -86,7 +86,6 @@ services:
       - SENDGRID_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-      - GOOGLE_PRIVATE_KEY
     networks:
       - traefik-net
     deploy:
@@ -94,11 +93,11 @@ services:
         - traefik.backend=server
         - traefik.frontend.entryPoints=http,https
         - traefik.port=3000
-        - traefik.frontend.rule=Host:server.jumbosmash.com
+        - traefik.frontend.rule=Host:stagingserver.jumbosmash.com
         - traefik.backend.loadbalancer.stickiness=true
 
   #
-  # Prod Redis Service
+  # redis service
   #
 
   redis:
@@ -113,13 +112,13 @@ services:
 
 
   #
-  #  Prod Deployment Service
+  #  Deployment Service
   #
 
   deployment:
     image: sperrys/deploy:node
     environment:
-      NODE_ENV: production
+      NODE_ENV: staging
     networks:
       - traefik-net
     secrets:
@@ -131,35 +130,33 @@ services:
         - traefik.frontend.entryPoints=http,https
         - traefik.backend=deploy
         - traefik.port=3004
-        - traefik.frontend.rule=Host:deploy.jumbosmash.com
+        - traefik.frontend.rule=Host:stagingdeploy.jumbosmash.com
 
 # https://docs.docker.com/engine/swarm/secrets/
 secrets:
-  POSTGRES_HOST:
+   SENDGRID_API_KEY:
     external: true
-  SERVER_POSTGRES_DATABASE:
+   KOH_POSTGRES_DATABASE:
+     external: true
+   KOH_POSTGRES_USER:
     external: true
-  SERVER_POSTGRES_USER:
+   KOH_POSTGRES_PASSWORD:
     external: true
-  SERVER_POSTGRES_PASSWORD:
+   SERVER_POSTGRES_DATABASE:
     external: true
-  KOH_POSTGRES_DATABASE:
+   SERVER_POSTGRES_USER:
     external: true
-  KOH_POSTGRES_USER:
+   SERVER_POSTGRES_PASSWORD:
     external: true
-  KOH_POSTGRES_PASSWORD:
+   POSTGRES_HOST:
     external: true
-  SECRET:
+   SECRET:
     external: true
-  SENDGRID_API_KEY:
+   AWS_ACCESS_KEY_ID:
     external: true
-  AWS_ACCESS_KEY_ID:
+   AWS_SECRET_ACCESS_KEY:
     external: true
-  AWS_SECRET_ACCESS_KEY:
-    external: true
-  DOCKER_PASSWORD:
-    external: true
-  GOOGLE_PRIVATE_KEY:
+   DOCKER_PASSWORD:
     external: true
 
 networks:
