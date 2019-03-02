@@ -101,7 +101,7 @@ const MatchesStack = createStackNavigator(
   {
     [routes.Matches]: { screen: Matches },
     [routes.Message]: { screen: Message },
-    [routes.CardsExpandedCard]: { screen: ExpandedCard }
+    [routes.MatchesExpandedCard]: { screen: ExpandedCard }
   },
   {
     initialRouteName: routes.Matches,
