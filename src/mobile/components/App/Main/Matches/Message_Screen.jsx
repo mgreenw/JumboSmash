@@ -1,13 +1,7 @@
 // @flow
 
 import React from 'react';
-import {
-  Alert,
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type {
   ReduxState,
@@ -31,7 +25,6 @@ import { Colors } from 'mobile/styles/colors';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
-import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
