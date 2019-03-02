@@ -5,6 +5,7 @@ import type { $Request, $Response, NextFunction } from 'express';
 const AJV = require('ajv');
 
 const codes = require('../status-codes');
+const { version } = require('../../utils');
 
 const ajv = new AJV();
 
@@ -23,6 +24,7 @@ const validate = (schema: Object) => {
     return res.status(400).json({
       status: codes.BAD_REQUEST.status,
       message: ajv.errorsText(validateSchema.errors),
+      version,
     });
   };
 };

@@ -1,5 +1,7 @@
 // @flow
 
+const { version } = require('../../utils');
+
 type ResponseStatus = {
   status: string,
   code: number,
@@ -30,6 +32,7 @@ const status = (responseStatus: ResponseStatus) => {
           status: responseStatus.status,
           data: responseData,
         },
+        version,
       };
     },
     noData: (): NoDataResponse => {
@@ -38,6 +41,7 @@ const status = (responseStatus: ResponseStatus) => {
         body: {
           status: responseStatus.status,
         },
+        version,
       };
     },
   };

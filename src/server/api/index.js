@@ -59,6 +59,7 @@ apiRouter.use((err, req, res, _next) => {
   `);
   return res.status(500).json({
     status: codes.SERVER_ERROR.status,
+    version: utils.version,
   });
 });
 
