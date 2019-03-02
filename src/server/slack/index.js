@@ -11,7 +11,7 @@ exports.postVerificationCode = (
   utln: string,
   email: string,
 ) => {
-  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     verificationCodes.send(`
       code:  *${verificationCode}*
       utln:  *${utln}*
@@ -28,7 +28,7 @@ exports.postReport = (
   message: string,
 ) => {
   // TODO: Send an email as a backup in case slack fails to send the report.
-  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     reporting.send(`
 A new report was filed.
 
@@ -46,7 +46,7 @@ exports.postFeedback = (
   message: string,
   reasonCode: string,
 ) => {
-  if (NODE_ENV !== 'travis' && NODE_ENV !== 'testing') {
+  if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     feedback.send(`
 ---------------------------
 We've got some more feedback!
