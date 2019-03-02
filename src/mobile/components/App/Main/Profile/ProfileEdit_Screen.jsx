@@ -22,7 +22,7 @@ import type {
 } from 'mobile/reducers';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import saveProfileFieldsAction from 'mobile/actions/app/saveProfile';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 

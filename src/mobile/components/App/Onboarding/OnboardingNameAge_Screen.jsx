@@ -5,13 +5,13 @@ import { View } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { BirthdayInput } from 'mobile/components/shared/DigitInput';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import { validateBirthday } from 'mobile/utils/Birthday';
 import validateName from 'mobile/utils/ValidateName';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
@@ -19,7 +19,7 @@ type State = {
   profile: UserProfile,
   settings: UserSettings,
   errorMessageName: string,
-  errorMessageBirthday: string,
+  errorMessageBirthday: string
 };
 
 export default class NameAgeScreen extends React.Component<Props, State> {
@@ -34,7 +34,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
       profile,
       settings: navigation.getParam('settings', null),
       errorMessageName: '',
-      errorMessageBirthday: '',
+      errorMessageBirthday: ''
     };
   }
 
@@ -54,13 +54,13 @@ export default class NameAgeScreen extends React.Component<Props, State> {
       settings,
       onUpdateProfileSettings: (
         newProfile: UserProfile,
-        newSettings: UserSettings,
+        newSettings: UserSettings
       ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -70,10 +70,10 @@ export default class NameAgeScreen extends React.Component<Props, State> {
         ...state.profile,
         fields: {
           ...state.profile.fields,
-          displayName: name,
-        },
+          displayName: name
+        }
       },
-      errorMessageName: '',
+      errorMessageName: ''
     }));
   };
 
@@ -85,10 +85,10 @@ export default class NameAgeScreen extends React.Component<Props, State> {
         ...state.profile,
         fields: {
           ...state.profile.fields,
-          birthday: formatedBirthday,
-        },
+          birthday: formatedBirthday
+        }
       },
-      errorMessageBirthday: '',
+      errorMessageBirthday: ''
     }));
   };
 
@@ -99,12 +99,12 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     const validName = validateName(profile.fields.displayName);
     if (!validBirthday) {
       this.setState({
-        errorMessageBirthday: 'Invalid Birthday',
+        errorMessageBirthday: 'Invalid Birthday'
       });
     }
     if (!validName) {
       this.setState({
-        errorMessageName: 'Too Long of Name',
+        errorMessageName: 'Too Long of Name'
       });
     }
 
@@ -144,12 +144,13 @@ export default class NameAgeScreen extends React.Component<Props, State> {
       profile,
       errorMessageName,
       errorMessageBirthday,
-      unformatedBirthday,
+      unformatedBirthday
     } = this.state;
-    const incomplete =      profile.fields.displayName === ''
-      || profile.fields.birthday === ''
-      || errorMessageName !== ''
-      || errorMessageBirthday !== '';
+    const incomplete =
+      profile.fields.displayName === '' ||
+      profile.fields.birthday === '' ||
+      errorMessageName !== '' ||
+      errorMessageBirthday !== '';
     const body = (
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>

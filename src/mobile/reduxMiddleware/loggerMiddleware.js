@@ -1,14 +1,14 @@
 // @flow
-/* eslint-disable */
 
 import DevTesting from 'mobile/utils/DevTesting';
+import type { Action } from 'mobile/reducers/index';
 
 // middleware logger for actions
-export function loggerMiddleware({ getState }: any) {
-  return (next: any) => (action: any) => {
-    DevTesting.log('Will Dispatch: ', action.type);
+const loggerMiddleware = () => (next: any) => (action: Action) => {
+  DevTesting.log('Will Dispatch: ', action.type);
 
-    // Call the next dispatch method in the middleware chain.
-    return next(action);
-  };
-}
+  // Call the next dispatch method in the middleware chain.
+  return next(action);
+};
+
+export default loggerMiddleware;

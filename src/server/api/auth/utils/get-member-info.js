@@ -17,14 +17,7 @@ const getMemberInfo = (email: string): Promise<any> => {
 
       // Use the response's 'status' key to return the appropriate value. If
       // status is unexpected, reject.
-      switch (bodyJson.status) {
-        case 'GET_MEMBER_INFO__SUCCESS':
-          return resolve(bodyJson.member);
-        case 'GET_MEMBER_INFO__NOT_FOUND':
-          return resolve(null);
-        default:
-          return reject(new Error('Koh: No status found in result body.'));
-      }
+      return resolve(bodyJson);
     });
   });
 };

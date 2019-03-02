@@ -10,7 +10,7 @@ import type {
   ProfileFields,
   Dispatch
 } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import createUserAction from 'mobile/actions/app/createUser';
 import { OnboardingLayout } from './Onboarding_Layout';
 
@@ -86,7 +86,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
         }
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}
-        title="Project Gem"
+        title="JumboSmash"
         lastScreen
         loading={createUserInProgress}
       />

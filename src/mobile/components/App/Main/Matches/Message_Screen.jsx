@@ -19,12 +19,13 @@ import type {
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
-import { routes } from 'mobile/components/Navigation';
-import NavigationService from 'mobile/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -202,6 +203,28 @@ class MessagingScreen extends React.Component<Props, State> {
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
         renderFooter={this.renderFooter}
+        renderAvatar={null}
+        minInputToolbarHeight={50}
+        renderSend={(props: any) => {
+          return (
+            <TouchableOpacity
+              style={{
+                width: 45,
+                height: 50,
+                paddingTop: 10,
+                paddingRight: 15
+              }}
+              onPress={() => {
+                const text: string = props.text.trim();
+                if (text.length > 0) {
+                  props.onSend({ text }, true);
+                }
+              }}
+            >
+              <CustomIcon name={'send'} size={30} color="black" />
+            </TouchableOpacity>
+          );
+        }}
       />
     );
   };

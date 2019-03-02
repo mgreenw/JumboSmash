@@ -20,5 +20,14 @@ export default function(timestamp: string) {
 
   // what's left is seconds
   const seconds = delta % 60; // in theory the modulus is not required
-  return 'foo';
+  if (days > 0) {
+    return `${days}d`;
+  }
+  if (hours > 0) {
+    return `${hours}h`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m`;
+  }
+  return `1m`;
 }

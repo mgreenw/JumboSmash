@@ -6,18 +6,17 @@ import { Colors } from './colors';
 // Arthur Styles is our set of standardized styles.
 const buttonBase = {
   height: 40,
-  borderRadius: 20,
-  width: '100%',
+  borderRadius: 20
 };
 
 const buttonTitleBase = {
-  paddingLeft: 30,
-  paddingRight: 30,
+  paddingLeft: 20,
+  paddingRight: 20
 };
 
 const swipeButtonBase = {
   position: 'absolute',
-  bottom: 20,
+  bottom: 20
 };
 
 export const Arthur_Styles = StyleSheet.create({
@@ -25,91 +24,91 @@ export const Arthur_Styles = StyleSheet.create({
     width: '100%',
     borderRadius: 30,
     margin: 0,
-    backgroundColor: Colors.AquaMarine,
+    backgroundColor: Colors.AquaMarine
   },
   checkBoxContainer_unchecked: {
     width: '100%',
     borderRadius: 30,
     margin: 0,
-    backgroundColor: Colors.IceBlue,
+    backgroundColor: Colors.IceBlue
   },
   checkBoxText_unchecked: {
     fontSize: 12,
     marginLeft: 2,
-    color: Colors.Black,
+    color: Colors.Black
   },
   checkBoxText_checked: {
     fontSize: 12,
     marginLeft: 2,
-    color: Colors.IceBlue,
+    color: Colors.IceBlue
   },
   checkBoxWrapper: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: 'red'
   },
   title: {
     color: Colors.Grapefruit,
     fontFamily: 'vegan',
     fontSize: 45,
     padding: 15,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   onboardingHeader: {
     fontSize: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   buttonPrimaryActive: {
     ...buttonBase,
-    backgroundColor: Colors.Grapefruit,
+    backgroundColor: Colors.Grapefruit
   },
   buttonTitlePrimaryActive: {
     ...buttonTitleBase,
-    color: Colors.White,
+    color: Colors.White
   },
   buttonPrimaryDisabled: {
     ...buttonBase,
-    backgroundColor: Colors.Grey85,
+    backgroundColor: Colors.Grey85
   },
   buttonTitlePrimaryDisabled: {
     ...buttonTitleBase,
-    color: Colors.BlueyGrey,
+    color: Colors.BlueyGrey
   },
   buttonSecondaryActive: {
     ...buttonBase,
     backgroundColor: Colors.White,
     borderColor: Colors.Grapefruit,
-    borderWidth: 1,
+    borderWidth: 1
   },
   buttonTitleSecondaryActive: {
     ...buttonTitleBase,
-    color: Colors.Grapefruit,
+    color: Colors.Grapefruit
   },
   buttonSecondaryDisabled: {
     ...buttonBase,
     backgroundColor: Colors.White,
     borderColor: Colors.Grey85,
-    borderWidth: 1,
+    borderWidth: 1
   },
   buttonTitleSecondaryDisabled: {
     ...buttonTitleBase,
-    color: Colors.BlueyGrey,
+    color: Colors.BlueyGrey
   },
   container: {
     backgroundColor: Colors.White,
-    flex: 1,
+    flex: 1
   },
   waves: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: '100%',
+    width: '100%'
   },
   swipeButton_dislike: {
     ...swipeButtonBase,
-    left: 100,
+    left: 100
   },
   swipeButton_like: {
     ...swipeButtonBase,
-    right: 100,
-  },
+    right: 100
+  }
 });

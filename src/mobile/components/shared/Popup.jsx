@@ -2,13 +2,16 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
-import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog';
+import Dialog, {
+  DialogContent,
+  ScaleAnimation
+} from 'react-native-popup-dialog';
 import { Colors } from 'mobile/styles/colors';
 
 type Props = {
   visible: boolean,
   onTouchOutside: () => void,
-  children: React.Node,
+  children: React.Node
 };
 
 export default (props: Props) => {
@@ -23,7 +26,7 @@ export default (props: Props) => {
       dialogStyle={{
         /* This is a hack so that we can do a shadow over a wrapper */
         backgroundColor: 'transparent',
-        padding: 18,
+        padding: 18
       }}
       onTouchOutside={onTouchOutside}
     >
@@ -36,9 +39,9 @@ export default (props: Props) => {
           shadowRadius: 4,
           shadowOffset: {
             height: 2,
-            width: 0,
+            width: 0
           },
-          padding: 20,
+          padding: 20
         }}
       >
         <View>{children}</View>
