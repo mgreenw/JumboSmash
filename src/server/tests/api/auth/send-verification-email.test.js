@@ -215,4 +215,19 @@ describe('api/auth/send-verification-email', () => {
         expect(res.body.status).toBe(codes.BAD_REQUEST.status);
       });
   });
+
+  it('should be a be a not-tufts email if it is a gmail acct', () => {
+    return request(app)
+      .post('/api/auth/send-verification-email')
+      .send(
+        {
+          email: 'mgreen14@gmail.com',
+        },
+      )
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((res) => {
+        expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL.status);
+      });
+  });
 });

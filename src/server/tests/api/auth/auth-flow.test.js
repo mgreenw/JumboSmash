@@ -1,9 +1,12 @@
 const request = require('supertest');
 const uuidv4 = require('uuid/v4');
+const jwt = require('jsonwebtoken');
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
 
 const db = require('../../../db');
+
+const dbUtils = require('../../utils/db');
 
 const GOOD_EMAIL = 'jchun03@tufts.edu';
 const GOOD_UTLN = 'jchun03';
@@ -447,5 +450,27 @@ describe('api/auth/verify', () => {
 
     const tokenRes = await db.query('SELECT expo_push_token FROM classmates WHERE utln = $1 LIMIT 1', [GOOD_UTLN2]);
     expect(tokenRes.rows[0].expo_push_token).toBe(token);
+  });
+
+  it('should return UNAUTHENTICATED if the token is generated with a bad secret', async () => {
+    const me = await dbUtils.createUser('mgreen99', true);
+    const token = jwt.sign({
+      userId: me.id,
+      uuid: me.tokenUUID,
+    }, 'NOT_THE_REAL_SECRET', {
+      expiresIn: 31540000, // expires in 365 days
+    });
+    const res = await request(app)
+      .get('/api/users/me/settings')
+      .set('Authorization', token)
+      .send(
+        {
+          email: GOOD_EMAIL2,
+        },
+      )
+      .set('Accept', 'application/json');
+
+    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+    expect(res.statusCode).toBe(401);
   });
 });

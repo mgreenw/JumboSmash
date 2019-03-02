@@ -10,7 +10,7 @@ import BaseInput from 'mobile/components/shared/customTextInput/BaseInput';
 type Props = {
   value: string,
   onChangeText: (bio: string) => void,
-  label?: string,
+  label?: string
 };
 
 const MAX_LENGTH = 500;
@@ -36,9 +36,9 @@ export default class BioInput extends BaseInput {
                 paddingBottom: 5,
                 color: selectedAnim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [Colors.Black, Colors.AquaMarine],
-                }),
-              },
+                  outputRange: [Colors.Black, Colors.AquaMarine]
+                })
+              }
             ]}
           >
             {label}
@@ -50,8 +50,8 @@ export default class BioInput extends BaseInput {
             borderRadius: 3,
             borderColor: selectedAnim.interpolate({
               inputRange: [0, 1],
-              outputRange: [Colors.Black, Colors.AquaMarine],
-            }),
+              outputRange: [Colors.Black, Colors.AquaMarine]
+            })
           }}
         >
           <TextInput
@@ -61,8 +61,8 @@ export default class BioInput extends BaseInput {
               {
                 height: '100%',
                 padding: 9,
-                textAlignVertical: 'top',
-              },
+                textAlignVertical: 'top'
+              }
             ]}
             onBlur={this._onBlur}
             onChange={this._onChange}
@@ -78,7 +78,15 @@ export default class BioInput extends BaseInput {
           />
         </Animated.View>
         <View>
-          <Text style={(textStyles.body2Style, { paddingRight: 6, textAlign: 'right' })}>
+          <Text
+            style={[
+              textStyles.body2Style,
+              { paddingRight: 6, textAlign: 'right' },
+              charactersLeft <= 15
+                ? { color: Colors.Grapefruit }
+                : { color: Colors.Black }
+            ]}
+          >
             {charactersLeft}
           </Text>
         </View>
