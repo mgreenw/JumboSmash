@@ -1,6 +1,12 @@
 // @flow
 
 function generateVerificationEmail(code: string, link: string = 'https://jumbosmash.com') {
+  // TO UPDATE:
+  // 1. Delete copy the following string into an empty file for reference.
+  // 2. Copy the new template string here.
+  // 3. Add the ${code} and ${link} paramaters into the correct places using the
+  //    reference file you made. NOTE: There are 2 places where ${code} is used
+  // That's all folks!
   return `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
