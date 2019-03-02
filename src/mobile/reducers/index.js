@@ -72,6 +72,15 @@ import type {
   SummonPopup_Action,
   DismissPopup_Action
 } from 'mobile/actions/popup';
+import type {
+  NewMessageInitiated_Action,
+  NewMessageCompleted_Action
+} from 'mobile/actions/app/notifications/newMessage';
+import type {
+  NewMatchInitiated_Action,
+  NewMatchCompleted_Action
+} from 'mobile/actions/app/notifications/newMatch';
+
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
@@ -97,14 +106,15 @@ export type NewMatchToast = {
   profileId?: number
 };
 
-export type NewMessageToatCode = 'NEW_MESSAGE';
-export type NewMessageToat = {
+export type NewMessageToastCode = 'NEW_MESSAGE';
+export type NewMessageToast = {
   id: number,
-  code: ?NewMatchToastCode,
+  code: ?NewMessageToastCode,
   messageId?: number
 };
 
-export type TopToast = NewMatchToast | NewMessageToat;
+export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
+export type TopToast = NewMatchToast | NewMessageToast;
 
 // /////////////
 // USER TYPES:
@@ -377,7 +387,11 @@ export type Action =
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
   | SummonPopup_Action
-  | DismissPopup_Action;
+  | DismissPopup_Action
+  | NewMessageInitiated_Action
+  | NewMessageCompleted_Action
+  | NewMatchInitiated_Action
+  | NewMatchCompleted_Action;
 
 export type GetState = () => ReduxState;
 
@@ -1098,6 +1112,34 @@ export default function rootReducer(
 
     case 'DISMISS_POPUP': {
       return { ...state, popupErrorCode: null };
+    }
+
+    case 'NEW_MESSAGE__INITIATED': {
+      return state;
+    }
+
+    case 'NEW_MESSAGE__COMPLETED': {
+      return {
+        ...state,
+        topToast: {
+          id: uuidv4(),
+          code: 'NEW_MESSAGE'
+        }
+      };
+    }
+
+    case 'NEW_MATCH__INITIATED': {
+      return state;
+    }
+
+    case 'NEW_MATCH__COMPLETED': {
+      return {
+        ...state,
+        topToast: {
+          id: uuidv4(),
+          code: 'NEW_MATCH'
+        }
+      };
     }
 
     default: {
