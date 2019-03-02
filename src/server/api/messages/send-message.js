@@ -11,6 +11,7 @@ const {
   canAccessUserData,
 } = require('../utils');
 const Socket = require('../../socket');
+const { apply: getProfile } = require('../users/get-profile');
 
 /* eslint-disable */
 const schema = {
@@ -77,10 +78,24 @@ const sendMessage = async (
       previousMessageId = previousMessageResult.rows[0].id;
     }
 
+    const senderProfileResult = await getProfile(senderUserId);
+    if (
+      senderProfileResult.body.status !== codes.GET_PROFILE__SUCCESS
+      || !senderProfileResult.body.data
+    ) {
+      throw new Error('Failed to get sender profile - this should have been caught by canAccessUserData()');
+    }
+
+    const senderProfile = senderProfileResult.body.data;
+
     // Send the message over the socket!
     Socket.sendNewMessageNotification(receiverUserId, {
-      ...message,
-      fromClient: false,
+      message: {
+        ...message,
+        fromClient: false,
+      },
+      senderUserId,
+      senderProfile,
     });
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
