@@ -75,7 +75,9 @@ class BottomToastComponent extends React.Component<Props> {
     } else {
       paddingTop = Constants.statusBarHeight;
     }
+    const marginHorizontal = 18;
     return (
+
       <Toast
         ref={this.setToastRef}
         positionValue={paddingTop + 18}
@@ -83,7 +85,7 @@ class BottomToastComponent extends React.Component<Props> {
         style={{
           height,
           backgroundColor: Colors.White,
-          width: width - 18 * 2,
+          width: width - marginHorizontal * 2,
           justifyContent: 'center',
           marginHorizontal: 20,
           padding: 15,
