@@ -210,8 +210,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>Show me on Social</Text>
                 <Switch
                   value={editedSettings.activeScenes.social}
-                  OnTrackColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
+                  trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSocialSwitchChange}
                 />
               </View>
