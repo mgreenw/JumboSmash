@@ -1,0 +1,12 @@
+{
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "jumbosmash_test",
+    "user": "jumbosmashdev",
+    "password": "tonysmash2019"
+  },
+  "secret": "ohhhhhnoooo!!",
+  "koh_host": "http://koh.jumbosmash.com",
+  "s3_bucket": "projectgem-dev"
+}
