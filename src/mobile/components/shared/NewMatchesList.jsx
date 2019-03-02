@@ -80,7 +80,9 @@ class NewMatchesList extends React.Component<Props> {
           <Text style={[textStyles.subtitle1Style, { paddingLeft: 15 }]}>
             New Matches
           </Text>
-          {unmessagedMatchIds === null || unmessagedMatchIds === undefined ? (
+          {unmessagedMatchIds === null ||
+          unmessagedMatchIds === undefined ||
+          unmessagedMatchIds.length === 0 ? (
             this.renderGenesisText()
           ) : (
             <FlatList
