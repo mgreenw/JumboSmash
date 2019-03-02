@@ -1,13 +1,16 @@
 // @flow
-import Toast, { DURATION } from 'react-native-easy-toast';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dimensions } from 'react-native';
 import type {
   ReduxState,
-  Dispatch,
   BottomToast,
   BottomToastCode
 } from 'mobile/reducers/index';
+import { Colors } from 'mobile/styles/colors';
+import { textStyles } from 'mobile/styles/textStyles';
+
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 type ReduxProps = {
   bottomToast: BottomToast
@@ -22,21 +25,48 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
-class SettingsToast extends React.Component<Props> {
+function messageFromCode(code: BottomToastCode): string {
+  switch (code) {
+    case 'SAVE_SETTINGS__SUCCESS': {
+      return 'Your settings have been saved.';
+    }
+
+    case 'SAVE_SETTINGS__FAILURE': {
+      return 'Settings save failed. Try again.';
+    }
+
+    case 'SAVE_PROFILE__SUCCESS': {
+      return 'Your profile has been saved.';
+    }
+
+    case 'SAVE_PROFILE__FAILURE': {
+      return 'Profile save failed. Try again.';
+    }
+
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (code: empty); // ensures we have handled all cases
+      return '';
+    }
+  }
+}
+
+class BottomToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { bottomToast } = this.props;
     if (bottomToast.code && bottomToast.id !== prevProps.bottomToast.id) {
-      this.showToast(bottomToast.code);
+      const message = messageFromCode(bottomToast.code);
+      this.showToast(message);
     }
   }
 
   showToast = message => {
     // Focus the text input using the raw DOM API
-    if (this.toast) this.toast.show(message);
+    if (this.toast) this.toast.show(message, DURATION.LENGTH_SHORT * 3);
   };
 
   setToastRef = element => {
@@ -46,11 +76,27 @@ class SettingsToast extends React.Component<Props> {
   toast: Toast;
 
   render() {
-    return <Toast ref={this.setToastRef} />;
+    const { width } = Dimensions.get('window');
+    const height = 55;
+    return (
+      <Toast
+        ref={this.setToastRef}
+        positionValue={height + 12}
+        style={{
+          height,
+          backgroundColor: Colors.Offblack,
+          width: width - 18 * 2,
+          justifyContent: 'center',
+          marginHorizontal: 20,
+          padding: 15
+        }}
+        textStyle={[textStyles.subtitle1Style, { color: Colors.White }]}
+      />
+    );
   }
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(SettingsToast);
+)(BottomToastComponent);

@@ -697,6 +697,10 @@ export default function rootReducer(
 
     case 'SAVE_PROFILE__COMPLETED': {
       const { fields } = action.payload;
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_PROFILE__SUCCESS'
+      };
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_PROFILE__COMPLETED');
       }
@@ -712,7 +716,8 @@ export default function rootReducer(
             ...state.client.profile,
             fields
           }
-        }
+        },
+        bottomToast
       };
     }
 
