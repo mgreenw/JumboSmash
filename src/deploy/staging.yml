@@ -50,7 +50,7 @@ services:
   #
 
   koh:
-    image: kohthefacestealer/koh:0.0.5
+    image: kohthefacestealer/koh:0.0.6
     networks:
       - traefik-net
     environment:
@@ -74,7 +74,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:0.0.3
+    image: maxgreenwald/projectgem:0.0.5
     environment:
       NODE_ENV: staging
     secrets:
