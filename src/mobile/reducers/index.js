@@ -79,6 +79,11 @@ import type { ServerMatch } from 'mobile/api/serverTypes';
 
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
+export type BottomToastCode =
+  | 'SAVE_SETTINGS__SUCCESS'
+  | 'SAVE_SETTINGS__FAILURE'
+  | 'SAVE_PROFILE__SUCCESS'
+  | 'SAVE_PROFILE__FAILURE';
 
 // /////////////
 // USER TYPES:
@@ -310,7 +315,10 @@ export type ReduxState = {|
   unmessagedMatchIds: ?(number[]),
 
   // Global Error Popup
-  popupErrorCode: ?PopupCode
+  popupErrorCode: ?PopupCode,
+
+  // Toast
+  bottomToastCode: ?BottomToastCode
 |};
 
 export type Action =
@@ -408,7 +416,10 @@ const defaultState: ReduxState = {
   unmessagedMatchIds: null,
 
   // Global Error Popup
-  popupErrorCode: null
+  popupErrorCode: null,
+
+  // Toasts
+  bottomToastCode: null
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -891,7 +902,8 @@ export default function rootReducer(
         client: {
           ...state.client,
           settings: action.payload
-        }
+        },
+        bottomToastCode: 'SAVE_SETTINGS__SUCCESS'
       };
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
