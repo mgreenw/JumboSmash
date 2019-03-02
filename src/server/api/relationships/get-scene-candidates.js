@@ -60,6 +60,9 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
   //      without it being a valid user id
   //   8) We exclude all users indicated by a 'exclude[]=<user_id>' query
   //      parameter in the request
+  //   9) The RANDOM() order at the end is thought to be slow on big tables.
+  //      However, since that is done last and there is a max of about 1000
+  //      rows, we should be gucci!
   const result = await db.query(`
     SELECT
       profile.user_id AS "userId",
@@ -81,7 +84,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
         (critic.want_she AND candidate.use_she) OR
         (critic.want_they AND candidate.use_they)
       )` : ''}
-    ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST
+    ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST, RANDOM()
     LIMIT 10
 
 
