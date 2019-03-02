@@ -23,6 +23,7 @@ import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
+import formatTime from 'mobile/utils/formattedTimeSince';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -91,6 +92,7 @@ class MessagingScreen extends React.Component<Props> {
     const profile = profileMap[userId];
     const mostRecentMessage =
       conversationMap[userId].byId[match.mostRecentMessage];
+    const formattedTime = formatTime(mostRecentMessage.timestamp);
     return (
       <TouchableOpacity
         style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
@@ -134,7 +136,7 @@ class MessagingScreen extends React.Component<Props> {
             }}
           >
             <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
-              {mostRecentMessage.timestamp}
+              {formattedTime}
             </Text>
           </View>
         </View>

@@ -28,10 +28,10 @@ class AuthHelpScreen extends React.Component<Props, State> {
       <AuthLayout
         title={'Having Trouble?'}
         bodyText={
-          'If you’re a senior and are having trouble logging in or signing up, email us at jumbosmash19@gmail.com from your .edu email, and the team will get you set up.'
+          'If you’re a senior and are having trouble logging in or signing up, email us at support@jumbosmash.com from your Tufts email, and the team will get you set up.'
         }
         buttonText={'Email the Team'}
-        onButtonPress={() => Linking.openURL('mailto:jumbosmash19@gmail.com')}
+        onButtonPress={() => Linking.openURL('mailto:support@jumbosmash.com')}
         loading={false}
         buttonDisabled={false}
       />

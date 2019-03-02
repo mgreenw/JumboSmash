@@ -84,7 +84,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         }
         section={'profile'}
         onButtonPress={this._goToNextPage}
-        title="Project Gem"
+        title="JumboSmash"
         firstScreen={true}
         buttonText={"Roll 'Bos'"}
       />

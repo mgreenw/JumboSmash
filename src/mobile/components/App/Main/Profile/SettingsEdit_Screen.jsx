@@ -210,12 +210,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>Show me on Social</Text>
                 <Switch
                   value={editedSettings.activeScenes.social}
-                  tintColor={
-                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
-                  }
-                  onTintColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
-                  ios_backgroundColor={Colors.AquaMarine}
+                  trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSocialSwitchChange}
                 />
               </View>
@@ -249,12 +244,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>Show me on Smash</Text>
                 <Switch
                   value={editedSettings.activeScenes.smash}
-                  tintColor={
-                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
-                  }
-                  onTintColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
-                  ios_backgroundColor={Colors.AquaMarine}
+                  trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSmashSwitchChange}
                 />
               </View>
