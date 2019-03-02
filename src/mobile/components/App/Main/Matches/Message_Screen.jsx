@@ -190,21 +190,32 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderContent = () => {
     const { messages } = this.props;
-    if (messages === null || messages === undefined) {
-      return this._renderGenisis();
-    }
+    const shouldRenderGenisis =
+      messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
-        messages={messages}
+        messages={
+          !shouldRenderGenisis
+            ? messages
+            : [
+                {
+                  _id: 1,
+                  text: 'This is a system message',
+                  createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
+                  system: true
+                }
+              ]
+        }
         onSend={this.onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderFooter={this.renderFooter}
+        renderMessage={shouldRenderGenisis ? this._renderGenisis : null}
         renderAvatar={null}
         minInputToolbarHeight={50}
+        alignTop
         renderSend={(props: any) => {
           return (
             <TouchableOpacity
@@ -245,7 +256,7 @@ class MessagingScreen extends React.Component<Props, State> {
         >
           <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
+        <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
             {'Late-night Espresso’s run? ;)'}
           </Text>
