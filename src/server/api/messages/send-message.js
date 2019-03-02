@@ -47,6 +47,18 @@ const sendMessage = async (
   unconfirmedMessageUuid: string,
 ) => {
   try {
+    // The sender's profile is being fetched here so an error here will not let the message
+    // go through.
+    const senderProfileResult = await getProfile(senderUserId);
+    if (
+      senderProfileResult.body.status !== codes.GET_PROFILE__SUCCESS.status
+      || !senderProfileResult.body.data
+    ) {
+      throw new Error('Failed to get sender profile - this should have been caught by canAccessUserData()');
+    }
+
+    const senderProfile = senderProfileResult.body.data;
+
     const messageResult = await db.query(`
       INSERT INTO messages
       (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid)
@@ -77,16 +89,6 @@ const sendMessage = async (
     if (previousMessageResult.rowCount > 0) {
       previousMessageId = previousMessageResult.rows[0].id;
     }
-
-    const senderProfileResult = await getProfile(senderUserId);
-    if (
-      senderProfileResult.body.status !== codes.GET_PROFILE__SUCCESS
-      || !senderProfileResult.body.data
-    ) {
-      throw new Error('Failed to get sender profile - this should have been caught by canAccessUserData()');
-    }
-
-    const senderProfile = senderProfileResult.body.data;
 
     // Send the message over the socket!
     Socket.sendNewMessageNotification(receiverUserId, {
