@@ -13,9 +13,6 @@ import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
-import Popup from 'mobile/components/shared/Popup';
-import { textStyles } from 'mobile/styles/textStyles';
-import { Colors } from 'mobile/styles/colors';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -73,7 +70,6 @@ class SplashScreen extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { sendVerificationEmail_inProgress: sendingEmail } = this.props;
-
     const { sendVerificationEmail_inProgress: wasSendingEmail } = prevProps;
 
     // This logic determines that an email has been sent, because we maintain
@@ -217,7 +213,7 @@ class SplashScreen extends React.Component<Props, State> {
           <Transition inline appear="horizontal">
             <View style={{ flex: 1 }}>
               <View style={{ flex: 2, alignItems: 'center' }}>
-                <Text style={Arthur_Styles.title}>Project Gem</Text>
+                <Text style={Arthur_Styles.title}>JumboSmash</Text>
                 <Image
                   resizeMode="contain"
                   style={{
@@ -255,24 +251,6 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           </Transition>
         </KeyboardView>
-        <Popup
-          visible={showPopup}
-          onTouchOutside={() => {
-            this.setState({ showPopup: false });
-          }}
-        >
-          <Text
-            style={[
-              textStyles.headline4StyleMedium,
-              {
-                color: Colors.Grapefruit,
-                textAlign: 'center'
-              }
-            ]}
-          >
-            {'Your session has expired, please login again!'}
-          </Text>
-        </Popup>
       </View>
     );
   }

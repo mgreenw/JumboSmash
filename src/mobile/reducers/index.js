@@ -1,6 +1,7 @@
 // @flow
 
 // Auth:
+import uuidv4 from 'uuid/v4';
 import type {
   SendVerificationEmail_Response,
   SendVerificationEmailCompleted_Action,
@@ -67,11 +68,43 @@ import type {
   SendMessageInitiated_Action,
   SendMessageCompleted_Action
 } from 'mobile/actions/app/sendMessage';
+import type {
+  SummonPopup_Action,
+  DismissPopup_Action
+} from 'mobile/actions/popup';
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
+
+// For global popups
+export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
+export type BottomToastCode =
+  | 'SAVE_SETTINGS__SUCCESS'
+  | 'SAVE_SETTINGS__FAILURE'
+  | 'SAVE_PROFILE__SUCCESS'
+  | 'SAVE_PROFILE__FAILURE';
+export type BottomToast = {
+  id: number,
+  code: ?BottomToastCode
+};
+
+export type NewMatchToastCode = 'NEW_MATCH';
+export type NewMatchToast = {
+  id: number,
+  code: ?NewMatchToastCode,
+  profileId?: number
+};
+
+export type NewMessageToatCode = 'NEW_MESSAGE';
+export type NewMessageToat = {
+  id: number,
+  code: ?NewMatchToastCode,
+  messageId?: number
+};
+
+export type TopToast = NewMatchToast | NewMessageToat;
 
 // /////////////
 // USER TYPES:
@@ -300,7 +333,14 @@ export type ReduxState = {|
 
   matches: Matches,
   messagedMatchIds: ?(number[]),
-  unmessagedMatchIds: ?(number[])
+  unmessagedMatchIds: ?(number[]),
+
+  // Global Error Popup
+  popupErrorCode: ?PopupCode,
+
+  // Toast
+  bottomToast: BottomToast,
+  topToast: TopToast
 |};
 
 export type Action =
@@ -335,7 +375,9 @@ export type Action =
   | GetConversationInitiated_Action
   | GetConversationCompleted_Action
   | SendMessageInitiated_Action
-  | SendMessageCompleted_Action;
+  | SendMessageCompleted_Action
+  | SummonPopup_Action
+  | DismissPopup_Action;
 
 export type GetState = () => ReduxState;
 
@@ -393,7 +435,20 @@ const defaultState: ReduxState = {
     allIds: []
   },
   messagedMatchIds: null,
-  unmessagedMatchIds: null
+  unmessagedMatchIds: null,
+
+  // Global Error Popup
+  popupErrorCode: null,
+
+  // Toasts
+  bottomToast: {
+    id: 0,
+    code: null
+  },
+  topToast: {
+    id: 0,
+    code: null
+  }
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -642,6 +697,10 @@ export default function rootReducer(
 
     case 'SAVE_PROFILE__COMPLETED': {
       const { fields } = action.payload;
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_PROFILE__SUCCESS'
+      };
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_PROFILE__COMPLETED');
       }
@@ -657,7 +716,8 @@ export default function rootReducer(
             ...state.client.profile,
             fields
           }
-        }
+        },
+        bottomToast
       };
     }
 
@@ -867,6 +927,10 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_SETTINGS__SUCCESS'
+      };
       return {
         ...state,
         inProgress: {
@@ -876,7 +940,8 @@ export default function rootReducer(
         client: {
           ...state.client,
           settings: action.payload
-        }
+        },
+        bottomToast
       };
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
@@ -1023,6 +1088,16 @@ export default function rootReducer(
           }
         }
       };
+    }
+
+    // TODO: trivially make these their own slice reducer
+    case 'SUMMON_POPUP': {
+      const { code: popupErrorCode } = action.payload;
+      return { ...state, popupErrorCode };
+    }
+
+    case 'DISMISS_POPUP': {
+      return { ...state, popupErrorCode: null };
     }
 
     default: {
