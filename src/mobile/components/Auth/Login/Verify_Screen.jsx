@@ -64,11 +64,16 @@ class SplashScreen extends React.Component<Props, State> {
     const { login_inProgress, login_response, navigation } = this.props;
     if (prevProps.login_inProgress !== login_inProgress) {
       if (!login_inProgress && !!login_response) {
-        if (login_response.statusCode === 'SUCCESS') {
+        const { statusCode } = login_response;
+        if (statusCode === 'SUCCESS') {
           navigation.navigate(routes.AppSwitch, {});
+        } else if (statusCode === 'BAD_CODE') {
+          this._codeInputError('Incorrect verification code');
+        } else if (statusCode === 'EXPIRED_CODE') {
+          this._codeInputError('Expired verification code');
         } else {
           // TODO: more verbose errors
-          this._codeInputError(login_response.statusCode);
+          this._codeInputError(statusCode);
         }
       }
     }
