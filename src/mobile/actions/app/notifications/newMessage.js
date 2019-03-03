@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'mobile/reducers';
+import type { Dispatch, Message, UserProfile } from 'mobile/reducers';
 
 export type NewMessageInitiated_Action = {
   type: 'NEW_MESSAGE__INITIATED',
@@ -9,7 +9,11 @@ export type NewMessageInitiated_Action = {
 
 export type NewMessageCompleted_Action = {
   type: 'NEW_MESSAGE__COMPLETED',
-  payload: {},
+  payload: {
+    message: Message,
+    senderProfile: UserProfile,
+    senderUserId: number
+  },
   meta: {}
 };
 
@@ -21,15 +25,23 @@ function initiate(): NewMessageInitiated_Action {
   };
 }
 
-function complete(): NewMessageCompleted_Action {
+function complete(
+  message: Message,
+  senderProfile: UserProfile,
+  senderUserId: number
+): NewMessageCompleted_Action {
   return {
     type: 'NEW_MESSAGE__COMPLETED',
-    payload: {},
+    payload: { message, senderProfile, senderUserId },
     meta: {}
   };
 }
 
-export default () => (dispatch: Dispatch) => {
+export default (
+  message: Message,
+  senderProfile: UserProfile,
+  senderUserId: number
+) => (dispatch: Dispatch) => {
   dispatch(initiate());
-  dispatch(complete());
+  dispatch(complete(message, senderProfile, senderUserId));
 };
