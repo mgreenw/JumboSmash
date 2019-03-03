@@ -58,7 +58,8 @@ apiRouter.use((err, req, res, _next) => {
     ${err.stack}
   `);
   return res.status(500).json({
-    status: codes.SERVER_ERROR,
+    status: codes.SERVER_ERROR.status,
+    version: utils.version,
   });
 });
 

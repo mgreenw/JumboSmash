@@ -1,7 +1,13 @@
 // @flow
 
 import * as React from 'react';
-import { Platform, View, Text, StatusBar } from 'react-native';
+import {
+  Platform,
+  View,
+  Text,
+  StatusBar,
+  TouchableOpacity
+} from 'react-native';
 import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
@@ -21,7 +27,8 @@ type Props = {
   title: string,
   loading?: boolean,
   borderBottom?: boolean,
-  centerComponent?: React.Node
+  centerComponent?: React.Node,
+  onTitlePress?: () => void
 };
 /* eslint-enable */
 
@@ -35,7 +42,8 @@ export default (props: Props) => {
     title,
     loading,
     borderBottom,
-    centerComponent
+    centerComponent,
+    onTitlePress
   } = props;
 
   const LeftIcon = (
@@ -55,9 +63,9 @@ export default (props: Props) => {
   );
 
   const Title = (
-    <View>
+    <TouchableOpacity disabled={!onTitlePress} onPress={onTitlePress}>
       <Text style={textStyles.headline5Style}>{title}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   let paddingTop;
@@ -81,7 +89,7 @@ export default (props: Props) => {
         leftComponent={LeftIcon}
         rightComponent={RightIcon}
         centerComponent={centerComponent || Title}
-        outerContainerStyles={{ borderBottomWidth: borderBottom ? 1 : 0 }}
+        containerStyle={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />
       <StatusBar barStyle="dark-content" />
     </View>

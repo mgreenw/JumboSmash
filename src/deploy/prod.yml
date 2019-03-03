@@ -9,7 +9,7 @@ services:
       --entryPoints="Name:https Address::443 TLS"
       --acme
       --acme.acmelogging="true"
-      --acme.email="jumbosmash@gmail.com"
+      --acme.email="jumbosmash19@gmail.com"
       --acme.entrypoint="https"
       --acme.storage="/acme.json"
       --acme.httpChallenge.entryPoint=http
@@ -47,32 +47,20 @@ services:
 
 
   #
-  #  arthur, (beta) Website service
-  #
-
-  arthur:
-    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
-    networks:
-      - traefik-net
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.tags=website,test
-        - traefik.frontend.entryPoints=http,https
-        - traefik.backend=arthur
-        - traefik.frontend.rule=Host:arthur.jumbosmash.com
-        - traefik.port=80
-
-  #
-  #  Koh Service
+  #  Prod Koh Service
   #
 
   koh:
-    image: kohthefacestealer/koh:0.0.4
+    image: kohthefacestealer/koh:0.0.6
     networks:
       - traefik-net
     environment:
       NODE_ENV: production
+    secrets:
+      - POSTGRES_HOST
+      - KOH_POSTGRES_DATABASE
+      - KOH_POSTGRES_USER
+      - KOH_POSTGRES_PASSWORD
     deploy:
       labels:
         - traefik.backend=koh
@@ -86,18 +74,19 @@ services:
   #
 
   server:
+    image: maxgreenwald/projectgem:0.0.5
     environment:
       NODE_ENV: production
-    image: maxgreenwald/projectgem:0.0.3
     secrets:
       - POSTGRES_HOST
-      - POSTGRES_DATABASE
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      - SERVER_POSTGRES_DATABASE
+      - SERVER_POSTGRES_USER
+      - SERVER_POSTGRES_PASSWORD
       - SECRET
       - SENDGRID_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
+      - GOOGLE_PRIVATE_KEY
     networks:
       - traefik-net
     deploy:
@@ -109,7 +98,7 @@ services:
         - traefik.backend.loadbalancer.stickiness=true
 
   #
-  # redis service
+  # Prod Redis Service
   #
 
   redis:
@@ -124,7 +113,7 @@ services:
 
 
   #
-  #  Deployment Service
+  #  Prod Deployment Service
   #
 
   deployment:
@@ -133,8 +122,8 @@ services:
       NODE_ENV: production
     networks:
       - traefik-net
-        #   secrets:
-        #  - DOCKER_PASSWORD
+    secrets:
+      - DOCKER_PASSWORD
     volumes:
       - /usr/local/bin/docker:/usr/bin/docker
     deploy:
@@ -148,11 +137,17 @@ services:
 secrets:
   POSTGRES_HOST:
     external: true
-  POSTGRES_DATABASE:
+  SERVER_POSTGRES_DATABASE:
     external: true
-  POSTGRES_USER:
+  SERVER_POSTGRES_USER:
     external: true
-  POSTGRES_PASSWORD:
+  SERVER_POSTGRES_PASSWORD:
+    external: true
+  KOH_POSTGRES_DATABASE:
+    external: true
+  KOH_POSTGRES_USER:
+    external: true
+  KOH_POSTGRES_PASSWORD:
     external: true
   SECRET:
     external: true
@@ -161,6 +156,10 @@ secrets:
   AWS_ACCESS_KEY_ID:
     external: true
   AWS_SECRET_ACCESS_KEY:
+    external: true
+  DOCKER_PASSWORD:
+    external: true
+  GOOGLE_PRIVATE_KEY:
     external: true
 
 networks:

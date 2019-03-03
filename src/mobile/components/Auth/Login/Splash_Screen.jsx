@@ -9,13 +9,10 @@ import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
-import Popup from 'mobile/components/shared/Popup';
-import { textStyles } from 'mobile/styles/textStyles';
-import { Colors } from 'mobile/styles/colors';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -37,7 +34,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  showPopup: boolean
+  showPopup: boolean,
+  hasHadError: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -65,13 +63,13 @@ class SplashScreen extends React.Component<Props, State> {
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      showPopup: error != null
+      showPopup: error != null,
+      hasHadError: false
     };
   }
 
   componentDidUpdate(prevProps: Props) {
     const { sendVerificationEmail_inProgress: sendingEmail } = this.props;
-
     const { sendVerificationEmail_inProgress: wasSendingEmail } = prevProps;
 
     // This logic determines that an email has been sent, because we maintain
@@ -175,6 +173,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _utlnInputError = (errorMessage: string) => {
     this.setState({
+      hasHadError: true,
       errorMessageUtln: errorMessage
     });
   };
@@ -204,7 +203,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   render() {
     // this is the navigator we passed in from App.js
-    const { utln, errorMessageUtln, showPopup } = this.state;
+    const { utln, errorMessageUtln, showPopup, hasHadError } = this.state;
     const { sendVerificationEmail_inProgress } = this.props;
 
     return (
@@ -214,7 +213,7 @@ class SplashScreen extends React.Component<Props, State> {
           <Transition inline appear="horizontal">
             <View style={{ flex: 1 }}>
               <View style={{ flex: 2, alignItems: 'center' }}>
-                <Text style={Arthur_Styles.title}>Project Gem</Text>
+                <Text style={Arthur_Styles.title}>JumboSmash</Text>
                 <Image
                   resizeMode="contain"
                   style={{
@@ -235,50 +234,23 @@ class SplashScreen extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row'
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  width: '100%'
                 }}
               >
-                <View style={{ flex: 1 }} />
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'space-around'
-                  }}
-                >
-                  <PrimaryButton
-                    onPress={this._onSubmit}
-                    title="Roll 'Bos'"
-                    disabled={sendVerificationEmail_inProgress || utln === ''}
-                    loading={sendVerificationEmail_inProgress}
-                  />
-                  <TertiaryButton
-                    onPress={this._onHelp}
-                    title="Having Touble?"
-                  />
-                </View>
-                <View style={{ flex: 1 }} />
+                <PrimaryButton
+                  onPress={this._onSubmit}
+                  title="Verify I'm a Senior!"
+                  disabled={sendVerificationEmail_inProgress || utln === ''}
+                  loading={sendVerificationEmail_inProgress}
+                  hidden={!hasHadError}
+                />
+                <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
               </View>
             </View>
           </Transition>
         </KeyboardView>
-        <Popup
-          visible={showPopup}
-          onTouchOutside={() => {
-            this.setState({ showPopup: false });
-          }}
-        >
-          <Text
-            style={[
-              textStyles.headline4StyleMedium,
-              {
-                color: Colors.Grapefruit,
-                textAlign: 'center'
-              }
-            ]}
-          >
-            {'Your session has expired, please login again!'}
-          </Text>
-        </Popup>
       </View>
     );
   }

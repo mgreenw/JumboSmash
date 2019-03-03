@@ -6,7 +6,8 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import type {
@@ -22,7 +23,8 @@ import getMatchesAction from 'mobile/actions/app/getMatches';
 import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
+import formatTime from 'mobile/utils/formattedTimeSince';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -62,7 +64,34 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   };
 }
 
-class MessagingScreen extends React.Component<Props> {
+type State = {
+  matchesLoaded: boolean
+};
+
+class MessagingScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      matchesLoaded: false
+    };
+  }
+
+  componentDidMount() {
+    const { getMatches } = this.props;
+    getMatches();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { getMatchesInProgress } = this.props;
+    if (prevProps.getMatchesInProgress && !getMatchesInProgress) {
+      // We're doing this safely
+      /* eslint-disable-next-line react/no-did-update-set-state */
+      this.setState({
+        matchesLoaded: true
+      });
+    }
+  }
+
   // return a render list function so we can display this IN the flatlist
   renderGenesisText = (hasNewMatches: boolean) => () => {
     return (
@@ -91,6 +120,7 @@ class MessagingScreen extends React.Component<Props> {
     const profile = profileMap[userId];
     const mostRecentMessage =
       conversationMap[userId].byId[match.mostRecentMessage];
+    const formattedTime = formatTime(mostRecentMessage.timestamp);
     return (
       <TouchableOpacity
         style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
@@ -134,7 +164,7 @@ class MessagingScreen extends React.Component<Props> {
             }}
           >
             <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
-              {mostRecentMessage.timestamp}
+              {formattedTime}
             </Text>
           </View>
         </View>
@@ -160,23 +190,36 @@ class MessagingScreen extends React.Component<Props> {
 
     // we need to show one element to actually render the genesis text AS the element
     const data = renderGensis ? [1] : messagedMatchIds;
+    const { matchesLoaded } = this.state;
 
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Messages" leftIconName="cards" borderBottom />
-        <View style={{ flex: 1 }}>
-          <FlatList
-            ListHeaderComponent={<NewMatchesList />}
-            data={data}
-            keyExtractor={this.keyExtractor}
-            renderItem={
-              renderGensis
-                ? this.renderGenesisText(hasNewMatches)
-                : this.renderMatchListItem
-            }
-            refreshControl={refreshComponent}
-          />
-        </View>
+        {matchesLoaded ? (
+          <View style={{ flex: 1 }}>
+            <FlatList
+              ListHeaderComponent={<NewMatchesList />}
+              data={data}
+              keyExtractor={this.keyExtractor}
+              renderItem={
+                renderGensis
+                  ? this.renderGenesisText(hasNewMatches)
+                  : this.renderMatchListItem
+              }
+              refreshControl={refreshComponent}
+            />
+          </View>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ActivityIndicator />
+          </View>
+        )}
       </View>
     );
   }

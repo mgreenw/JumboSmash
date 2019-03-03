@@ -1,6 +1,10 @@
 // @flow
 
 const winston = require('winston');
+const { LoggingWinston } = require('@google-cloud/logging-winston');
+const config = require('config');
+
+const { version } = require('../package.json');
 
 const utils = require('../utils');
 
@@ -21,6 +25,7 @@ const timestampError = winston.format.combine(
 );
 
 const logger = winston.createLogger({
+  defaultMeta: { NODE_ENV },
   transports: [
     //
     // - Write to all logs with level `info` and below to `combined.log`
@@ -31,16 +36,33 @@ const logger = winston.createLogger({
       level: 'error',
       format: timestampError,
     }),
-    new winston.transports.File({
-      filename: 'combined.log',
-      format: timestampError,
-    }),
   ],
 });
 
+if (NODE_ENV === 'production') {
+  const google = config.get('google');
+  const googleCloud = new LoggingWinston({
+    projectId: google.project_id,
+    credentials: {
+      client_email: google.client_email,
+      private_key: google.private_key,
+    },
+    serviceContext: {
+      service: 'projectgem-server',
+      version,
+    },
+  });
+
+  logger.add(googleCloud);
+}
+
 // Don't log to the console in production.
-if (NODE_ENV !== 'production' && NODE_ENV !== 'testing') {
+if (NODE_ENV !== 'production' && NODE_ENV !== 'test') {
   logger.add(new winston.transports.Console({
+    format: timestampError,
+  }));
+  logger.add(new winston.transports.File({
+    filename: 'combined.log',
     format: timestampError,
   }));
 }

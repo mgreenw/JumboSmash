@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import type { Match, ReduxState, UserProfile } from 'mobile/reducers';
 import { textStyles } from 'mobile/styles/textStyles';
-import { routes } from 'mobile/components/Navigation';
-import NavigationActions from 'mobile/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+import NavigationActions from 'mobile/components/navigation/NavigationService';
 import Avatar, { MediumWidth } from './Avatar';
 
 type ReduxProps = {|
@@ -47,7 +47,7 @@ class NewMatchesList extends React.Component<Props> {
           marginHorizontal: 15
         }}
       >
-        <Avatar size="Medium" photoId={profile.photoIds[0]} border />
+        <Avatar size="Medium" photoId={profile.photoIds[0]} />
       </TouchableOpacity>
     );
   };
@@ -80,7 +80,9 @@ class NewMatchesList extends React.Component<Props> {
           <Text style={[textStyles.subtitle1Style, { paddingLeft: 15 }]}>
             New Matches
           </Text>
-          {unmessagedMatchIds === null || unmessagedMatchIds === undefined ? (
+          {unmessagedMatchIds === null ||
+          unmessagedMatchIds === undefined ||
+          unmessagedMatchIds.length === 0 ? (
             this.renderGenesisText()
           ) : (
             <FlatList

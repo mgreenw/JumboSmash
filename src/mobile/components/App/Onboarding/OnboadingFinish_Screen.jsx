@@ -10,7 +10,7 @@ import type {
   ProfileFields,
   Dispatch
 } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import createUserAction from 'mobile/actions/app/createUser';
 import { OnboardingLayout } from './Onboarding_Layout';
 
@@ -81,14 +81,15 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {'Your profile’s ready. \n\nGet in losers, we’re going smashing.'}
+            {"You're all set. \n\nGet in losers, we’re going smashing."}
           </Text>
         }
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}
-        title="Project Gem"
+        title="JumboSmash"
         lastScreen
         loading={createUserInProgress}
+        buttonText={'Start Swiping'}
       />
     );
   }

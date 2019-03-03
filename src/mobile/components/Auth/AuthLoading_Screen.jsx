@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');

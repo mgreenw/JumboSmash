@@ -1,29 +1,32 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View, Alert, Linking } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import { Colors } from 'mobile/styles/colors';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
-  navigation: any,
+  navigation: any
 };
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
-export default class OnboardingSettingsInfoScreen extends React.Component<Props, State> {
+export default class OnboardingSettingsInfoScreen extends React.Component<
+  Props,
+  State
+> {
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -41,12 +44,15 @@ export default class OnboardingSettingsInfoScreen extends React.Component<Props,
     navigation.navigate(routes.OnboardingGenders, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -55,12 +61,16 @@ export default class OnboardingSettingsInfoScreen extends React.Component<Props,
       <View style={{ flex: 1, width: '100%' }}>
         <Text style={textStyles.body1Style}>
           {
-            'The next few questions will help us match you with the right people. We understand thatgender identity is a spectrum, and believe that the way you identify should be left up to you, so please interpret the following gender options however they make sense to you. For more information, check out our '
+            'The next few questions will help us match you with the right people. We understand that gender identity is a spectrum, and believe that the way you identify should be left up to you, so please interpret the following gender options however they make sense to you. For more information, check out our '
           }
           <Text
-            style={{ color: Colors.Grapefruit, textDecorationLine: 'underline' }}
+            style={{
+              color: Colors.Grapefruit,
+              textDecorationLine: 'underline'
+            }}
             onPress={() => {
-              Alert.alert('Not yet linked to gender statement screen');
+              // TODO: Make this go to the jumbosmash.com
+              Linking.openURL('https://arthur.jumbosmash.com/gender.html');
             }}
           >
             {'Statement on Gender'}
@@ -78,7 +88,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<Props,
         infoScreen
         section="settings"
         onButtonPress={this._goToNextPage}
-        title="Project Gem"
+        title="JumboSmash"
         progress={0}
       />
     );

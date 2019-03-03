@@ -19,12 +19,13 @@ import type {
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
-import { routes } from 'mobile/components/Navigation';
-import NavigationService from 'mobile/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -187,42 +188,87 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _renderContent = () => {
+  _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
-    if (messages === null || messages === undefined) {
-      return this._renderGenisis();
-    }
+    const shouldRenderGenesis =
+      messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
-        messages={messages}
+        /* If we want to render our genesis text, we need to supply a dummy 
+        element for the listview. Because of the strict render method of GiftedChat, 
+        this element must match the GiftedChat Message type */
+        messages={
+          !shouldRenderGenesis
+            ? messages
+            : [
+                ({
+                  _id: 'GENESIS_ID',
+                  text: '',
+                  createdAt: new Date(),
+                  system: true,
+                  sent: true
+                }: GiftedChatMessage)
+              ]
+        }
         onSend={this.onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderFooter={this.renderFooter}
+        renderMessage={
+          shouldRenderGenesis
+            ? () => {
+                return this._renderGenesis(profile);
+              }
+            : null
+        }
+        renderAvatar={null}
+        minInputToolbarHeight={50}
+        alignTop
+        renderSend={(props: any) => {
+          return (
+            <TouchableOpacity
+              style={{
+                width: 45,
+                height: 50,
+                paddingTop: 10,
+                paddingRight: 15
+              }}
+              onPress={() => {
+                const text: string = props.text.trim();
+                if (text.length > 0) {
+                  props.onSend({ text }, true);
+                }
+              }}
+            >
+              <CustomIcon name={'send'} size={30} color="black" />
+            </TouchableOpacity>
+          );
+        }}
       />
     );
   };
 
-  _renderGenisis = () => {
-    const { navigation, profileMap } = this.props;
-    const { match } = this.state;
-    const profile = profileMap[match.userId];
+  _goToProfile = (profile: UserProfile) => {
+    const { navigation } = this.props;
+    navigation.navigate(routes.MatchesExpandedCard, {
+      profile,
+      onMinimize: NavigationService.back
+    });
+  };
+
+  _renderGenesis = (profile: UserProfile) => {
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(routes.MatchesExpandedCard, {
-              profile,
-              onMinimize: NavigationService.back
-            })
-          }
+          onPress={() => {
+            this._goToProfile(profile);
+          }}
         >
           <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
+        <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
             {'Late-night Espresso’s run? ;)'}
           </Text>
@@ -232,22 +278,26 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { profileMap } = this.props;
+    const { match } = this.state;
+    const profile = profileMap[match.userId];
     const { messagesLoaded } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <View>
           <GEMHeader
-            title="Messages"
+            title={profile.fields.displayName}
             leftIconName="back"
             rightIconName="ellipsis"
             onRightIconPress={() => {
               Alert.alert('this should be report and stuff?');
             }}
             borderBottom
+            onTitlePress={() => this._goToProfile(profile)}
           />
         </View>
         {messagesLoaded ? (
-          this._renderContent()
+          this._renderContent(profile)
         ) : (
           <View
             style={{

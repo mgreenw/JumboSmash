@@ -1,7 +1,14 @@
 // @flow
 
 import React from 'react';
-import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Switch,
+  ImageBackground,
+  Linking
+} from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
@@ -11,13 +18,13 @@ import type {
   ReduxState,
   Dispatch
 } from 'mobile/reducers';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
-import NavigationService from 'mobile/NavigationService';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
@@ -210,12 +217,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>Show me on Social</Text>
                 <Switch
                   value={editedSettings.activeScenes.social}
-                  tintColor={
-                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
-                  }
-                  onTintColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
-                  ios_backgroundColor={Colors.AquaMarine}
+                  trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSocialSwitchChange}
                 />
               </View>
@@ -249,12 +251,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 <Text style={textStyles.body1Style}>Show me on Smash</Text>
                 <Switch
                   value={editedSettings.activeScenes.smash}
-                  tintColor={
-                    Colors.AquaMarine /* TODO: investigate if this is deprecated */
-                  }
-                  onTintColor={Colors.AquaMarine}
-                  trackColor={Colors.AquaMarine}
-                  ios_backgroundColor={Colors.AquaMarine}
+                  trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSmashSwitchChange}
                 />
               </View>
@@ -315,21 +312,20 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
               </View>
               <Spacer />
-              <View style={{ paddingBottom: 20 }}>
+              {/* <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"
-                  onPress={() => {
-                    /* TODO */
-                  }}
+                  onPress={() => {}}
                   disabled={logoutInProgress}
                   loading={false}
                 />
-              </View>
+              </View> */}
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
-                    /* TODO */
+                    // Todo: Make this go to the real website
+                    Linking.openURL('https://arthur.jumbosmash.com/terms.html');
                   }}
                   disabled={logoutInProgress}
                   loading={false}

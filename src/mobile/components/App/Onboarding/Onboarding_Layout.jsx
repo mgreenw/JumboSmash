@@ -7,7 +7,7 @@ import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
@@ -36,7 +36,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
       firstScreen,
       lastScreen,
       infoScreen,
-      loading,
+      loading = false,
       onButtonPress,
       title,
       body,

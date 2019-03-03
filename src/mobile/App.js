@@ -4,9 +4,12 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import { createAppContainer } from '@react-navigation/native';
-import NavigationService from 'mobile/NavigationService';
-import { createRootNavigator } from 'mobile/components/Navigation';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import createRootNavigator from 'mobile/components/navigation/Navigation';
 import store from './store';
+import MasterPopup from './components/MasterPopup';
+import BottomToast from './components/shared/toast/BottomToast';
+import TopToast from './components/shared/toast/TopToast';
 
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
@@ -29,6 +32,9 @@ export default class App extends React.Component<Props, State> {
             NavigationService.setTopLevelNavigator(navigatorRef);
           }}
         />
+        <MasterPopup />
+        <BottomToast />
+        <TopToast />
       </Provider>
     );
   }

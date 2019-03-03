@@ -11,7 +11,7 @@ const AuthenticationError = require('./authentication-error');
 function getUser(token: string): Promise<any> {
   return new Promise((resolve, reject) => {
     jwt.verify(token, config.get('secret'), async (err, decoded) => {
-      if (err) return reject(err);
+      if (err) return reject(new AuthenticationError('Invalid secret used in decoding'));
       try {
         // Get the user from the users table. If the user has a profile setup,
         // join with that profile. If not, the 'profile' field will be null

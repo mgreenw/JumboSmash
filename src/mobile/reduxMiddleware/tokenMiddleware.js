@@ -1,17 +1,19 @@
 // @flow
-/* eslint-disable */
 
 import type { Action } from 'mobile/reducers/index';
-import NavigationService from 'mobile/NavigationService';
-import { SPLASH_ROUTE } from 'mobile/components/Navigation';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import { summonPopup as summonPopupAction } from 'mobile/actions/popup';
 
-const tokenMiddleware = (store: any) => (next: any) => (action: Action) => {
-  let result = next(action);
+const tokenMiddleware = ({ dispatch }: any) => (next: any) => (
+  action: Action
+) => {
+  const result = next(action);
   const { type } = action;
   if (type === 'UNAUTHORIZED') {
-    NavigationService.reset(type);
+    dispatch(summonPopupAction(type));
+    NavigationService.reset();
   }
   return result;
 };
 
-export { tokenMiddleware };
+export default tokenMiddleware;

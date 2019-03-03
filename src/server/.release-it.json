@@ -1,0 +1,15 @@
+{
+  "git": {
+    "tagName": "server-${version}",
+    "tagAnnotation": "Server ${version} release",
+    "commitMessage": "Release server ${version}"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Server - ${version}",
+    "releaseNotes": "${changelog}"
+  },
+  "npm": {
+    "publish": false
+  }
+}

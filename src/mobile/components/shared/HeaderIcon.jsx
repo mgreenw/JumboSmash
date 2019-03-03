@@ -4,8 +4,8 @@ import React from 'react';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import NavigationService from 'mobile/NavigationService';
-import { routes } from 'mobile/components/Navigation';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 
 type Props = {
   name: ?IconName,
@@ -68,8 +68,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
       <TouchableOpacity
         ref={self => (this.iconTouchableOpacity = self)}
         style={{
-          paddingLeft: 22,
-          paddingRight: 22,
+          marginHorizontal: 12,
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',

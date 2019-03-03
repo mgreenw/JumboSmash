@@ -1,11 +1,10 @@
 // prettier-ignore
 {
-  "presets": ["babel-preset-expo", "flow"],
+  "presets": ["babel-preset-expo", "@babel/preset-flow",],
   "comments": false,
   "env": {
     "development": {
       "plugins": [
-        "transform-react-jsx-source",
         [
           "module-resolver",
           {

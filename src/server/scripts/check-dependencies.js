@@ -46,7 +46,7 @@ const envDeps = {
   production: ['prod'],
   staging: ['prod'],
   development: ['prod', 'dev'],
-  testing: ['prod', 'dev'],
+  test: ['prod', 'dev'],
   travis: ['prod', 'dev'],
 };
 

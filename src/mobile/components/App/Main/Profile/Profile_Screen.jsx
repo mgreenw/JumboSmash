@@ -5,7 +5,7 @@ import { TouchableOpacity, Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';

@@ -2,14 +2,18 @@
 
 import React from 'react';
 import { Dimensions } from 'react-native';
-import type { UserSettings, UserProfile, ReduxState } from 'mobile/reducers/index';
-import { routes } from 'mobile/components/Navigation';
+import type {
+  UserSettings,
+  UserProfile,
+  ReduxState
+} from 'mobile/reducers/index';
+import routes from 'mobile/components/navigation/routes';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
 import { connect } from 'react-redux';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type NavigationProps = {
-  navigation: any,
+  navigation: any
 };
 
 type DispatchProps = {};
@@ -20,7 +24,7 @@ type Props = NavigationProps & DispatchProps & ReduxProps;
 
 type State = {
   profile: UserProfile,
-  settings: UserSettings,
+  settings: UserSettings
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -28,7 +32,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('client is null in Onboarding Photos');
   }
   return {
-    photoIds: reduxState.client.profile.photoIds,
+    photoIds: reduxState.client.profile.photoIds
   };
 }
 
@@ -42,7 +46,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.state = {
       profile: navigation.getParam('profile', null),
-      settings: navigation.getParam('settings', null),
+      settings: navigation.getParam('settings', null)
     };
   }
 
@@ -60,12 +64,15 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     navigation.navigate(routes.OnboardingBio, {
       profile,
       settings,
-      onUpdateProfileSettings: (newProfile: UserProfile, newSettings: UserSettings) => {
+      onUpdateProfileSettings: (
+        newProfile: UserProfile,
+        newSettings: UserSettings
+      ) => {
         this.setState({
           profile: newProfile,
-          settings: newSettings,
+          settings: newSettings
         });
-      },
+      }
     });
   };
 
@@ -87,7 +94,11 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
           // AddMultiPhotos gets direct redux access due to constraints on
           // photo uploading. CreatMyProfile needs previously uploaded photos,
           // which occurs here.
-          <AddMultiPhotos width={containerWidth} imageWidth={imageWidth} enableDeleteFirst />
+          <AddMultiPhotos
+            width={containerWidth}
+            imageWidth={imageWidth}
+            enableDeleteFirst
+          />
         }
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
@@ -102,5 +113,5 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(OnboardingAddPicturesScreen);
