@@ -43,7 +43,7 @@ class UnmatchPopup extends React.Component<Props> {
             <View style={{ flex: 1, marginRight: 30 }}>
               <SecondaryButton
                 onPress={onCancel}
-                title={'Cancel'}
+                title="Cancel"
                 loading={false}
                 disabled={false}
               />
@@ -51,7 +51,7 @@ class UnmatchPopup extends React.Component<Props> {
             <View style={{ flex: 1 }}>
               <PrimaryButton
                 onPress={onConfirm}
-                title={'Done'}
+                title="Done"
                 loading={false}
                 disabled={false}
               />
