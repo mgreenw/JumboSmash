@@ -1,6 +1,7 @@
 // @flow
 
 export default function(timestamp: string) {
+  console.log({ timestamp });
   const oldDate = new Date(timestamp);
   const nowDate = new Date();
   // get total seconds between the times

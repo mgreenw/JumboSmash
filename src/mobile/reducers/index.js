@@ -165,12 +165,9 @@ export type Match = {|
   scenes: SceneMatchTimes
 |};
 
-type Matches = {|
-  byId: {
-    [Id: number]: Match
-  },
-  allIds: number[] // Id's in order
-|};
+type Matches = {
+  [Id: number]: Match
+};
 
 export type SceneCandidates = {|
   smash: ?(Candidate[]),
@@ -341,7 +338,7 @@ export type ReduxState = {|
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
 
-  matches: Matches,
+  matchesById: Matches,
   messagedMatchIds: ?(number[]),
   unmessagedMatchIds: ?(number[]),
 
@@ -444,10 +441,7 @@ const defaultState: ReduxState = {
   profiles: {},
 
   // before loaded
-  matches: {
-    byId: {},
-    allIds: []
-  },
+  matchesById: {},
   messagedMatchIds: null,
   unmessagedMatchIds: null,
 
@@ -480,21 +474,17 @@ function normalizeMatches(
   return normalize(matches, [MatchSchema]);
 }
 
-// helper to add matches -- TODO: make a generic, use the immutable library?
-function updateMatches(
-  state: ReduxState,
-  byIdChanges: { [userId: number]: Match },
-  newOrder?: number[]
-): Matches {
-  const { byId = {}, allIds = [] } = state.matches || {};
-  const updatedMatches = {
-    byId: {
-      ...byId,
-      ...byIdChanges
-    },
-    allIds: newOrder || allIds
-  };
-  return updatedMatches;
+function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
+  // split between messaged and non-messaged matcehs
+  const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
+
+  // If we don't have any messages yet then the index of findIndex will be -1
+  const noMessages = index === -1;
+  const unmessagedMatchIds = noMessages
+    ? orderedIds
+    : orderedIds.slice(0, index);
+  const messagedMatchIds = noMessages ? [] : orderedIds.slice(index).reverse();
+  return { unmessagedMatchIds, messagedMatchIds };
 }
 
 // TODO: use this helper to determine if order was messed up
@@ -856,30 +846,18 @@ export default function rootReducer(
     case 'GET_MATCHES__COMPLETED': {
       const { payload: serverMatches } = action;
 
-      // split between messaged and non-messaged matcehs
-      const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
       const { result: orderedIds, entities: normalizedData } = normalizeMatches(
         serverMatches
       );
 
-      // If we don't have any messages yet then the index of findIndex will be -1
-      const noMessages = index === -1;
-      const unmessagedMatchIds = noMessages
-        ? orderedIds
-        : orderedIds.slice(0, index);
-      const messagedMatchIds = noMessages
-        ? []
-        : orderedIds.slice(index).reverse();
+      const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
+        serverMatches,
+        orderedIds
+      );
 
       const confirmedConversations = updateMostRecentConversations(
         state,
         normalizedData.mostRecentMessages || {}
-      );
-
-      const updatedMatches = updateMatches(
-        state,
-        normalizedData.matches,
-        orderedIds
       );
 
       return {
@@ -889,7 +867,7 @@ export default function rootReducer(
           getMatches: false
         },
         confirmedConversations,
-        matches: updatedMatches,
+        matchesById: normalizedData.matches,
         profiles: normalizedData.profiles,
         messagedMatchIds,
         unmessagedMatchIds
@@ -1076,6 +1054,7 @@ export default function rootReducer(
         { [id]: message },
         [...state.confirmedConversations[receiverUserId].allIds, id]
       );
+
       // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
       // will return an empty array if so.
@@ -1121,7 +1100,7 @@ export default function rootReducer(
     case 'NEW_MESSAGE__COMPLETED': {
       const { senderProfile, senderUserId, message } = action.payload;
       const orderedIds = [
-        ...state.confirmedConversations.allIds,
+        ...state.confirmedConversations[senderUserId].allIds,
         message.messageId
       ];
 
