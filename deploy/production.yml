@@ -52,7 +52,7 @@ services:
       - 'traefik.frontend.rule=Host:koh.jumbosmash.com'
       - traefik.backend.loadbalancer.stickiness=true
   server:
-    image: 'maxgreenwald/projectgem:0.0.6'
+    image: 'maxgreenwald/projectgem:0.0.5'
     environment:
       NODE_ENV: production
     secrets:
