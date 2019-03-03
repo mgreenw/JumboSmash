@@ -305,7 +305,14 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
               </View>
               <Spacer />
-              {/* TODO: Add back "Safety on Jumbosmash" */}
+              {/* <View style={{ paddingBottom: 20 }}>
+                <SecondaryButton
+                  title="Safety on JumboSmash"
+                  onPress={() => {}}
+                  disabled={logoutInProgress}
+                  loading={false}
+                />
+              </View> */}
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Terms and Conditions"
