@@ -6,8 +6,7 @@
   },
   "github": {
     "release": true,
-    "releaseName": "Server - ${version}",
-    "releaseNotes": "${changelog}"
+    "releaseName": "Server - ${version}"
   },
   "npm": {
     "publish": false
