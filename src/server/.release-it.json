@@ -1,4 +1,5 @@
 {
+  "preReleaseId": "beta",
   "git": {
     "tagName": "server-${version}",
     "tagAnnotation": "Server ${version} release",
