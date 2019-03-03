@@ -98,6 +98,7 @@ const sendMessage = async (
       },
       senderUserId,
       senderProfile,
+      previousMessageId,
     });
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
