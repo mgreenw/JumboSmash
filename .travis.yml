@@ -26,6 +26,7 @@ jobs:
         fi
 
     install:
+      - echo "Installing Server Dependencies.." ;
       - npm install
       - npm install --prefix ./src/server
     before_script:
