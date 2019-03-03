@@ -255,7 +255,8 @@ export type GiftedChatMessage = {|
   _id: string,
   text: string,
   createdAt: ?Date | number, // optional & accepts ducktyped date numbers
-  user: GiftedChatUser,
+  user?: GiftedChatUser,
+  system?: boolean,
   sent: boolean
 |};
 

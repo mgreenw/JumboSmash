@@ -190,21 +190,42 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
-    if (messages === null || messages === undefined) {
-      return this._renderGenisis(profile);
-    }
+    const shouldRenderGenesis =
+      messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
-        messages={messages}
+        /* If we want to render our genesis text, we need to supply a dummy 
+        element for the listview. Because of the strict render method of GiftedChat, 
+        this element must match the GiftedChat Message type */
+        messages={
+          !shouldRenderGenesis
+            ? messages
+            : [
+                ({
+                  _id: 'GENESIS_ID',
+                  text: '',
+                  createdAt: new Date(),
+                  system: true,
+                  sent: true
+                }: GiftedChatMessage)
+              ]
+        }
         onSend={this.onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderFooter={this.renderFooter}
+        renderMessage={
+          shouldRenderGenesis
+            ? () => {
+                return this._renderGenesis(profile);
+              }
+            : null
+        }
         renderAvatar={null}
         minInputToolbarHeight={50}
+        alignTop
         renderSend={(props: any) => {
           return (
             <TouchableOpacity
@@ -230,7 +251,6 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _goToProfile = (profile: UserProfile) => {
-    console.log('go to profile');
     const { navigation } = this.props;
     navigation.navigate(routes.MatchesExpandedCard, {
       profile,
@@ -238,13 +258,17 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
-  _renderGenisis = (profile: UserProfile) => {
+  _renderGenesis = (profile: UserProfile) => {
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
-        <TouchableOpacity onPress={this._goToProfile}>
+        <TouchableOpacity
+          onPress={() => {
+            this._goToProfile(profile);
+          }}
+        >
           <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 84, paddingTop: 20 }}>
+        <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
             {'Late-night Espresso’s run? ;)'}
           </Text>
