@@ -63,7 +63,8 @@ function complete(
           smash: true,
           social: true,
           stone: true
-        }
+        },
+        pushNotificationToken: null
       }
     },
     meta: {}

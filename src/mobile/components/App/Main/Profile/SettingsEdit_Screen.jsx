@@ -166,6 +166,17 @@ class SettingsScreen extends React.Component<Props, State> {
     NavigationService.back();
   };
 
+  _onPushNotificationSwitchChange = () => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+
+        pushNotificationToken:
+          state.editedSettings.pushNotificationToken === null ? ' test ' : null
+      }
+    }));
+  };
+
   render() {
     const { editedSettings } = this.state;
     const { logoutInProgress, logout } = this.props;
@@ -293,6 +304,41 @@ class SettingsScreen extends React.Component<Props, State> {
                   plural
                 />
               </Collapsible>
+            </View>
+
+            <View style={[styles.settingsBlock, { marginTop: 20 }]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'Notifications'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSocial is where you can match with people for hanging out.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingBottom: 15,
+                  paddingLeft: 10
+                }}
+              >
+                <Text style={textStyles.body1Style}>Enable Notifications</Text>
+                <Switch
+                  value={editedSettings.pushNotificationToken !== null}
+                  trackColor={{ true: Colors.AquaMarine }}
+                  onValueChange={this._onPushNotificationSwitchChange}
+                />
+              </View>
             </View>
 
             <View style={styles.settingsBlock}>

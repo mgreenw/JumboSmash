@@ -132,7 +132,8 @@ export type UserSettings = {
     smash: boolean,
     social: boolean,
     stone: boolean
-  }
+  },
+  pushNotificationToken: ?string
 };
 
 export type ProfileFields = {|
