@@ -11,5 +11,8 @@
   },
   "npm": {
     "publish": false
+  },
+  "scripts": {
+    "afterBump": "npm run bump-deploy-version ${version}"
   }
 }
