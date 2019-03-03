@@ -68,8 +68,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
       <TouchableOpacity
         ref={self => (this.iconTouchableOpacity = self)}
         style={{
-          paddingLeft: 22,
-          paddingRight: 22,
+          marginHorizontal: 12,
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',

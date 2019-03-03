@@ -2,7 +2,7 @@
 /* eslint-disable */
 
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Platform } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import _ from 'lodash';
 import { StyleSheet } from 'react-native';
@@ -46,7 +46,9 @@ class GenderToggle extends React.Component<
           alignItems: 'center'
         }}
         onPress={() => {
-          Haptic.selection();
+          if (Platform.OS === 'ios') {
+            Haptic.selection();
+          }
           this.props.onPress();
         }}
       >

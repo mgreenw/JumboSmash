@@ -162,10 +162,11 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   mail.send({
     to: memberInfo.email,
     from: 'beta@jumbosmash.com',
-    subject: 'JumboSmash Email Verification',
-    html: `<p>Enter this code: ${verificationCode}</p>`,
+    subject: 'JumboSmash Verification Code',
+    html: authUtils.generateVerificationEmail(verificationCode),
   });
 
+  logger.debug(`Verification Code: ${verificationCode}`);
   slack.postVerificationCode(verificationCode, memberInfo.utln, memberInfo.email);
 
   // Send a success response to the client

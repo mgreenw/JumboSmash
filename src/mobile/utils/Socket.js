@@ -2,10 +2,11 @@
 
 import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
+import newMessageAction from 'mobile/actions/app/notifications/newMessage';
+import newMatchAction from 'mobile/actions/app/notifications/newMatch';
 import store from 'mobile/store';
-
+import type { UserProfile, Message } from 'mobile/reducers';
 import { SERVER_ROUTE } from '../api/routes';
-
 // Ignore the annoying warning from the websocket connection options
 // Not bad at all and no way around it for now
 // https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
@@ -49,10 +50,27 @@ function connect(token: string) {
 
   _socket.on('NEW_MESSAGE', data => {
     console.log('NEW_MESSAGE:', data);
+    const {
+      message,
+      senderProfile,
+      senderUserId
+    }: {
+      message: Message,
+      senderProfile: UserProfile,
+      senderUserId: number
+    } = data;
+    // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
+    // $FlowFixMe
+    store.dispatch(newMessageAction(message, senderProfile, senderUserId));
   });
 
   _socket.on('NEW_MATCH', data => {
     console.log('NEW_MATCH:', data);
+
+    // TODO: correctly type thunks
+    // We have to ignore flow here because dispatch expects a normal action not a thunk.
+    // $FlowFixMe
+    store.dispatch(newMatchAction());
   });
   /* eslint-enable */
 }
