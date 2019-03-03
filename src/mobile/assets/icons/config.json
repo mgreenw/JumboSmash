@@ -21,20 +21,6 @@
       ]
     },
     {
-      "uid": "f9075e1d9860b93973d68b91468fc4df",
-      "css": "back",
-      "code": 59393,
-      "src": "custom_icons",
-      "selected": true,
-      "svg": {
-        "path": "M758.8 923.7C776.3 941.2 776.3 969.5 758.8 986.9L758.8 986.9C741.3 1004.4 713 1004.4 695.6 986.9L241.2 532.5C232.5 523.8 228.1 512.3 228.1 500.9 228.1 489.4 232.5 478 241.2 469.3L695.6 14.9C713.1-2.6 741.4-2.6 758.8 14.9L758.8 14.9C776.3 32.4 776.3 60.7 758.8 78.1L336 500.9 758.8 923.7Z",
-        "width": 1000
-      },
-      "search": [
-        "back"
-      ]
-    },
-    {
       "uid": "9a583144062939d1540bb0ca29550f9e",
       "css": "cards",
       "code": 59394,
@@ -161,6 +147,34 @@
       ]
     },
     {
+      "uid": "f9075e1d9860b93973d68b91468fc4df",
+      "css": "back",
+      "code": 59393,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M758.8 923.7C776.3 941.2 776.3 969.5 758.8 986.9L758.8 986.9C741.3 1004.4 713 1004.4 695.6 986.9L241.2 532.5C232.5 523.8 228.1 512.3 228.1 500.9 228.1 489.4 232.5 478 241.2 469.3L695.6 14.9C713.1-2.6 741.4-2.6 758.8 14.9L758.8 14.9C776.3 32.4 776.3 60.7 758.8 78.1L336 500.9 758.8 923.7Z",
+        "width": 1000
+      },
+      "search": [
+        "back"
+      ]
+    },
+    {
+      "uid": "026e46bf16dbf625442ca18b49cfad8c",
+      "css": "forward",
+      "code": 59406,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M13.1 76.5A44.8 44.8 0 0 1 13.1 13.1H13.1A44.8 44.8 0 0 1 76.5 13.1L531.7 468.3A44.8 44.8 0 0 1 531.7 531.7L76.5 986.9A44.8 44.8 0 0 1 13.1 986.9H13.1A44.8 44.8 0 0 1 13.1 923.5L436.7 500Z",
+        "width": 545
+      },
+      "search": [
+        "forward"
+      ]
+    },
+    {
       "uid": "b32493dc70c05b02692fe60b7a5bdbbf",
       "css": "ellipsis",
       "code": 59403,
@@ -173,6 +187,92 @@
       "search": [
         "meatball"
       ]
+    },
+    {
+      "uid": "c465befa935b5757225270c6c964b6b9",
+      "css": "down",
+      "code": 59405,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M1000 500.1A500.1 500.1 0 1 1 500.1 0 500.1 500.1 0 0 1 1000 500.1ZM416 264.1L406.4 506.1 303.4 507.7A36.5 36.5 0 0 0 276.7 569.1L477.5 793.3A36.5 36.5 0 0 0 533.5 792.1L716.5 565.4A35.6 35.6 0 0 0 688.2 506H591L579.8 264.1A48.2 48.2 0 0 0 531.6 215.9H464.2A48.2 48.2 0 0 0 416 264.1Z",
+        "width": 1000
+      },
+      "search": [
+        "profile_arrow"
+      ]
+    },
+    {
+      "uid": "e82cedfa1d5f15b00c5a81c9bd731ea2",
+      "css": "info-circled",
+      "code": 59404,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "17ebadd1e3f274ff0205601eef7b9cc4",
+      "css": "help-circled",
+      "code": 59407,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "b035c28eba2b35c6ffe92aee8b0df507",
+      "css": "attention-circled",
+      "code": 59408,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "c76b7947c957c9b78b11741173c8349b",
+      "css": "attention",
+      "code": 59409,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "0d6ab6194c0eddda2b8c9cedf2ab248e",
+      "css": "attach",
+      "code": 59410,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "bbfb51903f40597f0b70fd75bc7b5cac",
+      "css": "trash",
+      "code": 61944,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "559647a6f430b3aeadbecd67194451dd",
+      "css": "menu",
+      "code": 61641,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "ccddff8e8670dcd130e3cb55fdfc2fd0",
+      "css": "down-open",
+      "code": 59411,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "fe6697b391355dec12f3d86d6d490397",
+      "css": "up-open",
+      "code": 59412,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "bc71f4c6e53394d5ba46b063040014f1",
+      "css": "cw",
+      "code": 59413,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "4109c474ff99cad28fd5a2c38af2ec6f",
+      "css": "filter",
+      "code": 61616,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "f9c8ea86275ca16128235c6452b67b8e",
+      "css": "user-secret",
+      "code": 61979,
+      "src": "fontawesome"
     }
   ]
 }

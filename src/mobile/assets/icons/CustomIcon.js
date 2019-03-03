@@ -24,4 +24,5 @@ export type IconName =
   | 'heart-filled'
   | 'ellipsis'
   | 'add'
-  | 'send';
+  | 'send'
+  | 'down';
