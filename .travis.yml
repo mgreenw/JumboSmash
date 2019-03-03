@@ -47,7 +47,7 @@ jobs:
       - ls ./src/koh
       - npm install --prefix ./src/koh
       - npm install --prefix ./src/mobile
-      - npm install --prefix ./src/deploy/deploy
+      - npm install --prefix ./src/deploy
       - npm install --prefix ./src/server
     before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
