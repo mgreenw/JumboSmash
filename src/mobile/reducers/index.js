@@ -110,7 +110,7 @@ export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   id: number,
   code: ?NewMessageToastCode,
-  messageId?: number
+  displayName: ?string
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
@@ -501,7 +501,7 @@ function updateMatches(
 function updateConfirmedConversation(
   state: ReduxState,
   userId: number,
-  byIdChange: { [userId: number]: Message },
+  byIdChange: { [messageId: number]: Message },
   newOrder?: number[]
 ): ConfirmedConversations {
   const { byId = {}, allIds = [] } = state.confirmedConversations[userId] || {};
@@ -1119,12 +1119,27 @@ export default function rootReducer(
     }
 
     case 'NEW_MESSAGE__COMPLETED': {
+      const { senderProfile, senderUserId, message } = action.payload;
+      const orderedIds = [
+        ...state.confirmedConversations.allIds,
+        message.messageId
+      ];
+
+      const confirmedConversations = updateConfirmedConversation(
+        state,
+        senderUserId,
+        { [message.messageId]: message },
+        orderedIds
+      );
+
       return {
         ...state,
         topToast: {
           id: uuidv4(),
-          code: 'NEW_MESSAGE'
-        }
+          code: 'NEW_MESSAGE',
+          displayName: senderProfile.fields.displayName
+        },
+        confirmedConversations
       };
     }
 
