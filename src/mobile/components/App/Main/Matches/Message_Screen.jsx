@@ -190,12 +190,12 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderContent = () => {
     const { messages } = this.props;
-    const shouldRenderGenisis =
+    const shouldRenderGenesis =
       messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
         messages={
-          !shouldRenderGenisis
+          !shouldRenderGenesis
             ? messages
             : [
                 {
@@ -212,7 +212,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderMessage={shouldRenderGenisis ? this._renderGenisis : null}
+        renderMessage={shouldRenderGenesis ? this._renderGenesis : null}
         renderAvatar={null}
         minInputToolbarHeight={50}
         alignTop
@@ -240,7 +240,7 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderGenisis = () => {
+  _renderGenesis = () => {
     const { navigation, profileMap } = this.props;
     const { match } = this.state;
     const profile = profileMap[match.userId];
