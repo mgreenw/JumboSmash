@@ -69,7 +69,10 @@ export default class BioInput extends BaseInput {
             onFocus={this._onFocus}
             placeholderTextColor={Colors.Grey80}
             placeholder="Let everyone know how quirky you are"
-            onChangeText={onChangeText}
+            onChangeText={(text) => {
+              const noIndents = text.replace(/(\n)( *)(\n)/, '\n');
+              return onChangeText(noIndents);
+            }}
             autoCorrect
             multiline
             value={value}

@@ -156,7 +156,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
         <View style={{ flex: 1 }}>
           <PrimaryInput
             value={profile.fields.displayName}
-            label="Preferred Name"
+            label="Preferred First Name"
             onChange={this._onChangeName}
             error={errorMessageName}
             containerStyle={{ width: '100%' }}

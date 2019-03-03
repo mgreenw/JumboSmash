@@ -16,7 +16,7 @@ if (NODE_ENV === 'production' || NODE_ENV === 'staging') {
   };
 } else if (NODE_ENV === 'development') {
   exports.send = (output: any) => {
-    logger.info(JSON.stringify(output, null, 2));
+    logger.debug(`Sending email:\nFrom: ${output.from}\nTo: ${output.to}\nSubject: ${output.subject}`);
   };
 } else {
   exports.send = (output: any) => {

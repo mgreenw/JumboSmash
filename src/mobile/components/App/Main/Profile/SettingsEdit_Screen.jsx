@@ -1,7 +1,14 @@
 // @flow
 
 import React from 'react';
-import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Switch,
+  ImageBackground,
+  Linking
+} from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
@@ -305,21 +312,20 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
               </View>
               <Spacer />
-              <View style={{ paddingBottom: 20 }}>
+              {/* <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"
-                  onPress={() => {
-                    /* TODO */
-                  }}
+                  onPress={() => {}}
                   disabled={logoutInProgress}
                   loading={false}
                 />
-              </View>
+              </View> */}
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
-                    /* TODO */
+                    // Todo: Make this go to the real website
+                    Linking.openURL('https://arthur.jumbosmash.com/terms.html');
                   }}
                   disabled={logoutInProgress}
                   loading={false}
