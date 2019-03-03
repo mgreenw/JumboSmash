@@ -5,23 +5,14 @@ services:
     command: >-
       --api --docker --docker.swarmMode --docker.domain=jumbosmash.com
       --docker.watch --logLevel=DEBUG
-
       --entryPoints="Name:http Address::80 Redirect.EntryPoint:https"
-
       --entryPoints="Name:https Address::443 TLS"
-
       --acme
-
       --acme.acmelogging="true"
-
       --acme.email="jumbosmash19@gmail.com"
-
       --acme.entrypoint="https"
-
       --acme.storage="/acme.json"
-
       --acme.httpChallenge.entryPoint=http
-
       --acme.onhostrule=true
     ports:
     - '80:80'
