@@ -1,10 +1,10 @@
 version: '3.3'
-
 services:
   reverse-proxy:
-    image: traefik:alpine # The official Traefik docker image
-    command: |-
-      --api --docker --docker.swarmMode --docker.domain=jumbosmash.com --docker.watch --logLevel=DEBUG
+    image: 'traefik:alpine'
+    command: >-
+      --api --docker --docker.swarmMode --docker.domain=jumbosmash.com
+      --docker.watch --logLevel=DEBUG
       --entryPoints="Name:http Address::80 Redirect.EntryPoint:https"
       --entryPoints="Name:https Address::443 TLS"
       --acme
@@ -15,125 +15,95 @@ services:
       --acme.httpChallenge.entryPoint=http
       --acme.onhostrule=true
     ports:
-      - 80:80
-      - 443:443
+    - '80:80'
+    - '443:443'
     networks:
-      - traefik-net
+    - traefik-net
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/traefik/acme.json:/acme.json
+    - '/var/run/docker.sock:/var/run/docker.sock'
+    - '/opt/traefik/acme.json:/acme.json'
     deploy:
       placement:
         constraints:
-          - node.role == manager
-
-
-  #
-  #  Prod Website Service
-  #
-
+        - node.role == manager
   website:
-    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
+    image: 'sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63'
     networks:
-      - traefik-net
+    - traefik-net
     deploy:
       labels:
-        - traefik.enable=true
-        - traefik.tags=website,prod
-        - traefik.frontend.entryPoints=http,https
-        - traefik.backend=website
-        - traefik.frontend.rule=Host:jumbosmash.com
-        - traefik.port=80
-
-
-  #
-  #  Prod Koh Service
-  #
-
+      - traefik.enable=true
+      - 'traefik.tags=website,prod'
+      - 'traefik.frontend.entryPoints=http,https'
+      - traefik.backend=website
+      - 'traefik.frontend.rule=Host:jumbosmash.com'
+      - traefik.port=80
   koh:
-    image: kohthefacestealer/koh:0.0.6
+    image: 'kohthefacestealer/koh:0.0.6'
     networks:
-      - traefik-net
+    - traefik-net
     environment:
       NODE_ENV: production
     secrets:
-      - POSTGRES_HOST
-      - KOH_POSTGRES_DATABASE
-      - KOH_POSTGRES_USER
-      - KOH_POSTGRES_PASSWORD
+    - POSTGRES_HOST
+    - KOH_POSTGRES_DATABASE
+    - KOH_POSTGRES_USER
+    - KOH_POSTGRES_PASSWORD
     deploy:
       labels:
-        - traefik.backend=koh
-        - traefik.frontend.entryPoints=http,https
-        - traefik.port=3001
-        - traefik.frontend.rule=Host:koh.jumbosmash.com
-        - traefik.backend.loadbalancer.stickiness=true
-
-  #
-  #  Prod API Service
-  #
-
+      - traefik.backend=koh
+      - 'traefik.frontend.entryPoints=http,https'
+      - traefik.port=3001
+      - 'traefik.frontend.rule=Host:koh.jumbosmash.com'
+      - traefik.backend.loadbalancer.stickiness=true
   server:
-    image: maxgreenwald/projectgem:0.0.5
+    image: 'maxgreenwald/projectgem:0.0.5'
     environment:
       NODE_ENV: production
     secrets:
-      - POSTGRES_HOST
-      - SERVER_POSTGRES_DATABASE
-      - SERVER_POSTGRES_USER
-      - SERVER_POSTGRES_PASSWORD
-      - SECRET
-      - SENDGRID_API_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - GOOGLE_PRIVATE_KEY
+    - POSTGRES_HOST
+    - SERVER_POSTGRES_DATABASE
+    - SERVER_POSTGRES_USER
+    - SERVER_POSTGRES_PASSWORD
+    - SECRET
+    - SENDGRID_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - GOOGLE_PRIVATE_KEY
     networks:
-      - traefik-net
+    - traefik-net
     deploy:
       labels:
-        - traefik.backend=server
-        - traefik.frontend.entryPoints=http,https
-        - traefik.port=3000
-        - traefik.frontend.rule=Host:server.jumbosmash.com
-        - traefik.backend.loadbalancer.stickiness=true
-
-  #
-  # Prod Redis Service
-  #
-
+      - traefik.backend=server
+      - 'traefik.frontend.entryPoints=http,https'
+      - traefik.port=3000
+      - 'traefik.frontend.rule=Host:server.jumbosmash.com'
+      - traefik.backend.loadbalancer.stickiness=true
   redis:
     image: redis
     networks:
-       - traefik-net
+    - traefik-net
     deploy:
       labels:
-        - traefik.backend=redis
-        - traefik.port=6379
-        - traefik.backend.loadbalancer.stickiness=true
-
-
-  #
-  #  Prod Deployment Service
-  #
-
+      - traefik.backend=redis
+      - traefik.port=6379
+      - traefik.backend.loadbalancer.stickiness=true
   deployment:
-    image: sperrys/deploy:node
+    image: 'sperrys/deploy:node'
     environment:
       NODE_ENV: production
     networks:
-      - traefik-net
+    - traefik-net
     secrets:
-      - DOCKER_PASSWORD
+    - DOCKER_PASSWORD
     volumes:
-      - /usr/local/bin/docker:/usr/bin/docker
+    - '/usr/local/bin/docker:/usr/bin/docker'
     deploy:
       labels:
-        - traefik.frontend.entryPoints=http,https
-        - traefik.backend=deploy
-        - traefik.port=3004
-        - traefik.frontend.rule=Host:deploy.jumbosmash.com
-
-# https://docs.docker.com/engine/swarm/secrets/
+      - 'traefik.frontend.entryPoints=http,https'
+      - traefik.backend=deploy
+      - traefik.port=3004
+      - 'traefik.frontend.rule=Host:deploy.jumbosmash.com'
 secrets:
   POSTGRES_HOST:
     external: true
@@ -161,7 +131,6 @@ secrets:
     external: true
   GOOGLE_PRIVATE_KEY:
     external: true
-
 networks:
   traefik-net:
     driver: overlay

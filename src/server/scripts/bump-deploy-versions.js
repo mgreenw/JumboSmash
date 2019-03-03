@@ -12,35 +12,38 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 const semver = require('semver');
-const { exec } = require('child_process');
-const config = require('config');
 
-const utils = require('../utils');
+function updateDeployFile(path, version) {
+  const env = yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+  const oldVersion = semver.parse(env.services.server.image.split(':')[1]);
+  if (!semver.gt(version, oldVersion)) {
+    console.log(`The new server version ${version.toString()} for ${path} must be higher than the old version ${oldVersion.toString()}`);
+    process.exit(1);
+  }
 
-const NODE_ENV = utils.getNodeEnv();
+  env.services.server.image = `maxgreenwald/projectgem:${version.toString()}`;
 
-const stagingFilePath = '../deploy/staging.yml';
+  const newEnvDeploy = yaml.safeDump(env, {
+    noArrayIndent: true,
+  });
+  fs.writeFileSync(path, newEnvDeploy, 'utf8');
+}
 
 // Main function!
 (async () => {
   const newVersion = semver.parse(process.argv[2]);
+  const prerelease = semver.prerelease(newVersion);
+
   if (!newVersion) {
-    console.log(`Invalid version ${process.argv[2]}`)
-    process.exit(1);
-  }
-  const staging = yaml.safeLoad(fs.readFileSync(stagingFilePath, 'utf8'));
-  const oldVersion = semver.parse(staging.services.server.image.split(':')[1]);
-  if (!semver.gt(newVersion, oldVersion)) {
-    console.log(`The new server version must be higher than the old version ${oldVersion.toString()}`);
+    console.log(`Invalid version ${process.argv[2]}`);
     process.exit(1);
   }
 
-  staging.services.server.image = `maxgreenwald/projectgem:${newVersion.toString()}`;
+  updateDeployFile('../../deploy/staging.yml', newVersion);
 
-  const newStaging = yaml.safeDump(staging, {
-    noArrayIndent: true,
-  });
-  fs.writeFileSync(stagingFilePath, newStaging, 'utf8');
+  if (!prerelease) {
+    updateDeployFile('../../deploy/production.yml', newVersion);
+  }
 
   console.log('Done!');
 })();
