@@ -19,17 +19,17 @@ jobs:
        postgresql: '10'
     before_install:
       - if git diff --name-only HEAD^ | grep "src/server/";  then
-          echo "Changes to Server Code, Continuing Travis Stage!"
+          echo "Changes to Server Code, Continuing Travis Stage!";
         else
           echo "No Changes to Server, Exiting Stage ...!";
-          travis_terminate 0
+          travis_terminate 0;
         fi
 
     install:
       - echo "Installing Server Dependencies.." ;
       - npm install
       - npm install --prefix ./src/server
-    before_script: 
+    before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
       - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
       - cd ./src/server && npm run migrate up
