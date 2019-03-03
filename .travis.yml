@@ -22,7 +22,7 @@ jobs:
           echo "Changes to Server Code, Continuing Travis Stage!";
         else
           echo "No Changes to Server, Exiting Stage ...!";
-          travis_terminate 0;
+          #travis_terminate 0;
         fi
 
     install:
