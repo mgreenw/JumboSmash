@@ -230,7 +230,6 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _goToProfile = (profile: UserProfile) => {
-    console.log('go to profile');
     const { navigation } = this.props;
     navigation.navigate(routes.MatchesExpandedCard, {
       profile,
