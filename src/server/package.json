@@ -63,6 +63,7 @@
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
+    "js-yaml": "^3.12.2",
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
     "release-it": "^10.2.0",
