@@ -7,7 +7,8 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import type {
@@ -25,6 +26,19 @@ import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
 import formatTime from 'mobile/utils/formattedTimeSince';
+import { Colors } from 'mobile/styles/colors';
+
+const Seperator = (props: {}) => {
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 2,
+        backgroundColor: Colors.IceBlue
+      }}
+    />
+  );
+};
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -206,6 +220,9 @@ class MessagingScreen extends React.Component<Props, State> {
                   ? this.renderGenesisText(hasNewMatches)
                   : this.renderMatchListItem
               }
+              ItemSeparatorComponent={() => {
+                return <Seperator />;
+              }}
               refreshControl={refreshComponent}
             />
           </View>
