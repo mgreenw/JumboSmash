@@ -188,7 +188,7 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _renderContent = () => {
+  _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
     const shouldRenderGenesis =
       messages === null || messages === undefined || messages.length === 0;
@@ -215,7 +215,13 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderMessage={shouldRenderGenesis ? this._renderGenesis : null}
+        renderMessage={
+          shouldRenderGenesis
+            ? () => {
+                return this._renderGenesis(profile);
+              }
+            : null
+        }
         renderAvatar={null}
         minInputToolbarHeight={50}
         alignTop
@@ -243,19 +249,22 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderGenesis = () => {
-    const { navigation, profileMap } = this.props;
-    const { match } = this.state;
-    const profile = profileMap[match.userId];
+  _goToProfile = (profile: UserProfile) => {
+    const { navigation } = this.props;
+    navigation.navigate(routes.MatchesExpandedCard, {
+      profile,
+      onMinimize: NavigationService.back
+    });
+  };
+
+  _renderGenesis = (profile: UserProfile) => {
+    console.log('rendering genesis');
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(routes.MatchesExpandedCard, {
-              profile,
-              onMinimize: NavigationService.back
-            })
-          }
+          onPress={() => {
+            this._goToProfile(profile);
+          }}
         >
           <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
         </TouchableOpacity>
@@ -269,22 +278,26 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { profileMap } = this.props;
+    const { match } = this.state;
+    const profile = profileMap[match.userId];
     const { messagesLoaded } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <View>
           <GEMHeader
-            title="Messages"
+            title={profile.fields.displayName}
             leftIconName="back"
             rightIconName="ellipsis"
             onRightIconPress={() => {
               Alert.alert('this should be report and stuff?');
             }}
             borderBottom
+            onTitlePress={() => this._goToProfile(profile)}
           />
         </View>
         {messagesLoaded ? (
-          this._renderContent()
+          this._renderContent(profile)
         ) : (
           <View
             style={{

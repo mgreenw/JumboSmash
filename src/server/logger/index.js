@@ -57,7 +57,7 @@ if (NODE_ENV === 'production') {
 }
 
 // Don't log to the console in production.
-if (NODE_ENV !== 'production' && NODE_ENV !== 'testing') {
+if (NODE_ENV !== 'production' && NODE_ENV !== 'test') {
   logger.add(new winston.transports.Console({
     format: timestampError,
   }));

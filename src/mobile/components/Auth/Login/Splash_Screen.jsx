@@ -33,7 +33,9 @@ type Props = reduxProps & navigationProps & dispatchProps;
 
 type State = {
   utln: string,
-  errorMessageUtln: string
+  errorMessageUtln: string,
+  showPopup: boolean,
+  hasHadError: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -60,7 +62,9 @@ class SplashScreen extends React.Component<Props, State> {
     const error = navigation.getParam('error', null);
     this.state = {
       utln: '',
-      errorMessageUtln: ''
+      errorMessageUtln: '',
+      showPopup: error != null,
+      hasHadError: false
     };
   }
 
@@ -169,6 +173,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   _utlnInputError = (errorMessage: string) => {
     this.setState({
+      hasHadError: true,
       errorMessageUtln: errorMessage
     });
   };
@@ -198,7 +203,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   render() {
     // this is the navigator we passed in from App.js
-    const { utln, errorMessageUtln } = this.state;
+    const { utln, errorMessageUtln, showPopup, hasHadError } = this.state;
     const { sendVerificationEmail_inProgress } = this.props;
 
     return (
@@ -239,6 +244,7 @@ class SplashScreen extends React.Component<Props, State> {
                   title="Verify I'm a Senior!"
                   disabled={sendVerificationEmail_inProgress || utln === ''}
                   loading={sendVerificationEmail_inProgress}
+                  hidden={!hasHadError}
                 />
                 <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
               </View>

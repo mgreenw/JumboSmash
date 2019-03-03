@@ -1,6 +1,6 @@
 {
   "name": "jumbosmash-server",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.12.0",
@@ -13,7 +13,7 @@
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
     "migrate": "node-pg-migrate -m ./db/migrations",
     "build": "rm -rf ./dist && babel . --ignore node_modules,dist -d dist && cp .npmrc dist && cp -r config dist && cp *.json dist",
-    "test": "export NODE_ENV=testing && npm run migrate up && npm run jest",
+    "test": "npm run migrate up && npm run jest",
     "jest": "jest --runInBand --forceExit",
     "check-env": "babel-node ./scripts/check-environment",
     "check-node-version": "node ./scripts/check-node-version.js",
@@ -22,7 +22,8 @@
     "drop-all-tables": "babel-node ./scripts/drop-all-tables.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "release": "release-it"
   },
   "dependencies": {
     "@google-cloud/logging-winston": "^0.11.0",
@@ -64,6 +65,7 @@
     "jest": "^23.6.0",
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
+    "release-it": "^10.2.0",
     "supertest": "^3.3.0"
   },
   "jest": {

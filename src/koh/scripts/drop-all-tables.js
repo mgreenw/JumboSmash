@@ -40,7 +40,7 @@ async function dropOwnedTables() {
     if (ans.toLowerCase() !== 'y') {
       process.exit(1);
     }
-  } else if (NODE_ENV !== 'testing') {
+  } else if (NODE_ENV !== 'test') {
     console.log(`Careful: do not perform this action outside of your local computer (you just tried on ${NODE_ENV}).`);
     process.exit(1);
   }
