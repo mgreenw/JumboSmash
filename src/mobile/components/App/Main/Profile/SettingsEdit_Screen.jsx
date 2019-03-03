@@ -1,7 +1,14 @@
 // @flow
 
 import React from 'react';
-import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Switch,
+  ImageBackground,
+  Linking
+} from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
@@ -319,7 +326,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
-                    /* TODO */
+                    // Todo: Make this go to the real website
+                    Linking.openURL('https://arthur.jumbosmash.com/terms.html');
                   }}
                   disabled={logoutInProgress}
                   loading={false}
