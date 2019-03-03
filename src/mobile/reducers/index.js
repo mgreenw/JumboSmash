@@ -110,7 +110,7 @@ export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   id: number,
   code: ?NewMessageToastCode,
-  messageId?: number
+  displayName: ?string
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
@@ -165,12 +165,9 @@ export type Match = {|
   scenes: SceneMatchTimes
 |};
 
-type Matches = {|
-  byId: {
-    [Id: number]: Match
-  },
-  allIds: number[] // Id's in order
-|};
+type Matches = {
+  [Id: number]: Match
+};
 
 export type SceneCandidates = {|
   smash: ?(Candidate[]),
@@ -342,7 +339,7 @@ export type ReduxState = {|
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
 
-  matches: Matches,
+  matchesById: Matches,
   messagedMatchIds: ?(number[]),
   unmessagedMatchIds: ?(number[]),
 
@@ -445,10 +442,7 @@ const defaultState: ReduxState = {
   profiles: {},
 
   // before loaded
-  matches: {
-    byId: {},
-    allIds: []
-  },
+  matchesById: {},
   messagedMatchIds: null,
   unmessagedMatchIds: null,
 
@@ -481,28 +475,58 @@ function normalizeMatches(
   return normalize(matches, [MatchSchema]);
 }
 
-// helper to add matches -- TODO: make a generic, use the immutable library?
-function updateMatches(
+function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
+  // split between messaged and non-messaged matcehs
+  const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
+
+  // If we don't have any messages yet then the index of findIndex will be -1
+  const noMessages = index === -1;
+  const unmessagedMatchIds = noMessages
+    ? orderedIds
+    : orderedIds.slice(0, index);
+  const messagedMatchIds = noMessages ? [] : orderedIds.slice(index).reverse();
+  return { unmessagedMatchIds, messagedMatchIds };
+}
+
+function updateMostRecentMessage(
   state: ReduxState,
-  byIdChanges: { [userId: number]: Match },
-  newOrder?: number[]
-): Matches {
-  const { byId = {}, allIds = [] } = state.matches || {};
-  const updatedMatches = {
-    byId: {
-      ...byId,
-      ...byIdChanges
-    },
-    allIds: newOrder || allIds
+  matchId: number,
+  messageId: number
+) {
+  // Assert that these are neither null nor void
+  const { unmessagedMatchIds = [], messagedMatchIds = [] } = state;
+  const unmessaged = unmessagedMatchIds === null ? [] : unmessagedMatchIds;
+  const messaged = messagedMatchIds === null ? [] : messagedMatchIds;
+
+  // TODO: do some fancy check to ensure we HAVE a match for certain.
+  // Really unlikely we don't, but we should figure out how to handle this if somehow that occurs.
+  const match = {
+    ...state.matchesById[matchId],
+    mostRecentMessage: messageId
   };
-  return updatedMatches;
+
+  return {
+    unmessagedMatchIds: unmessaged.filter(id => {
+      return id !== matchId;
+    }),
+    messagedMatchIds: [
+      matchId,
+      ...messaged.filter(id => {
+        return id !== matchId;
+      })
+    ],
+    matchesById: {
+      ...state.matchesById,
+      [matchId]: match
+    }
+  };
 }
 
 // TODO: use this helper to determine if order was messed up
 function updateConfirmedConversation(
   state: ReduxState,
   userId: number,
-  byIdChange: { [userId: number]: Message },
+  byIdChange: { [messageId: number]: Message },
   newOrder?: number[]
 ): ConfirmedConversations {
   const { byId = {}, allIds = [] } = state.confirmedConversations[userId] || {};
@@ -857,30 +881,18 @@ export default function rootReducer(
     case 'GET_MATCHES__COMPLETED': {
       const { payload: serverMatches } = action;
 
-      // split between messaged and non-messaged matcehs
-      const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
       const { result: orderedIds, entities: normalizedData } = normalizeMatches(
         serverMatches
       );
 
-      // If we don't have any messages yet then the index of findIndex will be -1
-      const noMessages = index === -1;
-      const unmessagedMatchIds = noMessages
-        ? orderedIds
-        : orderedIds.slice(0, index);
-      const messagedMatchIds = noMessages
-        ? []
-        : orderedIds.slice(index).reverse();
+      const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
+        serverMatches,
+        orderedIds
+      );
 
       const confirmedConversations = updateMostRecentConversations(
         state,
         normalizedData.mostRecentMessages || {}
-      );
-
-      const updatedMatches = updateMatches(
-        state,
-        normalizedData.matches,
-        orderedIds
       );
 
       return {
@@ -890,7 +902,7 @@ export default function rootReducer(
           getMatches: false
         },
         confirmedConversations,
-        matches: updatedMatches,
+        matchesById: normalizedData.matches,
         profiles: normalizedData.profiles,
         messagedMatchIds,
         unmessagedMatchIds
@@ -1077,6 +1089,13 @@ export default function rootReducer(
         { [id]: message },
         [...state.confirmedConversations[receiverUserId].allIds, id]
       );
+
+      const {
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
+      } = updateMostRecentMessage(state, receiverUserId, id);
+
       // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
       // will return an empty array if so.
@@ -1101,7 +1120,10 @@ export default function rootReducer(
             ...state.unconfirmedConversations[receiverUserId],
             allIds: newUnsentMessageOrder
           }
-        }
+        },
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
       };
     }
 
@@ -1120,12 +1142,36 @@ export default function rootReducer(
     }
 
     case 'NEW_MESSAGE__COMPLETED': {
+      const { senderProfile, senderUserId, message } = action.payload;
+      const orderedIds = [
+        ...state.confirmedConversations[senderUserId].allIds,
+        message.messageId
+      ];
+
+      const confirmedConversations = updateConfirmedConversation(
+        state,
+        senderUserId,
+        { [message.messageId]: message },
+        orderedIds
+      );
+
+      const {
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
+      } = updateMostRecentMessage(state, senderUserId, message.messageId);
+
       return {
         ...state,
         topToast: {
           id: uuidv4(),
-          code: 'NEW_MESSAGE'
-        }
+          code: 'NEW_MESSAGE',
+          displayName: senderProfile.fields.displayName
+        },
+        confirmedConversations,
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
       };
     }
 
