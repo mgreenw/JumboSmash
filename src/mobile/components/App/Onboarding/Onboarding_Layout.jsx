@@ -36,7 +36,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
       firstScreen,
       lastScreen,
       infoScreen,
-      loading,
+      loading = false,
       onButtonPress,
       title,
       body,
