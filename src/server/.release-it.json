@@ -13,6 +13,6 @@
     "publish": false
   },
   "scripts": {
-    "afterBump": "npm run bump-deploy-version ${version}"
+    "beforeStart": "npm run bump-deploy-version ${version}"
   }
 }
