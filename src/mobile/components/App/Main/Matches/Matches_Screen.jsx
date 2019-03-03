@@ -7,8 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
-  ActivityIndicator,
-  StyleSheet
+  ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import type {
