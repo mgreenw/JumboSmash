@@ -89,6 +89,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
         title="JumboSmash"
         lastScreen
         loading={createUserInProgress}
+        buttonText={'Start Swiping'}
       />
     );
   }
