@@ -21,7 +21,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     unmessagedMatchIds: reduxState.unmessagedMatchIds,
     profileMap: reduxState.profiles,
-    matchMap: reduxState.matches.byId
+    matchMap: reduxState.matchesById
   };
 }
 

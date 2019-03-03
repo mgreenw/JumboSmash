@@ -47,7 +47,7 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
-    matchMap: reduxState.matches.byId,
+    matchMap: reduxState.matchesById,
     profileMap: reduxState.profiles,
     conversationMap: reduxState.confirmedConversations,
     messagedMatchIds: reduxState.messagedMatchIds,
