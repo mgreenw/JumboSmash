@@ -133,7 +133,7 @@ export type UserSettings = {
     social: boolean,
     stone: boolean
   },
-  pushNotificationToken: ?string
+  expoPushToken: ?string
 };
 
 export type ProfileFields = {|

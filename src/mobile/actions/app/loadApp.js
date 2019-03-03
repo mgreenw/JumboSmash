@@ -64,7 +64,7 @@ function complete(
           social: true,
           stone: true
         },
-        pushNotificationToken: null
+        expoPushToken: null
       }
     },
     meta: {}

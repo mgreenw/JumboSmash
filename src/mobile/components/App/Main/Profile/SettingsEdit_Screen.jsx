@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Switch,
   ImageBackground,
-  Linking
+  Linking,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
@@ -29,6 +30,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
 import { Constants } from 'expo';
+import requestNotificationToken from 'mobile/utils/requestNotificationToken';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -167,14 +169,27 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   _onPushNotificationSwitchChange = () => {
-    this.setState(state => ({
-      editedSettings: {
-        ...state.editedSettings,
-
-        pushNotificationToken:
-          state.editedSettings.pushNotificationToken === null ? ' test ' : null
-      }
-    }));
+    const { expoPushToken } = this.state.editedSettings;
+    if (expoPushToken !== null) {
+      this.setState(state => ({
+        editedSettings: {
+          ...state.editedSettings,
+          expoPushToken: null
+        }
+      }));
+    } else {
+      requestNotificationToken().then(newToken => {
+        if (newToken !== null) {
+          Alert.alert(newToken);
+          this.setState(state => ({
+            editedSettings: {
+              ...state.editedSettings,
+              expoPushToken: newToken
+            }
+          }));
+        }
+      });
+    }
   };
 
   render() {
@@ -306,7 +321,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </Collapsible>
             </View>
 
-            <View style={[styles.settingsBlock, { marginTop: 20 }]}>
+            <View style={[styles.settingsBlock]}>
               <View style={{ paddingHorizontal: 10 }}>
                 <Text
                   style={[
@@ -318,7 +333,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
                 <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
                   {
-                    'JumboSocial is where you can match with people for hanging out.'
+                    'JumboSmash uses push notifications to let you know when you have a new match or message.'
                   }
                 </Text>
               </View>
@@ -334,7 +349,7 @@ class SettingsScreen extends React.Component<Props, State> {
               >
                 <Text style={textStyles.body1Style}>Enable Notifications</Text>
                 <Switch
-                  value={editedSettings.pushNotificationToken !== null}
+                  value={editedSettings.expoPushToken !== null}
                   trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onPushNotificationSwitchChange}
                 />
