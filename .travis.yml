@@ -29,7 +29,7 @@ jobs:
       - echo "Installing Server Dependencies.." ;
       - npm install
       - npm install --prefix ./src/server
-    before_script:
+    before_script: 
       - psql -c 'create database jumbosmash_test;' -U postgres
       - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
       - cd ./src/server && npm run migrate up
