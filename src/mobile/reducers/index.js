@@ -487,6 +487,40 @@ function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
   return { unmessagedMatchIds, messagedMatchIds };
 }
 
+function updateMostRecentMessage(
+  state: ReduxState,
+  matchId: number,
+  messageId: number
+) {
+  // Assert that these are neither null nor void
+  const { unmessagedMatchIds = [], messagedMatchIds = [] } = state;
+  const unmessaged = unmessagedMatchIds === null ? [] : unmessagedMatchIds;
+  const messaged = messagedMatchIds === null ? [] : messagedMatchIds;
+
+  // TODO: do some fancy check to ensure we HAVE a match for certain.
+  // Really unlikely we don't, but we should figure out how to handle this if somehow that occurs.
+  const match = {
+    ...state.matchesById[matchId],
+    mostRecentMessage: messageId
+  };
+
+  return {
+    unmessagedMatchIds: unmessaged.filter(id => {
+      return id !== matchId;
+    }),
+    messagedMatchIds: [
+      matchId,
+      ...messaged.filter(id => {
+        return id !== matchId;
+      })
+    ],
+    matchesById: {
+      ...state.matchesById,
+      [matchId]: match
+    }
+  };
+}
+
 // TODO: use this helper to determine if order was messed up
 function updateConfirmedConversation(
   state: ReduxState,
@@ -1055,6 +1089,12 @@ export default function rootReducer(
         [...state.confirmedConversations[receiverUserId].allIds, id]
       );
 
+      const {
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
+      } = updateMostRecentMessage(state, receiverUserId, id);
+
       // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
       // will return an empty array if so.
@@ -1079,7 +1119,10 @@ export default function rootReducer(
             ...state.unconfirmedConversations[receiverUserId],
             allIds: newUnsentMessageOrder
           }
-        }
+        },
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
       };
     }
 
@@ -1111,6 +1154,12 @@ export default function rootReducer(
         orderedIds
       );
 
+      const {
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
+      } = updateMostRecentMessage(state, senderUserId, message.messageId);
+
       return {
         ...state,
         topToast: {
@@ -1118,7 +1167,10 @@ export default function rootReducer(
           code: 'NEW_MESSAGE',
           displayName: senderProfile.fields.displayName
         },
-        confirmedConversations
+        confirmedConversations,
+        unmessagedMatchIds,
+        messagedMatchIds,
+        matchesById
       };
     }
 
