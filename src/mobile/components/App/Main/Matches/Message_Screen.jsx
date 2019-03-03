@@ -194,16 +194,19 @@ class MessagingScreen extends React.Component<Props, State> {
       messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
+        /* If we want to render our genesis text, we need to supply a dummy 
+        element for the listview. Because of the strict render method of GiftedChat, 
+        this element must match the GiftedChat Message type */
         messages={
           !shouldRenderGenesis
             ? messages
             : [
-                {
+                ({
                   _id: 1,
-                  text: 'This is a system message',
-                  createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
+                  text: '',
+                  createdAt: new Date(),
                   system: true
-                }
+                }: GiftedChatMessage)
               ]
         }
         onSend={this.onSend}
