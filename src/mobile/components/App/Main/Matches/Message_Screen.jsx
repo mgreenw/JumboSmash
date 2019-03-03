@@ -6,7 +6,8 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import type {
@@ -26,6 +27,7 @@ import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { Colors } from 'mobile/styles/colors';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -47,6 +49,53 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 type State = {
   match: Match,
   messagesLoaded: boolean
+};
+
+const wrapperBase = {
+  backgroundColor: Colors.White,
+  borderWidth: 1.5,
+  margin: 3
+};
+const BubbleStyles = StyleSheet.create({
+  wrapperLeft: {
+    ...wrapperBase,
+    borderColor: Colors.AquaMarine
+  },
+  wrapperRight: {
+    ...wrapperBase,
+    borderColor: Colors.Grey80
+  },
+  messageText: {
+    ...textStyles.subtitle1Style,
+    color: Colors.Black
+  },
+  timeText: {
+    fontSize: 10
+  },
+  tickStyle: {
+    color: Colors.Black
+  }
+});
+
+const renderBubble = props => {
+  return (
+    <Bubble
+      {...props}
+      wrapperStyle={{
+        right: BubbleStyles.wrapperLeft,
+        left: BubbleStyles.wrapperRight
+      }}
+      textStyle={{
+        right: BubbleStyles.messageText,
+        left: BubbleStyles.messageText
+      }}
+      timeTextStyle={{
+        right: BubbleStyles.timeText,
+        left: BubbleStyles.timeText
+      }}
+      tickStyle={BubbleStyles.tickStyle}
+    />
+  );
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -156,19 +205,6 @@ class MessagingScreen extends React.Component<Props, State> {
     sendMessage(match.userId, message);
   };
 
-  renderBubble = props => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#f0f0f0'
-          }
-        }}
-      />
-    );
-  };
-
   renderSystemMessage = props => {
     return (
       <SystemMessage
@@ -214,7 +250,7 @@ class MessagingScreen extends React.Component<Props, State> {
         user={{
           _id: '1' // sent messages should have same user._id
         }}
-        renderBubble={this.renderBubble}
+        renderBubble={renderBubble}
         renderSystemMessage={this.renderSystemMessage}
         renderMessage={
           shouldRenderGenesis
