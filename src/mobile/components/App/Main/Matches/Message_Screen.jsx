@@ -202,10 +202,11 @@ class MessagingScreen extends React.Component<Props, State> {
             ? messages
             : [
                 ({
-                  _id: 1,
+                  _id: 'GENESIS_ID',
                   text: '',
                   createdAt: new Date(),
-                  system: true
+                  system: true,
+                  sent: true
                 }: GiftedChatMessage)
               ]
         }
@@ -258,7 +259,6 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _renderGenesis = (profile: UserProfile) => {
-    console.log('rendering genesis');
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
