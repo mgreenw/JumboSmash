@@ -25,6 +25,7 @@ import { Colors } from 'mobile/styles/colors';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
+import BlockPopup from './BlockPopup';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -286,6 +287,12 @@ class MessagingScreen extends React.Component<Props, State> {
         visible={showActionSheet}
         options={[
           {
+            text: 'Unmatch',
+            onPress: () => {
+              console.log('Pressed unmatch');
+            }
+          },
+          {
             text: 'Block',
             onPress: () => {
               this._toggleActionSheet(false);
@@ -323,8 +330,17 @@ class MessagingScreen extends React.Component<Props, State> {
     const displayName = profile.fields.displayName;
 
     const reasons = block ? BLOCK_REASONS : REPORT_REASONS;
-
     return (
+      <BlockPopup
+        visible={showPopup}
+        onCancel={() => this.setState({ showPopup: false })}
+        onDone={() =>
+          this.setState({ showPopup: false }, () => NavigationService.back())
+        }
+        displayName={displayName}
+      />
+    );
+    /* return (
       <Popup
         visible={showPopup}
         onTouchOutside={() => this._toggleShowPopup(false, false)}
@@ -393,7 +409,7 @@ class MessagingScreen extends React.Component<Props, State> {
           </View>
         </View>
       </Popup>
-    );
+    ); */
   }
 
   render() {
