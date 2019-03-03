@@ -14,6 +14,7 @@ import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
 import { Image } from 'mobile/components/shared/imageCacheFork';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type Props = {
   profile: UserProfile,
@@ -114,10 +115,15 @@ export default class CardView extends React.Component<Props> {
               )}`}
             </Text>
             <TouchableOpacity
-              style={{ position: 'absolute', right: 20 }}
+              style={{
+                position: 'absolute',
+                right: 20,
+                backgroundColor: Colors.White,
+                borderRadius: 33
+              }}
               onPress={onMinimize}
             >
-              <Text style={{ fontSize: 28 }}>{'<'}</Text>
+              <CustomIcon name="down" size={33} color={Colors.SunYellow} />
             </TouchableOpacity>
           </View>
           <View
