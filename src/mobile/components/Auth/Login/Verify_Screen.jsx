@@ -154,12 +154,11 @@ class SplashScreen extends React.Component<Props, State> {
     const responseEmail: string = navigation.getParam('responseEmail', '');
     const alreadySent: boolean = navigation.getParam('alreadySent', false);
     const isLoading = login_inProgress;
-
-    let message = alreadySent
-      ? `Congrats on graduating! Looks like a verification code already been sent to ${responseEmail}.`
-      : `Congrats on graduating! A verification code has been sent to ${responseEmail} Enter it below to start using JumboSmash.`;
-
-    message += ` Enter it below to continue.`;
+    const message = `Congrats on graduating! ${
+      alreadySent
+        ? `Looks like a verification code already been sent to `
+        : `A verification code has been sent to `
+    } ${responseEmail}.  Enter it below to start using JumboSmash.`;
 
     return (
       <View style={{ flex: 1 }}>
