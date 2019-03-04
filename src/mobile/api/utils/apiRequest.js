@@ -2,7 +2,7 @@
 
 import store from 'mobile/store';
 import { timeout } from './timeout';
-import { UNAUTHORIZED } from '../sharedResponseCodes';
+import { UNAUTHORIZED, NETWORK_REQUEST_FAILED } from '../sharedResponseCodes';
 
 type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
 export default function apiRequest(
@@ -33,6 +33,11 @@ export default function apiRequest(
       return response;
     })
     .catch(err => {
+      if (err instanceof TypeError) {
+        if (err.message === 'Network request failed') {
+          throw NETWORK_REQUEST_FAILED;
+        }
+      }
       throw { err, route };
     });
 }
