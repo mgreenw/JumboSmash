@@ -288,7 +288,24 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
                 <Text style={[textStyles.body2Style, { padding: 10 }]}>
                   {
-                    'This helps JumboSmash match you with the right people. For more information, check out our Statement on Gender. None of the following information will be shown on your profile. '
+                    'This helps JumboSmash match you with the right people. For more information, check out our '
+                  }
+                  <Text
+                    style={{
+                      color: Colors.Grapefruit,
+                      textDecorationLine: 'underline'
+                    }}
+                    onPress={() => {
+                      // TODO: Make this go to the jumbosmash.com
+                      Linking.openURL(
+                        'https://arthur.jumbosmash.com/gender.html'
+                      );
+                    }}
+                  >
+                    {'Statement on Gender'}
+                  </Text>
+                  {
+                    '. None of the following information will be shown on your profile. '
                   }
                 </Text>
                 <Spacer />
