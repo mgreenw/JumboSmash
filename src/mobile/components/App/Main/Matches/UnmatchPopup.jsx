@@ -51,7 +51,7 @@ class UnmatchPopup extends React.Component<Props> {
             <View style={{ flex: 1 }}>
               <PrimaryButton
                 onPress={onConfirm}
-                title="Done"
+                title="Unmatch"
                 loading={false}
                 disabled={false}
               />
