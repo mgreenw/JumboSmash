@@ -44,8 +44,7 @@ Provide the normal `Authorization` token in the request header.
             "smash": false,
             "social": false,
             "stone": false
-        },
-        "expoPushToken": "SOME_EXPO_TOKEN"
+        }
     }
 }
 ```

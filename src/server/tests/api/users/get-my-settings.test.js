@@ -68,7 +68,5 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.activeScenes.smash).toBe(false);
     expect(res.body.data.activeScenes.social).toBe(false);
     expect(res.body.data.activeScenes.stone).toBe(false);
-
-    expect(res.body.data.expoPushToken).toBeDefined();
   });
 });
