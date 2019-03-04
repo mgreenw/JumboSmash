@@ -67,10 +67,13 @@ function connect(token: string) {
   _socket.on('NEW_MATCH', data => {
     console.log('NEW_MATCH:', data);
 
+    // Ensure we type this function
+    const newMatchThunk = newMatchAction(data.scene);
+
     // TODO: correctly type thunks
     // We have to ignore flow here because dispatch expects a normal action not a thunk.
     // $FlowFixMe
-    store.dispatch(newMatchAction());
+    store.dispatch(newMatchThunk);
   });
   /* eslint-enable */
 }

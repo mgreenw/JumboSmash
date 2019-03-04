@@ -87,6 +87,8 @@ import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
 
+export type Scene = 'smash' | 'social' | 'stone';
+
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
 export type BottomToastCode =
@@ -103,7 +105,8 @@ export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   id: number,
   code: ?NewMatchToastCode,
-  profileId?: number
+  profileId?: number,
+  scene?: Scene
 };
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
@@ -186,8 +189,6 @@ export type GetSceneCandidatesInProgress = {|
   social: boolean,
   stone: boolean
 |};
-
-export type Scene = 'smash' | 'social' | 'stone';
 
 // For normalizer:
 const ConfirmedMessageSchema = new schema.Entity(
@@ -1184,7 +1185,8 @@ export default function rootReducer(
         ...state,
         topToast: {
           id: uuidv4(),
-          code: 'NEW_MATCH'
+          code: 'NEW_MATCH',
+          scene: action.payload.scene
         }
       };
     }

@@ -2,7 +2,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions, Platform } from 'react-native';
-import type { ReduxState, TopToast, TopToastCode } from 'mobile/reducers/index';
+import type {
+  ReduxState,
+  TopToast,
+  TopToastCode,
+  Scene
+} from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
@@ -26,6 +31,28 @@ function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
+function iconFromScene(scene: Scene) {
+  switch (scene) {
+    case 'social': {
+      return ' 🐘';
+    }
+
+    case 'smash': {
+      return ' 🍑';
+    }
+
+    case 'stone': {
+      return ' 🍀';
+    }
+
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (scene: empty); // ensures we have handled all cases
+      return '';
+    }
+  }
+}
+
 function messageFromCode(code: TopToastCode): string {
   switch (code) {
     case 'NEW_MESSAGE': {
@@ -33,7 +60,7 @@ function messageFromCode(code: TopToastCode): string {
     }
 
     case 'NEW_MATCH': {
-      return '[picture] you have a new match! [scene]';
+      return `You have a new match!`;
     }
 
     default: {
@@ -47,8 +74,12 @@ function messageFromCode(code: TopToastCode): string {
 class BottomToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { topToast } = this.props;
+    const icon =
+      topToast.code === 'NEW_MATCH' && topToast.scene
+        ? iconFromScene(topToast.scene)
+        : '';
     if (topToast.code && topToast.id !== prevProps.topToast.id) {
-      const message = messageFromCode(topToast.code);
+      const message = messageFromCode(topToast.code) + icon;
       this.showToast(message);
     }
   }
@@ -77,7 +108,6 @@ class BottomToastComponent extends React.Component<Props> {
     }
     const marginHorizontal = 18;
     return (
-
       <Toast
         ref={this.setToastRef}
         positionValue={paddingTop + 18}
