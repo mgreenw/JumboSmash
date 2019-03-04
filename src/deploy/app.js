@@ -50,7 +50,7 @@ app.post('/website', async (req, res) => {
   // TODO CLEAN THIS UP/MODULARIZE/
 
   // First Try to Pull the Most Recent Version from DockerHub
-  exec('docker pull sperrys/website:latest', (err, stdout, stderr) => {
+  exec('docker pull sperrys/website:master', (err, stdout, stderr) => {
     logger.info('Pulling Website!');
     if (err) {
       logger.error(err);
@@ -60,7 +60,7 @@ app.post('/website', async (req, res) => {
     logger.error(`${stderr}`);
 
     // Then try to bring down the arthur service
-    exec('docker service rm pg_arthur', (err, stdout, stderr) => {
+    exec('docker service rm gem_staging_arthur', (err, stdout, stderr) => {
       logger.info('Bringing Down Arthur!');
       if (err) {
         logger.error(err);
@@ -70,7 +70,7 @@ app.post('/website', async (req, res) => {
       logger.error(`${stderr}`);
 
       // Update the docker stack with the new version of arthur (this command only updates services that change)
-      exec('docker stack deploy --with-registry-auth  -c ../prod.yml pg', (err, stdout, stderr) => {
+      exec('docker stack deploy -c ../../deploy/staging.yml gem_staging', (err, stdout, stderr) => {
         logger.info('Updating Arthur!');
         if (err) {
           logger.error(err);
