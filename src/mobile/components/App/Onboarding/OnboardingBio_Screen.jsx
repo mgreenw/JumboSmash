@@ -90,7 +90,6 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
         title="About Me"
         main
         progress={2}
-        progressComplete={complete}
         buttonDisabled={!complete}
       />
     );

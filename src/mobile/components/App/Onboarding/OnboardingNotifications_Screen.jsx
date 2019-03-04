@@ -110,7 +110,6 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
         title="Push Notifications"
         main
         progress={1}
-        progressComplete={false /* TODO: toggle after completion */}
       />
     );
   }

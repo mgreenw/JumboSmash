@@ -104,7 +104,6 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
         title="Upload Photos"
         main
         progress={1}
-        progressComplete={complete}
         buttonDisabled={!complete}
       />
     );

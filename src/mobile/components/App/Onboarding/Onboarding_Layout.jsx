@@ -23,7 +23,6 @@ type Props = {
   lastScreen?: boolean,
   infoScreen?: boolean,
   progress?: number,
-  progressComplete?: boolean,
   loading?: boolean,
   buttonDisabled?: boolean,
   section: 'profile' | 'settings',
@@ -46,7 +45,6 @@ export class OnboardingLayout extends React.Component<Props, State> {
       progress,
       section,
       buttonDisabled,
-      progressComplete,
       onSkipPress
     } = this.props;
     return (
@@ -58,10 +56,9 @@ export class OnboardingLayout extends React.Component<Props, State> {
         />
         <KeyboardView waves={1}>
           <View style={{ paddingTop: 20 }}>
-            {progress !== undefined && progressComplete !== undefined && (
+            {progress !== undefined && (
               <OnboardingProgress
                 progress={progress}
-                progressComplete={progressComplete}
                 maxProgress={section === 'settings' ? 1 : 2}
               />
             )}
