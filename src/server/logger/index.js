@@ -56,7 +56,7 @@ if (NODE_ENV === 'production') {
   logger.add(googleCloud);
 }
 
-// Don't log to the console in production.
+// Don't log info to the console in production, test, or travis
 if (NODE_ENV !== 'production' && NODE_ENV !== 'test' && NODE_ENV !== 'travis') {
   logger.add(new winston.transports.Console({
     format: timestampError,
@@ -67,6 +67,7 @@ if (NODE_ENV !== 'production' && NODE_ENV !== 'test' && NODE_ENV !== 'travis') {
   }));
 }
 
+// Log console warn to test and travis!
 if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
   logger.add(new winston.transports.Console({
     level: 'warn',
