@@ -34,7 +34,9 @@ jobs:
       - cd ./src/server && npm run migrate up
     script:
       - npm run lint
+      - cd ../..
       - npx flow check src/server
+      - cd src/server
       - npm run check-env
       - npm run test
 notifications:
