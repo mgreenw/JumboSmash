@@ -22,10 +22,9 @@ type Props = {
   lastScreen?: boolean,
   infoScreen?: boolean,
   progress?: number,
-  progressComplete?: boolean,
   loading?: boolean,
   buttonDisabled?: boolean,
-  section: 'profile' | 'settings',
+  section: 'profile' | 'settings'
 };
 type State = {};
 
@@ -43,8 +42,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
       buttonText,
       progress,
       section,
-      buttonDisabled,
-      progressComplete,
+      buttonDisabled
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
@@ -55,14 +53,12 @@ export class OnboardingLayout extends React.Component<Props, State> {
         />
         <KeyboardView waves={1}>
           <View style={{ paddingTop: 20 }}>
-            {progress !== undefined &&
-              progressComplete !== undefined && (
-                <OnboardingProgress
-                  progress={progress}
-                  progressComplete={progressComplete}
-                  maxProgress={section === 'settings' ? 1 : 2}
-                />
-              )}
+            {progress !== undefined && (
+              <OnboardingProgress
+                progress={progress}
+                maxProgress={section === 'settings' ? 1 : 2}
+              />
+            )}
           </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
@@ -70,7 +66,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 style={{
                   flex: 0.5,
                   justifyContent: 'center',
-                  alignItems: 'center',
+                  alignItems: 'center'
                 }}
               >
                 <View>
@@ -88,11 +84,13 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: firstScreen || lastScreen || infoScreen ? 25 : 40,
-                  paddingRight: firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingLeft:
+                    firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingRight:
+                    firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 {body}
