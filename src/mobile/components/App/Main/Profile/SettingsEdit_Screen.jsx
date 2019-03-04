@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Switch,
   ImageBackground,
-  Linking
+  Linking,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
@@ -29,6 +30,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
 import { Constants } from 'expo';
+import requestNotificationToken from 'mobile/utils/requestNotificationToken';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -166,6 +168,30 @@ class SettingsScreen extends React.Component<Props, State> {
     NavigationService.back();
   };
 
+  _onPushNotificationSwitchChange = () => {
+    const { expoPushToken } = this.state.editedSettings;
+    if (expoPushToken !== null) {
+      this.setState(state => ({
+        editedSettings: {
+          ...state.editedSettings,
+          expoPushToken: null
+        }
+      }));
+    } else {
+      requestNotificationToken().then(newToken => {
+        if (newToken !== null) {
+          Alert.alert(newToken);
+          this.setState(state => ({
+            editedSettings: {
+              ...state.editedSettings,
+              expoPushToken: newToken
+            }
+          }));
+        }
+      });
+    }
+  };
+
   render() {
     const { editedSettings } = this.state;
     const { logoutInProgress, logout } = this.props;
@@ -293,6 +319,41 @@ class SettingsScreen extends React.Component<Props, State> {
                   plural
                 />
               </Collapsible>
+            </View>
+
+            <View style={[styles.settingsBlock]}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {'Notifications'}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboSmash uses push notifications to let you know when you have a new match or message.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingBottom: 15,
+                  paddingLeft: 10
+                }}
+              >
+                <Text style={textStyles.body1Style}>Enable Notifications</Text>
+                <Switch
+                  value={editedSettings.expoPushToken !== null}
+                  trackColor={{ true: Colors.AquaMarine }}
+                  onValueChange={this._onPushNotificationSwitchChange}
+                />
+              </View>
             </View>
 
             <View style={styles.settingsBlock}>
