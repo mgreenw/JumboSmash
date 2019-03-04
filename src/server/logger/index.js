@@ -57,19 +57,12 @@ if (NODE_ENV === 'production') {
 }
 
 // Don't log to the console in production.
-if (NODE_ENV !== 'production' && NODE_ENV !== 'test' && NODE_ENV !== 'travis') {
+if (NODE_ENV !== 'production' && NODE_ENV !== 'test') {
   logger.add(new winston.transports.Console({
     format: timestampError,
   }));
   logger.add(new winston.transports.File({
     filename: 'combined.log',
-    format: timestampError,
-  }));
-}
-
-if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
-  logger.add(new winston.transports.Console({
-    level: 'warn',
     format: timestampError,
   }));
 }

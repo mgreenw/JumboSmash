@@ -154,8 +154,7 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'smash', ${tableName}active_smash,
       'social', ${tableName}active_social,
       'stone', ${tableName}active_stone
-    ) AS "activeScenes",
-    expo_push_token AS "expoPushToken"
+    ) AS "activeScenes"
   `;
 }
 

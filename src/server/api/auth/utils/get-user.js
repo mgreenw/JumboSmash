@@ -17,12 +17,7 @@ function getUser(token: string): Promise<any> {
         // join with that profile. If not, the 'profile' field will be null
         const result = await db.query(
           `
-          SELECT
-            u.id,
-            COALESCE(p.user_id, 0)::boolean AS "hasProfile",
-            u.utln,
-            u.token_uuid AS "tokenUUID",
-            u.expo_push_token AS "expoPushToken"
+          SELECT u.id, COALESCE(p.user_id, 0)::boolean AS "hasProfile", u.utln, u.token_uuid AS "tokenUUID"
           FROM users u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $1

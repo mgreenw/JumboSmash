@@ -11,9 +11,6 @@ const config = require('config');
 const { UNAUTHORIZED, SERVER_ERROR } = require('./api/status-codes');
 const logger = require('./logger');
 const { getUser, AuthenticationError } = require('./api/auth/utils');
-const appUtils = require('./utils');
-
-const NODE_ENV = appUtils.getNodeEnv();
 
 const namespace = '/socket';
 
@@ -84,14 +81,6 @@ class Socket {
   }
 
   _notify(userId: number, event: string, data: Object) {
-    // The tests do not start at server.js which is required
-    // to initialize the server. Therefore, we cannot use the
-    // socket's notify method in tests.
-    if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
-      logger.warn('Cannot notify in a testing environment!');
-      return;
-    }
-
     try {
       this.io.to(userId.toString()).emit(event, data);
       logger.info(`Sent ${event} to userId ${userId} : ${JSON.stringify(data, null, 2)}`);

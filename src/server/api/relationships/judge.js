@@ -1,9 +1,6 @@
 // @flow
 
 import type { $Request } from 'express';
-import type { Notification } from '../../expo/send-notifications';
-
-const _ = require('lodash');
 
 const {
   status,
@@ -16,7 +13,6 @@ const codes = require('../status-codes');
 const db = require('../../db');
 const logger = require('../../logger');
 const Socket = require('../../socket');
-const Expo = require('../../expo');
 
 /* eslint-disable */
 const schema = {
@@ -38,17 +34,7 @@ const schema = {
 };
 /* eslint-enable */
 
-const emojis = {
-  smash: String.fromCodePoint(0x1F351),
-  social: String.fromCodePoint(0x1F418),
-  stone: String.fromCodePoint(0x1F343),
-};
-
-async function sendMatchSocketNotification(
-  userId: number,
-  matchUserId: number,
-  scene: string,
-): Promise<Notification[]> {
+async function sendMatchSocketNotification(userId: number, matchUserId: number, scene) {
   const matchResult = await db.query(`
     ${utils.matchQuery}
     AND me_critic.candidate_user_id = $2
@@ -57,24 +43,11 @@ async function sendMatchSocketNotification(
 
   if (matchResult.rowCount === 0) {
     logger.error('No match found in attempt to send notification.');
-    return [];
+    return;
   }
 
   const [match] = matchResult.rows;
-
-  // Send the notification over socket
   Socket.sendNewMatchNotification(userId, { match, scene });
-
-  // Return the push notification information
-  return [{
-    userId,
-    sound: 'default',
-    body: `You have a new match! ${emojis[scene]}`,
-    data: {
-      userId,
-    },
-    badge: 1, // TODO: make this dynamic with the number of unread messages
-  }];
 }
 
 async function checkMatch(
@@ -140,17 +113,13 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
     `, [userId, candidateUserId, liked]);
 
-    // Send notifications!
     if (liked) {
       checkMatch(userId, candidateUserId, scene).then(async (matched) => {
         if (matched) {
-          // Send the notifications over socket. This function returns the push notification
-          // object for each match. We send the push notifications together in one go
-          const notifications = _.flatten(await Promise.all([
+          await Promise.all([
             sendMatchSocketNotification(userId, candidateUserId, scene),
             sendMatchSocketNotification(candidateUserId, userId, scene),
-          ]));
-          Expo.sendNotifications(notifications);
+          ]);
         }
       });
     }
