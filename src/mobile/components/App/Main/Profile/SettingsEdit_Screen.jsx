@@ -7,8 +7,7 @@ import {
   StyleSheet,
   Switch,
   ImageBackground,
-  Linking,
-  Alert
+  Linking
 } from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
@@ -180,7 +179,6 @@ class SettingsScreen extends React.Component<Props, State> {
     } else {
       requestNotificationToken().then(newToken => {
         if (newToken !== null) {
-          Alert.alert(newToken);
           this.setState(state => ({
             editedSettings: {
               ...state.editedSettings,
