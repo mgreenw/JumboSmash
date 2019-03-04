@@ -132,7 +132,8 @@ export type UserSettings = {
     smash: boolean,
     social: boolean,
     stone: boolean
-  }
+  },
+  expoPushToken: ?string
 };
 
 export type ProfileFields = {|

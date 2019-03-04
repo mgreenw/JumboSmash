@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
@@ -24,7 +25,8 @@ type Props = {
   progress?: number,
   loading?: boolean,
   buttonDisabled?: boolean,
-  section: 'profile' | 'settings'
+  section: 'profile' | 'settings',
+  onSkipPress?: () => void
 };
 type State = {};
 
@@ -42,7 +44,8 @@ export class OnboardingLayout extends React.Component<Props, State> {
       buttonText,
       progress,
       section,
-      buttonDisabled
+      buttonDisabled,
+      onSkipPress
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
@@ -95,17 +98,24 @@ export class OnboardingLayout extends React.Component<Props, State> {
               >
                 {body}
               </View>
-              <View style={{ flex: 1, flexDirection: 'row' }}>
-                <View style={{ flex: 1 }} />
-                <View style={{ flex: 1 }}>
-                  <PrimaryButton
-                    onPress={onButtonPress}
-                    title={buttonText || 'Continue'}
-                    loading={loading}
-                    disabled={buttonDisabled}
-                  />
-                </View>
-                <View style={{ flex: 1 }} />
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%'
+                }}
+              >
+                <PrimaryButton
+                  onPress={onButtonPress}
+                  title={buttonText || 'Continue'}
+                  loading={loading}
+                  disabled={buttonDisabled}
+                />
+                {onSkipPress && (
+                  <TertiaryButton onPress={onSkipPress} title={'Skip'} />
+                )}
+                {onSkipPress && <View /> /* for spacing */}
               </View>
             </View>
           </Transition>
