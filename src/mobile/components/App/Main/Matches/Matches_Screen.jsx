@@ -134,6 +134,14 @@ class MessagingScreen extends React.Component<Props, State> {
     const mostRecentMessage =
       conversationMap[userId].byId[match.mostRecentMessage];
     const formattedTime = formatTime(mostRecentMessage.timestamp);
+    let matchScenes = '';
+    if (match.scenes.smash) {
+      matchScenes += '🍑';
+    }
+    if (match.scenes.social) {
+      matchScenes += '🐘';
+    }
+
     return (
       <TouchableOpacity
         style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
@@ -159,9 +167,14 @@ class MessagingScreen extends React.Component<Props, State> {
               paddingHorizontal: 15
             }}
           >
-            <Text style={textStyles.body1Style}>
-              {profile.fields.displayName}
-            </Text>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <Text style={textStyles.body1Style}>
+                {profile.fields.displayName}
+              </Text>
+              <Text>{matchScenes}</Text>
+            </View>
             <Text
               numberOfLines={2}
               style={[textStyles.subtitle1Style, { flex: 1 }]}
@@ -173,10 +186,17 @@ class MessagingScreen extends React.Component<Props, State> {
             style={{
               flexDirection: 'column',
               justifyContent: 'flex-start',
-              height: '100%'
+              height: '100%',
+              width: 30,
+              padding: 0
             }}
           >
-            <Text style={[textStyles.body2Style, { textAlign: 'right' }]}>
+            <Text
+              style={[
+                textStyles.body2Style,
+                { textAlign: 'right', padding: 0 }
+              ]}
+            >
               {formattedTime}
             </Text>
           </View>
