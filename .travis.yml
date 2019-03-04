@@ -24,7 +24,6 @@ jobs:
           echo "No Changes to Server, Exiting Stage ...!";
           travis_terminate 0;
         fi
-
     install:
       - echo "Installing Server Dependencies.." ;
       - npm install
@@ -35,7 +34,6 @@ jobs:
       - cd ./src/server && npm run migrate up
     script:
       - npm run lint
-      - cd ../..
       - npm run flow
       - cd src/server
       - npm run check-env

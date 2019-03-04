@@ -18,5 +18,3 @@ const server = app.listen(3000, () => {
 });
 
 socket.init(server);
-
-// This is a test to try and trigger a travis build
