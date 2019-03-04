@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 import { textStyles } from 'mobile/styles/textStyles';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
@@ -17,14 +16,6 @@ type State = {
   profile: UserProfile,
   settings: UserSettings
 };
-
-function mapStateToProps() {
-  return {};
-}
-
-function mapDispatchToProps() {
-  return {};
-}
 
 class OnboardingNotificationsScreen extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -115,7 +106,4 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OnboardingNotificationsScreen);
+export default OnboardingNotificationsScreen;
