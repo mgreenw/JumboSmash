@@ -15,3 +15,5 @@ export const TIMEOUT = 'TIMEOUT';
 // 2) as middleware for any API call going to the app API (not the auth API).
 export const AUTHORIZED = 'AUTHORIZED';
 export const UNAUTHORIZED = 'UNAUTHORIZED';
+
+export const NETWORK_REQUEST_FAILED = 'NETWORK_REQUEST_FAILED';

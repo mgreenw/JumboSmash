@@ -30,11 +30,13 @@ import type {
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
-  SaveProfileFieldsCompleted_Action
+  SaveProfileFieldsCompleted_Action,
+  SaveProfileFieldsFailed_Action
 } from 'mobile/actions/app/saveProfile';
 import type {
   Unauthorized_Action,
-  Error_Action
+  ServerError_Action,
+  NetworkError_Action
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
@@ -46,7 +48,8 @@ import type {
 } from 'mobile/actions/app/deletePhoto';
 import type {
   SaveSettingsInitiated_Action,
-  SaveSettingsCompleted_Action
+  SaveSettingsCompleted_Action,
+  SaveSettingsFailed_Action
 } from 'mobile/actions/app/saveSettings';
 import type {
   GetSceneCandidatesInitiated_Action,
@@ -367,14 +370,17 @@ export type Action =
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
   | SaveProfileFieldsCompleted_Action
+  | SaveProfileFieldsFailed_Action
   | Unauthorized_Action
-  | Error_Action
+  | ServerError_Action
+  | NetworkError_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | SaveSettingsInitiated_Action
   | SaveSettingsCompleted_Action
+  | SaveSettingsFailed_Action
   | GetSceneCandidatesInitiated_Action
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
@@ -766,6 +772,10 @@ export default function rootReducer(
     }
 
     case 'SERVER_ERROR': {
+      return state;
+    }
+
+    case 'NETWORK_ERROR': {
       return state;
     }
 
@@ -1187,6 +1197,36 @@ export default function rootReducer(
           id: uuidv4(),
           code: 'NEW_MATCH'
         }
+      };
+    }
+
+    case 'SAVE_SETTINGS__FAILED': {
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_SETTINGS__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveSettings: false
+        },
+        bottomToast
+      };
+    }
+
+    case 'SAVE_PROFILE__FAILED': {
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_PROFILE__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false
+        },
+        bottomToast
       };
     }
 

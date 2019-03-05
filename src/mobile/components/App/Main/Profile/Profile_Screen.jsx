@@ -1,7 +1,13 @@
 // @flow
 
 import React from 'react';
-import { TouchableOpacity, Text, View, Image } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  Image,
+  ActivityIndicator
+} from 'react-native';
 import { connect } from 'react-redux';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { ReduxState, UserProfile } from 'mobile/reducers/index';
@@ -18,37 +24,45 @@ const waves1 = require('../../../../assets/waves/waves1/waves.png');
 type cardButtonProps = {
   title: string,
   onPress: () => void,
-  icon: IconName
+  icon: IconName,
+  loading: boolean
 };
 class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
-    const { onPress, icon, title } = this.props;
+    const { onPress, icon, title, loading } = this.props;
     return (
-      <TouchableOpacity
-        onPress={onPress}
-        style={{
-          backgroundColor: 'transparent',
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingLeft: 60,
-          paddingRight: 60
-        }}
-      >
-        <View style={{ flexDirection: 'row' }}>
-          <CustomIcon name={icon} size={26} color="black" />
-          <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
-            {title}
-          </Text>
-        </View>
-        <CustomIcon
-          name="back"
-          style={{ transform: [{ rotate: '180deg' }] }}
-          size={26}
-          color="black"
-        />
-      </TouchableOpacity>
+      <View style={{ flex: 1, opacity: null }}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={{
+            backgroundColor: 'transparent',
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingLeft: 60,
+            paddingRight: 60
+          }}
+          disabled={loading}
+        >
+          <View style={{ flexDirection: 'row', opacity: loading ? 0.2 : null }}>
+            <CustomIcon name={icon} size={26} color="black" />
+            <Text style={[textStyles.headline6Style, { paddingLeft: 20 }]}>
+              {title}
+            </Text>
+          </View>
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <CustomIcon
+              name="back"
+              style={{ transform: [{ rotate: '180deg' }] }}
+              size={26}
+              color="black"
+            />
+          )}
+        </TouchableOpacity>
+      </View>
     );
   }
 }
@@ -62,7 +76,9 @@ type dispatchProps = {};
 type reduxProps = {
   photoId: number,
   displayName: string,
-  profile: UserProfile
+  profile: UserProfile,
+  saveProfileInProgress: boolean,
+  saveSettingsInProgress: boolean
 };
 
 type Props = navigationProps & dispatchProps & reduxProps;
@@ -80,7 +96,9 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
     displayName: reduxState.client.profile.fields.displayName,
     photoId: photoIds[0],
-    profile: reduxState.client.profile
+    profile: reduxState.client.profile,
+    saveProfileInProgress: reduxState.inProgress.saveProfile,
+    saveSettingsInProgress: reduxState.inProgress.saveSettings
   };
 }
 
@@ -108,7 +126,14 @@ class ProfileScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { photoId, displayName, navigation, profile } = this.props;
+    const {
+      photoId,
+      displayName,
+      navigation,
+      profile,
+      saveProfileInProgress,
+      saveSettingsInProgress
+    } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Profile" rightIconName="cards" />
@@ -170,16 +195,19 @@ class ProfileScreen extends React.Component<Props, State> {
               title="Edit Profile"
               onPress={this._onProfileEditPress}
               icon="user"
+              loading={saveProfileInProgress}
             />
             <CardButton
               title="Settings"
               onPress={this._onSettingsPress}
               icon="gear"
+              loading={saveSettingsInProgress}
             />
             <CardButton
               title="Help & Contact"
               onPress={this._onProfileHelpPress}
               icon="life-ring"
+              loading={false}
             />
           </View>
         </View>
