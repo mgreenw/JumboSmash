@@ -103,7 +103,9 @@ const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
     // Ensure the user can access the other user's data
-    const canSendMessage = await canAccessUserData(req.params.userId, req.user.id);
+    const canSendMessage = await canAccessUserData(req.params.userId, req.user.id, {
+      requireMatch: true,
+    });
     if (!canSendMessage) {
       return status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
     }
