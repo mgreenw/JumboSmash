@@ -3,7 +3,6 @@ import _ from 'lodash';
 import type { UserSettings, Dispatch, GetState } from 'mobile/reducers';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import DevTesting from '../../utils/DevTesting';
 
 export type SaveSettingsInitiated_Action = {
   type: 'SAVE_SETTINGS__INITIATED',
@@ -13,6 +12,12 @@ export type SaveSettingsInitiated_Action = {
 export type SaveSettingsCompleted_Action = {
   type: 'SAVE_SETTINGS__COMPLETED',
   payload: UserSettings,
+  meta: {}
+};
+
+export type SaveSettingsFailed_Action = {
+  type: 'SAVE_SETTINGS__FAILED',
+  payload: {},
   meta: {}
 };
 
@@ -32,6 +37,14 @@ function complete(settings: UserSettings): SaveSettingsCompleted_Action {
   };
 }
 
+function fail(): SaveSettingsFailed_Action {
+  return {
+    type: 'SAVE_SETTINGS__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
 // TODO: catch errors, e.g. the common network timeout.
 export default (settings: UserSettings) => (
   dispatch: Dispatch,
@@ -42,13 +55,12 @@ export default (settings: UserSettings) => (
     return;
   }
   dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    updateMySettings(settings)
-      .then(newSettings => {
-        dispatch(complete(newSettings));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+  updateMySettings(settings)
+    .then(newSettings => {
+      dispatch(complete(newSettings));
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
+      dispatch(fail());
+    });
 };

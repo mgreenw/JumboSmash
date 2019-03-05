@@ -7,33 +7,32 @@ import { Colors } from 'mobile/styles/colors';
 
 type Props = {
   progress: number,
-  progressComplete: boolean,
-  maxProgress: number,
+  maxProgress: number
 };
 
-const ProgressConnector = (props: { checked: boolean }) => {
-  const { checked } = props;
+const ProgressConnector = (props: { filled: boolean }) => {
+  const { filled } = props;
   return (
     <View
       style={{
         width: 20,
         height: 32,
-        justifyContent: 'center',
+        justifyContent: 'center'
       }}
     >
       <View
         style={{
           width: '100%',
           height: 2,
-          backgroundColor: checked ? Colors.AquaMarine : Colors.White,
+          backgroundColor: filled ? Colors.AquaMarine : Colors.White
         }}
       />
     </View>
   );
 };
 
-const ProgressTick = (props: { checked: boolean }) => {
-  const { checked } = props;
+const ProgressTick = (props: { filled: boolean }) => {
+  const { filled } = props;
   return (
     <View
       style={{
@@ -45,42 +44,43 @@ const ProgressTick = (props: { checked: boolean }) => {
         paddingTop: 1.5,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: checked ? Colors.AquaMarine : Colors.White,
+        backgroundColor: filled ? Colors.AquaMarine : Colors.White
       }}
-    >
-      <CustomIcon name="check" size={16} color={Colors.White} />
-    </View>
+    />
   );
 };
 
 export default class OnboardingProgress extends React.Component<Props> {
-  _renderTicks = (progress: number, max: number, checkCurrent: boolean) => {
+  _renderTicks = (progress: number, max: number) => {
     const Ticks = [];
-    const numTicks = checkCurrent ? progress + 1 : progress;
+    const numTicks = progress + 1;
     for (let i = 0; i < max; i += 1) {
       const index = i;
-      const checked = numTicks > index;
-      Ticks.push(<ProgressTick checked={checked} key={`tick_${i}`} />);
+      const filled = numTicks > index;
+      Ticks.push(<ProgressTick filled={filled} key={`tick_${i}`} />);
       Ticks.push(
-        <ProgressConnector checked={checked && index !== progress} key={`connector_${i}`} />,
+        <ProgressConnector
+          filled={filled && index !== progress}
+          key={`connector_${i}`}
+        />
       );
     }
-    Ticks.push(<ProgressTick checked={numTicks === max + 1} key="tick_last" />);
+    Ticks.push(<ProgressTick filled={numTicks === max + 1} key="tick_last" />);
     return Ticks;
   };
 
   render() {
-    const { progress, maxProgress, progressComplete } = this.props;
+    const { progress, maxProgress } = this.props;
     return (
       <View
         style={{
           width: '100%',
           flexDirection: 'row',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
-        {this._renderTicks(progress, maxProgress, progressComplete)}
+        {this._renderTicks(progress, maxProgress)}
       </View>
     );
   }

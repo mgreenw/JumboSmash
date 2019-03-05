@@ -68,7 +68,9 @@ async function selectPhoto(): Promise<?string> {
     }
     return result.uri;
   }
-  Alert.alert('Please enable camera roll access to proceed.');
+  Alert.alert(
+    "Please enable camera roll access in your phone's settings to proceed."
+  );
   return null;
 }
 

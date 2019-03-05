@@ -125,7 +125,6 @@ export default class OnboardingGendersScreen extends React.Component<
         title="Gender Identity"
         main
         progress={0}
-        progressComplete={complete}
         buttonDisabled={!complete}
       />
     );

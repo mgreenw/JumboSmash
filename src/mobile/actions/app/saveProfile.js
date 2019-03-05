@@ -17,6 +17,12 @@ export type SaveProfileFieldsCompleted_Action = {
   meta: {}
 };
 
+export type SaveProfileFieldsFailed_Action = {
+  type: 'SAVE_PROFILE__FAILED',
+  payload: {},
+  meta: {}
+};
+
 function initiate(): SaveProfileFieldsInitiated_Action {
   return {
     type: 'SAVE_PROFILE__INITIATED',
@@ -31,6 +37,14 @@ function complete(fields: ProfileFields): SaveProfileFieldsCompleted_Action {
     payload: {
       fields
     },
+    meta: {}
+  };
+}
+
+function fail(): SaveProfileFieldsFailed_Action {
+  return {
+    type: 'SAVE_PROFILE__FAILED',
+    payload: {},
     meta: {}
   };
 }
@@ -50,5 +64,6 @@ export default (fields: ProfileFields) => (
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
+      dispatch(fail());
     });
 };

@@ -185,7 +185,6 @@ export default class NameAgeScreen extends React.Component<Props, State> {
         title="Name & Age"
         main
         progress={0}
-        progressComplete={!incomplete}
         buttonDisabled={incomplete}
       />
     );
