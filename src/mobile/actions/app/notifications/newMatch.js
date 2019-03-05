@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'mobile/reducers';
+import type { Dispatch, Scene } from 'mobile/reducers';
 
 export type NewMatchInitiated_Action = {
   type: 'NEW_MATCH__INITIATED',
@@ -9,7 +9,7 @@ export type NewMatchInitiated_Action = {
 
 export type NewMatchCompleted_Action = {
   type: 'NEW_MATCH__COMPLETED',
-  payload: {},
+  payload: { scene: Scene },
   meta: {}
 };
 
@@ -21,15 +21,15 @@ function initiate(): NewMatchInitiated_Action {
   };
 }
 
-function complete(): NewMatchCompleted_Action {
+function complete(scene: Scene): NewMatchCompleted_Action {
   return {
     type: 'NEW_MATCH__COMPLETED',
-    payload: {},
+    payload: { scene },
     meta: {}
   };
 }
 
-export default () => (dispatch: Dispatch) => {
+export default (scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate());
-  dispatch(complete());
+  dispatch(complete(scene));
 };
