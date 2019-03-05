@@ -8,7 +8,6 @@
  */
 
 /* eslint-disable no-console */
-/* eslint-disable-next-line */
 const fs = require('fs');
 const semver = require('semver');
 
