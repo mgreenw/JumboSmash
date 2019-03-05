@@ -75,10 +75,22 @@ function connect(token: string) {
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
+
+  _socket.on('TYPING', data => {
+    console.log('Received typing', data);
+  });
   /* eslint-enable */
+}
+
+// Emit typing! That's all.
+function typing(otherUserId: number) {
+  if (_socket !== null) {
+    _socket.emit('TYPING', otherUserId);
+  }
 }
 
 export default {
   isConnected,
-  connect
+  connect,
+  typing
 };

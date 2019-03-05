@@ -63,6 +63,11 @@ async function checkReceipts(job: { data: string[] }) {
 
   // Create the paramaeter strings for the update query
   logger.info('Updating notification receipts.');
+  if (Object.keys(notifications).length === 0) {
+    logger.warn('No notification receipts to check.');
+    return;
+  }
+
   const generateValueTemplate = (startIndex: number): string => {
     return `($${startIndex + 1}::notification_status, $${startIndex + 2}, $${startIndex + 3})`;
   };
