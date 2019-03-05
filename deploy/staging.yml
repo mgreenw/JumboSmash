@@ -33,7 +33,7 @@ services:
   #
 
   arthur:
-    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
+    image: sperrys/website:master
     networks:
       - traefik-net
     deploy:
