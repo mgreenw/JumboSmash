@@ -1,128 +1,164 @@
 version: '3.3'
+
 services:
   reverse-proxy:
-    image: 'traefik:alpine'
-    command: >-
-      --api --docker --docker.swarmMode --docker.domain=jumbosmash.com
-      --docker.watch --logLevel=DEBUG --entryPoints="Name:http Address::80
-      Redirect.EntryPoint:https" --entryPoints="Name:https Address::443 TLS"
-      --acme --acme.acmelogging="true" --acme.email="jumbosmash19@gmail.com"
-      --acme.entrypoint="https" --acme.storage="/acme.json"
-      --acme.httpChallenge.entryPoint=http --acme.onhostrule=true
+    image: traefik:alpine # The official Traefik docker image
+    command: |-
+      --api --docker --docker.swarmMode --docker.domain=jumbosmash.com --docker.watch --logLevel=DEBUG
+      --entryPoints="Name:http Address::80 Redirect.EntryPoint:https"
+      --entryPoints="Name:https Address::443 TLS"
+      --acme
+      --acme.acmelogging="true"
+      --acme.email="jumbosmash19@gmail.com"
+      --acme.entrypoint="https"
+      --acme.storage="/acme.json"
+      --acme.httpChallenge.entryPoint=http
+      --acme.onhostrule=true
     ports:
-    - '80:80'
-    - '443:443'
+      - 80:80
+      - 443:443
     networks:
-    - traefik-net
+      - traefik-net
     volumes:
-    - '/var/run/docker.sock:/var/run/docker.sock'
-    - '/opt/traefik/acme.json:/acme.json'
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/traefik/acme.json:/acme.json
     deploy:
       placement:
         constraints:
-        - node.role == manager
+          - node.role == manager
+
+
+  #
+  #  arthur, (beta) Website service
+  #
+
   arthur:
-    image: 'sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63'
+    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
     networks:
-    - traefik-net
+      - traefik-net
     deploy:
       labels:
-      - traefik.enable=true
-      - 'traefik.tags=website,test'
-      - 'traefik.frontend.entryPoints=http,https'
-      - traefik.backend=arthur
-      - 'traefik.frontend.rule=Host:arthur.jumbosmash.com'
-      - traefik.port=80
+        - traefik.enable=true
+        - traefik.tags=website,test
+        - traefik.frontend.entryPoints=http,https
+        - traefik.backend=arthur
+        - traefik.frontend.rule=Host:arthur.jumbosmash.com
+        - traefik.port=80
+
+  #
+  #  Staging Koh Service
+  #
+
   koh:
-    image: 'kohthefacestealer/koh:0.0.6'
+    image: kohthefacestealer/koh:0.0.6
     networks:
-    - traefik-net
+      - traefik-net
     environment:
       NODE_ENV: staging
     secrets:
-    - POSTGRES_HOST
-    - KOH_POSTGRES_DATABASE
-    - KOH_POSTGRES_USER
-    - KOH_POSTGRES_PASSWORD
+      - POSTGRES_HOST
+      - KOH_POSTGRES_DATABASE
+      - KOH_POSTGRES_USER
+      - KOH_POSTGRES_PASSWORD
     deploy:
       labels:
-      - traefik.backend=koh
-      - 'traefik.frontend.entryPoints=http,https'
-      - traefik.port=3001
-      - 'traefik.frontend.rule=Host:stagingkoh.jumbosmash.com'
-      - traefik.backend.loadbalancer.stickiness=true
+        - traefik.backend=koh
+        - traefik.frontend.entryPoints=http,https
+        - traefik.port=3001
+        - traefik.frontend.rule=Host:stagingkoh.jumbosmash.com
+        - traefik.backend.loadbalancer.stickiness=true
+
+
+  #
+  #  Staging API Service
+  #
+
   server:
-    image: 'maxgreenwald/projectgem:0.1.0-beta.6'
+    image: maxgreenwald/projectgem:0.1.0-beta.6
     environment:
       NODE_ENV: staging
     secrets:
-    - POSTGRES_HOST
-    - SERVER_POSTGRES_DATABASE
-    - SERVER_POSTGRES_USER
-    - SERVER_POSTGRES_PASSWORD
-    - SECRET
-    - SENDGRID_API_KEY
-    - AWS_ACCESS_KEY_ID
-    - AWS_SECRET_ACCESS_KEY
+      - POSTGRES_HOST
+      - SERVER_POSTGRES_DATABASE
+      - SERVER_POSTGRES_USER
+      - SERVER_POSTGRES_PASSWORD
+      - SECRET
+      - SENDGRID_API_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     networks:
-    - traefik-net
+      - traefik-net
     deploy:
       labels:
-      - traefik.backend=server
-      - 'traefik.frontend.entryPoints=http,https'
-      - traefik.port=3000
-      - 'traefik.frontend.rule=Host:stagingserver.jumbosmash.com'
-      - traefik.backend.loadbalancer.stickiness=true
+        - traefik.backend=server
+        - traefik.frontend.entryPoints=http,https
+        - traefik.port=3000
+        - traefik.frontend.rule=Host:stagingserver.jumbosmash.com
+        - traefik.backend.loadbalancer.stickiness=true
+
+  #
+  # redis service
+  #
+
   redis:
     image: redis
     networks:
-    - traefik-net
+       - traefik-net
     deploy:
       labels:
-      - traefik.backend=redis
-      - traefik.port=6379
-      - traefik.backend.loadbalancer.stickiness=true
+        - traefik.backend=redis
+        - traefik.port=6379
+        - traefik.backend.loadbalancer.stickiness=true
+
+
+  #
+  #  Deployment Service
+  #
+
   deployment:
-    image: 'sperrys/deploy:node'
+    image: sperrys/deploy:node
     environment:
       NODE_ENV: staging
     networks:
-    - traefik-net
+      - traefik-net
     secrets:
-    - DOCKER_PASSWORD
+      - DOCKER_PASSWORD
     volumes:
-    - '/usr/local/bin/docker:/usr/bin/docker'
+      - /usr/local/bin/docker:/usr/bin/docker
     deploy:
       labels:
-      - 'traefik.frontend.entryPoints=http,https'
-      - traefik.backend=deploy
-      - traefik.port=3004
-      - 'traefik.frontend.rule=Host:stagingdeploy.jumbosmash.com'
+        - traefik.frontend.entryPoints=http,https
+        - traefik.backend=deploy
+        - traefik.port=3004
+        - traefik.frontend.rule=Host:stagingdeploy.jumbosmash.com
+
+# https://docs.docker.com/engine/swarm/secrets/
 secrets:
-  SENDGRID_API_KEY:
+   SENDGRID_API_KEY:
     external: true
-  KOH_POSTGRES_DATABASE:
+   KOH_POSTGRES_DATABASE:
+     external: true
+   KOH_POSTGRES_USER:
     external: true
-  KOH_POSTGRES_USER:
+   KOH_POSTGRES_PASSWORD:
     external: true
-  KOH_POSTGRES_PASSWORD:
+   SERVER_POSTGRES_DATABASE:
     external: true
-  SERVER_POSTGRES_DATABASE:
+   SERVER_POSTGRES_USER:
     external: true
-  SERVER_POSTGRES_USER:
+   SERVER_POSTGRES_PASSWORD:
     external: true
-  SERVER_POSTGRES_PASSWORD:
+   POSTGRES_HOST:
     external: true
-  POSTGRES_HOST:
+   SECRET:
     external: true
-  SECRET:
+   AWS_ACCESS_KEY_ID:
     external: true
-  AWS_ACCESS_KEY_ID:
+   AWS_SECRET_ACCESS_KEY:
     external: true
-  AWS_SECRET_ACCESS_KEY:
+   DOCKER_PASSWORD:
     external: true
-  DOCKER_PASSWORD:
-    external: true
+
 networks:
   traefik-net:
     driver: overlay

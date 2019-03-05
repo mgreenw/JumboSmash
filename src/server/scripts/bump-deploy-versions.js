@@ -9,24 +9,19 @@
 
 /* eslint-disable no-console */
 /* eslint-disable-next-line */
-const yaml = require('js-yaml');
 const fs = require('fs');
 const semver = require('semver');
 
 function updateDeployFile(path, version) {
-  const env = yaml.safeLoad(fs.readFileSync(path, 'utf8'));
+  const env = fs.readFileSync(path, 'utf8');
   const oldVersion = semver.parse(env.services.server.image.split(':')[1]);
   if (!semver.gt(version, oldVersion)) {
     console.log(`The new server version ${version.toString()} for ${path} must be higher than the old version ${oldVersion.toString()}`);
     process.exit(1);
   }
 
-  env.services.server.image = `maxgreenwald/projectgem:${version.toString()}`;
-
-  const newEnvDeploy = yaml.safeDump(env, {
-    noArrayIndent: true,
-  });
-  fs.writeFileSync(path, newEnvDeploy, 'utf8');
+  env.replace(/maxgreenwald\/projectgem:[0-9.]+(-beta.[0-9])*/, `maxgreenwald/projectgem:${version.toString()}`);
+  fs.writeFileSync(path, env, 'utf8');
 }
 
 // Main function!
