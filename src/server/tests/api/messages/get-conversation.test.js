@@ -65,8 +65,8 @@ describe('GET api/messages/:userId', () => {
   });
 
   it('should not accept an invalid most recent message id', async () => {
-    dbUtils.createRelationship(me.id, other.id, true);
-    dbUtils.createRelationship(other.id, me.id, true);
+    await dbUtils.createRelationship(me.id, other.id, true);
+    await dbUtils.createRelationship(other.id, me.id, true);
     let res = await request(app)
       .get(`/api/messages/${other.id}?most-recent-message-id=aaoeu`)
       .set('Accept', 'application/json')
