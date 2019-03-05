@@ -1155,10 +1155,8 @@ export default function rootReducer(
 
     case 'NEW_MESSAGE__COMPLETED': {
       const { senderProfile, senderUserId, message } = action.payload;
-      const orderedIds = [
-        ...state.confirmedConversations[senderUserId].allIds,
-        message.messageId
-      ];
+      const { allIds = [] } = state.confirmedConversations[senderUserId] || {};
+      const orderedIds = [...allIds, message.messageId];
 
       const confirmedConversations = updateConfirmedConversation(
         state,
