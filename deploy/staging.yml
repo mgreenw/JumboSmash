@@ -74,7 +74,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:0.1.0-beta.7
+    image: maxgreenwald/projectgem:0.1.0
     environment:
       NODE_ENV: staging
     secrets:
