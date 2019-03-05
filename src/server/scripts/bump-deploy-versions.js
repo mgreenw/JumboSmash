@@ -26,8 +26,10 @@ function updateDeployFile(path, version) {
   fs.writeFileSync(path, env, 'utf8');
 }
 
-
+console.log('Parsing new version from argument');
 const newVersion = semver.parse(process.argv[2]);
+
+console.log('Parsing prerelease');
 const prerelease = semver.prerelease(newVersion);
 
 if (!newVersion) {
@@ -35,9 +37,11 @@ if (!newVersion) {
   process.exit(1);
 }
 
+console.log('Updating staging.yml file');
 updateDeployFile('../../deploy/staging.yml', newVersion);
 
 if (!prerelease) {
+  console.log('Updating production.yml file');
   updateDeployFile('../../deploy/production.yml', newVersion);
 }
 
