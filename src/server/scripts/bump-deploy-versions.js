@@ -12,15 +12,18 @@
 const fs = require('fs');
 const semver = require('semver');
 
+const serverRegex = /maxgreenwald\/projectgem:([0-9.]+(-beta.[0-9])*)/;
+
 function updateDeployFile(path, version) {
   const env = fs.readFileSync(path, 'utf8');
-  const oldVersion = semver.parse(env.services.server.image.split(':')[1]);
+
+  const oldVersion = semver.parse(env.match(serverRegex)[1]);
   if (!semver.gt(version, oldVersion)) {
     console.log(`The new server version ${version.toString()} for ${path} must be higher than the old version ${oldVersion.toString()}`);
     process.exit(1);
   }
 
-  env.replace(/maxgreenwald\/projectgem:[0-9.]+(-beta.[0-9])*/, `maxgreenwald/projectgem:${version.toString()}`);
+  env.replace(serverRegex, `maxgreenwald/projectgem:${version.toString()}`);
   fs.writeFileSync(path, env, 'utf8');
 }
 
