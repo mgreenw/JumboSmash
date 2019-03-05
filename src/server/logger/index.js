@@ -59,6 +59,7 @@ if (NODE_ENV === 'production') {
 // Don't log info to the console in production, test, or travis
 if (NODE_ENV !== 'production' && NODE_ENV !== 'test' && NODE_ENV !== 'travis') {
   logger.add(new winston.transports.Console({
+    level: 'silly',
     format: timestampError,
   }));
   logger.add(new winston.transports.File({
