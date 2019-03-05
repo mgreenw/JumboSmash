@@ -15,6 +15,7 @@ describe('POST api/messages/:userId', () => {
     await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
     await db.query('DELETE FROM messages');
+    await db.query('DELETE FROM relationships');
 
     me = await dbUtils.createUser('mgreen99', true);
     other = await dbUtils.createUser('jjaffe99', true);
@@ -24,6 +25,7 @@ describe('POST api/messages/:userId', () => {
   afterAll(async () => {
     await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
+    await db.query('DELETE FROM relationships');
     await db.query('DELETE FROM messages');
   });
 
@@ -71,7 +73,19 @@ describe('POST api/messages/:userId', () => {
     expect(res.statusCode).toBe(404);
   });
 
+  it('should fail if there is no match between the two users', async () => {
+    const res = await request(app)
+      .post(`/api/messages/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__USER_NOT_FOUND.status);
+  });
+
   it('should succeed if the other user exists', async () => {
+    dbUtils.createRelationship(me.id, other.id, true);
+    dbUtils.createRelationship(other.id, me.id, true);
     const res = await request(app)
       .post(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')

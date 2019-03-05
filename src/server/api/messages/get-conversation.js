@@ -68,7 +68,11 @@ const handler = [
   asyncHandler(async (req: $Request) => {
     // If the user is banned, return an emtpy array (which is the default
     // if the user couldn't be found otherwise)
-    if (!(await canAccessUserData(req.params.userId, req.user.id))) {
+    const allowedAccess = await canAccessUserData(req.params.userId, req.user.id, {
+      requireMatch: true,
+    });
+
+    if (!allowedAccess) {
       return status(codes.GET_CONVERSATION__SUCCESS).data([]);
     }
 
