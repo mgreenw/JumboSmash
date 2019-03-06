@@ -18,13 +18,14 @@ function getConversationUrl(userId: number, mostRecentMessageId?: number) {
 export default function getConversation(
   userId: number,
   mostRecentMessageId?: number
-): Promise<Message[]> {
+): Promise<{ messages: Message[], messageReadTimestamp: ?string }> {
   const url = getConversationUrl(userId, mostRecentMessageId);
   return apiRequest('GET', url)
     .then(response => {
       switch (response.status) {
         case GET_CONVERSATION__SUCCESS: {
-          return response.data;
+          const { messageReadTimestamp, messages } = response;
+          return { messages, messageReadTimestamp };
         }
         case GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID: {
           throw new Error('Error: Invalid most recent message ID');

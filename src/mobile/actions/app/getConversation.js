@@ -14,7 +14,11 @@ export type GetConversationInitiated_Action = {
 };
 export type GetConversationCompleted_Action = {
   type: 'GET_CONVERSATION__COMPLETED',
-  payload: { userId: number, messages: Message[] },
+  payload: {
+    userId: number,
+    messages: Message[],
+    messageReadTimestamp: ?string
+  },
   meta: {}
 };
 
@@ -28,11 +32,12 @@ function initiate(userId: number): GetConversationInitiated_Action {
 
 function complete(
   userId: number,
-  messages: Message[]
+  messages: Message[],
+  messageReadTimestamp: ?string
 ): GetConversationCompleted_Action {
   return {
     type: 'GET_CONVERSATION__COMPLETED',
-    payload: { userId, messages },
+    payload: { userId, messages, messageReadTimestamp },
     meta: {}
   };
 }
@@ -43,8 +48,8 @@ export default (userId: number, mostRecentMessageId?: number) => (
   dispatch(initiate(userId));
   DevTesting.fakeLatency(() => {
     getConversation(userId, mostRecentMessageId)
-      .then(messages => {
-        dispatch(complete(userId, messages));
+      .then(({ messages, messageReadTimestamp }) => {
+        dispatch(complete(userId, messages, messageReadTimestamp));
       })
       .catch(error => {
         dispatch(apiErrorHandler(error));

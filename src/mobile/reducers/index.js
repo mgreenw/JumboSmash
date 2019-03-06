@@ -169,7 +169,8 @@ type BaseUserNew = {| userId: number, profile: number |};
 export type Match = {|
   ...BaseUserNew,
   mostRecentMessage: number,
-  scenes: SceneMatchTimes
+  scenes: SceneMatchTimes,
+  messageReadTimestamp: ?string
 |};
 
 type Matches = {
@@ -230,6 +231,7 @@ const MatchSchema = new schema.Entity(
   {
     profile: ProfileSchema,
     mostRecentMessage: MostRecentMessageSchema
+    // @JacobJaffe I think I need to do something here but I don't know exactly what.
   },
   { idAttribute: 'userId' }
 );
@@ -1023,7 +1025,7 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const { userId, messages } = action.payload;
+      const { userId, messages, messageReadTimestamp } = action.payload;
       // TODO: ensure 'result' for array order is preserved
       // pretty sure it's preserved via testing, but not sure via their docs
       // also TODO: create helper function to type return value

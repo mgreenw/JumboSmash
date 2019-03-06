@@ -34,5 +34,6 @@ export type ServerMessage = {
 
 export type ServerMatch = ServerBaseUser & {
   scenes: ServerScenes,
-  mostRecentMessage: ServerMessage
+  mostRecentMessage: ServerMessage,
+  messageReadTimestamp: ?string
 };
