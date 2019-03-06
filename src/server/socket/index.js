@@ -10,12 +10,15 @@ const config = require('config');
 
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
 const logger = require('../logger');
+const db = require('../db');
 const { getUser, AuthenticationError } = require('../api/auth/utils');
 const appUtils = require('../utils');
+const { canAccessUserData } = require('../api/utils');
 
 const NODE_ENV = appUtils.getNodeEnv();
 
 const namespace = '/socket';
+const READ_MESSAGE = 'READ_MESSAGE';
 
 class Socket {
   _io: ?SocketIO;
@@ -34,7 +37,7 @@ class Socket {
   init(server: Server) {
     const _io = initSocket(server, {
       path: namespace,
-      transports: ['websocket', 'polling'], // Only enable polling as a backup
+      transports: ['websocket'], // Don't use polling - it requires sticky sessions and is old
     });
     _io.adapter(redisAdapter(config.get('redis')));
 
@@ -74,6 +77,29 @@ class Socket {
 
       socket.on('disconnect', () => {
         logger.info(`Socket disconnected: ${socket.user.id}`);
+      });
+
+      socket.on(READ_MESSAGE, async (otherUserId: number) => {
+        const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
+          requireMatch: true,
+        });
+
+        // If there is access, update the db and notify the other user
+        if (hasAccess) {
+          const now = new Date();
+          await db.query(`
+            UPDATE relationships
+            SET message_read_timestamp = $1
+            WHERE
+              critic_user_id = $2
+              AND candidate_user_id = $3
+          `, [now, socket.user.id, otherUserId]);
+
+          this.notify(otherUserId, READ_MESSAGE, {
+            userId: socket.user.id,
+            messageReadTimestamp: now,
+          });
+        }
       });
     });
 

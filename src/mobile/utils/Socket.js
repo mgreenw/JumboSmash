@@ -28,7 +28,7 @@ function connect(token: string) {
   // Connect the socket with the new token
   _socket = io(SERVER_ROUTE, {
     path: '/socket',
-    transports: ['websocket', 'polling'],
+    transports: ['websocket'], // Don't use polling - it requires sticky sessions and is old
     query: {
       token
     }
