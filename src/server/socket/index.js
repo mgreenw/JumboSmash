@@ -89,7 +89,7 @@ class Socket {
           const now = new Date();
           await db.query(`
             UPDATE relationships
-            SET message_read_timestamp = $1
+            SET critic_message_read_timestamp = $1
             WHERE
               critic_user_id = $2
               AND candidate_user_id = $3

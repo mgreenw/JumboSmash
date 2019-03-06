@@ -57,11 +57,10 @@ describe('GET api/messages/:userId', () => {
       .get(`/api/messages/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-    await db.query('DELETE FROM messages');
 
-    expect(res.body.data.length).toBe(0);
+    await db.query('DELETE FROM messages');
+    expect(res.statusCode).toBe(404);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__USER_NOT_FOUND.status);
   });
 
   it('should not accept an invalid most recent message id', async () => {
@@ -98,12 +97,13 @@ describe('GET api/messages/:userId', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
 
-    expect(res.body.data.length).toBe(1);
-    expect(res.body.data[0].content).toBe('hey');
-    expect(res.body.data[0].fromClient).toBe(true);
+    expect(res.body.data.messages.length).toBe(1);
+    expect(res.body.data.messages[0].content).toBe('hey');
+    expect(res.body.data.messages[0].fromClient).toBe(true);
   });
 
-  it('should succeed if the other user exists', async () => {
+  it('should fail if the other user does not exist', async () => {
+    // Query for a user that can't exist
     const result = await db.query(`
       SELECT COALESCE(SUM(id), 0) AS id from users
     `);
@@ -114,10 +114,8 @@ describe('GET api/messages/:userId', () => {
       .get(`/api/messages/${id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-
-    expect(res.body.data.length).toBe(0);
+    expect(res.statusCode).toBe(404);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__USER_NOT_FOUND.status);
   });
 
   it('should make the message be from the other person if they sent it', async () => {
@@ -134,8 +132,8 @@ describe('GET api/messages/:userId', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data).toBeDefined();
-    expect(res.body.data[res.body.data.length - 1].fromClient).toBe(false);
-    expect(res.body.data[0].messageId).toBeDefined();
+    expect(res.body.data.messages[res.body.data.messages.length - 1].fromClient).toBe(false);
+    expect(res.body.data.messages[0].messageId).toBeDefined();
   });
 
   it('should fail on an invalid most recent message id (string)', async () => {
@@ -171,7 +169,7 @@ describe('GET api/messages/:userId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-    expect(res.body.data.length).toBe(0);
+    expect(res.body.data.messages.length).toBe(0);
   });
 
   it('should sucessfully limit the response to 1 message if the most recent message id is the penultimate message', async () => {
@@ -195,8 +193,27 @@ describe('GET api/messages/:userId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-    expect(res.body.data.length).toBe(1);
-    expect(res.body.data[0].messageId).toBe(result.rows[result.rowCount - 1].id);
+    expect(res.body.data.messages.length).toBe(1);
+    expect(res.body.data.messages[0].messageId).toBe(result.rows[result.rowCount - 1].id);
+    expect(res.body.data.messageReadTimestamp).toBeNull();
+  });
+
+  it('should return the correct message read timestamp', async () => {
+    const readDate = new Date();
+
+    await db.query(`
+      UPDATE  relationships
+      SET critic_message_read_timestamp = $1
+      WHERE critic_user_id = $2 AND candidate_user_id = $3
+    `, [readDate, other.id, me.id]);
+
+    const res = await request(app)
+      .get(`/api/messages/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(new Date(res.body.data.messageReadTimestamp)).toEqual(readDate);
   });
 
   it('should return an empty array if the other user is banned', async () => {
@@ -217,8 +234,7 @@ describe('GET api/messages/:userId', () => {
       .get(`/api/messages/${person.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-    expect(res.body.data.length).toBe(0);
+    expect(res.statusCode).toBe(404);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__USER_NOT_FOUND.status);
   });
 });

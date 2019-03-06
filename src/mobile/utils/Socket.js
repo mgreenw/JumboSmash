@@ -75,10 +75,28 @@ function connect(token: string) {
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
+
+  _socket.on('READ_MESSAGE', data => {
+    const {
+      userId,
+      messageReadTimestamp
+    }: {
+      userId: number,
+      messageReadTimestamp: Date
+    } = data;
+    console.log('Other user read some messages', userId, messageReadTimestamp);
+  });
   /* eslint-enable */
+}
+
+function readMessage(userId: number) {
+  if (_socket !== null) {
+    _socket.emit('READ_MESSAGE', userId);
+  }
 }
 
 export default {
   isConnected,
-  connect
+  connect,
+  readMessage
 };

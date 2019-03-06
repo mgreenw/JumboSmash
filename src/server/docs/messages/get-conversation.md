@@ -43,26 +43,29 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_CONVERSATION__SUCCESS",
-    "data": [
-        {
-            "messageId": 13,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T16:53:43.337Z",
-            "fromClient": true
-        },
-        {
-            "messageId": 14,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T16:54:02.715Z",
-            "fromClient": false
-        },
-        {
-            "messageId": 15,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T17:04:50.704Z",
-            "fromClient": true
-        }
-    ]
+    "data": {
+        "messages" :[
+            {
+                "messageId": 13,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:53:43.337Z",
+                "fromClient": true
+            },
+            {
+                "messageId": 14,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:54:02.715Z",
+                "fromClient": false
+            },
+            {
+                "messageId": 15,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T17:04:50.704Z",
+                "fromClient": true
+            }
+        ],
+        "messageReadTimestamp": "2019-05-05T19:26:22.408Z"
+    }
 }
 ```
 
@@ -77,5 +80,19 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID"
+}
+```
+
+### OR
+
+**Condition** : The other user is banned, blocked, or not matched.
+
+**Code** : `404 NOT FOUND`
+
+**Content**
+
+```json
+{
+    "status": "GET_CONVERSATION__USER_NOT_FOUND"
 }
 ```

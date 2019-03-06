@@ -56,12 +56,24 @@ const getConversation = async (
     ORDER BY timestamp
   `;
 
-  const result = await db.query(
+  //
+  const messageReadQuery = db.query(`
+    SELECT critic_message_read_timestamp AS "messageReadTimestamp"
+    FROM relationships
+    WHERE critic_user_id = $1 AND candidate_user_id = $2
+  `, [matchUserId, userId]);
+
+  const messagesQuery = db.query(
     query,
     [userId, matchUserId],
   );
 
-  return status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
+  const [messagesResult, messageReadResult] = await Promise.all([messagesQuery, messageReadQuery]);
+
+  return status(codes.GET_CONVERSATION__SUCCESS).data({
+    messages: messagesResult.rows,
+    messageReadTimestamp: messageReadResult.rows[0].messageReadTimestamp,
+  });
 };
 
 const handler = [
@@ -73,7 +85,7 @@ const handler = [
     });
 
     if (!allowedAccess) {
-      return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+      return status(codes.GET_CONVERSATION__USER_NOT_FOUND).noData();
     }
 
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
