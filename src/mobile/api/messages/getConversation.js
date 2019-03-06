@@ -24,8 +24,7 @@ export default function getConversation(
     .then(response => {
       switch (response.status) {
         case GET_CONVERSATION__SUCCESS: {
-          const { messageReadTimestamp, messages } = response;
-          return { messages, messageReadTimestamp };
+          return response.data;
         }
         case GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID: {
           throw new Error('Error: Invalid most recent message ID');
