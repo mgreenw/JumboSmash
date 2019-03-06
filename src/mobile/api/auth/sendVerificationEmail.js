@@ -31,8 +31,8 @@ const NO_UTLN = 'NO UTLN FOR THIS RESPONSE';
 export default function sendVerificationEmail(
   request: Request
 ): Promise<SendVerificationEmail_Response> {
-  return apiRequest('POST', SEND_VERIFCATION_EMAIL__ROUTE, request)
-    .then(response => {
+  return apiRequest('POST', SEND_VERIFCATION_EMAIL__ROUTE, request).then(
+    response => {
       // We use this to ASSERT what the type of the response is.
       switch (response.status) {
         // Valid EMAIL
@@ -88,13 +88,11 @@ export default function sendVerificationEmail(
               utln: NO_UTLN
             };
           }
-          throw { response };
+          throw new Error(response);
         }
         default:
-          throw { response };
+          throw new Error(response);
       }
-    })
-    .catch(error => {
-      throw { error, request };
-    });
+    }
+  );
 }

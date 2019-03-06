@@ -38,6 +38,6 @@ export default function apiRequest(
           throw NETWORK_REQUEST_FAILED;
         }
       }
-      throw { err, route };
+      throw new Error({ err, route });
     });
 }

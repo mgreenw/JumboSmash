@@ -14,17 +14,13 @@ export default function sendMessage(
   return apiRequest('POST', SEND_MESSAGE__ROUTE + userId, {
     content,
     unconfirmedMessageUuid
-  })
-    .then(response => {
-      switch (response.status) {
-        case SEND_MESSAGE__SUCCESS: {
-          return response.data;
-        }
-        default:
-          throw new Error(response);
+  }).then(response => {
+    switch (response.status) {
+      case SEND_MESSAGE__SUCCESS: {
+        return response.data;
       }
-    })
-    .catch(error => {
-      throw new Error(error);
-    });
+      default:
+        throw new Error(response);
+    }
+  });
 }

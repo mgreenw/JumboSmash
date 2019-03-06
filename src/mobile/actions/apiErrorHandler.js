@@ -5,7 +5,6 @@ import {
   SERVER_ERROR,
   NETWORK_REQUEST_FAILED
 } from 'mobile/api/sharedResponseCodes';
-import DevTesting from 'mobile/utils/DevTesting';
 
 export type Unauthorized_Action = {
   type: 'UNAUTHORIZED'
@@ -23,22 +22,19 @@ export type NetworkError_Action = {
 export function apiErrorHandler(
   reject: empty
 ): Unauthorized_Action | ServerError_Action | NetworkError_Action {
-  if (reject.error.err === UNAUTHORIZED) {
-    return {
-      type: 'UNAUTHORIZED'
-    };
-  }
-
-  if (reject.error === NETWORK_REQUEST_FAILED) {
+  if (reject === NETWORK_REQUEST_FAILED) {
     return {
       type: 'NETWORK_ERROR'
     };
   }
 
-  if (
-    reject.error.response !== undefined &&
-    reject.error.response.status === SERVER_ERROR
-  ) {
+  if (reject === UNAUTHORIZED) {
+    return {
+      type: 'UNAUTHORIZED'
+    };
+  }
+
+  if (reject === SERVER_ERROR) {
     return {
       type: 'SERVER_ERROR'
     };
