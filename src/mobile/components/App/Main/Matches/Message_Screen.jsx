@@ -81,40 +81,6 @@ const BubbleStyles = StyleSheet.create({
   }
 });
 
-const renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
-  const { currentMessage } = props;
-  const { failed = false } = currentMessage;
-  return (
-    <TouchableOpacity style={{}}>
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: failed
-            ? BubbleStyles.wrapperFailed
-            : BubbleStyles.wrapperRight,
-          left: BubbleStyles.wrapperLeft
-        }}
-        textStyle={{
-          right: BubbleStyles.messageText,
-          left: BubbleStyles.messageText
-        }}
-        timeTextStyle={{
-          right: BubbleStyles.timeText,
-          left: BubbleStyles.timeText
-        }}
-        tickStyle={BubbleStyles.tickStyle}
-        onPress={() => {
-          if (failed) {
-            Alert.alert('TODO: Allow resending failed message');
-          } else {
-            Alert.alert('TODO: Allow interacting with old messages');
-          }
-        }}
-      />
-    </TouchableOpacity>
-  );
-};
-
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const { navigation } = ownProps;
   const match: ?Match = navigation.getParam('match', null);
@@ -125,7 +91,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
-
   const failedMessages = unconfirmedConversation
     ? unconfirmedConversation.failedIds
         .map(uuid => {
@@ -228,7 +193,41 @@ class MessagingScreen extends React.Component<Props, State> {
     }
   }
 
-  onSend = (messages: GiftedChatMessage[] = []) => {
+  _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
+    const { currentMessage } = props;
+    const { failed = false } = currentMessage;
+    return (
+      <TouchableOpacity style={{}}>
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            right: failed
+              ? BubbleStyles.wrapperFailed
+              : BubbleStyles.wrapperRight,
+            left: BubbleStyles.wrapperLeft
+          }}
+          textStyle={{
+            right: BubbleStyles.messageText,
+            left: BubbleStyles.messageText
+          }}
+          timeTextStyle={{
+            right: BubbleStyles.timeText,
+            left: BubbleStyles.timeText
+          }}
+          tickStyle={BubbleStyles.tickStyle}
+          onPress={() => {
+            if (failed) {
+              this._onSend([currentMessage]);
+            } else {
+              Alert.alert('TODO: Allow interacting with old messages');
+            }
+          }}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  _onSend = (messages: GiftedChatMessage[] = []) => {
     if (messages.length !== 1) {
       throw new Error('tried to send more than one message. WTF??');
     }
@@ -238,7 +237,7 @@ class MessagingScreen extends React.Component<Props, State> {
     sendMessage(match.userId, message);
   };
 
-  renderSystemMessage = props => {
+  _renderSystemMessage = props => {
     return (
       <SystemMessage
         {...props}
@@ -250,11 +249,6 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
       />
     );
-  };
-
-  // for when we have typing text
-  renderFooter = () => {
-    return null;
   };
 
   _renderContent = (profile: UserProfile) => {
@@ -280,12 +274,12 @@ class MessagingScreen extends React.Component<Props, State> {
                 }: GiftedChatMessage)
               ]
         }
-        onSend={this.onSend}
+        onSend={this._onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
-        renderBubble={renderBubble}
-        renderSystemMessage={this.renderSystemMessage}
+        renderBubble={this._renderBubble}
+        renderSystemMessage={this._renderSystemMessage}
         renderMessage={
           shouldRenderGenesis
             ? () => {

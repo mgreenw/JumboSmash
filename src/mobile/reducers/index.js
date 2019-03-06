@@ -1073,6 +1073,9 @@ export default function rootReducer(
       } = unsentMessages;
       const uuid = giftedChatMessage._id;
 
+      // If we are resending a message, we want to move the Id to inProgress.
+      const newFailedIds = failedIds.filter(i => i !== uuid);
+
       return {
         ...state,
         inProgress: {
@@ -1094,7 +1097,7 @@ export default function rootReducer(
             },
             allIds: [...allIds, uuid],
             inProgressIds: [...inProgressIds, uuid],
-            failedIds
+            failedIds: newFailedIds
           }
         }
       };
