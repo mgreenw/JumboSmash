@@ -53,7 +53,8 @@ Provide the normal `Authorization` token in the request header.
                 "content": "Well hello there",
                 "timestamp": "2019-02-17T16:01:08.078696",
                 "fromClient": false
-            }
+            },
+            "messageReadTimestamp": null
         },
         {
             "userId": 8,
@@ -70,7 +71,8 @@ Provide the normal `Authorization` token in the request header.
                 "social": "2019-01-27 13:25:43.162-05",
                 "stone": null
             },
-            "mostRecentMessage": null
+            "mostRecentMessage": null,
+            "messageReadTimestamp": "2019-01-27 13:25:43.162-05"
         }
     ]
 }

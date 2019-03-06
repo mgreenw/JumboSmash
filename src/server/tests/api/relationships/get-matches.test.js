@@ -91,6 +91,7 @@ describe('GET api/relationships/matches', () => {
     expect(match.scenes.smash).not.toBeNull();
     expect(match.scenes.social).toBeNull();
     expect(match.scenes.stone).toBeNull();
+    expect(match.messageReadTimestamp).toBeNull();
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
