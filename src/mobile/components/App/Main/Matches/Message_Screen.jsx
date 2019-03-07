@@ -29,6 +29,7 @@ import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
+import ActionSheet from 'mobile/components/shared/ActionSheet';
 
 type ExtraData = {|
   showOtherUserTyping: boolean,
@@ -53,12 +54,14 @@ type DispatchProps = {
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
-type State = {
+type State = {|
   match: Match,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
-  lastRecievedTyping: ?Date
-};
+  lastRecievedTyping: ?Date,
+  showFailedMessageActionSheet: boolean,
+  selectedMessage: ?GiftedChatMessage
+|};
 
 const wrapperBase = {
   backgroundColor: Colors.White,
@@ -185,7 +188,9 @@ class MessagingScreen extends React.Component<Props, State> {
       match,
       nextTyping: null,
       showOtherUserTyping: false,
-      lastRecievedTyping: null
+      lastRecievedTyping: null,
+      showFailedMessageActionSheet: false,
+      selectedMessage: null
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -243,7 +248,7 @@ class MessagingScreen extends React.Component<Props, State> {
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
           if (failed) {
-            this._onSend([currentMessage]);
+            this._toggleFailedMessageActionSheet(true, currentMessage);
           } else {
             Alert.alert('TODO: Allow interacting with old messages');
           }
@@ -415,9 +420,19 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
+  _toggleFailedMessageActionSheet = (
+    showFailedMessageActionSheet: boolean,
+    selectedMessage?: GiftedChatMessage
+  ) => {
+    this.setState({
+      showFailedMessageActionSheet,
+      selectedMessage: selectedMessage || null
+    });
+  };
+
   render() {
     const { profileMap } = this.props;
-    const { match } = this.state;
+    const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
     const profile = profileMap[match.userId];
     return (
       <View style={{ flex: 1 }}>
@@ -434,6 +449,39 @@ class MessagingScreen extends React.Component<Props, State> {
           />
         </View>
         {this._renderContent(profile)}
+        <ActionSheet
+          visible={showFailedMessageActionSheet}
+          options={[
+            {
+              text: 'Resend',
+              onPress: () => {
+                this.setState({ showFailedMessageActionSheet: false }, () => {
+                  if (!selectedMessage) {
+                    throw new Error('no message during resend');
+                  }
+                  this._onSend([selectedMessage]);
+                });
+              }
+            },
+            {
+              text: "Don't Send",
+              onPress: () => {
+                this.setState({ showFailedMessageActionSheet: false }, () => {
+                  if (!selectedMessage) {
+                    throw new Error("no message during don't send");
+                  }
+                  Alert.alert('deleting failed message not yet implemented');
+                });
+              }
+            }
+          ]}
+          cancel={{
+            text: 'Cancel',
+            onPress: () => {
+              this._toggleFailedMessageActionSheet(false);
+            }
+          }}
+        />
       </View>
     );
   }

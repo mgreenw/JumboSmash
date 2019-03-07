@@ -10,7 +10,9 @@ import BaseInput from 'mobile/components/shared/customTextInput/BaseInput';
 type Props = {
   value: string,
   onChangeText: (bio: string) => void,
-  label?: string
+  placeholder: string,
+  label?: string,
+  maxLength?: number
 };
 
 const MAX_LENGTH = 500;
@@ -19,8 +21,8 @@ export default class BioInput extends BaseInput {
   props: Props;
 
   render() {
-    const { value, onChangeText, label } = this.props;
-    const charactersLeft = MAX_LENGTH - value.length;
+    const { value, onChangeText, label, maxLength, placeholder } = this.props;
+    const charactersLeft = maxLength ? maxLength - value.length : 0;
 
     // from base input
     const { selectedAnim } = this.state;
@@ -68,15 +70,15 @@ export default class BioInput extends BaseInput {
             onChange={this._onChange}
             onFocus={this._onFocus}
             placeholderTextColor={Colors.Grey80}
-            placeholder="Let everyone know how quirky you are"
-            onChangeText={(text) => {
+            placeholder={placeholder}
+            onChangeText={text => {
               const noIndents = text.replace(/(\n)( *)(\n)/, '\n');
               return onChangeText(noIndents);
             }}
             autoCorrect
             multiline
             value={value}
-            maxLength={MAX_LENGTH}
+            maxLength={maxLength || undefined}
             underlineColorAndroid={'transparent'}
           />
         </Animated.View>
@@ -85,12 +87,12 @@ export default class BioInput extends BaseInput {
             style={[
               textStyles.body2Style,
               { paddingRight: 6, textAlign: 'right' },
-              charactersLeft <= 15
+              maxLength && charactersLeft <= 15
                 ? { color: Colors.Grapefruit }
                 : { color: Colors.Black }
             ]}
           >
-            {charactersLeft}
+            {maxLength && charactersLeft}
           </Text>
         </View>
       </View>
