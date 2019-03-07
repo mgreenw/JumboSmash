@@ -7,15 +7,10 @@ import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButto
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 
-export type Reason = {
-  text: string,
-  code: string
-};
-
 type Props = {
   title: string,
   subtitle: string,
-  body: React.Node,
+  body?: React.Node,
   primaryButtonText: string,
   primaryButtonDisabled?: boolean,
   primaryButtonLoading?: boolean,
@@ -59,14 +54,16 @@ export default (props: Props) => {
         <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
           {subtitle}
         </Text>
-        {body}
+        {body || <View style={{ height: 20 }} />}
         <View
           style={{
             flexDirection: flexRow ? 'row' : 'column'
           }}
         >
           {secondaryButtonText && onSecondaryButtonPress && (
-            <View style={flexRow && { flex: flexRow && 1, paddingRight: 30 }}>
+            <View
+              style={flexRow ? { flex: flexRow && 1, paddingRight: 30 } : null}
+            >
               <SecondaryButton
                 onPress={onSecondaryButtonPress}
                 title={secondaryButtonText}
@@ -75,7 +72,7 @@ export default (props: Props) => {
               />
             </View>
           )}
-          <View style={flexRow ? { flex: flexRow && 1 } : { marginTop: 20 }}>
+          <View style={flexRow ? { flex: 1 } : { marginTop: 20 }}>
             <PrimaryButton
               onPress={onPrimaryButtonPress}
               title={primaryButtonText}

@@ -6,23 +6,31 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 
-export type Reason = {
-  text: string,
-  code: string
+export type Reason =
+  | { text: 'Made me uncomfortable', code: 'UNCOMFORTABLE' }
+  | { text: 'Abusive or threatening', code: 'ABUSIVE' }
+  | { text: 'Inappropriate content', code: 'INAPPROPRIATE' }
+  | { text: 'Bad offline behavior', code: 'BEHAVIOR' }
+  | { text: 'Spam or scam', code: 'SPAM' }
+  | { text: 'No reason', code: 'NO_REASON' };
+
+export type SelectedReason = {
+  reason: Reason,
+  selected: boolean
 };
 
 type Props = {
-  reasons: Reason[],
-  selectedReasons: boolean[],
-  onSelect: (reason: Reason, index: number) => void
+  reasons: SelectedReason[],
+  onSelect: (selected: boolean, index: number) => void
 };
 
 export default (props: Props) => {
-  const { reasons, selectedReasons, onSelect } = props;
+  const { reasons, onSelect } = props;
   return (
     <View>
-      {reasons.map((reason, i) => {
-        const checked = selectedReasons[i];
+      {reasons.map((selectedReason, i) => {
+        const reason = selectedReason.reason;
+        const selected = selectedReason.selected;
         return (
           <View
             style={{ flexDirection: 'row', marginTop: 22 }}
@@ -39,9 +47,9 @@ export default (props: Props) => {
                 marginRight: 15,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: checked ? Colors.AquaMarine : Colors.White
+                backgroundColor: selected ? Colors.AquaMarine : Colors.White
               }}
-              onPress={() => onSelect(reason, i)}
+              onPress={() => onSelect(!selected, i)}
             >
               <CustomIcon name="check" size={16} color={Colors.White} />
             </TouchableOpacity>

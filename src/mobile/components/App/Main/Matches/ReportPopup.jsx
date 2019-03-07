@@ -9,7 +9,7 @@ import { Colors } from 'mobile/styles/colors';
 import BioInput from 'mobile/components/shared/BioInput';
 import Layout from 'mobile/components/shared/Popup_Layout';
 import ReasonSelector from './ReasonSelector';
-import type { Reason } from './ReasonSelector';
+import type { SelectedReason } from './ReasonSelector';
 
 type ProppyProps = {
   visible: boolean,
@@ -22,7 +22,7 @@ type Props = ProppyProps;
 
 type State = {
   step: 1 | 2 | 3,
-  selectedReasons: boolean[],
+  selectedReasons: SelectedReason[],
   reportMessage: string,
   block: boolean
 };
@@ -41,17 +41,21 @@ class ReportPopup extends React.Component<Props, State> {
 
     this.state = {
       step: 1,
-      selectedReasons: [],
+      selectedReasons: REPORT_REASONS.map(r => {
+        return {
+          reason: r,
+          selected: false
+        };
+      }),
       reportMessage: '',
       block: false
     };
   }
 
-  _onSelectReason = (reason: Reason, index: number) => {
+  _onSelectReason = (selected: boolean, index: number) => {
     const { selectedReasons } = this.state;
-    const checked = selectedReasons[index];
-    const newSelectedReasons = selectedReasons;
-    newSelectedReasons[index] = !checked;
+    const newSelectedReasons = [...selectedReasons];
+    newSelectedReasons[index].selected = selected;
     this.setState({ selectedReasons: newSelectedReasons });
   };
 
@@ -62,8 +66,7 @@ class ReportPopup extends React.Component<Props, State> {
     const reasonSelector = (
       <View style={{ marginBottom: 31 }}>
         <ReasonSelector
-          reasons={REPORT_REASONS}
-          selectedReasons={selectedReasons}
+          reasons={selectedReasons}
           onSelect={this._onSelectReason}
         />
       </View>
@@ -75,7 +78,9 @@ class ReportPopup extends React.Component<Props, State> {
         subtitle={`Help keep JumboSmash safe by telling the team why you’re reporting ${displayName}.`}
         body={reasonSelector}
         primaryButtonText={'Next'}
-        primaryButtonDisabled={selectedReasons.filter(r => r).length === 0}
+        primaryButtonDisabled={
+          selectedReasons.filter(r => r.selected).length === 0
+        }
         primaryButtonLoading={false}
         onPrimaryButtonPress={() => this.setState({ step: 2 })}
         secondaryButtonText={'Cancel'}

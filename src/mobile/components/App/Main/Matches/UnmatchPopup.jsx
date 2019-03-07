@@ -17,14 +17,12 @@ type Props = ProppyProps;
 class UnmatchPopup extends React.Component<Props> {
   render() {
     const { visible, onCancel, displayName, onDone } = this.props;
-    const body = <View style={{ marginTop: 20 }} />;
 
     return (
       <Popup visible={visible} onTouchOutside={() => {}}>
         <Layout
           title={'Are you sure?'}
           subtitle={`This will unmatch you and ${displayName} in JumboSmash and JumboSocial.`}
-          body={body}
           primaryButtonText={'Unmatch'}
           primaryButtonDisabled={false}
           primaryButtonLoading={false}
