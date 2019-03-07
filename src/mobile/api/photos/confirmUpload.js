@@ -15,22 +15,18 @@ export type SignedUrlPayload = {
 };
 
 export default function confirmUpload(): Promise<number[]> {
-  return apiRequest('GET', CONFIRM_PHOTO__ROUTE)
-    .then(response => {
-      switch (response.status) {
-        case CONFIRM_UPLOAD__SUCCESS:
-          return response.data;
-        case CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO:
-          throw { response };
-        case CONFIRM_UPLOAD__NO_UPLOAD_FOUND:
-          throw { response };
-        case CONFIRM_UPLOAD__NO_AVAILABLE_SLOT:
-          throw { response };
-        default:
-          throw { response };
-      }
-    })
-    .catch(error => {
-      throw { error };
-    });
+  return apiRequest('GET', CONFIRM_PHOTO__ROUTE).then(response => {
+    switch (response.status) {
+      case CONFIRM_UPLOAD__SUCCESS:
+        return response.data;
+      case CONFIRM_UPLOAD__NO_UNCONFIRMED_PHOTO:
+        throw new Error(response);
+      case CONFIRM_UPLOAD__NO_UPLOAD_FOUND:
+        throw new Error(response);
+      case CONFIRM_UPLOAD__NO_AVAILABLE_SLOT:
+        throw new Error(response);
+      default:
+        throw new Error(response);
+    }
+  });
 }
