@@ -75,10 +75,6 @@ function connect(token: string) {
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
-
-  _socket.on('TYPING', data => {
-    console.log('Received typing', data);
-  });
   /* eslint-enable */
 }
 
@@ -89,8 +85,31 @@ function typing(otherUserId: number) {
   }
 }
 
+function subscribeToTyping(userId: number, cb: () => void) {
+  if (_socket !== null) {
+    _socket.on('TYPING', data => {
+      if (userId === data.userId) {
+        cb();
+      }
+    });
+  } else {
+    console.log(
+      'Cannot connect to socket for typing subscription: Socket is null'
+    );
+  }
+}
+
+function unsubscribeFromTyping() {
+  if (_socket !== null) {
+    // $FlowFixMe with no callback parameter it will cancel ALL typing listeners, which is what we want!
+    _socket.off('TYPING');
+  }
+}
+
 export default {
   isConnected,
   connect,
-  typing
+  typing,
+  subscribeToTyping,
+  unsubscribeFromTyping
 };
