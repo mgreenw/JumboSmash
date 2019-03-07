@@ -1,5 +1,7 @@
 # Project GEM API Docs
 
+Note: See the docs for the socket communication protocol [here](socket/README.md).
+
 ## Public Endpoints
 
 ### Authentication
@@ -40,3 +42,4 @@
 ### Meta
 * [Send Feedback](meta/send-feedback.md) : `POST /api/meta/feedback`
 * [Report User](meta/report-user.md) : `POST /api/meta/report`
+
