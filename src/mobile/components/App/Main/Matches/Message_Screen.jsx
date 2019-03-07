@@ -28,6 +28,7 @@ import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
+import Socket from 'mobile/utils/Socket';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -48,7 +49,8 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
   match: Match,
-  messagesLoaded: boolean
+  messagesLoaded: boolean,
+  nextTyping: ?Date
 };
 
 const wrapperBase = {
@@ -174,7 +176,8 @@ class MessagingScreen extends React.Component<Props, State> {
     }
     this.state = {
       match,
-      messagesLoaded: false
+      messagesLoaded: false,
+      nextTyping: null
     };
   }
 
@@ -205,6 +208,22 @@ class MessagingScreen extends React.Component<Props, State> {
     sendMessage(match.userId, message);
   };
 
+  onInputTextChanged = text => {
+    if (!text) {
+      return;
+    }
+    const { match, nextTyping } = this.state;
+    const now = new Date();
+
+    if (!nextTyping || now > nextTyping) {
+      const twoSecondsFromNow = new Date(now.getTime() + 2000);
+      Socket.typing(match.userId);
+      this.setState({
+        nextTyping: twoSecondsFromNow
+      });
+    }
+  };
+
   renderSystemMessage = props => {
     return (
       <SystemMessage
@@ -230,8 +249,8 @@ class MessagingScreen extends React.Component<Props, State> {
       messages === null || messages === undefined || messages.length === 0;
     return (
       <GiftedChat
-        /* If we want to render our genesis text, we need to supply a dummy 
-        element for the listview. Because of the strict render method of GiftedChat, 
+        /* If we want to render our genesis text, we need to supply a dummy
+        element for the listview. Because of the strict render method of GiftedChat,
         this element must match the GiftedChat Message type */
         messages={
           !shouldRenderGenesis
@@ -252,6 +271,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         renderBubble={renderBubble}
         renderSystemMessage={this.renderSystemMessage}
+        onInputTextChanged={this.onInputTextChanged}
         renderMessage={
           shouldRenderGenesis
             ? () => {
