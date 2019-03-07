@@ -179,6 +179,9 @@ class MessagingScreen extends React.Component<Props, State> {
       messagesLoaded: false,
       nextTyping: null
     };
+    Socket.subscribeToTyping(data => {
+      console.log(data);
+    });
   }
 
   componentDidMount() {

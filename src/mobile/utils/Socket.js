@@ -75,10 +75,6 @@ function connect(token: string) {
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
-
-  _socket.on('TYPING', data => {
-    console.log('Received typing', data);
-  });
   /* eslint-enable */
 }
 
@@ -89,8 +85,30 @@ function typing(otherUserId: number) {
   }
 }
 
+function subscribeToTyping(cb: (data: any) => void) {
+  if (_socket !== null) {
+    _socket.on('TYPING', data => {
+      console.log('Received typing', data);
+      cb(data);
+    });
+  } else {
+    console.log(
+      'Cannot connect to socket for typing subscription: Socket is null'
+    );
+  }
+}
+
+function unsubscribeFromTyping() {
+  if (_socket !== null) {
+    // TODO: consider flow ignoring
+    _socket.off('TYPING');
+  }
+}
+
 export default {
   isConnected,
   connect,
-  typing
+  typing,
+  subscribeToTyping,
+  unsubscribeFromTyping
 };
