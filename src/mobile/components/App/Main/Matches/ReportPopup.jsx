@@ -41,9 +41,9 @@ class ReportPopup extends React.Component<Props, State> {
 
     this.state = {
       step: 1,
-      selectedReasons: REPORT_REASONS.map(r => {
+      selectedReasons: REPORT_REASONS.map(reason => {
         return {
-          reason: r,
+          reason,
           selected: false
         };
       }),
@@ -52,7 +52,7 @@ class ReportPopup extends React.Component<Props, State> {
     };
   }
 
-  _onSelectReason = (selected: boolean, index: number) => {
+  _onToggleReason = (selected: boolean, index: number) => {
     const { selectedReasons } = this.state;
     const newSelectedReasons = [...selectedReasons];
     newSelectedReasons[index].selected = selected;
@@ -67,7 +67,7 @@ class ReportPopup extends React.Component<Props, State> {
       <View style={{ marginBottom: 31 }}>
         <ReasonSelector
           reasons={selectedReasons}
-          onSelect={this._onSelectReason}
+          onToggle={this._onToggleReason}
         />
       </View>
     );

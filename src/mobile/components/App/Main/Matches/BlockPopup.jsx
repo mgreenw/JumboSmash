@@ -38,16 +38,16 @@ class BlockPopup extends React.Component<Props, State> {
 
     this.state = {
       step: 1,
-      selectedReasons: BLOCK_REASONS.map(r => {
+      selectedReasons: BLOCK_REASONS.map(reason => {
         return {
-          reason: r,
+          reason,
           selected: false
         };
       })
     };
   }
 
-  _onSelectReason = (selected: boolean, index: number) => {
+  _onToggleReason = (selected: boolean, index: number) => {
     const { selectedReasons } = this.state;
     const newSelectedReasons = [...selectedReasons];
     newSelectedReasons[index].selected = selected;
@@ -62,7 +62,7 @@ class BlockPopup extends React.Component<Props, State> {
       <View style={{ marginBottom: 31 }}>
         <ReasonSelector
           reasons={selectedReasons}
-          onSelect={this._onSelectReason}
+          onToggle={this._onToggleReason}
         />
       </View>
     );

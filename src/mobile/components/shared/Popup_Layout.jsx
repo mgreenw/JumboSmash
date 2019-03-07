@@ -61,9 +61,7 @@ export default (props: Props) => {
           }}
         >
           {secondaryButtonText && onSecondaryButtonPress && (
-            <View
-              style={flexRow ? { flex: flexRow && 1, paddingRight: 30 } : null}
-            >
+            <View style={flexRow ? { flex: 1, paddingRight: 30 } : null}>
               <SecondaryButton
                 onPress={onSecondaryButtonPress}
                 title={secondaryButtonText}

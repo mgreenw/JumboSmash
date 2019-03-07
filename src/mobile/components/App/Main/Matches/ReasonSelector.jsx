@@ -21,11 +21,11 @@ export type SelectedReason = {
 
 type Props = {
   reasons: SelectedReason[],
-  onSelect: (selected: boolean, index: number) => void
+  onToggle: (selected: boolean, index: number) => void
 };
 
 export default (props: Props) => {
-  const { reasons, onSelect } = props;
+  const { reasons, onToggle } = props;
   return (
     <View>
       {reasons.map((selectedReason, i) => {
@@ -49,7 +49,7 @@ export default (props: Props) => {
                 alignItems: 'center',
                 backgroundColor: selected ? Colors.AquaMarine : Colors.White
               }}
-              onPress={() => onSelect(!selected, i)}
+              onPress={() => onToggle(!selected, i)}
             >
               <CustomIcon name="check" size={16} color={Colors.White} />
             </TouchableOpacity>
