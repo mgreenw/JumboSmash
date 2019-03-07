@@ -84,6 +84,7 @@ import type {
   NewMatchInitiated_Action,
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
+import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
 
 import { normalize, schema } from 'normalizr';
 
@@ -404,7 +405,8 @@ export type Action =
   | NewMessageInitiated_Action
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
-  | NewMatchCompleted_Action;
+  | NewMatchCompleted_Action
+  | CancelFailedMessage_Action;
 
 export type GetState = () => ReduxState;
 
@@ -1282,6 +1284,25 @@ export default function rootReducer(
           saveProfile: false
         },
         bottomToast
+      };
+    }
+
+    case 'CANCEL_FAILED_MESSAGE': {
+      const { receiverUserId, failedMessageUuid } = action.payload;
+      const unsentMessages =
+        state.unconfirmedConversations[receiverUserId] || {};
+      const { failedIds = [] } = unsentMessages;
+      return {
+        ...state,
+        unconfirmedConversations: {
+          ...state.unconfirmedConversations,
+          [receiverUserId]: {
+            ...unsentMessages,
+            failedIds: failedIds.filter(i => {
+              return i !== failedMessageUuid;
+            })
+          }
+        }
       };
     }
 
