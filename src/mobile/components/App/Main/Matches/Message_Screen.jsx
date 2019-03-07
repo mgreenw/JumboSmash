@@ -29,6 +29,7 @@ import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
+import ActionSheet from 'mobile/components/shared/ActionSheet';
 
 type ExtraData = {
   showOtherUserTyping: boolean,
@@ -57,7 +58,8 @@ type State = {
   messagesLoaded: boolean,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
-  lastRecievedTyping: ?Date
+  lastRecievedTyping: ?Date,
+  showActionSheet: boolean
 };
 
 const wrapperBase = {
@@ -187,7 +189,8 @@ class MessagingScreen extends React.Component<Props, State> {
       messagesLoaded: false,
       nextTyping: null,
       showOtherUserTyping: false,
-      lastRecievedTyping: null
+      lastRecievedTyping: null,
+      showActionSheet: false
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -419,38 +422,71 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
+  _toggleActionSheet = (showActionSheet: boolean) => {
+    this.setState({ showActionSheet });
+  };
+
   render() {
     const { profileMap } = this.props;
-    const { match } = this.state;
+    const { match, showActionSheet } = this.state;
     const profile = profileMap[match.userId];
     const { messagesLoaded } = this.state;
     return (
-      <View style={{ flex: 1 }}>
-        <View>
-          <GEMHeader
-            title={profile.fields.displayName}
-            leftIconName="back"
-            rightIconName="ellipsis"
-            onRightIconPress={() => {
-              Alert.alert('this should be report and stuff?');
-            }}
-            borderBottom
-            onTitlePress={() => this._goToProfile(profile)}
-          />
-        </View>
-        {messagesLoaded ? (
-          this._renderContent(profile)
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <ActivityIndicator />
+      <View>
+        <View style={{ flex: 1 }}>
+          <View>
+            <GEMHeader
+              title={profile.fields.displayName}
+              leftIconName="back"
+              rightIconName="ellipsis"
+              onRightIconPress={() => {
+                Alert.alert('this should be report and stuff?');
+              }}
+              borderBottom
+              onTitlePress={() => this._goToProfile(profile)}
+            />
           </View>
-        )}
+          {messagesLoaded ? (
+            this._renderContent(profile)
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                alignContent: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ActivityIndicator />
+            </View>
+          )}
+        </View>
+        <ActionSheet
+          visible={showActionSheet}
+          options={[
+            {
+              text: 'Foo',
+              onPress: () => {
+                this.setState({ showActionSheet: false }, () => {
+                  Alert.alert('Foo');
+                });
+              }
+            },
+            {
+              text: 'Bar',
+              onPress: () => {
+                this.setState({ showActionSheet: false }, () => {
+                  Alert.alert('Bar');
+                });
+              }
+            }
+          ]}
+          cancel={{
+            text: 'Cancel',
+            onPress: () => {
+              this._toggleActionSheet(false);
+            }
+          }}
+        />
       </View>
     );
   }
