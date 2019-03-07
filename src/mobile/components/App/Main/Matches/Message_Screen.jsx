@@ -105,20 +105,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
-  const failedMessages = unconfirmedConversation
-    ? unconfirmedConversation.failedIds
-        .map(uuid => {
-          const message = unconfirmedConversation.byId[uuid];
-          return {
-            ...message,
-            createdAt: null,
-            sent: false,
-            failed: true
-          };
-        })
-        .reverse()
-    : [];
-
   // Map over unsent messages, mark createdAt as null (as not sent yet)
   // and mark sent as false (as not sent yet)
   const inProgressMessages = unconfirmedConversation
