@@ -12,6 +12,7 @@ const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
 const logger = require('../logger');
 const { getUser, AuthenticationError } = require('../api/auth/utils');
 const appUtils = require('../utils');
+const { canAccessUserData } = require('../api/utils');
 
 const NODE_ENV = appUtils.getNodeEnv();
 
@@ -75,6 +76,17 @@ class Socket {
       socket.on('disconnect', () => {
         logger.info(`Socket disconnected: ${socket.user.id}`);
       });
+
+      socket.on('TYPING', async (otherUserId: number) => {
+        const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
+          requireMatch: true,
+        });
+        if (hasAccess) {
+          this.notify(otherUserId, 'TYPING', {
+            userId: socket.user.id,
+          });
+        }
+      });
     });
 
     this._io = _io;
@@ -91,7 +103,7 @@ class Socket {
 
     try {
       this.io.to(userId.toString()).emit(event, data);
-      logger.info(`Sent ${event} to userId ${userId} : ${JSON.stringify(data, null, 2)}`);
+      logger.debug(`Sent ${event} to userId ${userId} : ${JSON.stringify(data, null, 2)}`);
     } catch (error) {
       logger.warn('Failed to send update to user', error);
     }
