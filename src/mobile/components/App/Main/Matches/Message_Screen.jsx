@@ -53,14 +53,15 @@ type DispatchProps = {
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
-type State = {
+type State = {|
   match: Match,
   messagesLoaded: boolean,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
-  showActionSheet: boolean
-};
+  showFailedMessageActionSheet: boolean,
+  selectedMessage: ?GiftedChatMessage
+|};
 
 const wrapperBase = {
   backgroundColor: Colors.White,
@@ -190,7 +191,8 @@ class MessagingScreen extends React.Component<Props, State> {
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
-      showActionSheet: false
+      showFailedMessageActionSheet: false,
+      selectedMessage: null
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -259,7 +261,7 @@ class MessagingScreen extends React.Component<Props, State> {
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
           if (failed) {
-            this._onSend([currentMessage]);
+            this._toggleFailedMessageActionSheet(true, currentMessage);
           } else {
             Alert.alert('TODO: Allow interacting with old messages');
           }
@@ -422,60 +424,70 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _toggleActionSheet = (showActionSheet: boolean) => {
-    this.setState({ showActionSheet });
+  _toggleFailedMessageActionSheet = (
+    showFailedMessageActionSheet: boolean,
+    selectedMessage?: GiftedChatMessage
+  ) => {
+    this.setState({
+      showFailedMessageActionSheet,
+      selectedMessage: selectedMessage || null
+    });
   };
 
   render() {
     const { profileMap } = this.props;
-    const { match, showActionSheet } = this.state;
+    const { match, showFailedMessageActionSheet } = this.state;
     const profile = profileMap[match.userId];
-    const { messagesLoaded } = this.state;
+    const { messagesLoaded, selectedMessage } = this.state;
     return (
-      <View>
-        <View style={{ flex: 1 }}>
-          <View>
-            <GEMHeader
-              title={profile.fields.displayName}
-              leftIconName="back"
-              rightIconName="ellipsis"
-              onRightIconPress={() => {
-                Alert.alert('this should be report and stuff?');
-              }}
-              borderBottom
-              onTitlePress={() => this._goToProfile(profile)}
-            />
-          </View>
-          {messagesLoaded ? (
-            this._renderContent(profile)
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                alignContent: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <ActivityIndicator />
-            </View>
-          )}
+      <View style={{ flex: 1 }}>
+        <View>
+          <GEMHeader
+            title={profile.fields.displayName}
+            leftIconName="back"
+            rightIconName="ellipsis"
+            onRightIconPress={() => {
+              Alert.alert('this should be report and stuff?');
+            }}
+            borderBottom
+            onTitlePress={() => this._goToProfile(profile)}
+          />
         </View>
+        {messagesLoaded ? (
+          this._renderContent(profile)
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ActivityIndicator />
+          </View>
+        )}
         <ActionSheet
-          visible={showActionSheet}
+          visible={showFailedMessageActionSheet}
           options={[
             {
-              text: 'Foo',
+              text: 'Resend',
               onPress: () => {
-                this.setState({ showActionSheet: false }, () => {
-                  Alert.alert('Foo');
+                this.setState({ showFailedMessageActionSheet: false }, () => {
+                  if (!selectedMessage) {
+                    throw new Error('no message during resend');
+                  }
+                  this._onSend([selectedMessage]);
                 });
               }
             },
             {
-              text: 'Bar',
+              text: "Don't Send",
               onPress: () => {
-                this.setState({ showActionSheet: false }, () => {
-                  Alert.alert('Bar');
+                this.setState({ showFailedMessageActionSheet: false }, () => {
+                  if (!selectedMessage) {
+                    throw new Error("no message during don't send");
+                  }
+                  Alert.alert('deleting failed message not yet implemented');
                 });
               }
             }
@@ -483,7 +495,7 @@ class MessagingScreen extends React.Component<Props, State> {
           cancel={{
             text: 'Cancel',
             onPress: () => {
-              this._toggleActionSheet(false);
+              this._toggleFailedMessageActionSheet(false);
             }
           }}
         />
