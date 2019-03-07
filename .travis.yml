@@ -27,6 +27,7 @@ jobs:
     install:
       - echo "Installing Server Dependencies.." ;
       - npm install
+      - mv .flowconfig src/server
       - npm install --prefix ./src/server
     before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
