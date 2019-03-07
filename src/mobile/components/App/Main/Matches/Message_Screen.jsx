@@ -31,10 +31,11 @@ import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 
-type ExtraData = {
+type ExtraData = {|
   showOtherUserTyping: boolean,
-  otherUserName: string
-};
+  otherUserName: string,
+  loadingMessages: boolean
+|};
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -55,7 +56,6 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {|
   match: Match,
-  messagesLoaded: boolean,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
@@ -158,7 +158,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     : [];
 
   const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
-
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
@@ -187,7 +186,6 @@ class MessagingScreen extends React.Component<Props, State> {
     }
     this.state = {
       match,
-      messagesLoaded: false,
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
@@ -220,17 +218,6 @@ class MessagingScreen extends React.Component<Props, State> {
     const { match } = this.state;
     const { getConversation } = this.props;
     getConversation(match.userId);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { getConversation_inProgress } = this.props;
-    if (prevProps.getConversation_inProgress && !getConversation_inProgress) {
-      // We're doing this safely
-      /* eslint-disable-next-line react/no-did-update-set-state */
-      this.setState({
-        messagesLoaded: true
-      });
-    }
   }
 
   // unsubscribe on unmount so we don't attempt to set the state of this component
@@ -311,13 +298,14 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _renderContent = (profile: UserProfile) => {
-    const { messages } = this.props;
+    const { messages, getConversation_inProgress } = this.props;
     const { showOtherUserTyping } = this.state;
     const shouldRenderGenesis =
       messages === null || messages === undefined || messages.length === 0;
     const extraData: ExtraData = {
       showOtherUserTyping,
-      otherUserName: profile.fields.displayName
+      otherUserName: profile.fields.displayName,
+      loadingMessages: getConversation_inProgress
     };
     return (
       <GiftedChat
@@ -344,7 +332,8 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         onInputTextChanged={this._onInputTextChanged}
         renderBubble={this._renderBubble}
-        renderFooter={this._renderFooter}
+        renderFooter={this._renderOtherUserTyping}
+        renderChatFooter={this._renderChatLoading}
         renderSystemMessage={this._renderSystemMessage}
         extraData={extraData}
         renderMessage={
@@ -408,7 +397,7 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderFooter = ({ extraData }: { extraData: ExtraData }) => {
+  _renderOtherUserTyping = ({ extraData }: { extraData: ExtraData }) => {
     return (
       <View
         style={{
@@ -424,6 +413,13 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
+  _renderChatLoading = ({ extraData }: { extraData: ExtraData }) => {
+    if (extraData.loadingMessages) {
+      return <ActivityIndicator />;
+    }
+    return null;
+  };
+
   _toggleFailedMessageActionSheet = (
     showFailedMessageActionSheet: boolean,
     selectedMessage?: GiftedChatMessage
@@ -436,12 +432,7 @@ class MessagingScreen extends React.Component<Props, State> {
 
   render() {
     const { profileMap } = this.props;
-    const {
-      match,
-      showFailedMessageActionSheet,
-      messagesLoaded,
-      selectedMessage
-    } = this.state;
+    const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
     const profile = profileMap[match.userId];
     return (
       <View style={{ flex: 1 }}>
@@ -457,19 +448,7 @@ class MessagingScreen extends React.Component<Props, State> {
             onTitlePress={() => this._goToProfile(profile)}
           />
         </View>
-        {messagesLoaded ? (
-          this._renderContent(profile)
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              alignContent: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <ActivityIndicator />
-          </View>
-        )}
+        {this._renderContent(profile)}
         <ActionSheet
           visible={showFailedMessageActionSheet}
           options={[
