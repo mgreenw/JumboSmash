@@ -38,6 +38,10 @@ export default function apiRequest(
           throw NETWORK_REQUEST_FAILED;
         }
       }
+      // Gotta propogate that up!
+      if (err === UNAUTHORIZED) {
+        throw err;
+      }
       throw new Error({ err, route });
     });
 }

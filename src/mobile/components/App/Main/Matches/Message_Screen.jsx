@@ -30,6 +30,11 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 
+type ExtraData = {
+  showOtherUserTyping: boolean,
+  otherUserName: string
+};
+
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
@@ -50,7 +55,9 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 type State = {
   match: Match,
   messagesLoaded: boolean,
-  nextTyping: ?Date
+  nextTyping: ?Date,
+  showOtherUserTyping: boolean,
+  lastRecievedTyping: ?Date
 };
 
 const wrapperBase = {
@@ -61,11 +68,15 @@ const wrapperBase = {
 const BubbleStyles = StyleSheet.create({
   wrapperLeft: {
     ...wrapperBase,
-    borderColor: Colors.AquaMarine
+    borderColor: Colors.Grey80
   },
   wrapperRight: {
     ...wrapperBase,
-    borderColor: Colors.Grey80
+    borderColor: Colors.AquaMarine
+  },
+  wrapperFailed: {
+    ...wrapperBase,
+    borderColor: Colors.Grapefruit
   },
   messageText: {
     ...textStyles.subtitle1Style,
@@ -79,27 +90,6 @@ const BubbleStyles = StyleSheet.create({
   }
 });
 
-const renderBubble = props => {
-  return (
-    <Bubble
-      {...props}
-      wrapperStyle={{
-        right: BubbleStyles.wrapperLeft,
-        left: BubbleStyles.wrapperRight
-      }}
-      textStyle={{
-        right: BubbleStyles.messageText,
-        left: BubbleStyles.messageText
-      }}
-      timeTextStyle={{
-        right: BubbleStyles.timeText,
-        left: BubbleStyles.timeText
-      }}
-      tickStyle={BubbleStyles.tickStyle}
-    />
-  );
-};
-
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const { navigation } = ownProps;
   const match: ?Match = navigation.getParam('match', null);
@@ -112,15 +102,32 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
 
   // Map over unsent messages, mark createdAt as null (as not sent yet)
-  // and mark sent as false (as not sent yet)
-  const unsentMessages = unconfirmedConversation
-    ? unconfirmedConversation.allIds
+  // and mark sent as false (as not sent yet), and failed for styling
+  const failedMessages = unconfirmedConversation
+    ? unconfirmedConversation.failedIds
         .map(uuid => {
           const message = unconfirmedConversation.byId[uuid];
           return {
             ...message,
             createdAt: null,
-            sent: false
+            sent: false,
+            failed: true
+          };
+        })
+        .reverse()
+    : [];
+
+  // Map over unsent messages, mark createdAt as null (as not sent yet)
+  // and mark sent as false (as not sent yet)
+  const inProgressMessages = unconfirmedConversation
+    ? unconfirmedConversation.inProgressIds
+        .map(uuid => {
+          const message = unconfirmedConversation.byId[uuid];
+          return {
+            ...message,
+            createdAt: null,
+            sent: false,
+            failed: false
           };
         })
         .reverse()
@@ -140,13 +147,14 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
               _id: message.fromClient ? '1' : '2',
               name: message.fromClient ? 'A' : 'B'
             },
-            sent: true
+            sent: true,
+            failed: false
           };
         })
         .reverse()
     : [];
 
-  const messages = unsentMessages.concat(sentMessages);
+  const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
 
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
@@ -177,10 +185,29 @@ class MessagingScreen extends React.Component<Props, State> {
     this.state = {
       match,
       messagesLoaded: false,
-      nextTyping: null
+      nextTyping: null,
+      showOtherUserTyping: false,
+      lastRecievedTyping: null
     };
-    Socket.subscribeToTyping(data => {
-      console.log(data);
+    Socket.subscribeToTyping(match.userId, () => {
+      const date = new Date();
+      this.setState({
+        showOtherUserTyping: true,
+        lastRecievedTyping: date
+      });
+      setTimeout(() => {
+        const { lastRecievedTyping } = this.state;
+
+        // Technically this can call set state AFTER unmounting
+        // because we don't check. But because we unsubscribe
+        // when unmounting, we are gaurenteed a finite amount of
+        // these occur, so it's fine to have the no-op.
+        if (lastRecievedTyping === date) {
+          this.setState({
+            showOtherUserTyping: false
+          });
+        }
+      }, 2500);
     });
   }
 
@@ -201,7 +228,44 @@ class MessagingScreen extends React.Component<Props, State> {
     }
   }
 
-  onSend = (messages: GiftedChatMessage[] = []) => {
+  // unsubscribe on unmount so we don't attempt to set the state of this component
+  componentWillUnmount() {
+    Socket.unsubscribeFromTyping();
+  }
+
+  _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
+    const { currentMessage } = props;
+    const { failed = false } = currentMessage;
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: failed
+            ? BubbleStyles.wrapperFailed
+            : BubbleStyles.wrapperRight,
+          left: BubbleStyles.wrapperLeft
+        }}
+        textStyle={{
+          right: BubbleStyles.messageText,
+          left: BubbleStyles.messageText
+        }}
+        timeTextStyle={{
+          right: BubbleStyles.timeText,
+          left: BubbleStyles.timeText
+        }}
+        tickStyle={BubbleStyles.tickStyle}
+        onPress={() => {
+          if (failed) {
+            this._onSend([currentMessage]);
+          } else {
+            Alert.alert('TODO: Allow interacting with old messages');
+          }
+        }}
+      />
+    );
+  };
+
+  _onSend = (messages: GiftedChatMessage[] = []) => {
     if (messages.length !== 1) {
       throw new Error('tried to send more than one message. WTF??');
     }
@@ -211,7 +275,7 @@ class MessagingScreen extends React.Component<Props, State> {
     sendMessage(match.userId, message);
   };
 
-  onInputTextChanged = text => {
+  _onInputTextChanged = text => {
     if (!text) {
       return;
     }
@@ -227,7 +291,7 @@ class MessagingScreen extends React.Component<Props, State> {
     }
   };
 
-  renderSystemMessage = props => {
+  _renderSystemMessage = props => {
     return (
       <SystemMessage
         {...props}
@@ -241,15 +305,15 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  // for when we have typing text
-  renderFooter = () => {
-    return null;
-  };
-
   _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
+    const { showOtherUserTyping } = this.state;
     const shouldRenderGenesis =
       messages === null || messages === undefined || messages.length === 0;
+    const extraData: ExtraData = {
+      showOtherUserTyping,
+      otherUserName: profile.fields.displayName
+    };
     return (
       <GiftedChat
         /* If we want to render our genesis text, we need to supply a dummy
@@ -264,17 +328,20 @@ class MessagingScreen extends React.Component<Props, State> {
                   text: '',
                   createdAt: new Date(),
                   system: true,
-                  sent: true
+                  sent: true,
+                  failed: false
                 }: GiftedChatMessage)
               ]
         }
-        onSend={this.onSend}
+        onSend={this._onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
-        renderBubble={renderBubble}
-        renderSystemMessage={this.renderSystemMessage}
-        onInputTextChanged={this.onInputTextChanged}
+        onInputTextChanged={this._onInputTextChanged}
+        renderBubble={this._renderBubble}
+        renderFooter={this._renderFooter}
+        renderSystemMessage={this._renderSystemMessage}
+        extraData={extraData}
         renderMessage={
           shouldRenderGenesis
             ? () => {
@@ -332,6 +399,22 @@ class MessagingScreen extends React.Component<Props, State> {
             {'Late-night Espresso’s run? ;)'}
           </Text>
         </View>
+      </View>
+    );
+  };
+
+  _renderFooter = ({ extraData }: { extraData: ExtraData }) => {
+    return (
+      <View
+        style={{
+          marginLeft: 10,
+          marginRight: 10,
+          height: 20
+        }}
+      >
+        {extraData.showOtherUserTyping && (
+          <Text>{`${extraData.otherUserName} is typing`}</Text>
+        )}
       </View>
     );
   };

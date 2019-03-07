@@ -21,6 +21,14 @@ export type SendMessageCompleted_Action = {
   },
   meta: {}
 };
+export type SendMessageFailed_Action = {
+  type: 'SEND_MESSAGE__FAILED',
+  payload: {
+    receiverUserId: number,
+    messageUuid: string
+  },
+  meta: {}
+};
 
 function initiate(
   receiverUserId: number,
@@ -45,6 +53,17 @@ function complete(
   };
 }
 
+function fail(
+  receiverUserId: number,
+  messageUuid: string
+): SendMessageFailed_Action {
+  return {
+    type: 'SEND_MESSAGE__FAILED',
+    payload: { receiverUserId, messageUuid },
+    meta: {}
+  };
+}
+
 // TODO: catch errors, e.g. the common network timeout.
 export default (
   receiverUserId: number,
@@ -57,6 +76,7 @@ export default (
         dispatch(complete(receiverUserId, message, previousMessageId));
       })
       .catch(error => {
+        dispatch(fail(receiverUserId, giftedChatMessage._id));
         dispatch(apiErrorHandler(error));
       });
   });

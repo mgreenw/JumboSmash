@@ -85,11 +85,12 @@ function typing(otherUserId: number) {
   }
 }
 
-function subscribeToTyping(cb: (data: any) => void) {
+function subscribeToTyping(userId: number, cb: () => void) {
   if (_socket !== null) {
     _socket.on('TYPING', data => {
-      console.log('Received typing', data);
-      cb(data);
+      if (userId === data.userId) {
+        cb();
+      }
     });
   } else {
     console.log(
@@ -100,7 +101,7 @@ function subscribeToTyping(cb: (data: any) => void) {
 
 function unsubscribeFromTyping() {
   if (_socket !== null) {
-    // TODO: consider flow ignoring
+    // $FlowFixMe with no callback parameter it will cancel ALL typing listeners, which is what we want!
     _socket.off('TYPING');
   }
 }
