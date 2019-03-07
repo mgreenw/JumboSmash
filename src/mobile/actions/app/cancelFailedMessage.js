@@ -21,7 +21,6 @@ function genAction(
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
 export default (receiverUserId: number, failedMessageUuid: string) => (
   dispatch: Dispatch
 ) => {
