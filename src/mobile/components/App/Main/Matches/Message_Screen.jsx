@@ -55,7 +55,6 @@ type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
   match: Match,
-  messagesLoaded: boolean,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date
@@ -156,7 +155,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     : [];
 
   const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
-  console.log(reduxState.inProgress.getConversation[userId]);
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
@@ -185,7 +183,6 @@ class MessagingScreen extends React.Component<Props, State> {
     }
     this.state = {
       match,
-      messagesLoaded: false,
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null
@@ -330,7 +327,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         onInputTextChanged={this._onInputTextChanged}
         renderBubble={this._renderBubble}
-        renderFooter={this._renderFooter}
+        renderFooter={this._renderOtherUserTyping}
         renderChatFooter={this._renderChatLoading}
         renderSystemMessage={this._renderSystemMessage}
         extraData={extraData}
@@ -395,7 +392,7 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderFooter = ({ extraData }: { extraData: ExtraData }) => {
+  _renderOtherUserTyping = ({ extraData }: { extraData: ExtraData }) => {
     return (
       <View
         style={{
