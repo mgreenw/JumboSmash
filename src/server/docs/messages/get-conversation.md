@@ -64,7 +64,10 @@ Provide the normal `Authorization` token in the request header.
                 "fromClient": true
             }
         ],
-        "messageReadTimestamp": "2019-05-05T19:26:22.408Z"
+        "readReceipt": {
+            "timestamp": "2019-05-05T19:26:22.408Z",
+            "messageId": 92
+        }
     }
 }
 ```

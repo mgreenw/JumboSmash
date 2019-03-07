@@ -79,26 +79,89 @@ class Socket {
         logger.info(`Socket disconnected: ${socket.user.id}`);
       });
 
-      socket.on(READ_MESSAGE, async (otherUserId: number) => {
-        const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
+      socket.on(READ_MESSAGE, async (senderUserId: number, messageId: number) => {
+        const now = new Date();
+        const hasAccess = await canAccessUserData(senderUserId, socket.user.id, {
           requireMatch: true,
         });
 
         // If there is access, update the db and notify the other user
-        if (hasAccess) {
-          const now = new Date();
-          await db.query(`
-            UPDATE relationships
-            SET critic_message_read_timestamp = $1
-            WHERE
-              critic_user_id = $2
-              AND candidate_user_id = $3
-          `, [now, socket.user.id, otherUserId]);
+        if (!hasAccess) return;
 
-          this.notify(otherUserId, READ_MESSAGE, {
+        const client = await db.connect();
+        try {
+          await client.query('BEGIN');
+
+          const messageResult = await client.query(`
+            SELECT timestamp
+            FROM messages
+            WHERE
+              id = $1
+              AND sender_user_id = $2
+              AND receiver_user_id = $3
+          `, [messageId, senderUserId, socket.user.id]);
+
+          if (messageResult.rowCount === 0) return;
+          const [{ timestamp: newTimestamp }] = messageResult.rows;
+
+          const previousMessageResult = await client.query(`
+            SELECT critic_read_message_id AS "criticReadMessageId"
+            FROM relationships
+            WHERE
+              critic_user_id = $1
+              AND candidate_user_id = $2
+          `, [socket.user.id, senderUserId]);
+
+          // If there is a previous message, ensure that the new message
+          // is after the old message
+          if (previousMessageResult.rowCount > 0) {
+            const [{ criticReadMessageId }] = previousMessageResult.rows;
+
+            if (criticReadMessageId === messageId) {
+              logger.debug('Cannot read the same message twice.');
+              return;
+            }
+
+            const previousTimestampResult = await client.query(`
+              SELECT timestamp
+              FROM messages
+              WHERE id = $1
+            `, [criticReadMessageId]);
+
+            if (previousTimestampResult.rowCount > 0) {
+              const [{ timestamp: previousTimestamp }] = previousTimestampResult.rows;
+              if (previousTimestamp > newTimestamp) {
+                logger.debug('Cannot read a message that is before an already read message.');
+                return;
+              }
+            }
+          }
+
+          await client.query(`
+            UPDATE relationships
+            SET
+              critic_read_message_timestamp = $1,
+              critic_read_message_id = $2
+            WHERE
+              critic_user_id = $3
+              AND candidate_user_id = $4
+          `, [now, messageId, socket.user.id, senderUserId]);
+
+          await client.query('COMMIT');
+
+          this.notify(senderUserId, READ_MESSAGE, {
             userId: socket.user.id,
-            messageReadTimestamp: now,
+            readReceipt: {
+              timestamp: now,
+              messageId,
+            },
           });
+          logger.debug(`Successfully read message ${messageId}`);
+        } catch (error) {
+          await client.query('ROLLBACK');
+          throw error;
+        } finally {
+          client.release();
         }
       });
     });

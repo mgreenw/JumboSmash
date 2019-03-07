@@ -30,7 +30,7 @@ const query = `
       'timestamp', most_recent_message.timestamp,
       'fromClient', most_recent_message.from_client
     ) END AS "mostRecentMessage",
-    they_critic.critic_message_read_timestamp AS "messageReadTimestamp"
+    they_critic.critic_read_message_timestamp AS "messageReadTimestamp"
   FROM relationships me_critic
   JOIN relationships they_critic
     ON they_critic.candidate_user_id = $1

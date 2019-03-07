@@ -195,7 +195,8 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data.messages.length).toBe(1);
     expect(res.body.data.messages[0].messageId).toBe(result.rows[result.rowCount - 1].id);
-    expect(res.body.data.messageReadTimestamp).toBeNull();
+    expect(res.body.data.readReceipt.timestamp).toBeNull();
+    expect(res.body.data.readReceipt.messageId).toBeNull();
   });
 
   it('should return the correct message read timestamp', async () => {
@@ -203,7 +204,7 @@ describe('GET api/messages/:userId', () => {
 
     await db.query(`
       UPDATE  relationships
-      SET critic_message_read_timestamp = $1
+      SET critic_read_message_timestamp = $1
       WHERE critic_user_id = $2 AND candidate_user_id = $3
     `, [readDate, other.id, me.id]);
 
@@ -213,7 +214,7 @@ describe('GET api/messages/:userId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
-    expect(new Date(res.body.data.messageReadTimestamp)).toEqual(readDate);
+    expect(new Date(res.body.data.readReceipt.timestamp)).toEqual(readDate);
   });
 
   it('should return an empty array if the other user is banned', async () => {

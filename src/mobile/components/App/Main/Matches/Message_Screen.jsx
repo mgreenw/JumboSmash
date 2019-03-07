@@ -28,6 +28,7 @@ import sendMessageAction from 'mobile/actions/app/sendMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
+import Socket from 'mobile/utils/Socket';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -226,12 +227,17 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderContent = (profile: UserProfile) => {
     const { messages } = this.props;
+    const { match } = this.state;
     const shouldRenderGenesis =
       messages === null || messages === undefined || messages.length === 0;
+
+    if (!shouldRenderGenesis) {
+      Socket.readMessage(match.userId, Number.parseInt(messages[0]._id, 0));
+    }
     return (
       <GiftedChat
-        /* If we want to render our genesis text, we need to supply a dummy 
-        element for the listview. Because of the strict render method of GiftedChat, 
+        /* If we want to render our genesis text, we need to supply a dummy
+        element for the listview. Because of the strict render method of GiftedChat,
         this element must match the GiftedChat Message type */
         messages={
           !shouldRenderGenesis

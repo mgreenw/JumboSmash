@@ -89,9 +89,9 @@ function connect(token: string) {
   /* eslint-enable */
 }
 
-function readMessage(userId: number) {
+function readMessage(userId: number, messageId: number) {
   if (_socket !== null) {
-    _socket.emit('READ_MESSAGE', userId);
+    _socket.emit('READ_MESSAGE', userId, messageId);
   }
 }
 

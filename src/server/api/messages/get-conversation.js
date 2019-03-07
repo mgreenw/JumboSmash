@@ -56,9 +56,14 @@ const getConversation = async (
     ORDER BY timestamp
   `;
 
-  //
-  const messageReadQuery = db.query(`
-    SELECT critic_message_read_timestamp AS "messageReadTimestamp"
+  // Get the read recept from relationships. This is the receipt from the other user
+  // in the conversation.
+  const readReceiptQuery = db.query(`
+    SELECT
+      json_build_object(
+        'timestamp', critic_read_message_timestamp,
+        'messageId', critic_read_message_id
+      ) AS "readReceipt"
     FROM relationships
     WHERE critic_user_id = $1 AND candidate_user_id = $2
   `, [matchUserId, userId]);
@@ -68,11 +73,11 @@ const getConversation = async (
     [userId, matchUserId],
   );
 
-  const [messagesResult, messageReadResult] = await Promise.all([messagesQuery, messageReadQuery]);
+  const [messagesResult, readReceiptResults] = await Promise.all([messagesQuery, readReceiptQuery]);
 
   return status(codes.GET_CONVERSATION__SUCCESS).data({
     messages: messagesResult.rows,
-    messageReadTimestamp: messageReadResult.rows[0].messageReadTimestamp,
+    readReceipt: readReceiptResults.rows[0],
   });
 };
 
