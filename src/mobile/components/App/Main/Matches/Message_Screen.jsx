@@ -436,9 +436,13 @@ class MessagingScreen extends React.Component<Props, State> {
 
   render() {
     const { profileMap } = this.props;
-    const { match, showFailedMessageActionSheet } = this.state;
+    const {
+      match,
+      showFailedMessageActionSheet,
+      messagesLoaded,
+      selectedMessage
+    } = this.state;
     const profile = profileMap[match.userId];
-    const { messagesLoaded, selectedMessage } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <View>
