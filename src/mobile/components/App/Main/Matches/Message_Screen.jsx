@@ -105,6 +105,20 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
+  const failedMessages = unconfirmedConversation
+    ? unconfirmedConversation.failedIds
+        .map(uuid => {
+          const message = unconfirmedConversation.byId[uuid];
+          return {
+            ...message,
+            createdAt: null,
+            sent: false,
+            failed: true
+          };
+        })
+        .reverse()
+    : [];
+
   // Map over unsent messages, mark createdAt as null (as not sent yet)
   // and mark sent as false (as not sent yet)
   const inProgressMessages = unconfirmedConversation
@@ -197,33 +211,31 @@ class MessagingScreen extends React.Component<Props, State> {
     const { currentMessage } = props;
     const { failed = false } = currentMessage;
     return (
-      <TouchableOpacity style={{}}>
-        <Bubble
-          {...props}
-          wrapperStyle={{
-            right: failed
-              ? BubbleStyles.wrapperFailed
-              : BubbleStyles.wrapperRight,
-            left: BubbleStyles.wrapperLeft
-          }}
-          textStyle={{
-            right: BubbleStyles.messageText,
-            left: BubbleStyles.messageText
-          }}
-          timeTextStyle={{
-            right: BubbleStyles.timeText,
-            left: BubbleStyles.timeText
-          }}
-          tickStyle={BubbleStyles.tickStyle}
-          onPress={() => {
-            if (failed) {
-              this._onSend([currentMessage]);
-            } else {
-              Alert.alert('TODO: Allow interacting with old messages');
-            }
-          }}
-        />
-      </TouchableOpacity>
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: failed
+            ? BubbleStyles.wrapperFailed
+            : BubbleStyles.wrapperRight,
+          left: BubbleStyles.wrapperLeft
+        }}
+        textStyle={{
+          right: BubbleStyles.messageText,
+          left: BubbleStyles.messageText
+        }}
+        timeTextStyle={{
+          right: BubbleStyles.timeText,
+          left: BubbleStyles.timeText
+        }}
+        tickStyle={BubbleStyles.tickStyle}
+        onPress={() => {
+          if (failed) {
+            this._onSend([currentMessage]);
+          } else {
+            Alert.alert('TODO: Allow interacting with old messages');
+          }
+        }}
+      />
     );
   };
 
