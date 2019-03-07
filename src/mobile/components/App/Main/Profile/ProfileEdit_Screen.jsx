@@ -170,6 +170,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
                   value={editedProfileFields.bio}
                   onChangeText={this._onChangeBio}
                   label="About Me"
+                  placeholder="Let everyone know how quirky you are"
+                  maxLength={500}
                 />
               </View>
             </View>
