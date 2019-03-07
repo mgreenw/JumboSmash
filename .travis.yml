@@ -26,9 +26,9 @@ jobs:
         fi
     install:
       - echo "Installing Server Dependencies.." ;
-      - npm install
-      - mv .flowconfig src/server
+      - npm install --prefix ./src/mobile
       - npm install --prefix ./src/server
+      - npm install --prefix ./src/deploy
     before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
       - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
@@ -36,7 +36,7 @@ jobs:
     script:
       - npm run lint
       - cd ../..
-      - npx flow check src/server
+      - npm run flow
       - cd src/server
       - npm run check-env
       - npm run test
