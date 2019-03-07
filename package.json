@@ -7,8 +7,5 @@
   },
   "devDependencies": {
     "flow-bin": "^0.81.0"
-  },
-  "dependencies": {
-    "react-native-gifted-chat": "^0.7.2"
   }
 }

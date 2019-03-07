@@ -61,11 +61,15 @@ const wrapperBase = {
 const BubbleStyles = StyleSheet.create({
   wrapperLeft: {
     ...wrapperBase,
-    borderColor: Colors.AquaMarine
+    borderColor: Colors.Grey80
   },
   wrapperRight: {
     ...wrapperBase,
-    borderColor: Colors.Grey80
+    borderColor: Colors.AquaMarine
+  },
+  wrapperFailed: {
+    ...wrapperBase,
+    borderColor: Colors.Grapefruit
   },
   messageText: {
     ...textStyles.subtitle1Style,
@@ -79,27 +83,6 @@ const BubbleStyles = StyleSheet.create({
   }
 });
 
-const renderBubble = props => {
-  return (
-    <Bubble
-      {...props}
-      wrapperStyle={{
-        right: BubbleStyles.wrapperLeft,
-        left: BubbleStyles.wrapperRight
-      }}
-      textStyle={{
-        right: BubbleStyles.messageText,
-        left: BubbleStyles.messageText
-      }}
-      timeTextStyle={{
-        right: BubbleStyles.timeText,
-        left: BubbleStyles.timeText
-      }}
-      tickStyle={BubbleStyles.tickStyle}
-    />
-  );
-};
-
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const { navigation } = ownProps;
   const match: ?Match = navigation.getParam('match', null);
@@ -110,17 +93,31 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
-
-  // Map over unsent messages, mark createdAt as null (as not sent yet)
-  // and mark sent as false (as not sent yet)
-  const unsentMessages = unconfirmedConversation
-    ? unconfirmedConversation.allIds
+  const failedMessages = unconfirmedConversation
+    ? unconfirmedConversation.failedIds
         .map(uuid => {
           const message = unconfirmedConversation.byId[uuid];
           return {
             ...message,
             createdAt: null,
-            sent: false
+            sent: false,
+            failed: true
+          };
+        })
+        .reverse()
+    : [];
+
+  // Map over unsent messages, mark createdAt as null (as not sent yet)
+  // and mark sent as false (as not sent yet)
+  const inProgressMessages = unconfirmedConversation
+    ? unconfirmedConversation.inProgressIds
+        .map(uuid => {
+          const message = unconfirmedConversation.byId[uuid];
+          return {
+            ...message,
+            createdAt: null,
+            sent: false,
+            failed: false
           };
         })
         .reverse()
@@ -140,13 +137,14 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
               _id: message.fromClient ? '1' : '2',
               name: message.fromClient ? 'A' : 'B'
             },
-            sent: true
+            sent: true,
+            failed: false
           };
         })
         .reverse()
     : [];
 
-  const messages = unsentMessages.concat(sentMessages);
+  const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
 
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
@@ -198,7 +196,39 @@ class MessagingScreen extends React.Component<Props, State> {
     }
   }
 
-  onSend = (messages: GiftedChatMessage[] = []) => {
+  _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
+    const { currentMessage } = props;
+    const { failed = false } = currentMessage;
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: failed
+            ? BubbleStyles.wrapperFailed
+            : BubbleStyles.wrapperRight,
+          left: BubbleStyles.wrapperLeft
+        }}
+        textStyle={{
+          right: BubbleStyles.messageText,
+          left: BubbleStyles.messageText
+        }}
+        timeTextStyle={{
+          right: BubbleStyles.timeText,
+          left: BubbleStyles.timeText
+        }}
+        tickStyle={BubbleStyles.tickStyle}
+        onPress={() => {
+          if (failed) {
+            this._onSend([currentMessage]);
+          } else {
+            Alert.alert('TODO: Allow interacting with old messages');
+          }
+        }}
+      />
+    );
+  };
+
+  _onSend = (messages: GiftedChatMessage[] = []) => {
     if (messages.length !== 1) {
       throw new Error('tried to send more than one message. WTF??');
     }
@@ -208,7 +238,7 @@ class MessagingScreen extends React.Component<Props, State> {
     sendMessage(match.userId, message);
   };
 
-  onInputTextChanged = text => {
+  _onInputTextChanged = text => {
     if (!text) {
       return;
     }
@@ -224,7 +254,7 @@ class MessagingScreen extends React.Component<Props, State> {
     }
   };
 
-  renderSystemMessage = props => {
+  _renderSystemMessage = props => {
     return (
       <SystemMessage
         {...props}
@@ -236,11 +266,6 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
       />
     );
-  };
-
-  // for when we have typing text
-  renderFooter = () => {
-    return null;
   };
 
   _renderContent = (profile: UserProfile) => {
@@ -261,17 +286,18 @@ class MessagingScreen extends React.Component<Props, State> {
                   text: '',
                   createdAt: new Date(),
                   system: true,
-                  sent: true
+                  sent: true,
+                  failed: false
                 }: GiftedChatMessage)
               ]
         }
-        onSend={this.onSend}
+        onSend={this._onSend}
         user={{
           _id: '1' // sent messages should have same user._id
         }}
-        renderBubble={renderBubble}
-        renderSystemMessage={this.renderSystemMessage}
-        onInputTextChanged={this.onInputTextChanged}
+        onInputTextChanged={this._onInputTextChanged}
+        renderBubble={this._renderBubble}
+        renderSystemMessage={this._renderSystemMessage}
         renderMessage={
           shouldRenderGenesis
             ? () => {

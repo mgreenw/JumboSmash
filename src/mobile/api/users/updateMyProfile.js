@@ -11,28 +11,24 @@ function updateOrCreateMyProfileFields(
   request: ProfileFields,
   method: 'PATCH' | 'POST'
 ): Promise<ProfileFields> {
-  return apiRequest(method, MY_PROFILE__ROUTE, request)
-    .then(response => {
-      switch (response.status) {
-        // We get back a UserProfile, but only care about the fields.
-        // TODO: have, serverside, only return the fields
-        case FINALIZE_PROFILE_SETUP__SUCCESS:
-          // These eslint disables are so we can use Flow to assert the types of the responses.
-          // eslint-disable-next-line no-unused-expressions
-          (response.data: UserProfile);
-          return response.data.fields;
-        case UPDATE_PROFILE__SUCCESS: {
-          // eslint-disable-next-line no-unused-expressions
-          (response.data: UserProfile);
-          return response.data.fields;
-        }
-        default:
-          throw { response };
+  return apiRequest(method, MY_PROFILE__ROUTE, request).then(response => {
+    switch (response.status) {
+      // We get back a UserProfile, but only care about the fields.
+      // TODO: have, serverside, only return the fields
+      case FINALIZE_PROFILE_SETUP__SUCCESS:
+        // These eslint disables are so we can use Flow to assert the types of the responses.
+        // eslint-disable-next-line no-unused-expressions
+        (response.data: UserProfile);
+        return response.data.fields;
+      case UPDATE_PROFILE__SUCCESS: {
+        // eslint-disable-next-line no-unused-expressions
+        (response.data: UserProfile);
+        return response.data.fields;
       }
-    })
-    .catch(error => {
-      throw { error, request };
-    });
+      default:
+        throw new Error(response);
+    }
+  });
 }
 
 export function updateMyProfileFields(

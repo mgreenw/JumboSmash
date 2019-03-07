@@ -15,8 +15,8 @@ export default function getSceneCandidates(scene: Scene): Promise<Candidate[]> {
     excludeSceneCandidateIds[scene]
   );
   const queryString = queryParams.length ? `?${queryParams}` : '';
-  return apiRequest('GET', SCENE_CANDIDATES__ROUTES[scene] + queryString)
-    .then(response => {
+  return apiRequest('GET', SCENE_CANDIDATES__ROUTES[scene] + queryString).then(
+    response => {
       switch (response.status) {
         case GET_SCENE_CANDIDATES__SUCCESS: {
           return response.data;
@@ -24,8 +24,6 @@ export default function getSceneCandidates(scene: Scene): Promise<Candidate[]> {
         default:
           throw new Error(response);
       }
-    })
-    .catch(error => {
-      throw new Error(error);
-    });
+    }
+  );
 }
