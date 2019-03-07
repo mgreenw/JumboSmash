@@ -1,12 +1,14 @@
 // @flow
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import Dialog, {
   DialogContent,
   ScaleAnimation
 } from 'react-native-popup-dialog';
 import { Colors } from 'mobile/styles/colors';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import { Constants } from 'expo';
 
 type Props = {
   visible: boolean,
@@ -16,7 +18,6 @@ type Props = {
 
 export default (props: Props) => {
   const { visible, children, onTouchOutside } = props;
-
   return (
     <Dialog
       dialogAnimation={new ScaleAnimation()}
@@ -44,7 +45,10 @@ export default (props: Props) => {
           padding: 20
         }}
       >
-        <View>{children}</View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View>{children}</View>
+        </TouchableWithoutFeedback>
+        <KeyboardSpacer topSpacing={-Constants.statusBarHeight} />
       </DialogContent>
     </Dialog>
   );
