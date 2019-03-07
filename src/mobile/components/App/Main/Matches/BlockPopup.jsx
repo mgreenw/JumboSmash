@@ -1,13 +1,14 @@
 // @flow
 
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import Popup from 'mobile/components/shared/Popup';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
+import Layout from 'mobile/components/shared/Popup_Layout';
+import ReasonSelector from './ReasonSelector';
+import type { Reason } from './ReasonSelector';
 
 type ProppyProps = {
   visible: boolean,
@@ -41,139 +42,91 @@ class BlockPopup extends React.Component<Props, State> {
     };
   }
 
+  _onSelectReason = (reason: Reason, index: number) => {
+    const { selectedReasons } = this.state;
+    const checked = selectedReasons[index];
+    const newSelectedReasons = selectedReasons;
+    newSelectedReasons[index] = !checked;
+    this.setState({ selectedReasons: newSelectedReasons });
+  };
+
   _renderBlockReasons() {
     const { selectedReasons } = this.state;
     const { displayName, onCancel } = this.props;
 
-    return (
-      <View>
-        <Text
-          style={[
-            textStyles.headline4StyleMedium,
-            {
-              color: Colors.Grapefruit,
-              textAlign: 'center'
-            }
-          ]}
-        >
-          {'Block'}
-        </Text>
-        <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-          {`Help keep JumboSmash safe by telling the team why you’re blocking ${displayName}.`}
-        </Text>
-        {BLOCK_REASONS.map((reason, i) => {
-          const checked = selectedReasons[i];
-          return (
-            <View
-              style={{ flexDirection: 'row', marginTop: 22 }}
-              key={reason.code}
-            >
-              <TouchableOpacity
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderColor: Colors.AquaMarine,
-                  borderWidth: 2,
-                  borderRadius: 32,
-                  paddingTop: 1.5,
-                  marginRight: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: checked ? Colors.AquaMarine : Colors.White
-                }}
-                onPress={() => {
-                  const newSelectedReasons = selectedReasons;
-                  newSelectedReasons[i] = !checked;
-                  this.setState({ selectedReasons: newSelectedReasons });
-                }}
-              >
-                <CustomIcon name="check" size={16} color={Colors.White} />
-              </TouchableOpacity>
-              <Text style={textStyles.headline6Style}>{reason.text}</Text>
-            </View>
-          );
-        })}
-        <View style={{ flexDirection: 'row', marginTop: 31 }}>
-          <View style={{ flex: 1, paddingRight: 30 }}>
-            <SecondaryButton
-              onPress={onCancel}
-              title="Cancel"
-              loading={false}
-              disabled={false}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <PrimaryButton
-              onPress={() => {
-                this.setState({ step: 2 });
-              }}
-              title={'Block'}
-              loading={false}
-              disabled={selectedReasons.filter(r => r).length === 0}
-            />
-          </View>
-        </View>
+    const reasonSelector = (
+      <View style={{ marginBottom: 31 }}>
+        <ReasonSelector
+          reasons={BLOCK_REASONS}
+          selectedReasons={selectedReasons}
+          onSelect={this._onSelectReason}
+        />
       </View>
+    );
+
+    return (
+      <Layout
+        title={'Block'}
+        subtitle={`Help keep JumboSmash safe by telling the team why you’re blocking ${displayName}.`}
+        body={reasonSelector}
+        primaryButtonText={'Block'}
+        primaryButtonDisabled={selectedReasons.filter(r => r).length === 0}
+        primaryButtonLoading={false}
+        onPrimaryButtonPress={() => this.setState({ step: 2 })}
+        secondaryButtonText={'Cancel'}
+        secondaryButtonDisabled={false}
+        secondaryButtonLoading={false}
+        onSecondaryButtonPress={onCancel}
+      />
     );
   }
 
   _renderDone() {
     const { displayName, onDone } = this.props;
-    return (
-      <View>
-        <Text
-          style={[
-            textStyles.headline4StyleMedium,
-            {
-              color: Colors.Grapefruit,
-              textAlign: 'center'
-            }
-          ]}
-        >
-          {'Block'}
-        </Text>
-        <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-          {`Thanks for letting the team know. ${displayName} won’t be able to see you anymore in JumboSmash or JumboSocial.`}
-        </Text>
+    const body = (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: 20
+        }}
+      >
         <View
           style={{
-            flexDirection: 'row',
+            height: 20,
+            width: 20,
+            borderRadius: 20,
+            backgroundColor: 'black',
+            alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 11
+            marginRight: 5
           }}
         >
-          <View
-            style={{
-              height: 20,
-              width: 20,
-              borderRadius: 20,
-              backgroundColor: 'black',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 5
-            }}
-          >
-            <CustomIcon name="check" size={10} color={Colors.White} />
-          </View>
-          <Text style={[textStyles.subtitle1Style]}>
-            {`${displayName} has been blocked`}
-          </Text>
+          <CustomIcon name="check" size={10} color={Colors.White} />
         </View>
-        <View style={{ marginTop: 31 }}>
-          <PrimaryButton
-            onPress={onDone}
-            title={'Done'}
-            loading={false}
-            disabled={false}
-          />
-        </View>
+        <Text style={[textStyles.subtitle1Style]}>
+          {`${displayName} has been blocked`}
+        </Text>
       </View>
+    );
+
+    return (
+      <Layout
+        title={'Block'}
+        subtitle={`Thanks for letting the team know. ${displayName} won’t be able to see you anymore in JumboSmash or JumboSocial.`}
+        body={body}
+        primaryButtonText={'Done'}
+        primaryButtonDisabled={false}
+        primaryButtonLoading={false}
+        onPrimaryButtonPress={onDone}
+        flexRow={false}
+      />
     );
   }
 
   render() {
     const { step } = this.state;
-    const { visible, onCancel } = this.props;
+    const { visible } = this.props;
     let renderedContent;
     if (step === 1) {
       renderedContent = this._renderBlockReasons();
@@ -183,7 +136,7 @@ class BlockPopup extends React.Component<Props, State> {
       throw new Error('Error in Block Popup, invalid step number');
     }
     return (
-      <Popup visible={visible} onTouchOutside={onCancel}>
+      <Popup visible={visible} onTouchOutside={() => {}}>
         {renderedContent}
       </Popup>
     );
