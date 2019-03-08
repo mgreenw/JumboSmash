@@ -457,24 +457,25 @@ class MessagingScreen extends React.Component<Props, State> {
           {
             text: 'View Profile',
             onPress: () => {
-              this.setState({ showUserActionSheet: false }, () => {
-                this._goToProfile(profile);
-              });
+              this.setState({ showUserActionSheet: false });
+              this._goToProfile(profile);
             }
           },
           {
             text: 'Unmatch',
             onPress: () => {
-              this.setState({ showUserActionSheet: false }, () => {
-                this.setState({ showUnmatchPopup: true });
+              this.setState({
+                showUserActionSheet: false,
+                showUnmatchPopup: true
               });
             }
           },
           {
             text: 'Block',
             onPress: () => {
-              this.setState({ showUserActionSheet: false }, () => {
-                this.setState({ showBlockPopup: true });
+              this.setState({
+                showUserActionSheet: false,
+                showBlockPopup: true
               });
             },
             textStyle: {
@@ -484,8 +485,9 @@ class MessagingScreen extends React.Component<Props, State> {
           {
             text: 'Report',
             onPress: () => {
-              this.setState({ showUserActionSheet: false }, () => {
-                this.setState({ showReportPopup: true });
+              this.setState({
+                showUserActionSheet: false,
+                showReportPopup: true
               });
             },
             textStyle: {
