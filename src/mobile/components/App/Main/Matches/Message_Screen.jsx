@@ -30,6 +30,9 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
+import BlockPopup from './BlockPopup';
+import ReportPopup from './ReportPopup';
+import UnmatchPopup from './UnmatchPopup';
 
 type ExtraData = {|
   showOtherUserTyping: boolean,
@@ -60,7 +63,11 @@ type State = {|
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
   showFailedMessageActionSheet: boolean,
-  selectedMessage: ?GiftedChatMessage
+  selectedMessage: ?GiftedChatMessage,
+  showUserActionSheet: boolean,
+  showBlockPopup: boolean,
+  showReportPopup: boolean,
+  showUnmatchPopup: boolean
 |};
 
 const wrapperBase = {
@@ -190,7 +197,11 @@ class MessagingScreen extends React.Component<Props, State> {
       showOtherUserTyping: false,
       lastRecievedTyping: null,
       showFailedMessageActionSheet: false,
-      selectedMessage: null
+      selectedMessage: null,
+      showUserActionSheet: false,
+      showBlockPopup: false,
+      showReportPopup: false,
+      showUnmatchPopup: false
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -430,6 +441,129 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
+  _toggleUserActionSheet = (showUserActionSheet: boolean) => {
+    this.setState({ showUserActionSheet });
+  };
+
+  _renderUserActionSheet() {
+    const { showUserActionSheet } = this.state;
+    const { profileMap } = this.props;
+    const { match } = this.state;
+    const profile = profileMap[match.userId];
+    return (
+      <ActionSheet
+        visible={showUserActionSheet}
+        options={[
+          {
+            text: 'View Profile',
+            onPress: () => {
+              this.setState({ showUserActionSheet: false }, () => {
+                this._goToProfile(profile);
+              });
+            }
+          },
+          {
+            text: 'Unmatch',
+            onPress: () => {
+              this.setState({ showUserActionSheet: false }, () => {
+                this.setState({ showUnmatchPopup: true });
+              });
+            }
+          },
+          {
+            text: 'Block',
+            onPress: () => {
+              this.setState({ showUserActionSheet: false }, () => {
+                this.setState({ showBlockPopup: true });
+              });
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          },
+          {
+            text: 'Report',
+            onPress: () => {
+              this.setState({ showUserActionSheet: false }, () => {
+                this.setState({ showReportPopup: true });
+              });
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          }
+        ]}
+        cancel={{
+          text: 'Cancel',
+          onPress: () => {
+            this._toggleUserActionSheet(false);
+          }
+        }}
+      />
+    );
+  }
+
+  _renderBlockPopup() {
+    const { showBlockPopup, match } = this.state;
+    const { profileMap } = this.props;
+    const profile = profileMap[match.profile];
+    const displayName = profile.fields.displayName;
+
+    return (
+      <BlockPopup
+        visible={showBlockPopup}
+        onCancel={() => this.setState({ showBlockPopup: false })}
+        onDone={() =>
+          this.setState({ showBlockPopup: false }, () =>
+            NavigationService.back()
+          )
+        }
+        displayName={displayName}
+      />
+    );
+  }
+
+  _renderReportPopup() {
+    const { showReportPopup, match } = this.state;
+    const { profileMap } = this.props;
+    const profile = profileMap[match.profile];
+    const displayName = profile.fields.displayName;
+
+    return (
+      <ReportPopup
+        visible={showReportPopup}
+        onCancel={() => this.setState({ showReportPopup: false })}
+        onDone={block =>
+          this.setState(
+            { showReportPopup: false },
+            () => block && NavigationService.back()
+          )
+        }
+        displayName={displayName}
+      />
+    );
+  }
+
+  _renderUnmatchPopup() {
+    const { showUnmatchPopup, match } = this.state;
+    const { profileMap } = this.props;
+    const profile = profileMap[match.profile];
+    const displayName = profile.fields.displayName;
+
+    return (
+      <UnmatchPopup
+        visible={showUnmatchPopup}
+        onCancel={() => this.setState({ showUnmatchPopup: false })}
+        onDone={() =>
+          this.setState({ showUnmatchPopup: false }, () =>
+            NavigationService.back()
+          )
+        }
+        displayName={displayName}
+      />
+    );
+  }
+
   render() {
     const { profileMap } = this.props;
     const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
@@ -441,9 +575,7 @@ class MessagingScreen extends React.Component<Props, State> {
             title={profile.fields.displayName}
             leftIconName="back"
             rightIconName="ellipsis"
-            onRightIconPress={() => {
-              Alert.alert('this should be report and stuff?');
-            }}
+            onRightIconPress={() => this._toggleUserActionSheet(true)}
             borderBottom
             onTitlePress={() => this._goToProfile(profile)}
           />
@@ -482,6 +614,10 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
+        {this._renderUserActionSheet()}
+        {this._renderBlockPopup()}
+        {this._renderReportPopup()}
+        {this._renderUnmatchPopup()}
       </View>
     );
   }
