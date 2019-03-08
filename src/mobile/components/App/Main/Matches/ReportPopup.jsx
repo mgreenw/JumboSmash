@@ -99,10 +99,7 @@ class ReportPopup extends React.Component<Props, State> {
         style={{
           maxHeight: 160,
           marginTop: 20,
-          marginBottom: 77,
-          borderWidth: 1.5,
-          borderRadius: 3,
-          borderColor: Colors.Black
+          marginBottom: 77
         }}
       >
         <BioInput
