@@ -30,6 +30,7 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
+import { TypingAnimation } from 'react-native-typing-animation';
 
 type ExtraData = {|
   showOtherUserTyping: boolean,
@@ -68,6 +69,13 @@ const wrapperBase = {
   borderWidth: 1.5,
   margin: 3
 };
+
+const cornersBase = {
+  borderTopLeftRadius: 15,
+  borderTopRightRadius: 15,
+  borderBottomLeftRadius: 15,
+  borderBottomRightRadius: 15
+};
 const BubbleStyles = StyleSheet.create({
   wrapperLeft: {
     ...wrapperBase,
@@ -90,6 +98,14 @@ const BubbleStyles = StyleSheet.create({
   },
   tickStyle: {
     color: Colors.Black
+  },
+  containerRight: {
+    ...cornersBase,
+    borderBottomRightRadius: 0
+  },
+  containerLeft: {
+    ...cornersBase,
+    borderBottomLeftRadius: 0
   }
 });
 
@@ -245,6 +261,14 @@ class MessagingScreen extends React.Component<Props, State> {
           right: BubbleStyles.timeText,
           left: BubbleStyles.timeText
         }}
+        containerToNextStyle={{
+          right: BubbleStyles.containerRight,
+          left: BubbleStyles.containerLeft
+        }}
+        containerToPreviousStyle={{
+          right: BubbleStyles.containerRight,
+          left: BubbleStyles.containerLeft
+        }}
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
           if (failed) {
@@ -397,18 +421,37 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
+  // Fake a button. Easier to do it this way than to try and mock an actual button because
+  // the internal animation must be absolutely positioned.
   _renderOtherUserTyping = ({ extraData }: { extraData: ExtraData }) => {
+    const { showOtherUserTyping } = extraData;
+    if (!showOtherUserTyping) {
+      return null;
+    }
     return (
       <View
-        style={{
-          marginLeft: 10,
-          marginRight: 10,
-          height: 20
-        }}
+        style={[
+          BubbleStyles.containerLeft,
+          wrapperBase,
+          {
+            borderColor: Colors.Grey80,
+            marginLeft: 10,
+            height: 40,
+            top: -8,
+            width: 72,
+            paddingLeft: 18
+          }
+        ]}
       >
-        {extraData.showOtherUserTyping && (
-          <Text>{`${extraData.otherUserName} is typing`}</Text>
-        )}
+        <TypingAnimation
+          dotColor={Colors.Black}
+          dotMargin={7}
+          dotAmplitude={4}
+          dotSpeed={0.15}
+          dotRadius={3.5}
+          dotX={11}
+          dotY={12}
+        />
       </View>
     );
   };
