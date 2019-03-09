@@ -12,7 +12,7 @@ export const SERVER_ROUTE =
         .split(':')
         .shift()
         .concat(':3000/')}`
-    : 'https://server.jumbosmash.com/';
+    : 'https://stagingserver.jumbosmash.com/';
 
 // /////////////////////
 // ROUTE CONSTRUCTORS:
