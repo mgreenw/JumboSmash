@@ -60,7 +60,7 @@ const schema = {
     },
     "expoPushToken": {
       "description": "The push notification token from expo",
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "required": []
