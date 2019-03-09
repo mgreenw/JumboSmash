@@ -10,7 +10,11 @@ export type CancelFailedMessage_Action = {|
   meta: {}
 |};
 
-function genAction(
+// No api call, so not really a thunk. We still use
+// the same format though in case we want to add thunk-
+// like behavoir (e.g. a timeout, or logging) for 
+// consistancy. 
+function genCancelFailedMessageAction(
   receiverUserId: number,
   failedMessageUuid: string
 ): CancelFailedMessage_Action {
@@ -24,5 +28,5 @@ function genAction(
 export default (receiverUserId: number, failedMessageUuid: string) => (
   dispatch: Dispatch
 ) => {
-  dispatch(genAction(receiverUserId, failedMessageUuid));
+  dispatch(genCancelFailedMessageAction(receiverUserId, failedMessageUuid));
 };
