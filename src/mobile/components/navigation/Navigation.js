@@ -67,7 +67,8 @@ const CardsStack = createStackNavigator(
   },
   {
     initialRouteName: routes.Cards,
-    ...removeHeader
+    ...removeHeader,
+    mode: 'modal'
   }
 );
 
