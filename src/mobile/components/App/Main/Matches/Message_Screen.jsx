@@ -25,6 +25,7 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
+import cancelFailedMessageAction from 'mobile/actions/app/cancelFailedMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
@@ -53,7 +54,8 @@ type ReduxProps = {
 
 type DispatchProps = {
   getConversation: (userId: number, mostRecentMessageId?: number) => void,
-  sendMessage: (userId: number, message: GiftedChatMessage) => void
+  sendMessage: (userId: number, message: GiftedChatMessage) => void,
+  cancelFailedMessage: (userId: number, messagedUuid: string) => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
@@ -195,6 +197,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     },
     sendMessage: (userId: number, message: GiftedChatMessage) => {
       dispatch(sendMessageAction(userId, message));
+    },
+    cancelFailedMessage: (userId: number, messageUuid: string) => {
+      dispatch(cancelFailedMessageAction(userId, messageUuid));
     }
   };
 }
@@ -610,7 +615,7 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { profileMap } = this.props;
+    const { profileMap, cancelFailedMessage } = this.props;
     const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
     const profile = profileMap[match.userId];
     return (
@@ -647,7 +652,7 @@ class MessagingScreen extends React.Component<Props, State> {
                   if (!selectedMessage) {
                     throw new Error("no message during don't send");
                   }
-                  Alert.alert('deleting failed message not yet implemented');
+                  cancelFailedMessage(match.userId, selectedMessage._id);
                 });
               }
             }
