@@ -1,6 +1,7 @@
 // @flow
 
-import type { Candidate, Scene, Dispatch } from 'mobile/reducers';
+import type { Scene, Dispatch } from 'mobile/reducers';
+import type { ServerCandidate } from 'mobile/api/serverTypes';
 import getSceneCandidates from 'mobile/api/relationships/getSceneCandidates';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -13,7 +14,7 @@ export type GetSceneCandidatesInitiated_Action = {
 export type GetSceneCandidatesCompleted_Action = {
   type: 'GET_SCENE_CANDIDATES__COMPLETED',
   payload: {
-    candidates: Candidate[],
+    candidates: ServerCandidate[],
     scene: Scene
   },
   meta: {}
@@ -28,7 +29,7 @@ function initiate(scene: Scene): GetSceneCandidatesInitiated_Action {
 }
 
 function complete(
-  candidates: Candidate[],
+  candidates: ServerCandidate[],
   scene: Scene
 ): GetSceneCandidatesCompleted_Action {
   return {

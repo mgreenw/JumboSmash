@@ -6,10 +6,9 @@ import { Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import type {
   ReduxState,
-  Candidate,
   UserProfile,
   UserSettings,
-  SceneCandidates,
+  SceneCandidateIds,
   GetSceneCandidatesInProgress,
   Scene,
   Dispatch
@@ -21,12 +20,11 @@ import PreviewCard from 'mobile/components/shared/PreviewCard';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import DevTesting from 'mobile/utils/DevTesting';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
+import Swiper from 'react-native-deck-swiper';
 import type { SwipeDirection } from './Deck';
-import Deck from './Deck';
 import SceneSelector from './SceneSelector';
 import SwipeButtons from './SwipeButtons';
 
@@ -58,9 +56,10 @@ type navigationProps = {
 };
 
 type reduxProps = {
-  sceneCandidates: SceneCandidates,
+  sceneCandidateIds: SceneCandidateIds,
   getSceneCandidatesInProgress: GetSceneCandidatesInProgress,
-  clientSettings: UserSettings
+  clientSettings: UserSettings,
+  profileMap: { [userId: number]: UserProfile }
 };
 
 type dispatchProps = {
@@ -85,9 +84,10 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
     throw new Error('client is null in Cards Screen');
   }
   return {
-    sceneCandidates: reduxState.sceneCandidates,
+    sceneCandidateIds: reduxState.sceneCandidateIds,
     getSceneCandidatesInProgress: reduxState.inProgress.getSceneCandidates,
-    clientSettings: reduxState.client.settings
+    clientSettings: reduxState.client.settings,
+    profileMap: reduxState.profiles
   };
 }
 
@@ -121,17 +121,19 @@ class SwipingScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(_, prevState: State) {
-    const { sceneCandidates } = this.props;
+    const { sceneCandidateIds } = this.props;
     const { currentScene } = this.state;
     if (
       prevState.currentScene !== currentScene &&
-      !sceneCandidates[currentScene]
+      !sceneCandidateIds[currentScene]
     ) {
       this._showLoadingAndFetchCandidates(300);
     }
   }
 
-  _renderCard = (profile: UserProfile) => {
+  _renderCard = (id: number) => {
+    const { profileMap } = this.props;
+    const profile = profileMap[id];
     return <PreviewCard profile={profile} />;
   };
 
@@ -166,22 +168,18 @@ class SwipingScreen extends React.Component<Props, State> {
     );
   };
 
-  _onSwipeStart = () => {
-    DevTesting.log('swiping');
+  _onSwipeRight = (index: number) => {
+    const { judgeSceneCandidate, sceneCandidateIds } = this.props;
+    const { currentScene } = this.state;
+    const id = sceneCandidateIds[currentScene][index];
+    judgeSceneCandidate(id, currentScene, true);
   };
 
-  _onSwipeRight = (user: Candidate) => {
-    const { judgeSceneCandidate } = this.props;
+  _onSwipeLeft = (index: number) => {
+    const { judgeSceneCandidate, sceneCandidateIds } = this.props;
     const { currentScene } = this.state;
-    judgeSceneCandidate(user.userId, currentScene, true);
-    DevTesting.log(`Card liked: ${user.profile.fields.displayName}`);
-  };
-
-  _onSwipeLeft = (user: Candidate) => {
-    const { judgeSceneCandidate } = this.props;
-    const { currentScene } = this.state;
-    judgeSceneCandidate(user.userId, currentScene, false);
-    DevTesting.log(`Card disliked: ${user.profile.fields.displayName}`);
+    const id = sceneCandidateIds[currentScene][index];
+    judgeSceneCandidate(id, currentScene, false);
   };
 
   _onSwipeComplete = () => {
@@ -210,8 +208,11 @@ class SwipingScreen extends React.Component<Props, State> {
     this._onPressSwipeButton('left');
   };
 
-  _onCardTap = (profile: UserProfile) => {
-    const { navigation } = this.props;
+  _onTapCard = (index: number) => {
+    const { currentScene } = this.state;
+    const { profileMap, sceneCandidateIds, navigation } = this.props;
+    const id = sceneCandidateIds[currentScene][index];
+    const profile = profileMap[id];
     navigation.navigate(routes.CardsExpandedCard, {
       profile,
       onMinimize: () => navigation.pop(),
@@ -233,7 +234,7 @@ class SwipingScreen extends React.Component<Props, State> {
     setTimeout(() => {
       this.setState({ loadingSource: ArthurLoadingGif }, () => {
         const {
-          sceneCandidates,
+          sceneCandidateIds,
           getSceneCandidatesInProgress,
           getSceneCandidates
         } = this.props;
@@ -241,7 +242,7 @@ class SwipingScreen extends React.Component<Props, State> {
           const { currentScene } = this.state;
           if (
             !getSceneCandidatesInProgress[currentScene] &&
-            sceneCandidates[currentScene] === null
+            sceneCandidateIds[currentScene] === null
           ) {
             getSceneCandidates(currentScene);
           }
@@ -335,11 +336,11 @@ unless you turn it on in Settings.`}
     );
   }
 
-  deck: ?Deck;
+  deck: ?Swiper;
 
   render() {
     const {
-      sceneCandidates,
+      sceneCandidateIds,
       getSceneCandidatesInProgress,
       clientSettings
     } = this.props;
@@ -347,7 +348,7 @@ unless you turn it on in Settings.`}
 
     const isLoading =
       getSceneCandidatesInProgress[currentScene] ||
-      sceneCandidates[currentScene] === null;
+      sceneCandidateIds[currentScene] === null;
 
     const isActiveInScene = clientSettings.activeScenes[currentScene] === true;
 
@@ -370,24 +371,23 @@ unless you turn it on in Settings.`}
         />
       );
     } else if (
-      sceneCandidates[currentScene] === null ||
-      sceneCandidates[currentScene] === undefined
+      sceneCandidateIds[currentScene] === null ||
+      sceneCandidateIds[currentScene] === undefined
     ) {
       throw new Error(`${currentScene} candidates is null or undefined`);
     } else {
       renderedContent = (
-        <Deck
+        <Swiper
           ref={deck => (this.deck = deck)}
-          data={sceneCandidates[currentScene]}
+          cards={sceneCandidateIds[currentScene]}
           renderCard={this._renderCard}
           renderEmpty={this._renderEmpty}
-          onSwipeStart={this._onSwipeStart}
-          onSwipeRight={this._onSwipeRight}
-          onSwipeLeft={this._onSwipeLeft}
+          onSwipedRight={this._onSwipeRight}
+          onSwipedLeft={this._onSwipeLeft}
           onSwipeComplete={this._onSwipeComplete}
-          onCardTap={this._onCardTap}
-          infinite
-          disableSwipe={isLoading}
+          onTapCard={this._onTapCard}
+          backgroundColor={'transparent'}
+          stackSize={2}
         />
       );
     }

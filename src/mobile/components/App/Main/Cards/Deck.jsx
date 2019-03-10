@@ -10,7 +10,6 @@ import {
   StyleSheet
 } from 'react-native';
 import type { AnimatedValueXY, Node } from 'react-native';
-import type { UserProfile, Candidate } from 'mobile/reducers';
 import DevTesting from 'mobile/utils/DevTesting';
 
 const RIGHT = 'right';
@@ -18,14 +17,14 @@ const LEFT = 'left';
 export type SwipeDirection = 'left' | 'right';
 
 type Props = {
-  data: Candidate[],
-  renderCard: (profile: UserProfile, isTop: boolean) => Node,
+  candidateIds: number[],
+  renderCard: (candidateId: number, isTop: boolean) => Node,
   renderEmpty: () => Node,
   onSwipeStart: () => void,
-  onSwipeRight: (user: Candidate) => void,
-  onSwipeLeft: (user: Candidate) => void,
+  onSwipeRight: (candidateId: number) => void,
+  onSwipeLeft: (candidateId: number) => void,
   onSwipeComplete: () => void,
-  onCardTap: (profile: UserProfile) => void,
+  onCardTap: (candidateId: number) => void,
   disableSwipe: boolean,
   infinite?: boolean
 };
@@ -82,7 +81,7 @@ export default class Deck extends React.Component<Props, State> {
       },
       onPanResponderRelease: (_, gesture) => {
         const { swipeGestureInProgress } = this.state;
-        const { data, onCardTap, disableSwipe } = this.props;
+        const { candidateIds, onCardTap, disableSwipe } = this.props;
         // If the deck should not be swipeable then return
         if (disableSwipe) {
           return;
@@ -97,7 +96,7 @@ export default class Deck extends React.Component<Props, State> {
         } else {
           DevTesting.log('Swipe dismissed');
           if (!swipeGestureInProgress) {
-            onCardTap(data[0].profile);
+            onCardTap(candidateIds[0]);
           }
           this._resetPosition();
         }
@@ -127,9 +126,14 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   _onSwipeComplete(swipeDirection: SwipeDirection) {
-    const { onSwipeRight, onSwipeLeft, onSwipeComplete, data } = this.props;
+    const {
+      onSwipeRight,
+      onSwipeLeft,
+      onSwipeComplete,
+      candidateIds
+    } = this.props;
     const { position } = this.state;
-    const item = data[0];
+    const item = candidateIds[0];
     if (swipeDirection === RIGHT) {
       onSwipeRight(item);
     } else {
@@ -160,32 +164,32 @@ export default class Deck extends React.Component<Props, State> {
   }
 
   _renderCards(): React.Node[] {
-    const { disableSwipe, renderCard, renderEmpty, data } = this.props;
+    const { disableSwipe, renderCard, renderEmpty, candidateIds } = this.props;
     const { panResponder } = this.state;
-    if (data.length === 0) {
+    if (candidateIds.length === 0) {
       return renderEmpty();
     }
 
-    return data
-      .map((user, i) => {
+    return candidateIds
+      .map((id, i) => {
         if (i < 0) {
           return null;
         }
         if (i === 0 && !disableSwipe) {
           return (
             <Animated.View
-              key={user.userId}
+              key={id}
               style={[this._getCardStyle(), styles.cardStyle]}
               {...panResponder.panHandlers}
             >
-              {renderCard(user.profile, true)}
+              {renderCard(id, true)}
             </Animated.View>
           );
         }
 
         return (
-          <View key={user.userId} style={styles.cardStyle}>
-            {renderCard(user.profile, i === 0)}
+          <View key={id} style={styles.cardStyle}>
+            {renderCard(id, i === 0)}
           </View>
         );
       })

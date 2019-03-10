@@ -22,6 +22,7 @@ export default function judgeSceneCandidate(
           return response.data;
         }
         default:
+          console.log(response);
           throw new Error(response);
       }
     })

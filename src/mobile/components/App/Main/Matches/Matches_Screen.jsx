@@ -27,7 +27,7 @@ import routes from 'mobile/components/navigation/routes';
 import formatTime from 'mobile/utils/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 
-const Seperator = (props: {}) => {
+const Seperator = () => {
   return (
     <View
       style={{

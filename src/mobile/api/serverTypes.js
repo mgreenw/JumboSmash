@@ -18,6 +18,8 @@ export type ServerBaseUser = {
   profile: ServerProfile
 };
 
+export type ServerCandidate = ServerBaseUser;
+
 // nullable timestamps
 export type ServerScenes = {
   smash: ?string,

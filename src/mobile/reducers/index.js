@@ -90,7 +90,7 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch } from 'mobile/api/serverTypes';
+import type { ServerMatch, ServerCandidate } from 'mobile/api/serverTypes';
 
 export type Scene = 'smash' | 'social' | 'stone';
 
@@ -102,13 +102,13 @@ export type BottomToastCode =
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE';
 export type BottomToast = {
-  id: number,
+  id: string,
   code: ?BottomToastCode
 };
 
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
-  id: number,
+  id: string,
   code: ?NewMatchToastCode,
   profileId?: number,
   scene?: Scene
@@ -116,7 +116,7 @@ export type NewMatchToast = {
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
-  id: number,
+  id: string,
   code: ?NewMessageToastCode,
   displayName: ?string
 };
@@ -178,10 +178,10 @@ type Matches = {
   [Id: number]: Match
 };
 
-export type SceneCandidates = {|
-  smash: ?(Candidate[]),
-  social: ?(Candidate[]),
-  stone: ?(Candidate[])
+export type SceneCandidateIds = {|
+  smash: ?(number[]),
+  social: ?(number[]),
+  stone: ?(number[])
 |};
 
 export type ExcludeSceneCandidateIds = {|
@@ -224,6 +224,16 @@ const ProfileSchema = new schema.Entity(
   {},
   {
     idAttribute: (_, parent) => parent.userId
+  }
+);
+
+const CanidateSchema = new schema.Entity(
+  'candidates',
+  {
+    profile: ProfileSchema
+  },
+  {
+    idAttribute: 'userId'
   }
 );
 
@@ -338,7 +348,7 @@ export type ReduxState = {|
     login: ?Login_Response
   |},
 
-  sceneCandidates: SceneCandidates,
+  sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
 
   // map of userID's to messages
@@ -444,7 +454,7 @@ const defaultState: ReduxState = {
     login: null
   },
   onboardingCompleted: false,
-  sceneCandidates: {
+  sceneCandidateIds: {
     smash: null,
     social: null,
     stone: null
@@ -468,11 +478,11 @@ const defaultState: ReduxState = {
 
   // Toasts
   bottomToast: {
-    id: 0,
+    id: '0',
     code: null
   },
   topToast: {
-    id: 0,
+    id: '0',
     code: null
   }
 };
@@ -486,10 +496,24 @@ function normalizeMatches(
   entities: {|
     matches: { [userId: number]: Match },
     mostRecentMessages: { [userId: number]: MostRecentMessage },
-    profiles: { [userId: number]: any }
+    profiles: { [userId: number]: UserProfile }
   |}
 } {
   return normalize(matches, [MatchSchema]);
+}
+
+function normalizeCanidates(
+  canidates: ServerCandidate[]
+): {
+  result: number[],
+  entities: {|
+    profiles: { [userId: number]: UserProfile },
+
+    // Pretty useless data we happen to get. Profile Id and User Id are the same thing, and we don't really use this at all.
+    candidates: { [userId: number]: { profileId: number, userId: number } }
+  |}
+} {
+  return normalize(canidates, [CanidateSchema]);
 }
 
 function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
@@ -868,24 +892,35 @@ export default function rootReducer(
       };
     }
 
+    // TODO: if we want this to load more canidates BEFORE empty, then append the new Ids to the old Ids.
+    // Currently, this assumes that state.sceneCanidateIds is an empty array.
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = {
-        ...state.inProgress.getSceneCandidates,
-        [scene]: false
-      };
 
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: candidates
-      };
+      const {
+        result: orderedIds,
+        entities: normalizedData
+      } = normalizeCanidates(candidates);
+
+      // TODO: use [...oldIds, ...newIds] to preserve stack
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: getSceneCandidatesInProgress_updated
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: false
+          }
         },
-        sceneCandidates: sceneCandidates_updated
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
+        sceneCandidateIds: {
+          ...state.sceneCandidateIds,
+          [scene]: orderedIds
+        }
       };
     }
 
@@ -924,7 +959,10 @@ export default function rootReducer(
         },
         confirmedConversations,
         matchesById: normalizedData.matches,
-        profiles: normalizedData.profiles,
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
         messagedMatchIds,
         unmessagedMatchIds
       };
@@ -941,32 +979,24 @@ export default function rootReducer(
     }
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
-      const { candidateUserId, scene } = action.payload;
-      const currentSceneCandidates = state.sceneCandidates[scene];
+      const { candidateUserId: judgedId, scene } = action.payload;
+      const currentSceneCandidateIds = state.sceneCandidateIds[scene];
       if (
-        currentSceneCandidates === null ||
-        currentSceneCandidates === undefined
+        currentSceneCandidateIds === null ||
+        currentSceneCandidateIds === undefined
       ) {
         throw new Error(
           'currentSceneCandidates is null in judge scene candidates'
         );
       }
 
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: currentSceneCandidates.filter(
-          c => c.userId !== candidateUserId
-        )
-      };
-
       const excludeSceneCandidateIds_updated = {
         ...state.excludeSceneCandidateIds,
-        [scene]: [...state.excludeSceneCandidateIds[scene], candidateUserId]
+        [scene]: [...state.excludeSceneCandidateIds[scene], judgedId]
       };
 
       return {
         ...state,
-        sceneCandidates: sceneCandidates_updated,
         excludeSceneCandidateIds: excludeSceneCandidateIds_updated
       };
     }

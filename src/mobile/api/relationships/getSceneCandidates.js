@@ -1,14 +1,17 @@
 // @flow
 
-import type { Candidate, Scene } from 'mobile/reducers';
+import type { Scene } from 'mobile/reducers';
 import store from 'mobile/store';
 import { arrayToQueryString } from 'mobile/utils/Api';
+import type { ServerCandidate } from '../serverTypes';
 import apiRequest from '../utils/apiRequest';
 import { SCENE_CANDIDATES__ROUTES } from '../routes';
 
 const GET_SCENE_CANDIDATES__SUCCESS = 'GET_SCENE_CANDIDATES__SUCCESS';
 
-export default function getSceneCandidates(scene: Scene): Promise<Candidate[]> {
+export default function getSceneCandidates(
+  scene: Scene
+): Promise<ServerCandidate[]> {
   const { excludeSceneCandidateIds } = store.getState();
   const queryParams = arrayToQueryString(
     'exclude[]',
