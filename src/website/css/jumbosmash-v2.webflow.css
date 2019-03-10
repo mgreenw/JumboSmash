@@ -109,6 +109,7 @@ a {
   -ms-flex-align: center;
   align-items: center;
   background-color: hsla(182.02702702702703, 59.20%, 50.98%, 1.00);
+  line-height: 30px;
 }
 
 .section.wide.img {
@@ -118,7 +119,7 @@ a {
 
 .body {
   background-color: transparent;
-  font-family: 'Gothic A1';
+  font-family: 'Gothic A1', sans-serif;
 }
 
 .wrapper {
@@ -146,9 +147,9 @@ a {
 .wrap {
   position: static;
   max-width: 700px;
-  padding-top: 20px;
+  padding-top: 40px;
   padding-bottom: 40px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   text-align: center;
 }
 
@@ -209,7 +210,7 @@ a {
   max-width: 60%;
   margin-top: 20px;
   margin-bottom: 10px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: hsla(182.02702702702703, 59.20%, 50.98%, 1.00);
   font-size: 30px;
   line-height: 44px;
@@ -247,19 +248,19 @@ a {
 
 .heading-3 {
   margin-bottom: 20px;
-  font-family: 'Vegan style webfont';
+  font-family: 'Vegan style webfont', sans-serif;
   color: #ff6161;
   font-weight: 400;
 }
 
 .paragraph-2 {
   max-width: 525px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: #000;
 }
 
 .field-label {
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: #ff6161;
   font-size: 20px;
 }
@@ -272,7 +273,7 @@ a {
 .field-label-2 {
   margin-top: 10px;
   margin-bottom: 10px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: #6b6b6b;
   font-size: 16px;
   font-weight: 700;
@@ -280,7 +281,7 @@ a {
 
 .text-field {
   border-radius: 6px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
 }
 
@@ -292,7 +293,7 @@ a {
   background-color: hsla(182.02702702702703, 59.20%, 50.98%, 1.00);
   -webkit-transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease;
   transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease;
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: #fff;
   font-size: 16px;
   font-weight: 400;
@@ -308,18 +309,20 @@ a {
 }
 
 .heading-4 {
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 .paragraph-3 {
-  font-family: 'Source Sans Pro';
+  font-family: 'Source Sans Pro', sans-serif;
   color: #fff;
+  line-height: 30px;
 }
 
 .link-block {
   width: 60px;
   height: 60px;
   margin-top: 20px;
+  margin-bottom: 20px;
   background-image: url('../images/instagram.png');
   background-position: 0px 0px;
   background-size: contain;
@@ -327,26 +330,74 @@ a {
 
 .paragraph-4 {
   display: block;
-  font-family: 'Source Sans Pro';
-  color: #fff;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #000;
 }
 
 .heading-5 {
-  font-family: 'Source Sans Pro';
+  margin-top: 0px;
+  margin-bottom: 20px;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #fff;
 }
 
 .text-block-3 {
-  margin-top: 40px;
+  margin-top: 0px;
   color: #fff;
   font-size: 10px;
 }
 
 .link-3 {
-  color: #fff;
+  color: hsla(182.02702702702703, 59.20%, 50.98%, 1.00);
 }
 
 .image-7 {
   display: none;
+}
+
+.feature-content {
+  width: 50vw;
+  max-width: 450px;
+  margin-right: 0px;
+  padding-right: 4vw;
+  padding-left: 4vw;
+}
+
+.image-8 {
+  overflow: hidden;
+  height: auto;
+  max-height: 95vh;
+}
+
+.paragraph-5 {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #fff;
+  font-size: 16px;
+}
+
+.feature-image {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: visible;
+  width: 50vw;
+  padding-right: auto;
+  padding-left: auto;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.heading-6 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 32px;
+  font-weight: 400;
 }
 
 @media (max-width: 991px) {
@@ -411,6 +462,9 @@ a {
   .form-block-2 {
     margin-top: 30px;
   }
+  .link-3 {
+    color: #ff6161;
+  }
   .form-3 {
     margin-top: auto;
   }
@@ -466,6 +520,14 @@ a {
   .text-block-3 {
     margin-top: 20px;
   }
+  .paragraph-5 {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  .heading-6 {
+    font-size: 24px;
+    line-height: 32px;
+  }
 }
 
 @media (max-width: 479px) {
@@ -486,6 +548,15 @@ a {
   .wrap {
     padding-right: 5vw;
     padding-left: 5vw;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
   .hero-image {
     display: block;
@@ -497,6 +568,10 @@ a {
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
   }
   .feature-wrap.reverse {
     -webkit-box-orient: vertical;
@@ -546,13 +621,25 @@ a {
   .link-block:hover {
     width: 50px;
     height: 50px;
-    background-image: url('../images/instagram_white.png');
-    background-size: cover;
+    background-image: url('../images/instagram.png');
+    background-size: contain;
+  }
+  .heading-5 {
+    margin-top: 20px;
+    margin-bottom: 0px;
+    color: #fff;
+    text-align: center;
   }
   .image-6 {
     display: none;
     overflow: visible;
     max-width: 100%;
+  }
+  .text-block-3 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    line-height: 15px;
+    text-align: center;
   }
   .form-3 {
     margin-right: 10px;
@@ -561,6 +648,22 @@ a {
   .image-7 {
     display: block;
     margin-bottom: 20px;
+  }
+  .feature-content {
+    width: auto;
+  }
+  .image-8 {
+    max-height: 95vh;
+  }
+  .paragraph-5 {
+    font-size: 14px;
+  }
+  .feature-image {
+    width: auto;
+    margin-top: 40px;
+  }
+  .heading-6 {
+    font-size: 24px;
   }
 }
 
