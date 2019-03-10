@@ -13,7 +13,6 @@ jobs:
     env:
       - NODE_CONFIG_ENV=travis
       - PGUSER=postgres
-      - CHANGED=false
     cache:
       - npm
     addons:
@@ -27,6 +26,7 @@ jobs:
         fi
     install:
       - echo "Installing Server Dependencies.." ;
+      - npm install
       - npm install --prefix ./src/server
     before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
