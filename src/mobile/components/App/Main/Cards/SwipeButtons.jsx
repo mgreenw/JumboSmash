@@ -5,11 +5,11 @@ import { View, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo';
 import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
-import type { SwipeDirection } from './Deck';
 
 const { width } = Dimensions.get('window');
 
 const iconHeight = 65;
+export type SwipeDirection = 'right' | 'left';
 
 type Props = {
   disabled: boolean,

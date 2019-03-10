@@ -2,7 +2,7 @@
 /* eslint react/no-unused-state: 0 */
 
 import React from 'react';
-import { Text, View, Image } from 'react-native';
+import { Text, View, Image, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import type {
   ReduxState,
@@ -24,9 +24,9 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import Swiper from 'react-native-deck-swiper';
-import type { SwipeDirection } from './Deck';
 import SceneSelector from './SceneSelector';
 import SwipeButtons from './SwipeButtons';
+import type { SwipeDirection } from './SwipeButtons';
 
 const ArthurLoadingImage = require('../../../../assets/arthurLoading.png');
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
@@ -76,7 +76,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   swipeInProgress: boolean,
   loadingSource: string,
-  currentScene: Scene
+  currentScene: Scene,
+  index: number
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -112,26 +113,18 @@ class SwipingScreen extends React.Component<Props, State> {
     this.state = {
       swipeInProgress: false,
       loadingSource: ArthurLoadingImage,
-      currentScene: 'smash'
+      currentScene: 'smash',
+      index: 0
     };
+    this._onSwipedAll();
   }
 
-  componentDidMount() {
-    this._showLoadingAndFetchCandidates(1200);
-  }
-
-  componentDidUpdate(_, prevState: State) {
-    const { sceneCandidateIds } = this.props;
-    const { currentScene } = this.state;
-    if (
-      prevState.currentScene !== currentScene &&
-      !sceneCandidateIds[currentScene]
-    ) {
-      this._showLoadingAndFetchCandidates(300);
+  _renderCard = (id: number, index: number) => {
+    if (index === 0) {
+      return this._renderNotActiveInScene();
     }
-  }
+    console.log({ index, id });
 
-  _renderCard = (id: number) => {
     const { profileMap } = this.props;
     const profile = profileMap[id];
     return <PreviewCard profile={profile} />;
@@ -186,6 +179,15 @@ class SwipingScreen extends React.Component<Props, State> {
     this.setState({ swipeInProgress: false });
   };
 
+  _onSwiped = () => {
+    this.setState(prevState => {
+      return {
+        index: prevState.index + 1
+      };
+    });
+    console.log('swipe');
+  };
+
   _onPressSwipeButton = (swipeDirection: SwipeDirection) => {
     if (this.deck) {
       if (swipeDirection === 'right') {
@@ -207,6 +209,9 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onTapCard = (index: number) => {
+    if (index === 0) {
+      return;
+    }
     const { currentScene } = this.state;
     const { profileMap, sceneCandidateIds, navigation } = this.props;
     const id = sceneCandidateIds[currentScene][index];
@@ -226,6 +231,13 @@ class SwipingScreen extends React.Component<Props, State> {
         />
       )
     });
+  };
+
+  _onSwipedAll = () => {
+    const { getSceneCandidates } = this.props;
+    const { currentScene } = this.state;
+    console.log('ALL SWIPED \n GETTING MORE!');
+    getSceneCandidates(currentScene);
   };
 
   _showLoadingAndFetchCandidates(initialTimeout: number) {
@@ -251,85 +263,59 @@ class SwipingScreen extends React.Component<Props, State> {
 
   _renderNotActiveInScene() {
     const { currentScene } = this.state;
+    const sceneName = SCENES[currentScene].display;
+    const sceneIcon = SCENES[currentScene].icon;
     return (
       <View
         style={{
           flex: 1,
-          marginVertical: 60,
-          marginHorizontal: 42,
-          alignItems: 'center'
+          marginBottom: 150,
+          paddingHorizontal: 37,
+          alignItems: 'center',
+          justifyContent: 'space-evenly',
+          backgroundColor: Colors.White,
+          borderRadius: 20
         }}
       >
-        <View
-          style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}
+        <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+          Welcome to
+        </Text>
+        <Text
+          style={[
+            textStyles.jumboSmashStyle,
+            { fontSize: 40, padding: 15, textAlign: 'center' }
+          ]}
         >
-          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
-            Welcome to
-          </Text>
-          <Text
-            style={[
-              textStyles.jumboSmashStyle,
-              { fontSize: 40, padding: 15, textAlign: 'center' }
-            ]}
-          >
-            {SCENES[currentScene].display}
-          </Text>
-        </View>
-        <View
-          style={{ flex: 3, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <View
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              borderWidth: 3,
-              borderColor: Colors.Grapefruit,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <Text style={{ fontSize: 69 }}>{SCENES[currentScene].icon}</Text>
-          </View>
-        </View>
+          {sceneName}
+        </Text>
         <View
           style={{
-            flex: 2.5,
-            justifyContent: 'flex-start',
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            borderWidth: 3,
+            borderColor: Colors.Grapefruit,
+            justifyContent: 'center',
             alignItems: 'center'
           }}
         >
-          <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
-            {SCENES[currentScene].description}
-          </Text>
+          <Text style={{ fontSize: 69 }}>{sceneIcon}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 2
+        <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
+          {SCENES[currentScene].description}
+        </Text>
+        <PrimaryButton
+          onPress={() => {
+            // TODO: ensure settings set.
+            this.deck.swipeBottom();
           }}
-        >
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 4 }}>
-            <PrimaryButton
-              onPress={() => NavigationService.navigate(routes.SettingsEdit)}
-              title="Go to settings"
-              loading={false}
-              disabled={false}
-            />
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-            {`You won’t be shown in ${SCENES[currentScene].display}
-unless you turn it on in Settings.`}
-          </Text>
-        </View>
+          title={`Enable ${sceneName}`}
+          loading={false}
+          disabled={false}
+        />
+        <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
+          {`You won’t be shown in ${sceneName} unless you enable it. You can always turn it off in settings.`}
+        </Text>
       </View>
     );
   }
@@ -337,16 +323,14 @@ unless you turn it on in Settings.`}
   deck: ?Swiper;
 
   render() {
+    const { width } = Dimensions.get('window');
     const {
       sceneCandidateIds,
       getSceneCandidatesInProgress,
       clientSettings
     } = this.props;
-    const { loadingSource, currentScene } = this.state;
-
-    const isLoading =
-      getSceneCandidatesInProgress[currentScene] ||
-      sceneCandidateIds[currentScene] === null;
+    const { loadingSource, currentScene, index } = this.state;
+    const isLoading = getSceneCandidatesInProgress[currentScene];
 
     const isActiveInScene = clientSettings.activeScenes[currentScene] === true;
 
@@ -354,39 +338,46 @@ unless you turn it on in Settings.`}
 
     if (!isActiveInScene) {
       renderedContent = this._renderNotActiveInScene();
-    } else if (isLoading) {
-      renderedContent = (
-        <Image
-          resizeMode="contain"
-          style={{
-            flex: 1,
-            height: null,
-            width: null,
-            marginTop: 46,
-            marginBottom: 182
-          }}
-          source={loadingSource}
-        />
-      );
-    } else if (
-      sceneCandidateIds[currentScene] === null ||
-      sceneCandidateIds[currentScene] === undefined
-    ) {
-      throw new Error(`${currentScene} candidates is null or undefined`);
     } else {
+      const candidateIds = sceneCandidateIds[currentScene];
+      console.log(candidateIds);
+      console.log({ index });
       renderedContent = (
         <Swiper
           ref={deck => (this.deck = deck)}
-          cards={sceneCandidateIds[currentScene]}
+          cards={candidateIds}
+          horizontalSwipe={index !== 0}
+          verticalSwipe={false}
           renderCard={this._renderCard}
-          renderEmpty={this._renderEmpty}
           onSwipedRight={this._onSwipeRight}
           onSwipedLeft={this._onSwipeLeft}
           onSwipeComplete={this._onSwipeComplete}
+          onSwipedAll={this._onSwipedAll}
+          onSwiped={this._onSwiped}
           onTapCard={this._onTapCard}
           backgroundColor={'transparent'}
-          stackSize={2}
-        />
+          cardVerticalMargin={0}
+          cardHorizontalMargin={0}
+          cardIndex={0}
+          showSecondCard
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Image
+              resizeMode="contain"
+              style={{
+                height: width,
+                width
+              }}
+              source={loadingSource}
+            />
+          </View>
+        </Swiper>
       );
     }
 
@@ -412,14 +403,12 @@ unless you turn it on in Settings.`}
             leftIconName="user"
             centerComponent={sceneSelector}
           />
-          <View style={{ backgroundColor: 'white', flex: 1 }}>
+          <View style={{ flex: 1 }}>
             {renderedContent}
-            {isActiveInScene && (
-              <SwipeButtons
-                disabled={isLoading}
-                onPress={this._onPressSwipeButton}
-              />
-            )}
+            <SwipeButtons
+              disabled={isLoading || index === 0}
+              onPress={this._onPressSwipeButton}
+            />
           </View>
         </View>
       </Transition>

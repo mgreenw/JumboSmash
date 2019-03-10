@@ -179,9 +179,9 @@ type Matches = {
 };
 
 export type SceneCandidateIds = {|
-  smash: ?(number[]),
-  social: ?(number[]),
-  stone: ?(number[])
+  smash: number[],
+  social: number[],
+  stone: number[]
 |};
 
 export type ExcludeSceneCandidateIds = {|
@@ -455,9 +455,9 @@ const defaultState: ReduxState = {
   },
   onboardingCompleted: false,
   sceneCandidateIds: {
-    smash: null,
-    social: null,
-    stone: null
+    smash: [],
+    social: [],
+    stone: []
   },
   excludeSceneCandidateIds: {
     smash: [],
