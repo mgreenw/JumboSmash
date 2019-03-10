@@ -67,15 +67,49 @@ function connect(token: string) {
   _socket.on('NEW_MATCH', data => {
     console.log('NEW_MATCH:', data);
 
+    // Ensure we type this function
+    const newMatchThunk = newMatchAction(data.scene);
+
     // TODO: correctly type thunks
     // We have to ignore flow here because dispatch expects a normal action not a thunk.
     // $FlowFixMe
-    store.dispatch(newMatchAction());
+    store.dispatch(newMatchThunk);
   });
   /* eslint-enable */
 }
 
+// Emit typing! That's all.
+function typing(otherUserId: number) {
+  if (_socket !== null) {
+    _socket.emit('TYPING', otherUserId);
+  }
+}
+
+function subscribeToTyping(userId: number, cb: () => void) {
+  if (_socket !== null) {
+    _socket.on('TYPING', data => {
+      if (userId === data.userId) {
+        cb();
+      }
+    });
+  } else {
+    console.log(
+      'Cannot connect to socket for typing subscription: Socket is null'
+    );
+  }
+}
+
+function unsubscribeFromTyping() {
+  if (_socket !== null) {
+    // $FlowFixMe with no callback parameter it will cancel ALL typing listeners, which is what we want!
+    _socket.off('TYPING');
+  }
+}
+
 export default {
   isConnected,
-  connect
+  connect,
+  typing,
+  subscribeToTyping,
+  unsubscribeFromTyping
 };

@@ -8,6 +8,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
 import Toast, { DURATION } from 'react-native-easy-toast';
+import { sceneToEmoji } from 'mobile/utils/emojis';
 
 type ReduxProps = {
   topToast: TopToast
@@ -33,7 +34,7 @@ function messageFromCode(code: TopToastCode): string {
     }
 
     case 'NEW_MATCH': {
-      return '[picture] you have a new match! [scene]';
+      return `You have a new match!`;
     }
 
     default: {
@@ -47,8 +48,12 @@ function messageFromCode(code: TopToastCode): string {
 class BottomToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { topToast } = this.props;
+    const icon =
+      topToast.code === 'NEW_MATCH' && topToast.scene
+        ? sceneToEmoji(topToast.scene)
+        : '';
     if (topToast.code && topToast.id !== prevProps.topToast.id) {
-      const message = messageFromCode(topToast.code);
+      const message = messageFromCode(topToast.code) + icon;
       this.showToast(message);
     }
   }
@@ -77,7 +82,6 @@ class BottomToastComponent extends React.Component<Props> {
     }
     const marginHorizontal = 18;
     return (
-
       <Toast
         ref={this.setToastRef}
         positionValue={paddingTop + 18}

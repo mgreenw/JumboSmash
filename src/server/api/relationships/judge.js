@@ -12,7 +12,7 @@ const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const logger = require('../../logger');
-const Socket = require('../../socket');
+const Notifications = require('../../notifications');
 
 /* eslint-disable */
 const schema = {
@@ -33,22 +33,6 @@ const schema = {
   "required": ["candidateUserId", "scene", "liked"]
 };
 /* eslint-enable */
-
-async function sendMatchSocketNotification(userId: number, matchUserId: number, scene) {
-  const matchResult = await db.query(`
-    ${utils.matchQuery}
-    AND me_critic.candidate_user_id = $2
-    LIMIT 1
-  `, [userId, matchUserId]);
-
-  if (matchResult.rowCount === 0) {
-    logger.error('No match found in attempt to send notification.');
-    return;
-  }
-
-  const [match] = matchResult.rows;
-  Socket.sendNewMatchNotification(userId, { match, scene });
-}
 
 async function checkMatch(
   userId: number,
@@ -92,7 +76,13 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
   // 3) The 'last_swipe_timestamp' is always updated to reflect that the
   //    critic has interacted with the candidate
   try {
-    await db.query(`
+    const result = await db.query(`
+      WITH old_liked AS (
+        SELECT liked_${scene} AS liked
+        FROM relationships
+        WHERE critic_user_id = $1
+          AND candidate_user_id = $2
+      )
       INSERT INTO relationships (
         critic_user_id,
         candidate_user_id,
@@ -111,15 +101,21 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         liked_${scene} = $3,
         last_swipe_timestamp = now(),
         liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
+      RETURNING (SELECT * FROM old_liked)
     `, [userId, candidateUserId, liked]);
 
-    if (liked) {
+    // This represents if the critic already liked the candidate in the given scene
+    const likedBefore = result.rowCount > 0 && result.rows[0].liked === true;
+
+    // Send notifications!
+    // If the user liked them this time but did not previously like
+    // the candidate in this scene, check for a match.
+    if (liked && !likedBefore) {
       checkMatch(userId, candidateUserId, scene).then(async (matched) => {
         if (matched) {
-          await Promise.all([
-            sendMatchSocketNotification(userId, candidateUserId, scene),
-            sendMatchSocketNotification(candidateUserId, userId, scene),
-          ]);
+          // Send the notifications! This will happen in the background
+          // so execution here can proceed.
+          Notifications.newMatch(userId, candidateUserId, scene);
         }
       });
     }

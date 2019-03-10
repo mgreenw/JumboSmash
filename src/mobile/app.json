@@ -3,15 +3,15 @@
     "sdkVersion": "32.0.0",
     "orientation": "portrait",
     "privacy": "unlisted",
-    "name": "ProjectGEM-dev",
+    "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "0.1.10",
-    "description": "Initial app store deployments",
+    "version": "1.2.1",
+    "description": "Ready for Beta",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 8,
+      "versionCode": 9,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {

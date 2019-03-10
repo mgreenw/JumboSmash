@@ -8,14 +8,15 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
-const { UNAUTHORIZED, SERVER_ERROR } = require('./api/status-codes');
-const logger = require('./logger');
-const { getUser, AuthenticationError } = require('./api/auth/utils');
+const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
+const logger = require('../logger');
+const { getUser, AuthenticationError } = require('../api/auth/utils');
+const appUtils = require('../utils');
+const { canAccessUserData } = require('../api/utils');
+
+const NODE_ENV = appUtils.getNodeEnv();
 
 const namespace = '/socket';
-
-const NEW_MESSAGE = 'NEW_MESSAGE';
-const NEW_MATCH = 'NEW_MATCH';
 
 class Socket {
   _io: ?SocketIO;
@@ -75,26 +76,37 @@ class Socket {
       socket.on('disconnect', () => {
         logger.info(`Socket disconnected: ${socket.user.id}`);
       });
+
+      socket.on('TYPING', async (otherUserId: number) => {
+        const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
+          requireMatch: true,
+        });
+        if (hasAccess) {
+          this.notify(otherUserId, 'TYPING', {
+            userId: socket.user.id,
+          });
+        }
+      });
     });
 
     this._io = _io;
   }
 
-  _notify(userId: number, event: string, data: Object) {
+  notify(userId: number, event: string, data: Object) {
+    // The tests do not start at server.js which is required
+    // to initialize the server. Therefore, we cannot use the
+    // socket's notify method in tests.
+    if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
+      logger.warn('Cannot notify in a testing environment!');
+      return;
+    }
+
     try {
       this.io.to(userId.toString()).emit(event, data);
-      logger.info(`Sent ${event} to userId ${userId} : ${JSON.stringify(data, null, 2)}`);
+      logger.debug(`Sent ${event} to userId ${userId} : ${JSON.stringify(data, null, 2)}`);
     } catch (error) {
       logger.warn('Failed to send update to user', error);
     }
-  }
-
-  sendNewMessageNotification(userId: number, message: Object) {
-    this._notify(userId, NEW_MESSAGE, message);
-  }
-
-  sendNewMatchNotification(userId: number, match: Object) {
-    this._notify(userId, NEW_MATCH, match);
   }
 }
 

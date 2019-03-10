@@ -30,11 +30,13 @@ import type {
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
-  SaveProfileFieldsCompleted_Action
+  SaveProfileFieldsCompleted_Action,
+  SaveProfileFieldsFailed_Action
 } from 'mobile/actions/app/saveProfile';
 import type {
   Unauthorized_Action,
-  Error_Action
+  ServerError_Action,
+  NetworkError_Action
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
@@ -46,7 +48,8 @@ import type {
 } from 'mobile/actions/app/deletePhoto';
 import type {
   SaveSettingsInitiated_Action,
-  SaveSettingsCompleted_Action
+  SaveSettingsCompleted_Action,
+  SaveSettingsFailed_Action
 } from 'mobile/actions/app/saveSettings';
 import type {
   GetSceneCandidatesInitiated_Action,
@@ -66,7 +69,8 @@ import type {
 } from 'mobile/actions/app/getConversation';
 import type {
   SendMessageInitiated_Action,
-  SendMessageCompleted_Action
+  SendMessageCompleted_Action,
+  SendMessageFailed_Action
 } from 'mobile/actions/app/sendMessage';
 import type {
   SummonPopup_Action,
@@ -80,12 +84,15 @@ import type {
   NewMatchInitiated_Action,
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
+import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
 
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
+
+export type Scene = 'smash' | 'social' | 'stone';
 
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
@@ -103,7 +110,8 @@ export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   id: number,
   code: ?NewMatchToastCode,
-  profileId?: number
+  profileId?: number,
+  scene?: Scene
 };
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
@@ -132,7 +140,8 @@ export type UserSettings = {
     smash: boolean,
     social: boolean,
     stone: boolean
-  }
+  },
+  expoPushToken: ?string
 };
 
 export type ProfileFields = {|
@@ -186,8 +195,6 @@ export type GetSceneCandidatesInProgress = {|
   social: boolean,
   stone: boolean
 |};
-
-export type Scene = 'smash' | 'social' | 'stone';
 
 // For normalizer:
 const ConfirmedMessageSchema = new schema.Entity(
@@ -254,7 +261,8 @@ export type GiftedChatMessage = {|
   createdAt: ?Date | number, // optional & accepts ducktyped date numbers
   user?: GiftedChatUser,
   system?: boolean,
-  sent: boolean
+  sent: boolean,
+  failed: boolean
 |};
 
 // TODO: enable if needed. This is a conceptual type.
@@ -276,11 +284,15 @@ export type ConfirmedMessages = {|
 
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
+// These are the messages that only exist client side:
+// those in progress being sent, and those that failed to send.
 type UnconfirmedMessages = {|
   byId: {
     [UUID: string]: GiftedChatMessage
   },
-  allIds: string[] // UUIDS in order
+  allIds: string[], // all UUIDS in order,
+  inProgressIds: string[], // messages being sent UUIDS in order
+  failedIds: string[] // messages failed to send in order they failed
 |};
 
 type ConfirmedConversations = { [userId: number]: ConfirmedMessages };
@@ -366,14 +378,17 @@ export type Action =
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
   | SaveProfileFieldsCompleted_Action
+  | SaveProfileFieldsFailed_Action
   | Unauthorized_Action
-  | Error_Action
+  | ServerError_Action
+  | NetworkError_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | SaveSettingsInitiated_Action
   | SaveSettingsCompleted_Action
+  | SaveSettingsFailed_Action
   | GetSceneCandidatesInitiated_Action
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
@@ -384,12 +399,14 @@ export type Action =
   | GetConversationCompleted_Action
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
+  | SendMessageFailed_Action
   | SummonPopup_Action
   | DismissPopup_Action
   | NewMessageInitiated_Action
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
-  | NewMatchCompleted_Action;
+  | NewMatchCompleted_Action
+  | CancelFailedMessage_Action;
 
 export type GetState = () => ReduxState;
 
@@ -768,6 +785,10 @@ export default function rootReducer(
       return state;
     }
 
+    case 'NETWORK_ERROR': {
+      return state;
+    }
+
     case 'UPLOAD_PHOTO__INITIATED': {
       return {
         ...state,
@@ -1046,8 +1067,16 @@ export default function rootReducer(
       // for a fresh store so that we can destructure with defaults.
       const unsentMessages =
         state.unconfirmedConversations[receiverUserId] || {};
-      const { byId = {}, allIds = [] } = unsentMessages;
+      const {
+        byId = {},
+        allIds = [],
+        inProgressIds = [],
+        failedIds = []
+      } = unsentMessages;
       const uuid = giftedChatMessage._id;
+
+      // If we are resending a message, we want to move the Id to inProgress.
+      const newFailedIds = failedIds.filter(i => i !== uuid);
 
       return {
         ...state,
@@ -1068,7 +1097,43 @@ export default function rootReducer(
               ...byId,
               [uuid]: giftedChatMessage
             },
-            allIds: [...allIds, uuid]
+            allIds: [...allIds, uuid],
+            inProgressIds: [...inProgressIds, uuid],
+            failedIds: newFailedIds
+          }
+        }
+      };
+    }
+
+    // Remove Id from in progress messages, add to failed messages.
+    case 'SEND_MESSAGE__FAILED': {
+      const { receiverUserId, messageUuid: uuid } = action.payload;
+
+      const unsentMessages =
+        state.unconfirmedConversations[receiverUserId] || {};
+      const { inProgressIds = [], failedIds = [] } = unsentMessages;
+
+      const newInProgressIds = inProgressIds.filter(i => i !== uuid);
+      const newFailedIds = [...failedIds, uuid];
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendMessage: {
+            ...state.inProgress.sendMessage,
+            [receiverUserId]: {
+              ...state.inProgress.sendMessage[receiverUserId],
+              [uuid]: false
+            }
+          }
+        },
+        unconfirmedConversations: {
+          ...state.unconfirmedConversations,
+          [receiverUserId]: {
+            ...unsentMessages,
+            inProgressIds: newInProgressIds,
+            failedIds: newFailedIds
           }
         }
       };
@@ -1079,9 +1144,12 @@ export default function rootReducer(
       const { messageId: id, unconfirmedMessageUuid: uuid } = message;
 
       // remove the sent message from the unsent list
-      const newUnsentMessageOrder = state.unconfirmedConversations[
-        receiverUserId
-      ].allIds.filter(i => i !== uuid);
+      const {
+        inProgressIds = [],
+        allIds = []
+      } = state.unconfirmedConversations[receiverUserId];
+      const newInProgressIds = inProgressIds.filter(i => i !== uuid);
+      const newAllIds = allIds.filter(i => i !== uuid);
 
       const confirmedConversations = updateConfirmedConversation(
         state,
@@ -1118,7 +1186,8 @@ export default function rootReducer(
           ...state.unconfirmedConversations,
           [receiverUserId]: {
             ...state.unconfirmedConversations[receiverUserId],
-            allIds: newUnsentMessageOrder
+            allIds: newAllIds,
+            inProgressIds: newInProgressIds
           }
         },
         unmessagedMatchIds,
@@ -1143,10 +1212,8 @@ export default function rootReducer(
 
     case 'NEW_MESSAGE__COMPLETED': {
       const { senderProfile, senderUserId, message } = action.payload;
-      const orderedIds = [
-        ...state.confirmedConversations[senderUserId].allIds,
-        message.messageId
-      ];
+      const { allIds = [] } = state.confirmedConversations[senderUserId] || {};
+      const orderedIds = [...allIds, message.messageId];
 
       const confirmedConversations = updateConfirmedConversation(
         state,
@@ -1184,7 +1251,57 @@ export default function rootReducer(
         ...state,
         topToast: {
           id: uuidv4(),
-          code: 'NEW_MATCH'
+          code: 'NEW_MATCH',
+          scene: action.payload.scene
+        }
+      };
+    }
+
+    case 'SAVE_SETTINGS__FAILED': {
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_SETTINGS__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveSettings: false
+        },
+        bottomToast
+      };
+    }
+
+    case 'SAVE_PROFILE__FAILED': {
+      const bottomToast = {
+        id: uuidv4(),
+        code: 'SAVE_PROFILE__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          saveProfile: false
+        },
+        bottomToast
+      };
+    }
+
+    case 'CANCEL_FAILED_MESSAGE': {
+      const { receiverUserId, failedMessageUuid } = action.payload;
+      const unsentMessages =
+        state.unconfirmedConversations[receiverUserId] || {};
+      const { failedIds = [] } = unsentMessages;
+      return {
+        ...state,
+        unconfirmedConversations: {
+          ...state.unconfirmedConversations,
+          [receiverUserId]: {
+            ...unsentMessages,
+            failedIds: failedIds.filter(i => {
+              return i !== failedMessageUuid;
+            })
+          }
         }
       };
     }

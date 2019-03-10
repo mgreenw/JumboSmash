@@ -11,16 +11,12 @@ export type SignedUrlPayload = {
 };
 
 export default function getSignedUrl(): Promise<SignedUrlPayload> {
-  return apiRequest('GET', GET_SIGN_URL__ROUTE)
-    .then(response => {
-      switch (response.status) {
-        case SIGN_URL__SUCCESS:
-          return response.data;
-        default:
-          throw { response };
-      }
-    })
-    .catch(error => {
-      throw { error };
-    });
+  return apiRequest('GET', GET_SIGN_URL__ROUTE).then(response => {
+    switch (response.status) {
+      case SIGN_URL__SUCCESS:
+        return response.data;
+      default:
+        throw new Error(response);
+    }
+  });
 }

@@ -20,20 +20,16 @@ export default function getConversation(
   mostRecentMessageId?: number
 ): Promise<Message[]> {
   const url = getConversationUrl(userId, mostRecentMessageId);
-  return apiRequest('GET', url)
-    .then(response => {
-      switch (response.status) {
-        case GET_CONVERSATION__SUCCESS: {
-          return response.data;
-        }
-        case GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID: {
-          throw new Error('Error: Invalid most recent message ID');
-        }
-        default:
-          throw new Error(response);
+  return apiRequest('GET', url).then(response => {
+    switch (response.status) {
+      case GET_CONVERSATION__SUCCESS: {
+        return response.data;
       }
-    })
-    .catch(error => {
-      throw new Error(error);
-    });
+      case GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID: {
+        throw new Error('Error: Invalid most recent message ID');
+      }
+      default:
+        throw new Error(response);
+    }
+  });
 }

@@ -9,18 +9,14 @@ const UPDATE_MY_SETTINGS__SUCCESS = 'UPDATE_SETTINGS__SUCCESS';
 export default function updateMySettings(
   request: UserSettings
 ): Promise<UserSettings> {
-  return apiRequest('PATCH', MY_SETTINGS__ROUTE, request)
-    .then(response => {
-      switch (response.status) {
-        case UPDATE_MY_SETTINGS__SUCCESS: {
-          const data: UserSettings = response.data;
-          return data;
-        }
-        default:
-          throw { response };
+  return apiRequest('PATCH', MY_SETTINGS__ROUTE, request).then(response => {
+    switch (response.status) {
+      case UPDATE_MY_SETTINGS__SUCCESS: {
+        const data: UserSettings = response.data;
+        return data;
       }
-    })
-    .catch(error => {
-      throw { error, request };
-    });
+      default:
+        throw new Error(response);
+    }
+  });
 }

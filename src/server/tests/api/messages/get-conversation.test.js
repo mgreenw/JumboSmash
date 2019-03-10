@@ -14,6 +14,7 @@ describe('GET api/messages/:userId', () => {
   beforeAll(async () => {
     await db.query('DELETE from classmates');
     await db.query('DELETE from profiles');
+    await db.query('DELETE from relationships');
     await db.query('DELETE FROM messages');
 
     me = await dbUtils.createUser('mgreen99', true);
@@ -24,6 +25,7 @@ describe('GET api/messages/:userId', () => {
   afterAll(async () => {
     await db.query('DELETE FROM classmates');
     await db.query('DELETE from profiles');
+    await db.query('DELETE from relationships');
     await db.query('DELETE FROM messages');
   });
 
@@ -44,7 +46,27 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
+  it('should return empty if there is no match', async () => {
+    await db.query(`
+      INSERT INTO MESSAGES
+      (sender_user_id, receiver_user_id, content, unconfirmed_message_uuid)
+      VALUES ($1, $2, $3, $4)
+    `, [me.id, other.id, 'hey', uuidv4()]);
+
+    const res = await request(app)
+      .get(`/api/messages/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    await db.query('DELETE FROM messages');
+
+    expect(res.body.data.length).toBe(0);
+  });
+
   it('should not accept an invalid most recent message id', async () => {
+    await dbUtils.createRelationship(me.id, other.id, true);
+    await dbUtils.createRelationship(other.id, me.id, true);
     let res = await request(app)
       .get(`/api/messages/${other.id}?most-recent-message-id=aaoeu`)
       .set('Accept', 'application/json')
@@ -179,6 +201,8 @@ describe('GET api/messages/:userId', () => {
 
   it('should return an empty array if the other user is banned', async () => {
     const person = await dbUtils.createUser('person04', true);
+    await dbUtils.createRelationship(person.id, me.id, true);
+    await dbUtils.createRelationship(me.id, person.id, true);
 
     let res = await request(app)
       .post(`/api/messages/${person.id}`)

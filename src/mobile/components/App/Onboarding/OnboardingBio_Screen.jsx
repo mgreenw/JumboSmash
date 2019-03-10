@@ -78,6 +78,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
           placeholder="The real Tony Monaco"
           onChangeText={this._onBioUpdate}
           value={profile.fields.bio}
+          maxLength={500}
         />
       </View>
     );
@@ -90,7 +91,6 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
         title="About Me"
         main
         progress={2}
-        progressComplete={complete}
         buttonDisabled={!complete}
       />
     );

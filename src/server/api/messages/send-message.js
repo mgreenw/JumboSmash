@@ -10,8 +10,7 @@ const {
   validate,
   canAccessUserData,
 } = require('../utils');
-const Socket = require('../../socket');
-const { apply: getProfile } = require('../users/get-profile');
+const Notifications = require('../../notifications');
 
 /* eslint-disable */
 const schema = {
@@ -47,18 +46,6 @@ const sendMessage = async (
   unconfirmedMessageUuid: string,
 ) => {
   try {
-    // The sender's profile is being fetched here so an error here will not let the message
-    // go through.
-    const senderProfileResult = await getProfile(senderUserId);
-    if (
-      senderProfileResult.body.status !== codes.GET_PROFILE__SUCCESS.status
-      || !senderProfileResult.body.data
-    ) {
-      throw new Error('Failed to get sender profile - this should have been caught by canAccessUserData()');
-    }
-
-    const senderProfile = senderProfileResult.body.data;
-
     const messageResult = await db.query(`
       INSERT INTO messages
       (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid)
@@ -90,16 +77,7 @@ const sendMessage = async (
       previousMessageId = previousMessageResult.rows[0].id;
     }
 
-    // Send the message over the socket!
-    Socket.sendNewMessageNotification(receiverUserId, {
-      message: {
-        ...message,
-        fromClient: false,
-      },
-      senderUserId,
-      senderProfile,
-      previousMessageId,
-    });
+    Notifications.newMessage(senderUserId, receiverUserId, message, previousMessageId);
 
     return status(codes.SEND_MESSAGE__SUCCESS).data({
       message,
@@ -125,7 +103,9 @@ const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
     // Ensure the user can access the other user's data
-    const canSendMessage = await canAccessUserData(req.params.userId, req.user.id);
+    const canSendMessage = await canAccessUserData(req.params.userId, req.user.id, {
+      requireMatch: true,
+    });
     if (!canSendMessage) {
       return status(codes.SEND_MESSAGE__USER_NOT_FOUND).noData();
     }

@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
@@ -22,10 +23,10 @@ type Props = {
   lastScreen?: boolean,
   infoScreen?: boolean,
   progress?: number,
-  progressComplete?: boolean,
   loading?: boolean,
   buttonDisabled?: boolean,
   section: 'profile' | 'settings',
+  onSkipPress?: () => void
 };
 type State = {};
 
@@ -44,7 +45,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
       progress,
       section,
       buttonDisabled,
-      progressComplete,
+      onSkipPress
     } = this.props;
     return (
       <View style={Arthur_Styles.container}>
@@ -55,14 +56,12 @@ export class OnboardingLayout extends React.Component<Props, State> {
         />
         <KeyboardView waves={1}>
           <View style={{ paddingTop: 20 }}>
-            {progress !== undefined &&
-              progressComplete !== undefined && (
-                <OnboardingProgress
-                  progress={progress}
-                  progressComplete={progressComplete}
-                  maxProgress={section === 'settings' ? 1 : 2}
-                />
-              )}
+            {progress !== undefined && (
+              <OnboardingProgress
+                progress={progress}
+                maxProgress={section === 'settings' ? 1 : 2}
+              />
+            )}
           </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
@@ -70,7 +69,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 style={{
                   flex: 0.5,
                   justifyContent: 'center',
-                  alignItems: 'center',
+                  alignItems: 'center'
                 }}
               >
                 <View>
@@ -88,26 +87,35 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <View
                 style={{
                   flex: 2,
-                  paddingLeft: firstScreen || lastScreen || infoScreen ? 25 : 40,
-                  paddingRight: firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingLeft:
+                    firstScreen || lastScreen || infoScreen ? 25 : 40,
+                  paddingRight:
+                    firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 {body}
               </View>
-              <View style={{ flex: 1, flexDirection: 'row' }}>
-                <View style={{ flex: 1 }} />
-                <View style={{ flex: 1 }}>
-                  <PrimaryButton
-                    onPress={onButtonPress}
-                    title={buttonText || 'Continue'}
-                    loading={loading}
-                    disabled={buttonDisabled}
-                  />
-                </View>
-                <View style={{ flex: 1 }} />
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  width: '100%'
+                }}
+              >
+                <PrimaryButton
+                  onPress={onButtonPress}
+                  title={buttonText || 'Continue'}
+                  loading={loading}
+                  disabled={buttonDisabled}
+                />
+                {onSkipPress && (
+                  <TertiaryButton onPress={onSkipPress} title={'Skip'} />
+                )}
+                {onSkipPress && <View /> /* for spacing */}
               </View>
             </View>
           </Transition>
