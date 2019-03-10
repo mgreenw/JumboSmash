@@ -35,7 +35,7 @@ jobs:
     script:
       - npm run lint
       - cd ../..
-      - npx flow check --ignore ".*/src/deploy/*, .*/src/mobile/*"
+      - npx flow check --ignore ".*/src/deploy/*, .*/src/mobile/*, .*/src/koh/*"
       - cd src/server
       - npm run check-env
       - npm run test
