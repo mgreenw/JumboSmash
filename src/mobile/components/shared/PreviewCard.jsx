@@ -18,13 +18,11 @@ export default (props: Props) => {
   return (
     <View
       style={{
-        flex: 1,
         margin: 20
       }}
     >
       <View
         style={{
-          flex: 2,
           alignItems: 'center'
         }}
       >
@@ -33,7 +31,8 @@ export default (props: Props) => {
           style={{
             width: width - 24,
             height: width - 24,
-            borderRadius: 20
+            borderRadius: 20,
+            backgroundColor: 'white'
           }}
           resizeMode={'contain'}
           uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
@@ -41,7 +40,6 @@ export default (props: Props) => {
       </View>
       <View
         style={{
-          flex: 1,
           backgroundColor: 'white',
           padding: 20,
           alignItems: 'center',
