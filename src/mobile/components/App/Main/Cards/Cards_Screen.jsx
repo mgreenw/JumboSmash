@@ -187,16 +187,14 @@ class SwipingScreen extends React.Component<Props, State> {
   };
 
   _onPressSwipeButton = (swipeDirection: SwipeDirection) => {
-    const { swipeInProgress } = this.state;
-    // Check if swipe is alredy in progress. Prevents user from breaking stuff by spamming the swipe buttons
-    if (!swipeInProgress) {
-      this.setState({ swipeInProgress: true }, () => {
-        if (this.deck) {
-          this.deck._forceSwipe(swipeDirection, 750);
-        } else {
-          throw new Error('this.deck is null in Cards_Screen');
-        }
-      });
+    if (this.deck) {
+      if (swipeDirection === 'right') {
+        this.deck.swipeRight();
+      } else if (swipeDirection === 'left') {
+        this.deck.swipeLeft();
+      }
+    } else {
+      throw new Error('this.deck is null in Cards_Screen');
     }
   };
 
