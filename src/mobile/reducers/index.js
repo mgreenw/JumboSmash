@@ -85,6 +85,10 @@ import type {
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
+import type {
+  UnmatchInitiated_Action,
+  UnmatchCompleted_Action
+} from 'mobile/actions/app/unmatch';
 
 import { normalize, schema } from 'normalizr';
 
@@ -93,6 +97,7 @@ import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
 
 export type Scene = 'smash' | 'social' | 'stone';
+export const Scenes: Scene[] = ['smash', 'social', 'stone'];
 
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
@@ -406,7 +411,9 @@ export type Action =
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
-  | CancelFailedMessage_Action;
+  | CancelFailedMessage_Action
+  | UnmatchInitiated_Action
+  | UnmatchCompleted_Action;
 
 export type GetState = () => ReduxState;
 
