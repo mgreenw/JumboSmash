@@ -53,7 +53,7 @@ jobs:
         then
           npm install --prefix ./src/mobile
         fi
-      - if [ -z $DEPLOY_CHANGE" ]
+      - if [ -z "$DEPLOY_CHANGE" ]
         then
           npm install --prefix ./src/deploy
         fi
