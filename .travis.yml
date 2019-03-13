@@ -24,19 +24,19 @@ jobs:
     before_install:
       - if git diff --name-only master | grep "src/server/";  then
           echo "Changes to Server Code!";
-          export SERVER_CHANGE=1;
+          export SERVER_CHANGE="True";
         fi
       - if git diff --name-only master | grep "src/koh/";  then
           echo "Changes to Koh Code!";
-          export KOH_CHANGE=1;
+          export KOH_CHANGE="True";
         fi
       - if git diff --name-only master | grep "src/mobile/";  then
           echo "Changes to Mobile Code!";
-          export MOBILE_CHANGE=1;
+          export MOBILE_CHANGE="True";
         fi
       - if git diff --name-only master | grep "src/deploy/";  then
           echo "Changes to Deploy Code!";
-          export DEPLOY_CHANGE=1;
+          export DEPLOY_CHANGE="True";
         fi
     install:
       - echo "Installing Dependencies..." ;
