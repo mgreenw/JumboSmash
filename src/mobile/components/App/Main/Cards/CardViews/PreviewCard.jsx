@@ -6,6 +6,7 @@ import type { UserProfile } from 'mobile/reducers';
 import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Image } from 'mobile/components/shared/imageCacheFork';
+import { Colors } from 'mobile/styles/colors';
 
 type Props = {
   profile: UserProfile
@@ -28,16 +29,29 @@ export default (props: Props) => {
           alignItems: 'center'
         }}
       >
-        <Image
-          key={profile.photoIds[0]}
+        <View
           style={{
+            /* In case image is not propperly cropped, fallback to this */
             width: width - 24,
-            height: width - 24,
-            borderRadius: 20
+            height: '100%',
+            backgroundColor: Colors.Black
           }}
-          resizeMode={'contain'}
-          uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
-        />
+        >
+          <Image
+            key={profile.photoIds[0]}
+            style={{
+              width: width - 24,
+              height: width - 24,
+              borderRadius: 20
+            }}
+            resizeMode={'contain'}
+            uri={
+              // TODO: revert
+              // GET_PHOTO__ROUTE + profile.photoIds[0]
+              'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
+            }
+          />
+        </View>
       </View>
       <View
         style={{

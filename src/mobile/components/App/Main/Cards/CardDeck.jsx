@@ -1,0 +1,236 @@
+// @flow
+import React from 'react';
+import { View, Text } from 'react-native';
+import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import type {
+  ReduxState,
+  Scene,
+  Dispatch,
+  UserProfile,
+  UserSettings
+} from 'mobile/reducers/index';
+import { connect } from 'react-redux';
+import Swiper from 'react-native-deck-swiper';
+
+import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
+import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
+import PreviewCard from './CardViews/PreviewCard';
+import InactiveSceneCard from './CardViews/InactiveSceneCard';
+
+type ProfileCard = {
+  type: 'PROFILE',
+  profileId: number,
+  testingText: string
+};
+
+type InactiveCard = {
+  type: 'INACTIVE',
+  testingText: string
+};
+
+type Card = InactiveCard | ProfileCard;
+
+type ProppyProps = {
+  scene: Scene
+};
+
+type ReduxProps = {
+  profileCards: ProfileCard[],
+  getCandidatesInProgress: boolean,
+  clientSettings: UserSettings,
+  profileMap: { [userId: number]: UserProfile }
+};
+
+type DispatchProps = {
+  getMoreCandidates: () => void,
+  dislike: (candidateUserId: number) => void,
+  like: (canidateUserId: number) => void
+};
+
+type Props = ProppyProps & DispatchProps & ReduxProps;
+type State = {
+  cards: Card[],
+  index: number,
+  allSwiped: boolean
+};
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+  const { scene } = ownProps;
+  const profileCards: ProfileCard[] = reduxState.sceneCandidateIds.smash.map(
+    profileId => {
+      return {
+        type: 'PROFILE',
+        profileId,
+        testingText: `Profile Id: ${profileId}`
+      };
+    }
+  );
+  if (!reduxState.client) {
+    throw new Error('client is null in Cards Screen');
+  }
+  return {
+    profileCards,
+    getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
+    clientSettings: reduxState.client.settings,
+    profileMap: reduxState.profiles
+  };
+}
+
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): DispatchProps {
+  const { scene } = ownProps;
+  return {
+    getMoreCandidates: () => {
+      dispatch(getSceneCandidatesAction(scene));
+    },
+    like: (candidateUserId: number) => {
+      dispatch(judgeSceneCandidateAction(candidateUserId, scene, true));
+    },
+    dislike: (candidateUserId: number) => {
+      dispatch(judgeSceneCandidateAction(candidateUserId, scene, false));
+    }
+  };
+}
+
+class cardDeck extends React.Component<Props, State> {
+  constructor(props: Props) {
+    const inactiveCard: InactiveCard = {
+      type: 'INACTIVE',
+      testingText: 'initial text for redux card'
+    };
+    super(props);
+    this.state = {
+      cards: [inactiveCard, ...props.profileCards],
+      index: 0,
+      allSwiped: false
+    };
+  }
+
+  // We use this to MUTATE the 'cards' array in this component's state.
+  // This is needed as the swiper uses a REFERENCE to the original array.
+  componentDidUpdate(prevProps: Props) {
+    const { profileCards, getCandidatesInProgress } = this.props;
+    const recievedNewCanidates =
+      prevProps.getCandidatesInProgress && !getCandidatesInProgress;
+    if (recievedNewCanidates) {
+      if (prevProps.profileCards !== profileCards) {
+        const { cards, allSwiped, index } = this.state;
+        const len = cards.length;
+        cards.splice(1, len, ...profileCards);
+        if (allSwiped) {
+          // The magic. This actually dosn't move the index, but forces the swiper to update its props.
+          // This is only used in the case we have hit the end of the deck.
+          this.swiper.jumpToCardIndex(index);
+        }
+      }
+    }
+  }
+
+  _onSwiped = (index: number) => {
+    this.setState({
+      index: index + 1
+    });
+  };
+
+  // Render the correct card based on the type.
+  // For now, we just have two:
+  //    1. the first card of the deck, used to active swiping
+  //       (and enable swiping if needed via settings)
+  //    2. the preview profile card.
+  _renderCard = (card: Card) => {
+    if (card.type === 'INACTIVE') {
+      const { clientSettings, scene } = this.props;
+      return (
+        <InactiveSceneCard
+          settings={clientSettings}
+          scene={scene}
+          dismissCard={() => {
+            this.swiper.swipeBottom();
+          }}
+        />
+      );
+    }
+    const { profileMap } = this.props;
+    const profile = profileMap[card.profileId];
+    return <PreviewCard profile={profile} />;
+  };
+
+  _onSwipedAll = () => {
+    const { getMoreCandidates } = this.props;
+    this.setState(
+      {
+        allSwiped: true
+      },
+      getMoreCandidates
+    );
+  };
+
+  _onSwipedLeft = (index: number) => {
+    const { dislike } = this.props;
+    const { cards } = this.state;
+    const card = cards[index];
+    if (card.type === 'PROFILE') {
+      dislike(card.profileId);
+    }
+  };
+
+  swiper: Swiper;
+
+  render() {
+    const { cards, index } = this.state;
+    const { getCandidatesInProgress } = this.props;
+
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1
+        }}
+      >
+        <Swiper
+          ref={swiper => {
+            this.swiper = swiper;
+          }}
+          cards={cards}
+          renderCard={this._renderCard}
+          onSwiped={this._onSwiped}
+          onSwipedLeft={this._onSwipedLeft}
+          onSwipedAll={this._onSwipedAll}
+          verticalSwipe={false}
+          horizontalSwipe={
+            index !== 0 /* don't allow the instructions to be swiped */
+          }
+          backgroundColor={'transparent'}
+          index={index}
+          stackSize={2}
+          cardVerticalMargin={0}
+          cardHorizontalMargin={0}
+          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+        />
+        <View
+          style={{
+            /* Absolutely absurd we have to do this, but the Swiper dosn't 
+               correctly propogate props to its children, so we have to fake locations. */
+            position: 'absolue',
+            zIndex: '-1'
+          }}
+        >
+          <PrimaryButton
+            onPress={this._onSwipedAll}
+            title="Load More"
+            loading={getCandidatesInProgress}
+            disabled={getCandidatesInProgress}
+          />
+        </View>
+      </View>
+    );
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(cardDeck);

@@ -892,17 +892,16 @@ export default function rootReducer(
       };
     }
 
-    // TODO: if we want this to load more canidates BEFORE empty, then append the new Ids to the old Ids.
-    // Currently, this assumes that state.sceneCanidateIds is an empty array.
+    // Appends new Ids to both the SceneCandidates array (the list of all candidates)
+    // and to the ExcludeSceneCandidates array (the list of candidates yet to have been confirmed judged by the server)
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
 
-      const {
-        result: orderedIds,
-        entities: normalizedData
-      } = normalizeCanidates(candidates);
-
-      // TODO: use [...oldIds, ...newIds] to preserve stack
+      const { result: newIds, entities: normalizedData } = normalizeCanidates(
+        candidates
+      );
+      const oldIds = state.sceneCandidateIds[scene];
+      const oldExcludeIds = state.excludeSceneCandidateIds[scene];
 
       return {
         ...state,
@@ -919,7 +918,11 @@ export default function rootReducer(
         },
         sceneCandidateIds: {
           ...state.sceneCandidateIds,
-          [scene]: orderedIds
+          [scene]: [...oldIds, ...newIds]
+        },
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: [...oldExcludeIds, ...newIds]
         }
       };
     }
@@ -980,25 +983,12 @@ export default function rootReducer(
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
       const { candidateUserId: judgedId, scene } = action.payload;
-      const currentSceneCandidateIds = state.sceneCandidateIds[scene];
-      if (
-        currentSceneCandidateIds === null ||
-        currentSceneCandidateIds === undefined
-      ) {
+      if (state.excludeSceneCandidateIds[scene].indexOf(judgedId) === -1) {
         throw new Error(
-          'currentSceneCandidates is null in judge scene candidates'
+          'Judged Candidate does not appear in reduxState.excludeSceneCandidateIds'
         );
       }
-
-      const excludeSceneCandidateIds_updated = {
-        ...state.excludeSceneCandidateIds,
-        [scene]: [...state.excludeSceneCandidateIds[scene], judgedId]
-      };
-
-      return {
-        ...state,
-        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
-      };
+      return state;
     }
 
     case 'SAVE_SETTINGS__COMPLETED': {
