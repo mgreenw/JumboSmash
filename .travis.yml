@@ -41,16 +41,16 @@ jobs:
     install:
       - echo "Installing Dependencies..." ;
       - npm install
-      - if echo $SERVER_CHANGE; then
+      - if [ "$SERVER_CHANGE" = "True"]; then
           npm install --prefix ./src/server;
         fi
-      - if echo $KOH_CHANGE; then
+      - if [ "$KOH_CHANGE" = "True"]; then
           npm install --prefix ./src/koh;
         fi
-      - if echo $MOBILE_CHANGE; then
+      - if [ "$MOBILE_CHANGE" = "True"]; then
           npm install --prefix ./src/mobile;
         fi
-      - if echo $DEPLOY_CHANGE; then
+      - if [ ""$DEPLOY_CHANGE"  = "True"]; then
           npm install --prefix ./src/deploy;
         fi
 
