@@ -1,11 +1,11 @@
 language: generic
 sudo: required
 services:
-- docker
 - redis-server
+
 jobs:
+  # Server Job
   include:
-  - stage: server
     dist: xenial
     language: node_js
     node_js:
@@ -13,21 +13,47 @@ jobs:
     env:
       - NODE_CONFIG_ENV=travis
       - PGUSER=postgres
+      - SERVER_CHANGE=""
+      - KOH_CHANGE=""
+      - MOBILE_CHANGE=""
+      - DEPLOY_CHANGE=""
     cache:
       - npm
     addons:
        postgresql: '10'
     before_install:
-      - if git diff --name-only HEAD^ | grep "src/server/";  then
-          echo "Changes to Server Code, Continuing Travis Stage!";
-        else
-          echo "No Changes to Server, Exiting Stage ...!";
-          travis_terminate 0;
+      - if git diff --name-only master | grep "src/server/";  then
+          echo "Changes to Server Code!";
+          export SERVER_CHANGE=1;
+        fi
+      - if git diff --name-only master | grep "src/koh/";  then
+          echo "Changes to Koh Code!";
+          export KOH_CHANGE=1;
+        fi
+      - if git diff --name-only master | grep "src/mobile/";  then
+          echo "Changes to Mobile Code!";
+          export MOBILE_CHANGE=1;
+        fi
+      - if git diff --name-only master | grep "src/deploy/";  then
+          echo "Changes to Deploy Code!";
+          export DEPLOY_CHANGE=1;
         fi
     install:
-      - echo "Installing Server Dependencies.." ;
+      - echo "Installing Dependencies..." ;
       - npm install
-      - npm install --prefix ./src/server
+      - if $SERVER_CHANGE; then
+          npm install --prefix ./src/server;
+        fi
+      - if $KOH_CHANGE; then
+          npm install --prefix ./src/koh;
+        fi
+      - if $MOBILE_CHANGE; then
+          npm install --prefix ./src/mobile;
+        fi
+      - if $DEPLOY_CHANGE; then
+          npm install --prefix ./src/deploy;
+        fi
+
     before_script:
       - psql -c 'create database jumbosmash_test;' -U postgres
       - psql -d jumbosmash_test -c 'create extension if not exists citext;' -U postgres
@@ -39,6 +65,7 @@ jobs:
       - cd src/server
       - npm run check-env
       - npm run test
+
 notifications:
   slack:
     secure: BT+I+DPQBPupDHMADVKtE7QPkqpDpchMS9eLxrGqNc7WuND8dnce/p0/PpodbSOiBTlgoxaGj0iFg1rSf3Z6dOiLcJs4RuuY4hRVxto2nlznOnY4xHY8gHMvaWUy7JkIXeLKLRQ4+jXHvhVU8h1y+GvxHL2VmDlxYWWKlw/r1ltHi7/fDObIhEDQx6Da/pdqfVPpQAkBaPnF+z0I3ZqFh2f1TIMknn3SPDTHqbseioVc4BD9lceICQ+h82a2eQF9QTyYbBkeCk2rA4kfaA3zNmaDTpbApuYzryjtgAtyhowRngU4k9OCSFYJ8VVUGFDpAchakRffCvHMN0uf2UUtL0lZRL3Dre00bTTvwFNSH7ZRL7czUb0Fdr9NMyf6JS99ijVRb2LTsdf3aEgRgu/uq0zgca3vM1J28ZzZ5BBJvzezp6G9ia5m102CJ1Pcjspc8wUmcHw0YhKAsNBVzJWTW4JXkcoN0o/t04Y+QkESOrQ37uS+8WeaOZYK0AWos05Owd2AVJXk5oZBvqMxSNGSqn7qP6MgxV1gxi4A3qotWIr6kRfgO1qGdDthnyZMyPKfcH8eDDc18vWGPmDSkU5c4kMm28Poyv7Ne2CrWGcsTHJzrKdnNtpCCcnpZqRnTNgiotSfaEbCS21r4JP4E40Dz7FilJ//zkPdoNi361AJ1+U=
