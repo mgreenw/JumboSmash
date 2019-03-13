@@ -13,10 +13,6 @@ jobs:
     env:
       - NODE_CONFIG_ENV=travis
       - PGUSER=postgres
-      - SERVER_CHANGE=""
-      - KOH_CHANGE=""
-      - MOBILE_CHANGE=""
-      - DEPLOY_CHANGE=""
     cache:
       - npm
     addons:
