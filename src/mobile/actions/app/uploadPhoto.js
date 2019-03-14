@@ -45,7 +45,7 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
 
 function fail(): UploadPhotoFailed_Action {
   return {
-    type: 'SEND_MESSAGE__FAILED',
+    type: 'UPLOAD_PHOTO__FAILED',
     payload: {},
     meta: {}
   };
@@ -57,13 +57,14 @@ export default (uri: string) => (dispatch: Dispatch) => {
   dispatch(initiate());
   getSignedUrl()
     .then(payload => {
+      // TODO: rewrite this to use promises correctly...
       uploadPhotoToS3(uri, payload).then(success => {
         if (success) {
           confirmUploadAction().then(photoIds => {
             dispatch(complete(photoIds));
           });
         } else {
-          throw new Error('Error Uploading Photo');
+          dispatch(fail());
         }
       });
     })

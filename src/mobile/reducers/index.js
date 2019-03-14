@@ -101,7 +101,8 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__SUCCESS'
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
-  | 'SAVE_PROFILE__FAILURE';
+  | 'SAVE_PROFILE__FAILURE'
+  | 'UPLOAD_PHOTO_FAILURE';
 export type BottomToast = {
   uuid: string,
   code: ?BottomToastCode
@@ -821,6 +822,21 @@ export default function rootReducer(
             photoIds: action.payload.photoIds
           }
         }
+      };
+    }
+
+    case 'UPLOAD_PHOTO__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'UPLOAD_PHOTO_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: false
+        },
+        bottomToast
       };
     }
 
