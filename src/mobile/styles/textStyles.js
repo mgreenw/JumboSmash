@@ -313,6 +313,7 @@ export const textStyles = StyleSheet.create({
     color: Colors.Grapefruit,
     fontFamily: 'vegan',
     fontSize: 45,
+    lineHeight: 80,
     padding: 15,
     textAlign: 'center'
   }

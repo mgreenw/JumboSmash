@@ -55,7 +55,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
           loading={loading}
         />
         <KeyboardView waves={1}>
-          <View style={{ paddingTop: 20 }}>
+          <View>
             {progress !== undefined && (
               <OnboardingProgress
                 progress={progress}
@@ -65,31 +65,20 @@ export class OnboardingLayout extends React.Component<Props, State> {
           </View>
           <Transition inline appear={'horizontal'}>
             <View style={{ flex: 1 }}>
-              <View
-                style={{
-                  flex: 0.5,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
+              <Text
+                style={[
+                  firstScreen || lastScreen || infoScreen
+                    ? textStyles.veganTitle
+                    : { ...textStyles.headline5StyleDemibold, padding: 10 },
+                  { alignSelf: 'center' }
+                ]}
               >
-                <View>
-                  <Text
-                    style={
-                      firstScreen || lastScreen || infoScreen
-                        ? textStyles.veganTitle
-                        : textStyles.headline5StyleDemibold
-                    }
-                  >
-                    {title}
-                  </Text>
-                </View>
-              </View>
+                {title}
+              </Text>
               <View
                 style={{
                   flex: 2,
-                  paddingLeft:
-                    firstScreen || lastScreen || infoScreen ? 25 : 40,
-                  paddingRight:
+                  paddingHorizontal:
                     firstScreen || lastScreen || infoScreen ? 25 : 40,
                   width: '100%',
                   alignItems: 'center',

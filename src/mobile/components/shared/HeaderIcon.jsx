@@ -68,11 +68,10 @@ export default class HeaderIcon extends React.Component<Props, State> {
       <TouchableOpacity
         ref={self => (this.iconTouchableOpacity = self)}
         style={{
-          marginHorizontal: 12,
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          opacity: disabled ? 0.2 : 1
+          opacity: disabled ? 0.2 : 1,
         }}
         onPress={() => {
           Keyboard.dismiss(); // in case a keyboard is up, buttons close them

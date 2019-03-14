@@ -87,7 +87,12 @@ export default (props: Props) => {
         placement="center"
         backgroundColor="transparent"
         leftComponent={LeftIcon}
+        leftContainerStyle={{ flex: 0, paddingLeft: 4 }}
         rightComponent={RightIcon}
+        rightContainerStyle={{
+          flex: 0,
+          paddingRight: 4
+        }}
         centerComponent={centerComponent || Title}
         containerStyle={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />

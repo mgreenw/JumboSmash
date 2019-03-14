@@ -36,8 +36,8 @@ const ProgressTick = (props: { filled: boolean }) => {
   return (
     <View
       style={{
-        width: 32,
-        height: 32,
+        width: 20,
+        height: 20,
         borderColor: Colors.AquaMarine,
         borderWidth: 2,
         borderRadius: 32,
