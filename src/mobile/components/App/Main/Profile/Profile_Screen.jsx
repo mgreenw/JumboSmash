@@ -40,8 +40,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            paddingLeft: 60,
-            paddingRight: 60
+            paddingHorizontal: '16.5%'
           }}
           disabled={loading}
         >
