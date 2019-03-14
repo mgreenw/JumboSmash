@@ -47,6 +47,10 @@ function messageFromCode(code: BottomToastCode): string {
       return 'Profile save failed. Try again.';
     }
 
+    case 'UPLOAD_PHOTO_FAILURE': {
+      return 'Failed to upload photo.';
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (code: empty); // ensures we have handled all cases

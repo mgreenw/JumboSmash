@@ -19,6 +19,12 @@ export type UploadPhotoCompleted_Action = {
   meta: {}
 };
 
+export type UploadPhotoFailed_Action = {
+  type: 'UPLOAD_PHOTO__FAILED',
+  payload: {},
+  meta: {}
+};
+
 function initiate(): UploadPhotoInitiated_Action {
   return {
     type: 'UPLOAD_PHOTO__INITIATED',
@@ -37,22 +43,33 @@ function complete(photoIds: number[]): UploadPhotoCompleted_Action {
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
+function fail(): UploadPhotoFailed_Action {
+  return {
+    type: 'UPLOAD_PHOTO__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
+// Invariant: only one of these actions in progress at a time.
+// We can enforce this via the inProgress property if needed, or even bind the uri to the state.
 export default (uri: string) => (dispatch: Dispatch) => {
   dispatch(initiate());
   getSignedUrl()
     .then(payload => {
+      // TODO: rewrite this to use promises correctly...
       uploadPhotoToS3(uri, payload).then(success => {
         if (success) {
           confirmUploadAction().then(photoIds => {
             dispatch(complete(photoIds));
           });
         } else {
-          throw new Error('Error Uploading Photo');
+          dispatch(fail());
         }
       });
     })
     .catch(error => {
+      dispatch(fail());
       dispatch(apiErrorHandler(error));
     });
 };
