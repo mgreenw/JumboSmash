@@ -115,7 +115,7 @@ class SplashScreen extends React.Component<Props, State> {
           break;
         }
         case 'NOT_TUFTS_EMAIL': {
-          this._onBadFormat();
+          this._onNotTuftsEmail();
           break;
         }
         default: {
@@ -126,9 +126,8 @@ class SplashScreen extends React.Component<Props, State> {
     }
   }
 
-  // for when the email submmited does not match *@tufts.edu
-  _onBadFormat = () => {
-    this._utlnInputError('Not a Tufts email!');
+  _onNotTuftsEmail = () => {
+    this._utlnInputError('Not a valid Tufts email');
   };
 
   // utln and email should be params, not from state, to ensure it's the
@@ -194,6 +193,10 @@ class SplashScreen extends React.Component<Props, State> {
       this._utlnInputError('Required');
       return false;
     }
+    if (!utln.includes('@tufts.edu')) {
+      this._onNotTuftsEmail();
+      return false;
+    }
     return true;
   };
 
@@ -212,7 +215,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   render() {
     // this is the navigator we passed in from App.js
-    const { utln, errorMessageUtln, showPopup, hasHadError } = this.state;
+    const { utln, errorMessageUtln, hasHadError } = this.state;
     const { sendVerificationEmail_inProgress } = this.props;
 
     return (
