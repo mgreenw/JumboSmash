@@ -90,7 +90,6 @@ export default () => (dispatch: Dispatch) => {
             Sentry.setUserContext({
               username: utln
             });
-
             Sentry.captureMessage('User Logged In!', {
               level: 'info'
             });

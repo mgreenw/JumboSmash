@@ -18,8 +18,8 @@ const AppContainer = createAppContainer(TopLevelNavigator);
 type Props = {};
 type State = {};
 
-// Remove this once Sentry is correctly setup.
-Sentry.enableInExpoDevelopment = true;
+// Enable if you want to test sentry locally!
+Sentry.enableInExpoDevelopment = false;
 
 Sentry.config(
   'https://ecc5a708ed57466a9ed0dfb92059f98a@sentry.io/1415487'
