@@ -75,7 +75,7 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
         <Transition inline appear="horizontal">
           <View style={{ flex: 1 }}>
             <ScrollView>
-              <View style={{ paddingLeft: 38, paddingRight: 38 }}>
+              <View style={{ paddingHorizontal: '10%' }}>
                 <TermsAndConditions />
               </View>
               <View

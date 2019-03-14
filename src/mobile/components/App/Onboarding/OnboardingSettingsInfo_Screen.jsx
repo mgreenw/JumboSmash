@@ -89,7 +89,6 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
         section="settings"
         onButtonPress={this._goToNextPage}
         title="JumboSmash"
-        progress={0}
       />
     );
   }

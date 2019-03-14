@@ -11,7 +11,8 @@ type StatusCode =
   | 'ALREADY_SENT'
   | 'WRONG_CLASS_YEAR'
   | 'NOT_STUDENT'
-  | 'NOT_FOUND';
+  | 'NOT_FOUND'
+  | 'NOT_TUFTS_EMAIL';
 
 export type SendVerificationEmail_Response = {
   statusCode: StatusCode,

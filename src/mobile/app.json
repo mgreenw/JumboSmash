@@ -5,7 +5,7 @@
     "privacy": "unlisted",
     "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "Ready for Beta",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
@@ -17,7 +17,19 @@
     "ios": {
       "bundleIdentifier": "com.jumbosmash.mobile"
     },
-    "primaryColor": "#ff6262"
+    "primaryColor": "#ff6262",
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "projectgem",
+            "project": "mobile",
+            "authToken": "babbe1b9977c4ce093df1e2d36d251855e31f529afc94134a59a8630cbe51926"
+          }
+        }
+      ]
+    }
   },
   "privacy": "unlisted"
 }

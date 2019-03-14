@@ -34,7 +34,6 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  showPopup: boolean,
   hasHadError: boolean
 };
 
@@ -58,12 +57,9 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
 class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
-    const error = navigation.getParam('error', null);
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      showPopup: error != null,
       hasHadError: false
     };
   }
@@ -114,6 +110,10 @@ class SplashScreen extends React.Component<Props, State> {
           this._onNotFound();
           break;
         }
+        case 'NOT_TUFTS_EMAIL': {
+          this._onNotTuftsEmail();
+          break;
+        }
         default: {
           // eslint-disable-next-line no-unused-expressions
           (statusCode: empty); // ensures we have handled all cases
@@ -121,6 +121,10 @@ class SplashScreen extends React.Component<Props, State> {
       }
     }
   }
+
+  _onNotTuftsEmail = () => {
+    this._utlnInputError('Not a valid Tufts email');
+  };
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
@@ -185,6 +189,10 @@ class SplashScreen extends React.Component<Props, State> {
       this._utlnInputError('Required');
       return false;
     }
+    if (utln.includes('@') && !utln.includes('@tufts.edu')) {
+      this._onNotTuftsEmail();
+      return false;
+    }
     return true;
   };
 
@@ -203,7 +211,7 @@ class SplashScreen extends React.Component<Props, State> {
 
   render() {
     // this is the navigator we passed in from App.js
-    const { utln, errorMessageUtln, showPopup, hasHadError } = this.state;
+    const { utln, errorMessageUtln, hasHadError } = this.state;
     const { sendVerificationEmail_inProgress } = this.props;
 
     return (
@@ -246,7 +254,10 @@ class SplashScreen extends React.Component<Props, State> {
                   loading={sendVerificationEmail_inProgress}
                   hidden={!hasHadError}
                 />
-                <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
+                <TertiaryButton
+                  onPress={this._onHelp}
+                  title="Having Trouble?"
+                />
               </View>
             </View>
           </Transition>
