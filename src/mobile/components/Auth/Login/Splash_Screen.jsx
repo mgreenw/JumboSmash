@@ -34,7 +34,6 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  showPopup: boolean,
   hasHadError: boolean
 };
 
@@ -63,7 +62,6 @@ class SplashScreen extends React.Component<Props, State> {
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      showPopup: error != null,
       hasHadError: false
     };
   }
@@ -258,7 +256,10 @@ class SplashScreen extends React.Component<Props, State> {
                   loading={sendVerificationEmail_inProgress}
                   hidden={!hasHadError}
                 />
-                <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
+                <TertiaryButton
+                  onPress={this._onHelp}
+                  title="Having Trouble?"
+                />
               </View>
             </View>
           </Transition>
