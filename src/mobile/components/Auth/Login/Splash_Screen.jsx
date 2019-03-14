@@ -34,7 +34,6 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  showPopup: boolean,
   hasHadError: boolean
 };
 
@@ -58,12 +57,9 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
 class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
-    const error = navigation.getParam('error', null);
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      showPopup: error != null,
       hasHadError: false
     };
   }
@@ -258,7 +254,10 @@ class SplashScreen extends React.Component<Props, State> {
                   loading={sendVerificationEmail_inProgress}
                   hidden={!hasHadError}
                 />
-                <TertiaryButton onPress={this._onHelp} title="Having Touble?" />
+                <TertiaryButton
+                  onPress={this._onHelp}
+                  title="Having Trouble?"
+                />
               </View>
             </View>
           </Transition>
