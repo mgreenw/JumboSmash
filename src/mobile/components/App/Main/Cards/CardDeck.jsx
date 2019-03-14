@@ -208,13 +208,14 @@ class cardDeck extends React.Component<Props, State> {
           stackSize={2}
           cardVerticalMargin={0}
           cardHorizontalMargin={0}
-          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+          stackSeparation={0}
+          marginBottom={0 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
         />
         <View
           style={{
             /* Absolutely absurd we have to do this, but the Swiper dosn't 
                correctly propogate props to its children, so we have to fake locations. */
-            position: 'absolue',
+            position: 'absolute',
             zIndex: '-1'
           }}
         >

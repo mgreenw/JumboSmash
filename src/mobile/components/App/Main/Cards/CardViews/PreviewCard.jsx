@@ -19,13 +19,11 @@ export default (props: Props) => {
   return (
     <View
       style={{
-        flex: 1,
         margin: 20
       }}
     >
       <View
         style={{
-          flex: 2,
           alignItems: 'center'
         }}
       >
@@ -33,8 +31,9 @@ export default (props: Props) => {
           style={{
             /* In case image is not propperly cropped, fallback to this */
             width: width - 24,
-            height: '100%',
-            backgroundColor: Colors.Black
+            height: width - 24,
+            borderRadius: 20,
+            backgroundColor: 'white'
           }}
         >
           <Image
@@ -55,7 +54,6 @@ export default (props: Props) => {
       </View>
       <View
         style={{
-          flex: 1,
           backgroundColor: 'white',
           padding: 20,
           alignItems: 'center',
