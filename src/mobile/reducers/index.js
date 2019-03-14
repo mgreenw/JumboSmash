@@ -40,7 +40,8 @@ import type {
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
-  UploadPhotoCompleted_Action
+  UploadPhotoCompleted_Action,
+  UploadPhotoFailed_Action
 } from 'mobile/actions/app/uploadPhoto';
 import type {
   DeletePhotoInitiated_Action,
@@ -406,7 +407,8 @@ export type Action =
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
-  | CancelFailedMessage_Action;
+  | CancelFailedMessage_Action
+  | UploadPhotoFailed_Action;
 
 export type GetState = () => ReduxState;
 
