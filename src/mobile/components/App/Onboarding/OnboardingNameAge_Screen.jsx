@@ -152,8 +152,12 @@ export default class NameAgeScreen extends React.Component<Props, State> {
       errorMessageName !== '' ||
       errorMessageBirthday !== '';
     const body = (
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1
+        }}
+      >
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <PrimaryInput
             value={profile.fields.displayName}
             label="Preferred First Name"
@@ -165,7 +169,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
             maxLength={50}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <BirthdayInput
             label="Birthday"
             assistive=""
