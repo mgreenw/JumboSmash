@@ -28,7 +28,7 @@ const NO_EMAIL = 'NO EMAIL FOR THIS RESPONSE CODE';
 const NO_CLASS_YEAR = 'NO CLASS YEAR FOR THIS RESPONSE CODE';
 const NO_UTLN = 'NO UTLN FOR THIS RESPONSE';
 
-const EMAIL_DOMAIN = '@tufts.eddu';
+const EMAIL_DOMAIN = '@tufts.edu';
 
 // A nice helper to allow us to just input the UTLN :)
 function allowRawUtlnInRequest(request: Request): Request {
