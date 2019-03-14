@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View, Alert } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import { Permissions, ImagePicker } from 'expo';
+import { Permissions, ImagePicker, ImageManipulator } from 'expo';
 import Popup from 'mobile/components/shared/Popup';
 import ProgressBar from 'react-native-progress/Bar';
 import { connect } from 'react-redux';
@@ -59,6 +59,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 async function selectPhoto(): Promise<?string> {
   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
   if (status === 'granted') {
+    // Get uri of image
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1]
@@ -66,7 +67,15 @@ async function selectPhoto(): Promise<?string> {
     if (result.cancelled) {
       return null;
     }
-    return result.uri;
+    // TODO: use the height and width of the result to ensure square here, crop if not in manipulation step
+    // ensure image is relatively small
+    const { uri } = await ImageManipulator.manipulateAsync(result.uri, [], {
+      compress: 1.0, // TODO: figure out how much this should be compressed. Currently, we don't
+      format: 'jpeg',
+      base64: false
+    });
+
+    return uri;
   }
   Alert.alert(
     "Please enable camera roll access in your phone's settings to proceed."
