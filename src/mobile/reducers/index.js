@@ -103,13 +103,13 @@ export type BottomToastCode =
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE';
 export type BottomToast = {
-  id: number,
+  uuid: string,
   code: ?BottomToastCode
 };
 
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
-  id: number,
+  uuid: string,
   code: ?NewMatchToastCode,
   profileId?: number,
   scene?: Scene
@@ -117,7 +117,7 @@ export type NewMatchToast = {
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
-  id: number,
+  uuid: string,
   code: ?NewMessageToastCode,
   displayName: ?string
 };
@@ -470,11 +470,11 @@ const defaultState: ReduxState = {
 
   // Toasts
   bottomToast: {
-    id: 0,
+    uuid: '0',
     code: null
   },
   topToast: {
-    id: 0,
+    uuid: '0',
     code: null
   }
 };
@@ -756,7 +756,7 @@ export default function rootReducer(
     case 'SAVE_PROFILE__COMPLETED': {
       const { fields } = action.payload;
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_PROFILE__SUCCESS'
       };
       if (!state.client) {
@@ -978,7 +978,7 @@ export default function rootReducer(
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_SETTINGS__SUCCESS'
       };
       return {
@@ -1233,7 +1233,7 @@ export default function rootReducer(
       return {
         ...state,
         topToast: {
-          id: uuidv4(),
+          uuid: uuidv4(),
           code: 'NEW_MESSAGE',
           displayName: senderProfile.fields.displayName
         },
@@ -1252,7 +1252,7 @@ export default function rootReducer(
       return {
         ...state,
         topToast: {
-          id: uuidv4(),
+          uuid: uuidv4(),
           code: 'NEW_MATCH',
           scene: action.payload.scene
         }
@@ -1261,7 +1261,7 @@ export default function rootReducer(
 
     case 'SAVE_SETTINGS__FAILED': {
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_SETTINGS__FAILURE'
       };
       return {
@@ -1276,7 +1276,7 @@ export default function rootReducer(
 
     case 'SAVE_PROFILE__FAILED': {
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_PROFILE__FAILURE'
       };
       return {

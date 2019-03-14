@@ -58,7 +58,7 @@ function messageFromCode(code: BottomToastCode): string {
 class BottomToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { bottomToast } = this.props;
-    if (bottomToast.code && bottomToast.id !== prevProps.bottomToast.id) {
+    if (bottomToast.code && bottomToast.uuid !== prevProps.bottomToast.uuid) {
       const message = messageFromCode(bottomToast.code);
       this.showToast(message);
     }
