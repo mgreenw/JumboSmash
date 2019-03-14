@@ -193,7 +193,7 @@ class SplashScreen extends React.Component<Props, State> {
       this._utlnInputError('Required');
       return false;
     }
-    if (!utln.includes('@tufts.edu')) {
+    if (utln.includes('@') && !utln.includes('@tufts.edu')) {
       this._onNotTuftsEmail();
       return false;
     }
