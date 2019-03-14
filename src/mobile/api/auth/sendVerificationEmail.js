@@ -22,6 +22,8 @@ const SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019 =
   'SEND_VERIFICATION_EMAIL__EMAIL_NOT_2019';
 const SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT =
   'SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT';
+const SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL =
+  'SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL';
 
 // Helpful for debugging, easier than having a conditional type based on an enum
 const NO_EMAIL = 'NO EMAIL FOR THIS RESPONSE CODE';
@@ -90,6 +92,14 @@ export default function sendVerificationEmail(
         return {
           statusCode: 'WRONG_CLASS_YEAR',
           classYear: response.data.classYear,
+          responseEmail: NO_EMAIL,
+          requestEmail: request.email,
+          utln: NO_UTLN
+        };
+      case SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL:
+        return {
+          statusCode: 'NOT_TUFTS_EMAIL',
+          classYear: NO_CLASS_YEAR,
           responseEmail: NO_EMAIL,
           requestEmail: request.email,
           utln: NO_UTLN
