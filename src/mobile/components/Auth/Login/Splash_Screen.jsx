@@ -114,6 +114,10 @@ class SplashScreen extends React.Component<Props, State> {
           this._onNotFound();
           break;
         }
+        case 'NOT_TUFTS_EMAIL': {
+          this._onBadFormat();
+          break;
+        }
         default: {
           // eslint-disable-next-line no-unused-expressions
           (statusCode: empty); // ensures we have handled all cases
@@ -121,6 +125,11 @@ class SplashScreen extends React.Component<Props, State> {
       }
     }
   }
+
+  // for when the email submmited does not match *@tufts.edu
+  _onBadFormat = () => {
+    this._utlnInputError('Not a Tufts email!');
+  };
 
   // utln and email should be params, not from state, to ensure it's the
   // same that were submitted!
