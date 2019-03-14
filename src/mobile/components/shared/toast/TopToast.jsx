@@ -52,7 +52,7 @@ class BottomToastComponent extends React.Component<Props> {
       topToast.code === 'NEW_MATCH' && topToast.scene
         ? sceneToEmoji(topToast.scene)
         : '';
-    if (topToast.code && topToast.id !== prevProps.topToast.id) {
+    if (topToast.code && topToast.uuid !== prevProps.topToast.uuid) {
       const message = messageFromCode(topToast.code) + icon;
       this.showToast(message);
     }
