@@ -3,8 +3,10 @@
 import type { UserSettings, UserProfile, Dispatch } from 'mobile/reducers';
 import getMyProfile from 'mobile/api/users/GetMyProfile';
 import getMySettings from 'mobile/api/users/GetMySettings';
+import getClientUtln from 'mobile/api/auth/getClientUtln';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import getMyPhotos from 'mobile/api/users/GetMyPhotos';
+import Sentry from 'sentry-expo';
 
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
@@ -77,13 +79,24 @@ export default () => (dispatch: Dispatch) => {
     .then(profile => {
       // if profile is null, onboarding has not been completed, though
       // some photos may have been uploaded.
-      if (profile === null) {
+      if (profile === null || profile === undefined) {
         getMyPhotos().then(photoIds => {
           dispatch(complete(null, null, false, photoIds));
         });
       } else {
         getMySettings().then(settings => {
-          dispatch(complete(profile, settings, true));
+          getClientUtln().then(utln => {
+            // TODO: add UserId, need it retrieved somewhere, preferably the same utln endpoint
+            Sentry.setUserContext({
+              username: utln
+            });
+
+            Sentry.captureMessage('User Logged In!', {
+              level: 'info'
+            });
+
+            dispatch(complete(profile, settings, true));
+          });
         });
       }
     })
