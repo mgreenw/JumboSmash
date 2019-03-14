@@ -209,7 +209,7 @@ class cardDeck extends React.Component<Props, State> {
           cardVerticalMargin={0}
           cardHorizontalMargin={0}
           stackSeparation={0}
-          marginBottom={0 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
         />
         <View
           style={{
