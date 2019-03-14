@@ -57,8 +57,6 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
 class SplashScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
-    const error = navigation.getParam('error', null);
     this.state = {
       utln: '',
       errorMessageUtln: '',
