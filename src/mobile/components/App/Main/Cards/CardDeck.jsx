@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -210,6 +210,7 @@ class cardDeck extends React.Component<Props, State> {
           cardHorizontalMargin={0}
           stackSeparation={0}
           marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+          stackScale={6}
         />
         <View
           style={{

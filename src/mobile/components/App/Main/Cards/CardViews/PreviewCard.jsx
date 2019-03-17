@@ -44,11 +44,7 @@ export default (props: Props) => {
               borderRadius: 20
             }}
             resizeMode={'contain'}
-            uri={
-              // TODO: revert
-              // GET_PHOTO__ROUTE + profile.photoIds[0]
-              'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
-            }
+            uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
           />
         </View>
       </View>
