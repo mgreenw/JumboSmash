@@ -40,7 +40,8 @@ import type {
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
-  UploadPhotoCompleted_Action
+  UploadPhotoCompleted_Action,
+  UploadPhotoFailed_Action
 } from 'mobile/actions/app/uploadPhoto';
 import type {
   DeletePhotoInitiated_Action,
@@ -100,15 +101,16 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__SUCCESS'
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
-  | 'SAVE_PROFILE__FAILURE';
+  | 'SAVE_PROFILE__FAILURE'
+  | 'UPLOAD_PHOTO_FAILURE';
 export type BottomToast = {
-  id: string,
+  uuid: string,
   code: ?BottomToastCode
 };
 
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
-  id: string,
+  uuid: string,
   code: ?NewMatchToastCode,
   profileId?: number,
   scene?: Scene
@@ -116,7 +118,7 @@ export type NewMatchToast = {
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
-  id: string,
+  uuid: string,
   code: ?NewMessageToastCode,
   displayName: ?string
 };
@@ -416,7 +418,8 @@ export type Action =
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
-  | CancelFailedMessage_Action;
+  | CancelFailedMessage_Action
+  | UploadPhotoFailed_Action;
 
 export type GetState = () => ReduxState;
 
@@ -478,11 +481,11 @@ const defaultState: ReduxState = {
 
   // Toasts
   bottomToast: {
-    id: '0',
+    uuid: '0',
     code: null
   },
   topToast: {
-    id: '0',
+    uuid: '0',
     code: null
   }
 };
@@ -778,7 +781,7 @@ export default function rootReducer(
     case 'SAVE_PROFILE__COMPLETED': {
       const { fields } = action.payload;
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_PROFILE__SUCCESS'
       };
       if (!state.client) {
@@ -843,6 +846,21 @@ export default function rootReducer(
             photoIds: action.payload.photoIds
           }
         }
+      };
+    }
+
+    case 'UPLOAD_PHOTO__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'UPLOAD_PHOTO_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          uploadPhoto: false
+        },
+        bottomToast
       };
     }
 
@@ -996,7 +1014,7 @@ export default function rootReducer(
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_SETTINGS__SUCCESS'
       };
       return {
@@ -1251,7 +1269,7 @@ export default function rootReducer(
       return {
         ...state,
         topToast: {
-          id: uuidv4(),
+          uuid: uuidv4(),
           code: 'NEW_MESSAGE',
           displayName: senderProfile.fields.displayName
         },
@@ -1270,7 +1288,7 @@ export default function rootReducer(
       return {
         ...state,
         topToast: {
-          id: uuidv4(),
+          uuid: uuidv4(),
           code: 'NEW_MATCH',
           scene: action.payload.scene
         }
@@ -1279,7 +1297,7 @@ export default function rootReducer(
 
     case 'SAVE_SETTINGS__FAILED': {
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_SETTINGS__FAILURE'
       };
       return {
@@ -1294,7 +1312,7 @@ export default function rootReducer(
 
     case 'SAVE_PROFILE__FAILED': {
       const bottomToast = {
-        id: uuidv4(),
+        uuid: uuidv4(),
         code: 'SAVE_PROFILE__FAILURE'
       };
       return {

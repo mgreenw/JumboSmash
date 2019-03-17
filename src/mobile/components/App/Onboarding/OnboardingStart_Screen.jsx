@@ -86,7 +86,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
         onButtonPress={this._goToNextPage}
         title="JumboSmash"
         firstScreen={true}
-        buttonText={"Roll 'Bos'"}
+        buttonText={"Roll 'Bos"}
       />
     );
   }

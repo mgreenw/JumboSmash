@@ -47,6 +47,10 @@ function messageFromCode(code: BottomToastCode): string {
       return 'Profile save failed. Try again.';
     }
 
+    case 'UPLOAD_PHOTO_FAILURE': {
+      return 'Failed to upload photo.';
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (code: empty); // ensures we have handled all cases
@@ -58,7 +62,7 @@ function messageFromCode(code: BottomToastCode): string {
 class BottomToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { bottomToast } = this.props;
-    if (bottomToast.code && bottomToast.id !== prevProps.bottomToast.id) {
+    if (bottomToast.code && bottomToast.uuid !== prevProps.bottomToast.uuid) {
       const message = messageFromCode(bottomToast.code);
       this.showToast(message);
     }
