@@ -30,7 +30,11 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "DELETE_PHOTO__SUCCESS",
-    "data": [1, 2, 3]
+    "data": [
+        "70228bb4-9387-44d5-938c-46c3369e8ec0",
+        "6ed8c5c4-251a-4933-912d-0143162d0d70",
+        "fd246025-361b-48a0-b7c4-3193a67ddcd6"
+    ]
 }
 ```
 
