@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -52,7 +52,8 @@ type Props = ProppyProps & DispatchProps & ReduxProps;
 type State = {
   cards: Card[],
   index: number,
-  allSwiped: boolean
+  allSwiped: boolean,
+  noCandidates: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -102,11 +103,11 @@ class cardDeck extends React.Component<Props, State> {
       testingText: 'initial text for redux card'
     };
     super(props);
-    // TODO: if (props.profileCards.length === 0) ...
     this.state = {
       cards: [inactiveCard, ...props.profileCards],
       index: 0,
-      allSwiped: false
+      allSwiped: false,
+      noCandidates: false // wait untill we check -- allow a load
     };
   }
 
@@ -122,16 +123,26 @@ class cardDeck extends React.Component<Props, State> {
         const len = cards.length;
         cards.splice(1, len, ...profileCards);
         if (allSwiped) {
-          // The magic. This actually dosn't move the index, but forces the swiper to update its props.
-          // This is only used in the case we have hit the end of the deck.
-          this.setState(
-            {
-              allSwiped: false
-            },
-            () => {
-              this.swiper.jumpToCardIndex(index);
-            }
-          );
+          // at this point index will be length + 1 if no new cards are fetched.
+          const noCandidates = index > profileCards.length;
+          if (noCandidates) {
+            this.setState({
+              noCandidates,
+              allSwiped: true // should stay true
+            });
+          } else {
+            this.setState(
+              {
+                allSwiped: false,
+                noCandidates
+              },
+              () => {
+                // The magic. This actually dosn't move the index, but forces the swiper to update its props.
+                // This is only used in the case we have hit the end of the deck.
+                this.swiper.jumpToCardIndex(index);
+              }
+            );
+          }
         }
       }
     }
@@ -194,7 +205,7 @@ class cardDeck extends React.Component<Props, State> {
   swiper: Swiper;
 
   render() {
-    const { cards, index, allSwiped } = this.state;
+    const { cards, index, allSwiped, noCandidates } = this.state;
     const { getCandidatesInProgress, getMoreCandidates } = this.props;
 
     return (
@@ -236,6 +247,16 @@ class cardDeck extends React.Component<Props, State> {
               zIndex: 2
             }}
           >
+            {noCandidates && (
+              <PrimaryButton
+                onPress={() => {
+                  Alert.alert('Not Yet Implemented');
+                }}
+                title="Refresh Stack"
+                loading={false}
+                disabled={false}
+              />
+            )}
             <PrimaryButton
               onPress={getMoreCandidates}
               title="Load More"
@@ -245,7 +266,7 @@ class cardDeck extends React.Component<Props, State> {
           </View>
         )}
         <SwipeButtons
-          disabled={allSwiped || index === 0}
+          disabled={noCandidates || allSwiped || index === 0}
           onPressDislike={this._onButtonDislike}
           onPressLike={this._onButtonLike}
         />
