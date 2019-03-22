@@ -13,11 +13,12 @@ export type SwipeDirection = 'right' | 'left';
 
 type Props = {
   disabled: boolean,
-  onPress: (swipeDirection: SwipeDirection) => void
+  onPressDislike: () => void,
+  onPressLike: () => void
 };
 
 export default (props: Props) => {
-  const { onPress, disabled } = props;
+  const { onPressLike, onPressDislike, disabled } = props;
   return (
     <LinearGradient
       colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)', 'white']}
@@ -42,7 +43,7 @@ export default (props: Props) => {
         }}
       >
         <TouchableOpacity
-          onPress={() => onPress('left')}
+          onPress={onPressDislike}
           style={{
             height: iconHeight,
             width: iconHeight,
@@ -57,7 +58,7 @@ export default (props: Props) => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onPress('right')}
+          onPress={onPressLike}
           style={{
             height: iconHeight,
             width: iconHeight,

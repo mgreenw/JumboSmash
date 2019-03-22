@@ -16,6 +16,7 @@ import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
+import SwipeButtons from './SwipeButtons';
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -56,7 +57,7 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const { scene } = ownProps;
-  const profileCards: ProfileCard[] = reduxState.sceneCandidateIds.smash.map(
+  const profileCards: ProfileCard[] = reduxState.sceneCandidateIds[scene].map(
     profileId => {
       return {
         type: 'PROFILE',
@@ -101,6 +102,7 @@ class cardDeck extends React.Component<Props, State> {
       testingText: 'initial text for redux card'
     };
     super(props);
+    // TODO: if (props.profileCards.length === 0) ...
     this.state = {
       cards: [inactiveCard, ...props.profileCards],
       index: 0,
@@ -122,7 +124,14 @@ class cardDeck extends React.Component<Props, State> {
         if (allSwiped) {
           // The magic. This actually dosn't move the index, but forces the swiper to update its props.
           // This is only used in the case we have hit the end of the deck.
-          this.swiper.jumpToCardIndex(index);
+          this.setState(
+            {
+              allSwiped: false
+            },
+            () => {
+              this.swiper.jumpToCardIndex(index);
+            }
+          );
         }
       }
     }
@@ -159,12 +168,10 @@ class cardDeck extends React.Component<Props, State> {
 
   _onSwipedAll = () => {
     const { getMoreCandidates } = this.props;
-    this.setState(
-      {
-        allSwiped: true
-      },
-      getMoreCandidates
-    );
+    this.setState({
+      allSwiped: true
+    });
+    getMoreCandidates();
   };
 
   _onSwipedLeft = (index: number) => {
@@ -176,11 +183,19 @@ class cardDeck extends React.Component<Props, State> {
     }
   };
 
+  _onButtonLike = () => {
+    this.swiper.swipeRight();
+  };
+
+  _onButtonDislike = () => {
+    this.swiper.swipeLeft();
+  };
+
   swiper: Swiper;
 
   render() {
-    const { cards, index } = this.state;
-    const { getCandidatesInProgress } = this.props;
+    const { cards, index, allSwiped } = this.state;
+    const { getCandidatesInProgress, getMoreCandidates } = this.props;
 
     return (
       <View
@@ -210,23 +225,30 @@ class cardDeck extends React.Component<Props, State> {
           cardHorizontalMargin={0}
           stackSeparation={0}
           marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
-          stackScale={6}
+          stackScale={10}
         />
-        <View
-          style={{
-            /* Absolutely absurd we have to do this, but the Swiper dosn't 
+        {allSwiped && (
+          <View
+            style={{
+              /* Absolutely absurd we have to do this, but the Swiper dosn't 
                correctly propogate props to its children, so we have to fake locations. */
-            position: 'absolute',
-            zIndex: '-1'
-          }}
-        >
-          <PrimaryButton
-            onPress={this._onSwipedAll}
-            title="Load More"
-            loading={getCandidatesInProgress}
-            disabled={getCandidatesInProgress}
-          />
-        </View>
+              position: 'absolute',
+              zIndex: 2
+            }}
+          >
+            <PrimaryButton
+              onPress={getMoreCandidates}
+              title="Load More"
+              loading={getCandidatesInProgress}
+              disabled={getCandidatesInProgress}
+            />
+          </View>
+        )}
+        <SwipeButtons
+          disabled={allSwiped || index === 0}
+          onPressDislike={this._onButtonDislike}
+          onPressLike={this._onButtonLike}
+        />
       </View>
     );
   }

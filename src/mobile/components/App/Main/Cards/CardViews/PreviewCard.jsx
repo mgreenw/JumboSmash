@@ -6,20 +6,25 @@ import type { UserProfile } from 'mobile/reducers';
 import { getAge } from 'mobile/utils/Birthday';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Image } from 'mobile/components/shared/imageCacheFork';
-import { Colors } from 'mobile/styles/colors';
 
 type Props = {
   profile: UserProfile
 };
 
-const { width } = Dimensions.get('window');
-
 export default (props: Props) => {
+  const { width, height } = Dimensions.get('window');
+  const minHeight = width;
+  const h = height * 0.6;
+  const useHeight = Math.max(h, minHeight);
+
   const { profile } = props;
   return (
     <View
       style={{
-        margin: 20
+        margin: 20,
+        flex: 1,
+        justifyContent: 'center',
+        marginBottom: 100
       }}
     >
       <View
@@ -31,7 +36,7 @@ export default (props: Props) => {
           style={{
             /* In case image is not propperly cropped, fallback to this */
             width: width - 24,
-            height: width - 24,
+            height: useHeight,
             borderRadius: 20,
             backgroundColor: 'white'
           }}
@@ -40,10 +45,10 @@ export default (props: Props) => {
             key={profile.photoIds[0]}
             style={{
               width: width - 24,
-              height: width - 24,
+              height: useHeight,
               borderRadius: 20
             }}
-            resizeMode={'contain'}
+            resizeMode={'cover' /* don't stretch people */}
             uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
           />
         </View>
