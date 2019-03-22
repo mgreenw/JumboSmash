@@ -12,7 +12,7 @@ export type DeletePhotoInitiated_Action = {
 export type DeletePhotoCompleted_Action = {
   type: 'DELETE_PHOTO__COMPLETED',
   payload: {
-    photoIds: Array<number>
+    photoUuids: Array<string>
   },
   meta: {}
 };
@@ -25,18 +25,18 @@ function initiate(): DeletePhotoInitiated_Action {
   };
 }
 
-function complete(photoIds: Array<number>): DeletePhotoCompleted_Action {
+function complete(photoUuids: Array<string>): DeletePhotoCompleted_Action {
   return {
     type: 'DELETE_PHOTO__COMPLETED',
     payload: {
-      photoIds
+      photoUuids
     },
     meta: {}
   };
 }
-export default (photoId: number) => (dispatch: Dispatch) => {
+export default (photoUuid: string) => (dispatch: Dispatch) => {
   dispatch(initiate());
-  deletePhotoApi(photoId)
+  deletePhotoApi(photoUuid)
     .then(newPhotoIds => {
       dispatch(complete(newPhotoIds));
     })

@@ -8,7 +8,8 @@ import { GET_MY_PHOTOS__ROUTE } from '../routes';
 
 const GET_MY_PHOTOS__SUCCESS = 'GET_MY_PHOTOS__SUCCESS';
 
-export default function getMyPhotos(): Promise<number[]> {
+// returns an array of photo UUID's
+export default function getMyPhotos(): Promise<string[]> {
   return apiRequest('GET', GET_MY_PHOTOS__ROUTE).then(response => {
     switch (response.status) {
       case GET_MY_PHOTOS__SUCCESS:

@@ -14,7 +14,8 @@ export type SignedUrlPayload = {
   fields: Object
 };
 
-export default function confirmUpload(): Promise<number[]> {
+// Returns an array of photo UUID's
+export default function confirmUpload(): Promise<string[]> {
   return apiRequest('GET', CONFIRM_PHOTO__ROUTE).then(response => {
     switch (response.status) {
       case CONFIRM_UPLOAD__SUCCESS:
