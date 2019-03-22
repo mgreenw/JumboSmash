@@ -1,8 +1,8 @@
 # Delete Photo
 
-Delete the photo with the given id. This photo must be owned by the requesting user.
+Delete the photo with the given uuid. This photo must be owned by the requesting user.
 
-**URL** : `/api/photos/:photoId`
+**URL** : `/api/photos/:photoUuid`
 
 **Method** : `DELETE`
 

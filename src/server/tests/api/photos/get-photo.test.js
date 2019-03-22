@@ -9,7 +9,7 @@ const utils = require('./utils');
 let me = {};
 let photoUuid;
 
-describe('GET api/photos/:photoId', () => {
+describe('GET api/photos/:photoUuid', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');

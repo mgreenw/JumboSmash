@@ -31,8 +31,8 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 ### Photos
 * [Sign Photo Upload URL](photos/sign-url.md) : `GET /api/photos/sign-url`
 * [Confirm Photo Upload](photos/confirm-upload.md) : `GET /api/photos/confirm-upload`
-* [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoId`
-* [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoId`
+* [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoUuid`
+* [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoUuid`
 * [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
 
 ### Messages

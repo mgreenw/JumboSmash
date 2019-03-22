@@ -1,8 +1,8 @@
 # Get Photo
 
-Get the given photo by id.
+Get the given photo by uuid.
 
-**URL** : `/api/photos/:photoId`
+**URL** : `/api/photos/:photoUuid`
 
 **Method** : `GET`
 
