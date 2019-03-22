@@ -7,7 +7,7 @@ const dbUtils = require('../../utils/db');
 const utils = require('./utils');
 
 let me = {};
-let photoId;
+let photoUuid;
 
 describe('GET api/photos/:photoId', () => {
   // Setup
@@ -43,7 +43,7 @@ describe('GET api/photos/:photoId', () => {
 
   it('should fail given there is no photo for that id', async () => {
     const res = await request(app)
-      .get('/api/photos/1')
+      .get('/api/photos/79d9ddb5-4823-422c-b5b0-e0feb5b82edd')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
@@ -70,12 +70,12 @@ describe('GET api/photos/:photoId', () => {
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS.status);
-    expect(Number.isInteger(res.body.data[0]) && res.body.data[0] > 0).toBeTruthy();
+    expect(res.body.data.length).toBe(1);
 
-    photoId = res.body.data[res.body.data.length - 1];
+    photoUuid = res.body.data[res.body.data.length - 1];
 
     res = await request(app)
-      .get(`/api/photos/${photoId}`)
+      .get(`/api/photos/${photoUuid}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json')
       .redirects(1);
@@ -92,7 +92,7 @@ describe('GET api/photos/:photoId', () => {
     const person = await dbUtils.createUser('person04', true);
 
     const res = await request(app)
-      .get(`/api/photos/${photoId}`)
+      .get(`/api/photos/${photoUuid}`)
       .set('Authorization', person.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);

@@ -17,10 +17,10 @@ const s3 = new aws.S3({ region: 'us-east-1', signatureVersion: 'v4' });
 const bucket = config.get('s3_bucket');
 
 /**
- * @api {delete} /api/photos/:photoId
+ * @api {delete} /api/photos/:photoUuid
  *
  */
-const deletePhoto = async (photoId: number, userId: number) => {
+const deletePhoto = async (photoUuid: string, userId: number) => {
   // On error, return a server error.
   const photosRes = await db.query(`
     SELECT id, uuid, index
@@ -32,7 +32,7 @@ const deletePhoto = async (photoId: number, userId: number) => {
   // First, ensure the photo exists in this list.
   // Remove the photo that we want to delete from the photos
   const photos = photosRes.rows;
-  const [photoToDelete] = _.remove(photos, photo => photo.id === photoId);
+  const [photoToDelete] = _.remove(photos, photo => photo.uuid === photoUuid);
   if (photoToDelete === undefined) {
     return apiUtils.status(codes.DELETE_PHOTO__NOT_FOUND).noData();
   }
@@ -46,13 +46,12 @@ const deletePhoto = async (photoId: number, userId: number) => {
     // 1. Remove the photo from our database
     await client.query(`
       DELETE FROM photos
-      WHERE
-        id = $1
-    `, [photoToDelete.id]);
+      WHERE uuid = $1
+    `, [photoToDelete.uuid]);
 
     // Get an updated list of photos for the requesting user
     const updatedPhotos = _.map(photos, (photo, index) => {
-      return `(${photo.id}, ${index + 1})`;
+      return `('${photo.uuid}'::uuid, ${index + 1})`;
     });
 
     // 2. Update the photos for the requesting user. Only do if some photos exist
@@ -63,8 +62,8 @@ const deletePhoto = async (photoId: number, userId: number) => {
         FROM
           (VALUES
             ${updatedPhotos.join(',')}
-          ) AS updated_photos (id, index)
-        WHERE photos.id = updated_photos.id
+          ) AS updated_photos (uuid, index)
+        WHERE photos.uuid = updated_photos.uuid
       `);
     }
 
@@ -79,7 +78,7 @@ const deletePhoto = async (photoId: number, userId: number) => {
     await client.query('COMMIT');
 
     return apiUtils.status(codes.DELETE_PHOTO__SUCCESS).data(
-      _.map(photos, photo => photo.id),
+      _.map(photos, photo => photo.uuid),
     );
   } catch (err) {
     await client.query('ROLLBACK');
@@ -91,7 +90,7 @@ const deletePhoto = async (photoId: number, userId: number) => {
 
 const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
-    return deletePhoto(Number.parseInt(req.params.photoId, 10), req.user.id);
+    return deletePhoto(req.params.photoUuid, req.user.id);
   }),
 ];
 

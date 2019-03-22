@@ -63,7 +63,7 @@ Type: `Array of Integers`
 
 ```json
 {
-    "status": "REORDER_PHOTOS__MISMATCHED_IDS"
+    "status": "REORDER_PHOTOS__MISMATCHED_UUIDS"
 }
 ```
 
