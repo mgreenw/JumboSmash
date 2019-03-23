@@ -15,7 +15,7 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 * [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
 
 ### Users
-* [Create My Profile](users/create-my-profile.md) : `POST /api/users/me/profile`
+* [Finalize Profile Setup](users/finalize-profile-setup.md) : `POST /api/users/me/profile`
 * [Update My Profile](users/update-my-profile.md) : `PATCH /api/users/me/profile`
 * [Get My Profile](users/get-my-profile.md) : `GET /api/users/me/profile`
 * [Get Profile](users/get-profile.md) : `GET /api/users/:userId/profile`

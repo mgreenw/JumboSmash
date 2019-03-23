@@ -19,6 +19,11 @@ user has already liked in that scene. This endpoint returns at most 10 results.
   * Description: A user id to exclude from the candidate list
   * Required: `false`
   * Note: Multiple `exclude[]` parameters can be included in one query (it becomes an array). E.g. `?exclude[]=1&exclude[]=2`
+* `reset-candidates`
+  * Type: `any`
+  * Description: Whether or not to reset the candidate list in this scene. All candidates that have been swiped left on will be reset.
+  * Required: `false`
+  * Note: This parameter only needs to exist to be triggered. If it is set to `false` but it exists, it will still reset the list. An example usage is as follows: `?exclude[]=1&reset-candidates`
 
 **Method** : `GET`
 

@@ -9,12 +9,18 @@ const apiUtils = require('../utils');
 const utils = require('./utils');
 const { profileSelectQuery } = require('../users/utils');
 const codes = require('../status-codes');
+const logger = require('../../logger');
 
 /**
  * @api {get} /api/relationships/candidates/:scene
  *
  */
-const getSceneCandidates = async (userId: number, scene: string, exclude: number[]) => {
+const getSceneCandidates = async (
+  userId: number,
+  scene: string,
+  exclude: number[],
+  resetCandidates: boolean = false,
+) => {
   // Generate a list of excluded users
   // If the excluded params are not valid, return an error.
   let excludedUsers = [];
@@ -40,6 +46,18 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
   // Ensure the scene is valid.
   if (!utils.sceneIsValid(scene)) {
     return apiUtils.status(codes.GET_SCENE_CANDIDATES__INVALID_SCENE).noData();
+  }
+
+  // If the resetCandidates flag is set, reset all non-liked candidates in this scene.
+  if (resetCandidates) {
+    logger.debug(`Resetting candidates for user ${userId} in ${scene}`);
+    await db.query(`
+      UPDATE relationships
+      SET swiped_${scene}_timestamp = NULL
+      WHERE
+        critic_user_id = $1
+        AND liked_${scene} IS FALSE
+    `, [userId]);
   }
 
   const isSmash = scene === 'smash';
@@ -85,8 +103,6 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
       )` : ''}
     ORDER BY RANDOM()
     LIMIT 10
-
-
   `, [userId, excludedUsers]);
 
   return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data(_.shuffle(result.rows));
@@ -94,7 +110,7 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
 
 const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
-    return getSceneCandidates(req.user.id, req.params.scene, req.query.exclude);
+    return getSceneCandidates(req.user.id, req.params.scene, req.query.exclude, req.query['reset-candidates'] !== undefined);
   }),
 ];
 
