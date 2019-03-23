@@ -25,17 +25,16 @@ const schema = {
  *
  */
 const reorderPhotos = async (newOrder: string[], userId: number) => {
-  // No worry about SQL Injection here: newOrder is verified to be an
-  // array of integers/numbers.
-  const newOrderQuery = newOrder.map(uuid => `'${uuid}'::uuid`);
+  // Generate the query paramaters.
+  const newOrderParams = newOrder.map((uuid, index) => `$${index + 2}::uuid`);
   const result = await db.query(`
     SELECT COUNT(*) AS "mismatchCount"
-    FROM UNNEST(ARRAY[${newOrderQuery.join(',')}]) photo_uuid
+    FROM UNNEST(ARRAY[${newOrderParams.join(',')}]) photo_uuid
     FULL JOIN (SELECT uuid FROM photos WHERE user_id = $1) photos on photos.uuid=photo_uuid
     WHERE
           photo_uuid IS NULL
       OR photos.uuid IS NULL
-  `, [userId]);
+  `, [userId, ...newOrder]);
 
   const [{ mismatchCount }] = result.rows;
 
