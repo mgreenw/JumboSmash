@@ -154,7 +154,7 @@ export type ProfileFields = {|
 
 export type UserProfile = {|
   fields: ProfileFields,
-  photoIds: number[]
+  photoUuids: string[]
 |};
 
 type SceneMatchTimes = {|
@@ -843,7 +843,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...profile,
-            photoIds: action.payload.photoIds
+            photoUuids: action.payload.photoUuids
           }
         }
       };
@@ -878,7 +878,7 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for DELETE_PHOTO__COMPLETED');
       }
-      const { photoIds } = action.payload;
+      const { photoUuids } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -889,7 +889,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds
+            photoUuids
           }
         }
       };

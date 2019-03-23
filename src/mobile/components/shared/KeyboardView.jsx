@@ -9,9 +9,8 @@ import {
   View,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback
 } from 'react-native';
-import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { Transition } from 'react-navigation-fluid-transitions';
 
 const waves1 = require('../../assets/waves/waves1/waves.png');
@@ -19,7 +18,7 @@ const waves1 = require('../../assets/waves/waves1/waves.png');
 type Props = {
   waves: false | 1,
   children: React.Node,
-  verticalOffset?: number,
+  verticalOffset?: number
 };
 
 const KeyboardView = (props: Props) => {
@@ -27,21 +26,40 @@ const KeyboardView = (props: Props) => {
   return (
     <KeyboardAvoidingView
       style={{
-        flex: 1,
+        flex: 1
       }}
       behavior="padding"
       keyboardVerticalOffset={verticalOffset}
     >
-      <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss} accessible={false}>
+      <TouchableWithoutFeedback
+        style={{ flex: 1 }}
+        onPress={Keyboard.dismiss}
+        accessible={false}
+      >
         <View style={{ flex: 1 }}>{children}</View>
       </TouchableWithoutFeedback>
       {waves && (
         <Transition inline appear="bottom">
-          <Image
-            resizeMode="stretch"
-            source={waves1}
-            style={[Arthur_Styles.waves, { zIndex: -1 }]}
-          />
+          <View
+            style={{
+              position: 'absolute',
+              height: '100%',
+              width: '100%',
+              zIndex: -1
+            }}
+          >
+            <View style={{ flex: 3 }} />
+            <Image
+              resizeMode="stretch"
+              source={waves1}
+              style={[
+                {
+                  flex: 1,
+                  width: '100%'
+                }
+              ]}
+            />
+          </View>
         </Transition>
       )}
     </KeyboardAvoidingView>
@@ -49,7 +67,7 @@ const KeyboardView = (props: Props) => {
 };
 
 KeyboardView.defaultProps = {
-  verticalOffset: 0,
+  verticalOffset: 0
 };
 
 export default KeyboardView;
