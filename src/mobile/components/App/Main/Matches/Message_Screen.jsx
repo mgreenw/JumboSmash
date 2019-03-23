@@ -426,7 +426,7 @@ class MessagingScreen extends React.Component<Props, State> {
             this._goToProfile(profile);
           }}
         >
-          <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
+          <Avatar size={'Large'} photoUuid={profile.photoUuids[0]} border />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>

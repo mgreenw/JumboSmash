@@ -16,13 +16,13 @@ import AddSinglePhoto from './AddSinglePhoto';
 type ReduxProps = {
   uploadPhotoInProgress: boolean,
   deletePhotoInProgress: boolean,
-  photoIds: number[],
+  photoUuids: string[],
   token: ?string
 };
 
 type DispatchProps = {
   uploadPhoto: string => void,
-  deletePhoto: number => void
+  deletePhoto: string => void
 };
 
 type ProppyProps = {
@@ -39,7 +39,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     uploadPhotoInProgress: reduxState.inProgress.uploadPhoto,
     deletePhotoInProgress: reduxState.inProgress.deletePhoto,
-    photoIds: reduxState.client.profile.photoIds,
+    photoUuids: reduxState.client.profile.photoUuids,
     token: reduxState.token
   };
 }
@@ -49,8 +49,8 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     uploadPhoto: (uri: string) => {
       dispatch(uploadPhotoAction(uri));
     },
-    deletePhoto: (photoId: number) => {
-      dispatch(deletePhotoAction(photoId));
+    deletePhoto: (photoUuid: string) => {
+      dispatch(deletePhotoAction(photoUuid));
     }
   };
 }
@@ -92,28 +92,28 @@ class AddMultiPhotos extends React.Component<Props> {
     }
   };
 
-  _onRemove = (photoId: ?number) => {
-    if (photoId === null || photoId === undefined) {
+  _onRemove = (photoUuid: ?string) => {
+    if (photoUuid === null || photoUuid === undefined) {
       return;
     }
     const { deletePhoto } = this.props;
-    deletePhoto(photoId);
+    deletePhoto(photoUuid);
   };
 
   render() {
     const {
-      photoIds,
+      photoUuids,
       imageWidth,
       width,
       token,
       deletePhotoInProgress,
       uploadPhotoInProgress
     } = this.props;
-    const numImages = photoIds.length;
-    const id1 = numImages > 0 ? photoIds[0] : null;
-    const id2 = numImages > 1 ? photoIds[1] : null;
-    const id3 = numImages > 2 ? photoIds[2] : null;
-    const id4 = numImages > 3 ? photoIds[3] : null;
+    const numImages = photoUuids.length;
+    const uuid1 = numImages > 0 ? photoUuids[0] : null;
+    const uuid2 = numImages > 1 ? photoUuids[1] : null;
+    const uuid3 = numImages > 2 ? photoUuids[2] : null;
+    const uuid4 = numImages > 3 ? photoUuids[3] : null;
 
     let popupMessage = '';
 
@@ -133,14 +133,14 @@ class AddMultiPhotos extends React.Component<Props> {
         <View style={{ top: 0, left: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
-            photoId={id1}
+            photoUuid={uuid1}
             disabled={false}
-            enableRemove={id2 != null}
+            enableRemove={uuid2 != null}
             onAdd={() => {
               this._onAdd();
             }}
             onRemove={() => {
-              this._onRemove(id1);
+              this._onRemove(uuid1);
             }}
             width={imageWidth}
           />
@@ -148,14 +148,14 @@ class AddMultiPhotos extends React.Component<Props> {
         <View style={{ top: 0, right: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
-            photoId={id2}
-            disabled={id1 == null}
+            photoUuid={uuid2}
+            disabled={uuid1 == null}
             enableRemove
             onAdd={() => {
               this._onAdd();
             }}
             onRemove={() => {
-              this._onRemove(id2);
+              this._onRemove(uuid2);
             }}
             width={imageWidth}
           />
@@ -163,14 +163,14 @@ class AddMultiPhotos extends React.Component<Props> {
         <View style={{ bottom: 0, left: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
-            photoId={id3}
-            disabled={id2 == null}
+            photoUuid={uuid3}
+            disabled={uuid2 == null}
             enableRemove
             onAdd={() => {
               this._onAdd();
             }}
             onRemove={() => {
-              this._onRemove(id3);
+              this._onRemove(uuid3);
             }}
             width={imageWidth}
           />
@@ -178,14 +178,14 @@ class AddMultiPhotos extends React.Component<Props> {
         <View style={{ bottom: 0, right: 0, position: 'absolute' }}>
           <AddSinglePhoto
             token={token}
-            photoId={id4}
-            disabled={id3 == null}
+            photoUuid={uuid4}
+            disabled={uuid3 == null}
             enableRemove
             onAdd={() => {
               this._onAdd();
             }}
             onRemove={() => {
-              this._onRemove(id4);
+              this._onRemove(uuid4);
             }}
             width={imageWidth}
           />

@@ -10,7 +10,7 @@ export type ServerProfile = {
     bio: string,
     birthday: string
   },
-  photoIds: number[]
+  photoUuids: number[]
 };
 
 export type ServerBaseUser = {
