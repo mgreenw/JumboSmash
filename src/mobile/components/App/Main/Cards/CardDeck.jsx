@@ -14,6 +14,7 @@ import Swiper from 'react-native-deck-swiper';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
+import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons from './SwipeButtons';
@@ -39,13 +40,15 @@ type ReduxProps = {
   profileCards: ProfileCard[],
   getCandidatesInProgress: boolean,
   clientSettings: UserSettings,
-  profileMap: { [userId: number]: UserProfile }
+  profileMap: { [userId: number]: UserProfile },
+  enableSceneInProgress: boolean
 };
 
 type DispatchProps = {
   getMoreCandidates: () => void,
   dislike: (candidateUserId: number) => void,
-  like: (canidateUserId: number) => void
+  like: (canidateUserId: number) => void,
+  enableScene: () => void
 };
 
 type Props = ProppyProps & DispatchProps & ReduxProps;
@@ -74,7 +77,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     profileCards,
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
     clientSettings: reduxState.client.settings,
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    enableSceneInProgress: reduxState.inProgress.saveSettings
   };
 }
 
@@ -82,7 +86,7 @@ function mapDispatchToProps(
   dispatch: Dispatch,
   ownProps: Props
 ): DispatchProps {
-  const { scene } = ownProps;
+  const { clientSettings, scene } = ownProps;
   return {
     getMoreCandidates: () => {
       dispatch(getSceneCandidatesAction(scene));
@@ -92,6 +96,17 @@ function mapDispatchToProps(
     },
     dislike: (candidateUserId: number) => {
       dispatch(judgeSceneCandidateAction(candidateUserId, scene, false));
+    },
+    enableScene: () => {
+      dispatch(
+        saveSettingsAction({
+          ...clientSettings,
+          activeScenes: {
+            ...clientSettings.activeScenes,
+            [scene]: true
+          }
+        })
+      );
     }
   };
 }
@@ -161,14 +176,15 @@ class cardDeck extends React.Component<Props, State> {
   //    2. the preview profile card.
   _renderCard = (card: Card) => {
     if (card.type === 'INACTIVE') {
-      const { clientSettings, scene } = this.props;
+      const { clientSettings, scene, enableSceneInProgress } = this.props;
       return (
         <InactiveSceneCard
           settings={clientSettings}
           scene={scene}
-          dismissCard={() => {
+          onEnable={() => {
             this.swiper.swipeBottom();
           }}
+          loading={enableSceneInProgress}
         />
       );
     }

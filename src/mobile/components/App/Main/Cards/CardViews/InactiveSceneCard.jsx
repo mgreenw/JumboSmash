@@ -1,13 +1,11 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import routes from 'mobile/components/navigation/routes';
-import NavigationService from 'mobile/components/navigation/NavigationService';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import type { UserSettings, Scene } from 'mobile/reducers';
+import type { Scene } from 'mobile/reducers';
 
 const SCENE_META_DATA = {
   smash: {
@@ -30,14 +28,13 @@ const SCENE_META_DATA = {
 };
 
 type Props = {
-  settings: UserSettings,
   scene: Scene,
-  dismissCard: () => void
+  onEnable: () => void,
+  loading: boolean
 };
 
 export default (props: Props) => {
-  const { settings, scene, dismissCard } = props;
-  const sceneEnabled = settings.activeScenes[scene];
+  const { scene, onEnable, loading } = props;
   const sceneData = SCENE_META_DATA[scene];
 
   return (
@@ -88,16 +85,10 @@ export default (props: Props) => {
         </Text>
       </View>
       <PrimaryButton
-        onPress={
-          sceneEnabled
-            ? dismissCard
-            : () => {
-                Alert.alert('Please enable jumbosmash in settings');
-              }
-        }
-        title="Start Swiping"
-        loading={false}
-        disabled={false}
+        onPress={onEnable}
+        title={`Enable ${sceneData.display}`}
+        loading={loading}
+        disabled={loading}
       />
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
