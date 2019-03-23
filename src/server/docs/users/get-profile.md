@@ -42,8 +42,8 @@ Provide the normal `Authorization` token in the request header.
             "birthday": "1999-01-27",
             "bio": "Already has 2 friends so..."
         },
-        "photoIds": [
-            14
+        "photoUuids": [
+            "27b737bc-0e64-4e0e-8e9f-59787b44f792"
         ]
     }
 }

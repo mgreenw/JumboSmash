@@ -55,7 +55,7 @@ Provide the normal `Authorization` token in the request header.
                     "birthday": "2019-02-19",
                     "bio": "He is the president"
                 },
-                "photoIds": [1]
+                "photoUuids": ["5e6f2885-8539-4460-a7f0-af80eef662cf"]
             }
         }
     ]

@@ -86,7 +86,8 @@ describe('GET api/photos/confirm_upload', () => {
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.CONFIRM_UPLOAD__SUCCESS.status);
-    expect(Number.isInteger(res.body.data[0]) && res.body.data[0] > 0).toBeTruthy();
+    expect(res.body.data[0]).toBeDefined();
+    expect(res.body.data.length).toBe(1);
 
     await utils.deletePhoto(key);
   });
