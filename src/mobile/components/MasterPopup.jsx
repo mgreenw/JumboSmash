@@ -43,10 +43,8 @@ function messageFromCode(code: PopupCode) {
       return `Looks like your verification code has expired. Probably TuftsSecure's Fault. Let's try this again.`;
     }
 
-    // TODO: change copy if we ever use this.
-    // currently it's just for type enforcing
     case 'SERVER_ERROR': {
-      return `Gah! A Server Error! Ya shouldn't be seeing this message!`;
+      return `Oops! Something went wrong. Please try again!`;
     }
 
     default: {
