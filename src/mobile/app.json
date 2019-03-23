@@ -9,6 +9,9 @@
     "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
+    "splash": {
+      "image": "./assets/arthurIcon.png"
+    },
     "android": {
       "package": "com.jumbosmash.mobile",
       "versionCode": 9,
