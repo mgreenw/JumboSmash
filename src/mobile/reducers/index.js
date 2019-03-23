@@ -1358,12 +1358,20 @@ export default function rootReducer(
         throw new Error('messagedMatchIds is null or undefined');
       }
 
+      const newMessagedMatchIds = state.messagedMatchIds.filter(
+        id => id !== matchId
+      );
+
       if (
         state.unmessagedMatchIds === null ||
         state.unmessagedMatchIds === undefined
       ) {
         throw new Error('unmessagedMatchIds is null or undefined');
       }
+
+      const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
+        id => id !== matchId
+      );
 
       return {
         ...state,
@@ -1372,10 +1380,8 @@ export default function rootReducer(
           unmatch: false
         },
         matchesById: updatedMatchesById,
-        messagedMatchIds: state.messagedMatchIds.filter(id => id !== matchId),
-        unmessagedMatchIds: state.unmessagedMatchIds.filter(
-          id => id !== matchId
-        )
+        messagedMatchIds: newMessagedMatchIds,
+        unmessagedMatchIds: newUnmessagedMatchIds
       };
     }
 
