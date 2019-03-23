@@ -6,13 +6,19 @@ const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const utils = require('./utils');
+const logger = require('../../logger');
 
 const matchedScenesChecks = utils.scenes.map((scene) => {
   return `(me_critic.liked_${scene} AND they_critic.liked_${scene})`;
 });
 
 const sceneTimestampList = utils.scenes.map((scene) => {
-  return `me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp`;
+  return `
+    CASE WHEN me_critic.liked_${scene} AND they_critic.liked_${scene}
+    THEN GREATEST(me_critic.swiped_${scene}_timestamp, they_critic.swiped_${scene}_timestamp)
+    ELSE NULL
+    END
+  `;
 });
 
 /**

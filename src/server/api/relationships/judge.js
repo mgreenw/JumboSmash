@@ -73,8 +73,6 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
   // 2) If there is currently no relationship between the two users, a
   //    relationship will be inserted. If there is a relationship, the
   //    relationship will be updated with the desired values
-  // 3) The 'last_swipe_timestamp' is always updated to reflect that the
-  //    critic has interacted with the candidate
   try {
     const result = await db.query(`
       WITH old_liked AS (
@@ -87,20 +85,19 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         critic_user_id,
         candidate_user_id,
         liked_${scene},
-        liked_${scene}_timestamp
+        swiped_${scene}_timestamp
       )
       VALUES (
         $1,
         $2,
         $3,
-        CASE WHEN $3 THEN NOW() ELSE NULL END
+        NOW()
       )
       ON CONFLICT (critic_user_id, candidate_user_id)
       DO UPDATE
         SET
         liked_${scene} = $3,
-        last_swipe_timestamp = now(),
-        liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
+        swiped_${scene}_timestamp = NOW()
       RETURNING (SELECT * FROM old_liked)
     `, [userId, candidateUserId, liked]);
 

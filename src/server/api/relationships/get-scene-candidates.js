@@ -53,14 +53,12 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
   //   4) We ALWAYS check if the candidate is active in the scene
   //   5) We limit to 10 results - the results should change as the user
   //      swipes, so we can always just get the first 10
-  //   6) We order by "last_swipe_timestamp" - we want the user to see people
-  //      they haven't seen recently
-  //   7) There is no risk of SQL injection by directly inserting userId:
+  //   6) There is no risk of SQL injection by directly inserting userId:
   //      that value is generated server side and there is no way to get here
   //      without it being a valid user id
-  //   8) We exclude all users indicated by a 'exclude[]=<user_id>' query
+  //   7) We exclude all users indicated by a 'exclude[]=<user_id>' query
   //      parameter in the request
-  //   9) The RANDOM() order at the end is thought to be slow on big tables.
+  //   8) The RANDOM() order at the end is thought to be slow on big tables.
   //      However, since that is done last and there is a max of about 1000
   //      rows, we should be gucci!
   const result = await db.query(`
@@ -78,13 +76,14 @@ const getSceneCandidates = async (userId: number, scene: string, exclude: number
       candidate.active_${scene} AND
       NOT COALESCE(r_critic.blocked, false) AND
       NOT COALESCE(r_candidate.blocked, false) AND
-      NOT COALESCE(r_critic.liked_${scene}, false)
+      NOT COALESCE(r_critic.liked_${scene}, false) AND
+      r_critic.swiped_${scene}_timestamp IS NULL
       ${isSmash ? `AND (
         (critic.want_he AND candidate.use_he) OR
         (critic.want_she AND candidate.use_she) OR
         (critic.want_they AND candidate.use_they)
       )` : ''}
-    ORDER BY r_critic.last_swipe_timestamp DESC NULLS FIRST, RANDOM()
+    ORDER BY RANDOM()
     LIMIT 10
 
 
