@@ -10,13 +10,14 @@ import { SCENE_CANDIDATES__ROUTES } from '../routes';
 const GET_SCENE_CANDIDATES__SUCCESS = 'GET_SCENE_CANDIDATES__SUCCESS';
 
 export default function getSceneCandidates(
-  scene: Scene
+  scene: Scene,
+  resetCandidates?: boolean
 ): Promise<ServerCandidate[]> {
   const { excludeSceneCandidateIds } = store.getState();
-  const queryParams = arrayToQueryString(
-    'exclude[]',
-    excludeSceneCandidateIds[scene]
-  );
+  const resetCandidatesQuery = resetCandidates ? '&reset-candidates' : '';
+  const queryParams =
+    arrayToQueryString('exclude[]', excludeSceneCandidateIds[scene]) +
+    resetCandidatesQuery;
   const queryString = queryParams.length ? `?${queryParams}` : '';
   return apiRequest('GET', SCENE_CANDIDATES__ROUTES[scene] + queryString).then(
     response => {
@@ -25,7 +26,6 @@ export default function getSceneCandidates(
           return response.data;
         }
         default:
-          console.log({ queryParams, response });
           throw new Error(response);
       }
     }
