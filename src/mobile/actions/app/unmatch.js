@@ -6,41 +6,54 @@ import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type UnmatchInitiated_Action = {
   type: 'UNMATCH__INITIATED',
-  payload: { candidateUserId: number },
+  payload: {},
   meta: {}
 };
 export type UnmatchCompleted_Action = {
   type: 'UNMATCH__COMPLETED',
-  payload: { candidateUserId: number },
+  payload: { matchId: number },
   meta: {}
 };
 
-function initiate(candidateUserId: number): UnmatchInitiated_Action {
+export type UnmatchFailed_Action = {
+  type: 'UNMATCH__FAILED',
+  payload: {},
+  meta: {}
+};
+
+function initiate(): UnmatchInitiated_Action {
   return {
     type: 'UNMATCH__INITIATED',
-    payload: { candidateUserId },
+    payload: {},
     meta: {}
   };
 }
 
-function complete(candidateUserId: number): UnmatchCompleted_Action {
+function complete(matchId: number): UnmatchCompleted_Action {
   return {
     type: 'UNMATCH__COMPLETED',
-    payload: { candidateUserId },
+    payload: { matchId },
     meta: {}
   };
 }
 
-export default (candidateUserId: number) => (dispatch: Dispatch) => {
-  dispatch(initiate(candidateUserId));
+function fail(): UnmatchFailed_Action {
+  return {
+    type: 'UNMATCH__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
+export default (matchId: number) => (dispatch: Dispatch) => {
+  dispatch(initiate());
   // We have to dislike the candidate in each scene
-  Promise.all(
-    Scenes.map(scene => judgeSceneCandidate(candidateUserId, scene, false))
-  )
+  Promise.all(Scenes.map(scene => judgeSceneCandidate(matchId, scene, false)))
     .then(() => {
-      dispatch(complete(candidateUserId));
+      dispatch(complete(matchId));
     })
     .catch(error => {
+      dispatch(fail());
       dispatch(apiErrorHandler(error));
     });
 };

@@ -88,7 +88,8 @@ import type {
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
 import type {
   UnmatchInitiated_Action,
-  UnmatchCompleted_Action
+  UnmatchCompleted_Action,
+  UnmatchFailed_Action
 } from 'mobile/actions/app/unmatch';
 
 import { normalize, schema } from 'normalizr';
@@ -107,7 +108,8 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
-  | 'UPLOAD_PHOTO_FAILURE';
+  | 'UPLOAD_PHOTO_FAILURE'
+  | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
   code: ?BottomToastCode
@@ -331,6 +333,7 @@ export type ReduxState = {|
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean,
+    unmatch: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
 
@@ -416,6 +419,7 @@ export type Action =
   | CancelFailedMessage_Action
   | UnmatchInitiated_Action
   | UnmatchCompleted_Action
+  | UnmatchFailed_Action
   | UploadPhotoFailed_Action;
 
 export type GetState = () => ReduxState;
@@ -447,7 +451,8 @@ const defaultState: ReduxState = {
     deletePhoto: false,
     getMatches: false,
     getConversation: {},
-    sendMessage: {}
+    sendMessage: {},
+    unmatch: false
   },
   response: {
     sendVerificationEmail: null,
@@ -1328,6 +1333,50 @@ export default function rootReducer(
             })
           }
         }
+      };
+    }
+
+    case 'UNMATCH__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: true
+        }
+      };
+    }
+
+    case 'UNMATCH__COMPLETED': {
+      const { matchId } = action.payload;
+      const updatedMatchesById = state.matchesById;
+      delete updatedMatchesById[matchId];
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        matchesById: updatedMatchesById,
+        messagedMatchIds: state.messagedMatchIds.filter(id => id !== matchId),
+        unmessagedMatchIds: state.unmessagedMatchIds.filter(
+          id => id !== matchId
+        )
+      };
+    }
+
+    case 'UNMATCH__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'UNMATCH_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        bottomToast
       };
     }
 
