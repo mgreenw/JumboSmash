@@ -26,6 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
 import formatTime from 'mobile/utils/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
+import { NavigationEvents } from 'react-navigation';
 
 const Seperator = (props: {}) => {
   return (
@@ -227,6 +228,14 @@ class MessagingScreen extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
+        <NavigationEvents
+          onWillFocus={() => {
+            // onWillFocus calls this during the transition state from previous screen.
+            if (!getMatchesInProgress) {
+              getMatches();
+            }
+          }}
+        />
         <GEMHeader title="Messages" leftIconName="cards" borderBottom />
         {matchesLoaded ? (
           <View style={{ flex: 1 }}>
