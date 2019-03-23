@@ -1351,6 +1351,20 @@ export default function rootReducer(
       const updatedMatchesById = state.matchesById;
       delete updatedMatchesById[matchId];
 
+      if (
+        state.messagedMatchIds === null ||
+        state.messagedMatchIds === undefined
+      ) {
+        throw new Error('messagedMatchIds is null or undefined');
+      }
+
+      if (
+        state.unmessagedMatchIds === null ||
+        state.unmessagedMatchIds === undefined
+      ) {
+        throw new Error('unmessagedMatchIds is null or undefined');
+      }
+
       return {
         ...state,
         inProgress: {
