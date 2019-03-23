@@ -41,10 +41,12 @@ function complete(
   };
 }
 
-export default (scene: Scene) => (dispatch: Dispatch) => {
+export default (scene: Scene, resetCandidates?: boolean) => (
+  dispatch: Dispatch
+) => {
   dispatch(initiate(scene));
   DevTesting.fakeLatency(() => {
-    getSceneCandidates(scene)
+    getSceneCandidates(scene, resetCandidates)
       .then(candidates => {
         dispatch(complete(candidates, scene));
       })
