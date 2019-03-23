@@ -28,7 +28,12 @@ const query = `
       'messageId', most_recent_message.message_id,
       'content', most_recent_message.content,
       'timestamp', most_recent_message.timestamp,
-      'fromClient', most_recent_message.from_client
+      'sender',
+        CASE
+        WHEN most_recent_message.from_system IS true THEN 'system'
+        WHEN most_recent_message.sender_user_id = $1 THEN 'client'
+        ELSE 'match'
+        END
     ) END AS "mostRecentMessage"
   FROM relationships me_critic
   JOIN relationships they_critic

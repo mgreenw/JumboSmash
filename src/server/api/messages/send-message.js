@@ -55,7 +55,7 @@ const sendMessage = async (
         timestamp,
         content,
         unconfirmed_message_uuid AS "unconfirmedMessageUuid",
-        true AS "fromClient"
+        'client' AS sender
     `, [content, senderUserId, receiverUserId, unconfirmedMessageUuid]);
 
     const [message] = messageResult.rows;

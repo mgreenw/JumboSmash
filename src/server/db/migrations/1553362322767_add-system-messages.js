@@ -2,7 +2,7 @@ exports.shorthands = undefined;
 
 exports.up = (pgm) => {
   pgm.addColumns('messages', {
-    is_system_message: {
+    from_system: {
       type: 'boolean',
       notNull: true,
       default: false,
@@ -11,5 +11,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropColumns('messages', ['is_system_message']);
+  pgm.dropColumns('messages', ['from_system']);
 };
