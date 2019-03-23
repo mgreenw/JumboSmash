@@ -46,6 +46,7 @@ type ReduxProps = {
 
 type DispatchProps = {
   getMoreCandidates: () => void,
+  getMoreCandidatesAndReset: () => void,
   dislike: (candidateUserId: number) => void,
   like: (canidateUserId: number) => void,
   enableScene: () => void
@@ -90,6 +91,9 @@ function mapDispatchToProps(
   return {
     getMoreCandidates: () => {
       dispatch(getSceneCandidatesAction(scene));
+    },
+    getMoreCandidatesAndReset: () => {
+      dispatch(getSceneCandidatesAction(scene, true));
     },
     like: (candidateUserId: number) => {
       dispatch(judgeSceneCandidateAction(candidateUserId, scene, true));
@@ -222,7 +226,11 @@ class cardDeck extends React.Component<Props, State> {
 
   render() {
     const { cards, index, allSwiped, noCandidates } = this.state;
-    const { getCandidatesInProgress, getMoreCandidates } = this.props;
+    const {
+      getCandidatesInProgress,
+      getMoreCandidates,
+      getMoreCandidatesAndReset
+    } = this.props;
 
     return (
       <View
@@ -265,9 +273,7 @@ class cardDeck extends React.Component<Props, State> {
           >
             {noCandidates && (
               <PrimaryButton
-                onPress={() => {
-                  Alert.alert('Not Yet Implemented');
-                }}
+                onPress={getMoreCandidatesAndReset}
                 title="Refresh Stack"
                 loading={false}
                 disabled={false}
