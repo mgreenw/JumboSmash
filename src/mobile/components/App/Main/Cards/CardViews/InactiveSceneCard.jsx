@@ -72,7 +72,9 @@ class inactiveSceneCard extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
     const { sceneEnabled, dismissCard } = this.props;
     if (sceneEnabled && !prevProps.sceneEnabled) {
-      dismissCard();
+      // TODO: figure out why this fails.
+      // For now, the double press is fine.
+      // dismissCard();
     }
   }
 
