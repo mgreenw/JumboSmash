@@ -12,13 +12,13 @@ export type SaveSettingsInitiated_Action = {
 export type SaveSettingsCompleted_Action = {
   type: 'SAVE_SETTINGS__COMPLETED',
   payload: UserSettings,
-  meta: {}
+  meta: { disableToast: boolean }
 };
 
 export type SaveSettingsFailed_Action = {
   type: 'SAVE_SETTINGS__FAILED',
   payload: {},
-  meta: {}
+  meta: { disableToast: boolean }
 };
 
 function initiate(): SaveSettingsInitiated_Action {
@@ -29,19 +29,26 @@ function initiate(): SaveSettingsInitiated_Action {
   };
 }
 
-function complete(settings: UserSettings): SaveSettingsCompleted_Action {
+function complete(
+  settings: UserSettings,
+  disableToast: boolean = false
+): SaveSettingsCompleted_Action {
   return {
     type: 'SAVE_SETTINGS__COMPLETED',
     payload: settings,
-    meta: {}
+    meta: {
+      disableToast
+    }
   };
 }
 
-function fail(): SaveSettingsFailed_Action {
+function fail(disableToast: boolean = false): SaveSettingsFailed_Action {
   return {
     type: 'SAVE_SETTINGS__FAILED',
     payload: {},
-    meta: {}
+    meta: {
+      disableToast
+    }
   };
 }
 
@@ -85,12 +92,11 @@ const enableScene = (scene: Scene) => (
   dispatch(initiate());
   updateMySettings(settings)
     .then(newSettings => {
-      dispatch(apiErrorHandler('foo'));
-      dispatch(fail());
+      dispatch(complete(newSettings, true));
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
-      dispatch(fail());
+      dispatch(fail(true));
     });
 };
 

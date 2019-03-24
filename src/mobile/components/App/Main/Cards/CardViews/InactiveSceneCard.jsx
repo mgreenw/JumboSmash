@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
@@ -30,7 +30,8 @@ const SCENE_META_DATA = {
 };
 
 type ProppyProps = {
-  scene: Scene
+  scene: Scene,
+  dismissCard: () => void
 };
 
 type DispatchProps = {
@@ -38,7 +39,8 @@ type DispatchProps = {
 };
 
 type ReduxProps = {
-  sceneEnabled: boolean
+  sceneEnabled: boolean,
+  enableSceneInProgress: boolean
 };
 
 type Props = ProppyProps & DispatchProps & ReduxProps;
@@ -49,7 +51,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     throw new Error('client is null in Cards Screen');
   }
   return {
-    sceneEnabled: reduxState.client.settings.activeScenes[scene]
+    sceneEnabled: reduxState.client.settings.activeScenes[scene],
+    enableSceneInProgress: reduxState.inProgress.saveSettings
   };
 }
 
@@ -65,72 +68,97 @@ function mapDispatchToProps(
   };
 }
 
-const inactiveSceneCard = (props: Props) => {
-  const { scene, enableScene } = props;
-  const sceneData = SCENE_META_DATA[scene];
+class inactiveSceneCard extends React.Component<Props> {
+  componentDidUpdate(prevProps: Props) {
+    const { sceneEnabled, dismissCard } = this.props;
+    if (sceneEnabled && !prevProps.sceneEnabled) {
+      dismissCard();
+    }
+  }
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: Colors.White
-      }}
-    >
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
-          Welcome to
-        </Text>
-        <Text
-          style={[
-            textStyles.jumboSmashStyle,
-            { fontSize: 40, padding: 15, textAlign: 'center' }
-          ]}
-        >
-          {sceneData.display}
-        </Text>
-      </View>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View
-          style={{
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            borderWidth: 3,
-            borderColor: Colors.Grapefruit,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ fontSize: 69 }}>{sceneData.icon}</Text>
-        </View>
-      </View>
+  render() {
+    const {
+      scene,
+      enableScene,
+      sceneEnabled,
+      enableSceneInProgress,
+      dismissCard
+    } = this.props;
+    const sceneData = SCENE_META_DATA[scene];
+
+    return (
       <View
         style={{
           flex: 1,
-          justifyContent: 'flex-start',
-          alignItems: 'center'
+          alignItems: 'center',
+          backgroundColor: Colors.White,
+          paddingHorizontal: '10%'
         }}
       >
-        <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
-          {sceneData.description}
-        </Text>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+            Welcome to
+          </Text>
+          <Text
+            style={[
+              textStyles.jumboSmashStyle,
+              { fontSize: 40, padding: 15, textAlign: 'center' }
+            ]}
+          >
+            {sceneData.display}
+          </Text>
+        </View>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <View
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 50,
+              borderWidth: 3,
+              borderColor: Colors.Grapefruit,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Text style={{ fontSize: 69 }}>{sceneData.icon}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-start',
+            alignItems: 'center'
+          }}
+        >
+          <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
+            {sceneData.description}
+          </Text>
+        </View>
+        <PrimaryButton
+          onPress={sceneEnabled ? dismissCard : enableScene}
+          title={sceneEnabled ? 'Start Swiping' : `Enable ${sceneData.display}`}
+          loading={enableSceneInProgress}
+          disabled={enableSceneInProgress}
+        />
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          {!sceneEnabled && (
+            <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
+              {`You won’t be shown in ${
+                sceneData.display
+              } unless you turn it on in Settings.`}
+            </Text>
+          )}
+        </View>
       </View>
-      <PrimaryButton
-        onPress={enableScene}
-        title={`Enable ${sceneData.display}`}
-        loading={false}
-        disabled={false}
-      />
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-          {`You won’t be shown in ${sceneData.display}
-unless you turn it on in Settings.`}
-        </Text>
-      </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 export default connect(
   mapStateToProps,

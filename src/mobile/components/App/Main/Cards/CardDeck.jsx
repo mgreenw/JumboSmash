@@ -160,7 +160,7 @@ class cardDeck extends React.Component<Props, State> {
       return (
         <InactiveSceneCard
           scene={scene}
-          dismiss={() => {
+          dismissCard={() => {
             this.swiper.swipeBottom();
           }}
         />
@@ -269,11 +269,13 @@ class cardDeck extends React.Component<Props, State> {
             />
           </View>
         )}
-        <SwipeButtons
-          disabled={noCandidates || allSwiped || index === 0}
-          onPressDislike={this._onButtonDislike}
-          onPressLike={this._onButtonLike}
-        />
+        {index !== 0 && (
+          <SwipeButtons
+            disabled={noCandidates || allSwiped || index === 0}
+            onPressDislike={this._onButtonDislike}
+            onPressLike={this._onButtonLike}
+          />
+        )}
       </View>
     );
   }

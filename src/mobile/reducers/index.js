@@ -1039,10 +1039,13 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__SUCCESS'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__SUCCESS'
+          };
       return {
         ...state,
         inProgress: {
@@ -1322,10 +1325,13 @@ export default function rootReducer(
     }
 
     case 'SAVE_SETTINGS__FAILED': {
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__FAILURE'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__FAILURE'
+          };
       return {
         ...state,
         inProgress: {
