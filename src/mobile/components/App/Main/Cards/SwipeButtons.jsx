@@ -43,7 +43,7 @@ export default (props: Props) => {
         }}
       >
         <TouchableOpacity
-          onPress={onPressDislike}
+          onPress={disabled ? () => {} : onPressDislike}
           style={{
             height: iconHeight,
             width: iconHeight,
@@ -58,7 +58,7 @@ export default (props: Props) => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={onPressLike}
+          onPress={disabled ? () => {} : onPressLike}
           style={{
             height: iconHeight,
             width: iconHeight,
