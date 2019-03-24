@@ -214,6 +214,15 @@ class cardDeck extends React.Component<Props, State> {
     }
   };
 
+  _onSwipedRight = (index: number) => {
+    const { like } = this.props;
+    const { cards } = this.state;
+    const card = cards[index];
+    if (card.type === 'PROFILE') {
+      like(card.profileId);
+    }
+  };
+
   _onButtonLike = () => {
     this.swiper.swipeRight();
   };
@@ -248,6 +257,7 @@ class cardDeck extends React.Component<Props, State> {
           renderCard={this._renderCard}
           onSwiped={this._onSwiped}
           onSwipedLeft={this._onSwipedLeft}
+          onSwipedRight={this._onSwipedRight}
           onSwipedAll={this._onSwipedAll}
           verticalSwipe={false}
           horizontalSwipe={
@@ -275,8 +285,8 @@ class cardDeck extends React.Component<Props, State> {
               <PrimaryButton
                 onPress={getMoreCandidatesAndReset}
                 title="Refresh Stack"
-                loading={false}
-                disabled={false}
+                loading={getCandidatesInProgress}
+                disabled={getCandidatesInProgress}
               />
             )}
             <PrimaryButton
