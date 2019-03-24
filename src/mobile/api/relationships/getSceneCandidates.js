@@ -25,7 +25,6 @@ export default function getSceneCandidates(
           return response.data;
         }
         default:
-          console.log({ queryParams, response });
           throw new Error(response);
       }
     }
