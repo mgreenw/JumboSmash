@@ -21,13 +21,11 @@ import SwipeButtons from './SwipeButtons';
 
 type ProfileCard = {
   type: 'PROFILE',
-  profileId: number,
-  testingText: string
+  profileId: number
 };
 
 type InactiveCard = {
-  type: 'INACTIVE',
-  testingText: string
+  type: 'INACTIVE'
 };
 
 type Card = InactiveCard | ProfileCard;
@@ -210,6 +208,15 @@ class cardDeck extends React.Component<Props, State> {
     }
   };
 
+  _onSwipedRight = (index: number) => {
+    const { like } = this.props;
+    const { cards } = this.state;
+    const card = cards[index];
+    if (card.type === 'PROFILE') {
+      like(card.profileId);
+    }
+  };
+
   _onButtonLike = () => {
     this.swiper.swipeRight();
   };
@@ -240,6 +247,7 @@ class cardDeck extends React.Component<Props, State> {
           renderCard={this._renderCard}
           onSwiped={this._onSwiped}
           onSwipedLeft={this._onSwipedLeft}
+          onSwipedRight={this._onSwipedRight}
           onSwipedAll={this._onSwipedAll}
           verticalSwipe={false}
           horizontalSwipe={
