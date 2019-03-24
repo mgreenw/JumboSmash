@@ -1,11 +1,13 @@
 // @flow
 
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import type { Scene } from 'mobile/reducers';
+import type { Scene, ReduxState, Dispatch } from 'mobile/reducers';
+import { connect } from 'react-redux';
+import { enableScene as enableSceneAction } from 'mobile/actions/app/saveSettings';
 
 const SCENE_META_DATA = {
   smash: {
@@ -27,14 +29,44 @@ const SCENE_META_DATA = {
   }
 };
 
-type Props = {
-  scene: Scene,
-  onEnable: () => void,
-  loading: boolean
+type ProppyProps = {
+  scene: Scene
 };
 
-export default (props: Props) => {
-  const { scene, onEnable, loading } = props;
+type DispatchProps = {
+  enableScene: () => void
+};
+
+type ReduxProps = {
+  sceneEnabled: boolean
+};
+
+type Props = ProppyProps & DispatchProps & ReduxProps;
+
+function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
+  const { scene } = ownProps;
+  if (!reduxState.client) {
+    throw new Error('client is null in Cards Screen');
+  }
+  return {
+    sceneEnabled: reduxState.client.settings.activeScenes[scene]
+  };
+}
+
+function mapDispatchToProps(
+  dispatch: Dispatch,
+  ownProps: Props
+): DispatchProps {
+  const { scene } = ownProps;
+  return {
+    enableScene: () => {
+      dispatch(enableSceneAction(scene));
+    }
+  };
+}
+
+const inactiveSceneCard = (props: Props) => {
+  const { scene, enableScene } = props;
   const sceneData = SCENE_META_DATA[scene];
 
   return (
@@ -85,10 +117,10 @@ export default (props: Props) => {
         </Text>
       </View>
       <PrimaryButton
-        onPress={onEnable}
+        onPress={enableScene}
         title={`Enable ${sceneData.display}`}
-        loading={loading}
-        disabled={loading}
+        loading={false}
+        disabled={false}
       />
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
@@ -99,3 +131,8 @@ unless you turn it on in Settings.`}
     </View>
   );
 };
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(inactiveSceneCard);

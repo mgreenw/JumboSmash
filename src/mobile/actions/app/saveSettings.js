@@ -1,6 +1,6 @@
 // @flow
 import _ from 'lodash';
-import type { UserSettings, Dispatch, GetState } from 'mobile/reducers';
+import type { UserSettings, Dispatch, GetState, Scene } from 'mobile/reducers';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
@@ -64,3 +64,34 @@ export default (settings: UserSettings) => (
       dispatch(fail());
     });
 };
+
+const enableScene = (scene: Scene) => (
+  dispatch: Dispatch,
+  getState: GetState
+) => {
+  const { client } = getState();
+
+  // Should always be called from inside app
+  if (!client) {
+    throw new Error('client null in enable scene');
+  }
+  const settings: UserSettings = {
+    ...client.settings,
+    activeScenes: {
+      ...client.settings.activeScenes,
+      [scene]: true
+    }
+  };
+  dispatch(initiate());
+  updateMySettings(settings)
+    .then(newSettings => {
+      dispatch(apiErrorHandler('foo'));
+      dispatch(fail());
+    })
+    .catch(error => {
+      dispatch(apiErrorHandler(error));
+      dispatch(fail());
+    });
+};
+
+export { enableScene };
