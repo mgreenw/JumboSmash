@@ -40,11 +40,11 @@ function messageFromCode(code: PopupCode) {
     }
 
     case 'EXPIRED_VERIFY_CODE': {
-      return `Looks like your verification code has expired. Probably TuftsSecure's Fault. Let's try this again.`;
+      return "Looks like your verification code has expired. Probably TuftsSecure's Fault. Let's try this again.";
     }
 
     case 'SERVER_ERROR': {
-      return `Oops! Something went wrong. Please try again!`;
+      return 'Oops! Something went wrong. Please try again!';
     }
 
     default: {
