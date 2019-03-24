@@ -59,6 +59,7 @@ class UnmatchPopup extends React.Component<Props, State> {
     const { unmatch_inProgress, onDone } = this.props;
     if (unmatch_inProgress && !nextProps.unmatch_inProgress) {
       this.setState({ fakeLoading: true }, () => {
+        // The timeout is so the progress bar doesn't look jumpy
         setTimeout(() => {
           onDone();
         }, 500);
