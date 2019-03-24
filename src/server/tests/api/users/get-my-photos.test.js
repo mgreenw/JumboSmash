@@ -37,19 +37,19 @@ describe('GET api/users/me/photos', () => {
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 1, $2)
-      RETURNING id
+      RETURNING uuid
     `, [me.id, uuidv4()]);
 
-    const firstId = photoRes.rows[0].id;
+    const firstUuid = photoRes.rows[0].uuid;
 
     photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 2, $2)
-      RETURNING id
+      RETURNING uuid
     `, [me.id, uuidv4()]);
 
-    const secondId = photoRes.rows[0].id;
+    const secondUuid = photoRes.rows[0].uuid;
 
     const res = await request(app)
       .get('/api/users/me/photos')
@@ -57,6 +57,6 @@ describe('GET api/users/me/photos', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MY_PHOTOS__SUCCESS.status);
-    expect(res.body.data).toEqual([firstId, secondId]);
+    expect(res.body.data).toEqual([firstUuid, secondUuid]);
   });
 });

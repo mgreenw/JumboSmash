@@ -25,11 +25,11 @@ const getSignedUrl = async (params): Promise<string> => {
 };
 
 /**
- * @api {get} /api/photos/:photoId
+ * @api {get} /api/photos/:photoUuid
  *
  */
-const getPhoto = async (photoId: number) => {
-  // Get the photo by id
+const getPhoto = async (photoUuid: string) => {
+  // Get the photo by uuid
   // NOTE: the join here ensures that the user is not banned.
   // This allows for blocked users to get the other user's photos.
   // This is ok because they will most likely already have them locally cached
@@ -38,8 +38,8 @@ const getPhoto = async (photoId: number) => {
     SELECT uuid
     FROM photos
     JOIN users ON photos.user_id = users.id
-    WHERE photos.id = $1
-  `, [photoId]);
+    WHERE photos.uuid = $1
+  `, [photoUuid]);
 
   // If it does not exist, error.
   if (photoRes.rowCount === 0) {
@@ -68,7 +68,7 @@ const handler = [
   // to force a redirect.
   async (req: $Request, res: $Response, next: $Next) => {
     try {
-      const photoRes = await getPhoto(req.params.photoId);
+      const photoRes = await getPhoto(req.params.photoUuid);
 
       // If the photo was succesfully retrieved, redirect to it!
       // NOTE: This is "abnormal" by the standards of the API

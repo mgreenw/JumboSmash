@@ -14,7 +14,7 @@ export type UploadPhotoInitiated_Action = {
 export type UploadPhotoCompleted_Action = {
   type: 'UPLOAD_PHOTO__COMPLETED',
   payload: {
-    photoIds: number[]
+    photoUuids: string[]
   },
   meta: {}
 };
@@ -33,11 +33,11 @@ function initiate(): UploadPhotoInitiated_Action {
   };
 }
 
-function complete(photoIds: number[]): UploadPhotoCompleted_Action {
+function complete(photoUuids: string[]): UploadPhotoCompleted_Action {
   return {
     type: 'UPLOAD_PHOTO__COMPLETED',
     payload: {
-      photoIds
+      photoUuids
     },
     meta: {}
   };
@@ -60,8 +60,8 @@ export default (uri: string) => (dispatch: Dispatch) => {
       // TODO: rewrite this to use promises correctly...
       uploadPhotoToS3(uri, payload).then(success => {
         if (success) {
-          confirmUploadAction().then(photoIds => {
-            dispatch(complete(photoIds));
+          confirmUploadAction().then(photoUuids => {
+            dispatch(complete(photoUuids));
           });
         } else {
           dispatch(fail());

@@ -54,8 +54,8 @@ Provide the user's initial profile fields.
             "birthday": "1999-01-27",
             "bio": "Already has 2 friends so..."
         },
-        "photoIds": [
-            1
+        "photoUuids": [
+            "8c67b20d-5dd6-4597-80dc-0250bc6cad2c"
         ]
     }
 }
