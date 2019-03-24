@@ -45,7 +45,6 @@ function complete(
 export default (scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate(scene));
   DevTesting.fakeLatency(() => {
-    console.log({ scene });
     getSceneCandidates(scene)
       .then(candidates => {
         dispatch(complete(candidates, scene));
