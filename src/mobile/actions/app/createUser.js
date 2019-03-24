@@ -5,18 +5,23 @@ import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 
-export type CreateProfileAndSettingsInitiated_Action = {
+export type CreateUserInitiated_Action = {
   type: 'CREATE_PROFILE_AND_SETTINGS__INITIATED',
   payload: {},
   meta: {}
 };
-export type CreateProfileAndSettingsCompleted_Action = {
+export type CreateUserCompleted_Action = {
   type: 'CREATE_PROFILE_AND_SETTINGS__COMPLETED',
   payload: {},
   meta: {}
 };
+export type CreateUserFailed_Action = {
+  type: 'CREATE_PROFILE_AND_SETTINGS__FAILED',
+  payload: {},
+  meta: {}
+};
 
-function initiate(): CreateProfileAndSettingsInitiated_Action {
+function initiate(): CreateUserInitiated_Action {
   return {
     type: 'CREATE_PROFILE_AND_SETTINGS__INITIATED',
     payload: {},
@@ -24,9 +29,18 @@ function initiate(): CreateProfileAndSettingsInitiated_Action {
   };
 }
 
-function complete(): CreateProfileAndSettingsCompleted_Action {
+function complete(): CreateUserCompleted_Action {
   return {
     type: 'CREATE_PROFILE_AND_SETTINGS__COMPLETED',
+    payload: {},
+    meta: {}
+  };
+}
+
+// This failure case should only stop the inProgress state; all errors should be generic and caught by middleware.
+function fail(): CreateUserFailed_Action {
+  return {
+    type: 'CREATE_PROFILE_AND_SETTINGS__FAILED',
     payload: {},
     meta: {}
   };
@@ -41,12 +55,18 @@ export default (fields: ProfileFields, settings: UserSettings) => (
     // to determine that onboarding is done, so settings must be created first
     updateMySettings(settings)
       .then(() => {
-        createMyProfileFields(fields).then(() => {
-          dispatch(complete());
-        });
+        createMyProfileFields(fields)
+          .then(() => {
+            dispatch(complete());
+          })
+          .catch(error => {
+            dispatch(apiErrorHandler(error));
+            dispatch(fail());
+          });
       })
       .catch(error => {
         dispatch(apiErrorHandler(error));
+        dispatch(fail());
       });
   });
 };
