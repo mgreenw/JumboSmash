@@ -64,7 +64,7 @@ Provide the message content and a unique uuid (v4) for the message that is gener
             "timestamp": "2019-02-21T02:12:15.082Z",
             "content": "This is fun",
             "unconfirmedMessageUuid": "e27195f8-4451-4561-96a5-83e82ecc4dd4",
-            "sender": "client"
+            "fromClient": true
         },
         "previousMessageId": 9
     }
@@ -88,7 +88,7 @@ Provide the message content and a unique uuid (v4) for the message that is gener
             "timestamp": "2019-02-21T02:12:15.082Z",
             "content": "This is fun",
             "unconfirmedMessageUuid": "e27195f8-4451-4561-96a5-83e82ecc4dd4",
-            "sender": "client"
+            "fromClient": true
         },
         "previousMessageId": null
     }

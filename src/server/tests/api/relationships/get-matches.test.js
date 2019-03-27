@@ -228,7 +228,7 @@ describe('GET api/relationships/matches', () => {
     expect(message.content).toBe('hey');
     expect(message.messageId).toBeDefined();
     expect(message.timestamp).toBeDefined();
-    expect(message.sender).toBe('client');
+    expect(message.fromClient).toBeTruthy();
 
     expect(res.body.data[0].mostRecentMessage).toBeNull();
   });
