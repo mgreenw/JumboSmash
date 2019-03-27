@@ -1,6 +1,7 @@
 // @flow
 
-import type { Message, Dispatch } from 'mobile/reducers';
+import type { Dispatch } from 'mobile/reducers';
+import type { ServerMessage } from 'mobile/api/serverTypes';
 import getConversation from 'mobile/api/messages/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -14,7 +15,7 @@ export type GetConversationInitiated_Action = {
 };
 export type GetConversationCompleted_Action = {
   type: 'GET_CONVERSATION__COMPLETED',
-  payload: { userId: number, messages: Message[] },
+  payload: { userId: number, messages: ServerMessage[] },
   meta: {}
 };
 
@@ -28,7 +29,7 @@ function initiate(userId: number): GetConversationInitiated_Action {
 
 function complete(
   userId: number,
-  messages: Message[]
+  messages: ServerMessage[]
 ): GetConversationCompleted_Action {
   return {
     type: 'GET_CONVERSATION__COMPLETED',
