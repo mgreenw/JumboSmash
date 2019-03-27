@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions, Platform } from 'react-native';
-import type { ReduxState, TopToast, TopToastCode } from 'mobile/reducers/index';
+import type { ReduxState, TopToast } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
@@ -27,19 +27,23 @@ function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
-function messageFromCode(code: TopToastCode): string {
-  switch (code) {
+function toastMessage(toast: TopToast): string {
+  switch (toast.code) {
     case 'NEW_MESSAGE': {
-      return '[picture] [name] sent you a message.';
+      return `${toast.displayName} sent you a message.`;
     }
 
     case 'NEW_MATCH': {
       return `You have a new match!`;
     }
 
+    case 'INITIAL': {
+      throw new Error('attempted to display initial toast');
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
-      (code: empty); // ensures we have handled all cases
+      (toast.code: empty); // ensures we have handled all cases
       return '';
     }
   }
@@ -53,7 +57,7 @@ class BottomToastComponent extends React.Component<Props> {
         ? sceneToEmoji(topToast.scene)
         : '';
     if (topToast.code && topToast.uuid !== prevProps.topToast.uuid) {
-      const message = messageFromCode(topToast.code) + icon;
+      const message = toastMessage(topToast) + icon;
       this.showToast(message);
     }
   }
