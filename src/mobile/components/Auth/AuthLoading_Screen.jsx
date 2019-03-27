@@ -9,7 +9,6 @@ import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
-import { textStyles } from 'mobile/styles/textStyles';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');

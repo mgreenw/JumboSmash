@@ -93,6 +93,8 @@ import { normalize, schema } from 'normalizr';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch } from 'mobile/api/serverTypes';
+import type { NetworkChange_Action } from './offline-fork';
+import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 
 export type Scene = 'smash' | 'social' | 'stone';
 
@@ -305,6 +307,8 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
+  network: { isConnected: boolean },
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -412,7 +416,8 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action;
+  | UploadPhotoFailed_Action
+  | NetworkChange_Action;
 
 export type GetState = () => ReduxState;
 
@@ -421,6 +426,7 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
+  network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   token: null,
   client: null,
   authLoaded: false,
@@ -1350,7 +1356,15 @@ export default function rootReducer(
       };
     }
 
+    // See offline-fork.js -- this allows us to use
+    // react-native-offline at a flat level in our redux state.
+    case CONNECTION_CHANGE: {
+      console.log('connection change! Action:', action);
+      return handleNetworkChange(state, action.payload);
+    }
+
     default: {
+      console.log('unandled action', action);
       // eslint-disable-next-line no-unused-expressions
       (action: empty); // ensures we have handled all cases
       return state;
