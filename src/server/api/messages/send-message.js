@@ -35,9 +35,6 @@ const schema = {
 /**
  * @api {post} /api/messages/:userId
  *
- * NOTE: We currently do not make sure that users are matched. This is a performance and simplicity
- *       decision as we will not provide UI for users to message users they are not matched to.
- *       We may consider improving/changing this in the future.
  */
 const sendMessage = async (
   senderUserId: number,
@@ -55,7 +52,7 @@ const sendMessage = async (
         timestamp,
         content,
         unconfirmed_message_uuid AS "unconfirmedMessageUuid",
-        true AS "fromClient"
+        'client' AS sender
     `, [content, senderUserId, receiverUserId, unconfirmedMessageUuid]);
 
     const [message] = messageResult.rows;
