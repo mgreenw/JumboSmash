@@ -19,7 +19,8 @@ type NavigationProps = {
 };
 
 type ReduxProps = {
-  createUserInProgress: boolean
+  createUserInProgress: boolean,
+  createUserSuccess: ?boolean
 };
 type DispatchProps = {
   createUser: (fields: ProfileFields, settings: UserSettings) => void
@@ -33,7 +34,8 @@ type State = {
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
-    createUserInProgress: reduxState.inProgress.createUser
+    createUserInProgress: reduxState.inProgress.createUser,
+    createUserSuccess: reduxState.response.createUserSuccess
   };
 }
 
@@ -56,15 +58,18 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { navigation, createUserInProgress } = this.props;
+    const { navigation, createUserInProgress, createUserSuccess } = this.props;
     if (prevProps.createUserInProgress !== createUserInProgress) {
       navigation.setParams({
         headerLeft: createUserInProgress ? null : ''
       });
 
-      // todo: watch for errors
       if (!createUserInProgress) {
-        navigation.navigate(routes.OnboardingAppLoad, {});
+        // This only gets called because of an error that would trigger a popup error.
+        // TODO: give the user a better way of fixing any errors here.
+        if (createUserSuccess) {
+          navigation.navigate(routes.OnboardingAppLoad, {});
+        }
       }
     }
   }
@@ -77,13 +82,14 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
 
   render() {
     const { createUserInProgress } = this.props;
+    const body = (
+      <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
+        {"You're all set. \n\nGet in losers, we’re going smashing."}
+      </Text>
+    );
     return (
       <OnboardingLayout
-        body={
-          <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {"You're all set. \n\nGet in losers, we’re going smashing."}
-          </Text>
-        }
+        body={body}
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}
         title="JumboSmash"

@@ -25,8 +25,9 @@ import type {
   LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
-  CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action
+  CreateUserInitiated_Action,
+  CreateUserCompleted_Action,
+  CreateUserFailed_Action
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
@@ -154,7 +155,7 @@ export type ProfileFields = {|
 
 export type UserProfile = {|
   fields: ProfileFields,
-  photoIds: number[]
+  photoUuids: string[]
 |};
 
 type SceneMatchTimes = {|
@@ -337,7 +338,8 @@ export type ReduxState = {|
   // trigger different component states for different errors.
   response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response
+    login: ?Login_Response,
+    createUserSuccess: ?boolean // So we can determine whether onboarding has been succesful
   |},
 
   sceneCandidates: SceneCandidates,
@@ -374,8 +376,9 @@ export type Action =
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
   | LoadAppCompleted_Action
-  | CreateProfileAndSettingsInitiated_Action
-  | CreateProfileAndSettingsCompleted_Action
+  | CreateUserInitiated_Action
+  | CreateUserCompleted_Action
+  | CreateUserFailed_Action
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
@@ -444,7 +447,8 @@ const defaultState: ReduxState = {
   },
   response: {
     sendVerificationEmail: null,
-    login: null
+    login: null,
+    createUserSuccess: null
   },
   onboardingCompleted: false,
   sceneCandidates: {
@@ -702,6 +706,10 @@ export default function rootReducer(
     case 'CREATE_PROFILE_AND_SETTINGS__INITIATED': {
       return {
         ...state,
+        response: {
+          ...state.response,
+          createUserSuccess: null
+        },
         inProgress: {
           ...state.inProgress,
           createUser: true
@@ -715,6 +723,24 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: true
+        }
+      };
+    }
+
+    case 'CREATE_PROFILE_AND_SETTINGS__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: false
         }
       };
     }
@@ -819,7 +845,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...profile,
-            photoIds: action.payload.photoIds
+            photoUuids: action.payload.photoUuids
           }
         }
       };
@@ -854,7 +880,7 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for DELETE_PHOTO__COMPLETED');
       }
-      const { photoIds } = action.payload;
+      const { photoUuids } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -865,7 +891,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds
+            photoUuids
           }
         }
       };

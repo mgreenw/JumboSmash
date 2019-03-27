@@ -9,7 +9,7 @@ const dbUtils = require('../../utils/db');
 
 let me = {};
 
-describe('DELETE api/photos/:photoId', () => {
+describe('DELETE api/photos/:photoUuid', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE FROM classmates');
@@ -39,9 +39,9 @@ describe('DELETE api/photos/:photoId', () => {
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
-  it('should fail given there is no photo with that id', async () => {
+  it('should fail given there is no photo with that uuid', async () => {
     const res = await request(app)
-      .delete('/api/photos/1')
+      .delete('/api/photos/cf9ab9b8-d529-4706-850e-0b9c90e7214e')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
@@ -54,13 +54,13 @@ describe('DELETE api/photos/:photoId', () => {
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 1, $2)
-      RETURNING id
+      RETURNING uuid
     `, [otherUser.id, uuidv4()]);
 
-    const [{ id }] = photoRes.rows;
+    const [{ uuid }] = photoRes.rows;
 
     const res = await request(app)
-      .delete(`/api/photos/${id}`)
+      .delete(`/api/photos/${uuid}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
@@ -72,20 +72,20 @@ describe('DELETE api/photos/:photoId', () => {
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 1, $2)
-      RETURNING id
+      RETURNING uuid
     `, [me.id, uuidv4()]);
 
     photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 2, $2)
-      RETURNING id
+      RETURNING uuid
     `, [me.id, uuidv4()]);
 
-    const [{ id }] = photoRes.rows;
+    const [{ uuid }] = photoRes.rows;
 
     const res = await request(app)
-      .delete(`/api/photos/${id}`)
+      .delete(`/api/photos/${uuid}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
@@ -98,10 +98,10 @@ describe('DELETE api/photos/:photoId', () => {
       INSERT INTO photos (user_id, index, uuid)
       VALUES
         ($1, 2, $2)
-      RETURNING id
+      RETURNING uuid
     `, [me.id, uuidv4()]);
 
-    const secondId = photoRes.rows[0].id;
+    const secondUuid = photoRes.rows[0].uuid;
 
     photoRes = await db.query(`
       INSERT INTO photos (user_id, index, uuid)
@@ -111,20 +111,20 @@ describe('DELETE api/photos/:photoId', () => {
     `, [me.id, uuidv4()]);
 
     const res = await request(app)
-      .delete(`/api/photos/${secondId}`)
+      .delete(`/api/photos/${secondUuid}`)
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.DELETE_PHOTO__SUCCESS.status);
 
     photoRes = await db.query(`
-      SELECT index, id
+      SELECT index, uuid
       FROM photos
       WHERE user_id = $1
       ORDER BY index
     `, [me.id]);
 
     expect(photoRes.rows[1].index).toBe(2);
-    expect(res.body.data[0]).toBe(photoRes.rows[0].id);
+    expect(res.body.data[0]).toBe(photoRes.rows[0].uuid);
   });
 });

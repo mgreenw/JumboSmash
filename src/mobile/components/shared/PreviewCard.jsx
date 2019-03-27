@@ -29,14 +29,14 @@ export default (props: Props) => {
         }}
       >
         <Image
-          key={profile.photoIds[0]}
+          key={profile.photoUuids[0]}
           style={{
             width: width - 24,
             height: width - 24,
             borderRadius: 20
           }}
           resizeMode={'contain'}
-          uri={GET_PHOTO__ROUTE + profile.photoIds[0]}
+          uri={GET_PHOTO__ROUTE + profile.photoUuids[0]}
         />
       </View>
       <View

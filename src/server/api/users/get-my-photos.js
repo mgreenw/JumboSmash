@@ -14,14 +14,14 @@ const codes = require('../status-codes');
  */
 const getMyPhotos = async (userId: number) => {
   const result = await db.query(`
-    SELECT id
+    SELECT uuid
     FROM photos
     WHERE user_id = $1
     ORDER BY index
   `, [userId]);
 
   return apiUtils.status(codes.GET_MY_PHOTOS__SUCCESS).data(
-    _.map(result.rows, row => row.id),
+    _.map(result.rows, row => row.uuid),
   );
 };
 

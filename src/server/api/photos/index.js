@@ -13,8 +13,8 @@ const photosRouter = express.Router();
 // Authenticated methods
 photosRouter.get('/confirm-upload', confirmUpload.handler);
 photosRouter.get('/sign-url', signUrl.handler);
-photosRouter.get('/:photoId(\\d+$)', getPhoto.handler);
-photosRouter.delete('/:photoId(\\d+$)', deletePhoto.handler);
+photosRouter.get('/:photoUuid', getPhoto.handler);
+photosRouter.delete('/:photoUuid', deletePhoto.handler);
 photosRouter.patch('/reorder', reorderPhotos.handler);
 
 module.exports = photosRouter;

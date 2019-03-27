@@ -55,6 +55,8 @@ describe('POST api/users/me/profile', () => {
   it('should succeed if the user has been created and has uploaded a photo yet does not yet have a profile', async () => {
     const user = await dbUtils.createUser('mgreen13');
     const photoId = await dbUtils.insertPhoto(user.id);
+    const photoRes = await db.query('SELECT uuid FROM photos WHERE id = $1', [photoId]);
+    const photoUuid = photoRes.rows[0].uuid;
     const res = await request(app)
       .post('/api/users/me/profile')
       .set('Accept', 'application/json')
@@ -67,7 +69,7 @@ describe('POST api/users/me/profile', () => {
       .expect(201);
     expect(res.body.status).toBe(codes.FINALIZE_PROFILE_SETUP__SUCCESS.status);
     expect(res.body.data).toBeDefined();
-    expect(res.body.data.photoIds).toEqual([photoId]);
+    expect(res.body.data.photoUuids).toEqual([photoUuid]);
     expect(res.body.data.fields.displayName).toBe('Max');
     expect(res.body.data.fields.bio).toBe('He is a guy');
     expect(res.body.data.fields.birthday).toBe('1997-09-09');

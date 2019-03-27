@@ -52,8 +52,6 @@ const report = async (
   // 2) If there is currently no relationship between the two users, a
   //    relationship will be inserted. If there is a relationship, the
   //    relationship will be updated with the desired values
-  // 3) The 'last_swipe_timestamp' is always updated to reflect that the
-  //    critic has interacted with the candidate
   const reportedUserResult = await db.query(`
     SELECT utln, email
     FROM classmates
@@ -79,15 +77,13 @@ ${message}`;
 
   if (block) {
     await db.query(`
-    INSERT INTO relationships
-      (critic_user_id, candidate_user_id, blocked)
-      VALUES ($1, $2, true)
-    ON CONFLICT (critic_user_id, candidate_user_id)
-    DO UPDATE
-      SET
-      blocked = true,
-      last_swipe_timestamp = now()
-  `, [reportingUserId, reportedUserId]);
+      INSERT INTO relationships
+        (critic_user_id, candidate_user_id, blocked)
+        VALUES ($1, $2, true)
+      ON CONFLICT (critic_user_id, candidate_user_id)
+      DO UPDATE
+        SET blocked = true
+    `, [reportingUserId, reportedUserId]);
   }
 
   return status(REPORT__SUCCESS).noData();

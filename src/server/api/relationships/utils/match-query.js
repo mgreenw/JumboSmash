@@ -10,7 +10,7 @@ const matchedScenesSelect = utilScenes.map((scene) => {
     CASE
       me_critic.liked_${scene} AND they_critic.liked_${scene}
       WHEN true
-        THEN GREATEST(me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp)
+        THEN GREATEST(me_critic.swiped_${scene}_timestamp, they_critic.swiped_${scene}_timestamp)
         ELSE NULL
     END`;
 });

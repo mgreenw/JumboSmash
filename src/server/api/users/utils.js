@@ -107,9 +107,9 @@ function profileSelectQuery(
     )
   `;
 
-  const photoIds = `
+  const photoUuids = `
     ARRAY(
-      SELECT id
+      SELECT uuid
       FROM photos
       WHERE user_id = ${userIdMatch}
       ORDER BY index
@@ -120,14 +120,14 @@ function profileSelectQuery(
     return `
       json_build_object(
         'fields', ${fields},
-        'photoIds', ${photoIds}
+        'photoUuids', ${photoUuids}
       )
     `;
   }
 
   return `
       ${fields} AS fields,
-      ${photoIds} AS "photoIds"
+      ${photoUuids} AS "photoUuids"
     `;
 }
 
