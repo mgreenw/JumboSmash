@@ -92,7 +92,7 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch, ServerCandidate } from 'mobile/api/serverTypes';
+import type { ServerMatch, ServerMessage, ServerCandidate } from 'mobile/api/serverTypes';
 
 export type Scene = 'smash' | 'social' | 'stone';
 
@@ -249,19 +249,18 @@ const MatchSchema = new schema.Entity(
   { idAttribute: 'userId' }
 );
 
+// We add these unconfrimed uuid's so that we can handle messages being sent from client side.
+// For those retrieved from server, we ignore this field.
 export type Message = {|
-  messageId: number,
-  content: string,
-  timestamp: string,
-  fromClient: boolean,
+  ...ServerMessage,
   unconfirmedMessageUuid: string
 |};
 
 // Extended type because in context we don't know who it is sent to.
-type MostRecentMessage = {
+type MostRecentMessage = {|
   ...Message,
   otherUserId: number
-};
+|};
 
 type GiftedChatUser = {|
   _id: string,
