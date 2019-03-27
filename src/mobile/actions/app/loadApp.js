@@ -35,7 +35,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  photoIds: ?(number[])
+  photoUuids: ?(string[])
 ): LoadAppCompleted_Action {
   return {
     type: 'LOAD_APP__COMPLETED',
@@ -47,7 +47,7 @@ function complete(
           birthday: '',
           displayName: ''
         },
-        photoIds: photoIds || [] // incase partial photo uploading in onboarding
+        photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },
       settings: settings || {
         identifyAsGenders: {
@@ -80,8 +80,8 @@ export default () => (dispatch: Dispatch) => {
       // if profile is null, onboarding has not been completed, though
       // some photos may have been uploaded.
       if (profile === null || profile === undefined) {
-        getMyPhotos().then(photoIds => {
-          dispatch(complete(null, null, false, photoIds));
+        getMyPhotos().then(photoUuids => {
+          dispatch(complete(null, null, false, photoUuids));
         });
       } else {
         getMySettings().then(settings => {

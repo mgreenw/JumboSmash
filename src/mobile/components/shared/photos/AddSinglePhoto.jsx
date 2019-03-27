@@ -13,7 +13,7 @@ type Props = {
   onRemove: () => void,
   enableRemove: boolean,
   width: number,
-  photoId: ?number
+  photoUuid: ?string
 };
 
 type State = {
@@ -33,7 +33,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
   };
 
   render() {
-    const { onAdd, onRemove, width, photoId, enableRemove } = this.props;
+    const { onAdd, onRemove, width, photoUuid, enableRemove } = this.props;
     const { showActionSheet } = this.state;
     return (
       <View>
@@ -44,7 +44,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
             backgroundColor: Colors.Ice,
             aspectRatio: 1,
             borderColor: Colors.AquaMarine,
-            borderWidth: photoId ? 0 : 2,
+            borderWidth: photoUuid ? 0 : 2,
             borderStyle: 'dashed',
             borderRadius: 3,
             alignItems: 'center',
@@ -52,14 +52,14 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
           }}
           disabled={false}
           onPress={
-            photoId
+            photoUuid
               ? () => {
                   this._toggleActionSheet(true);
                 }
               : onAdd
           }
         >
-          {photoId ? (
+          {photoUuid ? (
             <Image
               style={{
                 flex: 1,
@@ -68,7 +68,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 borderRadius: 8
               }}
               resizeMode="contain"
-              uri={GET_PHOTO__ROUTE + photoId}
+              uri={GET_PHOTO__ROUTE + photoUuid}
             />
           ) : (
             <Text
@@ -77,7 +77,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 { textDecorationLine: 'underline' }
               ]}
             >
-              {photoId ? '' : 'Add'}
+              {photoUuid ? '' : 'Add'}
             </Text>
           )}
         </TouchableOpacity>

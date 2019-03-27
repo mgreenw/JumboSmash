@@ -2,9 +2,9 @@
 
 import {
   UNAUTHORIZED,
-  SERVER_ERROR,
   NETWORK_REQUEST_FAILED
 } from 'mobile/api/sharedResponseCodes';
+import Sentry from 'sentry-expo';
 
 export type Unauthorized_Action = {
   type: 'UNAUTHORIZED'
@@ -34,10 +34,11 @@ export function apiErrorHandler(
     };
   }
 
-  if (reject === SERVER_ERROR) {
-    return {
-      type: 'SERVER_ERROR'
-    };
-  }
-  throw reject;
+  // All other errors we should log!
+  Sentry.captureException(reject);
+
+  // Just throw everything else as a Server Error for the user.
+  return {
+    type: 'SERVER_ERROR'
+  };
 }

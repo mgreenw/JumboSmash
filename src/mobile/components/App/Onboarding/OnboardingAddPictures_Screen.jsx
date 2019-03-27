@@ -18,7 +18,7 @@ type NavigationProps = {
 
 type DispatchProps = {};
 
-type ReduxProps = { photoIds: number[] };
+type ReduxProps = { photoUuids: string[] };
 
 type Props = NavigationProps & DispatchProps & ReduxProps;
 
@@ -32,7 +32,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('client is null in Onboarding Photos');
   }
   return {
-    photoIds: reduxState.client.profile.photoIds
+    photoUuids: reduxState.client.profile.photoUuids
   };
 }
 
@@ -78,8 +78,8 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   render() {
     const { width } = Dimensions.get('window');
-    const { photoIds } = this.props;
-    const complete = photoIds.length > 0;
+    const { photoUuids } = this.props;
+    const complete = photoUuids.length > 0;
 
     // A bit of a hack, but we want pictures to look nice.
     // We have 22 padding via onboarding layout, plus an additional 40 here,
@@ -87,19 +87,21 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     const containerWidth = width - 44 - 80;
     const imageWidth = (containerWidth - 15) / 2;
 
+    // AddMultiPhotos gets direct redux access due to constraints on
+    // photo uploading. CreatMyProfile needs previously uploaded photos,
+    // which occurs here.
+    const body = (
+      <AddMultiPhotos
+        width={containerWidth}
+        imageWidth={imageWidth}
+        enableDeleteFirst
+      />
+    );
+
     return (
       <OnboardingLayout
         section="profile"
-        body={
-          // AddMultiPhotos gets direct redux access due to constraints on
-          // photo uploading. CreatMyProfile needs previously uploaded photos,
-          // which occurs here.
-          <AddMultiPhotos
-            width={containerWidth}
-            imageWidth={imageWidth}
-            enableDeleteFirst
-          />
-        }
+        body={body}
         onButtonPress={this._goToNextPage}
         title="Upload Photos"
         main
