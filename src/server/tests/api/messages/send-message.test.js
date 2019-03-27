@@ -94,7 +94,7 @@ describe('POST api/messages/:userId', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
     expect(res.body.data).toBeDefined();
-    expect(res.body.data.message.sender).toBe('client');
+    expect(res.body.data.message.fromClient).toBe(true);
     expect(res.body.data.message.messageId).toBeDefined();
     // The first message should have no prev message id
     expect(res.body.data.previousMessageId).toBeNull();
