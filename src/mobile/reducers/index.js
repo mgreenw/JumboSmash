@@ -112,7 +112,7 @@ export type BottomToast = {
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
-  code: ?NewMatchToastCode,
+  code: NewMatchToastCode,
   profileId?: number,
   scene?: Scene
 };
@@ -120,12 +120,17 @@ export type NewMatchToast = {
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   uuid: string,
-  code: ?NewMessageToastCode,
-  displayName: ?string
+  code: NewMessageToastCode,
+  displayName: string
+};
+
+type InitialToast = {
+  uuid: string,
+  code: 'INITIAL'
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
-export type TopToast = NewMatchToast | NewMessageToast;
+export type TopToast = NewMatchToast | NewMessageToast | InitialToast;
 
 // /////////////
 // USER TYPES:
@@ -479,7 +484,7 @@ const defaultState: ReduxState = {
   },
   topToast: {
     uuid: '0',
-    code: null
+    code: 'INITIAL'
   }
 };
 
