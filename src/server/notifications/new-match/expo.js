@@ -3,16 +3,12 @@
 const Expo = require('../../expo');
 
 const emojis = {
-  smash: String.fromCodePoint(0x1f351),
-  social: String.fromCodePoint(0x1f418),
-  stone: String.fromCodePoint(0x1f343),
+  smash: String.fromCodePoint(0x1F351),
+  social: String.fromCodePoint(0x1F418),
+  stone: String.fromCodePoint(0x1F343),
 };
 
-module.exports = (
-  matchingUserId: number,
-  matchedUserId: number,
-  scene: string,
-) => {
+module.exports = (matchingUserId: number, matchedUserId: number, scene: string) => {
   // Construct the shared notification body
   const body = `You have a new match! ${emojis[scene]}`;
   const notification = {
