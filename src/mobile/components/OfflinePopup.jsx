@@ -36,7 +36,6 @@ const OfflinePopup = (props: Props) => {
   return (
     <Popup visible={!isConnected && authLoaded} onTouchOutside={() => {}}>
       <FormattedPopup
-        onTouchOutside={() => {}}
         title="No internet connection."
         subtitle={'Trying to reconnect...'}
         primaryButtonText={'Check Connection'}
