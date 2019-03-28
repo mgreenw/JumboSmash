@@ -34,7 +34,7 @@ function toastMessage(toast: TopToast): string {
     }
 
     case 'NEW_MATCH': {
-      return `You have a new match!`;
+      return 'You have a new match!';
     }
 
     case 'INITIAL': {
