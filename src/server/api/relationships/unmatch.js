@@ -7,7 +7,7 @@ const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
-const sceneQuery = utils.scenes.map(scene => `liked_${scene} = false, swiped_${scene}_timestamp = NULL`);
+const sceneQuery = utils.scenes.map(scene => `liked_${scene} = false`);
 /**
  * @api {post} /api/relationships/unmatch/:matchUserId
  *
