@@ -166,7 +166,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
             containerStyle={{ width: '100%' }}
             assistive=""
             autoCapitalize="words"
-            maxLength={50}
+            maxLength={20}
           />
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>

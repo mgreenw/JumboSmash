@@ -39,7 +39,6 @@ export class PrimaryInput extends React.Component<Props, State> {
           primaryColor={primaryColor}
           selectedColor={Colors.AquaMarine}
           errorColor={errorColor}
-          maxLength={20}
         />
         <AssistiveError
           {...this.props}

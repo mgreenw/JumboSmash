@@ -158,6 +158,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 containerStyle={{ width: '100%' }}
                 assistive=""
                 autoCapitalize="words"
+                maxLength={20}
               />
               <View
                 style={{
