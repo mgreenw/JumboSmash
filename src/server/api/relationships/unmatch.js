@@ -16,7 +16,7 @@ const unmatch = async (userId: number, matchUserId: number) => {
   // If the users are matched in a scene, unmatch them in that scene and require
   // both users to re-consent to the match
   const matched = await canAccessUserData(matchUserId, userId, { requireMatch: true });
-  if (!matched || Number.isNaN(matchUserId)) {
+  if (!matched) {
     return status(codes.UNMATCH__NOT_MATCHED).noData();
   }
 
