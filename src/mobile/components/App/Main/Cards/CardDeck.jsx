@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { View } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -40,6 +40,7 @@ type ReduxProps = {
 
 type DispatchProps = {
   getMoreCandidates: () => void,
+  getMoreCandidatesAndReset: () => void,
   dislike: (candidateUserId: number) => void,
   like: (canidateUserId: number) => void
 };
@@ -80,6 +81,9 @@ function mapDispatchToProps(
   return {
     getMoreCandidates: () => {
       dispatch(getSceneCandidatesAction(scene));
+    },
+    getMoreCandidatesAndReset: () => {
+      dispatch(getSceneCandidatesAction(scene, true));
     },
     like: (candidateUserId: number) => {
       dispatch(judgeSceneCandidateAction(candidateUserId, scene, true));
@@ -219,7 +223,11 @@ class cardDeck extends React.Component<Props, State> {
 
   render() {
     const { cards, deckIndex, allSwiped, noCandidates } = this.state;
-    const { getCandidatesInProgress, getMoreCandidates } = this.props;
+    const {
+      getCandidatesInProgress,
+      getMoreCandidates,
+      getMoreCandidatesAndReset
+    } = this.props;
 
     return (
       <View
@@ -263,12 +271,10 @@ class cardDeck extends React.Component<Props, State> {
           >
             {noCandidates && (
               <PrimaryButton
-                onPress={() => {
-                  Alert.alert('Not Yet Implemented');
-                }}
+                onPress={getMoreCandidatesAndReset}
                 title="Refresh Stack"
-                loading={false}
-                disabled={false}
+                loading={getCandidatesInProgress}
+                disabled={getCandidatesInProgress}
               />
             )}
             <PrimaryButton
