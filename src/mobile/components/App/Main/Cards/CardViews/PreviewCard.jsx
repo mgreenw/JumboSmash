@@ -14,8 +14,7 @@ type Props = {
 export default (props: Props) => {
   const { width, height } = Dimensions.get('window');
   const minHeight = width;
-  const h = height * 0.6;
-  const useHeight = Math.max(h, minHeight);
+  const useHeight = Math.max(height * 0.6, minHeight);
 
   const { profile } = props;
   return (
@@ -34,7 +33,7 @@ export default (props: Props) => {
       >
         <View
           style={{
-            /* In case image is not propperly cropped, fallback to this */
+            /* In case image is not properly cropped, fallback to this */
             width: width - 24,
             height: useHeight,
             borderRadius: 20,

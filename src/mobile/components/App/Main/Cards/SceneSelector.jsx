@@ -53,10 +53,10 @@ export default class SceneSelector extends Component<Props> {
   selectedSceneHorizontalPosition: AnimatedValue;
 
   render() {
-    const { scene } = this.props;
-    const renderedScenes = SCENES.map((s, index) => (
+    const { scene: currentScene } = this.props;
+    const renderedScenes = SCENES.map((scene, index) => (
       <View
-        key={s.value}
+        key={scene.value}
         style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
       >
         <TouchableOpacity
@@ -68,7 +68,7 @@ export default class SceneSelector extends Component<Props> {
               fontSize: 20
             }}
           >
-            {s.label}
+            {scene.label}
           </Text>
         </TouchableOpacity>
       </View>
@@ -86,7 +86,7 @@ export default class SceneSelector extends Component<Props> {
       >
         <NavigationEvents
           onDidBlur={() => {
-            this.animate(sceneIndex(scene) / SCENES.length);
+            this.animate(sceneIndex(currentScene) / SCENES.length);
           }}
         />
         <View

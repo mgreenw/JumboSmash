@@ -92,7 +92,11 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch, ServerMessage, ServerCandidate } from 'mobile/api/serverTypes';
+import type {
+  ServerMatch,
+  ServerMessage,
+  ServerCandidate
+} from 'mobile/api/serverTypes';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 

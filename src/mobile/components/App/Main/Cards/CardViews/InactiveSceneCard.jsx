@@ -68,7 +68,7 @@ function mapDispatchToProps(
   };
 }
 
-class inactiveSceneCard extends React.Component<Props> {
+class InactiveSceneCard extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
     const { sceneEnabled, dismissCard } = this.props;
     if (sceneEnabled && !prevProps.sceneEnabled) {
@@ -165,4 +165,4 @@ class inactiveSceneCard extends React.Component<Props> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(inactiveSceneCard);
+)(InactiveSceneCard);

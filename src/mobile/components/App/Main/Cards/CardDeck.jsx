@@ -47,7 +47,7 @@ type DispatchProps = {
 type Props = ProppyProps & DispatchProps & ReduxProps;
 type State = {
   cards: Card[],
-  index: number,
+  deckIndex: number,
   allSwiped: boolean,
   noCandidates: boolean
 };
@@ -58,8 +58,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     profileId => {
       return {
         type: 'PROFILE',
-        profileId,
-        testingText: `Profile Id: ${profileId}`
+        profileId
       };
     }
   );
@@ -94,15 +93,14 @@ function mapDispatchToProps(
 class cardDeck extends React.Component<Props, State> {
   constructor(props: Props) {
     const inactiveCard: InactiveCard = {
-      type: 'INACTIVE',
-      testingText: 'initial text for redux card'
+      type: 'INACTIVE'
     };
     super(props);
     this.state = {
       cards: [inactiveCard, ...props.profileCards],
-      index: 0,
+      deckIndex: 0,
       allSwiped: false,
-      noCandidates: false // wait untill we check -- allow a load
+      noCandidates: false // wait until we check -- allow a load
     };
   }
 
@@ -114,12 +112,13 @@ class cardDeck extends React.Component<Props, State> {
       prevProps.getCandidatesInProgress && !getCandidatesInProgress;
     if (recievedNewCanidates) {
       if (prevProps.profileCards !== profileCards) {
-        const { cards, allSwiped, index } = this.state;
+        const { cards, allSwiped, deckIndex } = this.state;
         const len = cards.length;
+        // keep the card this componenet adds (the genesis) and append the rest
         cards.splice(1, len, ...profileCards);
         if (allSwiped) {
-          // at this point index will be length + 1 if no new cards are fetched.
-          const noCandidates = index > profileCards.length;
+          // at this point deckIndex will be length + 1 if no new cards are fetched.
+          const noCandidates = deckIndex > profileCards.length;
           if (noCandidates) {
             this.setState({
               noCandidates,
@@ -132,9 +131,9 @@ class cardDeck extends React.Component<Props, State> {
                 noCandidates
               },
               () => {
-                // The magic. This actually dosn't move the index, but forces the swiper to update its props.
+                // The magic. This actually dosn't move the deckIndex, but forces the swiper to update its props.
                 // This is only used in the case we have hit the end of the deck.
-                this.swiper.jumpToCardIndex(index);
+                this.swiper.jumpToCardIndex(deckIndex);
               }
             );
           }
@@ -143,9 +142,9 @@ class cardDeck extends React.Component<Props, State> {
     }
   }
 
-  _onSwiped = (index: number) => {
+  _onSwiped = (deckIndex: number) => {
     this.setState({
-      index: index + 1
+      deckIndex: deckIndex + 1
     });
   };
 
@@ -155,20 +154,29 @@ class cardDeck extends React.Component<Props, State> {
   //       (and enable swiping if needed via settings)
   //    2. the preview profile card.
   _renderCard = (card: Card) => {
-    if (card.type === 'INACTIVE') {
-      const { scene } = this.props;
-      return (
-        <InactiveSceneCard
-          scene={scene}
-          dismissCard={() => {
-            this.swiper.swipeBottom();
-          }}
-        />
-      );
+    switch (card.type) {
+      case 'INACTIVE': {
+        const { scene } = this.props;
+        return (
+          <InactiveSceneCard
+            scene={scene}
+            dismissCard={() => {
+              this.swiper.swipeBottom();
+            }}
+          />
+        );
+      }
+      case 'PROFILE': {
+        const { profileMap } = this.props;
+        const profile = profileMap[card.profileId];
+        return <PreviewCard profile={profile} />;
+      }
+      default: {
+        // eslint-disable-next-line no-unused-expressions
+        (card.type: empty); // ensures we have handled all cases
+        return null;
+      }
     }
-    const { profileMap } = this.props;
-    const profile = profileMap[card.profileId];
-    return <PreviewCard profile={profile} />;
   };
 
   _onSwipedAll = () => {
@@ -179,19 +187,19 @@ class cardDeck extends React.Component<Props, State> {
     getMoreCandidates();
   };
 
-  _onSwipedLeft = (index: number) => {
+  _onSwipedLeft = (deckIndex: number) => {
     const { dislike } = this.props;
     const { cards } = this.state;
-    const card = cards[index];
+    const card = cards[deckIndex];
     if (card.type === 'PROFILE') {
       dislike(card.profileId);
     }
   };
 
-  _onSwipedRight = (index: number) => {
+  _onSwipedRight = (deckIndex: number) => {
     const { like } = this.props;
     const { cards } = this.state;
-    const card = cards[index];
+    const card = cards[deckIndex];
     if (card.type === 'PROFILE') {
       like(card.profileId);
     }
@@ -208,7 +216,7 @@ class cardDeck extends React.Component<Props, State> {
   swiper: Swiper;
 
   render() {
-    const { cards, index, allSwiped, noCandidates } = this.state;
+    const { cards, deckIndex, allSwiped, noCandidates } = this.state;
     const { getCandidatesInProgress, getMoreCandidates } = this.props;
 
     return (
@@ -231,10 +239,10 @@ class cardDeck extends React.Component<Props, State> {
           onSwipedAll={this._onSwipedAll}
           verticalSwipe={false}
           horizontalSwipe={
-            index !== 0 /* don't allow the instructions to be swiped */
+            deckIndex !== 0 /* don't allow the instructions to be swiped */
           }
           backgroundColor={'transparent'}
-          index={index}
+          deckIndex={deckIndex}
           stackSize={2}
           cardVerticalMargin={0}
           cardHorizontalMargin={0}
@@ -245,7 +253,7 @@ class cardDeck extends React.Component<Props, State> {
         {allSwiped && (
           <View
             style={{
-              /* Absolutely absurd we have to do this, but the Swiper dosn't 
+              /* Absolutely absurd we have to do this, but the Swiper does not
                correctly propogate props to its children, so we have to fake locations. */
               position: 'absolute',
               zIndex: 2
@@ -269,9 +277,9 @@ class cardDeck extends React.Component<Props, State> {
             />
           </View>
         )}
-        {index !== 0 && (
+        {deckIndex !== 0 && (
           <SwipeButtons
-            disabled={noCandidates || allSwiped || index === 0}
+            disabled={noCandidates || allSwiped || deckIndex === 0}
             onPressDislike={this._onButtonDislike}
             onPressLike={this._onButtonLike}
           />

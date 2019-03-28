@@ -18,7 +18,7 @@ const CardsLayout = (props: Props) => {
   return (
     <View style={{ flex: 1 }}>
       <GEMHeader
-        title="PROJECTGEM"
+        title="JumboSmash"
         rightIconName="message"
         leftIconName="user"
         centerComponent={sceneSelector}
