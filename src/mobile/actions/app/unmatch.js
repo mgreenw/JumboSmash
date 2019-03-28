@@ -1,7 +1,6 @@
 // @flow
 import type { Dispatch } from 'mobile/reducers';
-import { Scenes } from 'mobile/reducers';
-import judgeSceneCandidate from 'mobile/api/relationships/judgeSceneCandidate';
+import unmatch from 'mobile/api/relationships/unmatch';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type UnmatchInitiated_Action = {
@@ -48,7 +47,7 @@ function fail(): UnmatchFailed_Action {
 export default (matchId: number) => (dispatch: Dispatch) => {
   dispatch(initiate());
   // We have to dislike the candidate in each scene
-  Promise.all(Scenes.map(scene => judgeSceneCandidate(matchId, scene, false)))
+  unmatch(matchId)
     .then(() => {
       dispatch(complete(matchId));
     })

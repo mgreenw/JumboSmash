@@ -84,9 +84,14 @@ export const SCENE_CANDIDATES__ROUTES = {
 const MATCHES = 'matches/';
 export const GET_MATCHES__ROUTE = RELATIONSHIPS_ROUTE + MATCHES;
 
+// Relationships:
 // Judge
 const JUDGE = 'judge/';
 export const JUDGE_SCENE_CANDIDATE__ROUTE = RELATIONSHIPS_ROUTE + JUDGE;
+
+// Unmatch
+const UNMATCH = 'unmatch/';
+export const UNMATCH__ROUTE = RELATIONSHIPS_ROUTE + UNMATCH;
 
 // Messages
 export const GET_CONVERSATION = MESSAGES_ROUTE;
