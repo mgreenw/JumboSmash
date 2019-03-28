@@ -93,6 +93,8 @@ import { normalize, schema } from 'normalizr';
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
 import type { ServerMatch, ServerMessage, ServerCandidate } from 'mobile/api/serverTypes';
+import type { NetworkChange_Action } from './offline-fork';
+import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 
 export type Scene = 'smash' | 'social' | 'stone';
 
@@ -112,7 +114,7 @@ export type BottomToast = {
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
-  code: ?NewMatchToastCode,
+  code: NewMatchToastCode,
   profileId?: number,
   scene?: Scene
 };
@@ -120,12 +122,17 @@ export type NewMatchToast = {
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   uuid: string,
-  code: ?NewMessageToastCode,
-  displayName: ?string
+  code: NewMessageToastCode,
+  displayName: string
+};
+
+type InitialToast = {
+  uuid: string,
+  code: 'INITIAL'
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
-export type TopToast = NewMatchToast | NewMessageToast;
+export type TopToast = NewMatchToast | NewMessageToast | InitialToast;
 
 // /////////////
 // USER TYPES:
@@ -314,6 +321,8 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
+  network: { isConnected: boolean },
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -421,7 +430,8 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action;
+  | UploadPhotoFailed_Action
+  | NetworkChange_Action;
 
 export type GetState = () => ReduxState;
 
@@ -430,6 +440,7 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
+  network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   token: null,
   client: null,
   authLoaded: false,
@@ -489,7 +500,7 @@ const defaultState: ReduxState = {
   },
   topToast: {
     uuid: '0',
-    code: null
+    code: 'INITIAL'
   }
 };
 
@@ -1373,6 +1384,12 @@ export default function rootReducer(
           }
         }
       };
+    }
+
+    // See offline-fork.js -- this allows us to use
+    // react-native-offline at a flat level in our redux state.
+    case CONNECTION_CHANGE: {
+      return handleNetworkChange(state, action.payload);
     }
 
     default: {

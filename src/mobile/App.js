@@ -7,10 +7,12 @@ import { createAppContainer } from '@react-navigation/native';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import createRootNavigator from 'mobile/components/navigation/Navigation';
 import Sentry from 'sentry-expo';
+import { ReduxNetworkProvider } from 'react-native-offline';
 import store from './store';
 import MasterPopup from './components/MasterPopup';
 import BottomToast from './components/shared/toast/BottomToast';
 import TopToast from './components/shared/toast/TopToast';
+import OfflinePopup from './components/OfflinePopup';
 
 const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
@@ -35,14 +37,17 @@ export default class App extends React.Component<Props, State> {
   render() {
     return (
       <Provider store={store}>
-        <AppContainer
-          ref={navigatorRef => {
-            NavigationService.setTopLevelNavigator(navigatorRef);
-          }}
-        />
-        <MasterPopup />
-        <BottomToast />
-        <TopToast />
+        <ReduxNetworkProvider>
+          <AppContainer
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          />
+          <MasterPopup />
+          <BottomToast />
+          <TopToast />
+          <OfflinePopup />
+        </ReduxNetworkProvider>
       </Provider>
     );
   }
