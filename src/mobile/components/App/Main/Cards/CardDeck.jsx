@@ -187,6 +187,7 @@ class cardDeck extends React.Component<Props, State> {
     getMoreCandidates();
   };
 
+  // These are callbacks for after swiping
   _onSwipedLeft = (deckIndex: number) => {
     const { dislike } = this.props;
     const { cards } = this.state;
@@ -205,6 +206,7 @@ class cardDeck extends React.Component<Props, State> {
     }
   };
 
+  // These cause swipes to occur, for faking a swipe from a button
   _onButtonLike = () => {
     this.swiper.swipeRight();
   };

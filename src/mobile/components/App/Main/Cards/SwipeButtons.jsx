@@ -9,7 +9,6 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 const { width } = Dimensions.get('window');
 
 const iconHeight = 65;
-export type SwipeDirection = 'right' | 'left';
 
 type Props = {
   disabled: boolean,
