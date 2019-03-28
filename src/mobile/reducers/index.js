@@ -86,6 +86,11 @@ import type {
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
+import type {
+  ReportUserInitiated_Action,
+  ReportUserCompleted_Action,
+  ReportUserFailed_Action
+} from 'mobile/actions/app/reportUser';
 
 import { normalize, schema } from 'normalizr';
 
@@ -102,7 +107,8 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
-  | 'UPLOAD_PHOTO_FAILURE';
+  | 'UPLOAD_PHOTO_FAILURE'
+  | 'REPORT_USER__FAILURE';
 export type BottomToast = {
   uuid: string,
   code: ?BottomToastCode
@@ -326,6 +332,7 @@ export type ReduxState = {|
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean,
+    reportUser: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
 
@@ -409,7 +416,10 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action;
+  | UploadPhotoFailed_Action
+  | ReportUserInitiated_Action
+  | ReportUserCompleted_Action
+  | ReportUserFailed_Action;
 
 export type GetState = () => ReduxState;
 
@@ -440,7 +450,8 @@ const defaultState: ReduxState = {
     deletePhoto: false,
     getMatches: false,
     getConversation: {},
-    sendMessage: {}
+    sendMessage: {},
+    reportUser: false
   },
   response: {
     sendVerificationEmail: null,
@@ -1321,6 +1332,41 @@ export default function rootReducer(
             })
           }
         }
+      };
+    }
+
+    case 'REPORT_USER__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: true
+        }
+      };
+    }
+
+    case 'REPORT_USER__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        }
+      };
+    }
+
+    case 'REPORT_USER__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'REPORT_USER__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        },
+        bottomToast
       };
     }
 
