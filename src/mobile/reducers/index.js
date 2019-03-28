@@ -25,8 +25,9 @@ import type {
   LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
-  CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action
+  CreateUserInitiated_Action,
+  CreateUserCompleted_Action,
+  CreateUserFailed_Action
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
@@ -91,7 +92,7 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch } from 'mobile/api/serverTypes';
+import type { ServerMatch, ServerMessage } from 'mobile/api/serverTypes';
 
 export type Scene = 'smash' | 'social' | 'stone';
 
@@ -238,19 +239,18 @@ const MatchSchema = new schema.Entity(
   { idAttribute: 'userId' }
 );
 
+// We add these unconfrimed uuid's so that we can handle messages being sent from client side.
+// For those retrieved from server, we ignore this field.
 export type Message = {|
-  messageId: number,
-  content: string,
-  timestamp: string,
-  fromClient: boolean,
+  ...ServerMessage,
   unconfirmedMessageUuid: string
 |};
 
 // Extended type because in context we don't know who it is sent to.
-type MostRecentMessage = {
+type MostRecentMessage = {|
   ...Message,
   otherUserId: number
-};
+|};
 
 type GiftedChatUser = {|
   _id: string,
@@ -337,7 +337,8 @@ export type ReduxState = {|
   // trigger different component states for different errors.
   response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response
+    login: ?Login_Response,
+    createUserSuccess: ?boolean // So we can determine whether onboarding has been succesful
   |},
 
   sceneCandidates: SceneCandidates,
@@ -374,8 +375,9 @@ export type Action =
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
   | LoadAppCompleted_Action
-  | CreateProfileAndSettingsInitiated_Action
-  | CreateProfileAndSettingsCompleted_Action
+  | CreateUserInitiated_Action
+  | CreateUserCompleted_Action
+  | CreateUserFailed_Action
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
@@ -444,7 +446,8 @@ const defaultState: ReduxState = {
   },
   response: {
     sendVerificationEmail: null,
-    login: null
+    login: null,
+    createUserSuccess: null
   },
   onboardingCompleted: false,
   sceneCandidates: {
@@ -702,6 +705,10 @@ export default function rootReducer(
     case 'CREATE_PROFILE_AND_SETTINGS__INITIATED': {
       return {
         ...state,
+        response: {
+          ...state.response,
+          createUserSuccess: null
+        },
         inProgress: {
           ...state.inProgress,
           createUser: true
@@ -715,6 +722,24 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: true
+        }
+      };
+    }
+
+    case 'CREATE_PROFILE_AND_SETTINGS__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: false
         }
       };
     }

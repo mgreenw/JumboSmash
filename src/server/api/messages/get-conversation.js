@@ -21,7 +21,11 @@ const getConversation = async (
       content,
       timestamp,
       unconfirmed_message_uuid AS "unconfirmedMessageUuid",
-      (sender_user_id = $1) AS "fromClient"
+      CASE
+        WHEN from_system IS true THEN 'system'
+        WHEN sender_user_id = $1 THEN 'client'
+        ELSE 'match'
+      END AS sender
     FROM messages
     WHERE (
         (sender_user_id = $1 AND receiver_user_id = $2)

@@ -56,7 +56,7 @@ Provide the normal `Authorization` token in the request header.
                 "messageId": 2,
                 "content": "Well hello there",
                 "timestamp": "2019-02-17T16:01:08.078696",
-                "fromClient": false
+                "sender": "match"
             }
         },
         {

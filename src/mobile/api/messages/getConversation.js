@@ -1,6 +1,6 @@
 // @flow
 
-import type { Message } from 'mobile/reducers';
+import type { ServerMessage } from '../serverTypes';
 import apiRequest from '../utils/apiRequest';
 import { GET_CONVERSATION } from '../routes';
 
@@ -18,7 +18,7 @@ function getConversationUrl(userId: number, mostRecentMessageId?: number) {
 export default function getConversation(
   userId: number,
   mostRecentMessageId?: number
-): Promise<Message[]> {
+): Promise<ServerMessage[]> {
   const url = getConversationUrl(userId, mostRecentMessageId);
   return apiRequest('GET', url).then(response => {
     switch (response.status) {
