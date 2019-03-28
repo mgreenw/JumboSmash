@@ -1358,12 +1358,10 @@ export default function rootReducer(
     // See offline-fork.js -- this allows us to use
     // react-native-offline at a flat level in our redux state.
     case CONNECTION_CHANGE: {
-      console.log('connection change! Action:', action);
       return handleNetworkChange(state, action.payload);
     }
 
     default: {
-      console.log('unandled action', action);
       // eslint-disable-next-line no-unused-expressions
       (action: empty); // ensures we have handled all cases
       return state;
