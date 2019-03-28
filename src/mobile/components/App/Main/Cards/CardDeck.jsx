@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, Platform } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -271,6 +271,7 @@ class cardDeck extends React.Component<Props, State> {
           stackSeparation={0}
           marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
           stackScale={10}
+          useViewOverflow={Platform.OS === 'ios'}
         />
         {allSwiped && (
           <View
