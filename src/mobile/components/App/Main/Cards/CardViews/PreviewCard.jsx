@@ -11,37 +11,49 @@ type Props = {
   profile: UserProfile
 };
 
-const { width } = Dimensions.get('window');
-
 export default (props: Props) => {
+  const { width, height } = Dimensions.get('window');
+  const minHeight = width;
+  const useHeight = Math.max(height * 0.6, minHeight);
+
   const { profile } = props;
   return (
     <View
       style={{
+        margin: 20,
         flex: 1,
-        margin: 20
+        justifyContent: 'center',
+        marginBottom: 100
       }}
     >
       <View
         style={{
-          flex: 2,
           alignItems: 'center'
         }}
       >
-        <Image
-          key={profile.photoUuids[0]}
+        <View
           style={{
+            /* In case image is not properly cropped, fallback to this */
             width: width - 24,
-            height: width - 24,
-            borderRadius: 20
+            height: useHeight,
+            borderRadius: 20,
+            backgroundColor: 'white'
           }}
-          resizeMode={'contain'}
-          uri={GET_PHOTO__ROUTE + profile.photoUuids[0]}
-        />
+        >
+          <Image
+            key={profile.photoUuids[0]}
+            style={{
+              width: width - 24,
+              height: useHeight,
+              borderRadius: 20
+            }}
+            resizeMode={'cover' /* don't stretch people */}
+            uri={GET_PHOTO__ROUTE + profile.photoUuids[0]}
+          />
+        </View>
       </View>
       <View
         style={{
-          flex: 1,
           backgroundColor: 'white',
           padding: 20,
           alignItems: 'center',

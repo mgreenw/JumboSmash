@@ -28,7 +28,7 @@ import formatTime from 'mobile/utils/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 import { NavigationEvents } from 'react-navigation';
 
-const Seperator = (props: {}) => {
+const Seperator = () => {
   return (
     <View
       style={{

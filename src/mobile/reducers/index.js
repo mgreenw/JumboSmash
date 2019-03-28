@@ -92,7 +92,11 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch, ServerMessage } from 'mobile/api/serverTypes';
+import type {
+  ServerMatch,
+  ServerMessage,
+  ServerCandidate
+} from 'mobile/api/serverTypes';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 
@@ -188,10 +192,10 @@ type Matches = {
   [Id: number]: Match
 };
 
-export type SceneCandidates = {|
-  smash: ?(Candidate[]),
-  social: ?(Candidate[]),
-  stone: ?(Candidate[])
+export type SceneCandidateIds = {|
+  smash: number[],
+  social: number[],
+  stone: number[]
 |};
 
 export type ExcludeSceneCandidateIds = {|
@@ -234,6 +238,16 @@ const ProfileSchema = new schema.Entity(
   {},
   {
     idAttribute: (_, parent) => parent.userId
+  }
+);
+
+const CanidateSchema = new schema.Entity(
+  'candidates',
+  {
+    profile: ProfileSchema
+  },
+  {
+    idAttribute: 'userId'
   }
 );
 
@@ -350,7 +364,7 @@ export type ReduxState = {|
     createUserSuccess: ?boolean // So we can determine whether onboarding has been succesful
   |},
 
-  sceneCandidates: SceneCandidates,
+  sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
 
   // map of userID's to messages
@@ -461,10 +475,10 @@ const defaultState: ReduxState = {
     createUserSuccess: null
   },
   onboardingCompleted: false,
-  sceneCandidates: {
-    smash: null,
-    social: null,
-    stone: null
+  sceneCandidateIds: {
+    smash: [],
+    social: [],
+    stone: []
   },
   excludeSceneCandidateIds: {
     smash: [],
@@ -503,10 +517,24 @@ function normalizeMatches(
   entities: {|
     matches: { [userId: number]: Match },
     mostRecentMessages: { [userId: number]: MostRecentMessage },
-    profiles: { [userId: number]: any }
+    profiles: { [userId: number]: UserProfile }
   |}
 } {
   return normalize(matches, [MatchSchema]);
+}
+
+function normalizeCanidates(
+  canidates: ServerCandidate[]
+): {
+  result: number[],
+  entities: {|
+    profiles: { [userId: number]: UserProfile },
+
+    // Pretty useless data we happen to get. Profile Id and User Id are the same thing, and we don't really use this at all.
+    candidates: { [userId: number]: { profileId: number, userId: number } }
+  |}
+} {
+  return normalize(canidates, [CanidateSchema]);
 }
 
 function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
@@ -922,24 +950,38 @@ export default function rootReducer(
       };
     }
 
+    // Appends new Ids to both the SceneCandidates array (the list of all candidates)
+    // and to the ExcludeSceneCandidates array (the list of candidates yet to have been confirmed judged by the server)
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = {
-        ...state.inProgress.getSceneCandidates,
-        [scene]: false
-      };
 
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: candidates
-      };
+      const { result: newIds, entities: normalizedData } = normalizeCanidates(
+        candidates
+      );
+      const oldIds = state.sceneCandidateIds[scene];
+      const oldExcludeIds = state.excludeSceneCandidateIds[scene];
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: getSceneCandidatesInProgress_updated
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: false
+          }
         },
-        sceneCandidates: sceneCandidates_updated
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
+        sceneCandidateIds: {
+          ...state.sceneCandidateIds,
+          [scene]: [...oldIds, ...newIds]
+        },
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: [...oldExcludeIds, ...newIds]
+        }
       };
     }
 
@@ -978,7 +1020,10 @@ export default function rootReducer(
         },
         confirmedConversations,
         matchesById: normalizedData.matches,
-        profiles: normalizedData.profiles,
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
         messagedMatchIds,
         unmessagedMatchIds
       };
@@ -995,44 +1040,26 @@ export default function rootReducer(
     }
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
-      const { candidateUserId, scene } = action.payload;
-      const currentSceneCandidates = state.sceneCandidates[scene];
-      if (
-        currentSceneCandidates === null ||
-        currentSceneCandidates === undefined
-      ) {
+      const { candidateUserId: judgedId, scene } = action.payload;
+      if (state.excludeSceneCandidateIds[scene].indexOf(judgedId) === -1) {
         throw new Error(
-          'currentSceneCandidates is null in judge scene candidates'
+          'Judged Candidate does not appear in reduxState.excludeSceneCandidateIds'
         );
       }
-
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: currentSceneCandidates.filter(
-          c => c.userId !== candidateUserId
-        )
-      };
-
-      const excludeSceneCandidateIds_updated = {
-        ...state.excludeSceneCandidateIds,
-        [scene]: [...state.excludeSceneCandidateIds[scene], candidateUserId]
-      };
-
-      return {
-        ...state,
-        sceneCandidates: sceneCandidates_updated,
-        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
-      };
+      return state;
     }
 
     case 'SAVE_SETTINGS__COMPLETED': {
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__SUCCESS'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__SUCCESS'
+          };
       return {
         ...state,
         inProgress: {
@@ -1312,10 +1339,13 @@ export default function rootReducer(
     }
 
     case 'SAVE_SETTINGS__FAILED': {
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__FAILURE'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__FAILURE'
+          };
       return {
         ...state,
         inProgress: {
