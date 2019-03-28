@@ -15,6 +15,6 @@ relationshipsRouter.get('/candidates/:scene', getSceneCandidates.handler);
 relationshipsRouter.get('/matches', getMatches.handler);
 relationshipsRouter.post('/judge', judge.handler);
 relationshipsRouter.post('/report', report.handler);
-relationshipsRouter.post('/unmatch', unmatch.handler);
+relationshipsRouter.post('/unmatch/:matchUserId', unmatch.handler);
 
 module.exports = relationshipsRouter;
