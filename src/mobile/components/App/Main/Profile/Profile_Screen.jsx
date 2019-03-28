@@ -73,7 +73,7 @@ type navigationProps = {
 type dispatchProps = {};
 
 type reduxProps = {
-  photoId: number,
+  photoUuid: string,
   displayName: string,
   profile: UserProfile,
   saveProfileInProgress: boolean,
@@ -88,13 +88,13 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Profile Screen');
   }
-  const photoIds = reduxState.client.profile.photoIds;
-  if (photoIds.length === 0) {
+  const photoUuids = reduxState.client.profile.photoUuids;
+  if (photoUuids.length === 0) {
     throw new Error('no photos in Profile Screen');
   }
   return {
     displayName: reduxState.client.profile.fields.displayName,
-    photoId: photoIds[0],
+    photoUuid: photoUuids[0],
     profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile,
     saveSettingsInProgress: reduxState.inProgress.saveSettings
@@ -126,7 +126,7 @@ class ProfileScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      photoId,
+      photoUuid,
       displayName,
       navigation,
       profile,
@@ -158,7 +158,7 @@ class ProfileScreen extends React.Component<Props, State> {
                 })
               }
             >
-              <Avatar size="Large" photoId={photoId} />
+              <Avatar size="Large" photoUuid={photoUuid} />
             </TouchableOpacity>
             <Text
               style={[

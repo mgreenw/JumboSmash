@@ -10,7 +10,7 @@ const matchedScenesSelect = utilScenes.map((scene) => {
     CASE
       me_critic.liked_${scene} AND they_critic.liked_${scene}
       WHEN true
-        THEN GREATEST(me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp)
+        THEN GREATEST(me_critic.swiped_${scene}_timestamp, they_critic.swiped_${scene}_timestamp)
         ELSE NULL
     END`;
 });
@@ -28,7 +28,7 @@ const query = `
       'messageId', most_recent_message.message_id,
       'content', most_recent_message.content,
       'timestamp', most_recent_message.timestamp,
-      'fromClient', most_recent_message.from_client
+      'sender', most_recent_message.sender
     ) END AS "mostRecentMessage"
   FROM relationships me_critic
   JOIN relationships they_critic
@@ -45,10 +45,14 @@ const query = `
         id AS message_id,
         content,
         timestamp,
-        (sender_user_id = $1) AS from_client,
+        CASE
+          WHEN from_system IS true THEN 'system'
+          WHEN sender_user_id = $1 THEN 'client'
+          ELSE 'match'
+        END AS sender,
         CASE WHEN sender_user_id = $1 THEN receiver_user_id ELSE sender_user_id END AS other_user_id
-      FROM   messages
-      WHERE  $1 in (sender_user_id, receiver_user_id)
+      FROM messages
+      WHERE $1 in (sender_user_id, receiver_user_id)
       ) most_recent_messages
     ORDER BY other_user_id, timestamp DESC
   ) AS most_recent_message ON most_recent_message.other_user_id = they_profile.user_id

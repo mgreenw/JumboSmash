@@ -147,6 +147,15 @@ exports.JUDGE__CANDIDATE_NOT_FOUND = {
   code: 400,
 };
 
+exports.UNMATCH__SUCCESS = {
+  status: 'UNMATCH__SUCCESS',
+  code: 200,
+};
+exports.UNMATCH__NOT_MATCHED = {
+  status: 'UNMATCH__NOT_MATCHED',
+  code: 403,
+};
+
 // Report
 exports.REPORT__SUCCESS = {
   status: 'REPORT__SUCCESS',
@@ -219,8 +228,8 @@ exports.REORDER_PHOTOS__SUCCESS = {
   status: 'REORDER_PHOTOS__SUCCESS',
   code: 200,
 };
-exports.REORDER_PHOTOS__MISMATCHED_IDS = {
-  status: 'REORDER_PHOTOS__MISMATCHED_IDS',
+exports.REORDER_PHOTOS__MISMATCHED_UUIDS = {
+  status: 'REORDER_PHOTOS__MISMATCHED_UUIDS',
   code: 400,
 };
 

@@ -5,10 +5,13 @@
     "privacy": "unlisted",
     "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "1.2.2",
-    "description": "Ready for Beta",
+    "version": "1.4.0",
+    "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
+    "splash": {
+      "image": "./assets/arthurIcon.png"
+    },
     "android": {
       "package": "com.jumbosmash.mobile",
       "versionCode": 9,

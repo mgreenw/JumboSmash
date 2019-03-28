@@ -25,8 +25,9 @@ import type {
   LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
-  CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action
+  CreateUserInitiated_Action,
+  CreateUserCompleted_Action,
+  CreateUserFailed_Action
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
@@ -96,7 +97,13 @@ import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch } from 'mobile/api/serverTypes';
+import type {
+  ServerMatch,
+  ServerMessage,
+  ServerCandidate
+} from 'mobile/api/serverTypes';
+import type { NetworkChange_Action } from './offline-fork';
+import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -118,7 +125,7 @@ export type BottomToast = {
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
-  code: ?NewMatchToastCode,
+  code: NewMatchToastCode,
   profileId?: number,
   scene?: Scene
 };
@@ -126,12 +133,17 @@ export type NewMatchToast = {
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   uuid: string,
-  code: ?NewMessageToastCode,
-  displayName: ?string
+  code: NewMessageToastCode,
+  displayName: string
+};
+
+type InitialToast = {
+  uuid: string,
+  code: 'INITIAL'
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
-export type TopToast = NewMatchToast | NewMessageToast;
+export type TopToast = NewMatchToast | NewMessageToast | InitialToast;
 
 // /////////////
 // USER TYPES:
@@ -161,7 +173,7 @@ export type ProfileFields = {|
 
 export type UserProfile = {|
   fields: ProfileFields,
-  photoIds: number[]
+  photoUuids: string[]
 |};
 
 type SceneMatchTimes = {|
@@ -187,10 +199,10 @@ type Matches = {
   [Id: number]: Match
 };
 
-export type SceneCandidates = {|
-  smash: ?(Candidate[]),
-  social: ?(Candidate[]),
-  stone: ?(Candidate[])
+export type SceneCandidateIds = {|
+  smash: number[],
+  social: number[],
+  stone: number[]
 |};
 
 export type ExcludeSceneCandidateIds = {|
@@ -236,6 +248,16 @@ const ProfileSchema = new schema.Entity(
   }
 );
 
+const CanidateSchema = new schema.Entity(
+  'candidates',
+  {
+    profile: ProfileSchema
+  },
+  {
+    idAttribute: 'userId'
+  }
+);
+
 const MatchSchema = new schema.Entity(
   'matches',
   {
@@ -245,19 +267,18 @@ const MatchSchema = new schema.Entity(
   { idAttribute: 'userId' }
 );
 
+// We add these unconfrimed uuid's so that we can handle messages being sent from client side.
+// For those retrieved from server, we ignore this field.
 export type Message = {|
-  messageId: number,
-  content: string,
-  timestamp: string,
-  fromClient: boolean,
+  ...ServerMessage,
   unconfirmedMessageUuid: string
 |};
 
 // Extended type because in context we don't know who it is sent to.
-type MostRecentMessage = {
+type MostRecentMessage = {|
   ...Message,
   otherUserId: number
-};
+|};
 
 type GiftedChatUser = {|
   _id: string,
@@ -311,6 +332,8 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
+  network: { isConnected: boolean },
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -345,10 +368,11 @@ export type ReduxState = {|
   // trigger different component states for different errors.
   response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response
+    login: ?Login_Response,
+    createUserSuccess: ?boolean // So we can determine whether onboarding has been succesful
   |},
 
-  sceneCandidates: SceneCandidates,
+  sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
 
   // map of userID's to messages
@@ -382,8 +406,9 @@ export type Action =
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
   | LoadAppCompleted_Action
-  | CreateProfileAndSettingsInitiated_Action
-  | CreateProfileAndSettingsCompleted_Action
+  | CreateUserInitiated_Action
+  | CreateUserCompleted_Action
+  | CreateUserFailed_Action
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
@@ -394,6 +419,7 @@ export type Action =
   | NetworkError_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
+  | UploadPhotoFailed_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | SaveSettingsInitiated_Action
@@ -420,7 +446,7 @@ export type Action =
   | UnmatchInitiated_Action
   | UnmatchCompleted_Action
   | UnmatchFailed_Action
-  | UploadPhotoFailed_Action;
+  | NetworkChange_Action;
 
 export type GetState = () => ReduxState;
 
@@ -429,6 +455,7 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
+  network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   token: null,
   client: null,
   authLoaded: false,
@@ -456,13 +483,14 @@ const defaultState: ReduxState = {
   },
   response: {
     sendVerificationEmail: null,
-    login: null
+    login: null,
+    createUserSuccess: null
   },
   onboardingCompleted: false,
-  sceneCandidates: {
-    smash: null,
-    social: null,
-    stone: null
+  sceneCandidateIds: {
+    smash: [],
+    social: [],
+    stone: []
   },
   excludeSceneCandidateIds: {
     smash: [],
@@ -488,7 +516,7 @@ const defaultState: ReduxState = {
   },
   topToast: {
     uuid: '0',
-    code: null
+    code: 'INITIAL'
   }
 };
 
@@ -501,10 +529,24 @@ function normalizeMatches(
   entities: {|
     matches: { [userId: number]: Match },
     mostRecentMessages: { [userId: number]: MostRecentMessage },
-    profiles: { [userId: number]: any }
+    profiles: { [userId: number]: UserProfile }
   |}
 } {
   return normalize(matches, [MatchSchema]);
+}
+
+function normalizeCanidates(
+  canidates: ServerCandidate[]
+): {
+  result: number[],
+  entities: {|
+    profiles: { [userId: number]: UserProfile },
+
+    // Pretty useless data we happen to get. Profile Id and User Id are the same thing, and we don't really use this at all.
+    candidates: { [userId: number]: { profileId: number, userId: number } }
+  |}
+} {
+  return normalize(canidates, [CanidateSchema]);
 }
 
 function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
@@ -714,6 +756,10 @@ export default function rootReducer(
     case 'CREATE_PROFILE_AND_SETTINGS__INITIATED': {
       return {
         ...state,
+        response: {
+          ...state.response,
+          createUserSuccess: null
+        },
         inProgress: {
           ...state.inProgress,
           createUser: true
@@ -727,6 +773,24 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: true
+        }
+      };
+    }
+
+    case 'CREATE_PROFILE_AND_SETTINGS__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: false
         }
       };
     }
@@ -831,7 +895,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...profile,
-            photoIds: action.payload.photoIds
+            photoUuids: action.payload.photoUuids
           }
         }
       };
@@ -866,7 +930,7 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for DELETE_PHOTO__COMPLETED');
       }
-      const { photoIds } = action.payload;
+      const { photoUuids } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -877,7 +941,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds
+            photoUuids
           }
         }
       };
@@ -898,24 +962,38 @@ export default function rootReducer(
       };
     }
 
+    // Appends new Ids to both the SceneCandidates array (the list of all candidates)
+    // and to the ExcludeSceneCandidates array (the list of candidates yet to have been confirmed judged by the server)
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = {
-        ...state.inProgress.getSceneCandidates,
-        [scene]: false
-      };
 
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: candidates
-      };
+      const { result: newIds, entities: normalizedData } = normalizeCanidates(
+        candidates
+      );
+      const oldIds = state.sceneCandidateIds[scene];
+      const oldExcludeIds = state.excludeSceneCandidateIds[scene];
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: getSceneCandidatesInProgress_updated
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: false
+          }
         },
-        sceneCandidates: sceneCandidates_updated
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
+        sceneCandidateIds: {
+          ...state.sceneCandidateIds,
+          [scene]: [...oldIds, ...newIds]
+        },
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: [...oldExcludeIds, ...newIds]
+        }
       };
     }
 
@@ -954,7 +1032,10 @@ export default function rootReducer(
         },
         confirmedConversations,
         matchesById: normalizedData.matches,
-        profiles: normalizedData.profiles,
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
         messagedMatchIds,
         unmessagedMatchIds
       };
@@ -971,44 +1052,26 @@ export default function rootReducer(
     }
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
-      const { candidateUserId, scene } = action.payload;
-      const currentSceneCandidates = state.sceneCandidates[scene];
-      if (
-        currentSceneCandidates === null ||
-        currentSceneCandidates === undefined
-      ) {
+      const { candidateUserId: judgedId, scene } = action.payload;
+      if (state.excludeSceneCandidateIds[scene].indexOf(judgedId) === -1) {
         throw new Error(
-          'currentSceneCandidates is null in judge scene candidates'
+          'Judged Candidate does not appear in reduxState.excludeSceneCandidateIds'
         );
       }
-
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: currentSceneCandidates.filter(
-          c => c.userId !== candidateUserId
-        )
-      };
-
-      const excludeSceneCandidateIds_updated = {
-        ...state.excludeSceneCandidateIds,
-        [scene]: [...state.excludeSceneCandidateIds[scene], candidateUserId]
-      };
-
-      return {
-        ...state,
-        sceneCandidates: sceneCandidates_updated,
-        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
-      };
+      return state;
     }
 
     case 'SAVE_SETTINGS__COMPLETED': {
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__SUCCESS'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__SUCCESS'
+          };
       return {
         ...state,
         inProgress: {
@@ -1288,10 +1351,13 @@ export default function rootReducer(
     }
 
     case 'SAVE_SETTINGS__FAILED': {
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__FAILURE'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__FAILURE'
+          };
       return {
         ...state,
         inProgress: {
@@ -1398,6 +1464,12 @@ export default function rootReducer(
         },
         bottomToast
       };
+    }
+
+    // See offline-fork.js -- this allows us to use
+    // react-native-offline at a flat level in our redux state.
+    case CONNECTION_CHANGE: {
+      return handleNetworkChange(state, action.payload);
     }
 
     default: {

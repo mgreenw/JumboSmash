@@ -47,7 +47,7 @@ class NewMatchesList extends React.Component<Props> {
           marginHorizontal: 15
         }}
       >
-        <Avatar size="Medium" photoId={profile.photoIds[0]} />
+        <Avatar size="Medium" photoUuid={profile.photoUuids[0]} />
       </TouchableOpacity>
     );
   };

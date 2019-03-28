@@ -1,8 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Image, View } from 'react-native';
-import { Font, Asset } from 'expo';
+import { Image, View, Text } from 'react-native';
+import { Font, Asset, Constants } from 'expo';
 import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
@@ -142,6 +142,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
           />
         </View>
         <View style={{ flex: 1 }} />
+        <Text style={[{ textAlign: 'center' }]}>
+          {`Version ${Constants.manifest.version}`}
+        </Text>
       </View>
     );
   }

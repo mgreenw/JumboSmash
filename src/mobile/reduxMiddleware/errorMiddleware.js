@@ -1,14 +1,15 @@
 // @flow
 
 import type { Action } from 'mobile/reducers/index';
+import { summonPopup as summonPopupAction } from 'mobile/actions/popup';
 
-const errorMiddleware = () => (next: any) => (action: Action) => {
+const errorMiddleware = ({ dispatch }: any) => (next: any) => (
+  action: Action
+) => {
   const result = next(action);
   const { type } = action;
   if (type === 'SERVER_ERROR') {
-    throw new Error(
-      "Sorry, server error occured. Later, we'll catch these nicely. For now, restart the app!"
-    );
+    dispatch(summonPopupAction(type));
   }
   return result;
 };
