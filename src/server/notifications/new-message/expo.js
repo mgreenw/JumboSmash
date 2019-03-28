@@ -17,7 +17,10 @@ module.exports = async (senderUserId: number, receiverUserId: number, message: M
     sound: 'default',
     body: `${displayName}: ${message.content}`,
     data: {
-      senderUserId,
+      type: 'NEW_MESSAGE',
+      payload: {
+        senderUserId,
+      },
     },
     badge: 1, // TODO: make this dynamic with the number of unread messages
   }]);
