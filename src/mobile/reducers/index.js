@@ -87,6 +87,11 @@ import type {
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
+import type {
+  UnmatchInitiated_Action,
+  UnmatchCompleted_Action,
+  UnmatchFailed_Action
+} from 'mobile/actions/app/unmatch';
 
 import { normalize, schema } from 'normalizr';
 
@@ -101,6 +106,7 @@ import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 
 export type Scene = 'smash' | 'social' | 'stone';
+export const Scenes: Scene[] = ['smash', 'social', 'stone'];
 
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
@@ -109,7 +115,8 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
-  | 'UPLOAD_PHOTO_FAILURE';
+  | 'UPLOAD_PHOTO_FAILURE'
+  | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
   code: ?BottomToastCode
@@ -349,6 +356,7 @@ export type ReduxState = {|
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean,
+    unmatch: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
 
@@ -411,6 +419,7 @@ export type Action =
   | NetworkError_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
+  | UploadPhotoFailed_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | SaveSettingsInitiated_Action
@@ -434,7 +443,9 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action
+  | UnmatchInitiated_Action
+  | UnmatchCompleted_Action
+  | UnmatchFailed_Action
   | NetworkChange_Action;
 
 export type GetState = () => ReduxState;
@@ -467,7 +478,8 @@ const defaultState: ReduxState = {
     deletePhoto: false,
     getMatches: false,
     getConversation: {},
-    sendMessage: {}
+    sendMessage: {},
+    unmatch: false
   },
   response: {
     sendVerificationEmail: null,
@@ -1387,6 +1399,70 @@ export default function rootReducer(
             })
           }
         }
+      };
+    }
+
+    case 'UNMATCH__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: true
+        }
+      };
+    }
+
+    case 'UNMATCH__COMPLETED': {
+      const { matchId } = action.payload;
+      const updatedMatchesById = state.matchesById;
+      delete updatedMatchesById[matchId];
+
+      if (
+        state.messagedMatchIds === null ||
+        state.messagedMatchIds === undefined
+      ) {
+        throw new Error('messagedMatchIds is null or undefined');
+      }
+
+      const newMessagedMatchIds = state.messagedMatchIds.filter(
+        id => id !== matchId
+      );
+
+      if (
+        state.unmessagedMatchIds === null ||
+        state.unmessagedMatchIds === undefined
+      ) {
+        throw new Error('unmessagedMatchIds is null or undefined');
+      }
+
+      const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
+        id => id !== matchId
+      );
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        matchesById: updatedMatchesById,
+        messagedMatchIds: newMessagedMatchIds,
+        unmessagedMatchIds: newUnmessagedMatchIds
+      };
+    }
+
+    case 'UNMATCH__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'UNMATCH_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        bottomToast
       };
     }
 
