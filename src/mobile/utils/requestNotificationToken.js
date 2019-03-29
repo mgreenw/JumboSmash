@@ -1,12 +1,6 @@
 // @flow
-import {
-  Permissions,
-  Notifications,
-  Linking,
-  IntentLauncherAndroid,
-  Constants
-} from 'expo';
-import { Platform } from 'react-native';
+import { Permissions, Notifications } from 'expo';
+import openAppSettings from 'mobile/utils/OpenAppSettings';
 
 export default async function requestNotificationToken(): Promise<?string> {
   // https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -26,17 +20,7 @@ export default async function requestNotificationToken(): Promise<?string> {
 
   // Stop here if the user did not grant permissions
   if (finalStatus !== 'granted') {
-    if (Platform.OS === 'ios') {
-      Linking.openURL('app-settings:');
-    } else {
-      // https://forums.expo.io/t/opening-device-settings-on-android-using-linking/2059/7
-      IntentLauncherAndroid.startActivityAsync(
-        // TODO: I'm not certain this is the right page but I need a physical device to test this better.
-        IntentLauncherAndroid.ACTION_APPLICATION_DETAILS_SETTINGS,
-        {},
-        `package:${Constants.manifest.android.package}`
-      );
-    }
+    openAppSettings();
     return null;
   }
 
