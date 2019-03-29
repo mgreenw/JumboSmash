@@ -23,5 +23,5 @@ export default function() {
       store.dispatch(getConversationThunk);
     }
   }
-  return 'foo';
+  return;
 }
