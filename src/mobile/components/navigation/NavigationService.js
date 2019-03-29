@@ -89,6 +89,6 @@ export default {
   setTopLevelNavigator,
   navigateToCards,
   reset,
-  getCurrentRoute
+  getCurrentRoute,
   navigateToMatch
 };
