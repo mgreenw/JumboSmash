@@ -1339,14 +1339,32 @@ export default function rootReducer(
       return state;
     }
 
+    // Acts as a smaller form of GET_MATCHES -- appends a single one.
     case 'NEW_MATCH__COMPLETED': {
+      const { scene, match } = action.payload;
+      const { result: orderedIds, entities: normalizedData } = normalizeMatches(
+        [match]
+      );
+      const confirmedConversations = updateMostRecentConversations(
+        state,
+        normalizedData.mostRecentMessages || {}
+      );
+
       return {
         ...state,
         topToast: {
           uuid: uuidv4(),
           code: 'NEW_MATCH',
-          scene: action.payload.scene
-        }
+          scene
+        },
+        confirmedConversations,
+        matchesById: normalizedData.matches,
+        profiles: {
+          ...state.profiles,
+          ...normalizedData.profiles
+        },
+        messagedMatchIds,
+        unmessagedMatchIds
       };
     }
 
