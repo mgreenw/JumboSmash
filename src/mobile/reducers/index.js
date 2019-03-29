@@ -585,8 +585,6 @@ function updateMostRecentMessage(
     };
   }
 
-  // TODO: do some fancy check to ensure we HAVE a match for certain.
-  // Really unlikely we don't, but we should figure out how to handle this if somehow that occurs.
   const match = {
     ...state.matchesById[matchId],
     mostRecentMessage: messageId
@@ -1041,7 +1039,7 @@ export default function rootReducer(
 
       const confirmedConversations = updateMostRecentConversations(
         state,
-        mostRecentMessages || {}
+        mostRecentMessages
       );
 
       return {

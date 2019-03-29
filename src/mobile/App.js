@@ -8,6 +8,7 @@ import createRootNavigator from 'mobile/components/navigation/Navigation';
 import Sentry from 'sentry-expo';
 import { ReduxNetworkProvider } from 'react-native-offline';
 import { Notifications } from 'expo';
+import { AppState } from 'react-native';
 
 import notificationHandler from 'mobile/utils/NotificationHandler';
 import store from './store';
@@ -20,7 +21,9 @@ const TopLevelNavigator = createRootNavigator();
 const AppContainer = createAppContainer(TopLevelNavigator);
 
 type Props = {};
-type State = {};
+type State = {
+  appState: any
+};
 
 // Enable if you want to test sentry locally!
 Sentry.enableInExpoDevelopment = false;
@@ -32,7 +35,9 @@ Sentry.config(
 export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      appState: AppState.currentState
+    };
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
@@ -43,6 +48,27 @@ export default class App extends React.Component<Props, State> {
       notificationHandler
     );
   }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  /**
+   * BoilerPlate for determining if app is open from:
+   * https://docs.expo.io/versions/latest/react-native/appstate/
+   */
+  _handleAppStateChange = (nextAppState: any) => {
+    const { appState } = this.state;
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!');
+      // TODO: check current screen. If a message screen, update messages.
+    }
+    this.setState({ appState: nextAppState });
+  };
 
   _notificationSubscription: any;
 

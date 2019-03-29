@@ -79,14 +79,22 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 }
 
 type State = {
-  matchesLoaded: boolean
+  matchesLoaded: boolean,
+
+  /**
+   * Used to determine if we are refreshing matches because the user pullled down on the scrollview.
+   * If false, then we don't show the animation (causing the load to occur in the background).
+   * Default to false when no refresh occuring.
+   */
+  refreshManuallyTriggered: boolean
 };
 
 class MessagingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      matchesLoaded: false
+      matchesLoaded: false,
+      refreshManuallyTriggered: false
     };
   }
 
@@ -101,7 +109,8 @@ class MessagingScreen extends React.Component<Props, State> {
       // We're doing this safely
       /* eslint-disable-next-line react/no-did-update-set-state */
       this.setState({
-        matchesLoaded: true
+        matchesLoaded: true,
+        refreshManuallyTriggered: false
       });
     }
   }
@@ -213,12 +222,15 @@ class MessagingScreen extends React.Component<Props, State> {
       messagedMatchIds,
       newMatchIds
     } = this.props;
+    const { refreshManuallyTriggered } = this.state;
     const renderGensis = !messagedMatchIds || messagedMatchIds.length === 0;
     const hasNewMatches = !!(newMatchIds && newMatchIds.length > 0);
     const refreshComponent = (
       <RefreshControl
-        refreshing={getMatchesInProgress}
-        onRefresh={getMatches}
+        refreshing={refreshManuallyTriggered}
+        onRefresh={() => {
+          this.setState({ refreshManuallyTriggered: true }, getMatches);
+        }}
       />
     );
 
