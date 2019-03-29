@@ -1039,7 +1039,7 @@ export default function rootReducer(
 
       const confirmedConversations = updateMostRecentConversations(
         state,
-        mostRecentMessages || {}
+        mostRecentMessages
       );
 
       return {
