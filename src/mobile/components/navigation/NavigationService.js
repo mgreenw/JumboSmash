@@ -1,6 +1,7 @@
 // @flow
 import { NavigationActions } from 'react-navigation';
 import type { Scene } from 'mobile/reducers';
+import store from 'mobile/store';
 import routes from './routes';
 
 let _navigator;
@@ -43,6 +44,22 @@ function navigateToCards(scene: Scene) {
   }
 }
 
+/**
+ *
+ * @param {number} userId
+ * attempts to go to the messaging screen for a given userId.
+ * If that userId is not in the redux state of matches, navigates instead to the `matches` screen.
+ */
+function navigateToMatch(userId: number) {
+  const { matchesById } = store.getState();
+  if (userId in matchesById) {
+    const match = matchesById[userId];
+    navigate(routes.Message, { match });
+  } else {
+    navigate(routes.Matches);
+  }
+}
+
 function back() {
   _navigator.dispatch(NavigationActions.back());
 }
@@ -58,5 +75,6 @@ export default {
   back,
   setTopLevelNavigator,
   navigateToCards,
-  reset
+  reset,
+  navigateToMatch
 };

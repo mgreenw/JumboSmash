@@ -4,6 +4,8 @@ import type {
   NewMatch_PushNotificationData,
   NewMessage_PushNotificationData
 } from 'mobile/api/serverTypes';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 
 /**
  *  https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -46,10 +48,12 @@ function handler(notification: Notification) {
       const { data } = notification;
       switch (data.type) {
         case 'NEW_MATCH': {
+          NavigationService.navigate(routes.Matches);
           return;
         }
 
         case 'NEW_MESSAGE': {
+          NavigationService.navigateToMatch(data.payload.senderUserId);
           return;
         }
 
