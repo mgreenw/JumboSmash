@@ -46,12 +46,12 @@ function fail(): ReportUserFailed_Action {
 export default (
   userId: number,
   reportMessage: string,
-  reasonCodes: string[],
-  block: boolean
+  reasonCodes: string[]
+  // block: boolean
 ) => (dispatch: Dispatch) => {
   const reasonCode = reasonCodes.filter(r => r).join();
   dispatch(initiate());
-  reportUser(userId, reportMessage, reasonCode, block)
+  reportUser(userId, reportMessage, reasonCode, false)
     .then(() => {
       dispatch(complete());
     })

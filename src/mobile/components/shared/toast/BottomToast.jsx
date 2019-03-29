@@ -51,6 +51,10 @@ function messageFromCode(code: BottomToastCode): string {
       return 'Failed to upload photo.';
     }
 
+    case 'REPORT_USER__FAILURE': {
+      return 'Failed to report user.';
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (code: empty); // ensures we have handled all cases
