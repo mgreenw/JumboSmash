@@ -10,7 +10,7 @@ function setTopLevelNavigator(navigatorRef: any) {
   _navigator = navigatorRef;
 }
 
-function navigate(routeName: string, params: any) {
+function navigate(routeName: string, params?: Object) {
   _navigator.dispatch(
     NavigationActions.navigate({
       routeName,
@@ -68,6 +68,19 @@ function reset() {
   navigate(routes.Splash);
 }
 
+/**
+ * Get the route of the top level screen.
+ * See for details:
+ * https://github.com/react-navigation/react-navigation/issues/962
+ */
+function getCurrentRoute(): { routeName: string, params: Object } {
+  let route = _navigator.state.nav;
+  while (route.routes) {
+    route = route.routes[route.index];
+  }
+  return route;
+}
+
 // add other navigation functions that you need and export them
 
 export default {
@@ -76,5 +89,6 @@ export default {
   setTopLevelNavigator,
   navigateToCards,
   reset,
+  getCurrentRoute,
   navigateToMatch
 };

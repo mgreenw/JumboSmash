@@ -11,6 +11,7 @@ import { Notifications } from 'expo';
 import { AppState } from 'react-native';
 
 import notificationHandler from 'mobile/utils/NotificationHandler';
+import foregroundHandler from 'mobile/utils/ForegroundHandler';
 import store from './store';
 import MasterPopup from './components/MasterPopup';
 import BottomToast from './components/shared/toast/BottomToast';
@@ -64,8 +65,7 @@ export default class App extends React.Component<Props, State> {
   _handleAppStateChange = (nextAppState: any) => {
     const { appState } = this.state;
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      console.log('App has come to the foreground!');
-      // TODO: check current screen. If a message screen, update messages.
+      foregroundHandler();
     }
     this.setState({ appState: nextAppState });
   };
