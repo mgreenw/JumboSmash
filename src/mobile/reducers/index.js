@@ -1358,12 +1358,13 @@ export default function rootReducer(
     }
 
     case 'NEW_MATCH__COMPLETED': {
+      const { scene } = action.payload;
       return {
         ...state,
         topToast: {
           uuid: uuidv4(),
           code: 'NEW_MATCH',
-          scene: action.payload.scene
+          scene
         }
       };
     }
