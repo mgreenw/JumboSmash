@@ -55,6 +55,10 @@ function messageFromCode(code: BottomToastCode): string {
       return 'Failed to report user.';
     }
 
+    case 'UNMATCH_FAILURE': {
+      return 'Failed to unmatch. Try again';
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (code: empty); // ensures we have handled all cases

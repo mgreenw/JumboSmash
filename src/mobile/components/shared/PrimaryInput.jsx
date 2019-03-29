@@ -16,7 +16,7 @@ type Props = {
   onChange: (value: string) => void,
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters',
   value?: string,
-  maxLength?: number,
+  maxLength?: number
 };
 
 type State = {};
@@ -40,7 +40,11 @@ export class PrimaryInput extends React.Component<Props, State> {
           selectedColor={Colors.AquaMarine}
           errorColor={errorColor}
         />
-        <AssistiveError {...this.props} primaryColor={primaryColor} errorColor={errorColor} />
+        <AssistiveError
+          {...this.props}
+          primaryColor={primaryColor}
+          errorColor={errorColor}
+        />
       </View>
     );
   }

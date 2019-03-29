@@ -34,7 +34,8 @@ import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 
 // Cards
-import Cards from 'mobile/components/App/Main/Cards/Cards_Screen';
+import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
+import SocialCards from 'mobile/components/App/Main/Cards/SocialCards_Screen';
 import ExpandedCard from 'mobile/components/App/Main/Cards/ExpandedCard_Screen';
 
 // Messages & Matches
@@ -60,21 +61,59 @@ const removeHeader = {
   headerMode: 'none'
 };
 
-const CardsStack = createStackNavigator(
+const SmashStack = createStackNavigator(
   {
-    [routes.Cards]: { screen: Cards },
-    [routes.CardsExpandedCard]: { screen: ExpandedCard }
+    [routes.CardsExpandedCard]: { screen: ExpandedCard },
+    [routes.SmashCards]: { screen: SmashCards }
   },
   {
-    initialRouteName: routes.Cards,
-    ...removeHeader,
-    mode: 'modal'
+    initialRouteName: routes.SmashCards,
+    ...removeHeader
   }
 );
 
-CardsStack.navigationOptions = () => {
+SmashStack.navigationOptions = () => {
   return {
     gesturesEnabled: false
+  };
+};
+
+const SocialStack = createStackNavigator(
+  {
+    [routes.CardsExpandedCard]: { screen: ExpandedCard },
+    [routes.SocialCards]: { screen: SocialCards }
+  },
+  {
+    initialRouteName: routes.SocialCards,
+    ...removeHeader
+  }
+);
+
+SocialStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
+const CardsSwitch = createMaterialTopTabNavigator(
+  {
+    [routes.SmashCards]: SmashStack,
+    [routes.SocialCards]: SocialStack
+  },
+  {
+    swipeEnabled: false,
+    initialRouteName: routes.SmashCards,
+    animationEnabled: false,
+    order: [routes.SocialCards, routes.SmashCards],
+    // $FlowFixMe -- this is a hack but we want our own tab bar
+    tabBarComponent: null,
+    lazy: false // render all at once,
+  }
+);
+
+CardsSwitch.navigationOptions = () => {
+  return {
+    swipeEnabled: false
   };
 };
 
@@ -120,7 +159,7 @@ MatchesStack.navigationOptions = () => {
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createMaterialTopTabNavigator(
   {
-    [routes.Cards]: CardsStack,
+    [routes.Cards]: CardsSwitch,
     [routes.Profile]: ProfileStack,
     [routes.Matches]: MatchesStack
   },

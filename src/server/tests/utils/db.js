@@ -153,8 +153,8 @@ async function createRelationship(
   try {
     await db.query(`
       INSERT INTO relationships
-      (critic_user_id, candidate_user_id, liked_smash, liked_social, liked_stone, blocked)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      (critic_user_id, candidate_user_id, liked_smash, liked_social, liked_stone, blocked, swiped_smash_timestamp, swiped_social_timestamp, swiped_stone_timestamp)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW())
     `, [critic, candidate, likedSmash, likedSocial, likedStone, blocked]);
     return true;
   } catch (error) {

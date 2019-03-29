@@ -28,7 +28,7 @@ import formatTime from 'mobile/utils/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 import { NavigationEvents } from 'react-navigation';
 
-const Seperator = (props: {}) => {
+const Seperator = () => {
   return (
     <View
       style={{
@@ -158,7 +158,7 @@ class MessagingScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <Avatar size="Small" photoId={profile.photoIds[0]} />
+          <Avatar size="Small" photoUuid={profile.photoUuids[0]} />
           <View
             style={{
               flex: 1,

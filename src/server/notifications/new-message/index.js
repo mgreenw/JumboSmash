@@ -8,7 +8,7 @@ export type Message = {
   timestamp: string,
   content: string,
   unconfirmedMessageUuid: string,
-  fromClient: boolean,
+  sender: 'match' | 'client' | 'system',
 };
 
 function newMessage(
@@ -17,11 +17,11 @@ function newMessage(
   message: Message,
   previousMessageId: ?number,
 ) {
-  // Ensure that the 'fromClient' is always false - you'd never get notified
+  // Ensure that the 'sender' is always 'match' - you'd never get notified
   // about a message you didn't send!
   const updatedMessage: Message = {
     ...message,
-    fromClient: false,
+    sender: 'match',
   };
   newMessageExpo(senderUserId, receiverUserId, updatedMessage);
   newMessageSocket(senderUserId, receiverUserId, updatedMessage, previousMessageId);

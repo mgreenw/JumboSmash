@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  photoId: number,
+  photoUuid: string,
   size: 'Large' | 'Medium' | 'Small',
   border?: boolean
 };
@@ -24,7 +24,7 @@ export const MediumWidth = 75;
 export const SmallWidth = 70;
 
 export default (props: Props) => {
-  const { photoId, size, border } = props;
+  const { photoUuid, size, border } = props;
   let width = 0;
   if (size === 'Large') {
     width = LargeWidth;
@@ -40,7 +40,7 @@ export default (props: Props) => {
   return (
     <View style={[{ borderRadius: width }, border ? styles.border : {}]}>
       <Image
-        uri={GET_PHOTO__ROUTE + photoId}
+        uri={GET_PHOTO__ROUTE + photoUuid}
         style={[
           {
             height: width,

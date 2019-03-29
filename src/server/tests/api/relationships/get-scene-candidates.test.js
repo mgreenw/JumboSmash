@@ -280,4 +280,22 @@ describe('GET api/relationships/candidates/:scene', () => {
     })).toBeTruthy();
     expect(res.body.data.length).toBeLessThanOrEqual(3);
   });
+
+  it('should reset the candidates if the "reset-candidates" query param is supplied', async () => {
+    await dbUtils.createRelationship(me.id, activeSmash[activeSmash.length - 3].id, false);
+
+    // Should be 2 before resetting
+    let res = await request(app)
+      .get('/api/relationships/candidates/smash')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+    expect(res.body.data.length).toBe(2);
+
+    // Should be 3 after resetting
+    res = await request(app)
+      .get('/api/relationships/candidates/smash?reset-candidates')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+    expect(res.body.data.length).toBe(3);
+  });
 });

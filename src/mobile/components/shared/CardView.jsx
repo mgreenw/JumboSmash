@@ -53,18 +53,18 @@ export default class CardView extends React.Component<Props> {
               ])}
               scrollEventThrottle={16}
             >
-              {profile.photoIds.map(photoId => (
+              {profile.photoUuids.map(photoUuid => (
                 <Image
-                  key={photoId}
+                  key={photoUuid}
                   style={{ width, height: width }}
-                  uri={GET_PHOTO__ROUTE + photoId}
+                  uri={GET_PHOTO__ROUTE + photoUuid}
                   resizeMode="contain"
                 />
               ))}
             </ScrollView>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            {profile.photoIds.map((photoId, i) => {
+            {profile.photoUuids.map((photoUuid, i) => {
               const opacity = position.interpolate({
                 inputRange: [i - 1, i, i + 1],
                 outputRange: [0.4, 1, 0.4],
@@ -72,7 +72,7 @@ export default class CardView extends React.Component<Props> {
               });
               return (
                 <Animated.View
-                  key={photoId}
+                  key={photoUuid}
                   style={{
                     opacity,
                     height: 8,

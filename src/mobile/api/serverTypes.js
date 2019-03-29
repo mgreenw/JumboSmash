@@ -10,13 +10,15 @@ export type ServerProfile = {
     bio: string,
     birthday: string
   },
-  photoIds: number[]
+  photoUuids: number[]
 };
 
 export type ServerBaseUser = {
   userId: number,
   profile: ServerProfile
 };
+
+export type ServerCandidate = ServerBaseUser;
 
 // nullable timestamps
 export type ServerScenes = {
@@ -25,12 +27,14 @@ export type ServerScenes = {
   stone: ?string
 };
 
-export type ServerMessage = {
+export type Sender = 'system' | 'client' | 'match';
+
+export type ServerMessage = {|
   messageId: number,
   content: string,
   timestamp: string,
-  fromClient: boolean
-};
+  sender: Sender
+|};
 
 export type ServerMatch = ServerBaseUser & {
   scenes: ServerScenes,
