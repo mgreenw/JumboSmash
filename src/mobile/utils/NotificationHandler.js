@@ -1,9 +1,17 @@
 // @flow
 
-// https://docs.expo.io/versions/latest/guides/push-notifications/
+import type {
+  NewMatch_PushNotificationData,
+  NewMessage_PushNotificationData
+} from 'mobile/api/serverTypes';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
+
+/**
+ *  https://docs.expo.io/versions/latest/guides/push-notifications/
+ */
 type Notification = {
   /**
-   *
    * Either selected or received. selected if the notification was tapped on by the user, received if the notification was received while the user was in the app.
    */
   origin: 'received' | 'selected',
@@ -11,7 +19,7 @@ type Notification = {
   /**
    * Any data that has been attached with the notification.
    */
-  data: Object,
+  data: NewMatch_PushNotificationData | NewMessage_PushNotificationData,
 
   /**
    *  true if the notification is a push notification, false if it is a local notification.
@@ -20,7 +28,6 @@ type Notification = {
 };
 
 /**
- *
  * @param {*} notification The Notification object recieved when the listener is called by clicking a notification
  */
 function handler(notification: Notification) {
@@ -38,8 +45,24 @@ function handler(notification: Notification) {
     // 2 a) If a message, go to conversation
     // 2 b) If a new match, go to messages screen (we don't have the match in redux yet so this is way safer than awaiting the fetch)
     case 'selected': {
-      console.log(notification);
-      return;
+      const { data } = notification;
+      switch (data.type) {
+        case 'NEW_MATCH': {
+          NavigationService.navigate(routes.Matches);
+          return;
+        }
+
+        case 'NEW_MESSAGE': {
+          NavigationService.navigateToMatch(data.payload.senderUserId);
+          return;
+        }
+
+        default: {
+          // eslint-disable-next-line no-unused-expressions
+          (data.type: empty); // ensures we have handled all cases
+          return;
+        }
+      }
     }
 
     default: {
