@@ -535,7 +535,7 @@ function normalizeMatches(
   return normalize(matches, [MatchSchema]);
 }
 
-function normalizeCanidates(
+function normalizeCandidates(
   canidates: ServerCandidate[]
 ): {
   result: number[],
@@ -571,6 +571,19 @@ function updateMostRecentMessage(
   const { unmessagedMatchIds = [], messagedMatchIds = [] } = state;
   const unmessaged = unmessagedMatchIds === null ? [] : unmessagedMatchIds;
   const messaged = messagedMatchIds === null ? [] : messagedMatchIds;
+
+  // If a new message comes in before the match is loaded then don't update.
+  // The messages will be fetched DURING the fetch of the match.
+  const matchLoaded = matchId in state.matchesById;
+  if (!matchLoaded) {
+    // esentially just return the default substate.
+    // (Damn, imagine having slide reducers)
+    return {
+      unmessagedMatchIds: unmessaged,
+      messagedMatchIds: messaged,
+      matchesById: state.matchesById
+    };
+  }
 
   // TODO: do some fancy check to ensure we HAVE a match for certain.
   // Really unlikely we don't, but we should figure out how to handle this if somehow that occurs.
@@ -967,9 +980,10 @@ export default function rootReducer(
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
 
-      const { result: newIds, entities: normalizedData } = normalizeCanidates(
+      const { result: newIds, entities: normalizedData } = normalizeCandidates(
         candidates
       );
+      const { profiles = {} } = normalizedData;
       const oldIds = state.sceneCandidateIds[scene];
       const oldExcludeIds = state.excludeSceneCandidateIds[scene];
 
@@ -984,7 +998,7 @@ export default function rootReducer(
         },
         profiles: {
           ...state.profiles,
-          ...normalizedData.profiles
+          ...profiles
         },
         sceneCandidateIds: {
           ...state.sceneCandidateIds,
@@ -1014,6 +1028,12 @@ export default function rootReducer(
         serverMatches
       );
 
+      const {
+        matches = {},
+        mostRecentMessages = {},
+        profiles = {}
+      } = normalizedData;
+
       const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
         serverMatches,
         orderedIds
@@ -1021,7 +1041,7 @@ export default function rootReducer(
 
       const confirmedConversations = updateMostRecentConversations(
         state,
-        normalizedData.mostRecentMessages || {}
+        mostRecentMessages || {}
       );
 
       return {
@@ -1031,10 +1051,10 @@ export default function rootReducer(
           getMatches: false
         },
         confirmedConversations,
-        matchesById: normalizedData.matches,
+        matchesById: matches,
         profiles: {
           ...state.profiles,
-          ...normalizedData.profiles
+          ...profiles
         },
         messagedMatchIds,
         unmessagedMatchIds
