@@ -32,8 +32,9 @@ function complete(match: ServerMatch, scene: Scene): NewMatchCompleted_Action {
 }
 
 /**
- * Triggers the `New Match Toast` and calls the `getMatches` action to refresh match list.
- * TODO: change this so that `getMatches` has an optional flag to trigger the toast if we want to enable clicking on toast functionality.
+ * Triggers the `New Match Toast` and calls the `getMatches` action to refresh the match list.
+ * clicking on that toast goes to the matches screen, which would cause a match refresh anyways;
+ * this handles the case when a new match occurs while on the Matches screen.
  */
 export default (match: ServerMatch, scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate());
