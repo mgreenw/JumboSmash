@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-
 import { createAppContainer } from '@react-navigation/native';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import createRootNavigator from 'mobile/components/navigation/Navigation';
 import Sentry from 'sentry-expo';
 import { ReduxNetworkProvider } from 'react-native-offline';
+import { Notifications } from 'expo';
+
+import notificationHandler from 'mobile/utils/NotificationHandler';
 import store from './store';
 import MasterPopup from './components/MasterPopup';
 import BottomToast from './components/shared/toast/BottomToast';
@@ -31,7 +33,18 @@ export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {};
+
+    // Handle notifications that are received or selected while the app
+    // is open. If the app was closed and then opened by tapping the
+    // notification (rather than just tapping the app icon to open it),
+    // this function will fire on the next tick after the app starts
+    // with the notification data.
+    this._notificationSubscription = Notifications.addListener(
+      notificationHandler
+    );
   }
+
+  _notificationSubscription: any;
 
   /* eslint-disable */
   render() {
