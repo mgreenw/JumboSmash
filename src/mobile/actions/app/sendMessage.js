@@ -2,7 +2,7 @@
 import type { Dispatch, Message, GiftedChatMessage } from 'mobile/reducers';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
-import sendMessage from '../../api/messages/sendMessage';
+import sendMessage from '../../api/conversations/sendMessage';
 
 export type SendMessageInitiated_Action = {
   type: 'SEND_MESSAGE__INITIATED',
