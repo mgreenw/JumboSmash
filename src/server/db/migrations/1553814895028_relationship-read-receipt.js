@@ -54,6 +54,10 @@ exports.up = (pgm) => {
       FROM messages
       WHERE id = NEW.critic_read_message_id;
 
+      IF NOT ((_sender_user_id = NEW.critic_user_id AND _receiver_user_id = NEW.candidate_user_id) OR (_sender_user_id = NEW.candidate_user_id AND _receiver_user_id = NEW.critic_user_id)) THEN
+        RAISE EXCEPTION 'Given message is not in the conversation between the supplied critic and candidate.' USING HINT = 'MESSAGE_NOT_IN_CONVERSATION';
+      END IF;
+
       /* A user can only read a system message or a message from the match */
       IF NOT _from_system AND NEW.candidate_user_id <> _sender_user_id THEN
         RAISE EXCEPTION 'Only message from the system or from a match % can be read by user %', NEW.candidate_user_id, NEW.critic_user_id USING HINT = 'NOT_FROM_SYSTEM_OR_MATCH';
@@ -62,7 +66,7 @@ exports.up = (pgm) => {
       /* If the message can be read, the timestamp must be 1) after the current read timestamp */
       /* and 2) after the timestamp of the message */
       IF _timestamp > NEW.critic_read_message_timestamp THEN
-        RAISE EXCEPTION 'The read receipt for a message must be after the message was sent.' USING HINT = 'RECEIPT_TIME_BEFORE_MESSAGE_TIMESTAMP';
+        RAISE EXCEPTION 'The read receipt for a message must be after the message was sent.' USING HINT = 'READ_TIMESTAMP_BEFORE_MESSAGE_TIMESTAMP';
       END IF;
 
       /* If this is a not a new relationship, then we must perform additional checks */

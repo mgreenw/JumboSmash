@@ -72,14 +72,15 @@ No request body
 The codes are as follows. They are divided into two categories: ones to potentially handle on mobile and ones that should really never be returned by this endpoint. The ones that should not be returned are safety checks by the database but would be very hard to reach from this endpoint.
 
 ###### Likely Codes
-  - `NOT_FROM_SYSTEM_OR_MATCH`
-  - `ALREADY_READ_MESSAGE`
-  - `GIVEN_MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE`
+  - `NOT_FROM_SYSTEM_OR_MATCH` - The message is not the supplied match or the system.
+  - `ALREADY_READ_MESSAGE` - The message has already been read.
+  - `GIVEN_MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE` - The message was sent before the currently read message.
+  - `MESSAGE_NOT_IN_CONVERSATION` - The message is not in the conversation between the requesting user and the supplied match.
 
 ###### Unlikely Codes
-  - `RECEIPT_TIME_BEFORE_MESSAGE_TIMESTAMP`
-  - `CANNOT_DELETE_READ_RECEIPT`
-  - `NEW_TIMESTAMP_BEFORE_OLD_TIMESTAMP`
+  - `READ_TIMESTAMP_BEFORE_MESSAGE_TIMESTAMP` - The read timestamp is before the message's timestamp.
+  - `CANNOT_DELETE_READ_RECEIPT` - The `critic_read_message_id` is null but was not before.
+  - `NEW_TIMESTAMP_BEFORE_OLD_TIMESTAMP` - The read timestamp (now) is before the previous read timestamp (should have been sometime in the past).
 
 ### OR
 
