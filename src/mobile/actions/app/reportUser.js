@@ -47,7 +47,6 @@ export default (
   userId: number,
   reportMessage: string,
   reasonCodes: string[]
-  // block: boolean
 ) => (dispatch: Dispatch) => {
   const reasonCode = reasonCodes.filter(r => r).join();
   dispatch(initiate());

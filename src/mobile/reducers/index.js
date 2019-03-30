@@ -450,7 +450,6 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action
   | ReportUserInitiated_Action
   | ReportUserCompleted_Action
   | ReportUserFailed_Action
