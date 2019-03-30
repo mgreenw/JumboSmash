@@ -7,7 +7,7 @@ const { asyncHandler, status, canAccessUserData } = require('../utils');
 const codes = require('../status-codes');
 
 /**
- * @api {get} /api/messages/:userId
+ * @api {get} /api/conversations/:userId
  *
  */
 const getConversation = async (

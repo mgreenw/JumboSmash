@@ -23,13 +23,13 @@ const AUTH = 'auth/';
 const USERS = 'users/';
 const PHOTOS = 'photos/';
 const RELATIONSHIPS = 'relationships/';
-const MESSAGES = 'messages/';
+const CONVERSATIONS = 'conversations/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
 const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
 const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
-const MESSAGES_ROUTE = SERVER_ROUTE + API + MESSAGES;
+const CONVERSATIONS_ROUTE = SERVER_ROUTE + API + CONVERSATIONS;
 
 // //////////////
 // AUTH ROUTES:
@@ -94,5 +94,5 @@ const UNMATCH = 'unmatch/';
 export const UNMATCH__ROUTE = RELATIONSHIPS_ROUTE + UNMATCH;
 
 // Messages
-export const GET_CONVERSATION = MESSAGES_ROUTE;
-export const SEND_MESSAGE__ROUTE = MESSAGES_ROUTE;
+export const GET_CONVERSATION = CONVERSATIONS_ROUTE;
+export const SEND_MESSAGE__ROUTE = CONVERSATIONS_ROUTE;

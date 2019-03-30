@@ -16,7 +16,13 @@ module.exports = (matchingUserId: number, matchedUserId: number, scene: string) 
     sound: 'default',
     badge: 1, // TODO: make this dynamic with the number of unread notification
   };
-  const data = { scene };
+  const notificationData = userId => ({
+    type: 'NEW_MATCH',
+    payload: {
+      scene,
+      userId,
+    },
+  });
 
   // Send the two notifications! This is together because we want to send these
   // off in one request. Otherwise, we would seperate this into one function
@@ -25,18 +31,12 @@ module.exports = (matchingUserId: number, matchedUserId: number, scene: string) 
     {
       ...notification,
       userId: matchingUserId,
-      data: {
-        ...data,
-        userId: matchedUserId,
-      },
+      data: notificationData(matchedUserId),
     },
     {
       ...notification,
       userId: matchedUserId,
-      data: {
-        ...data,
-        userId: matchingUserId,
-      },
+      data: notificationData(matchingUserId),
     },
   ]);
 };

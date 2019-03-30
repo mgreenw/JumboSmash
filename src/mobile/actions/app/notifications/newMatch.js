@@ -1,5 +1,7 @@
 // @flow
 import type { Dispatch, Scene } from 'mobile/reducers';
+import type { ServerMatch } from 'mobile/api/serverTypes';
+import getMatches from 'mobile/actions/app/getMatches';
 
 export type NewMatchInitiated_Action = {
   type: 'NEW_MATCH__INITIATED',
@@ -9,7 +11,7 @@ export type NewMatchInitiated_Action = {
 
 export type NewMatchCompleted_Action = {
   type: 'NEW_MATCH__COMPLETED',
-  payload: { scene: Scene },
+  payload: { scene: Scene, match: ServerMatch },
   meta: {}
 };
 
@@ -21,15 +23,21 @@ function initiate(): NewMatchInitiated_Action {
   };
 }
 
-function complete(scene: Scene): NewMatchCompleted_Action {
+function complete(match: ServerMatch, scene: Scene): NewMatchCompleted_Action {
   return {
     type: 'NEW_MATCH__COMPLETED',
-    payload: { scene },
+    payload: { match, scene },
     meta: {}
   };
 }
 
-export default (scene: Scene) => (dispatch: Dispatch) => {
+/**
+ * Triggers the `New Match Toast` and calls the `getMatches` action to refresh the match list.
+ * clicking on that toast goes to the matches screen, which would cause a match refresh anyways;
+ * this handles the case when a new match occurs while on the Matches screen.
+ */
+export default (match: ServerMatch, scene: Scene) => (dispatch: Dispatch) => {
   dispatch(initiate());
-  dispatch(complete(scene));
+  dispatch(getMatches());
+  dispatch(complete(match, scene));
 };

@@ -2,7 +2,7 @@
 
 Get the messages in a converasation with another user
 
-**URL** : `/api/messages/:userId`
+**URL** : `/api/conversations/:userId`
 
 **Method** : `GET`
 

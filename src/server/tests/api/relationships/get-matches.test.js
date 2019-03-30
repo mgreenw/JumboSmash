@@ -213,7 +213,7 @@ describe('GET api/relationships/matches', () => {
 
 
     res = await request(app)
-      .post(`/api/messages/${matchIds[0]}`)
+      .post(`/api/conversations/${matchIds[0]}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });

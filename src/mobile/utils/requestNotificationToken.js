@@ -1,6 +1,6 @@
 // @flow
 import { Permissions, Notifications } from 'expo';
-import { Alert } from 'react-native';
+import openAppSettings from 'mobile/utils/OpenAppSettings';
 
 export default async function requestNotificationToken(): Promise<?string> {
   // https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -20,9 +20,7 @@ export default async function requestNotificationToken(): Promise<?string> {
 
   // Stop here if the user did not grant permissions
   if (finalStatus !== 'granted') {
-    Alert.alert(
-      "Please enable push notifications in your phone's settings to proceed"
-    );
+    openAppSettings();
     return null;
   }
 

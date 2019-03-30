@@ -1,6 +1,7 @@
 // @flow
 import { NavigationActions } from 'react-navigation';
 import type { Scene } from 'mobile/reducers';
+import store from 'mobile/store';
 import routes from './routes';
 
 let _navigator;
@@ -9,7 +10,7 @@ function setTopLevelNavigator(navigatorRef: any) {
   _navigator = navigatorRef;
 }
 
-function navigate(routeName: string, params: any) {
+function navigate(routeName: string, params?: Object) {
   _navigator.dispatch(
     NavigationActions.navigate({
       routeName,
@@ -43,12 +44,41 @@ function navigateToCards(scene: Scene) {
   }
 }
 
+/**
+ *
+ * @param {number} userId
+ * attempts to go to the messaging screen for a given userId.
+ * If that userId is not in the redux state of matches, navigates instead to the `matches` screen.
+ */
+function navigateToMatch(userId: number) {
+  const { matchesById } = store.getState();
+  if (userId in matchesById) {
+    const match = matchesById[userId];
+    navigate(routes.Message, { match });
+  } else {
+    navigate(routes.Matches);
+  }
+}
+
 function back() {
   _navigator.dispatch(NavigationActions.back());
 }
 
 function reset() {
   navigate(routes.Splash);
+}
+
+/**
+ * Get the route of the top level screen.
+ * See for details:
+ * https://github.com/react-navigation/react-navigation/issues/962
+ */
+function getCurrentRoute(): { routeName: string, params: Object } {
+  let route = _navigator.state.nav;
+  while (route.routes) {
+    route = route.routes[route.index];
+  }
+  return route;
 }
 
 // add other navigation functions that you need and export them
@@ -58,5 +88,7 @@ export default {
   back,
   setTopLevelNavigator,
   navigateToCards,
-  reset
+  reset,
+  getCurrentRoute,
+  navigateToMatch
 };

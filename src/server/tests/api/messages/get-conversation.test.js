@@ -9,7 +9,7 @@ const dbUtils = require('../../utils/db');
 let me = {};
 let other = {};
 
-describe('GET api/messages/:userId', () => {
+describe('GET api/conversations/:userId', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');
@@ -31,7 +31,7 @@ describe('GET api/messages/:userId', () => {
 
   it('must require the user to exist and have a profile setup', async () => {
     let res = await request(app)
-      .get('/api/messages/1')
+      .get('/api/conversations/1')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
@@ -39,7 +39,7 @@ describe('GET api/messages/:userId', () => {
 
     const user = await dbUtils.createUser('jjaffe01');
     res = await request(app)
-      .get('/api/messages/1')
+      .get('/api/conversations/1')
       .set('Authorization', user.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
@@ -54,7 +54,7 @@ describe('GET api/messages/:userId', () => {
     `, [me.id, other.id, 'hey', uuidv4()]);
 
     const res = await request(app)
-      .get(`/api/messages/${other.id}`)
+      .get(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -68,14 +68,14 @@ describe('GET api/messages/:userId', () => {
     await dbUtils.createRelationship(me.id, other.id, true);
     await dbUtils.createRelationship(other.id, me.id, true);
     let res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=aaoeu`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=aaoeu`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID.status);
 
     res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=-44`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=-44`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
@@ -84,7 +84,7 @@ describe('GET api/messages/:userId', () => {
 
   it('should succeed if the other user exists', async () => {
     let res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey' });
@@ -92,7 +92,7 @@ describe('GET api/messages/:userId', () => {
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
     res = await request(app)
-      .get(`/api/messages/${other.id}`)
+      .get(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -111,7 +111,7 @@ describe('GET api/messages/:userId', () => {
     const [{ id }] = result.rows;
 
     const res = await request(app)
-      .get(`/api/messages/${id}`)
+      .get(`/api/conversations/${id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -122,13 +122,13 @@ describe('GET api/messages/:userId', () => {
 
   it('should make the message be from the other person if they sent it', async () => {
     let res = await request(app)
-      .post(`/api/messages/${me.id}`)
+      .post(`/api/conversations/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
       .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
 
     res = await request(app)
-      .get(`/api/messages/${other.id}`)
+      .get(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -140,7 +140,7 @@ describe('GET api/messages/:userId', () => {
 
   it('should fail on an invalid most recent message id (string)', async () => {
     const res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=hahaduped`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=hahaduped`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
@@ -149,7 +149,7 @@ describe('GET api/messages/:userId', () => {
 
   it('should fail on an invalid most recent message id (negative)', async () => {
     const res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=-1`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=-1`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(400);
@@ -166,7 +166,7 @@ describe('GET api/messages/:userId', () => {
     `, [other.id]);
 
     const res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=${result.rows[0].id}`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=${result.rows[0].id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -176,7 +176,7 @@ describe('GET api/messages/:userId', () => {
 
   it('should sucessfully limit the response to 1 message if the most recent message id is the penultimate message', async () => {
     let res = await request(app)
-      .post(`/api/messages/${me.id}`)
+      .post(`/api/conversations/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
       .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey to you too' });
@@ -190,7 +190,7 @@ describe('GET api/messages/:userId', () => {
     `, [other.id]);
 
     res = await request(app)
-      .get(`/api/messages/${other.id}?most-recent-message-id=${result.rows[result.rowCount - 2].id}`)
+      .get(`/api/conversations/${other.id}?most-recent-message-id=${result.rows[result.rowCount - 2].id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
@@ -205,7 +205,7 @@ describe('GET api/messages/:userId', () => {
     await dbUtils.createRelationship(me.id, person.id, true);
 
     let res = await request(app)
-      .post(`/api/messages/${person.id}`)
+      .post(`/api/conversations/${person.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey I will ban you' });
@@ -214,7 +214,7 @@ describe('GET api/messages/:userId', () => {
     await dbUtils.banUser(person.id);
 
     res = await request(app)
-      .get(`/api/messages/${person.id}`)
+      .get(`/api/conversations/${person.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);

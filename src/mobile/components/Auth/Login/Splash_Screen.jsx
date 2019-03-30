@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, Image, View } from 'react-native';
+import { Keyboard, Text, Image, View } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
@@ -13,6 +13,7 @@ import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
+import Collapsible from 'react-native-collapsible';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -34,7 +35,8 @@ type Props = reduxProps & navigationProps & dispatchProps;
 type State = {
   utln: string,
   errorMessageUtln: string,
-  hasHadError: boolean
+  hasHadError: boolean,
+  keyboardUp: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
@@ -60,8 +62,20 @@ class SplashScreen extends React.Component<Props, State> {
     this.state = {
       utln: '',
       errorMessageUtln: '',
-      hasHadError: false
+      hasHadError: false,
+      keyboardUp: false
     };
+  }
+
+  componentWillMount() {
+    this.keyboardWillShowListener = Keyboard.addListener(
+      'keyboardWillShow',
+      this._keyboardWillShow
+    );
+    this.keyboardWillHideListener = Keyboard.addListener(
+      'keyboardWillHide',
+      this._keyboardWillHide
+    );
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -120,6 +134,11 @@ class SplashScreen extends React.Component<Props, State> {
         }
       }
     }
+  }
+
+  componentWillUnmount() {
+    this.keyboardWillShowListener.remove();
+    this.keyboardWillHideListener.remove();
   }
 
   _onNotTuftsEmail = () => {
@@ -209,27 +228,53 @@ class SplashScreen extends React.Component<Props, State> {
     }
   };
 
+  _keyboardWillShow = () => {
+    this.setState({
+      keyboardUp: true
+    });
+  };
+
+  _keyboardWillHide = () => {
+    this.setState({
+      keyboardUp: false
+    });
+  };
+
+  keyboardWillShowListener: any;
+
+  keyboardWillHideListener: any;
+
   render() {
     // this is the navigator we passed in from App.js
-    const { utln, errorMessageUtln, hasHadError } = this.state;
+    const { utln, errorMessageUtln, hasHadError, keyboardUp } = this.state;
     const { sendVerificationEmail_inProgress } = this.props;
+
+    const ImageView = Collapsible;
 
     return (
       <View style={Arthur_Styles.container}>
-        <View style={{ height: 64 }} />
+        <View style={{ height: '9.6%' }} />
         <KeyboardView waves={1}>
           <Transition inline appear="horizontal">
             <View style={{ flex: 1 }}>
-              <View style={{ flex: 2, alignItems: 'center' }}>
-                <Text style={Arthur_Styles.title}>JumboSmash</Text>
-                <Image
-                  resizeMode="contain"
-                  style={{
-                    flex: 1,
-                    maxWidth: '60%'
-                  }}
-                  source={ArthurUri}
-                />
+              <Text style={Arthur_Styles.title}>JumboSmash</Text>
+              <View
+                style={{
+                  flex: 2,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ImageView collapsed={keyboardUp}>
+                  <Image
+                    resizeMode="contain"
+                    style={{
+                      width: 200,
+                      height: 200
+                    }}
+                    source={ArthurUri}
+                  />
+                </ImageView>
                 <PrimaryInput
                   label="Tufts Email"
                   onChange={this._onInputChange}

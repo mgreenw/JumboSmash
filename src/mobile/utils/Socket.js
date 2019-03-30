@@ -5,8 +5,10 @@ import io from 'socket.io-client';
 import newMessageAction from 'mobile/actions/app/notifications/newMessage';
 import newMatchAction from 'mobile/actions/app/notifications/newMatch';
 import store from 'mobile/store';
-import type { UserProfile, Message } from 'mobile/reducers';
-import { SERVER_ROUTE } from '../api/routes';
+import type { UserProfile, Message, Scene } from 'mobile/reducers';
+import { SERVER_ROUTE } from 'mobile/api/routes';
+import type { ServerMatch } from 'mobile/api/serverTypes';
+
 // Ignore the annoying warning from the websocket connection options
 // Not bad at all and no way around it for now
 // https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
@@ -48,27 +50,25 @@ function connect(token: string) {
     console.log('Socket disconnected from server.');
   });
 
-  _socket.on('NEW_MESSAGE', data => {
-    console.log('NEW_MESSAGE:', data);
-    const {
-      message,
-      senderProfile,
-      senderUserId
-    }: {
+  _socket.on(
+    'NEW_MESSAGE',
+    (data: {
       message: Message,
       senderProfile: UserProfile,
       senderUserId: number
-    } = data;
-    // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
-    // $FlowFixMe
-    store.dispatch(newMessageAction(message, senderProfile, senderUserId));
-  });
+    }) => {
+      const { message, senderProfile, senderUserId } = data;
+      // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
+      // $FlowFixMe
+      store.dispatch(newMessageAction(message, senderProfile, senderUserId));
+    }
+  );
 
-  _socket.on('NEW_MATCH', data => {
-    console.log('NEW_MATCH:', data);
+  _socket.on('NEW_MATCH', (data: { match: ServerMatch, scene: Scene }) => {
+    const { match, scene } = data;
 
     // Ensure we type this function
-    const newMatchThunk = newMatchAction(data.scene);
+    const newMatchThunk = newMatchAction(match, scene);
 
     // TODO: correctly type thunks
     // We have to ignore flow here because dispatch expects a normal action not a thunk.

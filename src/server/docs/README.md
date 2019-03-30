@@ -36,8 +36,8 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 * [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
 
 ### Messages
-* [Get Conversation](messages/get-conversation.md) : `GET /api/messages/:userId`
-* [Send Message](messages/send-message.md) : `POST /api/messages/:userId`
+* [Get Conversation](messages/get-conversation.md) : `GET /api/conversations/:userId`
+* [Send Message](messages/send-message.md) : `POST /api/conversations/:userId`
 
 ### Meta
 * [Send Feedback](meta/send-feedback.md) : `POST /api/meta/feedback`
