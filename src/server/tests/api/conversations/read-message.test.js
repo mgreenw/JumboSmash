@@ -73,7 +73,7 @@ describe('PATCH api/conversations/:matchUserId/messages/:messageId', () => {
     res = await request(app)
       .patch('/api/conversations/1/messages/not-an-integer')
       .set('Accept', 'application/json')
-      .set('Authorization', me.token)
+      .set('Authorization', me.token);
     expect(res.statusCode).toBe(404);
   });
 
