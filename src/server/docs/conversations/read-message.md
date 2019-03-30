@@ -1,6 +1,6 @@
 # Read Message
 
-Read a message. This will update the read receipt for the other user.
+Read a message. This will update the read receipt for the other user via a socket update.
 
 **URL** : `/api/conversations/:matchUserId/messages/:messageId`
 
