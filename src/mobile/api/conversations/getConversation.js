@@ -18,7 +18,7 @@ function getConversationUrl(userId: number, mostRecentMessageId?: number) {
 export default function getConversation(
   userId: number,
   mostRecentMessageId?: number
-): Promise<ServerMessage[]> {
+): Promise<{ messages: ServerMessage[] }> {
   const url = getConversationUrl(userId, mostRecentMessageId);
   return apiRequest('GET', url).then(response => {
     switch (response.status) {
