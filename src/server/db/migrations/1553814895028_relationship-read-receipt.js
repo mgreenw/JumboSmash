@@ -69,7 +69,7 @@ exports.up = (pgm) => {
       /* These checks only neeed to be performed if there is already a read receipt */
       IF TG_OP = 'UPDATE' AND OLD.critic_read_message_id IS NOT NULL THEN
         IF NEW.critic_read_message_id = OLD.critic_read_message_id THEN
-          RAISE EXCEPTION 'Cannot read the same message twice.' USING HINT = 'CANNOT_REREAD_MESSAGE';
+          RAISE EXCEPTION 'Cannot read the same message twice.' USING HINT = 'ALREADY_READ_MESSAGE';
         END IF;
 
         IF NEW.critic_read_message_timestamp <= OLD.critic_read_message_timestamp THEN
@@ -81,7 +81,7 @@ exports.up = (pgm) => {
         WHERE id = OLD.critic_read_message_id;
 
         IF _last_read_message_timestamp > _timestamp THEN
-          RAISE EXCEPTION 'Can only read messages that were sent after the currently read message.' USING HINT = 'MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE';
+          RAISE EXCEPTION 'Can only read messages that were sent after the currently read message.' USING HINT = 'GIVEN_MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE';
         END IF;
       END IF;
 

@@ -273,7 +273,7 @@ exports.READ_MESSAGE__MESSAGE_NOT_FOUND = {
 };
 exports.READ_MESSAGE__FAILURE = {
   status: 'READ_MESSAGE__FAILURE',
-  code: 405,
+  code: 409,
 };
 
 

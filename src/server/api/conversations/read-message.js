@@ -44,7 +44,7 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
     }
 
     const [{ readTimestamp, messageTimestamp }] = result.rows;
-    logger.silly(`Read message at timestamp ${messageTimestamp}`);
+    logger.debug(`Read message at timestamp ${messageTimestamp}`);
 
     // TODO: Update Redis to reflect the fact that this message is read.
 
