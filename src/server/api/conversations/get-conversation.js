@@ -15,7 +15,7 @@ const getConversation = async (
   matchUserId: number,
   mostRecentMessageIdStr: ?string = undefined,
 ) => {
-  let query = `
+  let messagesQuery = `
     SELECT
       id AS "messageId",
       content,
@@ -47,7 +47,7 @@ const getConversation = async (
     }
 
     // Add the "most recent" part of the query
-    query += `AND timestamp >= (
+    messagesQuery += `AND timestamp >= (
         SELECT timestamp
         FROM messages
         WHERE id = ${mostRecentMessageId}
@@ -56,16 +56,32 @@ const getConversation = async (
   }
 
   // Always order by timestamp
-  query += `
+  messagesQuery += `
     ORDER BY timestamp
   `;
 
-  const result = await db.query(
-    query,
-    [userId, matchUserId],
-  );
+  const readReceiptQuery = `
+    SELECT
+      critic_read_message_id AS "messageId",
+      critic_read_message_timestamp AS "timestamp"
+    FROM relationships
+    WHERE critic_user_id = $1 AND candidate_user_id = $2
+  `;
 
-  return status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
+  const [messageResult, readReceiptResult] = await Promise.all([
+    db.query(messagesQuery, [userId, matchUserId]),
+    // Note the order reversal of the params: we want the read message of the
+    // other person (the match), not the message that the current user read
+    // of the match person.
+    db.query(readReceiptQuery, [matchUserId, userId]),
+  ]);
+
+  const readReceipt = readReceiptResult.rows[0].messageId ? readReceiptResult.rows[0] : null;
+
+  return status(codes.GET_CONVERSATION__SUCCESS).data({
+    messages: messageResult.rows,
+    readReceipt,
+  });
 };
 
 const handler = [
