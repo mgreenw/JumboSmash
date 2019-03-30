@@ -33,7 +33,7 @@ const schema = {
 /* eslint-enable */
 
 /**
- * @api {post} /api/messages/:userId
+ * @api {post} /api/conversations/:userId
  *
  */
 const sendMessage = async (

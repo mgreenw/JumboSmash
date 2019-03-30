@@ -9,7 +9,7 @@ const dbUtils = require('../../utils/db');
 let me = {};
 let other = {};
 
-describe('POST api/messages/:userId', () => {
+describe('POST api/conversations/:userId', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE FROM classmates');
@@ -31,7 +31,7 @@ describe('POST api/messages/:userId', () => {
 
   it('must require the user to exist and have a profile setup', async () => {
     let res = await request(app)
-      .post('/api/messages/1')
+      .post('/api/conversations/1')
       .set('Accept', 'application/json')
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
     expect(res.statusCode).toBe(400);
@@ -40,7 +40,7 @@ describe('POST api/messages/:userId', () => {
 
     const user = await dbUtils.createUser('jjaffe01');
     res = await request(app)
-      .post('/api/messages/1')
+      .post('/api/conversations/1')
       .set('Authorization', user.token)
       .set('Accept', 'application/json')
       .send({ content: 'hey there', unconfirmedMessageUuid: uuidv4() });
@@ -56,7 +56,7 @@ describe('POST api/messages/:userId', () => {
     const [{ id }] = result.rows;
 
     const res = await request(app)
-      .post(`/api/messages/${id}`)
+      .post(`/api/conversations/${id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
@@ -66,7 +66,7 @@ describe('POST api/messages/:userId', () => {
 
   it('should fail if the other userId is not an integer', async () => {
     const res = await request(app)
-      .post('/api/messages/not-an-integer')
+      .post('/api/conversations/not-an-integer')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
@@ -75,7 +75,7 @@ describe('POST api/messages/:userId', () => {
 
   it('should fail if there is no match between the two users', async () => {
     const res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
@@ -87,7 +87,7 @@ describe('POST api/messages/:userId', () => {
     await dbUtils.createRelationship(me.id, other.id, true);
     await dbUtils.createRelationship(other.id, me.id, true);
     const res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
@@ -102,7 +102,7 @@ describe('POST api/messages/:userId', () => {
 
   it('should fail if the unconfirmed message uuid is not provided', async () => {
     const res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey' });
@@ -113,7 +113,7 @@ describe('POST api/messages/:userId', () => {
 
   it('should fail if the unconfirmed message uuid is not a valid uuid/v4', async () => {
     const res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: 'heyjacob-itsmax-thisisntauuid-youduped' });
@@ -125,7 +125,7 @@ describe('POST api/messages/:userId', () => {
   it('should return the provided unconfirmedMessageUuid', async () => {
     const uuid = uuidv4();
     const res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuid });
@@ -136,7 +136,7 @@ describe('POST api/messages/:userId', () => {
 
   it('should return the id of the previous message', async () => {
     let res = await request(app)
-      .post(`/api/messages/${other.id}`)
+      .post(`/api/conversations/${other.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
@@ -145,7 +145,7 @@ describe('POST api/messages/:userId', () => {
     const { messageId } = res.body.data.message;
 
     res = await request(app)
-      .post(`/api/messages/${me.id}`)
+      .post(`/api/conversations/${me.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
       .send({ content: 'hey back', unconfirmedMessageUuid: uuidv4() });

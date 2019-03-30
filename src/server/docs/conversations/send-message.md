@@ -2,7 +2,7 @@
 
 Send a message to another user
 
-**URL** : `/api/messages/:userId`
+**URL** : `/api/conversations/:userId`
 
 **Method** : `POST`
 
