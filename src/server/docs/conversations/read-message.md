@@ -71,6 +71,8 @@ No request body
 ##### Failure Codes
 The codes are as follows. They are divided into two categories: ones to potentially handle on mobile and ones that should really never be returned by this endpoint. The ones that should not be returned are safety checks by the database but would be very hard to reach from this endpoint.
 
+NOTE: These are defined under one status `READ_MESSAGE__FAILURE` because these codes come directly from the database. We could return something like `READ_MESSAGE__NOT_FROM_SYSTEM_OR_MATCH`, but it would not work with our current status code definitions file because these constants are not declared in JavaScript code and do not contain status codes. Therefore, they are returned under this `READ_MESSAGE__FAILURE` case so this error could be handled generically or it could be essentially ignored. If mobile wants to use these very specific errors, they are more than welcome.
+
 ###### Likely Codes
   - `NOT_FROM_SYSTEM_OR_MATCH` - The message is not the supplied match or the system.
   - `ALREADY_READ_MESSAGE` - The message has already been read.
