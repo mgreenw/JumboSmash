@@ -591,7 +591,7 @@ class MessagingScreen extends React.Component<Props, State> {
           )
         }
         displayName={displayName}
-        matchId={match.profile}
+        userId={match.profile}
       />
     );
   }
