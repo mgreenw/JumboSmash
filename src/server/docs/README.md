@@ -38,6 +38,7 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 ### Conversations
 * [Get Conversation](conversations/get-conversation.md) : `GET /api/conversations/:userId`
 * [Send Message](conversations/send-message.md) : `POST /api/conversations/:userId`
+* [Read Message](conversations/read-message.md) : `PATCH /api/conversations/:matchUserId/messages/:messageId`
 
 ### Meta
 * [Send Feedback](meta/send-feedback.md) : `POST /api/meta/feedback`
