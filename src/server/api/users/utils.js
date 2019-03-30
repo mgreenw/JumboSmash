@@ -9,6 +9,7 @@ const bioMaxLength = 500;
 
 // Profile Errors
 const profileErrorMessages = {
+  DISPLAY_NAME_REQUIRED: 'DISPLAY_NAME_REQUIRED',
   DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
@@ -34,6 +35,11 @@ function validateProfile(profile: Profile) {
     birthday,
     bio,
   } = profile;
+
+  // Ensure that name without trailing / leading whitespace is non-empty
+  if (displayName && displayName.trim().length === 0) {
+    throw profileErrorMessages.DISPLAY_NAME_REQUIRED;
+  }
 
   // Check if the user's display name is too long
   if (displayName && displayName.length > displayNameMaxLength) {

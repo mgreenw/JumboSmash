@@ -108,6 +108,25 @@ describe('PATCH api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.DISPLAY_NAME_TOO_LONG);
   });
 
+  it('should error if the display name is whitespace', async () => {
+    const user = await dbUtils.createUser('jjaffe99');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Jacob',
+      bio: 'This dude rocks at making tests',
+      birthday: '1997-06-26',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        displayName: '   ',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.DISPLAY_NAME_REQUIRED);
+  });
+
   it('should error if the bio is too long (>500 characters)', async () => {
     const bioLength = 510;
     let bio = '';

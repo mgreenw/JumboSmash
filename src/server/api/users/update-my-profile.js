@@ -10,12 +10,14 @@ const codes = require('../status-codes');
 const db = require('../../db');
 
 /* eslint-disable */
-const schema = {
+export const updateMyProfileSchema = {
   "type": "object",
   "properties": {
     "displayName": {
       "description": "The user's display name. It should be their first name.",
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20,
     },
     "birthday": {
       "description": "The user's birthday",
@@ -24,7 +26,9 @@ const schema = {
     },
     "bio": {
       "description": "The user's bio!",
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
     }
   },
   "required": []
@@ -91,7 +95,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
 };
 
 const handler = [
-  apiUtils.validate(schema),
+  apiUtils.validate(updateMyProfileSchema),
   apiUtils.asyncHandler(async (req: $Request) => {
     return updateMyProfile(req.user.id, req.body);
   }),

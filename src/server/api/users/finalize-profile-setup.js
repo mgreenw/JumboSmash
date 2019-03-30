@@ -1,6 +1,7 @@
 // @flow
 
 import type { $Request } from 'express';
+import updateMyProfileSchema from './update-my-profile';
 
 const apiUtils = require('../utils');
 const { validateProfile, profileSelectQuery } = require('./utils');
@@ -9,22 +10,7 @@ const db = require('../../db');
 
 /* eslint-disable */
 const schema = {
-  "type": "object",
-  "properties": {
-    "displayName": {
-      "description": "The user's display name. It should be their first name.",
-      "type": "string"
-    },
-    "birthday": {
-      "description": "The user's birthday",
-      "type": "string",
-      "format": "date",
-    },
-    "bio": {
-      "description": "The user's bio!",
-      "type": "string"
-    }
-  },
+  ...updateMyProfileSchema,
   "required": ["displayName", "birthday", "bio"]
 };
 /* eslint-enable */
