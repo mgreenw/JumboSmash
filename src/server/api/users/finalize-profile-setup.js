@@ -1,8 +1,8 @@
 // @flow
 
 import type { $Request } from 'express';
-import updateMyProfileSchema from './update-my-profile';
 
+const { updateMyProfileSchema } = require('./update-my-profile');
 const apiUtils = require('../utils');
 const { validateProfile, profileSelectQuery } = require('./utils');
 const codes = require('../status-codes');
