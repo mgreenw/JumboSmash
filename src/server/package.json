@@ -38,6 +38,7 @@
     "config": "^2.0.1",
     "expo-server-sdk": "^3.1.0",
     "express": "^4.16.4",
+    "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
     "node-pg-migrate": "^3.13.0",
