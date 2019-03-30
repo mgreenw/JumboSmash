@@ -40,7 +40,7 @@ exports.up = (pgm) => {
     BEGIN
       IF NEW.critic_read_message_id IS NULL THEN
         IF TG_OP = 'UPDATE' AND OLD.critic_read_message_id IS NOT NULL THEN
-          RAISE EXCEPTION 'Cannot delete a read receipt once it has been created';
+          RAISE EXCEPTION 'Cannot delete a read receipt once it has been created' USING HINT = 'CANNOT_DELETE_READ_RECEIPT';
         END IF;
 
         /* Because we are not inserting a read receipt, we allow the insertion/update to continue */
@@ -56,20 +56,24 @@ exports.up = (pgm) => {
 
       /* A user can only read a system message or a message from the match */
       IF NOT _from_system AND NEW.candidate_user_id <> _sender_user_id THEN
-        RAISE EXCEPTION 'Only message from the system or from a match % can be read by user %', NEW.candidate_user_id, NEW.critic_user_id;
+        RAISE EXCEPTION 'Only message from the system or from a match % can be read by user %', NEW.candidate_user_id, NEW.critic_user_id USING HINT = 'NOT_FROM_SYSTEM_OR_MATCH';
       END IF;
 
       /* If the message can be read, the timestamp must be 1) after the current read timestamp */
       /* and 2) after the timestamp of the message */
       IF _timestamp > NEW.critic_read_message_timestamp THEN
-        RAISE EXCEPTION 'The read receipt for a message must be after the message was sent.';
+        RAISE EXCEPTION 'The read receipt for a message must be after the message was sent.' USING HINT = 'RECEIPT_TIME_BEFORE_MESSAGE_TIMESTAMP';
       END IF;
 
       /* If this is a not a new relationship, then we must perform additional checks */
       /* These checks only neeed to be performed if there is already a read receipt */
       IF TG_OP = 'UPDATE' AND OLD.critic_read_message_id IS NOT NULL THEN
+        IF NEW.critic_read_message_id = OLD.critic_read_message_id THEN
+          RAISE EXCEPTION 'Cannot read the same message twice.' USING HINT = 'CANNOT_REREAD_MESSAGE';
+        END IF;
+
         IF NEW.critic_read_message_timestamp <= OLD.critic_read_message_timestamp THEN
-          RAISE EXCEPTION 'The new read timestamp must be after the old read timestamp';
+          RAISE EXCEPTION 'The new read timestamp must be after the old read timestamp' USING HINT = 'NEW_TIMESTAMP_BEFORE_OLD_TIMESTAMP';
         END IF;
 
         SELECT timestamp INTO _last_read_message_timestamp
@@ -77,7 +81,7 @@ exports.up = (pgm) => {
         WHERE id = OLD.critic_read_message_id;
 
         IF _last_read_message_timestamp > _timestamp THEN
-          RAISE EXCEPTION 'Can only read messages that were sent after the currently read message.';
+          RAISE EXCEPTION 'Can only read messages that were sent after the currently read message.' USING HINT = 'MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE';
         END IF;
       END IF;
 
