@@ -93,7 +93,7 @@ const handler = [
     });
 
     if (!allowedAccess) {
-      return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+      return status(codes.GET_CONVERSATION__NOT_MATCHED).noData();
     }
 
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);
