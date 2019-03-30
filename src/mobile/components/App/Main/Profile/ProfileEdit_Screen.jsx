@@ -25,6 +25,7 @@ import saveProfileFieldsAction from 'mobile/actions/app/saveProfile';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
+import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -120,8 +121,26 @@ class ProfileEditScreen extends React.Component<Props, State> {
   _onBack = () => {
     const { editedProfileFields } = this.state;
     const { saveProfileFields } = this.props;
-    saveProfileFields(editedProfileFields);
-    NavigationService.back();
+    const valid = this._validateInputs();
+    if (valid) {
+      saveProfileFields(editedProfileFields);
+      NavigationService.back();
+    }
+  };
+
+  _validateInputs = () => {
+    // validate birthday to be the correct
+    const { editedProfileFields } = this.state;
+    const { valid: nameValid, reason: nameValidReason } = validateName(
+      editedProfileFields.displayName
+    );
+    if (!nameValid) {
+      this.setState({
+        errorMessageName: nameErrorCopy(nameValidReason)
+      });
+    }
+
+    return nameValid;
   };
 
   render() {
