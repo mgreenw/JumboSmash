@@ -63,7 +63,7 @@ No request body
     "status": "READ_MESSAGE__FAILURE",
     "data": {
         "message": "Cannot read the same message twice.",
-        "code": "CANNOT_REREAD_MESSAGE"
+        "code": "ALREADY_READ_MESSAGE"
     }
 }
 ```
