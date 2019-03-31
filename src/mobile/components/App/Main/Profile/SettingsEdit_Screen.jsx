@@ -30,6 +30,7 @@ import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
 import { Constants } from 'expo';
 import requestNotificationToken from 'mobile/utils/requestNotificationToken';
+import Spacer from 'mobile/components/shared/Spacer';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -43,22 +44,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20
   }
 });
-
-const Spacer = () => {
-  return (
-    <View style={{ width: '100%', alignItems: 'center' }}>
-      <View
-        style={{
-          paddingTop: 8,
-          marginBottom: 4,
-          borderTopWidth: 1,
-          width: '80%',
-          borderColor: Colors.Grey80
-        }}
-      />
-    </View>
-  );
-};
 
 type NavigationProps = {
   navigation: any
