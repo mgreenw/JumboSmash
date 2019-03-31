@@ -30,17 +30,22 @@ const NO_EMAIL = 'NO EMAIL FOR THIS RESPONSE CODE';
 const NO_CLASS_YEAR = 'NO CLASS YEAR FOR THIS RESPONSE CODE';
 const NO_UTLN = 'NO UTLN FOR THIS RESPONSE';
 
-const EMAIL_DOMAIN = '@tufts.edu';
+const TUFTS_EMAIL_DOMAIN = '@tufts.edu';
+const JUMBOSMASH_EMAIL_DOMAIN = '@jumbosmash.com';
 
 // A nice helper to allow us to just input the UTLN :)
 function allowRawUtlnInRequest(request: Request): Request {
   const { email } = request;
-  if (email.includes(EMAIL_DOMAIN)) {
+  if (
+    email.includes(TUFTS_EMAIL_DOMAIN) ||
+    email.includes(JUMBOSMASH_EMAIL_DOMAIN)
+  ) {
     return request;
   }
+  // append @tufts.edu
   return {
     ...request,
-    email: email + EMAIL_DOMAIN
+    email: email + TUFTS_EMAIL_DOMAIN
   };
 }
 
