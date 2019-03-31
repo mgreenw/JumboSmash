@@ -99,6 +99,9 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.data.messages.length).toBe(1);
     expect(res.body.data.messages[0].content).toBe('hey');
     expect(res.body.data.messages[0].sender).toBe('client');
+    expect(res.body.data.readReceipt).toBeNull();
+    // We sent them a message so it is read!
+    expect(res.body.data.conversationIsRead).toBeTruthy();
   });
 
   it('should fail if the other user does not exist', async () => {
@@ -132,6 +135,8 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.data.messages).toBeDefined();
     expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('match');
     expect(res.body.data.messages[0].messageId).toBeDefined();
+    expect(res.body.data.readReceipt).toBeNull();
+    expect(res.body.data.conversationIsRead).toBeFalsy();
   });
 
   it('should fail on an invalid most recent message id (string)', async () => {
@@ -168,6 +173,8 @@ describe('GET api/conversations/:userId', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data.messages.length).toBe(0);
+    expect(res.body.data.readReceipt).toBeNull();
+    expect(res.body.data.conversationIsRead).toBeFalsy();
   });
 
   it('should sucessfully limit the response to 1 message if the most recent message id is the penultimate message', async () => {
@@ -193,6 +200,8 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
     expect(res.body.data.messages.length).toBe(1);
     expect(res.body.data.messages[0].messageId).toBe(result.rows[result.rowCount - 1].id);
+    expect(res.body.data.readReceipt).toBeNull();
+    expect(res.body.data.conversationIsRead).toBeFalsy();
   });
 
   it('should fail if the other user is banned', async () => {

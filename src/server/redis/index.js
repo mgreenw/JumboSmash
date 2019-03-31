@@ -5,7 +5,7 @@ const config = require('config');
 
 const redisConfig = config.get('redis');
 
-const shared = new Redis(redisConfig.port, redisConfig.host);
+const shared = new Redis(redisConfig);
 
 shared.defineCommand('readMessage', {
   numberOfKeys: 1,

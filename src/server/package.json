@@ -65,13 +65,15 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-flowtype": "^2.50.3",
     "eslint-plugin-import": "^2.14.0",
-    "jest": "^23.6.0",
+    "jest": "^24.5.0",
     "nodemon": "^1.18.5",
     "regenerator-runtime": "^0.12.1",
     "release-it": "^10.2.0",
     "supertest": "^3.3.0"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "./jest.setup.js"
+    "setupFilesAfterEnv": [
+      "./scripts/jest-setup.js"
+    ]
   }
 }

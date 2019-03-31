@@ -67,7 +67,8 @@ Provide the normal `Authorization` token in the request header.
         "readReceipt": {
             "messageId": 14,
             "timestamp": "2019-01-27T17:04:50.704Z"
-        }
+        },
+        "conversationIsRead": false
 }
 ```
 
@@ -97,7 +98,8 @@ Provide the normal `Authorization` token in the request header.
                 "sender": "client"
             }
         ],
-        "readReceipt": null
+        "readReceipt": null,
+        "conversationIsRead": false
 }
 ```
 
