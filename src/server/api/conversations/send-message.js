@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const logger = require('../../logger');
 const redis = require('../../redis');
 const codes = require('../status-codes');
 const {
@@ -65,8 +66,10 @@ const sendMessage = async (
       senderUserId.toString(),
       message.timestamp.toISOString(),
     );
-    console.log('marked unread', didMarkUnread);
 
+    if (didMarkUnread) {
+      logger.debug('Send message: marked the conversation as unread');
+    }
 
     const previousMessageResult = await db.query(`
       SELECT id
