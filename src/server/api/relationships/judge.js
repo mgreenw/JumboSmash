@@ -130,16 +130,18 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         const { timestamp: sceneMatchMessageTimestamp } = systemMessageResult.rows[0];
 
         // Insert the message for both the sender and the receiver.
+        // Note the reversal of the params.
+        const timestamp = sceneMatchMessageTimestamp.toISOString();
         const [didMarkUnreadForJudger, didMarkUnreadForCandidate] = await Promise.all([
           redis.shared.insertMessage(
             redis.unreadConversationsKey(userId),
             candidateUserId.toString(),
-            sceneMatchMessageTimestamp.toISOString(),
+            timestamp,
           ),
           redis.shared.insertMessage(
             redis.unreadConversationsKey(candidateUserId),
             userId.toString(),
-            sceneMatchMessageTimestamp.toISOString(),
+            timestamp,
           ),
         ]);
 
