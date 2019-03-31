@@ -108,7 +108,7 @@ class BlockPopup extends React.Component<Props, State> {
   }
 
   _renderLoading() {
-    return <InProgress message={'Block...'} />;
+    return <InProgress message={'Blocking...'} />;
   }
 
   _onBlock = () => {
