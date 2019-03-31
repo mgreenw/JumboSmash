@@ -65,10 +65,12 @@ const getMatches = async (userId: number) => {
     {},
   );
 
-  const matches = matchesResult.rows.map(match => ({
-    ...match,
-    conversationIsRead: !(match in unreadConversationUserIdsMap),
-  }));
+  const matches = matchesResult.rows.map((match) => {
+    return {
+      ...match,
+      conversationIsRead: !(match.userId in unreadConversationUserIdsMap),
+    };
+  });
 
   return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(matches);
 };
