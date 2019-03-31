@@ -7,7 +7,8 @@ import {
   StyleSheet,
   ImageBackground,
   ScrollView,
-  Platform
+  Platform,
+  Text
 } from 'react-native';
 import { connect } from 'react-redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
@@ -26,6 +27,8 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
+import { textStyles } from 'mobile/styles/textStyles';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -193,6 +196,24 @@ class ProfileEditScreen extends React.Component<Props, State> {
                   placeholder="Let everyone know how quirky you are"
                   maxLength={500}
                 />
+              </View>
+            </View>
+            <View style={styles.profileBlock}>
+              <Text style={textStyles.body2Style}>Post-Grad Location</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                  marginTop: 5
+                }}
+              >
+                <Text
+                  style={[textStyles.headline6Style, { color: Colors.Grey80 }]}
+                >
+                  No Selected City
+                </Text>
+                <TertiaryButton title={'change'} onPress={() => {}} />
               </View>
             </View>
           </PlatformSpecificScrollView>
