@@ -225,4 +225,137 @@ describe('GET api/conversations/:userId', () => {
     expect(res.statusCode).toBe(403);
     expect(res.body.status).toBe(codes.GET_CONVERSATION__NOT_MATCHED.status);
   });
+
+  it('should update the read receipt based on the other users read status', async () => {
+    let res = await request(app)
+      .post(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token)
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'read this' });
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
+
+    const { messageId: firstMessageId } = res.body.data.message;
+
+    res = await request(app)
+      .get(`/api/conversations/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('match');
+    expect(res.body.data.readReceipt).toBeNull();
+    // We sent them a message so it is read!
+    expect(res.body.data.conversationIsRead).toBeFalsy();
+
+    res = await request(app)
+      .post(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token)
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'read this #2' });
+    expect(res.statusCode).toBe(201);
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
+
+    const { messageId: secondMessageId } = res.body.data.message;
+
+    res = await request(app)
+      .get(`/api/conversations/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('match');
+    expect(res.body.data.readReceipt).toBeNull();
+    // We sent them a message so it is read!
+    expect(res.body.data.conversationIsRead).toBeFalsy();
+
+    // Read the first message
+    res = await request(app)
+      .patch(`/api/conversations/${other.id}/messages/${firstMessageId}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
+    const { readTimestamp: firstReadTimestamp } = res.body.data;
+
+    res = await request(app)
+      .get(`/api/conversations/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('match');
+    expect(res.body.data.readReceipt).toBeNull();
+
+    // However, the conversation should be unread because we have not yet read the last message
+    expect(res.body.data.conversationIsRead).toBeFalsy();
+
+    // Ensure other has read all their messages
+    res = await request(app)
+      .get(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages.length > 0).toBeTruthy();
+
+    // // Other should read the last message
+    const { messageId } = res.body.data.messages.reverse().find(message => message.sender === 'match');
+    res = await request(app)
+      .patch(`/api/conversations/${me.id}/messages/${messageId}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
+
+    res = await request(app)
+      .get(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('client');
+    expect(res.body.data.readReceipt.messageId).toBe(firstMessageId);
+    expect(res.body.data.readReceipt.timestamp).toEqual(firstReadTimestamp);
+    expect(res.body.data.conversationIsRead).toBeTruthy();
+
+    // Read the second message
+    res = await request(app)
+      .patch(`/api/conversations/${other.id}/messages/${secondMessageId}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
+    const { readTimestamp: secondMessageTimestamp } = res.body.data;
+
+    res = await request(app)
+      .get(`/api/conversations/${other.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('match');
+    expect(res.body.data.readReceipt).not.toBeNull();
+    // It should now be read
+    expect(res.body.data.conversationIsRead).toBeTruthy();
+
+    res = await request(app)
+      .get(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
+    expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('client');
+    expect(res.body.data.readReceipt.messageId).toBe(secondMessageId);
+    expect(res.body.data.readReceipt.timestamp).toEqual(secondMessageTimestamp);
+    expect(res.body.data.conversationIsRead).toBeTruthy();
+  });
 });
