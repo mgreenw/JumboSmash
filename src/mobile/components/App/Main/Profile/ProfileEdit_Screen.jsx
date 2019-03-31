@@ -199,22 +199,20 @@ class ProfileEditScreen extends React.Component<Props, State> {
               </View>
             </View>
             <View style={styles.profileBlock}>
-              <Text style={textStyles.body2Style}>Post-Grad Location</Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-end',
-                  marginTop: 5
-                }}
-              >
-                <Text
-                  style={[textStyles.headline6Style, { color: Colors.Grey80 }]}
-                >
-                  No Selected City
-                </Text>
-                <TertiaryButton title={'change'} onPress={() => {}} />
-              </View>
+              <PopupInput
+                title={'Post-Grad Location'}
+                placeholder={'No Selected Location'}
+              />
+              <View style={{ height: 20 }} />
+              <PopupInput
+                title={'Dream Spring Fling Artist'}
+                placeholder={'No Selected Artist'}
+              />
+              <View style={{ height: 20 }} />
+              <PopupInput
+                title={'1st Year Dorm'}
+                placeholder={'No Selected Dorm'}
+              />
             </View>
           </PlatformSpecificScrollView>
         </View>
@@ -222,6 +220,32 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 }
+
+type PopupInputProps = {
+  title: string,
+  placeholder: string
+};
+const PopupInput = (props: PopupInputProps) => {
+  const { title, placeholder } = props;
+  return (
+    <View>
+      <Text style={textStyles.body2Style}>{title}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          marginTop: 5
+        }}
+      >
+        <Text style={[textStyles.headline6Style, { color: Colors.BlueyGrey }]}>
+          {placeholder}
+        </Text>
+        <TertiaryButton title={'change'} onPress={() => {}} />
+      </View>
+    </View>
+  );
+};
 
 export default connect(
   mapStateToProps,
