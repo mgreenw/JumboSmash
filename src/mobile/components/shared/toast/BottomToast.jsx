@@ -51,6 +51,10 @@ function messageFromCode(code: BottomToastCode): string {
       return 'Failed to upload photo.';
     }
 
+    case 'REPORT_USER__FAILURE': {
+      return 'Failed to report user.';
+    }
+
     case 'UNMATCH_FAILURE': {
       return 'Failed to unmatch. Try again';
     }
