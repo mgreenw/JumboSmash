@@ -78,7 +78,13 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
         const [{ messageTimestamp }] = systemMessageTimestampResult.rows;
         logger.debug(`System message read at ${messageTimestamp}`);
 
-        // TODO: Update Redis to reflect the fact that this message is read.
+        const conversationIsRead = await redis.shared.readMessage(
+          redis.unreadConversationsKey(readerUserId),
+          matchUserId.toString(),
+          messageTimestamp.toISOString(),
+        );
+
+        logger.debug(`Read system message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
 
         return status(codes.READ_MESSAGE__SUCCESS).noData();
       }
