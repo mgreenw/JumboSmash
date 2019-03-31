@@ -8,7 +8,8 @@ import {
   ImageBackground,
   ScrollView,
   Platform,
-  Text
+  Text,
+  Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
@@ -30,6 +31,11 @@ import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
+import { Constants } from 'expo';
+
+const manifest = Constants.manifest;
+const isDev =
+  typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev;
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -199,22 +205,24 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-            <View style={styles.profileBlock}>
-              <PopupInput
-                title={'Post-Grad Location'}
-                placeholder={'No Selected Location'}
-              />
-              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-              <PopupInput
-                title={'Dream Spring Fling Artist'}
-                placeholder={'No Selected Artist'}
-              />
-              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-              <PopupInput
-                title={'1st Year Dorm'}
-                placeholder={'No Selected Dorm'}
-              />
-            </View>
+            {isDev && (
+              <View style={styles.profileBlock}>
+                <PopupInput
+                  title={'Post-Grad Location'}
+                  placeholder={'No Selected Location'}
+                />
+                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                <PopupInput
+                  title={'Dream Spring Fling Artist'}
+                  placeholder={'No Selected Artist'}
+                />
+                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                <PopupInput
+                  title={'1st Year Dorm'}
+                  placeholder={'No Selected Dorm'}
+                />
+              </View>
+            )}
           </PlatformSpecificScrollView>
         </View>
       </View>
@@ -243,7 +251,12 @@ const PopupInput = (props: PopupInputProps) => {
           {placeholder}
         </Text>
         <View style={{ bottom: 4 }}>
-          <TertiaryButton title={'change'} onPress={() => {}} />
+          <TertiaryButton
+            title={'change'}
+            onPress={() => {
+              Alert.alert('Not Yet Enabled');
+            }}
+          />
         </View>
       </View>
     </View>
