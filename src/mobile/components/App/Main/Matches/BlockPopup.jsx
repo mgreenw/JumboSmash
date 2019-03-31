@@ -215,7 +215,6 @@ class BlockPopup extends React.Component<Props, State> {
     } else {
       throw new Error('Error in Block Popup, invalid step number');
     }
-    console.log(`Visible: ${visible}`);
     return (
       <Popup visible={visible} onTouchOutside={() => {}}>
         {renderedContent}

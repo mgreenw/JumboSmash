@@ -285,7 +285,7 @@ class ReportPopup extends React.Component<Props, State> {
         secondaryButtonText={!block ? `Block ${displayName}` : undefined}
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
-        onSecondaryButtonPress={this._onBlock} // Will add block functinality in next pr
+        onSecondaryButtonPress={this._onBlock}
         flexRow={false}
       />
     );

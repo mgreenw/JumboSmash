@@ -1588,6 +1588,8 @@ export default function rootReducer(
         throw new Error('unmessagedMatchIds is null or undefined');
       }
 
+      // TODO: We need to filter out this user from sceneCandidateIds. This requires changes to the deck
+
       const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
         id => id !== userId
       );
