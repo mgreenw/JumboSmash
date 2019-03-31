@@ -32,6 +32,7 @@ import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import { Constants } from 'expo';
+import routes from 'mobile/components/navigation/routes';
 
 const manifest = Constants.manifest;
 const isDev =
@@ -210,16 +211,34 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 <PopupInput
                   title={'Post-Grad Location'}
                   placeholder={'No Selected Location'}
+                  onChange={() => {
+                    NavigationService.navigate(routes.SelectCity, {
+                      onSave: postGradLocation => {
+                        this.setState(state => ({
+                          editedProfileFields: {
+                            ...state.editedProfileFields,
+                            postGradLocation
+                          }
+                        }));
+                      }
+                    });
+                  }}
                 />
                 <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
                 <PopupInput
                   title={'Dream Spring Fling Artist'}
                   placeholder={'No Selected Artist'}
+                  onChange={() => {
+                    Alert.alert('not yet implemented');
+                  }}
                 />
                 <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
                 <PopupInput
                   title={'1st Year Dorm'}
                   placeholder={'No Selected Dorm'}
+                  onChange={() => {
+                    Alert.alert('not yet implemented');
+                  }}
                 />
               </View>
             )}
@@ -232,10 +251,11 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
 type PopupInputProps = {
   title: string,
-  placeholder: string
+  placeholder: string,
+  onChange: () => void
 };
 const PopupInput = (props: PopupInputProps) => {
-  const { title, placeholder } = props;
+  const { title, placeholder, onChange } = props;
   return (
     <View>
       <Text style={textStyles.body2Style}>{title}</Text>
@@ -251,12 +271,7 @@ const PopupInput = (props: PopupInputProps) => {
           {placeholder}
         </Text>
         <View style={{ bottom: 4 }}>
-          <TertiaryButton
-            title={'change'}
-            onPress={() => {
-              Alert.alert('Not Yet Enabled');
-            }}
-          />
+          <TertiaryButton title={'change'} onPress={onChange} />
         </View>
       </View>
     </View>
