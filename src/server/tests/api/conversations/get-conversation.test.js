@@ -280,7 +280,13 @@ describe('GET api/conversations/:userId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
-    const { readTimestamp: firstReadTimestamp } = res.body.data;
+
+    let timestampResult = await db.query(`
+      SELECT critic_read_message_timestamp AS timestamp
+      FROM relationships
+      WHERE critic_user_id = $1 AND candidate_user_id = $2
+    `, [me.id, other.id]);
+    const [{ timestamp: firstReadTimestamp }] = timestampResult.rows;
 
     res = await request(app)
       .get(`/api/conversations/${other.id}`)
@@ -322,7 +328,7 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
     expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('client');
     expect(res.body.data.readReceipt.messageId).toBe(firstMessageId);
-    expect(res.body.data.readReceipt.timestamp).toEqual(firstReadTimestamp);
+    expect(res.body.data.readReceipt.timestamp).toEqual(firstReadTimestamp.toISOString());
     expect(res.body.data.conversationIsRead).toBeTruthy();
 
     // Read the second message
@@ -332,7 +338,12 @@ describe('GET api/conversations/:userId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
-    const { readTimestamp: secondMessageTimestamp } = res.body.data;
+    timestampResult = await db.query(`
+      SELECT critic_read_message_timestamp AS timestamp
+      FROM relationships
+      WHERE critic_user_id = $1 AND candidate_user_id = $2
+    `, [me.id, other.id]);
+    const [{ timestamp: secondReadTimestamp }] = timestampResult.rows;
 
     res = await request(app)
       .get(`/api/conversations/${other.id}`)
@@ -355,7 +366,7 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.data.messages[res.body.data.messages.length - 1].content).toBe('read this #2');
     expect(res.body.data.messages[res.body.data.messages.length - 1].sender).toBe('client');
     expect(res.body.data.readReceipt.messageId).toBe(secondMessageId);
-    expect(res.body.data.readReceipt.timestamp).toEqual(secondMessageTimestamp);
+    expect(res.body.data.readReceipt.timestamp).toEqual(secondReadTimestamp.toISOString());
     expect(res.body.data.conversationIsRead).toBeTruthy();
   });
 });
