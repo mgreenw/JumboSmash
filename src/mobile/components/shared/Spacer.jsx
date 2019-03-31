@@ -4,6 +4,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 
+/**
+ * A dividor we use for settings and profile edit screens.
+ */
 const Spacer = () => {
   return (
     <View style={{ width: '100%', alignItems: 'center' }}>
