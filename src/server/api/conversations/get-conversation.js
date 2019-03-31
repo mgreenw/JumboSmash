@@ -69,7 +69,7 @@ const getConversation = async (
     WHERE critic_user_id = $1 AND candidate_user_id = $2
   `;
 
-  const [messageResult, readReceiptResult, isUnread] = await Promise.all([
+  const [messageResult, readReceiptResult, conversationIsUnread] = await Promise.all([
     db.query(messagesQuery, [userId, matchUserId]),
     // Note the order reversal of the params: we want the read message of the
     // other person (the match), not the message that the current user read
@@ -86,7 +86,7 @@ const getConversation = async (
   return status(codes.GET_CONVERSATION__SUCCESS).data({
     messages: messageResult.rows,
     readReceipt,
-    isUnread: !!isUnread,
+    conversationIsRead: !conversationIsUnread,
   });
 };
 
