@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 
 /**
- * A dividor we use for settings and profile edit screens.
+ * A divider we use for settings and profile edit screens.
  */
 const Spacer = () => {
   return (
