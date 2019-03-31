@@ -58,8 +58,6 @@ export default function sendVerificationEmail(
     allowRawUtlnInRequest(request)
   ).then(response => {
     // We use this to ASSERT what the type of the response is.
-    console.log(request);
-    console.log(response);
     switch (response.status) {
       // Valid EMAIL
       case SEND_VERIFICATION_EMAIL__SUCCESS:
