@@ -2,30 +2,69 @@
 
 import React from 'react';
 import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import Popup from 'mobile/components/shared/Popup';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import BioInput from 'mobile/components/shared/BioInput';
 import Layout from 'mobile/components/shared/Popup_Layout';
+import InProgress from 'mobile/components/shared/InProgress';
+import ReportAction from 'mobile/actions/app/reportUser';
 import ReasonSelector from './ReasonSelector';
 import type { SelectedReason } from './ReasonSelector';
 
 type ProppyProps = {
   visible: boolean,
   displayName: string,
+  userId: number,
   onCancel: () => void,
   onDone: (block: boolean) => void
 };
 
-type Props = ProppyProps;
+type ReduxProps = {
+  report_inProgress: boolean
+};
+
+type DispatchProps = {
+  reportUser: (
+    userId: number,
+    reportMessage: string,
+    reasonCodes: string[]
+  ) => void
+};
+
+type Props = ProppyProps & ReduxProps & DispatchProps;
 
 type State = {
   step: 1 | 2 | 3,
   selectedReasons: SelectedReason[],
   reportMessage: string,
-  block: boolean
+  block: boolean,
+  fakeReportLoading: boolean
 };
+
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  if (!reduxState.client) {
+    throw new Error('client is null in report popup');
+  }
+  return {
+    report_inProgress: reduxState.inProgress.reportUser
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+  return {
+    reportUser: (
+      userId: number,
+      reportMessage: string,
+      reasonCodes: string[]
+    ) => {
+      dispatch(ReportAction(userId, reportMessage, reasonCodes));
+    }
+  };
+}
 
 const REPORT_REASONS = [
   { text: 'Made me uncomfortable', code: 'UNCOMFORTABLE' },
@@ -48,9 +87,33 @@ class ReportPopup extends React.Component<Props, State> {
         };
       }),
       reportMessage: '',
-      block: false
+      block: false,
+      fakeReportLoading: false
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { report_inProgress } = this.props;
+    if (report_inProgress && !nextProps.report_inProgress) {
+      this.setState({ fakeReportLoading: true }, () => {
+        // The timeout is so the progress bar doesn't look jumpy
+        setTimeout(() => {
+          this.setState({ step: 3, fakeReportLoading: false });
+        }, 500);
+      });
+    }
+  }
+
+  _renderLoading() {
+    return <InProgress message={'Reporting...'} />;
+  }
+
+  _onReport = () => {
+    const { reportMessage, selectedReasons } = this.state;
+    const { userId, reportUser } = this.props;
+    const reasonCodes = selectedReasons.map(r => r.reason.code);
+    reportUser(userId, reportMessage, reasonCodes);
+  };
 
   _onToggleReason = (selected: boolean, index: number) => {
     const { selectedReasons } = this.state;
@@ -117,7 +180,7 @@ class ReportPopup extends React.Component<Props, State> {
         primaryButtonText={'Report'}
         primaryButtonDisabled={false}
         primaryButtonLoading={false}
-        onPrimaryButtonPress={() => this.setState({ step: 3 })}
+        onPrimaryButtonPress={this._onReport}
         secondaryButtonText={'Back'}
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
@@ -171,17 +234,19 @@ class ReportPopup extends React.Component<Props, State> {
         secondaryButtonText={!block ? `Block ${displayName}` : undefined}
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
-        onSecondaryButtonPress={() => this.setState({ block: true })}
+        onSecondaryButtonPress={() => this.setState({ block: true })} // Will add block functinality in next pr
         flexRow={false}
       />
     );
   }
 
   render() {
-    const { step } = this.state;
-    const { visible } = this.props;
+    const { step, fakeReportLoading } = this.state;
+    const { visible, report_inProgress } = this.props;
     let renderedContent;
-    if (step === 1) {
+    if (report_inProgress || fakeReportLoading) {
+      renderedContent = this._renderLoading();
+    } else if (step === 1) {
       renderedContent = this._renderReportReasons();
     } else if (step === 2) {
       renderedContent = this._renderReportInput();
@@ -196,4 +261,7 @@ class ReportPopup extends React.Component<Props, State> {
   }
 }
 
-export default ReportPopup;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ReportPopup);

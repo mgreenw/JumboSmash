@@ -55,7 +55,8 @@ const KeyboardView = (props: Props) => {
               style={[
                 {
                   flex: 1,
-                  width: '100%'
+                  width: '100%',
+                  bottom: -2
                 }
               ]}
             />
