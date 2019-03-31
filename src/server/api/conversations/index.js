@@ -11,6 +11,6 @@ const conversationsRouter = express.Router();
 // Authenticated methods
 conversationsRouter.get('/:userId(\\d+$)', getConversation.handler);
 conversationsRouter.post('/:userId(\\d+$)', sendMessage.handler);
-conversationsRouter.patch('/:matchUserId(\\d+)/messages/:messageId(\\d+)', readMessage.handler);
+conversationsRouter.patch('/:matchUserId(\\d+)/messages/:messageId(\\d+)$', readMessage.handler);
 
 module.exports = conversationsRouter;
