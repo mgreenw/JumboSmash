@@ -220,4 +220,46 @@ describe('POST api/relationships/judge', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
   });
+
+  it('should insert a system message upon successful match', async () => {
+    const userOne = await dbUtils.createUser('testu04', true);
+    const userTwo = await dbUtils.createUser('testu05', true);
+
+    // Judge in one direction
+    let res = await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', userTwo.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: userOne.id,
+        scene: 'smash',
+        liked: true,
+      });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
+
+    // Judge in the other direction
+    res = await request(app)
+      .post('/api/relationships/judge')
+      .set('Authorization', userOne.token)
+      .set('Accept', 'application/json')
+      .send({
+        candidateUserId: userTwo.id,
+        scene: 'smash',
+        liked: true,
+      });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.JUDGE__SUCCESS.status);
+
+    // Ensure a system message was inserted
+    res = await request(app)
+      .get(`/api/conversations/${userTwo.id}`)
+      .set('Authorization', userOne.token)
+      .set('Accept', 'application/json');
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.messages.length).toBe(1);
+    const message = res.body.data.messages[0];
+    expect(message.sender).toBe('system');
+    expect(message.content).toContain('matched');
+  });
 });
