@@ -33,8 +33,7 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
       SET critic_read_message_id = $1, critic_read_message_timestamp = NOW()
       WHERE critic_user_id = $2 AND candidate_user_id = $3
       RETURNING
-        critic_read_message_timestamp AS "readTimestamp",
-        (SELECT timestamp FROM messages where id = $1) AS "messageTimestamp"
+        (SELECT timestamp FROM messages WHERE id = $1) AS "messageTimestamp"
     `, [messageId, readerUserId, matchUserId]);
 
     // We should never hit this case because we check the user's are matched in the handler
@@ -43,15 +42,13 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
       return status(codes.READ_MESSAGE__NOT_MATCHED).noData();
     }
 
-    const [{ readTimestamp, messageTimestamp }] = result.rows;
+    const [{ messageTimestamp }] = result.rows;
     logger.debug(`Read message at timestamp ${messageTimestamp}`);
 
     // TODO: Update Redis to reflect the fact that this message is read.
     // TODO: Send a socket notification to the match to update the read receipt.
 
-    return status(codes.READ_MESSAGE__SUCCESS).data({
-      readTimestamp,
-    });
+    return status(codes.READ_MESSAGE__SUCCESS).noData();
   } catch (error) {
     // This specific error means the message id is not valid.
     if (error.constraint && error.constraint === 'relationships_critic_read_message_id_fkey') {
@@ -61,6 +58,24 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
     // If the error is from a user-raised exception, this is not a server error.
     // Return that there was a failure and sent the error message and hint
     if (error.code === 'P0001') {
+      // If the message that is being read is a system message, we return success.
+      // This is because we do not store it as a read receipt but we will still
+      // update Redis if necessary.
+      if (error.hint === 'CANNOT_READ_SYSTEM_MESSAGE') {
+        const systemMessageTimestampResult = await db.query(`
+          SELECT timestamp as "messageTimestamp"
+          FROM messages
+          WHERE id = $1 AND from_system IS TRUE
+        `, [messageId]);
+
+        const [{ messageTimestamp }] = systemMessageTimestampResult.rows;
+        logger.debug(`System message read at ${messageTimestamp}`);
+
+        // TODO: Update Redis to reflect the fact that this message is read.
+
+        return status(codes.READ_MESSAGE__SUCCESS).noData();
+      }
+
       return status(codes.READ_MESSAGE__FAILURE).data({
         message: error.message,
         code: error.hint,

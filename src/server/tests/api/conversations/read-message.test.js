@@ -112,7 +112,6 @@ describe('PATCH api/conversations/:matchUserId/messages/:messageId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
-    expect(new Date(res.body.data.readTimestamp) < new Date()).toBeTruthy();
   });
 
   it('should fail if the message is from the reader', async () => {
@@ -130,7 +129,7 @@ describe('PATCH api/conversations/:matchUserId/messages/:messageId', () => {
       .set('Authorization', me.token);
     expect(res.statusCode).toBe(409);
     expect(res.body.status).toBe(codes.READ_MESSAGE__FAILURE.status);
-    expect(res.body.data.code).toBe('NOT_FROM_SYSTEM_OR_MATCH');
+    expect(res.body.data.code).toBe('CANNOT_READ_SENT_MESSAGE');
   });
 
   it('should fail if the message has already been read', async () => {
