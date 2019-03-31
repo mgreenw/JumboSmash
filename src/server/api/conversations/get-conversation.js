@@ -81,6 +81,8 @@ const getConversation = async (
     ),
   ]);
 
+  // Because the users are matched, there should always be at least one resulting row, meaning
+  // this access is safe. If the array length is zero, the result should be a server error.
   const readReceipt = readReceiptResult.rows[0].messageId ? readReceiptResult.rows[0] : null;
 
   return status(codes.GET_CONVERSATION__SUCCESS).data({

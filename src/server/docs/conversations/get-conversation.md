@@ -1,6 +1,6 @@
 # Get Conversation
 
-Get the messages in a converasation with another user
+Get the messages, read receipt, and read details of the conversation between the requesting client and another user.
 
 **URL** : `/api/conversations/:userId`
 

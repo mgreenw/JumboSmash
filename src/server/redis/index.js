@@ -18,8 +18,8 @@ shared.defineCommand('readMessage', {
     --[[ Get the current unread timestamp ]]--
     local currentUnreadTimestamp = redis.call('hget', receiverUserId,senderUserId)
 
-    --[[ If the current timestamp is the message that we are reading, delete it ]]--
-    --[[ This will set the conversation to read by the receiver ]]--
+    --[[ If the current 'latest message timestamp' matches the message being read, delete it ]]--
+    --[[ This will set the conversation to 'read' by the receiver ]]--
     local conversationRead = currentUnreadTimestamp == readMessageTimestamp
     if conversationRead then
       redis.call('hdel', receiverUserId, senderUserId)
@@ -50,13 +50,6 @@ shared.defineCommand('insertMessage', {
     return currentUnreadTimestamp
   `,
 });
-
-/*
-
-    if newMessageAfterCurrMessage then
-      redis.call('hset', receiverUserId, senderUserId, newMessageTimestamp)
-    end
-*/
 
 const prefix = 'gem';
 function unreadConversationsKey(userId: number) {
