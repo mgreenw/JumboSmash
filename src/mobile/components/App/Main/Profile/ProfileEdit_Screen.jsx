@@ -204,12 +204,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 title={'Post-Grad Location'}
                 placeholder={'No Selected Location'}
               />
-              <Spacer />
+              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
               <PopupInput
                 title={'Dream Spring Fling Artist'}
                 placeholder={'No Selected Artist'}
               />
-              <Spacer />
+              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
               <PopupInput
                 title={'1st Year Dorm'}
                 placeholder={'No Selected Dorm'}
@@ -242,7 +242,9 @@ const PopupInput = (props: PopupInputProps) => {
         <Text style={[textStyles.headline6Style, { color: Colors.BlueyGrey }]}>
           {placeholder}
         </Text>
-        <TertiaryButton title={'change'} onPress={() => {}} />
+        <View style={{ bottom: 4 }}>
+          <TertiaryButton title={'change'} onPress={() => {}} />
+        </View>
       </View>
     </View>
   );
