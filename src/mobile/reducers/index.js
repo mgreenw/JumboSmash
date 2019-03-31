@@ -174,7 +174,8 @@ export type UserSettings = {
 export type ProfileFields = {|
   displayName: string,
   birthday: string,
-  bio: string
+  bio: string,
+  postGradLocation: ?string
 |};
 
 export type UserProfile = {|
