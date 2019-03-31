@@ -43,10 +43,7 @@ No request body
 
 ```json
 {
-    "status": "READ_MESSAGE__SUCCESS",
-    "data": {
-        "readTimestamp": "2019-03-30T20:07:05.291Z"
-    }
+    "status": "READ_MESSAGE__SUCCESS"
 }
 ```
 
@@ -74,15 +71,18 @@ The codes are as follows. They are divided into two categories: ones to potentia
 NOTE: These are defined under one status `READ_MESSAGE__FAILURE` because these codes come directly from the database. We could return something like `READ_MESSAGE__NOT_FROM_SYSTEM_OR_MATCH`, but it would not work with our current status code definitions file because these constants are not declared in JavaScript code and do not contain status codes. Therefore, they are returned under this `READ_MESSAGE__FAILURE` case so this error could be handled generically or it could be essentially ignored. If mobile wants to use these very specific errors, they are more than welcome.
 
 ###### Likely Codes
-  - `NOT_FROM_SYSTEM_OR_MATCH` - The message is not the supplied match or the system.
+  - `CANNOT_READ_SENT_MESSAGE` - The message is not the supplied match or the system.
   - `ALREADY_READ_MESSAGE` - The message has already been read.
   - `GIVEN_MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE` - The message was sent before the currently read message.
   - `MESSAGE_NOT_IN_CONVERSATION` - The message is not in the conversation between the requesting user and the supplied match.
 
 ###### Unlikely Codes
   - `READ_TIMESTAMP_BEFORE_MESSAGE_TIMESTAMP` - The read timestamp is before the message's timestamp.
-  - `CANNOT_DELETE_READ_RECEIPT` - The `critic_read_message_id` is null but was not before.
   - `NEW_TIMESTAMP_BEFORE_OLD_TIMESTAMP` - The read timestamp (now) is before the previous read timestamp (should have been sometime in the past).
+
+###### Impossible Codes
+ - `CANNOT_READ_SYSTEM_MESSAGE` - A system message technically cannot be part of a read receipt. However, we allow them to be read because it reading it should remove the notification.
+ - `CANNOT_DELETE_READ_RECEIPT` - The `critic_read_message_id` is null but was not before.
 
 ### OR
 

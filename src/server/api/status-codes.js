@@ -280,6 +280,24 @@ exports.READ_MESSAGE__FAILURE = {
   code: 409,
 };
 
+// Read Message
+exports.READ_MESSAGE__SUCCESS = {
+  status: 'READ_MESSAGE__SUCCESS',
+  code: 200,
+};
+exports.READ_MESSAGE__NOT_MATCHED = {
+  status: 'READ_MESSAGE__NOT_MATCHED',
+  code: 400,
+};
+exports.READ_MESSAGE__MESSAGE_NOT_FOUND = {
+  status: 'READ_MESSAGE__MESSAGE_NOT_FOUND',
+  code: 400,
+};
+exports.READ_MESSAGE__FAILURE = {
+  status: 'READ_MESSAGE__FAILURE',
+  code: 409,
+};
+
 
 // META
 

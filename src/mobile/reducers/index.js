@@ -88,6 +88,11 @@ import type {
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
 import type {
+  ReportUserInitiated_Action,
+  ReportUserCompleted_Action,
+  ReportUserFailed_Action
+} from 'mobile/actions/app/reportUser';
+import type {
   UnmatchInitiated_Action,
   UnmatchCompleted_Action,
   UnmatchFailed_Action
@@ -116,6 +121,7 @@ export type BottomToastCode =
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
   | 'UPLOAD_PHOTO_FAILURE'
+  | 'REPORT_USER__FAILURE'
   | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
@@ -168,7 +174,8 @@ export type UserSettings = {
 export type ProfileFields = {|
   displayName: string,
   birthday: string,
-  bio: string
+  bio: string,
+  postGradLocation: ?string
 |};
 
 export type UserProfile = {|
@@ -356,6 +363,7 @@ export type ReduxState = {|
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean,
+    reportUser: boolean,
     unmatch: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
@@ -443,6 +451,9 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
+  | ReportUserInitiated_Action
+  | ReportUserCompleted_Action
+  | ReportUserFailed_Action
   | UnmatchInitiated_Action
   | UnmatchCompleted_Action
   | UnmatchFailed_Action
@@ -479,6 +490,7 @@ const defaultState: ReduxState = {
     getMatches: false,
     getConversation: {},
     sendMessage: {},
+    reportUser: false,
     unmatch: false
   },
   response: {
@@ -1418,6 +1430,41 @@ export default function rootReducer(
             })
           }
         }
+      };
+    }
+
+    case 'REPORT_USER__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: true
+        }
+      };
+    }
+
+    case 'REPORT_USER__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        }
+      };
+    }
+
+    case 'REPORT_USER__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'REPORT_USER__FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        },
+        bottomToast
       };
     }
 

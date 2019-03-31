@@ -23,9 +23,9 @@ exports.up = (pgm) => {
   // 1. Once a read receipt exists for a conversation it cannot be removed
   // 2. A new read receipt's timestamp must be after the previous read receipts timestamp
   // 3. A new read message must be different from AND sent after the old read message
-  // 4. Only system messages or messages from the critic's match can be read
+  // 4. Only messages from the critic's match can be read
   // 5. The read timestamp of the message must be after the sent timestamp of the message
-  pgm.createTrigger('relationships', 'read_message_must_be_from_match_or_system', {
+  pgm.createTrigger('relationships', 'read_receipt_constraint', {
     when: 'before',
     operation: ['insert', 'update'],
     level: 'row',
@@ -54,13 +54,17 @@ exports.up = (pgm) => {
       FROM messages
       WHERE id = NEW.critic_read_message_id;
 
+      IF _from_system THEN
+        RAISE EXCEPTION 'A message from the system cannot be read in a read receipt' USING HINT = 'CANNOT_READ_SYSTEM_MESSAGE';
+      END IF;
+
       IF NOT ((_sender_user_id = NEW.critic_user_id AND _receiver_user_id = NEW.candidate_user_id) OR (_sender_user_id = NEW.candidate_user_id AND _receiver_user_id = NEW.critic_user_id)) THEN
         RAISE EXCEPTION 'Given message is not in the conversation between the supplied critic and candidate.' USING HINT = 'MESSAGE_NOT_IN_CONVERSATION';
       END IF;
 
       /* A user can only read a system message or a message from the match */
-      IF NOT _from_system AND NEW.candidate_user_id <> _sender_user_id THEN
-        RAISE EXCEPTION 'Only message from the system or from a match % can be read by user %', NEW.candidate_user_id, NEW.critic_user_id USING HINT = 'NOT_FROM_SYSTEM_OR_MATCH';
+      IF NEW.candidate_user_id <> _sender_user_id THEN
+        RAISE EXCEPTION 'Only a message from a match can be read by the user' USING HINT = 'CANNOT_READ_SENT_MESSAGE';
       END IF;
 
       /* If the message can be read, the timestamp must be 1) after the current read timestamp */
@@ -96,11 +100,11 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTrigger('relationships', 'read_message_must_be_from_match_or_system', {
+  pgm.dropTrigger('relationships', 'read_receipt_constraint', {
     cascade: true,
     ifExists: true,
   });
-  pgm.dropFunction('read_message_must_be_from_match_or_system', []);
+  pgm.dropFunction('read_receipt_constraint', []);
   pgm.dropConstraint('relationships', 'read_message_id_and_timestamp_both_null_or_exist');
   pgm.dropColumns('relationships', ['critic_read_message_timestamp', 'critic_read_message_id']);
 };

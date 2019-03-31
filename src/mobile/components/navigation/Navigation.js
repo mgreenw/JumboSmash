@@ -32,6 +32,7 @@ import Profile from 'mobile/components/App/Main/Profile/Profile_Screen';
 import ProfileEdit from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
 import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen';
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
+import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
 
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
@@ -123,6 +124,7 @@ const ProfileStack = createStackNavigator(
     [routes.SettingsEdit]: { screen: SettingsEdit },
     [routes.ProfileEdit]: { screen: ProfileEdit },
     [routes.ProfileHelp]: { screen: ProfileHelp },
+    [routes.SelectCity]: { screen: SelectCity },
     [routes.ProfileExpandedCard]: { screen: ExpandedCard }
   },
   {

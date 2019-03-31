@@ -45,7 +45,8 @@ function complete(
         fields: {
           bio: '',
           birthday: '',
-          displayName: ''
+          displayName: '',
+          postGradLocation: null // optional field
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },
