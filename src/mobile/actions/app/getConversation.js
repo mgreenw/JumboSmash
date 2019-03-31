@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'mobile/reducers';
 import type { ServerMessage } from 'mobile/api/serverTypes';
-import getConversation from 'mobile/api/messages/getConversation';
+import getConversation from 'mobile/api/conversations/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 

@@ -6,7 +6,7 @@ const authRouter = require('./auth');
 const usersRouter = require('./users');
 const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
-const messagesRouter = require('./messages');
+const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
 
 const codes = require('./status-codes');
@@ -45,7 +45,7 @@ apiRouter.use(hasProfile);
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
-apiRouter.use('/messages', messagesRouter);
+apiRouter.use('/conversations', conversationsRouter);
 
 // --> Main Erro Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */

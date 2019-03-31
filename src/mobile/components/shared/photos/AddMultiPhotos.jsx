@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { Text, View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Permissions, ImagePicker, ImageManipulator } from 'expo';
@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import uploadPhotoAction from 'mobile/actions/app/uploadPhoto';
 import deletePhotoAction from 'mobile/actions/app/deletePhoto';
+import openAppSettings from 'mobile/utils/OpenAppSettings';
 import AddSinglePhoto from './AddSinglePhoto';
 
 type ReduxProps = {
@@ -77,9 +78,7 @@ async function selectPhoto(): Promise<?string> {
 
     return uri;
   }
-  Alert.alert(
-    "Please enable camera roll access in your phone's settings to proceed."
-  );
+  openAppSettings();
   return null;
 }
 
