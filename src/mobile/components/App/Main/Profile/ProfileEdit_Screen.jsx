@@ -29,6 +29,7 @@ import KeyboardView from 'mobile/components/shared/KeyboardView';
 import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
+import Spacer from 'mobile/components/shared/Spacer';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -203,12 +204,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 title={'Post-Grad Location'}
                 placeholder={'No Selected Location'}
               />
-              <View style={{ height: 20 }} />
+              <Spacer />
               <PopupInput
                 title={'Dream Spring Fling Artist'}
                 placeholder={'No Selected Artist'}
               />
-              <View style={{ height: 20 }} />
+              <Spacer />
               <PopupInput
                 title={'1st Year Dorm'}
                 placeholder={'No Selected Dorm'}
