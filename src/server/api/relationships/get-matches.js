@@ -67,7 +67,7 @@ const getMatches = async (userId: number) => {
 
   const matches = matchesResult.rows.map(match => ({
     ...match,
-    isUnread: !!unreadConversationUserIdsMap[match],
+    isRead: !(match in unreadConversationUserIdsMap),
   }));
 
   return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(matches);

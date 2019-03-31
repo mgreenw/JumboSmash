@@ -60,11 +60,12 @@ const sendMessage = async (
 
     // Set the receiver's unread conversations to include a message at timestamp
     // from this sender. We do this as quickly as possible once the message is inserted
-    redis.shared.hset(
+    const didMarkUnread = await redis.shared.insertMessage(
       redis.unreadConversationsKey(receiverUserId),
       senderUserId.toString(),
       message.timestamp.toISOString(),
     );
+    console.log('marked unread', didMarkUnread);
 
 
     const previousMessageResult = await db.query(`

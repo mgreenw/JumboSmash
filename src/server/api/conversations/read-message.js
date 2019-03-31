@@ -46,7 +46,7 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
 
     const [{ readTimestamp, messageTimestamp }] = result.rows;
 
-    const conversationIsRead = await redis.shared.updateUnreadConversation(
+    const conversationIsRead = await redis.shared.readMessage(
       redis.unreadConversationsKey(readerUserId),
       matchUserId.toString(),
       messageTimestamp.toISOString(),
