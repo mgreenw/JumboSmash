@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const redis = require('../../redis');
 const { asyncHandler, status, canAccessUserData } = require('../utils');
 const codes = require('../status-codes');
 
@@ -68,12 +69,16 @@ const getConversation = async (
     WHERE critic_user_id = $1 AND candidate_user_id = $2
   `;
 
-  const [messageResult, readReceiptResult] = await Promise.all([
+  const [messageResult, readReceiptResult, isUnread] = await Promise.all([
     db.query(messagesQuery, [userId, matchUserId]),
     // Note the order reversal of the params: we want the read message of the
     // other person (the match), not the message that the current user read
     // of the match person.
     db.query(readReceiptQuery, [matchUserId, userId]),
+    redis.shared.hexists(
+      redis.unreadConversationsKey(userId),
+      matchUserId.toString(),
+    ),
   ]);
 
   const readReceipt = readReceiptResult.rows[0].messageId ? readReceiptResult.rows[0] : null;
@@ -81,6 +86,7 @@ const getConversation = async (
   return status(codes.GET_CONVERSATION__SUCCESS).data({
     messages: messageResult.rows,
     readReceipt,
+    isUnread: !!isUnread,
   });
 };
 

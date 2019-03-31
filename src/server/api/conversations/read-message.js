@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const redis = require('../../redis');
 const logger = require('../../logger');
 const codes = require('../status-codes');
 const {
@@ -44,9 +45,15 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
     }
 
     const [{ readTimestamp, messageTimestamp }] = result.rows;
-    logger.debug(`Read message at timestamp ${messageTimestamp}`);
 
-    // TODO: Update Redis to reflect the fact that this message is read.
+    const conversationIsRead = await redis.shared.updateUnreadConversation(
+      redis.unreadConversationsKey(readerUserId),
+      matchUserId.toString(),
+      messageTimestamp.toISOString(),
+    );
+
+    logger.debug(`Read message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
+
     // TODO: Send a socket notification to the match to update the read receipt.
 
     return status(codes.READ_MESSAGE__SUCCESS).data({

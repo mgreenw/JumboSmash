@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const redis = require('../../redis');
 const codes = require('../status-codes');
 const {
   status,
@@ -56,6 +57,15 @@ const sendMessage = async (
     `, [content, senderUserId, receiverUserId, unconfirmedMessageUuid]);
 
     const [message] = messageResult.rows;
+
+    // Set the receiver's unread conversations to include a message at timestamp
+    // from this sender. We do this as quickly as possible once the message is inserted
+    redis.shared.hset(
+      redis.unreadConversationsKey(receiverUserId),
+      senderUserId.toString(),
+      message.timestamp.toISOString(),
+    );
+
 
     const previousMessageResult = await db.query(`
       SELECT id
