@@ -48,6 +48,7 @@ export default (
   reportMessage: string,
   reasonCodes: string[]
 ) => (dispatch: Dispatch) => {
+  // reasonCodes can contain null values so we filter those out and join the codes with commas
   const reasonCode = reasonCodes.filter(r => r).join();
   dispatch(initiate());
   reportUser(userId, reportMessage, reasonCode, false)
