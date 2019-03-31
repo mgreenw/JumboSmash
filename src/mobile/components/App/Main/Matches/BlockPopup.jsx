@@ -2,27 +2,69 @@
 
 import React from 'react';
 import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import Popup from 'mobile/components/shared/Popup';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import Layout from 'mobile/components/shared/Popup_Layout';
+import InProgress from 'mobile/components/shared/InProgress';
+import BlockAction from 'mobile/actions/app/blockUser';
 import ReasonSelector from './ReasonSelector';
 import type { SelectedReason } from './ReasonSelector';
 
 type ProppyProps = {
   visible: boolean,
   displayName: string,
+  userId: number,
   onCancel: () => void,
   onDone: () => void
 };
 
-type Props = ProppyProps;
+type ReduxProps = {
+  block_inProgress: boolean,
+  blockUserSuccess: ?boolean
+};
+
+type DispatchProps = {
+  blockUser: (
+    userId: number,
+    reportMessage: string,
+    reasonCodes: string[]
+  ) => void
+};
+
+type Props = ProppyProps & ReduxProps & DispatchProps;
 
 type State = {
   step: 1 | 2,
-  selectedReasons: SelectedReason[]
+  reportMessage: string,
+  selectedReasons: SelectedReason[],
+  fakeBlockLoading: boolean
 };
+
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  if (!reduxState.client) {
+    throw new Error('client is null in block popup');
+  }
+  return {
+    block_inProgress: reduxState.inProgress.blockUser,
+    blockUserSuccess: reduxState.response.blockUserSuccess
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
+  return {
+    blockUser: (
+      userId: number,
+      reportMessage: string,
+      reasonCodes: string[]
+    ) => {
+      dispatch(BlockAction(userId, reportMessage, reasonCodes));
+    }
+  };
+}
 
 const BLOCK_REASONS = [
   { text: 'Made me uncomfortable', code: 'UNCOMFORTABLE' },
@@ -43,9 +85,40 @@ class BlockPopup extends React.Component<Props, State> {
           reason,
           selected: false
         };
-      })
+      }),
+      reportMessage: '',
+      fakeBlockLoading: false
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { block_inProgress } = this.props;
+    if (block_inProgress && !nextProps.block_inProgress) {
+      this.setState({ fakeBlockLoading: true }, () => {
+        // The timeout is so the progress bar doesn't look jumpy
+        setTimeout(() => {
+          if (nextProps.blockUserSuccess) {
+            this.setState({ step: 2, fakeBlockLoading: false });
+          } else {
+            this.setState({ fakeBlockLoading: false });
+          }
+        }, 500);
+      });
+    }
+  }
+
+  _renderLoading() {
+    return <InProgress message={'Block...'} />;
+  }
+
+  _onBlock = () => {
+    const { reportMessage, selectedReasons } = this.state;
+    const { userId, blockUser } = this.props;
+    const selectedReasonCodes = selectedReasons
+      .filter(r => r.selected)
+      .map(r => r.reason.code);
+    blockUser(userId, reportMessage, selectedReasonCodes);
+  };
 
   _onToggleReason = (selected: boolean, index: number) => {
     const { selectedReasons } = this.state;
@@ -77,7 +150,7 @@ class BlockPopup extends React.Component<Props, State> {
           selectedReasons.filter(r => r.selected).length === 0
         }
         primaryButtonLoading={false}
-        onPrimaryButtonPress={() => this.setState({ step: 2 })}
+        onPrimaryButtonPress={this._onBlock}
         secondaryButtonText={'Cancel'}
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
@@ -130,16 +203,19 @@ class BlockPopup extends React.Component<Props, State> {
   }
 
   render() {
-    const { step } = this.state;
-    const { visible } = this.props;
+    const { step, fakeBlockLoading } = this.state;
+    const { visible, block_inProgress } = this.props;
     let renderedContent;
-    if (step === 1) {
+    if (block_inProgress || fakeBlockLoading) {
+      renderedContent = this._renderLoading();
+    } else if (step === 1) {
       renderedContent = this._renderBlockReasons();
     } else if (step === 2) {
       renderedContent = this._renderDone();
     } else {
       throw new Error('Error in Block Popup, invalid step number');
     }
+    console.log(`Visible: ${visible}`);
     return (
       <Popup visible={visible} onTouchOutside={() => {}}>
         {renderedContent}
@@ -148,4 +224,7 @@ class BlockPopup extends React.Component<Props, State> {
   }
 }
 
-export default BlockPopup;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BlockPopup);

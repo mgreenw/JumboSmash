@@ -12,6 +12,7 @@ import BioInput from 'mobile/components/shared/BioInput';
 import Layout from 'mobile/components/shared/Popup_Layout';
 import InProgress from 'mobile/components/shared/InProgress';
 import ReportAction from 'mobile/actions/app/reportUser';
+import BlockAction from 'mobile/actions/app/blockUser';
 import ReasonSelector from './ReasonSelector';
 import type { SelectedReason } from './ReasonSelector';
 
@@ -24,11 +25,19 @@ type ProppyProps = {
 };
 
 type ReduxProps = {
-  report_inProgress: boolean
+  report_inProgress: boolean,
+  reportUserSuccess: ?boolean,
+  block_inProgress: boolean,
+  blockUserSuccess: ?boolean
 };
 
 type DispatchProps = {
   reportUser: (
+    userId: number,
+    reportMessage: string,
+    reasonCodes: string[]
+  ) => void,
+  blockUser: (
     userId: number,
     reportMessage: string,
     reasonCodes: string[]
@@ -42,7 +51,8 @@ type State = {
   selectedReasons: SelectedReason[],
   reportMessage: string,
   block: boolean,
-  fakeReportLoading: boolean
+  fakeReportLoading: boolean,
+  fakeBlockLoading: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -50,7 +60,10 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('client is null in report popup');
   }
   return {
-    report_inProgress: reduxState.inProgress.reportUser
+    report_inProgress: reduxState.inProgress.reportUser,
+    reportUserSuccess: reduxState.response.reportUserSuccess,
+    block_inProgress: reduxState.inProgress.blockUser,
+    blockUserSuccess: reduxState.response.blockUserSuccess
   };
 }
 
@@ -62,6 +75,13 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
       reasonCodes: string[]
     ) => {
       dispatch(ReportAction(userId, reportMessage, reasonCodes));
+    },
+    blockUser: (
+      userId: number,
+      reportMessage: string,
+      reasonCodes: string[]
+    ) => {
+      dispatch(BlockAction(userId, reportMessage, reasonCodes));
     }
   };
 }
@@ -88,31 +108,62 @@ class ReportPopup extends React.Component<Props, State> {
       }),
       reportMessage: '',
       block: false,
-      fakeReportLoading: false
+      fakeReportLoading: false,
+      fakeBlockLoading: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { report_inProgress } = this.props;
+    const { report_inProgress, block_inProgress } = this.props;
     if (report_inProgress && !nextProps.report_inProgress) {
       this.setState({ fakeReportLoading: true }, () => {
         // The timeout is so the progress bar doesn't look jumpy
         setTimeout(() => {
-          this.setState({ step: 3, fakeReportLoading: false });
+          if (nextProps.reportUserSuccess) {
+            this.setState({ step: 3, fakeReportLoading: false });
+          } else {
+            this.setState({ fakeReportLoading: false });
+          }
+        }, 500);
+      });
+    } else if (block_inProgress && !nextProps.block_inProgress) {
+      this.setState({ fakeBlockLoading: true }, () => {
+        // The timeout is so the progress bar doesn't look jumpy
+        setTimeout(() => {
+          if (nextProps.blockUserSuccess) {
+            this.setState({ block: true, fakeBlockLoading: false });
+          } else {
+            this.setState({ fakeBlockLoading: false });
+          }
         }, 500);
       });
     }
   }
 
-  _renderLoading() {
+  _renderReportLoading() {
     return <InProgress message={'Reporting...'} />;
+  }
+
+  _renderBlockLoading() {
+    return <InProgress message={'Blocking...'} />;
   }
 
   _onReport = () => {
     const { reportMessage, selectedReasons } = this.state;
     const { userId, reportUser } = this.props;
-    const reasonCodes = selectedReasons.map(r => r.reason.code);
-    reportUser(userId, reportMessage, reasonCodes);
+    const selectedReasonCodes = selectedReasons
+      .filter(r => r.selected)
+      .map(r => r.reason.code);
+    reportUser(userId, reportMessage, selectedReasonCodes);
+  };
+
+  _onBlock = () => {
+    const { reportMessage, selectedReasons } = this.state;
+    const { userId, blockUser } = this.props;
+    const selectedReasonCodes = selectedReasons
+      .filter(r => r.selected)
+      .map(r => r.reason.code);
+    blockUser(userId, reportMessage, selectedReasonCodes);
   };
 
   _onToggleReason = (selected: boolean, index: number) => {
@@ -234,18 +285,20 @@ class ReportPopup extends React.Component<Props, State> {
         secondaryButtonText={!block ? `Block ${displayName}` : undefined}
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
-        onSecondaryButtonPress={() => this.setState({ block: true })} // Will add block functinality in next pr
+        onSecondaryButtonPress={this._onBlock} // Will add block functinality in next pr
         flexRow={false}
       />
     );
   }
 
   render() {
-    const { step, fakeReportLoading } = this.state;
-    const { visible, report_inProgress } = this.props;
+    const { step, fakeReportLoading, fakeBlockLoading } = this.state;
+    const { visible, report_inProgress, block_inProgress } = this.props;
     let renderedContent;
     if (report_inProgress || fakeReportLoading) {
-      renderedContent = this._renderLoading();
+      renderedContent = this._renderReportLoading();
+    } else if (block_inProgress || fakeBlockLoading) {
+      renderedContent = this._renderBlockLoading();
     } else if (step === 1) {
       renderedContent = this._renderReportReasons();
     } else if (step === 2) {
