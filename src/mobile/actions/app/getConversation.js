@@ -44,7 +44,7 @@ export default (userId: number, mostRecentMessageId?: number) => (
   dispatch(initiate(userId));
   DevTesting.fakeLatency(() => {
     getConversation(userId, mostRecentMessageId)
-      .then(messages => {
+      .then(({ messages }) => {
         dispatch(complete(userId, messages));
       })
       .catch(error => {
