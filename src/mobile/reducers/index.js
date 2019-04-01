@@ -677,7 +677,7 @@ function updateConfirmedConversation(
   }
 
   // Case 4 -- GOOD STATE
-  // The first message, and we don't have the previous mmessage in our inOrderIds.
+  // The first message, and we don't have the previous message in our inOrderIds.
   // This is typically on:
   //    a) the first load of a conversation,
   //    b) a reset load of the conversation, or
