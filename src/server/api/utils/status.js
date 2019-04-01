@@ -31,8 +31,8 @@ const status = (responseStatus: ResponseStatus) => {
         body: {
           status: responseStatus.status,
           data: responseData,
+          version,
         },
-        version,
       };
     },
     noData: (): NoDataResponse => {
@@ -40,8 +40,8 @@ const status = (responseStatus: ResponseStatus) => {
         statusCode: responseStatus.code,
         body: {
           status: responseStatus.status,
+          version,
         },
-        version,
       };
     },
   };
