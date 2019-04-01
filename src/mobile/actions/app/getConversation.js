@@ -4,7 +4,6 @@ import type { Dispatch, GetState } from 'mobile/reducers';
 import type { ServerMessage } from 'mobile/api/serverTypes';
 import getConversation from 'mobile/api/conversations/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import store from 'mobile/store';
 import DevTesting from '../../utils/DevTesting';
 
 export type GetConversationInitiated_Action = {
@@ -54,7 +53,7 @@ export default (userId: number) => (dispatch: Dispatch, getState: GetState) => {
     : [undefined];
   DevTesting.fakeLatency(() => {
     getConversation(userId, mostRecentMessageId)
-      .then(messages => {
+      .then(({ messages }) => {
         dispatch(complete(userId, messages, mostRecentMessageId));
       })
       .catch(error => {

@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const redis = require('../../redis');
 const { asyncHandler, status, canAccessUserData } = require('../utils');
 const codes = require('../status-codes');
 
@@ -15,7 +16,7 @@ const getConversation = async (
   matchUserId: number,
   mostRecentMessageIdStr: ?string = undefined,
 ) => {
-  let query = `
+  let messagesQuery = `
     SELECT
       id AS "messageId",
       content,
@@ -47,7 +48,7 @@ const getConversation = async (
     }
 
     // Add the "most recent" part of the query
-    query += `AND timestamp >= (
+    messagesQuery += `AND timestamp >= (
         SELECT timestamp
         FROM messages
         WHERE id = ${mostRecentMessageId}
@@ -56,16 +57,39 @@ const getConversation = async (
   }
 
   // Always order by timestamp
-  query += `
+  messagesQuery += `
     ORDER BY timestamp
   `;
 
-  const result = await db.query(
-    query,
-    [userId, matchUserId],
-  );
+  const readReceiptQuery = `
+    SELECT
+      critic_read_message_id AS "messageId",
+      critic_read_message_timestamp AS "timestamp"
+    FROM relationships
+    WHERE critic_user_id = $1 AND candidate_user_id = $2
+  `;
 
-  return status(codes.GET_CONVERSATION__SUCCESS).data(result.rows);
+  const [messageResult, readReceiptResult, conversationIsUnread] = await Promise.all([
+    db.query(messagesQuery, [userId, matchUserId]),
+    // Note the order reversal of the params: we want the read message of the
+    // other person (the match), not the message that the current user read
+    // of the match person.
+    db.query(readReceiptQuery, [matchUserId, userId]),
+    redis.shared.hexists(
+      redis.unreadConversationsKey(userId),
+      matchUserId.toString(),
+    ),
+  ]);
+
+  // Because the users are matched, there should always be at least one resulting row, meaning
+  // this access is safe. If the array length is zero, the result should be a server error.
+  const readReceipt = readReceiptResult.rows[0].messageId ? readReceiptResult.rows[0] : null;
+
+  return status(codes.GET_CONVERSATION__SUCCESS).data({
+    messages: messageResult.rows,
+    readReceipt,
+    conversationIsRead: !conversationIsUnread,
+  });
 };
 
 const handler = [
@@ -77,7 +101,7 @@ const handler = [
     });
 
     if (!allowedAccess) {
-      return status(codes.GET_CONVERSATION__SUCCESS).data([]);
+      return status(codes.GET_CONVERSATION__NOT_MATCHED).noData();
     }
 
     return getConversation(req.user.id, req.params.userId, req.query['most-recent-message-id']);

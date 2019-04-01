@@ -3,6 +3,9 @@ sudo: required
 services:
 - docker
 - redis-server
+branches:
+  only:
+  - master
 jobs:
   include:
   - stage: website

@@ -1,6 +1,6 @@
 # Get Conversation
 
-Get the messages in a converasation with another user
+Get the messages, read receipt, and read details of the conversation between the requesting client and another user.
 
 **URL** : `/api/conversations/:userId`
 
@@ -43,26 +43,63 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "GET_CONVERSATION__SUCCESS",
-    "data": [
-        {
-            "messageId": 13,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T16:53:43.337Z",
-            "sender": "client"
-        },
-        {
+    "data": {
+        "messages": [
+            {
+                "messageId": 13,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:53:43.337Z",
+                "sender": "client"
+            },
+            {
+                "messageId": 14,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:54:02.715Z",
+                "sender": "match"
+            },
+            {
+                "messageId": 15,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T17:04:50.704Z",
+                "sender": "client"
+            }
+        ],
+        "readReceipt": {
             "messageId": 14,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T16:54:02.715Z",
-            "sender": "match"
+            "timestamp": "2019-01-27T17:04:50.704Z"
         },
-        {
-            "messageId": 15,
-            "content": "aoeuaoeu",
-            "timestamp": "2019-01-27T17:04:50.704Z",
-            "sender": "client"
-        }
-    ]
+        "conversationIsRead": false
+}
+```
+
+### OR
+
+```json
+{
+    "status": "GET_CONVERSATION__SUCCESS",
+    "data": {
+        "messages": [
+            {
+                "messageId": 13,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:53:43.337Z",
+                "sender": "client"
+            },
+            {
+                "messageId": 14,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T16:54:02.715Z",
+                "sender": "match"
+            },
+            {
+                "messageId": 15,
+                "content": "aoeuaoeu",
+                "timestamp": "2019-01-27T17:04:50.704Z",
+                "sender": "client"
+            }
+        ],
+        "readReceipt": null,
+        "conversationIsRead": false
 }
 ```
 

@@ -88,6 +88,11 @@ import type {
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
 import type {
+  BlockUserInitiated_Action,
+  BlockUserCompleted_Action,
+  BlockUserFailed_Action
+} from 'mobile/actions/app/blockUser';
+import type {
   ReportUserInitiated_Action,
   ReportUserCompleted_Action,
   ReportUserFailed_Action
@@ -121,7 +126,6 @@ export type BottomToastCode =
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
   | 'UPLOAD_PHOTO_FAILURE'
-  | 'REPORT_USER__FAILURE'
   | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
@@ -364,6 +368,7 @@ export type ReduxState = {|
     uploadPhoto: boolean,
     deletePhoto: boolean,
     getMatches: boolean,
+    blockUser: boolean,
     reportUser: boolean,
     unmatch: boolean,
 
@@ -378,7 +383,9 @@ export type ReduxState = {|
   response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
     login: ?Login_Response,
-    createUserSuccess: ?boolean // So we can determine whether onboarding has been succesful
+    createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
+    blockUserSuccess: ?boolean,
+    reportUserSuccess: ?boolean
   |},
 
   sceneCandidateIds: SceneCandidateIds,
@@ -452,6 +459,9 @@ export type Action =
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
   | CancelFailedMessage_Action
+  | BlockUserInitiated_Action
+  | BlockUserCompleted_Action
+  | BlockUserFailed_Action
   | ReportUserInitiated_Action
   | ReportUserCompleted_Action
   | ReportUserFailed_Action
@@ -491,13 +501,16 @@ const defaultState: ReduxState = {
     getMatches: false,
     getConversation: {},
     sendMessage: {},
+    blockUser: false,
     reportUser: false,
     unmatch: false
   },
   response: {
     sendVerificationEmail: null,
     login: null,
-    createUserSuccess: null
+    createUserSuccess: null,
+    blockUserSuccess: null,
+    reportUserSuccess: null
   },
   onboardingCompleted: false,
   sceneCandidateIds: {
@@ -1509,6 +1522,10 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           reportUser: true
+        },
+        response: {
+          ...state.response,
+          reportUserSuccess: null
         }
       };
     }
@@ -1519,22 +1536,25 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           reportUser: false
+        },
+        response: {
+          ...state.response,
+          reportUserSuccess: true
         }
       };
     }
 
     case 'REPORT_USER__FAILED': {
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'REPORT_USER__FAILURE'
-      };
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
           reportUser: false
         },
-        bottomToast
+        response: {
+          ...state.response,
+          reportUserSuccess: false
+        }
       };
     }
 
@@ -1599,6 +1619,79 @@ export default function rootReducer(
           unmatch: false
         },
         bottomToast
+      };
+    }
+
+    case 'BLOCK_USER__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: true
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: null
+        }
+      };
+    }
+
+    case 'BLOCK_USER__COMPLETED': {
+      const { userId } = action.payload;
+      const updatedMatchesById = state.matchesById;
+      delete updatedMatchesById[userId];
+
+      if (
+        state.messagedMatchIds === null ||
+        state.messagedMatchIds === undefined
+      ) {
+        throw new Error('messagedMatchIds is null or undefined');
+      }
+
+      const newMessagedMatchIds = state.messagedMatchIds.filter(
+        id => id !== userId
+      );
+
+      if (
+        state.unmessagedMatchIds === null ||
+        state.unmessagedMatchIds === undefined
+      ) {
+        throw new Error('unmessagedMatchIds is null or undefined');
+      }
+
+      // TODO: We need to filter out this user from sceneCandidateIds. This requires changes to the deck
+
+      const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
+        id => id !== userId
+      );
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: false
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: true
+        },
+        matchesById: updatedMatchesById,
+        messagedMatchIds: newMessagedMatchIds,
+        unmessagedMatchIds: newUnmessagedMatchIds
+      };
+    }
+
+    case 'BLOCK_USER__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: false
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: false
+        }
       };
     }
 

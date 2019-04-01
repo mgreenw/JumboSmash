@@ -201,35 +201,67 @@ describe('GET api/relationships/matches', () => {
     expect(res.body.data.length).toBe(2);
   });
 
-  it('should return the most recent message between the users', async () => {
+  it('should return the most recent message and if the conversation is read between the users', async () => {
+    const personFive = await dbUtils.createUser('person05', true);
+    const personSix = await dbUtils.createUser('person06', true);
+    await dbUtils.createRelationship(personFive.id, personSix.id, true, true, true);
+    await dbUtils.createRelationship(personSix.id, personFive.id, true, true, true);
     let res = await request(app)
       .get('/api/relationships/matches')
-      .set('Authorization', me.token)
+      .set('Authorization', personFive.token)
       .set('Accept', 'application/json');
     const matchIds = res.body.data.map((match) => {
       expect(match.mostRecentMessage).toBeNull();
+      expect(match.conversationIsRead).toBeTruthy();
       return match.userId;
     });
 
+    res = await request(app)
+      .post(`/api/conversations/${personFive.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', personSix.token)
+      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
+
+    const { messageId } = res.body.data.message;
 
     res = await request(app)
       .post(`/api/conversations/${matchIds[0]}`)
       .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+      .set('Authorization', personFive.token)
+      .send({ content: 'hey back', unconfirmedMessageUuid: uuidv4() });
+    expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
     res = await request(app)
       .get('/api/relationships/matches')
-      .set('Authorization', me.token)
+      .set('Authorization', personFive.token)
       .set('Accept', 'application/json');
 
     // User should be at the end of the list now
-    const message = res.body.data[res.body.data.length - 1].mostRecentMessage;
-    expect(message.content).toBe('hey');
-    expect(message.messageId).toBeDefined();
-    expect(message.timestamp).toBeDefined();
-    expect(message.sender).toBe('client');
+    let [match] = res.body.data;
+    expect(match.mostRecentMessage.content).toBe('hey back');
+    expect(match.mostRecentMessage.messageId).toBeDefined();
+    expect(match.mostRecentMessage.timestamp).toBeDefined();
+    expect(match.mostRecentMessage.sender).toBe('client');
+    expect(match.conversationIsRead).toBeFalsy();
 
-    expect(res.body.data[0].mostRecentMessage).toBeNull();
+    res = await request(app)
+      .patch(`/api/conversations/${personSix.id}/messages/${messageId}`)
+      .set('Authorization', personFive.token)
+      .set('Accept', 'application/json');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
+
+    res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', personFive.token)
+      .set('Accept', 'application/json');
+
+    [match] = res.body.data;
+    expect(match.mostRecentMessage.content).toBe('hey back');
+    expect(match.mostRecentMessage.messageId).toBeDefined();
+    expect(match.mostRecentMessage.timestamp).toBeDefined();
+    expect(match.mostRecentMessage.sender).toBe('client');
+    expect(match.conversationIsRead).toBeTruthy();
   });
 });

@@ -2,6 +2,8 @@
 
 Read a message. This will update the read receipt for the other user via a socket update.
 
+NOTE: System messages SHOULD BE READ in order to remove the badge for that conversation. However, they will not show up as a read receipt for the other user.
+
 **URL** : `/api/conversations/:matchUserId/messages/:messageId`
 
 **Method** : `PATCH`
