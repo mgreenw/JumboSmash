@@ -76,6 +76,7 @@ export default (
         dispatch(complete(receiverUserId, message, previousMessageId));
       })
       .catch(error => {
+        console.log(error);
         dispatch(fail(receiverUserId, giftedChatMessage._id));
         dispatch(apiErrorHandler(error));
       });

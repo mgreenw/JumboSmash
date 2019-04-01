@@ -55,12 +55,20 @@ function connect(token: string) {
     (data: {
       message: Message,
       senderProfile: UserProfile,
-      senderUserId: number
+      senderUserId: number,
+      previousMessageId: ?number
     }) => {
-      const { message, senderProfile, senderUserId } = data;
+      const { message, senderProfile, senderUserId, previousMessageId } = data;
       // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
-      // $FlowFixMe
-      store.dispatch(newMessageAction(message, senderProfile, senderUserId));
+      store.dispatch(
+        // $FlowFixMe
+        newMessageAction(
+          message,
+          senderProfile,
+          senderUserId,
+          previousMessageId
+        )
+      );
     }
   );
 

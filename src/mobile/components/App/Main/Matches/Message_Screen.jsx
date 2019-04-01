@@ -161,28 +161,36 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
+  const _confirmedIdToMessage = id => {
+    // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
+    const message = confirmedConversation.byId[id];
+    return {
+      _id: message.messageId.toString(),
+      text: message.content,
+      createdAt: Date.parse(message.timestamp),
+      user: {
+        _id: message.sender,
+        name: message.sender
+      },
+      sent: true,
+      failed: false
+    };
+  };
+
   // map over messages, convert to a GiftedMessage
-  const sentMessages = confirmedConversation
-    ? confirmedConversation.allIds
-        .map(id => {
-          // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
-          const message = confirmedConversation.byId[id];
-          return {
-            _id: message.messageId.toString(),
-            text: message.content,
-            createdAt: Date.parse(message.timestamp),
-            user: {
-              _id: message.sender,
-              name: message.sender
-            },
-            sent: true,
-            failed: false
-          };
-        })
-        .reverse()
+  const inOrderMessages = confirmedConversation
+    ? confirmedConversation.inOrderIds.map(_confirmedIdToMessage).reverse()
+    : [];
+  const outOfOrderMessages = confirmedConversation
+    ? confirmedConversation.outOfOrderIds.map(_confirmedIdToMessage).reverse()
     : [];
 
-  const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
+  const messages = [
+    ...failedMessages,
+    ...inProgressMessages,
+    ...outOfOrderMessages,
+    ...inOrderMessages
+  ];
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
@@ -192,8 +200,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
-    getConversation: (userId: number, mostRecentMessageId?: number) => {
-      dispatch(getConversationAction(userId, mostRecentMessageId));
+    getConversation: (userId: number) => {
+      dispatch(getConversationAction(userId));
     },
     sendMessage: (userId: number, message: GiftedChatMessage) => {
       dispatch(sendMessageAction(userId, message));
