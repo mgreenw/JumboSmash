@@ -10,7 +10,7 @@
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
     "splash": {
-      "image": "./assets/arthurIcon.png"
+      "image": "./assets/splash/ArthurSplash.png"
     },
     "android": {
       "package": "com.jumbosmash.mobile",
