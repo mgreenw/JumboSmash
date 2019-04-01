@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch } from 'mobile/reducers';
+import type { Dispatch, GetState } from 'mobile/reducers';
 import type { ServerMessage } from 'mobile/api/serverTypes';
 import getConversation from 'mobile/api/conversations/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
@@ -45,9 +45,9 @@ function complete(
 }
 
 // TODO: enforce 1 per conversation invariant at a time
-export default (userId: number) => (dispatch: Dispatch) => {
+export default (userId: number) => (dispatch: Dispatch, getState: GetState) => {
   dispatch(initiate(userId));
-  const { confirmedConversations } = store.getState();
+  const { confirmedConversations } = getState();
   const confirmedMessages = confirmedConversations[userId];
   const [mostRecentMessageId] = confirmedMessages
     ? confirmedMessages.inOrderIds.slice(-1)

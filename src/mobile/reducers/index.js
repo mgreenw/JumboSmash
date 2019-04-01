@@ -637,7 +637,6 @@ function updateConfirmedConversation(
   // Case 1 -- GOOD STATE
   // Not the first message, and we have the previous message in our inOrderIds
   if (previousMessageId && prevMessageIndex !== -1) {
-    console.log('CASE 1');
     // We could get in a state where
     //    inOrderIds = [1, 2, 3, 4, 5]
     //    messageIds = [5, 6, 7]
@@ -652,8 +651,6 @@ function updateConfirmedConversation(
   // Not the first message, but we DON'T have the previous message in our inOrderIds
   // This means something has gone wrong.
   if (previousMessageId && prevMessageIndex === -1) {
-    console.log('CASE 2');
-
     newInOrderIds = inOrderIds;
 
     // Note that this is kinda INVERSED from the above.
@@ -671,8 +668,6 @@ function updateConfirmedConversation(
   // To handle this as nicely as possible, we throw ALL messages into outOfOrder.
   // That way, the next getConversation should see that there is no inOrderIds, and grab all Ids.
   if (!previousMessageId && prevMessageIndex !== -1) {
-    console.log('CASE 3');
-
     newInOrderIds = [];
     const allPreviousIds = inOrderIds.concat(outOfOrderIds);
     const newIdsWithoutDuplicates = messageIds.filter(
@@ -691,8 +686,6 @@ function updateConfirmedConversation(
   // NOTE: if outOfOrderIds contains elements NOT in messageIds, these are lost.
   // However, as this is a clean wipe we should use this as the messaging point of truth.
   if (!previousMessageId && prevMessageIndex === -1) {
-    console.log('CASE 4');
-
     newInOrderIds = messageIds;
     newOutOfOrderIds = [];
   }
