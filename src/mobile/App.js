@@ -8,7 +8,7 @@ import createRootNavigator from 'mobile/components/navigation/Navigation';
 import Sentry from 'sentry-expo';
 import { ReduxNetworkProvider } from 'react-native-offline';
 import { Notifications } from 'expo';
-import { AppState, YellowBox } from 'react-native';
+import { AppState } from 'react-native';
 
 import notificationHandler from 'mobile/utils/NotificationHandler';
 import foregroundHandler from 'mobile/utils/ForegroundHandler';
@@ -25,8 +25,6 @@ type Props = {};
 type State = {
   appState: any
 };
-
-YellowBox.ignoreWarnings(['Require cycle:']);
 
 // Enable if you want to test sentry locally!
 Sentry.enableInExpoDevelopment = false;
