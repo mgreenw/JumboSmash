@@ -10,14 +10,12 @@ const codes = require('../status-codes');
 const db = require('../../db');
 
 /* eslint-disable */
-export const updateMyProfileSchema = {
+const updateMyProfileSchema = {
   "type": "object",
   "properties": {
     "displayName": {
       "description": "The user's display name. It should be their first name.",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 20,
+      "type": "string"
     },
     "birthday": {
       "description": "The user's birthday",
@@ -26,9 +24,7 @@ export const updateMyProfileSchema = {
     },
     "bio": {
       "description": "The user's bio!",
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 500,
+      "type": "string"
     }
   },
   "required": []
@@ -104,4 +100,5 @@ const handler = [
 module.exports = {
   handler,
   apply: updateMyProfile,
+  updateMyProfileSchema,
 };

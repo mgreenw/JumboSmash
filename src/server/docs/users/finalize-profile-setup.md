@@ -118,6 +118,35 @@ Provide the user's initial profile fields.
 
 ### OR
 
+**Condition** : The user's display name must not be only whitespace.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "DISPLAY_NAME_REQUIRED"
+}
+```
+
+### OR
+
+**Condition** : The user's bio must not be only whitespace.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "BIO_REQUIRED"
+}
+```
+
+
+### OR
+
 **Condition**: The required fields were not supplied.
 
 **Code** : `400 BAD REQUEST`

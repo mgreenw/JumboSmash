@@ -153,6 +153,28 @@ describe('PATCH api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.BIO_TOO_LONG);
   });
 
+  it('should error if the bio is only whitespace', async () => {
+    const bio = '     ';
+    const user = await dbUtils.createUser('mgreen99');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio,
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-09-09',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.BIO_REQUIRED);
+  });
+
   it('should ensure the date is formatted correctly', async () => {
     const user = await dbUtils.createUser('mgreen21');
     await dbUtils.createProfile(user.id, {

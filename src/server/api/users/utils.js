@@ -13,6 +13,7 @@ const profileErrorMessages = {
   DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
+  BIO_REQUIRED: 'BIO_REQUIRED',
 };
 
 // This type here is to ensure that calls to the validateProfile function
@@ -57,6 +58,10 @@ function validateProfile(profile: Profile) {
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
     throw profileErrorMessages.BIO_TOO_LONG;
+  }
+
+  if (bio && bio.trim().length === 0) {
+    throw profileErrorMessages.BIO_REQUIRED;
   }
 }
 
