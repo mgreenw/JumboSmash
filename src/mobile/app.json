@@ -5,7 +5,7 @@
     "privacy": "unlisted",
     "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "1.5.2",
+    "version": "1.6.0-alpha",
     "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
@@ -14,7 +14,7 @@
     },
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 9,
+      "versionCode": 10,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
