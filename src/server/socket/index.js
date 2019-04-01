@@ -97,7 +97,7 @@ class Socket {
     // to initialize the server. Therefore, we cannot use the
     // socket's notify method in tests.
     if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
-      logger.warn('Cannot notify in a testing environment!');
+      logger.info('Cannot notify in a testing environment!');
       return;
     }
 
