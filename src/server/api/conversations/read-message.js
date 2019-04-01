@@ -6,6 +6,8 @@ const db = require('../../db');
 const redis = require('../../redis');
 const logger = require('../../logger');
 const codes = require('../status-codes');
+const Notifications = require('../../notifications');
+
 const {
   status,
   asyncHandler,
@@ -45,16 +47,17 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
 
     const [{ messageTimestamp }] = result.rows;
 
+    // Update Redis with the new read message if necessary
     const conversationIsRead = await redis.shared.readMessage(
       redis.unreadConversationsKey(readerUserId),
       matchUserId.toString(),
       messageTimestamp.toISOString(),
     );
 
+    // Send an update over socket
+    Notifications.readReceiptUpdate(matchUserId, readerUserId, messageId, messageTimestamp);
+
     logger.debug(`Read message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
-
-    // TODO: Send a socket notification to the match to update the read receipt.
-
     return status(codes.READ_MESSAGE__SUCCESS).noData();
   } catch (error) {
     // This specific error means the message id is not valid.

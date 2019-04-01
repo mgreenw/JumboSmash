@@ -75,6 +75,16 @@ function connect(token: string) {
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
+
+  _socket.on(
+    'READ_RECEIPT_UPDATE',
+    (data: {
+      readerUserId: number,
+      readReceipt: { messageId: number, timestamp: string }
+    }) => {
+      console.log('READ_RECEIPT_UPDATE', data);
+    }
+  );
   /* eslint-enable */
 }
 
