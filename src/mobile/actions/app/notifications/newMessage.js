@@ -12,7 +12,8 @@ export type NewMessageCompleted_Action = {
   payload: {
     message: Message,
     senderProfile: UserProfile,
-    senderUserId: number
+    senderUserId: number,
+    previousMessageId: ?number
   },
   meta: {}
 };
@@ -28,11 +29,12 @@ function initiate(): NewMessageInitiated_Action {
 function complete(
   message: Message,
   senderProfile: UserProfile,
-  senderUserId: number
+  senderUserId: number,
+  previousMessageId: ?number
 ): NewMessageCompleted_Action {
   return {
     type: 'NEW_MESSAGE__COMPLETED',
-    payload: { message, senderProfile, senderUserId },
+    payload: { message, senderProfile, senderUserId, previousMessageId },
     meta: {}
   };
 }
@@ -40,8 +42,9 @@ function complete(
 export default (
   message: Message,
   senderProfile: UserProfile,
-  senderUserId: number
+  senderUserId: number,
+  previousMessageId: ?number
 ) => (dispatch: Dispatch) => {
   dispatch(initiate());
-  dispatch(complete(message, senderProfile, senderUserId));
+  dispatch(complete(message, senderProfile, senderUserId, previousMessageId));
 };

@@ -320,7 +320,8 @@ export type ConfirmedMessages = {|
   byId: {|
     [Id: number]: Message
   |},
-  allIds: number[] // Id's in order
+  inOrderIds: number[], // Id's we know are in correct order
+  outOfOrderIds: number[] // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
 |};
 
 // Keyed by client generated ID. Fine, because client only
@@ -632,22 +633,85 @@ function updateMostRecentMessage(
   };
 }
 
-// TODO: use this helper to determine if order was messed up
 function updateConfirmedConversation(
   state: ReduxState,
   userId: number,
-  byIdChange: { [messageId: number]: Message },
-  newOrder?: number[]
+  newMessagesMap: { [messageId: number]: Message } = {},
+  messageIds: number[] = [],
+  previousMessageId: ?number // if this is the first time this is void
 ): ConfirmedConversations {
-  const { byId = {}, allIds = [] } = state.confirmedConversations[userId] || {};
+  const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+    state.confirmedConversations[userId] || {};
+
+  let newInOrderIds;
+  let newOutOfOrderIds;
+  const prevMessageIndex = inOrderIds.indexOf(previousMessageId);
+
+  // Case 1 -- GOOD STATE
+  // Not the first message, and we have the previous message in our inOrderIds
+  if (previousMessageId && prevMessageIndex !== -1) {
+    // We could get in a state where
+    //    inOrderIds = [1, 2, 3, 4, 5]
+    //    messageIds = [5, 6, 7]
+    // In that example, previousMessageId should be 4.
+    newInOrderIds = inOrderIds
+      .slice(0, prevMessageIndex + 1) // off by one error to preserve previous message
+      .concat(messageIds);
+    newOutOfOrderIds = outOfOrderIds.filter(id => !messageIds.includes(id));
+  }
+
+  // Case 2 -- BAD STATE
+  // Not the first message, but we DON'T have the previous message in our inOrderIds
+  // This means something has gone wrong.
+  if (previousMessageId && prevMessageIndex === -1) {
+    newInOrderIds = inOrderIds;
+
+    // Note that this is kinda INVERSED from the above.
+    // That's because if somehow we got back messages we already are keeping track of, we need to make sure
+    // we preserve the previous order, otherwise the messages will swap locations.
+    newOutOfOrderIds = outOfOrderIds.concat(
+      messageIds.filter(id => !outOfOrderIds.includes(id))
+    );
+  }
+
+  // Case 3 -- BAD STATE
+  // The first message, and we have the previous message in our inOrderIds.
+  // This is a really weird case. It indicates something has MASSIVELY screwed up,
+  // as on the api request we had more messages than we do now.
+  // To handle this as nicely as possible, we throw ALL messages into outOfOrder.
+  // That way, the next getConversation should see that there is no inOrderIds, and grab all Ids.
+  if (!previousMessageId && prevMessageIndex !== -1) {
+    newInOrderIds = [];
+    const allPreviousIds = inOrderIds.concat(outOfOrderIds);
+    const newIdsWithoutDuplicates = messageIds.filter(
+      id => !allPreviousIds.includes(id)
+    );
+    newOutOfOrderIds = allPreviousIds.concat(newIdsWithoutDuplicates);
+  }
+
+  // Case 4 -- GOOD STATE
+  // The first message, and we don't have the previous message in our inOrderIds.
+  // This is typically on:
+  //    a) the first load of a conversation,
+  //    b) a reset load of the conversation, or
+  //    c) on an initial message send / recieve.
+
+  // NOTE: if outOfOrderIds contains elements NOT in messageIds, these are lost.
+  // However, as this is a clean wipe we should use this as the messaging point of truth.
+  if (!previousMessageId && prevMessageIndex === -1) {
+    newInOrderIds = messageIds;
+    newOutOfOrderIds = [];
+  }
+
   return {
     ...state.confirmedConversations,
     [userId]: {
       byId: {
         ...byId,
-        ...byIdChange
+        ...newMessagesMap
       },
-      allIds: newOrder || allIds
+      inOrderIds: newInOrderIds,
+      outOfOrderIds: newOutOfOrderIds
     }
   };
 }
@@ -659,8 +723,9 @@ function updateMostRecentConversations(
   const messageIds = Object.keys(mostRecentMessages);
   const confirmedConversations = messageIds.reduce((conversations, id) => {
     const messageId = parseInt(id, 10);
-    const { byId = {}, allIds = [] } = conversations[messageId] || {};
     const { otherUserId } = mostRecentMessages[messageId];
+    const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+      conversations[otherUserId] || {};
     return {
       ...conversations,
       [otherUserId]: {
@@ -668,7 +733,8 @@ function updateMostRecentConversations(
           ...byId,
           [messageId]: mostRecentMessages[messageId]
         },
-        allIds
+        inOrderIds,
+        outOfOrderIds
       }
     };
   }, state.confirmedConversations);
@@ -1168,10 +1234,8 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const { userId, messages } = action.payload;
-      // TODO: ensure 'result' for array order is preserved
-      // pretty sure it's preserved via testing, but not sure via their docs
-      // also TODO: create helper function to type return value
+      const { userId, messages, previousMessageId } = action.payload;
+      //  TODO: create helper function to type return value
       const { result: orderedIds, entities } = normalize(messages, [
         ConfirmedMessageSchema
       ]);
@@ -1180,7 +1244,8 @@ export default function rootReducer(
         state,
         userId,
         entities.messages,
-        orderedIds
+        orderedIds,
+        previousMessageId
       );
 
       return {
@@ -1291,7 +1356,8 @@ export default function rootReducer(
         state,
         receiverUserId,
         { [id]: message },
-        [...state.confirmedConversations[receiverUserId].allIds, id]
+        [id],
+        previousMessageId
       );
 
       const {
@@ -1347,15 +1413,19 @@ export default function rootReducer(
     }
 
     case 'NEW_MESSAGE__COMPLETED': {
-      const { senderProfile, senderUserId, message } = action.payload;
-      const { allIds = [] } = state.confirmedConversations[senderUserId] || {};
-      const orderedIds = [...allIds, message.messageId];
+      const {
+        senderProfile,
+        senderUserId,
+        message,
+        previousMessageId
+      } = action.payload;
 
       const confirmedConversations = updateConfirmedConversation(
         state,
         senderUserId,
         { [message.messageId]: message },
-        orderedIds
+        [message.messageId],
+        previousMessageId
       );
 
       const {
