@@ -48,6 +48,7 @@
     "react-native-gifted-chat": "github:jacobjaffe/react-native-gifted-chat",
     "react-native-keyboard-aware-scroll-view": "^0.7.4",
     "react-native-keyboard-spacer": "^0.4.1",
+    "react-native-modal": "^9.0.0",
     "react-native-offline": "^4.3.0",
     "react-native-popup-dialog": "^0.17.0",
     "react-native-progress": "^3.5.0",

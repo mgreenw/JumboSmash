@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, ScrollView, TouchableHighlight } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -10,11 +10,13 @@ import type {
 } from 'mobile/reducers/index';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-deck-swiper';
+import Modal from 'react-native-modal';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import routes from 'mobile/components/navigation/routes';
+import CardView from 'mobile/components/shared/CardView';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons from './SwipeButtons';
@@ -52,7 +54,9 @@ type State = {
   cards: Card[],
   deckIndex: number,
   allSwiped: boolean,
-  noCandidates: boolean
+  noCandidates: boolean,
+  showExpandedCard: boolean,
+  expandedCardProfile: ?UserProfile
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -106,7 +110,9 @@ class cardDeck extends React.Component<Props, State> {
       cards: [inactiveCard, ...props.profileCards],
       deckIndex: 0,
       allSwiped: false,
-      noCandidates: false // wait until we check -- allow a load
+      noCandidates: false, // wait until we check -- allow a load
+      showExpandedCard: false,
+      expandedCardProfile: null
     };
   }
 
@@ -225,8 +231,23 @@ class cardDeck extends React.Component<Props, State> {
     const { cards } = this.state;
     const card = cards[deckIndex];
     if (card.type === 'PROFILE') {
-      this._goToProfile(card.profileId);
+      this._showExpandedCard(card.profileId);
     }
+  };
+
+  _showExpandedCard = (profileId: number) => {
+    const { profileMap } = this.props;
+    const profile = profileMap[profileId];
+    this.setState({
+      showExpandedCard: true,
+      expandedCardProfile: profile
+    });
+  };
+
+  _hideExpandedCard = () => {
+    this.setState({
+      showExpandedCard: false
+    });
   };
 
   _goToProfile = (profileId: number) => {
@@ -241,7 +262,14 @@ class cardDeck extends React.Component<Props, State> {
   swiper: Swiper;
 
   render() {
-    const { cards, deckIndex, allSwiped, noCandidates } = this.state;
+    const {
+      cards,
+      deckIndex,
+      allSwiped,
+      noCandidates,
+      showExpandedCard,
+      expandedCardProfile
+    } = this.state;
     const {
       getCandidatesInProgress,
       getMoreCandidates,
@@ -306,6 +334,30 @@ class cardDeck extends React.Component<Props, State> {
             />
           </View>
         )}
+        <Modal
+          isVisible={showExpandedCard}
+          swipeDirection={'down'}
+          onSwipeComplete={this._hideExpandedCard}
+          style={{ padding: 0, margin: 0 }}
+          propagateSwipe
+        >
+          <ScrollView>
+            <TouchableHighlight>
+              <View>
+                {expandedCardProfile && (
+                  <CardView
+                    profile={expandedCardProfile}
+                    onMinimize={() => {
+                      this.setState({
+                        showExpandedCard: false
+                      });
+                    }}
+                  />
+                )}
+              </View>
+            </TouchableHighlight>
+          </ScrollView>
+        </Modal>
         {deckIndex !== 0 && (
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}
