@@ -13,6 +13,8 @@ import Swiper from 'react-native-deck-swiper';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons from './SwipeButtons';
@@ -219,6 +221,23 @@ class cardDeck extends React.Component<Props, State> {
     this.swiper.swipeLeft();
   };
 
+  _onTapCard = (deckIndex: number) => {
+    const { cards } = this.state;
+    const card = cards[deckIndex];
+    if (card.type === 'PROFILE') {
+      this._goToProfile(card.profileId);
+    }
+  };
+
+  _goToProfile = (profileId: number) => {
+    const { profileMap } = this.props;
+    const profile = profileMap[profileId];
+    NavigationService.navigate(routes.CardsExpandedCard, {
+      profile,
+      onMinimize: NavigationService.back
+    });
+  };
+
   swiper: Swiper;
 
   render() {
@@ -260,6 +279,7 @@ class cardDeck extends React.Component<Props, State> {
           marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
           stackScale={10}
           useViewOverflow={Platform.OS === 'ios'}
+          onTapCard={this._onTapCard}
         />
         {allSwiped && (
           <View
