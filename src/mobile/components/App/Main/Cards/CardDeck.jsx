@@ -15,7 +15,6 @@ import Modal from 'react-native-modal';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import CardView from 'mobile/components/shared/CardView';
-import NavigationService from 'mobile/components/navigation/NavigationService';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import PreviewCard from './CardViews/PreviewCard';
@@ -329,7 +328,7 @@ class cardDeck extends React.Component<Props, State> {
         onCancel={() => this.setState({ showBlockPopup: false })}
         onDone={() =>
           this.setState({ showBlockPopup: false }, () =>
-            NavigationService.back()
+            this.swiper.swipeBottom()
           )
         }
         displayName={displayName}
@@ -355,7 +354,7 @@ class cardDeck extends React.Component<Props, State> {
         onDone={block =>
           this.setState(
             { showReportPopup: false },
-            () => block && NavigationService.back()
+            () => block && this.swiper.swipeBottom()
           )
         }
         displayName={displayName}
