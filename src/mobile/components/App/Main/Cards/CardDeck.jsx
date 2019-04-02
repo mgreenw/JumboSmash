@@ -14,8 +14,6 @@ import Modal from 'react-native-modal';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
-import NavigationService from 'mobile/components/navigation/NavigationService';
-import routes from 'mobile/components/navigation/routes';
 import CardView from 'mobile/components/shared/CardView';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
