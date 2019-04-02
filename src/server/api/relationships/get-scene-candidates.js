@@ -19,6 +19,7 @@ const getSceneCandidates = async (
   userId: number,
   scene: string,
   exclude: number[],
+  activeScenes: { smash: boolean, social: boolean, stone: boolean },
   resetCandidates: boolean = false,
 ) => {
   // Generate a list of excluded users
@@ -47,6 +48,11 @@ const getSceneCandidates = async (
   if (!utils.sceneIsValid(scene)) {
     return apiUtils.status(codes.GET_SCENE_CANDIDATES__INVALID_SCENE).noData();
   }
+
+  // // Ensure the user is active in the given scene
+  // if (!activeScenes[scene]) {
+  //   return apiUtils.status(codes.GET_SCENE_CANDIDATES__USER_NOT_ACTIVE_IN_SCENE).noData();
+  // }
 
   // If the resetCandidates flag is set, reset all non-liked candidates in this scene.
   if (resetCandidates) {
@@ -110,7 +116,7 @@ const getSceneCandidates = async (
 
 const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
-    return getSceneCandidates(req.user.id, req.params.scene, req.query.exclude, req.query['reset-candidates'] !== undefined);
+    return getSceneCandidates(req.user.id, req.params.scene, req.query.exclude, req.user.activeScenes, req.query['reset-candidates'] !== undefined);
   }),
 ];
 

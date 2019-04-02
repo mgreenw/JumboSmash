@@ -82,6 +82,19 @@ Provide the normal `Authorization` token in the request header.
 
 ### OR
 
+**Condition** : The user is not active in the given scene.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "GET_SCENE_CANDIDATES__USER_NOT_ACTIVE_IN_SCENE"
+}
+```
+
+### OR
+
 **Condition** : The query string contains non-integers or is otherwise invalid.
 
 **Code** : `400 BAD REQUEST`

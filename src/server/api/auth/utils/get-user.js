@@ -22,7 +22,12 @@ function getUser(token: string): Promise<any> {
             COALESCE(p.user_id, 0)::boolean AS "hasProfile",
             u.utln,
             u.token_uuid AS "tokenUUID",
-            u.expo_push_token AS "expoPushToken"
+            u.expo_push_token AS "expoPushToken",
+            json_build_object(
+              'smash', active_smash,
+              'social', active_social,
+              'stone', active_stone
+            ) AS "activeScenes"
           FROM users u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $1

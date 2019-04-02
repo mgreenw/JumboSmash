@@ -106,6 +106,35 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
+  // it('should fail if the user is not active in the given scene', async () => {
+  //   const user = await dbUtils.createUser('mgreen34');
+  //   await dbUtils.createProfile(user.id, {
+  //     displayName: 'Max',
+  //     bio: 'test',
+  //     birthday: '1997-09-09',
+  //   });
+  //   let res = await request(app)
+  //     .get('/api/relationships/candidates/smash')
+  //     .set('Authorization', user.token)
+  //     .set('Accept', 'application/json');
+  //   expect(res.statusCode).toBe(400);
+  //   expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__USER_NOT_ACTIVE_IN_SCENE.status);
+
+  //   res = await request(app)
+  //     .get('/api/relationships/candidates/social')
+  //     .set('Authorization', user.token)
+  //     .set('Accept', 'application/json');
+  //   expect(res.statusCode).toBe(400);
+  //   expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__USER_NOT_ACTIVE_IN_SCENE.status);
+
+  //   res = await request(app)
+  //     .get('/api/relationships/candidates/stone')
+  //     .set('Authorization', user.token)
+  //     .set('Accept', 'application/json');
+  //   expect(res.statusCode).toBe(400);
+  //   expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__USER_NOT_ACTIVE_IN_SCENE.status);
+  // });
+
   it('should only allow valid scenes (smash, social, stone)', async () => {
     const user = await dbUtils.createUser('mgreen02');
     await dbUtils.createProfile(user.id, {
@@ -113,6 +142,17 @@ describe('GET api/relationships/candidates/:scene', () => {
       bio: 'test',
       birthday: '1997-09-09',
     });
+    await dbUtils.updateSettings(user.id, {
+  useHe: true,
+  useShe: true,
+  useThey: true,
+  wantHe: true,
+  wantShe: true,
+  wantThey: true,
+  activeSmash: true,
+  activeSocial: true,
+  activeStone: true,
+});
     let res = await request(app)
       .get('/api/relationships/candidates/smash')
       .set('Authorization', user.token)
@@ -222,6 +262,8 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(_.every(res.body.data, (candidate) => {
+      console.log(candidate);
+      console.log(users[candidate.userId]);
       return users[candidate.userId].settings.activeSmash;
     })).toBeTruthy();
     expect(res.body.data.length).toBeLessThanOrEqual(5);
