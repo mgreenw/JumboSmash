@@ -8,6 +8,26 @@ const dbUtils = require('../../utils/db');
 
 let me;
 
+type User = {
+  id: number,
+  token: string,
+};
+
+async function judge(critic: User, candidate: User, scene: string, liked: boolean = true) {
+  const response = await request(app)
+    .post('/api/relationships/judge')
+    .set('Authorization', critic.token)
+    .set('Accept', 'application/json')
+    .send({
+      candidateUserId: candidate.id,
+      scene,
+      liked,
+    });
+
+  expect(response.body.status).toBe(codes.JUDGE__SUCCESS.status);
+  return response;
+}
+
 describe('GET api/relationships/matches', () => {
   // Setup
   beforeAll(async () => {
@@ -57,24 +77,8 @@ describe('GET api/relationships/matches', () => {
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
     const other = await dbUtils.createUser('person01', true);
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: other.id,
-        scene: 'smash',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', other.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: me.id,
-        scene: 'smash',
-        liked: true,
-      });
+    await judge(me, other, 'smash', true);
+    await judge(other, me, 'smash', true);
 
     const res = await request(app)
       .get('/api/relationships/matches')
@@ -93,81 +97,35 @@ describe('GET api/relationships/matches', () => {
     expect(match.scenes.stone).toBeNull();
   });
 
-  it('should return a match given a relationship with inverse likes on smash', async () => {
-    const person = await dbUtils.createUser('person02', true);
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: person.id,
-        scene: 'smash',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', person.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: me.id,
-        scene: 'smash',
-        liked: true,
-      });
 
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: person.id,
-        scene: 'social',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', person.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: me.id,
-        scene: 'social',
-        liked: true,
-      });
+  it('should return a match given a relationship with inverse likes on all scenes', async () => {
+    const personOne = await dbUtils.createUser('person02', true);
+    const personTwo = await dbUtils.createUser('random01', true);
 
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: person.id,
-        scene: 'stone',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', person.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: me.id,
-        scene: 'stone',
-        liked: true,
-      });
+    await judge(personTwo, personOne, 'smash', true);
+    await judge(personOne, personTwo, 'smash', true);
+
+    await judge(personTwo, personOne, 'social', true);
+    await judge(personOne, personTwo, 'social', true);
+
+    await judge(personTwo, personOne, 'stone', true);
+    await judge(personOne, personTwo, 'stone', true);
+
     const res = await request(app)
       .get('/api/relationships/matches')
-      .set('Authorization', me.token)
+      .set('Authorization', personTwo.token)
       .set('Accept', 'application/json');
 
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
-    expect(res.body.data.length).toBe(2);
+    expect(res.body.data.length).toBe(1);
 
+    const [match] = res.body.data;
     // NOTE: this tests ordering by 'last match date' if messages are null
-    const personMatch = (res.body.data[0].id === person.id)
-      ? res.body.data[1]
-      : res.body.data[0];
-    expect(personMatch.userId).toBe(person.id);
-    expect(personMatch.scenes.smash).not.toBeNull();
-    expect(personMatch.scenes.social).not.toBeNull();
-    expect(personMatch.scenes.stone).not.toBeNull();
+    expect(match.userId).toBe(personOne.id);
+    expect(match.scenes.smash).not.toBeNull();
+    expect(match.scenes.social).not.toBeNull();
+    expect(match.scenes.stone).not.toBeNull();
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
@@ -182,7 +140,7 @@ describe('GET api/relationships/matches', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
     // We should not recieve a result for the blocked one
-    expect(res.body.data.length).toBe(2);
+    expect(res.body.data.length).toBe(1);
   });
 
   it('should not get a match with a blocked user', async () => {
@@ -198,7 +156,7 @@ describe('GET api/relationships/matches', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
     // We should not recieve a result for the banned one
-    expect(res.body.data.length).toBe(2);
+    expect(res.body.data.length).toBe(1);
   });
 
   it('should return the most recent message and if the conversation is read between the users', async () => {
