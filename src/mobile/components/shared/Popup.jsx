@@ -27,7 +27,8 @@ export default (props: Props) => {
       dialogStyle={{
         /* This is a hack so that we can do a shadow over a wrapper */
         backgroundColor: 'transparent',
-        padding: 18
+        padding: 18,
+        zIndex: 99
       }}
       onTouchOutside={onTouchOutside}
     >

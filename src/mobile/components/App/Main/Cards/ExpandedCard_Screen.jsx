@@ -1,5 +1,8 @@
 // @flow
 
+// NOTE: THIS SCREEN IS DEPRECATED.
+// IT WILL BE REMOVED FROM THE MESSAGES VIEW REALLY SOON
+
 import React from 'react';
 import { View, StatusBar } from 'react-native';
 import CardView from 'mobile/components/shared/CardView';
@@ -37,8 +40,10 @@ export default (props: Props) => {
 
       <CardView
         profile={profile}
+        userId={0 /* DEPRECATED SECTION */}
         onMinimize={onMinimize}
         swipeButtons={swipeButtons}
+        onBlockReport={() => {}}
       />
       {swipeButtons}
     </View>
