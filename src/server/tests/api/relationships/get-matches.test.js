@@ -8,6 +8,26 @@ const dbUtils = require('../../utils/db');
 
 let me;
 
+type User = {
+  id: number,
+  token: string,
+};
+
+async function judge(critic: User, candidate: User, scene: string, liked: boolean = true) {
+  const response = await request(app)
+    .post('/api/relationships/judge')
+    .set('Authorization', critic.token)
+    .set('Accept', 'application/json')
+    .send({
+      candidateUserId: candidate.id,
+      scene,
+      liked,
+    });
+
+  expect(response.body.status).toBe(codes.JUDGE__SUCCESS.status);
+  return response;
+}
+
 describe('GET api/relationships/matches', () => {
   // Setup
   beforeAll(async () => {
@@ -57,24 +77,8 @@ describe('GET api/relationships/matches', () => {
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
     const other = await dbUtils.createUser('person01', true);
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: other.id,
-        scene: 'smash',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', other.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: me.id,
-        scene: 'smash',
-        liked: true,
-      });
+    await judge(me, other, 'smash', true);
+    await judge(other, me, 'smash', true);
 
     const res = await request(app)
       .get('/api/relationships/matches')
@@ -93,65 +97,20 @@ describe('GET api/relationships/matches', () => {
     expect(match.scenes.stone).toBeNull();
   });
 
+
   it('should return a match given a relationship with inverse likes on all scenes', async () => {
     const personOne = await dbUtils.createUser('person02', true);
     const personTwo = await dbUtils.createUser('random01', true);
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personTwo.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personOne.id,
-        scene: 'smash',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personOne.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personTwo.id,
-        scene: 'smash',
-        liked: true,
-      });
 
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personTwo.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personOne.id,
-        scene: 'social',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personOne.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personTwo.id,
-        scene: 'social',
-        liked: true,
-      });
+    await judge(personTwo, personOne, 'smash', true);
+    await judge(personOne, personTwo, 'smash', true);
 
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personTwo.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personOne.id,
-        scene: 'stone',
-        liked: true,
-      });
-    await request(app)
-      .post('/api/relationships/judge')
-      .set('Authorization', personOne.token)
-      .set('Accept', 'application/json')
-      .send({
-        candidateUserId: personTwo.id,
-        scene: 'stone',
-        liked: true,
-      });
+    await judge(personTwo, personOne, 'social', true);
+    await judge(personOne, personTwo, 'social', true);
+
+    await judge(personTwo, personOne, 'stone', true);
+    await judge(personOne, personTwo, 'stone', true);
+
     const res = await request(app)
       .get('/api/relationships/matches')
       .set('Authorization', personTwo.token)
