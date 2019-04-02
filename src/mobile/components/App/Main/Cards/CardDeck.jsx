@@ -250,15 +250,6 @@ class cardDeck extends React.Component<Props, State> {
     });
   };
 
-  _goToProfile = (profileId: number) => {
-    const { profileMap } = this.props;
-    const profile = profileMap[profileId];
-    NavigationService.navigate(routes.CardsExpandedCard, {
-      profile,
-      onMinimize: NavigationService.back
-    });
-  };
-
   swiper: Swiper;
 
   render() {
