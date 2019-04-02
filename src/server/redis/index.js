@@ -52,7 +52,7 @@ shared.defineCommand('insertMessage', {
 });
 
 const prefix = 'gem';
-function unreadConversationsKey(userId: number) {
+function unreadConversationsKey(userId: number | string) {
   return `${prefix}:unread-conversations userId:${userId}`;
 }
 

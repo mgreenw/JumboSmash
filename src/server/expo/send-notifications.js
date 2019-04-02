@@ -6,6 +6,7 @@ const _ = require('lodash');
 const db = require('../db');
 const logger = require('../logger');
 const notificationReceiptQueue = require('./receipt-queue');
+const getBadgeCount = require('./get-badge-count');
 
 const expo = new Expo();
 
@@ -14,7 +15,6 @@ export type Notification = {
   sound: 'default' | null,
   body: string,
   data?: Object,
-  badge?: number,
 };
 
 // Note: You cannot send more than one notification per user using this method.
@@ -24,7 +24,15 @@ async function sendNotifications(notifications: Notification[]) {
   const notificationMap = {};
   notifications.forEach((notification) => {
     const { userId, ...rest } = notification;
-    notificationMap[userId] = rest;
+    const badge = getBadgeCount(userId);
+    notificationMap[userId] = { ...rest, badge };
+  });
+
+  // Get and set the badge for every outgoing notification
+  const userIds = Object.keys(notificationMap);
+  const userBadges = await Promise.all(userIds.map(getBadgeCount));
+  userBadges.forEach((badge, index) => {
+    notificationMap[userIds[index]].badge = badge;
   });
 
   // Get the push token for each user in question and map them to the correct notification
