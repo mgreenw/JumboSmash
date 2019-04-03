@@ -225,17 +225,6 @@ class MessagingScreen extends React.Component<Props, State> {
       throw new Error('Match null or undefined in Messaging Screen');
     }
 
-    // Unfortunately, the declarative version of this api was not getting called
-    const didFocusSubscription = navigation.addListener(
-      'didFocus',
-      this._didFocus
-    );
-
-    const didBlurSubscription = navigation.addListener(
-      'didBlur',
-      this._didBlur
-    );
-
     this.state = {
       match,
       nextTyping: null,
@@ -246,9 +235,7 @@ class MessagingScreen extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showUnmatchPopup: false,
-      didFocusSubscription,
-      didBlurSubscription
+      showUnmatchPopup: false
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
