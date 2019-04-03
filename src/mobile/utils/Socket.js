@@ -87,7 +87,7 @@ function connect(token: string) {
 
   _socket.on(
     'READ_RECEIPT_UPDATE',
-    (data: { readerUserId: number, readReceipt: ReadReceipt }) => {
+    (data: { readerUserId: number, readReceipt: ?ReadReceipt }) => {
       const { readerUserId, readReceipt } = data;
 
       const readReceiptUpdateThunk = readReceiptUpdateAction(

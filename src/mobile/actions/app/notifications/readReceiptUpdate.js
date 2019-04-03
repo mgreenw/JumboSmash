@@ -11,7 +11,7 @@ export type ReadReceiptUpdateCompleted_Action = {
   type: 'READ_RECEIPT_UPDATE__COMPLETED',
   payload: {
     readerUserId: number,
-    readReceipt: ReadReceipt
+    readReceipt: ?ReadReceipt
   },
   meta: {}
 };
@@ -26,7 +26,7 @@ function initiate(): ReadReceiptUpdateInitiated_Action {
 
 function complete(
   readerUserId: number,
-  readReceipt: ReadReceipt
+  readReceipt: ?ReadReceipt
 ): ReadReceiptUpdateCompleted_Action {
   return {
     type: 'READ_RECEIPT_UPDATE__COMPLETED',
@@ -35,7 +35,7 @@ function complete(
   };
 }
 
-export default (readerUserId: number, readReceipt: ReadReceipt) => (
+export default (readerUserId: number, readReceipt: ?ReadReceipt) => (
   dispatch: Dispatch
 ) => {
   dispatch(initiate());
