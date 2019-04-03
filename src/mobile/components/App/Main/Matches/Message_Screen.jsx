@@ -267,9 +267,6 @@ class MessagingScreen extends React.Component<Props, State> {
 
   // unsubscribe on unmount so we don't attempt to set the state of this component
   componentWillUnmount() {
-    const { didFocusSubscription, didBlurSubscription } = this.state;
-    didFocusSubscription.remove();
-    didBlurSubscription.remove();
     Socket.unsubscribeFromTyping();
   }
 
