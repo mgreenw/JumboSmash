@@ -7,7 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Animated
+  StyleSheet,
+  ImageBackground
 } from 'react-native';
 import type { UserProfile } from 'mobile/reducers/index';
 import { getAge } from 'mobile/utils/Birthday';
@@ -15,6 +16,10 @@ import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
 import { Image } from 'mobile/components/shared/imageCacheFork';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { textStyles } from 'mobile/styles/textStyles';
+import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
+
+const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type Props = {
   profile: UserProfile,
@@ -23,93 +28,66 @@ type Props = {
 
 const { width } = Dimensions.get('window');
 
-export default class CardView extends React.Component<Props> {
-  scrollX = new Animated.Value(0); // this will be the scroll location of our ScrollView
+const styles = StyleSheet.create({
+  profileBlock: {
+    marginVertical: 5,
+    paddingVertical: 20,
+    backgroundColor: Colors.White
+  },
+  photoBlock: {
+    marginVertical: 5,
+    backgroundColor: Colors.White
+  },
+  titleBlock: {
+    marginVertical: 5,
+    paddingVertical: 35,
+    backgroundColor: Colors.White
+  }
+});
 
-  render() {
-    const { profile, onMinimize } = this.props;
-    const position = Animated.divide(this.scrollX, width);
-    return (
+const CardView = (props: Props) => {
+  const { profile, onMinimize } = props;
+
+  const photos = profile.photoUuids.map(photoUuid => (
+    <View style={styles.photoBlock} key={photoUuid}>
+      <Image
+        style={{ width, height: width }}
+        uri={GET_PHOTO__ROUTE + photoUuid}
+        resizeMode="contain"
+      />
+    </View>
+  ));
+
+  const firstPhoto = photos[0];
+  const lastPhoto = photos.length > 1 ? photos[photos.length - 1] : null;
+  // TODO: more photo logic! Show them all!
+
+  return (
+    <View style={{ flex: 1 }}>
+      <ImageBackground
+        source={wavesFull}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          backgroundColor: 'white'
+        }}
+      />
       <ScrollView
         style={{
-          backgroundColor: Colors.White,
+          backgroundColor: 'transparent',
           flex: 1
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <View style={{ width, height: width, backgroundColor: 'black' }}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onScroll={Animated.event([
-                { nativeEvent: { contentOffset: { x: this.scrollX } } }
-              ])}
-              scrollEventThrottle={16}
+        {firstPhoto}
+        <View style={styles.titleBlock}>
+          <View>
+            <Text
+              style={[
+                textStyles.headline4StyleSwiping,
+                { textAlign: 'center' }
+              ]}
             >
-              {profile.photoUuids.map(photoUuid => (
-                <Image
-                  key={photoUuid}
-                  style={{ width, height: width }}
-                  uri={GET_PHOTO__ROUTE + photoUuid}
-                  resizeMode="contain"
-                />
-              ))}
-            </ScrollView>
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            {profile.photoUuids.map((photoUuid, i) => {
-              const opacity = position.interpolate({
-                inputRange: [i - 1, i, i + 1],
-                outputRange: [0.4, 1, 0.4],
-                extrapolate: 'clamp'
-              });
-              return (
-                <Animated.View
-                  key={photoUuid}
-                  style={{
-                    opacity,
-                    height: 8,
-                    width: 8,
-                    backgroundColor: '#cccccc',
-                    margin: 8,
-                    marginTop: -31.5,
-                    borderRadius: 5
-                  }}
-                />
-              );
-            })}
-          </View>
-        </View>
-        <View
-          style={{
-            height: '100%',
-            backgroundColor: Colors.White,
-            shadowColor: '#6F6F6F',
-            shadowOpacity: 0.57,
-            shadowRadius: 2,
-            shadowOffset: {
-              height: -1,
-              width: 1
-            },
-            borderRadius: 10,
-            marginTop: -10
-          }}
-          elevation={5}
-        >
-          <View
-            style={{
-              marginTop: 18,
-              marginBottom: 18
-            }}
-          >
-            <Text style={{ fontSize: 28, textAlign: 'center' }}>
               {`${profile.fields.displayName}, ${getAge(
                 profile.fields.birthday
               )}`}
@@ -126,16 +104,28 @@ export default class CardView extends React.Component<Props> {
               <CustomIcon name="down" size={33} color={Colors.SunYellow} />
             </TouchableOpacity>
           </View>
+        </View>
+        <View style={styles.profileBlock}>
           <View
-            style={{ paddingLeft: 25, paddingRight: 25, paddingBottom: 20 }}
+            style={{
+              paddingHorizontal: '10.1%'
+            }}
           >
-            <Text style={{ textAlign: 'left', fontSize: 18 }}>
+            <Text style={[textStyles.body2Style, { textAlign: 'left' }]}>
+              {'About Me'}
+            </Text>
+            <Text style={[textStyles.body1Style, { textAlign: 'left' }]}>
               {profile.fields.bio}
             </Text>
           </View>
-          <View style={{ height: 80 }} />
+        </View>
+        {lastPhoto}
+        <View style={styles.profileBlock}>
+          <TertiaryButton title={'Block or Report'} onPress={() => {}} />
         </View>
       </ScrollView>
-    );
-  }
-}
+    </View>
+  );
+};
+
+export default CardView;
