@@ -2,6 +2,7 @@
 
 import type { $Request } from 'express';
 
+const uuidv4 = require('uuid/v4');
 const {
   status,
   validate,
@@ -11,8 +12,10 @@ const {
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const redis = require('../../redis');
 const logger = require('../../logger');
 const Notifications = require('../../notifications');
+const newMatchUtils = require('../../notifications/new-match/utils');
 
 /* eslint-disable */
 const schema = {
@@ -108,13 +111,46 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
     // If the user liked them this time but did not previously like
     // the candidate in this scene, check for a match.
     if (liked && !likedBefore) {
-      checkMatch(userId, candidateUserId, scene).then(async (matched) => {
-        if (matched) {
-          // Send the notifications! This will happen in the background
-          // so execution here can proceed.
-          Notifications.newMatch(userId, candidateUserId, scene);
-        }
-      });
+      const matched = await checkMatch(userId, candidateUserId, scene);
+      if (matched) {
+        // They are matched! Construct a system message.
+        const sceneEmoji = newMatchUtils.emojis[scene];
+        const jumboScene = `Jumbo${scene.charAt(0).toUpperCase() + scene.slice(1)}`;
+        const matchMessage = `${sceneEmoji} You matched in ${jumboScene}! ${sceneEmoji}`;
+
+        // Insert the system message
+        const systemMessageResult = await db.query(`
+          INSERT INTO messages
+          (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid, from_system)
+          VALUES ($1, $2, $3, $4, true)
+          RETURNING timestamp
+        `, [matchMessage, userId, candidateUserId, uuidv4()]);
+
+        // If the result here does not have one row it is a SERVER_ERROR;
+        const { timestamp: sceneMatchMessageTimestamp } = systemMessageResult.rows[0];
+
+        // Insert the message for both the sender and the receiver.
+        // Note the reversal of the params.
+        const timestamp = sceneMatchMessageTimestamp.toISOString();
+        const [didMarkUnreadForJudger, didMarkUnreadForCandidate] = await Promise.all([
+          redis.shared.insertMessage(
+            redis.unreadConversationsKey(userId),
+            candidateUserId.toString(),
+            timestamp,
+          ),
+          redis.shared.insertMessage(
+            redis.unreadConversationsKey(candidateUserId),
+            userId.toString(),
+            timestamp,
+          ),
+        ]);
+
+        logger.debug(`Inserted system match for users ${userId} (updated: ${!!didMarkUnreadForJudger}) and ${candidateUserId} (updated: ${!!didMarkUnreadForCandidate})`);
+
+        // Send the notifications! This will happen in the background
+        // so execution here can proceed.
+        Notifications.newMatch(userId, candidateUserId, scene);
+      }
     }
 
     // If the query succeeded, return success
