@@ -128,6 +128,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
+  const readReceipt = reduxState.readReceipts[userId];
 
   // Map over unsent messages, mark createdAt as null (as not sent yet)
   // and mark sent as false (as not sent yet), and failed for styling
@@ -161,8 +162,6 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
-  const { readReceipt } = confirmedConversation;
-
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
@@ -176,7 +175,9 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
       },
       sent: true,
       failed: false,
-      received: readReceipt ? readReceipt.timestamp >= message.timestamp : false
+      received: readReceipt
+        ? readReceipt.readAtTimestamp >= message.timestamp
+        : false
     };
   };
 
