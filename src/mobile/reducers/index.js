@@ -295,10 +295,13 @@ type MostRecentMessage = {|
   otherUserId: number
 |};
 
+/**
+ * Associates a message with the time the message was read by the user the message was sent to.
+ */
 export type ReadReceipt = {|
   messageId: number,
-  timestamp: string
-|} | null;
+  readAtTimestamp: string
+|};
 
 type GiftedChatUser = {|
   _id: string,
@@ -331,9 +334,19 @@ export type ConfirmedMessages = {|
     [Id: number]: Message
   |},
   inOrderIds: number[], // Id's we know are in correct order
-  outOfOrderIds: number[], // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
-  readReceipt: ReadReceipt
+  outOfOrderIds: number[] // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
 |};
+
+//  Stored seperately than conversations because this is updated via socket primarily,
+//  so is much safer to use if seperated outside of redux state controlled by api actions.
+//  Can also easily be converted to a slice reducer because of this abstraction.
+/**
+ * Associates a user with the most recent `ReadReceipt` of that user.
+ * If the conversation has never been read than the ReadReceipt is null.
+ */
+export type ReadReceipts = {
+  [userId: number]: ?ReadReceipt
+};
 
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
@@ -408,6 +421,8 @@ export type ReduxState = {|
   // Located outside of inProgress for convienence,
   // because of how different this works compared to other reducers
   unconfirmedConversations: UnconfirmedConversations,
+
+  readReceipts: ReadReceipts,
 
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
@@ -538,6 +553,7 @@ const defaultState: ReduxState = {
   },
   confirmedConversations: {},
   unconfirmedConversations: {},
+  readReceipts: {},
   profiles: {},
 
   // before loaded
@@ -651,10 +667,9 @@ function updateConfirmedConversation(
   userId: number,
   newMessagesMap: { [messageId: number]: Message } = {},
   messageIds: number[] = [],
-  previousMessageId: ?number, // if this is the first time this is void
-  newReadReceipt: ReadReceipt | void
+  previousMessageId: ?number // if this is the first time this is void
 ): ConfirmedConversations {
-  const { byId = {}, inOrderIds = [], outOfOrderIds = [], readReceipt = null } =
+  const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
     state.confirmedConversations[userId] || {};
 
   let newInOrderIds;
@@ -717,10 +732,6 @@ function updateConfirmedConversation(
     newOutOfOrderIds = [];
   }
 
-  // Update the read receipt if applicable
-  const updatedReadReceipt =
-    newReadReceipt === undefined ? readReceipt : newReadReceipt;
-
   return {
     ...state.confirmedConversations,
     [userId]: {
@@ -729,8 +740,7 @@ function updateConfirmedConversation(
         ...newMessagesMap
       },
       inOrderIds: newInOrderIds,
-      outOfOrderIds: newOutOfOrderIds,
-      readReceipt: updatedReadReceipt
+      outOfOrderIds: newOutOfOrderIds
     }
   };
 }
@@ -743,12 +753,8 @@ function updateMostRecentConversations(
   const confirmedConversations = messageIds.reduce((conversations, id) => {
     const messageId = parseInt(id, 10);
     const { otherUserId } = mostRecentMessages[messageId];
-    const {
-      byId = {},
-      inOrderIds = [],
-      outOfOrderIds = [],
-      readReceipt = null
-    } = conversations[otherUserId] || {};
+    const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+      conversations[otherUserId] || {};
     return {
       ...conversations,
       [otherUserId]: {
@@ -757,13 +763,24 @@ function updateMostRecentConversations(
           [messageId]: mostRecentMessages[messageId]
         },
         inOrderIds,
-        outOfOrderIds,
-        readReceipt
+        outOfOrderIds
       }
     };
   }, state.confirmedConversations);
 
   return confirmedConversations;
+}
+
+// Ugh, again, just a fake slice reducer
+function updateReadReceipts(
+  state: ReduxState,
+  userId: number,
+  readReceipt: ?ReadReceipt
+): ReadReceipts {
+  return {
+    ...state.readReceipts,
+    [userId]: readReceipt
+  };
 }
 
 export default function rootReducer(
@@ -1274,9 +1291,10 @@ export default function rootReducer(
         userId,
         entities.messages,
         orderedIds,
-        previousMessageId,
-        readReceipt
+        previousMessageId
       );
+
+      const readReceipts = updateReadReceipts(state, userId, readReceipt);
 
       return {
         ...state,
@@ -1287,6 +1305,7 @@ export default function rootReducer(
             [userId]: false
           }
         },
+        readReceipts,
         confirmedConversations
       };
     }
@@ -1443,20 +1462,11 @@ export default function rootReducer(
     }
 
     case 'READ_RECEIPT_UPDATE__COMPLETED': {
-      console.log('completed');
       const { readerUserId, readReceipt } = action.payload;
-      if (!state.confirmedConversations[readerUserId]) {
-        return state;
-      }
+      const readReceipts = updateReadReceipts(state, readerUserId, readReceipt);
       return {
         ...state,
-        confirmedConversations: {
-          ...state.confirmedConversations,
-          [readerUserId]: {
-            ...state.confirmedConversations[readerUserId],
-            readReceipt
-          }
-        }
+        readReceipts
       };
     }
 
