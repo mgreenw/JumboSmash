@@ -18,11 +18,12 @@ type Option = {
 type Props = {
   visible: boolean,
   options: Option[],
-  cancel?: Option
+  cancel?: Option,
+  cancelOnTouchOutside?: boolean
 };
 
 export default (props: Props) => {
-  const { visible, cancel, options } = props;
+  const { visible, cancel, options, cancelOnTouchOutside } = props;
 
   const numOptions = options.length;
 
@@ -40,7 +41,7 @@ export default (props: Props) => {
         /* This is a hack so that we can do a shadow over a wrapper */
         backgroundColor: 'transparent'
       }}
-      onTouchOutside={cancel && cancel.onPress}
+      onTouchOutside={cancelOnTouchOutside && cancel && cancel.onPress}
       containerStyle={{ justifyContent: 'flex-end' }}
     >
       <DialogContent style={{}}>

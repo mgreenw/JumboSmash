@@ -23,7 +23,8 @@ const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.pn
 
 type Props = {
   profile: UserProfile,
-  onMinimize: () => void
+  onMinimize: () => void,
+  onBlockReport: () => void
 };
 
 const { width } = Dimensions.get('window');
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
 });
 
 const CardView = (props: Props) => {
-  const { profile, onMinimize } = props;
+  const { profile, onMinimize, onBlockReport } = props;
 
   const photos = profile.photoUuids.map(photoUuid => (
     <View style={styles.photoBlock} key={photoUuid}>
@@ -121,7 +122,7 @@ const CardView = (props: Props) => {
         </View>
         {lastPhoto}
         <View style={styles.profileBlock}>
-          <TertiaryButton title={'Block or Report'} onPress={() => {}} />
+          <TertiaryButton title={'Block or Report'} onPress={onBlockReport} />
         </View>
       </ScrollView>
     </View>

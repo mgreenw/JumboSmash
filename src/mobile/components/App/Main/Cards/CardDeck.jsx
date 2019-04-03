@@ -15,9 +15,14 @@ import Modal from 'react-native-modal';
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import CardView from 'mobile/components/shared/CardView';
+import ActionSheet from 'mobile/components/shared/ActionSheet';
+import { Colors } from 'mobile/styles/colors';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons from './SwipeButtons';
+
+import BlockPopup from '../Matches/BlockPopup';
+import ReportPopup from '../Matches/ReportPopup';
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -54,7 +59,11 @@ type State = {
   allSwiped: boolean,
   noCandidates: boolean,
   showExpandedCard: boolean,
-  expandedCardProfile: ?UserProfile
+  expandedCardProfile: ?UserProfile,
+  expandedCardUserId: ?number,
+  showUserActionSheet: boolean,
+  showBlockPopup: boolean,
+  showReportPopup: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -110,7 +119,11 @@ class cardDeck extends React.Component<Props, State> {
       allSwiped: false,
       noCandidates: false, // wait until we check -- allow a load
       showExpandedCard: false,
-      expandedCardProfile: null
+      expandedCardProfile: null,
+      expandedCardUserId: null,
+      showUserActionSheet: false,
+      showBlockPopup: false,
+      showReportPopup: false
     };
   }
 
@@ -238,6 +251,7 @@ class cardDeck extends React.Component<Props, State> {
     const profile = profileMap[profileId];
     this.setState({
       showExpandedCard: true,
+      expandedCardUserId: profileId,
       expandedCardProfile: profile
     });
   };
@@ -247,6 +261,107 @@ class cardDeck extends React.Component<Props, State> {
       showExpandedCard: false
     });
   };
+
+  _toggleUserActionSheet = (overide?: boolean) => {
+    this.setState(state => {
+      const showUserActionSheet = overide || !state.showUserActionSheet;
+      return {
+        showUserActionSheet
+      };
+    });
+  };
+
+  _renderUserActionSheet() {
+    const { showUserActionSheet } = this.state;
+    return (
+      <ActionSheet
+        visible={showUserActionSheet}
+        options={[
+          {
+            text: 'Block',
+            onPress: () => {
+              this.setState({
+                showUserActionSheet: false,
+                showBlockPopup: true
+              });
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          },
+          {
+            text: 'Report',
+            onPress: () => {
+              this.setState({
+                showUserActionSheet: false,
+                showReportPopup: true
+              });
+            },
+            textStyle: {
+              color: Colors.Grapefruit
+            }
+          }
+        ]}
+        cancel={{
+          text: 'Cancel',
+          onPress: () => {
+            this._toggleUserActionSheet(false);
+          }
+        }}
+      />
+    );
+  }
+
+  _renderBlockPopup() {
+    const {
+      showBlockPopup,
+      expandedCardUserId,
+      expandedCardProfile
+    } = this.state;
+    const displayName = expandedCardProfile
+      ? expandedCardProfile.fields.displayName
+      : '';
+
+    return (
+      <BlockPopup
+        visible={showBlockPopup}
+        onCancel={() => this.setState({ showBlockPopup: false })}
+        onDone={() =>
+          this.setState({ showBlockPopup: false }, () =>
+            this.swiper.swipeBottom()
+          )
+        }
+        displayName={displayName}
+        userId={expandedCardUserId}
+      />
+    );
+  }
+
+  _renderReportPopup() {
+    const {
+      showReportPopup,
+      expandedCardUserId,
+      expandedCardProfile
+    } = this.state;
+    const displayName = expandedCardProfile
+      ? expandedCardProfile.fields.displayName
+      : '';
+
+    return (
+      <ReportPopup
+        visible={showReportPopup}
+        onCancel={() => this.setState({ showReportPopup: false })}
+        onDone={block =>
+          this.setState(
+            { showReportPopup: false },
+            () => block && this.swiper.swipeBottom()
+          )
+        }
+        displayName={displayName}
+        userId={expandedCardUserId}
+      />
+    );
+  }
 
   swiper: Swiper;
 
@@ -341,6 +456,16 @@ class cardDeck extends React.Component<Props, State> {
                         showExpandedCard: false
                       });
                     }}
+                    onBlockReport={() => {
+                      this.setState(
+                        {
+                          showExpandedCard: false
+                        },
+                        () => {
+                          this._toggleUserActionSheet(true);
+                        }
+                      );
+                    }}
                   />
                 )}
               </View>
@@ -354,6 +479,9 @@ class cardDeck extends React.Component<Props, State> {
             onPressLike={this._onButtonLike}
           />
         )}
+        {this._renderUserActionSheet()}
+        {this._renderBlockPopup()}
+        {this._renderReportPopup()}
       </View>
     );
   }
