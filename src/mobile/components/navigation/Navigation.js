@@ -62,44 +62,10 @@ const removeHeader = {
   headerMode: 'none'
 };
 
-const SmashStack = createStackNavigator(
-  {
-    [routes.CardsExpandedCard]: { screen: ExpandedCard },
-    [routes.SmashCards]: { screen: SmashCards }
-  },
-  {
-    initialRouteName: routes.SmashCards,
-    ...removeHeader
-  }
-);
-
-SmashStack.navigationOptions = () => {
-  return {
-    gesturesEnabled: false
-  };
-};
-
-const SocialStack = createStackNavigator(
-  {
-    [routes.CardsExpandedCard]: { screen: ExpandedCard },
-    [routes.SocialCards]: { screen: SocialCards }
-  },
-  {
-    initialRouteName: routes.SocialCards,
-    ...removeHeader
-  }
-);
-
-SocialStack.navigationOptions = () => {
-  return {
-    gesturesEnabled: false
-  };
-};
-
 const CardsSwitch = createMaterialTopTabNavigator(
   {
-    [routes.SmashCards]: SmashStack,
-    [routes.SocialCards]: SocialStack
+    [routes.SmashCards]: { screen: SmashCards },
+    [routes.SocialCards]: { screen: SocialCards }
   },
   {
     swipeEnabled: false,
