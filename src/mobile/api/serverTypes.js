@@ -1,6 +1,6 @@
 // @flow
 
-import type { Scene } from 'mobile/reducers/';
+import type { Scene, ReadReceipt } from 'mobile/reducers/';
 
 // Internally, we want to represent a lot of nested data pretty differently, using normalizer.
 // Here we keep track of how the server represents the data we pass back so our parsers operate
@@ -36,6 +36,11 @@ export type ServerMessage = {|
   content: string,
   timestamp: string,
   sender: Sender
+|};
+
+export type ServerConversation = {|
+  messages: ServerMessage[],
+  readReceipt: ReadReceipt
 |};
 
 export type ServerMatch = ServerBaseUser & {

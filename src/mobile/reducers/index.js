@@ -79,6 +79,10 @@ import type {
   DismissPopup_Action
 } from 'mobile/actions/popup';
 import type {
+  ReadReceiptUpdateInitiated_Action,
+  ReadReceiptUpdateCompleted_Action
+} from 'mobile/actions/app/notifications/readReceiptUpdate';
+import type {
   NewMessageInitiated_Action,
   NewMessageCompleted_Action
 } from 'mobile/actions/app/notifications/newMessage';
@@ -291,6 +295,11 @@ type MostRecentMessage = {|
   otherUserId: number
 |};
 
+export type ReadReceipt = {|
+  messageId: number,
+  timestamp: string
+|} | null;
+
 type GiftedChatUser = {|
   _id: string,
   name: string
@@ -321,7 +330,8 @@ export type ConfirmedMessages = {|
     [Id: number]: Message
   |},
   inOrderIds: number[], // Id's we know are in correct order
-  outOfOrderIds: number[] // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
+  outOfOrderIds: number[], // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
+  readReceipt: ReadReceipt
 |};
 
 // Keyed by client generated ID. Fine, because client only
@@ -458,6 +468,8 @@ export type Action =
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
+  | ReadReceiptUpdateInitiated_Action
+  | ReadReceiptUpdateCompleted_Action
   | CancelFailedMessage_Action
   | BlockUserInitiated_Action
   | BlockUserCompleted_Action
@@ -638,9 +650,10 @@ function updateConfirmedConversation(
   userId: number,
   newMessagesMap: { [messageId: number]: Message } = {},
   messageIds: number[] = [],
-  previousMessageId: ?number // if this is the first time this is void
+  previousMessageId: ?number, // if this is the first time this is void
+  newReadReceipt: ReadReceipt | void
 ): ConfirmedConversations {
-  const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+  const { byId = {}, inOrderIds = [], outOfOrderIds = [], readReceipt = null } =
     state.confirmedConversations[userId] || {};
 
   let newInOrderIds;
@@ -703,6 +716,10 @@ function updateConfirmedConversation(
     newOutOfOrderIds = [];
   }
 
+  // Update the read receipt if applicable
+  const updatedReadReceipt =
+    newReadReceipt === undefined ? readReceipt : newReadReceipt;
+
   return {
     ...state.confirmedConversations,
     [userId]: {
@@ -711,7 +728,8 @@ function updateConfirmedConversation(
         ...newMessagesMap
       },
       inOrderIds: newInOrderIds,
-      outOfOrderIds: newOutOfOrderIds
+      outOfOrderIds: newOutOfOrderIds,
+      readReceipt: updatedReadReceipt
     }
   };
 }
@@ -724,8 +742,12 @@ function updateMostRecentConversations(
   const confirmedConversations = messageIds.reduce((conversations, id) => {
     const messageId = parseInt(id, 10);
     const { otherUserId } = mostRecentMessages[messageId];
-    const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
-      conversations[otherUserId] || {};
+    const {
+      byId = {},
+      inOrderIds = [],
+      outOfOrderIds = [],
+      readReceipt = null
+    } = conversations[otherUserId] || {};
     return {
       ...conversations,
       [otherUserId]: {
@@ -734,7 +756,8 @@ function updateMostRecentConversations(
           [messageId]: mostRecentMessages[messageId]
         },
         inOrderIds,
-        outOfOrderIds
+        outOfOrderIds,
+        readReceipt
       }
     };
   }, state.confirmedConversations);
@@ -1234,7 +1257,12 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const { userId, messages, previousMessageId } = action.payload;
+      const {
+        userId,
+        messages,
+        previousMessageId,
+        readReceipt
+      } = action.payload;
       //  TODO: create helper function to type return value
       const { result: orderedIds, entities } = normalize(messages, [
         ConfirmedMessageSchema
@@ -1245,7 +1273,8 @@ export default function rootReducer(
         userId,
         entities.messages,
         orderedIds,
-        previousMessageId
+        previousMessageId,
+        readReceipt
       );
 
       return {
@@ -1406,6 +1435,28 @@ export default function rootReducer(
 
     case 'DISMISS_POPUP': {
       return { ...state, popupErrorCode: null };
+    }
+
+    case 'READ_RECEIPT_UPDATE__INITIATED': {
+      return state;
+    }
+
+    case 'READ_RECEIPT_UPDATE__COMPLETED': {
+      console.log('completed');
+      const { readerUserId, readReceipt } = action.payload;
+      if (!state.confirmedConversations[readerUserId]) {
+        return state;
+      }
+      return {
+        ...state,
+        confirmedConversations: {
+          ...state.confirmedConversations,
+          [readerUserId]: {
+            ...state.confirmedConversations[readerUserId],
+            readReceipt
+          }
+        }
+      };
     }
 
     case 'NEW_MESSAGE__INITIATED': {

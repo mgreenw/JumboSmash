@@ -19,7 +19,7 @@ import type {
 } from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
-import type { NavigationScreenProp } from 'react-navigation';
+import { type NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -161,6 +161,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
+  const { readReceipt } = confirmedConversation;
+
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
@@ -173,7 +175,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         name: message.sender
       },
       sent: true,
-      failed: false
+      failed: false,
+      received: readReceipt ? readReceipt.timestamp >= message.timestamp : false
     };
   };
 
@@ -191,6 +194,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     ...outOfOrderMessages,
     ...inOrderMessages
   ];
+
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
@@ -220,6 +224,18 @@ class MessagingScreen extends React.Component<Props, State> {
     if (match === null || match === undefined) {
       throw new Error('Match null or undefined in Messaging Screen');
     }
+
+    // Unfortunately, the declarative version of this api was not getting called
+    const didFocusSubscription = navigation.addListener(
+      'didFocus',
+      this._didFocus
+    );
+
+    const didBlurSubscription = navigation.addListener(
+      'didBlur',
+      this._didBlur
+    );
+
     this.state = {
       match,
       nextTyping: null,
@@ -230,7 +246,9 @@ class MessagingScreen extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showUnmatchPopup: false
+      showUnmatchPopup: false,
+      didFocusSubscription,
+      didBlurSubscription
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -262,6 +280,9 @@ class MessagingScreen extends React.Component<Props, State> {
 
   // unsubscribe on unmount so we don't attempt to set the state of this component
   componentWillUnmount() {
+    const { didFocusSubscription, didBlurSubscription } = this.state;
+    didFocusSubscription.remove();
+    didBlurSubscription.remove();
     Socket.unsubscribeFromTyping();
   }
 
@@ -355,6 +376,7 @@ class MessagingScreen extends React.Component<Props, State> {
       otherUserName: profile.fields.displayName,
       loadingMessages: getConversation_inProgress
     };
+
     return (
       <GiftedChat
         /* If we want to render our genesis text, we need to supply a dummy
