@@ -1,7 +1,7 @@
 // @flow
 
-import type { Dispatch, GetState, ReadReceipt } from 'mobile/reducers';
-import type { ServerMessage } from 'mobile/api/serverTypes';
+import type { Dispatch, GetState } from 'mobile/reducers';
+import type { ServerMessage, ServerReadReceipt } from 'mobile/api/serverTypes';
 import getConversation from 'mobile/api/conversations/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
@@ -19,7 +19,7 @@ export type GetConversationCompleted_Action = {
     userId: number,
     messages: ServerMessage[],
     previousMessageId: ?number,
-    readReceipt: ReadReceipt
+    readReceipt: ServerReadReceipt
   },
   meta: {}
 };
@@ -36,7 +36,7 @@ function complete(
   userId: number,
   messages: ServerMessage[],
   previousMessageId: ?number,
-  readReceipt: ReadReceipt
+  readReceipt: ServerReadReceipt
 ): GetConversationCompleted_Action {
   return {
     type: 'GET_CONVERSATION__COMPLETED',
