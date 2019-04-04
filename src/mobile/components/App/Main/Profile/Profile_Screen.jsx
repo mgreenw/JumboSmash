@@ -128,7 +128,6 @@ class ProfileScreen extends React.Component<Props, State> {
     const {
       photoUuid,
       displayName,
-      navigation,
       profile,
       saveProfileInProgress,
       saveSettingsInProgress
