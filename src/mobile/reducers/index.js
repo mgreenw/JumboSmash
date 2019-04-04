@@ -408,6 +408,7 @@ export type ReduxState = {|
     sendFeedback: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
+    readMessage: { [userId: number]: { [messageId: number]: boolean } },
 
     // map of userID's to conversation fetches in progress
     getConversation: { [userId: number]: boolean }
@@ -433,6 +434,9 @@ export type ReduxState = {|
   // Located outside of inProgress for convienence,
   // because of how different this works compared to other reducers
   unconfirmedConversations: UnconfirmedConversations,
+
+  // map of userIds to read messages
+  readMessageIds: { [userId: number]: number },
 
   readReceipts: ReadReceipts,
 
@@ -547,6 +551,7 @@ const defaultState: ReduxState = {
     getMatches: false,
     getConversation: {},
     sendMessage: {},
+    readMessage: {},
     blockUser: false,
     reportUser: false,
     unmatch: false,
@@ -573,6 +578,7 @@ const defaultState: ReduxState = {
   },
   confirmedConversations: {},
   unconfirmedConversations: {},
+  readMessageIds: {},
   readReceipts: {},
   profiles: {},
 
@@ -1826,13 +1832,56 @@ export default function rootReducer(
     }
 
     case 'READ_MESSAGE__INITIATED': {
-      return state;
+      const { senderUserId, messageId } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          readMessage: {
+            ...state.inProgress.readMessage,
+            [senderUserId]: {
+              ...state.inProgress.readMessage[senderUserId],
+              [messageId]: true
+            }
+          }
+        }
+      };
     }
     case 'READ_MESSAGE__COMPLETED': {
-      return state;
+      const { senderUserId, messageId } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          readMessage: {
+            ...state.inProgress.readMessage,
+            [senderUserId]: {
+              ...state.inProgress.readMessage[senderUserId],
+              [messageId]: false
+            }
+          }
+        },
+        readMessageIds: {
+          ...state.readMessageIds,
+          [senderUserId]: messageId
+        }
+      };
     }
     case 'READ_MESSAGE__FAILED': {
-      return state;
+      const { senderUserId, messageId } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          readMessage: {
+            ...state.inProgress.readMessage,
+            [senderUserId]: {
+              ...state.inProgress.readMessage[senderUserId],
+              [messageId]: false
+            }
+          }
+        }
+      };
     }
 
     default: {

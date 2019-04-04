@@ -64,7 +64,7 @@ function fail(
   };
 }
 
-// TODO: catch errors, e.g. the common network timeout.
+// TODO: if current message is already being sent then don't send
 export default (
   receiverUserId: number,
   giftedChatMessage: GiftedChatMessage
