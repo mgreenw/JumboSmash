@@ -103,6 +103,14 @@ export const REPORT_USER__ROUTE = RELATIONSHIPS_ROUTE + REPORT;
 export const GET_CONVERSATION = CONVERSATIONS_ROUTE;
 export const SEND_MESSAGE__ROUTE = CONVERSATIONS_ROUTE;
 
+/**
+ * NOTE: this should be used for ANY message editting. For now, we only allow reading.
+ */
+export const READ_MESSAGE__ROUTE__GENERATOR = (
+  matchUserId: number,
+  messageId: number
+) => `${CONVERSATIONS_ROUTE}${matchUserId}/messages/${messageId}`;
+
 // Send Feedback
 const FEEDBACK = 'feedback/';
 export const SEND_FEEDBACK__ROUTE = META_ROUTE + FEEDBACK;
