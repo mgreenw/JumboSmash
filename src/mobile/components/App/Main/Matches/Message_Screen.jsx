@@ -19,7 +19,7 @@ import type {
 } from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
-import type { NavigationScreenProp } from 'react-navigation';
+import { type NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -128,6 +128,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
+  const readReceipt = reduxState.readReceipts[userId];
 
   // Map over unsent messages, mark createdAt as null (as not sent yet)
   // and mark sent as false (as not sent yet), and failed for styling
@@ -173,7 +174,10 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         name: message.sender
       },
       sent: true,
-      failed: false
+      failed: false,
+      received: readReceipt
+        ? readReceipt.readAtTimestamp >= message.timestamp
+        : false
     };
   };
 
@@ -191,6 +195,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     ...outOfOrderMessages,
     ...inOrderMessages
   ];
+
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
@@ -220,6 +225,7 @@ class MessagingScreen extends React.Component<Props, State> {
     if (match === null || match === undefined) {
       throw new Error('Match null or undefined in Messaging Screen');
     }
+
     this.state = {
       match,
       nextTyping: null,
@@ -355,6 +361,7 @@ class MessagingScreen extends React.Component<Props, State> {
       otherUserName: profile.fields.displayName,
       loadingMessages: getConversation_inProgress
     };
+
     return (
       <GiftedChat
         /* If we want to render our genesis text, we need to supply a dummy
