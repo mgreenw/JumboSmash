@@ -18,7 +18,7 @@ const {
  * @api {patch} /api/conversations/:matchUserId/messages/:messageId
  *
  */
-async function readMessage(readerUserId: number, matchUserId: number, messageId: number) {
+const readMessage = async (readerUserId: number, matchUserId: number, messageId: number) => {
   try {
     // Try inserting the read receipt. There is a database trigger that will catch
     // any bad case - this allows us to save a lot of queries/checks. For the most
@@ -100,11 +100,23 @@ async function readMessage(readerUserId: number, matchUserId: number, messageId:
         // update the read receipt if needed. This is fire and forget: we don't
         // care if this fails
         if (previousMessageIdFromMatch !== null) {
+          // Call read message on the previous message id
           const readPreviousMessageResult = await readMessage(
             readerUserId,
             matchUserId,
             previousMessageIdFromMatch,
           );
+
+          // Ensure the response is reasonable. If it is not one of the two expected responses
+          // throw a SERVER_ERROR. This is a serious issue and we'll want to know.
+          const possibleStatuses = [
+            codes.READ_MESSAGE__SUCCESS.status,
+            codes.READ_MESSAGE__FAILURE.status,
+          ];
+          if (!possibleStatuses.includes(readPreviousMessageResult.body.status)) {
+            throw new Error(`Unexected response from reading a message before a system message: ${JSON.stringify(readPreviousMessageResult)}`);
+          }
+
           logger.debug(`Read message ${previousMessageIdFromMatch} before system message ${messageId}`);
         }
 
