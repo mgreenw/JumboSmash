@@ -73,7 +73,7 @@ Message:
 ${message}`;
 
   // Post the message and return
-  slack.postReport(reportingUserId, reportedUserId, revisedMessage);
+  slack.postReport(reportingUserId, reportedUserId, revisedMessage, block);
 
   if (block) {
     await db.query(`
