@@ -1,9 +1,11 @@
+// @flow
+
 import type {
   ReadMessageInitiated_Action,
   ReadMessageCompleted_Action,
   ReadMessageFailed_Action
 } from 'mobile/actions/app/readMessage';
-import { ReduxState, ReadMessages, InProgress } from './index';
+import type { ReduxState, ReadMessages, InProgress } from './index';
 
 function updateReadMessages(
   state: ReduxState,
@@ -20,15 +22,15 @@ function updateInProgress(
   state: ReduxState,
   senderUserId: number,
   messageId: ?number,
-  inProgress: boolean
+  isInProgress: boolean
 ): InProgress {
   return {
-    ...inProgress,
+    ...state.inProgress,
     readMessage: {
       ...state.inProgress.readMessage,
       [senderUserId]: {
         ...state.inProgress.readMessage[senderUserId],
-        [messageId]: inProgress
+        [messageId]: isInProgress
       }
     }
   };
@@ -67,10 +69,7 @@ function complete(
  * This is a fire and forget function, so if it fails we just update `inProgress`.
  * By NOT changing readMessages, this message can still trigger a new readMessage call.
  */
-function fail(
-  state: ReduxState,
-  action: ReadMessageInitiated_Action
-): ReduxState {
+function fail(state: ReduxState, action: ReadMessageFailed_Action): ReduxState {
   const { senderUserId, messageId } = action.payload;
   const inProgress = updateInProgress(state, senderUserId, messageId, true);
   return {
