@@ -4,8 +4,9 @@ import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
 import newMessageAction from 'mobile/actions/app/notifications/newMessage';
 import newMatchAction from 'mobile/actions/app/notifications/newMatch';
+import readReceiptUpdateAction from 'mobile/actions/app/notifications/readReceiptUpdate';
 import store from 'mobile/store';
-import type { UserProfile, Message, Scene } from 'mobile/reducers';
+import type { UserProfile, Message, Scene, ReadReceipt } from 'mobile/reducers';
 import { SERVER_ROUTE } from 'mobile/api/routes';
 import type { ServerMatch } from 'mobile/api/serverTypes';
 
@@ -86,11 +87,16 @@ function connect(token: string) {
 
   _socket.on(
     'READ_RECEIPT_UPDATE',
-    (data: {
-      readerUserId: number,
-      readReceipt: { messageId: number, timestamp: string }
-    }) => {
-      console.log('READ_RECEIPT_UPDATE', data);
+    (data: { readerUserId: number, readReceipt: ?ReadReceipt }) => {
+      const { readerUserId, readReceipt } = data;
+
+      const readReceiptUpdateThunk = readReceiptUpdateAction(
+        readerUserId,
+        readReceipt
+      );
+      // TODO: See above
+      // $FlowFixMe
+      store.dispatch(readReceiptUpdateThunk);
     }
   );
   /* eslint-enable */

@@ -79,6 +79,10 @@ import type {
   DismissPopup_Action
 } from 'mobile/actions/popup';
 import type {
+  ReadReceiptUpdateInitiated_Action,
+  ReadReceiptUpdateCompleted_Action
+} from 'mobile/actions/app/notifications/readReceiptUpdate';
+import type {
   NewMessageInitiated_Action,
   NewMessageCompleted_Action
 } from 'mobile/actions/app/notifications/newMessage';
@@ -291,6 +295,14 @@ type MostRecentMessage = {|
   otherUserId: number
 |};
 
+/**
+ * Associates a message with the time the message was read by the user the message was sent to.
+ */
+export type ReadReceipt = {|
+  messageId: number,
+  readAtTimestamp: string
+|};
+
 type GiftedChatUser = {|
   _id: string,
   name: string
@@ -303,7 +315,8 @@ export type GiftedChatMessage = {|
   user?: GiftedChatUser,
   system?: boolean,
   sent: boolean,
-  failed: boolean
+  failed: boolean,
+  received?: boolean
 |};
 
 // TODO: enable if needed. This is a conceptual type.
@@ -323,6 +336,17 @@ export type ConfirmedMessages = {|
   inOrderIds: number[], // Id's we know are in correct order
   outOfOrderIds: number[] // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
 |};
+
+//  Stored seperately than conversations because this is updated via socket primarily,
+//  so is much safer to use if seperated outside of redux state controlled by api actions.
+//  Can also easily be converted to a slice reducer because of this abstraction.
+/**
+ * Associates a user with the most recent `ReadReceipt` of that user.
+ * If the conversation has never been read than the ReadReceipt is null.
+ */
+export type ReadReceipts = {
+  [userId: number]: ?ReadReceipt
+};
 
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
@@ -398,6 +422,8 @@ export type ReduxState = {|
   // because of how different this works compared to other reducers
   unconfirmedConversations: UnconfirmedConversations,
 
+  readReceipts: ReadReceipts,
+
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
 
@@ -458,6 +484,8 @@ export type Action =
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
+  | ReadReceiptUpdateInitiated_Action
+  | ReadReceiptUpdateCompleted_Action
   | CancelFailedMessage_Action
   | BlockUserInitiated_Action
   | BlockUserCompleted_Action
@@ -525,6 +553,7 @@ const defaultState: ReduxState = {
   },
   confirmedConversations: {},
   unconfirmedConversations: {},
+  readReceipts: {},
   profiles: {},
 
   // before loaded
@@ -740,6 +769,18 @@ function updateMostRecentConversations(
   }, state.confirmedConversations);
 
   return confirmedConversations;
+}
+
+// Ugh, again, just a fake slice reducer
+function updateReadReceipts(
+  state: ReduxState,
+  userId: number,
+  readReceipt: ?ReadReceipt
+): ReadReceipts {
+  return {
+    ...state.readReceipts,
+    [userId]: readReceipt
+  };
 }
 
 export default function rootReducer(
@@ -1234,7 +1275,12 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const { userId, messages, previousMessageId } = action.payload;
+      const {
+        userId,
+        messages,
+        previousMessageId,
+        readReceipt
+      } = action.payload;
       //  TODO: create helper function to type return value
       const { result: orderedIds, entities } = normalize(messages, [
         ConfirmedMessageSchema
@@ -1248,6 +1294,8 @@ export default function rootReducer(
         previousMessageId
       );
 
+      const readReceipts = updateReadReceipts(state, userId, readReceipt);
+
       return {
         ...state,
         inProgress: {
@@ -1257,6 +1305,7 @@ export default function rootReducer(
             [userId]: false
           }
         },
+        readReceipts,
         confirmedConversations
       };
     }
@@ -1406,6 +1455,19 @@ export default function rootReducer(
 
     case 'DISMISS_POPUP': {
       return { ...state, popupErrorCode: null };
+    }
+
+    case 'READ_RECEIPT_UPDATE__INITIATED': {
+      return state;
+    }
+
+    case 'READ_RECEIPT_UPDATE__COMPLETED': {
+      const { readerUserId, readReceipt } = action.payload;
+      const readReceipts = updateReadReceipts(state, readerUserId, readReceipt);
+      return {
+        ...state,
+        readReceipts
+      };
     }
 
     case 'NEW_MESSAGE__INITIATED': {

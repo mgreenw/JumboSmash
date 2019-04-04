@@ -1,6 +1,6 @@
 // @flow
 
-import type { ServerMessage } from '../serverTypes';
+import type { ServerConversation } from '../serverTypes';
 import apiRequest from '../utils/apiRequest';
 import { GET_CONVERSATION } from '../routes';
 
@@ -18,7 +18,7 @@ function getConversationUrl(userId: number, mostRecentMessageId?: number) {
 export default function getConversation(
   userId: number,
   mostRecentMessageId?: number
-): Promise<{ messages: ServerMessage[] }> {
+): Promise<ServerConversation> {
   const url = getConversationUrl(userId, mostRecentMessageId);
   return apiRequest('GET', url).then(response => {
     switch (response.status) {
