@@ -5,7 +5,7 @@ import type {
   ReadMessageCompleted_Action,
   ReadMessageFailed_Action
 } from 'mobile/actions/app/readMessage';
-import type { ReduxState, ReadMessages, InProgress } from './index';
+import type { ReduxState, ReadMessages, InProgress } from '../index';
 
 function updateReadMessages(
   state: ReduxState,

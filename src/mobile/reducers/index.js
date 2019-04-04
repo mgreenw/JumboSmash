@@ -122,10 +122,10 @@ import type {
   ServerCandidate,
   ServerReadReceipt
 } from 'mobile/api/serverTypes';
-import type { ReadMessageAction } from './readMessage';
+import type { ReadMessageAction } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
-import ReadMessageReducer from './readMessage';
+import ReadMessageReducer from './conversations/readMessage';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
