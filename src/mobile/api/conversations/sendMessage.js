@@ -2,9 +2,9 @@
 
 import type { Message } from 'mobile/reducers';
 import apiRequest from '../utils/apiRequest';
-import { READ_MESSAGE__ROUTE } from '../routes';
+import { SEND_MESSAGE__ROUTE } from '../routes';
 
-const READ_MESSAGE__SUCCESS = 'READ_MESSAGE__SUCCESS';
+const SEND_MESSAGE__SUCCESS = 'SEND_MESSAGE__SUCCESS';
 
 export default function sendMessage(
   userId: number,
