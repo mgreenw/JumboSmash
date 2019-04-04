@@ -7,9 +7,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet,
-  ScrollView,
-  TouchableHighlight
+  StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import type {
@@ -33,8 +31,7 @@ import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
-import Modal from 'react-native-modal';
-import CardView from 'mobile/components/shared/CardView';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -693,40 +690,26 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
-        <Modal
+        <ModalProfileView
           isVisible={showExpandedCard}
-          swipeDirection={'down'}
           onSwipeComplete={this._hideExpandedCard}
-          style={{ padding: 0, margin: 0 }}
-          propagateSwipe
-        >
-          <ScrollView>
-            <TouchableHighlight>
-              <View>
-                {profile && (
-                  <CardView
-                    profile={profile}
-                    onMinimize={() => {
-                      this.setState({
-                        showExpandedCard: false
-                      });
-                    }}
-                    onBlockReport={() => {
-                      this.setState(
-                        {
-                          showExpandedCard: false
-                        },
-                        () => {
-                          this._toggleUserActionSheet(true);
-                        }
-                      );
-                    }}
-                  />
-                )}
-              </View>
-            </TouchableHighlight>
-          </ScrollView>
-        </Modal>
+          onBlockReport={() => {
+            this.setState(
+              {
+                showExpandedCard: false
+              },
+              () => {
+                this._toggleUserActionSheet(true);
+              }
+            );
+          }}
+          onMinimize={() => {
+            this.setState({
+              showExpandedCard: false
+            });
+          }}
+          profile={profile}
+        />
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}

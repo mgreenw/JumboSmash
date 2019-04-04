@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Platform, ScrollView, TouchableHighlight } from 'react-native';
+import { View, Platform } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -10,13 +10,12 @@ import type {
 } from 'mobile/reducers/index';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-deck-swiper';
-import Modal from 'react-native-modal';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
-import CardView from 'mobile/components/shared/CardView';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons from './SwipeButtons';
@@ -438,40 +437,28 @@ class cardDeck extends React.Component<Props, State> {
             />
           </View>
         )}
-        <Modal
-          isVisible={showExpandedCard}
-          swipeDirection={'down'}
-          onSwipeComplete={this._hideExpandedCard}
-          style={{ padding: 0, margin: 0 }}
-          propagateSwipe
-        >
-          <ScrollView>
-            <TouchableHighlight>
-              <View>
-                {expandedCardProfile && (
-                  <CardView
-                    profile={expandedCardProfile}
-                    onMinimize={() => {
-                      this.setState({
-                        showExpandedCard: false
-                      });
-                    }}
-                    onBlockReport={() => {
-                      this.setState(
-                        {
-                          showExpandedCard: false
-                        },
-                        () => {
-                          this._toggleUserActionSheet(true);
-                        }
-                      );
-                    }}
-                  />
-                )}
-              </View>
-            </TouchableHighlight>
-          </ScrollView>
-        </Modal>
+        {expandedCardProfile && (
+          <ModalProfileView
+            isVisible={showExpandedCard}
+            onSwipeComplete={this._hideExpandedCard}
+            onBlockReport={() => {
+              this.setState(
+                {
+                  showExpandedCard: false
+                },
+                () => {
+                  this._toggleUserActionSheet(true);
+                }
+              );
+            }}
+            onMinimize={() => {
+              this.setState({
+                showExpandedCard: false
+              });
+            }}
+            profile={expandedCardProfile}
+          />
+        )}
         {deckIndex !== 0 && (
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}

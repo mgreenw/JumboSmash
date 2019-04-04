@@ -6,9 +6,7 @@ import {
   Text,
   View,
   Image,
-  ActivityIndicator,
-  TouchableHighlight,
-  ScrollView
+  ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
 import Avatar from 'mobile/components/shared/Avatar';
@@ -20,8 +18,7 @@ import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
-import Modal from 'react-native-modal';
-import CardView from 'mobile/components/shared/CardView';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 
 const waves1 = require('../../../../assets/waves/waves1/waves.png');
 
@@ -226,31 +223,17 @@ class ProfileScreen extends React.Component<Props, State> {
               icon="life-ring"
               loading={false}
             />
-            <Modal
+            <ModalProfileView
               isVisible={showExpandedCard}
-              swipeDirection={'down'}
               onSwipeComplete={this._hideExpandedCard}
-              style={{ padding: 0, margin: 0 }}
-              propagateSwipe
-            >
-              <ScrollView>
-                <TouchableHighlight>
-                  <View>
-                    {profile && (
-                      <CardView
-                        profile={profile}
-                        onMinimize={() => {
-                          this.setState({
-                            showExpandedCard: false
-                          });
-                        }}
-                        onBlockReport={null}
-                      />
-                    )}
-                  </View>
-                </TouchableHighlight>
-              </ScrollView>
-            </Modal>
+              onBlockReport={null}
+              onMinimize={() => {
+                this.setState({
+                  showExpandedCard: false
+                });
+              }}
+              profile={profile}
+            />
           </View>
         </View>
       </View>
