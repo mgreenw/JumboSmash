@@ -32,7 +32,7 @@ export default async function requestNotificationToken(): Promise<?string> {
   const token = await Notifications.getExpoPushTokenAsync();
 
   Sentry.captureMessage(
-    `Push Notification Token Retrieved: ${token}` ? token : 'NO TOKEN FOUND',
+    `Push Notification Token Retrieved: ${token || 'NO TOKEN FOUND'}`,
     {
       level: 'info'
     }
