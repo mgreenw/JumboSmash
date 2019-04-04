@@ -26,11 +26,12 @@ exports.postReport = (
   reportingUserId: number,
   reportedUserId: number,
   message: string,
+  block: boolean,
 ) => {
   // TODO: Send an email as a backup in case slack fails to send the report.
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     reporting.send(`
-A new report was filed.
+A new report was filed. ${block ? 'The reporting user has requested to block the reported user.' : ''}
 
 Reporting User: *${reportingUserId}*
 Reported User: *${reportedUserId}*
