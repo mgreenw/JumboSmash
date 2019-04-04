@@ -1,6 +1,7 @@
 // @flow
 import { Permissions, Notifications } from 'expo';
 import openAppSettings from 'mobile/utils/OpenAppSettings';
+import Sentry from 'sentry-expo';
 
 export default async function requestNotificationToken(): Promise<?string> {
   // https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -20,12 +21,22 @@ export default async function requestNotificationToken(): Promise<?string> {
 
   // Stop here if the user did not grant permissions
   if (finalStatus !== 'granted') {
+    Sentry.captureMessage('Push Notifications Not Enabled', {
+      level: 'warning'
+    });
     openAppSettings();
     return null;
   }
 
   // Get the token that uniquely identifies this device
   const token = await Notifications.getExpoPushTokenAsync();
+
+  Sentry.captureMessage(
+    `Push Notification Token Retrieved: ${token}` ? token : 'NO TOKEN FOUND',
+    {
+      level: 'info'
+    }
+  );
 
   return token;
 }
