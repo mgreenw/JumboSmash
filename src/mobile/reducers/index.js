@@ -75,6 +75,11 @@ import type {
   SendMessageFailed_Action
 } from 'mobile/actions/app/sendMessage';
 import type {
+  ReadMessageInitiated_Action,
+  ReadMessageCompleted_Action,
+  ReadMessageFailed_Action
+} from 'mobile/actions/app/readMessage';
+import type {
   SummonPopup_Action,
   DismissPopup_Action
 } from 'mobile/actions/popup';
@@ -485,6 +490,9 @@ export type Action =
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
   | SendMessageFailed_Action
+  | ReadMessageInitiated_Action
+  | ReadMessageCompleted_Action
+  | ReadMessageFailed_Action
   | SummonPopup_Action
   | DismissPopup_Action
   | NewMessageInitiated_Action
@@ -1815,6 +1823,16 @@ export default function rootReducer(
     // react-native-offline at a flat level in our redux state.
     case CONNECTION_CHANGE: {
       return handleNetworkChange(state, action.payload);
+    }
+
+    case 'READ_MESSAGE__INITIATED': {
+      return state;
+    }
+    case 'READ_MESSAGE__COMPLETED': {
+      return state;
+    }
+    case 'READ_MESSAGE__FAILED': {
+      return state;
     }
 
     default: {
