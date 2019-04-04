@@ -32,6 +32,10 @@ class Socket {
     throw new Error('Oops! socket is not yet initialized.');
   }
 
+  get namespace() : string {
+    return namespace;
+  }
+
   init(server: Server) {
     const _io = initSocket(server, {
       path: namespace,
