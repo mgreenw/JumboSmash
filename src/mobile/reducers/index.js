@@ -106,6 +106,11 @@ import type {
   UnmatchCompleted_Action,
   UnmatchFailed_Action
 } from 'mobile/actions/app/unmatch';
+import type {
+  SendFeedbackInitiated_Action,
+  SendFeedbackCompleted_Action,
+  SendFeedbackFailed_Action
+} from 'mobile/actions/app/meta/sendFeedback';
 
 import { normalize, schema } from 'normalizr';
 
@@ -395,6 +400,7 @@ export type ReduxState = {|
     blockUser: boolean,
     reportUser: boolean,
     unmatch: boolean,
+    sendFeedback: boolean,
 
     sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
 
@@ -409,7 +415,8 @@ export type ReduxState = {|
     login: ?Login_Response,
     createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
     blockUserSuccess: ?boolean,
-    reportUserSuccess: ?boolean
+    reportUserSuccess: ?boolean,
+    sendFeedbackSuccess: ?boolean
   |},
 
   sceneCandidateIds: SceneCandidateIds,
@@ -496,7 +503,10 @@ export type Action =
   | UnmatchInitiated_Action
   | UnmatchCompleted_Action
   | UnmatchFailed_Action
-  | NetworkChange_Action;
+  | NetworkChange_Action
+  | SendFeedbackInitiated_Action
+  | SendFeedbackCompleted_Action
+  | SendFeedbackFailed_Action;
 
 export type GetState = () => ReduxState;
 
@@ -531,14 +541,16 @@ const defaultState: ReduxState = {
     sendMessage: {},
     blockUser: false,
     reportUser: false,
-    unmatch: false
+    unmatch: false,
+    sendFeedback: false
   },
   response: {
     sendVerificationEmail: null,
     login: null,
     createUserSuccess: null,
     blockUserSuccess: null,
-    reportUserSuccess: null
+    reportUserSuccess: null,
+    sendFeedbackSuccess: null
   },
   onboardingCompleted: false,
   sceneCandidateIds: {
@@ -1753,6 +1765,48 @@ export default function rootReducer(
         response: {
           ...state.response,
           blockUserSuccess: false
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: true
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: null
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: false
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: true
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: false
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: false
         }
       };
     }
