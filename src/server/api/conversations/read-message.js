@@ -43,6 +43,17 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
     // We should never hit this case because we check the user's are matched in the handler
     // but it is still a good sanity check.
     if (result.rows.length === 0) {
+      // This fixme is a result of 1) the fact that we are about 15 versions behind on Flow and
+      // 2) the shit way I designed the typing around the result of the controllers.
+      // I know how to fix it but that is definitely no feasibile in the next 3 weeks.
+      // This problem is because the system message read previous sent message by match
+      // functionality actually recurses once and calls the readMessage function and deals with
+      // the response. Unfortunately, the idea of "no data" means that data can be undefined
+      // in the response. Even if I check below if data exists, it still complains because
+      // of the way that older versions of flow don't have exact objects by default.
+      //
+      // TL;DR It is not worth fixing this.
+      // $FlowFixMe
       return status(codes.READ_MESSAGE__NOT_MATCHED).noData();
     }
 
