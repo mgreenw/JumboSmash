@@ -70,11 +70,6 @@ import type {
   GetConversationCompleted_Action
 } from 'mobile/actions/app/getConversation';
 import type {
-  SendMessageInitiated_Action,
-  SendMessageCompleted_Action,
-  SendMessageFailed_Action
-} from 'mobile/actions/app/sendMessage';
-import type {
   SummonPopup_Action,
   DismissPopup_Action
 } from 'mobile/actions/popup';
@@ -123,9 +118,11 @@ import type {
   ServerReadReceipt
 } from 'mobile/api/serverTypes';
 import type { ReadMessage_Action } from './conversations/readMessage';
+import type { SendMessage_Action } from './conversations/sendMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
+import SendMessageReducer from './conversations/sendMessage';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -494,9 +491,7 @@ export type Action =
   | JudgeSceneCandidateCompleted_Action
   | GetConversationInitiated_Action
   | GetConversationCompleted_Action
-  | SendMessageInitiated_Action
-  | SendMessageCompleted_Action
-  | SendMessageFailed_Action
+  | SendMessage_Action
   | ReadMessage_Action
   | SummonPopup_Action
   | DismissPopup_Action
@@ -644,7 +639,7 @@ function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
   return { unmessagedMatchIds, messagedMatchIds };
 }
 
-function updateMostRecentMessage(
+export function updateMostRecentMessage(
   state: ReduxState,
   matchId: number,
   messageId: number
@@ -672,10 +667,14 @@ function updateMostRecentMessage(
     mostRecentMessage: messageId
   };
 
+  // Needs to be explicitly typed when exported.
+  // See: https://github.com/facebook/flow/issues/6151
+  const newUnmessagedMatchIds: number[] = unmessaged.filter(id => {
+    return id !== matchId;
+  });
+
   return {
-    unmessagedMatchIds: unmessaged.filter(id => {
-      return id !== matchId;
-    }),
+    unmessagedMatchIds: newUnmessagedMatchIds,
     messagedMatchIds: [
       matchId,
       ...messaged.filter(id => {
@@ -689,7 +688,7 @@ function updateMostRecentMessage(
   };
 }
 
-function updateConfirmedConversation(
+export function updateConfirmedConversation(
   state: ReduxState,
   userId: number,
   newMessagesMap: { [messageId: number]: Message } = {},
@@ -1343,140 +1342,15 @@ export default function rootReducer(
     }
 
     case 'SEND_MESSAGE__INITIATED': {
-      const { receiverUserId, giftedChatMessage } = action.payload;
-
-      // Initialize to an empty object in case this is the first time sending a message
-      // for a fresh store so that we can destructure with defaults.
-      const unsentMessages =
-        state.unconfirmedConversations[receiverUserId] || {};
-      const {
-        byId = {},
-        allIds = [],
-        inProgressIds = [],
-        failedIds = []
-      } = unsentMessages;
-      const uuid = giftedChatMessage._id;
-
-      // If we are resending a message, we want to move the Id to inProgress.
-      const newFailedIds = failedIds.filter(i => i !== uuid);
-
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendMessage: {
-            ...state.inProgress.sendMessage,
-            [receiverUserId]: {
-              ...state.inProgress.sendMessage[receiverUserId],
-              [uuid]: true
-            }
-          }
-        },
-        unconfirmedConversations: {
-          ...state.unconfirmedConversations,
-          [receiverUserId]: {
-            byId: {
-              ...byId,
-              [uuid]: giftedChatMessage
-            },
-            allIds: [...allIds, uuid],
-            inProgressIds: [...inProgressIds, uuid],
-            failedIds: newFailedIds
-          }
-        }
-      };
+      return SendMessageReducer.initiate(state, action);
     }
 
-    // Remove Id from in progress messages, add to failed messages.
     case 'SEND_MESSAGE__FAILED': {
-      const { receiverUserId, messageUuid: uuid } = action.payload;
-
-      const unsentMessages =
-        state.unconfirmedConversations[receiverUserId] || {};
-      const { inProgressIds = [], failedIds = [] } = unsentMessages;
-
-      const newInProgressIds = inProgressIds.filter(i => i !== uuid);
-      const newFailedIds = [...failedIds, uuid];
-
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendMessage: {
-            ...state.inProgress.sendMessage,
-            [receiverUserId]: {
-              ...state.inProgress.sendMessage[receiverUserId],
-              [uuid]: false
-            }
-          }
-        },
-        unconfirmedConversations: {
-          ...state.unconfirmedConversations,
-          [receiverUserId]: {
-            ...unsentMessages,
-            inProgressIds: newInProgressIds,
-            failedIds: newFailedIds
-          }
-        }
-      };
+      return SendMessageReducer.fail(state, action);
     }
 
     case 'SEND_MESSAGE__COMPLETED': {
-      const { receiverUserId, previousMessageId, message } = action.payload;
-      const { messageId: id, unconfirmedMessageUuid: uuid } = message;
-
-      // remove the sent message from the unsent list
-      const {
-        inProgressIds = [],
-        allIds = []
-      } = state.unconfirmedConversations[receiverUserId];
-      const newInProgressIds = inProgressIds.filter(i => i !== uuid);
-      const newAllIds = allIds.filter(i => i !== uuid);
-
-      const confirmedConversations = updateConfirmedConversation(
-        state,
-        receiverUserId,
-        { [id]: message },
-        [id],
-        previousMessageId
-      );
-
-      const {
-        unmessagedMatchIds,
-        messagedMatchIds,
-        matchesById
-      } = updateMostRecentMessage(state, receiverUserId, id);
-
-      // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
-      // but because it is accessed within an object, the spread operator
-      // will return an empty array if so.
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendMessage: {
-            ...state.inProgress.sendMessage,
-            [receiverUserId]: {
-              ...state.inProgress.sendMessage[receiverUserId],
-              [uuid]: false
-            }
-          }
-        },
-        confirmedConversations,
-        // Must have values because initialized on Send Message Initiate
-        // TODO: consider deleting the message from unconfirmed byIds. (For invarients?)
-        unconfirmedConversations: {
-          ...state.unconfirmedConversations,
-          [receiverUserId]: {
-            ...state.unconfirmedConversations[receiverUserId],
-            allIds: newAllIds,
-            inProgressIds: newInProgressIds
-          }
-        },
-        unmessagedMatchIds,
-        messagedMatchIds,
-        matchesById
-      };
+      return SendMessageReducer.complete(state, action);
     }
 
     // TODO: trivially make these their own slice reducer
