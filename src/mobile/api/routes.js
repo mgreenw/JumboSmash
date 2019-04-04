@@ -109,7 +109,7 @@ export const SEND_MESSAGE__ROUTE = CONVERSATIONS_ROUTE;
 export const READ_MESSAGE__ROUTE__GENERATOR = (
   matchUserId: number,
   messageId: number
-) => `${CONVERSATIONS_ROUTE + matchUserId}/messages/${messageId}`;
+) => `${CONVERSATIONS_ROUTE}${matchUserId}/messages/${messageId}`;
 
 // Send Feedback
 const FEEDBACK = 'feedback/';
