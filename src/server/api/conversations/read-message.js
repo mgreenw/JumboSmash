@@ -14,6 +14,14 @@ const {
   canAccessUserData,
 } = require('../utils');
 
+// These codes mean that nothing went wrong with reading the message from the match
+// that came before the given system messageId. If there is a different code, we
+// throw a server error
+const acceptableReadPreviousMessageCodes = [
+  'ALREADY_READ_MESSAGE',
+  'GIVEN_MESSAGE_BEFORE_CURRENTLY_READ_MESSAGE',
+];
+
 /**
  * @api {patch} /api/conversations/:matchUserId/messages/:messageId
  *
@@ -108,16 +116,24 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
           );
 
           // Ensure the response is reasonable. If it is not one of the two expected responses
-          // throw a SERVER_ERROR. This is a serious issue and we'll want to know.
-          const possibleStatuses = [
-            codes.READ_MESSAGE__SUCCESS.status,
-            codes.READ_MESSAGE__FAILURE.status,
-          ];
-          if (!possibleStatuses.includes(readPreviousMessageResult.body.status)) {
-            throw new Error(`Unexected response from reading a message before a system message: ${JSON.stringify(readPreviousMessageResult)}`);
+          // throw a SERVER_ERROR. This is a serious issue and we'll want to know. See the
+          // comment on 'acceptableReadPreviousMessageCodes' above for more details
+          // on the failure case.
+          switch (readPreviousMessageResult.body.status) {
+            case codes.READ_MESSAGE__SUCCESS.status:
+              logger.debug('Successfully read message before system message');
+              break;
+            case codes.READ_MESSAGE__FAILURE.status: {
+              const { code } = readPreviousMessageResult.body.data;
+              if (!acceptableReadPreviousMessageCodes.includes(code)) {
+                throw new Error(`Unexpected code received from failure case of reading a message before a system message: ${code}`);
+              }
+              logger.debug('Acceptable failure in reading message before a system message');
+              break;
+            }
+            default:
+              throw new Error(`Unexected response from reading a message before a system message: ${JSON.stringify(readPreviousMessageResult)}`);
           }
-
-          logger.debug(`Read message ${previousMessageIdFromMatch} before system message ${messageId}`);
         }
 
         logger.debug(`Read system message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
