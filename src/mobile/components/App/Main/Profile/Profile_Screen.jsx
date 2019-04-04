@@ -175,7 +175,7 @@ class ProfileScreen extends React.Component<Props, State> {
               paddingBottom: 20
             }}
           >
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={this._showExpandedCard}>
               <Avatar size="Large" photoUuid={photoUuid} />
             </TouchableOpacity>
             <Text
