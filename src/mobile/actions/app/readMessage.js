@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'mobile/reducers';
+import type { Dispatch, GetState } from 'mobile/reducers';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import DevTesting from '../../utils/DevTesting';
 import readMessage from '../../api/conversations/readMessage';
@@ -62,9 +62,17 @@ function fail(
   };
 }
 
+// TODO: don't send if inProgress.
 export default (senderId: number, messageId: number) => (
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  getState: GetState
 ) => {
+  const { readMessageIds } = getState();
+  const lastReadMessageId = readMessageIds[senderId];
+  // don't send twice
+  if (lastReadMessageId === messageId) {
+    return;
+  }
   dispatch(initiate(senderId, messageId));
   DevTesting.fakeLatency(() => {
     readMessage(senderId, messageId)
