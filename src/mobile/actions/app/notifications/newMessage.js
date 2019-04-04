@@ -1,5 +1,6 @@
 // @flow
-import type { Dispatch, Message, UserProfile } from 'mobile/reducers';
+import type { Dispatch } from 'mobile/reducers';
+import type { ServerProfile, ServerMessage } from 'mobile/api/serverTypes';
 
 export type NewMessageInitiated_Action = {
   type: 'NEW_MESSAGE__INITIATED',
@@ -10,8 +11,8 @@ export type NewMessageInitiated_Action = {
 export type NewMessageCompleted_Action = {
   type: 'NEW_MESSAGE__COMPLETED',
   payload: {
-    message: Message,
-    senderProfile: UserProfile,
+    message: ServerMessage,
+    senderProfile: ServerProfile,
     senderUserId: number,
     previousMessageId: ?number
   },
@@ -27,8 +28,8 @@ function initiate(): NewMessageInitiated_Action {
 }
 
 function complete(
-  message: Message,
-  senderProfile: UserProfile,
+  message: ServerMessage,
+  senderProfile: ServerProfile,
   senderUserId: number,
   previousMessageId: ?number
 ): NewMessageCompleted_Action {
@@ -40,8 +41,8 @@ function complete(
 }
 
 export default (
-  message: Message,
-  senderProfile: UserProfile,
+  message: ServerMessage,
+  senderProfile: ServerProfile,
   senderUserId: number,
   previousMessageId: ?number
 ) => (dispatch: Dispatch) => {

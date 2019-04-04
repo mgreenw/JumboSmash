@@ -6,9 +6,14 @@ import newMessageAction from 'mobile/actions/app/notifications/newMessage';
 import newMatchAction from 'mobile/actions/app/notifications/newMatch';
 import readReceiptUpdateAction from 'mobile/actions/app/notifications/readReceiptUpdate';
 import store from 'mobile/store';
-import type { UserProfile, Message, Scene, ReadReceipt } from 'mobile/reducers';
+import type { Scene } from 'mobile/reducers';
+import type {
+  ServerProfile,
+  ServerMessage,
+  ServerReadReceipt,
+  ServerMatch
+} from 'mobile/api/serverTypes';
 import { SERVER_ROUTE } from 'mobile/api/routes';
-import type { ServerMatch } from 'mobile/api/serverTypes';
 
 // Ignore the annoying warning from the websocket connection options
 // Not bad at all and no way around it for now
@@ -54,8 +59,8 @@ function connect(token: string) {
   _socket.on(
     'NEW_MESSAGE',
     (data: {
-      message: Message,
-      senderProfile: UserProfile,
+      message: ServerMessage,
+      senderProfile: ServerProfile,
       senderUserId: number,
       previousMessageId: ?number
     }) => {
@@ -87,7 +92,7 @@ function connect(token: string) {
 
   _socket.on(
     'READ_RECEIPT_UPDATE',
-    (data: { readerUserId: number, readReceipt: ?ReadReceipt }) => {
+    (data: { readerUserId: number, readReceipt: ?ServerReadReceipt }) => {
       const { readerUserId, readReceipt } = data;
 
       const readReceiptUpdateThunk = readReceiptUpdateAction(

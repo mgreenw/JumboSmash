@@ -124,7 +124,8 @@ import type { Dispatch as ReduxDispatch } from 'redux';
 import type {
   ServerMatch,
   ServerMessage,
-  ServerCandidate
+  ServerCandidate,
+  ServerReadReceipt
 } from 'mobile/api/serverTypes';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
@@ -795,8 +796,13 @@ function updateMostRecentConversations(
 function updateReadReceipts(
   state: ReduxState,
   userId: number,
-  readReceipt: ?ReadReceipt
+  serverReadReceipt: ?ServerReadReceipt
 ): ReadReceipts {
+  const readReceipt = serverReadReceipt && {
+    messageId: serverReadReceipt.messageId,
+    readAtTimestamp: serverReadReceipt.timestamp
+  };
+
   return {
     ...state.readReceipts,
     [userId]: readReceipt

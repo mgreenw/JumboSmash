@@ -1,5 +1,6 @@
 // @flow
-import type { Dispatch, ReadReceipt } from 'mobile/reducers';
+import type { Dispatch } from 'mobile/reducers';
+import type { ServerReadReceipt } from 'mobile/api/serverTypes';
 
 export type ReadReceiptUpdateInitiated_Action = {
   type: 'READ_RECEIPT_UPDATE__INITIATED',
@@ -11,7 +12,7 @@ export type ReadReceiptUpdateCompleted_Action = {
   type: 'READ_RECEIPT_UPDATE__COMPLETED',
   payload: {
     readerUserId: number,
-    readReceipt: ?ReadReceipt
+    readReceipt: ?ServerReadReceipt
   },
   meta: {}
 };
@@ -26,7 +27,7 @@ function initiate(): ReadReceiptUpdateInitiated_Action {
 
 function complete(
   readerUserId: number,
-  readReceipt: ?ReadReceipt
+  readReceipt: ?ServerReadReceipt
 ): ReadReceiptUpdateCompleted_Action {
   return {
     type: 'READ_RECEIPT_UPDATE__COMPLETED',
@@ -35,7 +36,7 @@ function complete(
   };
 }
 
-export default (readerUserId: number, readReceipt: ?ReadReceipt) => (
+export default (readerUserId: number, readReceipt: ?ServerReadReceipt) => (
   dispatch: Dispatch
 ) => {
   dispatch(initiate());
