@@ -17,7 +17,7 @@ export default (props: Props) => {
     <View>
       <Text
         style={[
-          textStyles.headline4StyleMedium,
+          textStyles.headline4Style,
           {
             color: Colors.Grapefruit,
             textAlign: 'center',

@@ -91,17 +91,25 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   /* eslint-disable */
   _loadAssets() {
     const fonts = [
-      { vegan: require('../../assets/fonts/Vegan-Regular.ttf') },
+      { VeganStyle: require('../../assets/fonts/Vegan-Regular.ttf') },
+      {
+        AvenirNext_Regular: require('../../assets/fonts/AvenirNext-Regular.ttf')
+      },
+      {
+        AvenirNext_DemiBold: require('../../assets/fonts/AvenirNext-DemiBold.ttf')
+      },
+      {
+        SourceSansPro_Regular: require('../../assets/fonts/SourceSansPro-Regular.ttf')
+      },
+      {
+        SourceSansPro_Bold: require('../../assets/fonts/SourceSansPro-Bold.ttf')
+      },
+      {
+        SourceSansPro_DemiBold: require('../../assets/fonts/SourceSansPro-SemiBold.ttf')
+      },
 
-      {
-        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf')
-      },
-      {
-        gemicons: require('../../assets/icons/gemicons.ttf')
-      },
-      {
-        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf')
-      }
+      { gemicons: require('../../assets/icons/gemicons.ttf') },
+      { AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf') }
     ];
     /* eslint-enable */
 

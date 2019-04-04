@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
-  Easing,
+  Easing
 } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
@@ -26,19 +26,23 @@ type SingleDigitInputProps = {
   selectedColor: string,
   placeholder: string,
   secondaryColor: string,
-  selectedAnim: Animated.Value,
+  selectedAnim: Animated.Value
 };
 
 type SingleDigitInputState = {
   emphasizedAnim: Animated.Value,
-  errorAnim: Animated.Value,
+  errorAnim: Animated.Value
 };
 
-function _toggleAnimation(animation: Animated.Value, active: boolean, duration?: number) {
+function _toggleAnimation(
+  animation: Animated.Value,
+  active: boolean,
+  duration?: number
+) {
   Animated.timing(animation, {
     toValue: active ? 1 : 0,
     useNativeDriver: false,
-    duration,
+    duration
   }).start();
 }
 
@@ -48,21 +52,27 @@ const HEIGHT = 33;
 const NORMAL_LINE_THICKNESS = 2;
 const SELECTED_LINE_THICKNESS = 8;
 
-class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigitInputState> {
+class SingleDigitInput extends React.Component<
+  SingleDigitInputProps,
+  SingleDigitInputState
+> {
   constructor(props: SingleDigitInputProps) {
     super(props);
     const { emphasized, error } = this.props;
     this.state = {
       emphasizedAnim: new Animated.Value(emphasized ? 1 : 0),
-      errorAnim: new Animated.Value(error ? 1 : 0),
+      errorAnim: new Animated.Value(error ? 1 : 0)
     };
   }
 
   static defaultProps = {
-    placeholder: '',
+    placeholder: ''
   };
 
-  componentDidUpdate(prevProps: SingleDigitInputProps, prevState: SingleDigitInputState) {
+  componentDidUpdate(
+    prevProps: SingleDigitInputProps,
+    prevState: SingleDigitInputState
+  ) {
     if (this.props.emphasized != prevProps.emphasized) {
       _toggleAnimation(this.state.emphasizedAnim, this.props.emphasized, 200);
     }
@@ -83,15 +93,15 @@ class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigi
       value,
       placeholder,
       selectedAnim,
-      error,
+      error
     } = this.props;
     const scaleX = emphasizedAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [1, 1.2],
+      outputRange: [1, 1.2]
     });
     const scaleY = emphasizedAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [1, 1.3],
+      outputRange: [1, 1.3]
     });
     return (
       <Animated.View
@@ -100,12 +110,12 @@ class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigi
           width: WIDTH,
           transform: [
             {
-              scaleX,
+              scaleX
             },
             {
-              scaleY,
-            },
-          ],
+              scaleY
+            }
+          ]
         }}
       >
         <Text
@@ -114,8 +124,8 @@ class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigi
             textStyles.headline5Style,
             {
               textAlign: 'center',
-              color: value ? primaryColor : secondaryColor,
-            },
+              color: value ? primaryColor : secondaryColor
+            }
           ]}
         >
           {value || placeholder}
@@ -126,7 +136,7 @@ class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigi
             bottom: 0,
             width: '100%',
             backgroundColor: error ? errorColor : primaryColor,
-            height: NORMAL_LINE_THICKNESS,
+            height: NORMAL_LINE_THICKNESS
           }}
         />
         <Animated.View
@@ -135,13 +145,13 @@ class SingleDigitInput extends React.Component<SingleDigitInputProps, SingleDigi
             bottom: 0,
             width: selectedAnim.interpolate({
               inputRange: [0, 1],
-              outputRange: ['0%', '100%'],
+              outputRange: ['0%', '100%']
             }),
             backgroundColor: errorAnim.interpolate({
               inputRange: [0, 1],
-              outputRange: [selectedColor, errorColor],
+              outputRange: [selectedColor, errorColor]
             }),
-            height: NORMAL_LINE_THICKNESS,
+            height: NORMAL_LINE_THICKNESS
           }}
         />
       </Animated.View>
@@ -161,24 +171,29 @@ type MultiDigitInputProps = {
   secondaryColor: string,
   primaryColor: string,
   errorColor: string,
-  selectedColor: string,
+  selectedColor: string
 };
 type MultiDigitInputState = {
   shakeAnim: Animated.Value,
   selectedAnim: Animated.Value,
-  isFocused: boolean,
+  isFocused: boolean
 };
 
 function MultiDigitInput(
-  alterSingleDigits: (React.ChildrenArray<React.Element<typeof SingleDigitInput>>) => React.Node,
+  alterSingleDigits: (
+    React.ChildrenArray<React.Element<typeof SingleDigitInput>>
+  ) => React.Node
 ) {
-  return class extends React.Component<MultiDigitInputProps, MultiDigitInputState> {
+  return class extends React.Component<
+    MultiDigitInputProps,
+    MultiDigitInputState
+  > {
     constructor(props: MultiDigitInputProps) {
       super(props);
       this.state = {
         shakeAnim: new Animated.Value(0),
         selectedAnim: new Animated.Value(0),
-        isFocused: false,
+        isFocused: false
       };
     }
 
@@ -188,10 +203,13 @@ function MultiDigitInput(
       secondaryColor: Colors.BlueyGrey,
       primaryColor: Colors.Black,
       errorColor: Colors.Grapefruit,
-      selectedColor: Colors.AquaMarine,
+      selectedColor: Colors.AquaMarine
     };
 
-    componentDidUpdate(prevProps: MultiDigitInputProps, prevState: MultiDigitInputState) {
+    componentDidUpdate(
+      prevProps: MultiDigitInputProps,
+      prevState: MultiDigitInputState
+    ) {
       if (!prevProps.error && this.props.error) {
         this._shake();
       }
@@ -208,7 +226,7 @@ function MultiDigitInput(
       Animated.timing(shakeAnim, {
         duration: 375,
         toValue: 3,
-        ease: Easing.bounce,
+        ease: Easing.bounce
       }).start();
     };
 
@@ -223,7 +241,8 @@ function MultiDigitInput(
     _onKeyPress = (event: any) => {
       const isBackspace = event.nativeEvent.key === 'Backspace';
       const deleteOnEmpty = isBackspace && this.props.value === '';
-      const keyOnMaxLength = !isBackspace && this.props.value.length === this.props.maxLength;
+      const keyOnMaxLength =
+        !isBackspace && this.props.value.length === this.props.maxLength;
       if (deleteOnEmpty || keyOnMaxLength) {
         this._shake();
       }
@@ -240,7 +259,7 @@ function MultiDigitInput(
         errorColor,
         primaryColor,
         selectedColor,
-        secondaryColor,
+        secondaryColor
       } = this.props;
       const input = this.props.value;
       const inputLen = input.length;
@@ -267,13 +286,13 @@ function MultiDigitInput(
 
       const shakeTranslateX = shakeAnim.interpolate({
         inputRange: [0, 0.5, 1, 1.5, 2, 2.5, 3],
-        outputRange: [0, -15, 0, 15, 0, -15, 0],
+        outputRange: [0, -15, 0, 15, 0, -15, 0]
       });
 
       return (
         <TouchableWithoutFeedback
           style={{
-            width: '100%',
+            width: '100%'
           }}
           onPress={() => {
             this.inputRef.focus();
@@ -289,10 +308,10 @@ function MultiDigitInput(
                       inputRange: [0, 1],
                       outputRange: [
                         error ? errorColor : primaryColor,
-                        error ? errorColor : selectedColor,
-                      ],
-                    }),
-                  },
+                        error ? errorColor : selectedColor
+                      ]
+                    })
+                  }
                 ]}
               >
                 {label}
@@ -302,7 +321,7 @@ function MultiDigitInput(
               style={{
                 /* needed on android because views clip children */
                 height: HEIGHT * 1.2,
-                transform: [{ translateX: shakeTranslateX }],
+                transform: [{ translateX: shakeTranslateX }]
               }}
             >
               <TextInput
@@ -326,7 +345,7 @@ function MultiDigitInput(
                   justifyContent: 'space-between',
                   flexDirection: 'row',
                   flex: 1,
-                  width: '100%',
+                  width: '100%'
                 }}
               >
                 {alterSingleDigits(digitList)}
@@ -349,8 +368,7 @@ function makeDividor(key) {
       style={{
         color: Colors.BlueyGrey,
         fontSize: 30,
-        fontFamily: 'SourceSansPro',
-        fontWeight: '300',
+        fontFamily: 'SourceSansPro_Regular'
       }}
     >
       {'/'}

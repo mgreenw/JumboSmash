@@ -48,7 +48,7 @@ export const Arthur_Styles = StyleSheet.create({
   },
   title: {
     color: Colors.Grapefruit,
-    fontFamily: 'vegan',
+    fontFamily: 'VeganStyle',
     fontSize: 45,
     padding: 15,
     textAlign: 'center'
