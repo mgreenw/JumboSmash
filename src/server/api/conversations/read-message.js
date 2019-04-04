@@ -18,19 +18,12 @@ const {
  * @api {patch} /api/conversations/:matchUserId/messages/:messageId
  *
  */
-const readMessage = async (readerUserId: number, matchUserId: number, messageId: number) => {
+async function readMessage(readerUserId: number, matchUserId: number, messageId: number) {
   try {
-    // Ensure the user's are matched
-    const canReadMessage = await canAccessUserData(matchUserId, readerUserId, {
-      requireMatch: true,
-    });
-    if (!canReadMessage) {
-      return status(codes.READ_MESSAGE__NOT_MATCHED).noData();
-    }
-
     // Try inserting the read receipt. There is a database trigger that will catch
     // any bad case - this allows us to save a lot of queries/checks. For the most
     // part, we only care if it works or not.
+    logger.debug(`reading message: ${readerUserId}, ${matchUserId}, ${messageId}`);
     const result = await db.query(`
       UPDATE relationships
       SET critic_read_message_id = $1, critic_read_message_timestamp = NOW()
@@ -73,22 +66,49 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
       // update Redis if necessary.
       if (error.hint === 'CANNOT_READ_SYSTEM_MESSAGE') {
         const systemMessageTimestampResult = await db.query(`
-          SELECT timestamp as "messageTimestamp"
-          FROM messages
-          WHERE id = $1 AND from_system IS TRUE
-        `, [messageId]);
+          SELECT
+            system_message.timestamp as "messageTimestamp",
+            (
+              SELECT id
+              FROM messages match_message
+              WHERE
+                from_system IS FALSE
+                AND sender_user_id = $1
+                AND receiver_user_id = $2
+                AND match_message.timestamp < system_message.timestamp
+              ORDER by match_message.timestamp desc
+              LIMIT 1
+            ) AS "previousMessageIdFromMatch"
+          FROM messages system_message
+          WHERE system_message.id = $3 AND system_message.from_system IS TRUE
+        `, [matchUserId, readerUserId, messageId]);
 
-        const [{ messageTimestamp }] = systemMessageTimestampResult.rows;
-        logger.debug(`System message read at ${messageTimestamp}`);
+        const [{
+          messageTimestamp,
+          previousMessageIdFromMatch,
+        }] = systemMessageTimestampResult.rows;
 
+        logger.debug(`System message read at ${messageTimestamp}.`);
         const conversationIsRead = await redis.shared.readMessage(
           redis.unreadConversationsKey(readerUserId),
           matchUserId.toString(),
           messageTimestamp.toISOString(),
         );
 
-        logger.debug(`Read system message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
+        // Weirdly, we need to read the previous match message id. This allows
+        // mobile to only need to send one request per "read" event, but we can
+        // update the read receipt if needed. This is fire and forget: we don't
+        // care if this fails
+        if (previousMessageIdFromMatch !== null) {
+          const readPreviousMessageResult = await readMessage(
+            readerUserId,
+            matchUserId,
+            previousMessageIdFromMatch,
+          );
+          logger.debug(`Read message ${previousMessageIdFromMatch} before system message ${messageId}`);
+        }
 
+        logger.debug(`Read system message at timestamp ${messageTimestamp}. The conversation is ${conversationIsRead ? 'read' : 'still unread'}.`);
         return status(codes.READ_MESSAGE__SUCCESS).noData();
       }
 
@@ -105,6 +125,16 @@ const readMessage = async (readerUserId: number, matchUserId: number, messageId:
 
 const handler = [
   asyncHandler(async (req: $Request) => {
+    // Ensure the user's are matched. This is happening outside of the readMessage
+    // endpoint to handle the weird system message needing to call the readMessage()
+    // function directly. We don't want to double-check the match check, so we
+    // handle it here.
+    const canReadMessage = await canAccessUserData(req.params.matchUserId, req.user.id, {
+      requireMatch: true,
+    });
+    if (!canReadMessage) {
+      return status(codes.READ_MESSAGE__NOT_MATCHED).noData();
+    }
     return readMessage(req.user.id, req.params.matchUserId, req.params.messageId);
   }),
 ];
