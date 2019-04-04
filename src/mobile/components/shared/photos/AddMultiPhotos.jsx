@@ -195,7 +195,7 @@ class AddMultiPhotos extends React.Component<Props> {
         >
           <Text
             style={[
-              textStyles.headline4StyleMedium,
+              textStyles.headline4Style,
               {
                 color: Colors.Grapefruit,
                 textAlign: 'center',
