@@ -8,6 +8,7 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
+const db = require('../db');
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
 const logger = require('../logger');
 const { getUser, AuthenticationError } = require('../api/auth/utils');
@@ -32,10 +33,6 @@ class Socket {
     throw new Error('Oops! socket is not yet initialized.');
   }
 
-  get namespace() : string {
-    return namespace;
-  }
-
   init(server: Server) {
     const _io = initSocket(server, {
       path: namespace,
@@ -45,10 +42,18 @@ class Socket {
 
     /* eslint-disable no-param-reassign */
     _io.use(async (socket, next) => {
+      console.log('running');
       Promise.resolve(getUser(socket.handshake.query.token))
         .then((user) => {
           socket.user = user;
           next();
+          // db.query(`
+          //   UPDATE classmates
+          //   SET socket_id = $1
+          //   WHERE id = $2
+          // `, [socket.id, user.id])
+          //   .then(next)
+          //   .catch(next);
         })
         .catch((error) => {
           // A caught error from getUser means the token is invalid.
@@ -111,6 +116,15 @@ class Socket {
     } catch (error) {
       logger.warn('Failed to send update to user', error);
     }
+  }
+
+  disconnect(userId: number) {
+    this._io.clients((err, clients) => {
+      console.log(err, clients);
+    });
+    // this._io.of(namespace).adapter.clients((err, clients) => {
+    //   console.log(err, clients);
+    // });
   }
 }
 

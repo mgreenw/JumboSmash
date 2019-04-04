@@ -24,16 +24,7 @@ const logout = async (userId: number) => {
   //   WHERE id = $1
   // `, [userId]);
 
-  if (socket.io) {
-    // console.log(socket.io.adapter().client);
-    socket.io.of('/socket').adapter.clients((err, clients) => {
-      console.log(err, clients);
-    });
-    // console.log(socket.io);
-    // const clients = await promisify(socket.io.clients)();
-  } else {
-    logger.warn('Tried to kill user socket connection on logout but could not get initialized socket');
-  }
+  socket.disconnect(userId);
   return apiUtils.status(codes.GET_CONVERSATION__SUCCESS).noData();
 };
 
