@@ -20,7 +20,6 @@ import type {
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
 import { type NavigationScreenProp } from 'react-navigation';
-import routes from 'mobile/components/navigation/routes';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
@@ -32,6 +31,7 @@ import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -70,7 +70,8 @@ type State = {|
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
-  showUnmatchPopup: boolean
+  showUnmatchPopup: boolean,
+  showExpandedCard: boolean
 |};
 
 const wrapperBase = {
@@ -236,7 +237,8 @@ class MessagingScreen extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showUnmatchPopup: false
+      showUnmatchPopup: false,
+      showExpandedCard: false
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -425,11 +427,15 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _goToProfile = (profile: UserProfile) => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.MatchesExpandedCard, {
-      profile,
-      onMinimize: NavigationService.back
+  _showExpandedCard = () => {
+    this.setState({
+      showExpandedCard: true
+    });
+  };
+
+  _hideExpandedCard = () => {
+    this.setState({
+      showExpandedCard: false
     });
   };
 
@@ -438,7 +444,7 @@ class MessagingScreen extends React.Component<Props, State> {
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
           onPress={() => {
-            this._goToProfile(profile);
+            this._showExpandedCard();
           }}
         >
           <Avatar size={'Large'} photoUuid={profile.photoUuids[0]} border />
@@ -510,9 +516,6 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderUserActionSheet() {
     const { showUserActionSheet } = this.state;
-    const { profileMap } = this.props;
-    const { match } = this.state;
-    const profile = profileMap[match.userId];
     return (
       <ActionSheet
         visible={showUserActionSheet}
@@ -521,7 +524,7 @@ class MessagingScreen extends React.Component<Props, State> {
             text: 'View Profile',
             onPress: () => {
               this.setState({ showUserActionSheet: false });
-              this._goToProfile(profile);
+              this._showExpandedCard();
             }
           },
           {
@@ -634,7 +637,12 @@ class MessagingScreen extends React.Component<Props, State> {
 
   render() {
     const { profileMap, cancelFailedMessage } = this.props;
-    const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
+    const {
+      match,
+      showFailedMessageActionSheet,
+      selectedMessage,
+      showExpandedCard
+    } = this.state;
     const profile = profileMap[match.userId];
     return (
       <View style={{ flex: 1 }}>
@@ -645,7 +653,7 @@ class MessagingScreen extends React.Component<Props, State> {
             rightIconName="ellipsis"
             onRightIconPress={() => this._toggleUserActionSheet(true)}
             borderBottom
-            onTitlePress={() => this._goToProfile(profile)}
+            onTitlePress={() => this._showExpandedCard()}
           />
         </View>
         {this._renderContent(profile)}
@@ -681,6 +689,26 @@ class MessagingScreen extends React.Component<Props, State> {
               this._toggleFailedMessageActionSheet(false);
             }
           }}
+        />
+        <ModalProfileView
+          isVisible={showExpandedCard}
+          onSwipeComplete={this._hideExpandedCard}
+          onBlockReport={() => {
+            this.setState(
+              {
+                showExpandedCard: false
+              },
+              () => {
+                this._toggleUserActionSheet(true);
+              }
+            );
+          }}
+          onMinimize={() => {
+            this.setState({
+              showExpandedCard: false
+            });
+          }}
+          profile={profile}
         />
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}

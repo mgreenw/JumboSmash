@@ -37,7 +37,6 @@ import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
 import SocialCards from 'mobile/components/App/Main/Cards/SocialCards_Screen';
-import ExpandedCard from 'mobile/components/App/Main/Cards/ExpandedCard_Screen';
 
 // Messages & Matches
 import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
@@ -90,8 +89,7 @@ const ProfileStack = createStackNavigator(
     [routes.SettingsEdit]: { screen: SettingsEdit },
     [routes.ProfileEdit]: { screen: ProfileEdit },
     [routes.ProfileHelp]: { screen: ProfileHelp },
-    [routes.SelectCity]: { screen: SelectCity },
-    [routes.ProfileExpandedCard]: { screen: ExpandedCard }
+    [routes.SelectCity]: { screen: SelectCity }
   },
   {
     initialRouteName: routes.Profile,
@@ -108,8 +106,7 @@ ProfileStack.navigationOptions = () => {
 const MatchesStack = createStackNavigator(
   {
     [routes.Matches]: { screen: Matches },
-    [routes.Message]: { screen: Message },
-    [routes.MatchesExpandedCard]: { screen: ExpandedCard }
+    [routes.Message]: { screen: Message }
   },
   {
     initialRouteName: routes.Matches,

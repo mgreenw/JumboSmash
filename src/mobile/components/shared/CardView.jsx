@@ -24,7 +24,7 @@ const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.pn
 type Props = {
   profile: UserProfile,
   onMinimize: () => void,
-  onBlockReport: () => void
+  onBlockReport: ?() => void
 };
 
 const { width } = Dimensions.get('window');
@@ -121,9 +121,11 @@ const CardView = (props: Props) => {
           </View>
         </View>
         {lastPhoto}
-        <View style={styles.profileBlock}>
-          <TertiaryButton title={'Block or Report'} onPress={onBlockReport} />
-        </View>
+        {onBlockReport && (
+          <View style={styles.profileBlock}>
+            <TertiaryButton title={'Block or Report'} onPress={onBlockReport} />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
