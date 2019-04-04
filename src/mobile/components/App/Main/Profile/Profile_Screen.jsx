@@ -150,14 +150,7 @@ class ProfileScreen extends React.Component<Props, State> {
               paddingBottom: 20
             }}
           >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(routes.ProfileExpandedCard, {
-                  profile,
-                  onMinimize: () => navigation.pop()
-                })
-              }
-            >
+            <TouchableOpacity onPress={() => {}}>
               <Avatar size="Large" photoUuid={photoUuid} />
             </TouchableOpacity>
             <Text
