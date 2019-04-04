@@ -122,7 +122,7 @@ import type {
   ServerCandidate,
   ServerReadReceipt
 } from 'mobile/api/serverTypes';
-import type { ReadMessageAction } from './conversations/readMessage';
+import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
@@ -497,7 +497,7 @@ export type Action =
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
   | SendMessageFailed_Action
-  | ReadMessageAction
+  | ReadMessage_Action
   | SummonPopup_Action
   | DismissPopup_Action
   | NewMessageInitiated_Action

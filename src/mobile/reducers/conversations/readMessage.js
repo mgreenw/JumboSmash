@@ -78,7 +78,7 @@ function fail(state: ReduxState, action: ReadMessageFailed_Action): ReduxState {
   };
 }
 
-export type ReadMessageAction =
+export type ReadMessage_Action =
   | ReadMessageInitiated_Action
   | ReadMessageCompleted_Action
   | ReadMessageFailed_Action;
