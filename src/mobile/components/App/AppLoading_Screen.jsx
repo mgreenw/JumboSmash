@@ -10,7 +10,6 @@ import ProgressBar from 'react-native-progress/Bar';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import routes from 'mobile/components/navigation/routes';
 import { Constants } from 'expo';
-import { textStyles } from 'mobile/styles/textStyles';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 

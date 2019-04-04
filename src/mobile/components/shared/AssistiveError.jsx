@@ -7,31 +7,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Animated, Text, View, Easing, StyleSheet } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
+import { textStyles } from 'mobile/styles/textStyles';
 
 type Props = {
   assistive: string,
   error: string,
   primaryColor: string,
   errorColor: string,
-  centered?: boolean,
+  centered?: boolean
 };
 
 type State = {
-  errorAnim: Animated.Value,
+  errorAnim: Animated.Value
 };
 
 export default class AssistiveError extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      errorAnim: new Animated.Value(0),
+      errorAnim: new Animated.Value(0)
     };
   }
 
   static defaultProps = {
     primaryColor: Colors.Black,
     errorColor: Colors.Grapefruit,
-    selectedColor: Colors.AquaMarine,
+    selectedColor: Colors.AquaMarine
   };
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -46,7 +47,7 @@ export default class AssistiveError extends React.Component<Props, State> {
     Animated.timing(this.state.errorAnim, {
       toValue: active ? 1 : 0,
       duration: 200,
-      useNativeDriver: false,
+      useNativeDriver: false
     }).start();
   };
 
@@ -59,12 +60,12 @@ export default class AssistiveError extends React.Component<Props, State> {
         style={[
           {
             height: 18,
-            width: '100%',
+            width: '100%'
           },
           centered && {
             justifyContent: 'center',
-            alignItems: 'center',
-          },
+            alignItems: 'center'
+          }
         ]}
       >
         <Animated.Text
@@ -75,9 +76,9 @@ export default class AssistiveError extends React.Component<Props, State> {
               color: errorColor,
               opacity: errorAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, 1],
-              }),
-            },
+                outputRange: [0, 1]
+              })
+            }
           ]}
         >
           {error}
@@ -90,9 +91,9 @@ export default class AssistiveError extends React.Component<Props, State> {
               color: primaryColor,
               opacity: errorAnim.interpolate({
                 inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            },
+                outputRange: [1, 0]
+              })
+            }
           ]}
         >
           {error ? '' : assistive /* to instantly fade */}
@@ -104,9 +105,8 @@ export default class AssistiveError extends React.Component<Props, State> {
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: 'SourceSansPro',
-    fontSize: 14,
+    ...textStyles.subtitle2Style,
     paddingLeft: 7,
-    position: 'absolute',
-  },
+    position: 'absolute'
+  }
 });

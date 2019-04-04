@@ -162,7 +162,7 @@ class ProfileScreen extends React.Component<Props, State> {
             </TouchableOpacity>
             <Text
               style={[
-                textStyles.headline4StyleMedium,
+                textStyles.headline4StyleDemibold,
                 { textAlign: 'center', paddingTop: 10 }
               ]}
             >
