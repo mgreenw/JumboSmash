@@ -1,6 +1,6 @@
 // @flow
 
-import type { Dispatch, GetState } from 'mobile/reducers';
+import type { Dispatch, GetState, ReadReceipt } from 'mobile/reducers';
 import type { ServerMessage } from 'mobile/api/serverTypes';
 import getConversation from 'mobile/api/conversations/getConversation';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
@@ -18,7 +18,8 @@ export type GetConversationCompleted_Action = {
   payload: {
     userId: number,
     messages: ServerMessage[],
-    previousMessageId: ?number
+    previousMessageId: ?number,
+    readReceipt: ReadReceipt
   },
   meta: {}
 };
@@ -34,11 +35,12 @@ function initiate(userId: number): GetConversationInitiated_Action {
 function complete(
   userId: number,
   messages: ServerMessage[],
-  previousMessageId: ?number
+  previousMessageId: ?number,
+  readReceipt: ReadReceipt
 ): GetConversationCompleted_Action {
   return {
     type: 'GET_CONVERSATION__COMPLETED',
-    payload: { userId, messages, previousMessageId },
+    payload: { userId, messages, previousMessageId, readReceipt },
     meta: {}
   };
 }
@@ -53,8 +55,8 @@ export default (userId: number) => (dispatch: Dispatch, getState: GetState) => {
     : [undefined];
   DevTesting.fakeLatency(() => {
     getConversation(userId, mostRecentMessageId)
-      .then(({ messages }) => {
-        dispatch(complete(userId, messages, mostRecentMessageId));
+      .then(({ messages, readReceipt }) => {
+        dispatch(complete(userId, messages, mostRecentMessageId, readReceipt));
       })
       .catch(error => {
         dispatch(apiErrorHandler(error));
