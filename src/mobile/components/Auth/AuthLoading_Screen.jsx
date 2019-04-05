@@ -9,6 +9,7 @@ import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
+import Sentry from 'sentry-expo';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
@@ -130,6 +131,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         loadAuth();
       })
       .catch(e => {
+        Sentry.captureException(e);
+
         DevTesting.log('Error importing fonts:', e);
       });
   }
