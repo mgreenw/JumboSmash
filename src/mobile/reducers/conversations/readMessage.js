@@ -71,7 +71,7 @@ function complete(
  */
 function fail(state: ReduxState, action: ReadMessageFailed_Action): ReduxState {
   const { senderUserId, messageId } = action.payload;
-  const inProgress = updateInProgress(state, senderUserId, messageId, true);
+  const inProgress = updateInProgress(state, senderUserId, messageId, false);
   return {
     ...state,
     inProgress
