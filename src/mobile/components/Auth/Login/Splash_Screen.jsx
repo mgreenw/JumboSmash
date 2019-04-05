@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Keyboard, Text, Image, View } from 'react-native';
+import { Keyboard, Text, Image, View, Platform } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
@@ -14,10 +14,8 @@ import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
 import Collapsible from 'react-native-collapsible';
-import { Platform } from 'expo';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
-const isIos = Platform.OS === 'ios';
 
 type reduxProps = {
   sendVerificationEmail_inProgress: boolean,
@@ -70,14 +68,16 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentWillMount() {
-    const showEvent = isIos ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = isIos ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
     this.keyboardWillShowListener = Keyboard.addListener(
-      'keyboardWillShow',
+      showEvent,
       this._keyboardWillShow
     );
     this.keyboardWillHideListener = Keyboard.addListener(
-      'keyboardWillHide',
+      hideEvent,
       this._keyboardWillHide
     );
   }
