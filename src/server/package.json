@@ -24,7 +24,8 @@
     "lint": "eslint .",
     "lint:watch": "nodemon --exec eslint -- .",
     "release": "release-it",
-    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js"
+    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js",
+    "insert-admin": "node ./scripts/insert-admin.js"
   },
   "dependencies": {
     "@google-cloud/logging-winston": "^0.11.0",

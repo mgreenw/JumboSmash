@@ -1,6 +1,7 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
+  pgm.dropTable('admins');
   pgm.dropView('users');
   pgm.dropColumns('classmates', ['is_admin']);
 
@@ -11,6 +12,7 @@ exports.up = (pgm) => {
     admin_password: {
       type: 'varchar(100)',
       default: null,
+      check: 'char_length(admin_password) >= 8',
     },
   });
   pgm.createView('users', { replace: true }, `
@@ -37,6 +39,13 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
+  pgm.createTable('admins', {
+    id: 'id',
+    utln: {
+      type: 'citext',
+      unique: true,
+    },
+  });
   pgm.dropView('users');
   pgm.dropColumns('classmates', ['admin_password']);
   pgm.addColumns('classmates', {
