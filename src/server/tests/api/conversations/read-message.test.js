@@ -243,4 +243,42 @@ describe('PATCH api/conversations/:matchUserId/messages/:messageId', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
   });
+
+  it('should read the previous message a user tries to read a system message', async () => {
+    // Insert a non-system message. Other person is the sender.
+    let result = await db.query(`
+      INSERT INTO messages
+      (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid, from_system)
+      VALUES ('You matched in Smash', $1, $2, $3, false)
+      RETURNING id
+    `, [other.id, me.id, uuidv4()]);
+
+    const nonSystemMessageId = result.rows[0].id;
+
+    // Insert a system message
+    result = await db.query(`
+      INSERT INTO messages
+      (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid, from_system)
+      VALUES ('You matched in Smash', $1, $2, $3, true)
+      RETURNING id
+    `, [me.id, other.id, uuidv4()]);
+
+    const systemMessageId = result.rows[0].id;
+
+    let res = await request(app)
+      .patch(`/api/conversations/${other.id}/messages/${systemMessageId}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.READ_MESSAGE__SUCCESS.status);
+
+    // Ensure the read receipt for the other person is on the nonSystemMessageId
+    res = await request(app)
+      .get(`/api/conversations/${me.id}`)
+      .set('Accept', 'application/json')
+      .set('Authorization', other.token);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe(codes.GET_CONVERSATION__SUCCESS.status);
+    expect(res.body.data.readReceipt.messageId).toBe(nonSystemMessageId);
+  });
 });
