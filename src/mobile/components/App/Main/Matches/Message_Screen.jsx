@@ -24,6 +24,7 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
+import readMessageAction from 'mobile/actions/app/readMessage';
 import cancelFailedMessageAction from 'mobile/actions/app/cancelFailedMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
@@ -35,6 +36,45 @@ import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
+
+/**
+ *
+ * @param {newestMessage} accumulator for reduce function
+ * @param {currentMessage} element for reduce function
+ * Reduce function for computing the most recent non-client message from a list of messages.
+ */
+const newerMessage = (
+  newestMessage: ?GiftedChatMessage,
+  currentMessage: ?GiftedChatMessage
+) => {
+  // Don't use client messages
+  if (
+    currentMessage &&
+    currentMessage.user &&
+    currentMessage.user._id === 'client'
+  ) {
+    return newestMessage;
+  }
+
+  // If we don't have a current message, use any available.
+  if (currentMessage && !newestMessage) {
+    return currentMessage;
+  }
+
+  // main check: compare timestamps, return newer one.
+  if (
+    newestMessage &&
+    newestMessage.createdAt &&
+    currentMessage &&
+    currentMessage.createdAt &&
+    newestMessage.createdAt < currentMessage.createdAt
+  ) {
+    return currentMessage;
+  }
+
+  // default to just returning current one if fields are null.
+  return newestMessage;
+};
 
 type ExtraData = {|
   showOtherUserTyping: boolean,
@@ -49,12 +89,14 @@ type NavigationProps = {
 type ReduxProps = {
   getConversation_inProgress: boolean,
   profileMap: { [userId: number]: UserProfile },
-  messages: GiftedChatMessage[]
+  messages: GiftedChatMessage[],
+  mostRecentSenderMessageId: ?number
 };
 
 type DispatchProps = {
   getConversation: (userId: number, mostRecentMessageId?: number) => void,
   sendMessage: (userId: number, message: GiftedChatMessage) => void,
+  readMessage: (userId: number, message: number) => void,
   cancelFailedMessage: (userId: number, messagedUuid: string) => void
 };
 
@@ -166,7 +208,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
-    return {
+    const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
       text: message.content,
       createdAt: Date.parse(message.timestamp),
@@ -180,27 +222,46 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         ? readReceipt.readAtTimestamp >= message.timestamp
         : false
     };
+    return giftedChatMessage;
   };
 
   // map over messages, convert to a GiftedMessage
-  const inOrderMessages = confirmedConversation
+  const inOrderMessages: GiftedChatMessage[] = confirmedConversation
     ? confirmedConversation.inOrderIds.map(_confirmedIdToMessage).reverse()
     : [];
-  const outOfOrderMessages = confirmedConversation
+  const outOfOrderMessages: GiftedChatMessage[] = confirmedConversation
     ? confirmedConversation.outOfOrderIds.map(_confirmedIdToMessage).reverse()
     : [];
 
-  const messages = [
+  const messages: GiftedChatMessage[] = [
     ...failedMessages,
     ...inProgressMessages,
     ...outOfOrderMessages,
     ...inOrderMessages
   ];
 
+  const newestOutOfOrderMessage: ?GiftedChatMessage = outOfOrderMessages.reduceRight(
+    newerMessage,
+    null
+  );
+
+  const newestInOrderMessage: ?GiftedChatMessage = inOrderMessages.find(
+    (message: GiftedChatMessage) =>
+      message.user && message.user._id !== 'client'
+  );
+
+  const newestMessage: ?GiftedChatMessage = newerMessage(
+    newestInOrderMessage,
+    newestOutOfOrderMessage
+  );
+
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    mostRecentSenderMessageId: newestMessage
+      ? parseInt(newestMessage._id, 10)
+      : null
   };
 }
 
@@ -211,6 +272,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     },
     sendMessage: (userId: number, message: GiftedChatMessage) => {
       dispatch(sendMessageAction(userId, message));
+    },
+    readMessage: (userId: number, messageId: number) => {
+      dispatch(readMessageAction(userId, messageId));
     },
     cancelFailedMessage: (userId: number, messageUuid: string) => {
       dispatch(cancelFailedMessageAction(userId, messageUuid));
@@ -266,6 +330,16 @@ class MessagingScreen extends React.Component<Props, State> {
     const { match } = this.state;
     const { getConversation } = this.props;
     getConversation(match.userId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { mostRecentSenderMessageId: newId, readMessage } = this.props;
+    const { mostRecentSenderMessageId: oldId } = prevProps;
+    const { match } = this.state;
+
+    if (newId && newId !== oldId) {
+      readMessage(match.userId, newId);
+    }
   }
 
   // unsubscribe on unmount so we don't attempt to set the state of this component
