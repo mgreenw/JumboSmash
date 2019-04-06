@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Keyboard, Text, Image, View } from 'react-native';
+import { Keyboard, Text, Image, View, Platform } from 'react-native';
 import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
@@ -68,12 +68,16 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentWillMount() {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
     this.keyboardWillShowListener = Keyboard.addListener(
-      'keyboardWillShow',
+      showEvent,
       this._keyboardWillShow
     );
     this.keyboardWillHideListener = Keyboard.addListener(
-      'keyboardWillHide',
+      hideEvent,
       this._keyboardWillHide
     );
   }
