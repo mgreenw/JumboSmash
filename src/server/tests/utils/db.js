@@ -74,15 +74,20 @@ async function banUser(id) {
   `, [id]);
 }
 
-async function createUser(utln, useDefaultProfile = false, profileBody = null) {
+async function createUser(
+  utln,
+  useDefaultProfile = false,
+  profileBody = null,
+  adminPassword = null,
+) {
   const email = `${utln}@tufts.edu`;
 
   try {
     const result = await db.query(`
-    INSERT INTO users
-      (utln, email)
-      VALUES ($1, $2)
-    RETURNING id`, [utln, email]);
+    INSERT INTO classmates
+      (utln, email, admin_password)
+      VALUES ($1, $2, $3)
+    RETURNING id`, [utln, email, adminPassword]);
 
     const { id } = result.rows[0];
 
