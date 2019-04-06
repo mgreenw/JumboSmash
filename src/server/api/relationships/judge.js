@@ -170,6 +170,7 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
 const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
+    // NOTE: Admins get no special privileges here
     const canJudge = await canAccessUserData(req.body.candidateUserId, req.user.id);
     if (!canJudge) {
       return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();

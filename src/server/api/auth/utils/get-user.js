@@ -8,7 +8,7 @@ const logger = require('../../../logger');
 
 const AuthenticationError = require('./authentication-error');
 
-function getUser(token: string): Promise<any> {
+function getUser(token: string, adminPassword: ?string = null): Promise<any> {
   return new Promise((resolve, reject) => {
     jwt.verify(token, config.get('secret'), async (err, decoded) => {
       if (err) return reject(new AuthenticationError('Invalid secret used in decoding'));
@@ -22,12 +22,13 @@ function getUser(token: string): Promise<any> {
             COALESCE(p.user_id, 0)::boolean AS "hasProfile",
             u.utln,
             u.token_uuid AS "tokenUUID",
-            u.expo_push_token AS "expoPushToken"
+            u.expo_push_token AS "expoPushToken",
+            (u.admin_password IS NOT NULL AND u.admin_password = $1) AS "isAdmin"
           FROM users u
           LEFT JOIN profiles p ON p.user_id = u.id
-          WHERE u.id = $1
+          WHERE u.id = $2
           LIMIT 1`,
-          [decoded.userId],
+          [adminPassword, decoded.userId],
         );
 
         // If no user exists with that id, fail

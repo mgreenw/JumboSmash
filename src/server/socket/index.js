@@ -78,6 +78,7 @@ class Socket {
       });
 
       socket.on('TYPING', async (otherUserId: number) => {
+        // NOTE: Admins don't get special privileges here
         const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
           requireMatch: true,
         });

@@ -20,8 +20,10 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
 
   try {
     // Set the request's "user" property to be the user object (user
-    // and profile if the user has setup their profile)
-    req.user = await getUser(token);
+    // and profile if the user has setup their profile).
+    // If Admin-Authorization is null, the isAdmin will be false. Admins
+    // must be authenticated by 1) being a user and 2) by supplying the correct password
+    req.user = await getUser(token, req.get('Admin-Authorization'));
 
     // Go to the next middleware
     return next();
