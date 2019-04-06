@@ -216,6 +216,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         _id: message.sender,
         name: message.sender
       },
+      system: message.sender === 'system',
       sent: true,
       failed: false,
       received: readReceipt
