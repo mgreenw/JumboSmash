@@ -10,7 +10,7 @@ export default function readMEssage(
 ): Promise<void> {
   const route = READ_MESSAGE__ROUTE__GENERATOR(matchId, messageId);
   // No body for this.
-  return apiRequest('POST', route).then(response => {
+  return apiRequest('PATCH', route).then(response => {
     switch (response.status) {
       case READ_MESSAGE__SUCCESS: {
         return response.data;
