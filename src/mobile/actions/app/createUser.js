@@ -3,6 +3,7 @@ import type { ProfileFields, UserSettings, Dispatch } from 'mobile/reducers';
 import { createMyProfileFields } from 'mobile/api/users/updateMyProfile';
 import updateMySettings from 'mobile/api/users/updateMySettings';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
+import Sentry from 'sentry-expo';
 import DevTesting from '../../utils/DevTesting';
 
 export type CreateUserInitiated_Action = {
@@ -57,6 +58,9 @@ export default (fields: ProfileFields, settings: UserSettings) => (
       .then(() => {
         createMyProfileFields(fields)
           .then(() => {
+            Sentry.captureMessage('User Created!', {
+              level: 'info'
+            });
             dispatch(complete());
           })
           .catch(error => {
