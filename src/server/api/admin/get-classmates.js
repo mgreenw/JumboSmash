@@ -24,7 +24,7 @@ const getClassmates = async () => {
       admin_password IS NOT NULL AS "isAdmin"
     FROM classmates
   `);
-  return status(codes.GET_SETTINGS__SUCCESS).data({
+  return status(codes.GET_CLASSMATES__SUCCESS).data({
     classmates: classmatesResult.rows,
   });
 };
