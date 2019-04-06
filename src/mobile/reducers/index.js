@@ -75,11 +75,6 @@ import type {
   SendMessageFailed_Action
 } from 'mobile/actions/app/sendMessage';
 import type {
-  ReadMessageInitiated_Action,
-  ReadMessageCompleted_Action,
-  ReadMessageFailed_Action
-} from 'mobile/actions/app/readMessage';
-import type {
   SummonPopup_Action,
   DismissPopup_Action
 } from 'mobile/actions/popup';
@@ -127,8 +122,10 @@ import type {
   ServerCandidate,
   ServerReadReceipt
 } from 'mobile/api/serverTypes';
+import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
+import ReadMessageReducer from './conversations/readMessage';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -359,6 +356,11 @@ export type ReadReceipts = {
   [userId: number]: ?ReadReceipt
 };
 
+/**
+ * Used so that we don't send a readMessage API call if we've already confirmed we've sent one.
+ */
+export type ReadMessages = { [userId: number]: ?ReadReceipt };
+
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
 // These are the messages that only exist client side:
@@ -377,6 +379,31 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 
 // --------- //
 
+export type InProgress = {|
+  loadAuth: boolean,
+  sendVerificationEmail: boolean,
+  logout: boolean,
+  login: boolean,
+  loadApp: boolean,
+  getSceneCandidates: GetSceneCandidatesInProgress,
+  createUser: boolean,
+  saveProfile: boolean,
+  saveSettings: boolean,
+  uploadPhoto: boolean,
+  deletePhoto: boolean,
+  getMatches: boolean,
+  blockUser: boolean,
+  reportUser: boolean,
+  unmatch: boolean,
+  sendFeedback: boolean,
+
+  sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
+  readMessage: { [userId: number]: { [messageId: number]: boolean } },
+
+  // map of userID's to conversation fetches in progress
+  getConversation: { [userId: number]: boolean }
+|};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
   network: { isConnected: boolean },
@@ -390,29 +417,7 @@ export type ReduxState = {|
   appLoaded: boolean,
   onboardingCompleted: boolean,
 
-  inProgress: {|
-    loadAuth: boolean,
-    sendVerificationEmail: boolean,
-    logout: boolean,
-    login: boolean,
-    loadApp: boolean,
-    getSceneCandidates: GetSceneCandidatesInProgress,
-    createUser: boolean,
-    saveProfile: boolean,
-    saveSettings: boolean,
-    uploadPhoto: boolean,
-    deletePhoto: boolean,
-    getMatches: boolean,
-    blockUser: boolean,
-    reportUser: boolean,
-    unmatch: boolean,
-    sendFeedback: boolean,
-
-    sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
-
-    // map of userID's to conversation fetches in progress
-    getConversation: { [userId: number]: boolean }
-  |},
+  inProgress: InProgress,
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
@@ -436,6 +441,7 @@ export type ReduxState = {|
   unconfirmedConversations: UnconfirmedConversations,
 
   readReceipts: ReadReceipts,
+  readMessages: ReadMessages,
 
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
@@ -491,9 +497,7 @@ export type Action =
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
   | SendMessageFailed_Action
-  | ReadMessageInitiated_Action
-  | ReadMessageCompleted_Action
-  | ReadMessageFailed_Action
+  | ReadMessage_Action
   | SummonPopup_Action
   | DismissPopup_Action
   | NewMessageInitiated_Action
@@ -548,6 +552,7 @@ const defaultState: ReduxState = {
     getMatches: false,
     getConversation: {},
     sendMessage: {},
+    readMessage: {},
     blockUser: false,
     reportUser: false,
     unmatch: false,
@@ -575,6 +580,7 @@ const defaultState: ReduxState = {
   confirmedConversations: {},
   unconfirmedConversations: {},
   readReceipts: {},
+  readMessages: {},
   profiles: {},
 
   // before loaded
@@ -1832,13 +1838,15 @@ export default function rootReducer(
     }
 
     case 'READ_MESSAGE__INITIATED': {
-      return state;
+      return ReadMessageReducer.initiate(state, action);
     }
+
     case 'READ_MESSAGE__COMPLETED': {
-      return state;
+      return ReadMessageReducer.complete(state, action);
     }
+
     case 'READ_MESSAGE__FAILED': {
-      return state;
+      return ReadMessageReducer.fail(state, action);
     }
 
     default: {
