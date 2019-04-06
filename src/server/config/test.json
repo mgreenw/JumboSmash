@@ -13,5 +13,6 @@
     "host": "localhost",
     "port": 6379,
     "db": 1
-  }
+  },
+  "launch_date": "2019-04-06T14:11:23.952Z"
 }

@@ -16,7 +16,7 @@ const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
-const { authenticated, hasProfile } = require('./utils').middleware;
+const { authenticated, hasProfile, isAfterLaunch } = require('./utils').middleware;
 
 
 const apiRouter = express.Router();
@@ -45,6 +45,12 @@ apiRouter.use(hasProfile);
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
+
+// --> After Launch Only Routers <--
+apiRouter.use(isAfterLaunch);
+// Conversations are the only routes that are truly post-launch
+// We need other routes to interact with profiles and potentially relationships
+// to block other users.
 apiRouter.use('/conversations', conversationsRouter);
 
 // --> Main Erro Handler! <--

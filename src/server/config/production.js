@@ -32,4 +32,5 @@ module.exports = {
     client_email: 'projectgem-server@projectgem.iam.gserviceaccount.com',
     project_id: 'projectgem',
   },
+  launch_date: secrets.get('LAUNCH_DATE'),
 };

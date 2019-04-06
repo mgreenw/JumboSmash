@@ -22,4 +22,5 @@ module.exports = {
     host: 'gem_staging_redis',
     port: 6379,
   },
+  launch_date: secrets.get('LAUNCH_DATE'),
 };
