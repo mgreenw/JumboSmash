@@ -33,6 +33,7 @@ import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import formatMessage from 'mobile/utils/FormatMessage';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -210,7 +211,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     const message = confirmedConversation.byId[id];
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: message.content,
+      text: formatMessage(message.content),
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,

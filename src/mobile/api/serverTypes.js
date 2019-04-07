@@ -75,3 +75,11 @@ export type NewMessage_PushNotificationData = {
     senderUserId: number
   }
 };
+
+/**
+ * Message body for system messages.
+ */
+export type SystemMessage =
+  | 'MATCHED_SOCIAL'
+  | 'MATCHED_SMASH'
+  | 'MATCHED_STONE';
