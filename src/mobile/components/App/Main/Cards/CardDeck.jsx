@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, Image } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -22,6 +22,8 @@ import SwipeButtons from './SwipeButtons';
 
 import BlockPopup from '../Matches/BlockPopup';
 import ReportPopup from '../Matches/ReportPopup';
+
+const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -412,7 +414,7 @@ class cardDeck extends React.Component<Props, State> {
           useViewOverflow={Platform.OS === 'ios'}
           onTapCard={this._onTapCard}
         />
-        {allSwiped && (
+        {allSwiped && !getCandidatesInProgress && (
           <View
             style={{
               /* Absolutely absurd we have to do this, but the Swiper does not
@@ -429,13 +431,18 @@ class cardDeck extends React.Component<Props, State> {
                 disabled={getCandidatesInProgress}
               />
             )}
-            <PrimaryButton
-              onPress={getMoreCandidates}
-              title="Load More"
-              loading={getCandidatesInProgress}
-              disabled={getCandidatesInProgress}
-            />
           </View>
+        )}
+        {getCandidatesInProgress && (
+          <Image
+            resizeMode="contain"
+            style={{
+              flex: 1,
+              marginTop: 46,
+              marginBottom: 182
+            }}
+            source={ArthurLoadingGif}
+          />
         )}
         {expandedCardProfile && (
           <ModalProfileView
