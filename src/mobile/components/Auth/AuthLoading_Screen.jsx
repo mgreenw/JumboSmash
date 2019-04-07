@@ -1,18 +1,19 @@
 // @flow
 
 import React from 'react';
-import { Image, View } from 'react-native';
-import { Font, Asset } from 'expo';
+import { Image, View, Text } from 'react-native';
+import { Font, Asset, Constants } from 'expo';
 import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
+import Sentry from 'sentry-expo';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
-const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
-const ArthurLoadingImage = require('../../assets/arthurLoading.png');
+// const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
+// const ArthurLoadingImage = require('../../assets/arthurLoading.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -91,26 +92,34 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   /* eslint-disable */
   _loadAssets() {
     const fonts = [
-      { vegan: require('../../assets/fonts/Vegan-Regular.ttf') },
+      { VeganStyle: require('../../assets/fonts/Vegan-Regular.ttf') },
+      {
+        AvenirNext_Regular: require('../../assets/fonts/AvenirNext-Regular.ttf')
+      },
+      {
+        AvenirNext_DemiBold: require('../../assets/fonts/AvenirNext-DemiBold.ttf')
+      },
+      {
+        SourceSansPro_Regular: require('../../assets/fonts/SourceSansPro-Regular.ttf')
+      },
+      {
+        SourceSansPro_Bold: require('../../assets/fonts/SourceSansPro-Bold.ttf')
+      },
+      {
+        SourceSansPro_DemiBold: require('../../assets/fonts/SourceSansPro-SemiBold.ttf')
+      },
 
-      {
-        SourceSansPro: require('../../assets/fonts/SourceSansPro-Regular.ttf')
-      },
-      {
-        gemicons: require('../../assets/icons/gemicons.ttf')
-      },
-      {
-        AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf')
-      }
+      { gemicons: require('../../assets/icons/gemicons.ttf') },
+      { AvenirNext: require('../../assets/fonts/AvenirNext-Regular.ttf') }
     ];
     /* eslint-enable */
 
     const images = [
       Waves1,
       ArthurIcon,
-      WavesFullSCreen,
-      ArthurLoadingImage,
-      ArthurLoadingGif
+      WavesFullSCreen
+      // ArthurLoadingImage,
+      // ArthurLoadingGif
     ];
 
     const imageAssets = cacheImages(images);
@@ -122,6 +131,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         loadAuth();
       })
       .catch(e => {
+        Sentry.captureException(e);
+
         DevTesting.log('Error importing fonts:', e);
       });
   }
@@ -142,6 +153,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
           />
         </View>
         <View style={{ flex: 1 }} />
+        <Text style={[{ textAlign: 'center' }]}>
+          {`Version ${Constants.manifest.version}`}
+        </Text>
       </View>
     );
   }

@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
+const redis = require('../../redis');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const utils = require('./utils');
@@ -12,7 +13,12 @@ const matchedScenesChecks = utils.scenes.map((scene) => {
 });
 
 const sceneTimestampList = utils.scenes.map((scene) => {
-  return `me_critic.liked_${scene}_timestamp, they_critic.liked_${scene}_timestamp`;
+  return `
+    CASE WHEN me_critic.liked_${scene} AND they_critic.liked_${scene}
+    THEN GREATEST(me_critic.swiped_${scene}_timestamp, they_critic.swiped_${scene}_timestamp)
+    ELSE NULL
+    END
+  `;
 });
 
 /**
@@ -33,19 +39,40 @@ const getMatches = async (userId: number) => {
   // 3) We filter out all blocked users (if either person blocked the other)
   //    and also ensure that there exists at least one scene where both
   //    users liked the other (which means they have a match).
-  const result = await db.query(`
+  const [matchesResult, unreadConversationUserIds] = await Promise.all([
+    db.query(`
       ${utils.matchQuery}
-      AND me_critic.candidate_user_id = they_critic.critic_user_id
-      AND NOT them.banned
-      AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
-      AND
-        (${matchedScenesChecks.join(' OR ')})
-    ORDER BY
-      most_recent_message.timestamp NULLS FIRST,
-      GREATEST(${sceneTimestampList.join(',')}) DESC
-  `, [userId]);
+        AND me_critic.candidate_user_id = they_critic.critic_user_id
+        AND NOT them.banned
+        AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
+        AND
+          (${matchedScenesChecks.join(' OR ')})
+      ORDER BY
+        most_recent_message.timestamp NULLS FIRST,
+        GREATEST(${sceneTimestampList.join(',')}) DESC
+    `, [userId]),
+    redis.shared.hkeys(redis.unreadConversationsKey(userId)),
+  ]);
 
-  return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(result.rows);
+  // Map the userIds into an object for much faster access
+  const unreadConversationUserIdsMap = unreadConversationUserIds.reduce(
+    (unreadUserIds, unreadUserId) => {
+      /* eslint-disable no-param-reassign */
+      unreadUserIds[unreadUserId] = true;
+      /* eslint-enable no-param-reassign */
+      return unreadUserIds;
+    },
+    {},
+  );
+
+  const matches = matchesResult.rows.map((match) => {
+    return {
+      ...match,
+      conversationIsRead: !(match.userId in unreadConversationUserIdsMap),
+    };
+  });
+
+  return apiUtils.status(codes.GET_MATCHES__SUCCESS).data(matches);
 };
 
 const handler = [

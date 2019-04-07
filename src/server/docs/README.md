@@ -15,7 +15,7 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 * [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
 
 ### Users
-* [Create My Profile](users/create-my-profile.md) : `POST /api/users/me/profile`
+* [Finalize Profile Setup](users/finalize-profile-setup.md) : `POST /api/users/me/profile`
 * [Update My Profile](users/update-my-profile.md) : `PATCH /api/users/me/profile`
 * [Get My Profile](users/get-my-profile.md) : `GET /api/users/me/profile`
 * [Get Profile](users/get-profile.md) : `GET /api/users/:userId/profile`
@@ -31,13 +31,14 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 ### Photos
 * [Sign Photo Upload URL](photos/sign-url.md) : `GET /api/photos/sign-url`
 * [Confirm Photo Upload](photos/confirm-upload.md) : `GET /api/photos/confirm-upload`
-* [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoId`
-* [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoId`
+* [Get Photo](photos/get-photo.md) : `GET /api/photos/:photoUuid`
+* [Delete Photo](photos/delete-photo.md) : `DELETE /api/photos/:photoUuid`
 * [Reorder Photos](photos/reorder-photos.md) : `PATCH /api/photos/reorder`
 
-### Messages
-* [Get Conversation](messages/get-conversation.md) : `GET /api/messages/:userId`
-* [Send Message](messages/send-message.md) : `POST /api/messages/:userId`
+### Conversations
+* [Get Conversation](conversations/get-conversation.md) : `GET /api/conversations/:userId`
+* [Send Message](conversations/send-message.md) : `POST /api/conversations/:userId`
+* [Read Message](conversations/read-message.md) : `PATCH /api/conversations/:matchUserId/messages/:messageId`
 
 ### Meta
 * [Send Feedback](meta/send-feedback.md) : `POST /api/meta/feedback`

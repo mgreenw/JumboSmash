@@ -2,6 +2,7 @@
 
 import type { $Request } from 'express';
 
+const uuidv4 = require('uuid/v4');
 const {
   status,
   validate,
@@ -11,6 +12,7 @@ const {
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const redis = require('../../redis');
 const logger = require('../../logger');
 const Notifications = require('../../notifications');
 
@@ -73,8 +75,6 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
   // 2) If there is currently no relationship between the two users, a
   //    relationship will be inserted. If there is a relationship, the
   //    relationship will be updated with the desired values
-  // 3) The 'last_swipe_timestamp' is always updated to reflect that the
-  //    critic has interacted with the candidate
   try {
     const result = await db.query(`
       WITH old_liked AS (
@@ -87,20 +87,19 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
         critic_user_id,
         candidate_user_id,
         liked_${scene},
-        liked_${scene}_timestamp
+        swiped_${scene}_timestamp
       )
       VALUES (
         $1,
         $2,
         $3,
-        CASE WHEN $3 THEN NOW() ELSE NULL END
+        NOW()
       )
       ON CONFLICT (critic_user_id, candidate_user_id)
       DO UPDATE
         SET
         liked_${scene} = $3,
-        last_swipe_timestamp = now(),
-        liked_${scene}_timestamp = CASE WHEN $3 THEN NOW() ELSE NULL END
+        swiped_${scene}_timestamp = NOW()
       RETURNING (SELECT * FROM old_liked)
     `, [userId, candidateUserId, liked]);
 
@@ -111,13 +110,44 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
     // If the user liked them this time but did not previously like
     // the candidate in this scene, check for a match.
     if (liked && !likedBefore) {
-      checkMatch(userId, candidateUserId, scene).then(async (matched) => {
-        if (matched) {
-          // Send the notifications! This will happen in the background
-          // so execution here can proceed.
-          Notifications.newMatch(userId, candidateUserId, scene);
-        }
-      });
+      const matched = await checkMatch(userId, candidateUserId, scene);
+      if (matched) {
+        // They are matched! Construct a system message.
+        const matchMessage = `MATCHED_${scene.toUpperCase()}`;
+
+        // Insert the system message
+        const systemMessageResult = await db.query(`
+          INSERT INTO messages
+          (content, sender_user_id, receiver_user_id, unconfirmed_message_uuid, from_system)
+          VALUES ($1, $2, $3, $4, true)
+          RETURNING timestamp
+        `, [matchMessage, userId, candidateUserId, uuidv4()]);
+
+        // If the result here does not have one row it is a SERVER_ERROR;
+        const { timestamp: sceneMatchMessageTimestamp } = systemMessageResult.rows[0];
+
+        // Insert the message for both the sender and the receiver.
+        // Note the reversal of the params.
+        const timestamp = sceneMatchMessageTimestamp.toISOString();
+        const [didMarkUnreadForJudger, didMarkUnreadForCandidate] = await Promise.all([
+          redis.shared.insertMessage(
+            redis.unreadConversationsKey(userId),
+            candidateUserId.toString(),
+            timestamp,
+          ),
+          redis.shared.insertMessage(
+            redis.unreadConversationsKey(candidateUserId),
+            userId.toString(),
+            timestamp,
+          ),
+        ]);
+
+        logger.debug(`Inserted system match for users ${userId} (updated: ${!!didMarkUnreadForJudger}) and ${candidateUserId} (updated: ${!!didMarkUnreadForCandidate})`);
+
+        // Send the notifications! This will happen in the background
+        // so execution here can proceed.
+        Notifications.newMatch(userId, candidateUserId, scene);
+      }
     }
 
     // If the query succeeded, return success

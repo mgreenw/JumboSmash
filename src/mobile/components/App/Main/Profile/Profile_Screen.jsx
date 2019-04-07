@@ -18,6 +18,7 @@ import { Colors } from 'mobile/styles/colors';
 import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 
 const waves1 = require('../../../../assets/waves/waves1/waves.png');
 
@@ -73,7 +74,7 @@ type navigationProps = {
 type dispatchProps = {};
 
 type reduxProps = {
-  photoId: number,
+  photoUuid: string,
   displayName: string,
   profile: UserProfile,
   saveProfileInProgress: boolean,
@@ -82,19 +83,21 @@ type reduxProps = {
 
 type Props = navigationProps & dispatchProps & reduxProps;
 
-type State = {};
+type State = {
+  showExpandedCard: boolean
+};
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Profile Screen');
   }
-  const photoIds = reduxState.client.profile.photoIds;
-  if (photoIds.length === 0) {
+  const photoUuids = reduxState.client.profile.photoUuids;
+  if (photoUuids.length === 0) {
     throw new Error('no photos in Profile Screen');
   }
   return {
     displayName: reduxState.client.profile.fields.displayName,
-    photoId: photoIds[0],
+    photoUuid: photoUuids[0],
     profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile,
     saveSettingsInProgress: reduxState.inProgress.saveSettings
@@ -106,6 +109,13 @@ function mapDispatchToProps(): dispatchProps {
 }
 
 class ProfileScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      showExpandedCard: false
+    };
+  }
+
   _onSettingsPress = () => {
     const { navigation } = this.props;
     const { navigate } = navigation;
@@ -124,15 +134,27 @@ class ProfileScreen extends React.Component<Props, State> {
     navigate(routes.ProfileHelp, {});
   };
 
+  _showExpandedCard = () => {
+    this.setState({
+      showExpandedCard: true
+    });
+  };
+
+  _hideExpandedCard = () => {
+    this.setState({
+      showExpandedCard: false
+    });
+  };
+
   render() {
     const {
-      photoId,
+      photoUuid,
       displayName,
-      navigation,
       profile,
       saveProfileInProgress,
       saveSettingsInProgress
     } = this.props;
+    const { showExpandedCard } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Profile" rightIconName="cards" />
@@ -150,19 +172,12 @@ class ProfileScreen extends React.Component<Props, State> {
               paddingBottom: 20
             }}
           >
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(routes.ProfileExpandedCard, {
-                  profile,
-                  onMinimize: () => navigation.pop()
-                })
-              }
-            >
-              <Avatar size="Large" photoId={photoId} />
+            <TouchableOpacity onPress={this._showExpandedCard}>
+              <Avatar size="Large" photoUuid={photoUuid} />
             </TouchableOpacity>
             <Text
               style={[
-                textStyles.headline4StyleMedium,
+                textStyles.headline4StyleDemibold,
                 { textAlign: 'center', paddingTop: 10 }
               ]}
             >
@@ -207,6 +222,17 @@ class ProfileScreen extends React.Component<Props, State> {
               onPress={this._onProfileHelpPress}
               icon="life-ring"
               loading={false}
+            />
+            <ModalProfileView
+              isVisible={showExpandedCard}
+              onSwipeComplete={this._hideExpandedCard}
+              onBlockReport={null}
+              onMinimize={() => {
+                this.setState({
+                  showExpandedCard: false
+                });
+              }}
+              profile={profile}
             />
           </View>
         </View>

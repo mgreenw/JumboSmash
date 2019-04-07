@@ -7,7 +7,7 @@ import { BirthdayInput } from 'mobile/components/shared/DigitInput';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
 import { validateBirthday } from 'mobile/utils/Birthday';
-import validateName from 'mobile/utils/ValidateName';
+import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
@@ -96,7 +96,9 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     // validate birthday to be the correct
     const { profile } = this.state;
     const validBirthday = validateBirthday(profile.fields.birthday);
-    const validName = validateName(profile.fields.displayName);
+    const { valid: validName, reason: validNameReason } = validateName(
+      profile.fields.displayName
+    );
     if (!validBirthday) {
       this.setState({
         errorMessageBirthday: 'Invalid Birthday'
@@ -104,7 +106,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     }
     if (!validName) {
       this.setState({
-        errorMessageName: 'Too Long of Name'
+        errorMessageName: nameErrorCopy(validNameReason)
       });
     }
 
@@ -166,7 +168,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
             containerStyle={{ width: '100%' }}
             assistive=""
             autoCapitalize="words"
-            maxLength={50}
+            maxLength={20}
           />
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>

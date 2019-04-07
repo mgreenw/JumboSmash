@@ -11,6 +11,7 @@
   "s3_bucket": "projectgem-dev",
   "redis": {
     "host": "localhost",
-    "port": 6379
+    "port": 6379,
+    "db": 1
   }
 }

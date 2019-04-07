@@ -5,24 +5,32 @@ import { Animated, Easing, Text, TouchableOpacity, View } from 'react-native';
 import type AnimatedValue from 'react-native/Libraries/Animated/src/nodes/AnimatedValue';
 import type { Scene } from 'mobile/reducers';
 import { Colors } from 'mobile/styles/colors';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import { NavigationEvents } from 'react-navigation';
 
 type Props = {
-  startIndex: number,
-  onPress: (scene: Scene) => void
+  scene: Scene
 };
 
-const SCENES = [
+const SCENES: { label: string, value: Scene }[] = [
   { label: '🐘', value: 'social' },
   { label: '🍑', value: 'smash' }
 ];
+
+// helper function -- should be made more modular with the Emojis util we have later.
+// for now just a quick hack for sanity.
+function sceneIndex(scene: Scene) {
+  return scene === 'smash' ? 1 : 0;
+}
 
 const WIDTH = 40 * SCENES.length;
 
 export default class SceneSelector extends Component<Props> {
   constructor(props: Props) {
     super(props);
+    const startIndex = sceneIndex(props.scene);
     this.selectedSceneHorizontalPosition = new Animated.Value(
-      props.startIndex / SCENES.length
+      startIndex / SCENES.length
     );
   }
 
@@ -36,14 +44,16 @@ export default class SceneSelector extends Component<Props> {
   };
 
   toggleItem = (index: number) => {
-    const { onPress } = this.props;
     this.animate(index / SCENES.length);
-    onPress(SCENES[index].value);
+    // TOOD: make this better for when we have stone.
+    // for now, an easy hack to switch to the other scene.
+    NavigationService.navigateToCards(SCENES[index].value);
   };
 
   selectedSceneHorizontalPosition: AnimatedValue;
 
   render() {
+    const { scene: currentScene } = this.props;
     const renderedScenes = SCENES.map((scene, index) => (
       <View
         key={scene.value}
@@ -74,6 +84,11 @@ export default class SceneSelector extends Component<Props> {
           height: WIDTH / SCENES.length
         }}
       >
+        <NavigationEvents
+          onDidBlur={() => {
+            this.animate(sceneIndex(currentScene) / SCENES.length);
+          }}
+        />
         <View
           style={{
             flex: 1,

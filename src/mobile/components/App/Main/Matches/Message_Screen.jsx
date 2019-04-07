@@ -19,12 +19,12 @@ import type {
 } from 'mobile/reducers/index';
 import GEMHeader from 'mobile/components/shared/Header';
 import Avatar from 'mobile/components/shared/Avatar';
-import type { NavigationScreenProp } from 'react-navigation';
-import routes from 'mobile/components/navigation/routes';
+import { type NavigationScreenProp } from 'react-navigation';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
+import readMessageAction from 'mobile/actions/app/readMessage';
 import cancelFailedMessageAction from 'mobile/actions/app/cancelFailedMessage';
 import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
@@ -32,9 +32,50 @@ import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
+import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import formatMessage from 'mobile/utils/FormatMessage';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
+
+/**
+ *
+ * @param {newestMessage} accumulator for reduce function
+ * @param {currentMessage} element for reduce function
+ * Reduce function for computing the most recent non-client message from a list of messages.
+ */
+const newerMessage = (
+  newestMessage: ?GiftedChatMessage,
+  currentMessage: ?GiftedChatMessage
+) => {
+  // Don't use client messages
+  if (
+    currentMessage &&
+    currentMessage.user &&
+    currentMessage.user._id === 'client'
+  ) {
+    return newestMessage;
+  }
+
+  // If we don't have a current message, use any available.
+  if (currentMessage && !newestMessage) {
+    return currentMessage;
+  }
+
+  // main check: compare timestamps, return newer one.
+  if (
+    newestMessage &&
+    newestMessage.createdAt &&
+    currentMessage &&
+    currentMessage.createdAt &&
+    newestMessage.createdAt < currentMessage.createdAt
+  ) {
+    return currentMessage;
+  }
+
+  // default to just returning current one if fields are null.
+  return newestMessage;
+};
 
 type ExtraData = {|
   showOtherUserTyping: boolean,
@@ -49,12 +90,14 @@ type NavigationProps = {
 type ReduxProps = {
   getConversation_inProgress: boolean,
   profileMap: { [userId: number]: UserProfile },
-  messages: GiftedChatMessage[]
+  messages: GiftedChatMessage[],
+  mostRecentSenderMessageId: ?number
 };
 
 type DispatchProps = {
   getConversation: (userId: number, mostRecentMessageId?: number) => void,
   sendMessage: (userId: number, message: GiftedChatMessage) => void,
+  readMessage: (userId: number, message: number) => void,
   cancelFailedMessage: (userId: number, messagedUuid: string) => void
 };
 
@@ -70,7 +113,8 @@ type State = {|
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
-  showUnmatchPopup: boolean
+  showUnmatchPopup: boolean,
+  showExpandedCard: boolean
 |};
 
 const wrapperBase = {
@@ -128,6 +172,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
   const confirmedConversation = reduxState.confirmedConversations[userId];
   const unconfirmedConversation = reduxState.unconfirmedConversations[userId];
+  const readReceipt = reduxState.readReceipts[userId];
 
   // Map over unsent messages, mark createdAt as null (as not sent yet)
   // and mark sent as false (as not sent yet), and failed for styling
@@ -161,42 +206,77 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         .reverse()
     : [];
 
+  const _confirmedIdToMessage = id => {
+    // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
+    const message = confirmedConversation.byId[id];
+    const giftedChatMessage: GiftedChatMessage = {
+      _id: message.messageId.toString(),
+      text: formatMessage(message.content),
+      createdAt: Date.parse(message.timestamp),
+      user: {
+        _id: message.sender,
+        name: message.sender
+      },
+      system: message.sender === 'system',
+      sent: true,
+      failed: false,
+      received: readReceipt
+        ? readReceipt.readAtTimestamp >= message.timestamp
+        : false
+    };
+    return giftedChatMessage;
+  };
+
   // map over messages, convert to a GiftedMessage
-  const sentMessages = confirmedConversation
-    ? confirmedConversation.allIds
-        .map(id => {
-          // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
-          const message = confirmedConversation.byId[id];
-          return {
-            _id: message.messageId.toString(),
-            text: message.content,
-            createdAt: Date.parse(message.timestamp),
-            user: {
-              _id: message.fromClient ? '1' : '2',
-              name: message.fromClient ? 'A' : 'B'
-            },
-            sent: true,
-            failed: false
-          };
-        })
-        .reverse()
+  const inOrderMessages: GiftedChatMessage[] = confirmedConversation
+    ? confirmedConversation.inOrderIds.map(_confirmedIdToMessage).reverse()
+    : [];
+  const outOfOrderMessages: GiftedChatMessage[] = confirmedConversation
+    ? confirmedConversation.outOfOrderIds.map(_confirmedIdToMessage).reverse()
     : [];
 
-  const messages = [...failedMessages, ...inProgressMessages, ...sentMessages];
+  const messages: GiftedChatMessage[] = [
+    ...failedMessages,
+    ...inProgressMessages,
+    ...outOfOrderMessages,
+    ...inOrderMessages
+  ];
+
+  const newestOutOfOrderMessage: ?GiftedChatMessage = outOfOrderMessages.reduceRight(
+    newerMessage,
+    null
+  );
+
+  const newestInOrderMessage: ?GiftedChatMessage = inOrderMessages.find(
+    (message: GiftedChatMessage) =>
+      message.user && message.user._id !== 'client'
+  );
+
+  const newestMessage: ?GiftedChatMessage = newerMessage(
+    newestInOrderMessage,
+    newestOutOfOrderMessage
+  );
+
   return {
     getConversation_inProgress: reduxState.inProgress.getConversation[userId],
     messages,
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    mostRecentSenderMessageId: newestMessage
+      ? parseInt(newestMessage._id, 10)
+      : null
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
-    getConversation: (userId: number, mostRecentMessageId?: number) => {
-      dispatch(getConversationAction(userId, mostRecentMessageId));
+    getConversation: (userId: number) => {
+      dispatch(getConversationAction(userId));
     },
     sendMessage: (userId: number, message: GiftedChatMessage) => {
       dispatch(sendMessageAction(userId, message));
+    },
+    readMessage: (userId: number, messageId: number) => {
+      dispatch(readMessageAction(userId, messageId));
     },
     cancelFailedMessage: (userId: number, messageUuid: string) => {
       dispatch(cancelFailedMessageAction(userId, messageUuid));
@@ -212,6 +292,7 @@ class MessagingScreen extends React.Component<Props, State> {
     if (match === null || match === undefined) {
       throw new Error('Match null or undefined in Messaging Screen');
     }
+
     this.state = {
       match,
       nextTyping: null,
@@ -222,7 +303,8 @@ class MessagingScreen extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showUnmatchPopup: false
+      showUnmatchPopup: false,
+      showExpandedCard: false
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -250,6 +332,16 @@ class MessagingScreen extends React.Component<Props, State> {
     const { match } = this.state;
     const { getConversation } = this.props;
     getConversation(match.userId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { mostRecentSenderMessageId: newId, readMessage } = this.props;
+    const { mostRecentSenderMessageId: oldId } = prevProps;
+    const { match } = this.state;
+
+    if (newId && newId !== oldId) {
+      readMessage(match.userId, newId);
+    }
   }
 
   // unsubscribe on unmount so we don't attempt to set the state of this component
@@ -347,6 +439,7 @@ class MessagingScreen extends React.Component<Props, State> {
       otherUserName: profile.fields.displayName,
       loadingMessages: getConversation_inProgress
     };
+
     return (
       <GiftedChat
         /* If we want to render our genesis text, we need to supply a dummy
@@ -368,7 +461,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }
         onSend={this._onSend}
         user={{
-          _id: '1' // sent messages should have same user._id
+          _id: 'client' // sent messages should have same user._id
         }}
         onInputTextChanged={this._onInputTextChanged}
         renderBubble={this._renderBubble}
@@ -410,11 +503,15 @@ class MessagingScreen extends React.Component<Props, State> {
     );
   };
 
-  _goToProfile = (profile: UserProfile) => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.MatchesExpandedCard, {
-      profile,
-      onMinimize: NavigationService.back
+  _showExpandedCard = () => {
+    this.setState({
+      showExpandedCard: true
+    });
+  };
+
+  _hideExpandedCard = () => {
+    this.setState({
+      showExpandedCard: false
     });
   };
 
@@ -423,10 +520,10 @@ class MessagingScreen extends React.Component<Props, State> {
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
           onPress={() => {
-            this._goToProfile(profile);
+            this._showExpandedCard();
           }}
         >
-          <Avatar size={'Large'} photoId={profile.photoIds[0]} border />
+          <Avatar size={'Large'} photoUuid={profile.photoUuids[0]} border />
         </TouchableOpacity>
         <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
           <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
@@ -495,9 +592,6 @@ class MessagingScreen extends React.Component<Props, State> {
 
   _renderUserActionSheet() {
     const { showUserActionSheet } = this.state;
-    const { profileMap } = this.props;
-    const { match } = this.state;
-    const profile = profileMap[match.userId];
     return (
       <ActionSheet
         visible={showUserActionSheet}
@@ -506,7 +600,7 @@ class MessagingScreen extends React.Component<Props, State> {
             text: 'View Profile',
             onPress: () => {
               this.setState({ showUserActionSheet: false });
-              this._goToProfile(profile);
+              this._showExpandedCard();
             }
           },
           {
@@ -569,6 +663,7 @@ class MessagingScreen extends React.Component<Props, State> {
           )
         }
         displayName={displayName}
+        userId={match.profile}
       />
     );
   }
@@ -590,6 +685,7 @@ class MessagingScreen extends React.Component<Props, State> {
           )
         }
         displayName={displayName}
+        userId={match.profile}
       />
     );
   }
@@ -610,13 +706,19 @@ class MessagingScreen extends React.Component<Props, State> {
           )
         }
         displayName={displayName}
+        matchId={match.profile}
       />
     );
   }
 
   render() {
     const { profileMap, cancelFailedMessage } = this.props;
-    const { match, showFailedMessageActionSheet, selectedMessage } = this.state;
+    const {
+      match,
+      showFailedMessageActionSheet,
+      selectedMessage,
+      showExpandedCard
+    } = this.state;
     const profile = profileMap[match.userId];
     return (
       <View style={{ flex: 1 }}>
@@ -627,7 +729,7 @@ class MessagingScreen extends React.Component<Props, State> {
             rightIconName="ellipsis"
             onRightIconPress={() => this._toggleUserActionSheet(true)}
             borderBottom
-            onTitlePress={() => this._goToProfile(profile)}
+            onTitlePress={() => this._showExpandedCard()}
           />
         </View>
         {this._renderContent(profile)}
@@ -663,6 +765,26 @@ class MessagingScreen extends React.Component<Props, State> {
               this._toggleFailedMessageActionSheet(false);
             }
           }}
+        />
+        <ModalProfileView
+          isVisible={showExpandedCard}
+          onSwipeComplete={this._hideExpandedCard}
+          onBlockReport={() => {
+            this.setState(
+              {
+                showExpandedCard: false
+              },
+              () => {
+                this._toggleUserActionSheet(true);
+              }
+            );
+          }}
+          onMinimize={() => {
+            this.setState({
+              showExpandedCard: false
+            });
+          }}
+          profile={profile}
         />
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}

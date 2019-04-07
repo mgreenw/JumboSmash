@@ -1,5 +1,7 @@
 // @flow
 
+import type { Scene } from 'mobile/reducers/';
+
 // Internally, we want to represent a lot of nested data pretty differently, using normalizer.
 // Here we keep track of how the server represents the data we pass back so our parsers operate
 // in a well typed way.
@@ -10,13 +12,15 @@ export type ServerProfile = {
     bio: string,
     birthday: string
   },
-  photoIds: number[]
+  photoUuids: number[]
 };
 
 export type ServerBaseUser = {
   userId: number,
   profile: ServerProfile
 };
+
+export type ServerCandidate = ServerBaseUser;
 
 // nullable timestamps
 export type ServerScenes = {
@@ -25,14 +29,57 @@ export type ServerScenes = {
   stone: ?string
 };
 
-export type ServerMessage = {
+export type Sender = 'system' | 'client' | 'match';
+
+export type ServerMessage = {|
   messageId: number,
   content: string,
   timestamp: string,
-  fromClient: boolean
-};
+  sender: Sender
+|};
+
+export type ServerReadReceipt = {|
+  messageId: number,
+  timestamp: string
+|};
+
+export type ServerConversation = {|
+  messages: ServerMessage[],
+  readReceipt: ServerReadReceipt
+|};
 
 export type ServerMatch = ServerBaseUser & {
   scenes: ServerScenes,
   mostRecentMessage: ServerMessage
 };
+
+// Type for Push Notifications
+
+/**
+ * Recieved in the `Data` field of a `Notification` corresponding to a New Match Push Notification
+ */
+export type NewMatch_PushNotificationData = {
+  type: 'NEW_MATCH',
+  payload: {
+    scene: Scene,
+    userId: number
+  }
+};
+
+/**
+ * Recieved in the `Data` field of a `Notification` corresponding to a New MessagePush Notification
+ */
+export type NewMessage_PushNotificationData = {
+  type: 'NEW_MESSAGE',
+  payload: {
+    senderUserId: number
+  }
+};
+
+/**
+ * Message body for system messages.
+ */
+export type SystemMessage =
+  | 'MATCHED_SOCIAL'
+  | 'MATCHED_SMASH'
+  | 'MATCHED_STONE';

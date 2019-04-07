@@ -5,7 +5,6 @@ import { View, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo';
 import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
-import type { SwipeDirection } from './Deck';
 
 const { width } = Dimensions.get('window');
 
@@ -13,11 +12,12 @@ const iconHeight = 65;
 
 type Props = {
   disabled: boolean,
-  onPress: (swipeDirection: SwipeDirection) => void
+  onPressDislike: () => void,
+  onPressLike: () => void
 };
 
 export default (props: Props) => {
-  const { onPress, disabled } = props;
+  const { onPressLike, onPressDislike, disabled } = props;
   return (
     <LinearGradient
       colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)', 'white']}
@@ -42,7 +42,7 @@ export default (props: Props) => {
         }}
       >
         <TouchableOpacity
-          onPress={() => onPress('left')}
+          onPress={disabled ? () => {} : onPressDislike}
           style={{
             height: iconHeight,
             width: iconHeight,
@@ -57,7 +57,7 @@ export default (props: Props) => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => onPress('right')}
+          onPress={disabled ? () => {} : onPressLike}
           style={{
             height: iconHeight,
             width: iconHeight,

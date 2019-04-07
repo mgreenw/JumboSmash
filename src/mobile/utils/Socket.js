@@ -4,9 +4,17 @@ import { YellowBox } from 'react-native';
 import io from 'socket.io-client';
 import newMessageAction from 'mobile/actions/app/notifications/newMessage';
 import newMatchAction from 'mobile/actions/app/notifications/newMatch';
+import readReceiptUpdateAction from 'mobile/actions/app/notifications/readReceiptUpdate';
 import store from 'mobile/store';
-import type { UserProfile, Message } from 'mobile/reducers';
-import { SERVER_ROUTE } from '../api/routes';
+import type { Scene } from 'mobile/reducers';
+import type {
+  ServerProfile,
+  ServerMessage,
+  ServerReadReceipt,
+  ServerMatch
+} from 'mobile/api/serverTypes';
+import { SERVER_ROUTE } from 'mobile/api/routes';
+
 // Ignore the annoying warning from the websocket connection options
 // Not bad at all and no way around it for now
 // https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
@@ -48,33 +56,54 @@ function connect(token: string) {
     console.log('Socket disconnected from server.');
   });
 
-  _socket.on('NEW_MESSAGE', data => {
-    console.log('NEW_MESSAGE:', data);
-    const {
-      message,
-      senderProfile,
-      senderUserId
-    }: {
-      message: Message,
-      senderProfile: UserProfile,
-      senderUserId: number
-    } = data;
-    // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
-    // $FlowFixMe
-    store.dispatch(newMessageAction(message, senderProfile, senderUserId));
-  });
+  _socket.on(
+    'NEW_MESSAGE',
+    (data: {
+      message: ServerMessage,
+      senderProfile: ServerProfile,
+      senderUserId: number,
+      previousMessageId: ?number
+    }) => {
+      const { message, senderProfile, senderUserId, previousMessageId } = data;
+      // We have to ignore flow here because dispatch expects a normal action not a thunk. // TODO: correctly type thunks
+      store.dispatch(
+        // $FlowFixMe
+        newMessageAction(
+          message,
+          senderProfile,
+          senderUserId,
+          previousMessageId
+        )
+      );
+    }
+  );
 
-  _socket.on('NEW_MATCH', data => {
-    console.log('NEW_MATCH:', data);
+  _socket.on('NEW_MATCH', (data: { match: ServerMatch, scene: Scene }) => {
+    const { match, scene } = data;
 
     // Ensure we type this function
-    const newMatchThunk = newMatchAction(data.scene);
+    const newMatchThunk = newMatchAction(match, scene);
 
     // TODO: correctly type thunks
     // We have to ignore flow here because dispatch expects a normal action not a thunk.
     // $FlowFixMe
     store.dispatch(newMatchThunk);
   });
+
+  _socket.on(
+    'READ_RECEIPT_UPDATE',
+    (data: { readerUserId: number, readReceipt: ?ServerReadReceipt }) => {
+      const { readerUserId, readReceipt } = data;
+
+      const readReceiptUpdateThunk = readReceiptUpdateAction(
+        readerUserId,
+        readReceipt
+      );
+      // TODO: See above
+      // $FlowFixMe
+      store.dispatch(readReceiptUpdateThunk);
+    }
+  );
   /* eslint-enable */
 }
 

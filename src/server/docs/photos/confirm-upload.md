@@ -21,7 +21,7 @@ Provide the normal `Authorization` token in the request header.
 
 ## Success Response
 
-**Condition**: An unconfirmed photo exists AND a corresponding photo has been successfully been uploaded to AWS S3. In this case, the uploaded photo will be added to the requesting user's confirmed photos. The data is the new list if photoIds for the user
+**Condition**: An unconfirmed photo exists AND a corresponding photo has been successfully been uploaded to AWS S3. In this case, the uploaded photo will be added to the requesting user's confirmed photos. The data is the new list if photoUuids for the user
 
 **Code**: `200 OK`
 
@@ -30,7 +30,11 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "CONFIRM_UPLOAD__SUCCESS",
-    "data": [1, 2, 3]
+    "data": [
+        "70228bb4-9387-44d5-938c-46c3369e8ec0",
+        "6ed8c5c4-251a-4933-912d-0143162d0d70",
+        "fd246025-361b-48a0-b7c4-3193a67ddcd6"
+    ]
 }
 ```
 

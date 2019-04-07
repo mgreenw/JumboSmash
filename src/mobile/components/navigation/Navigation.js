@@ -32,10 +32,11 @@ import Profile from 'mobile/components/App/Main/Profile/Profile_Screen';
 import ProfileEdit from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
 import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen';
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
+import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
 
 // Cards
-import Cards from 'mobile/components/App/Main/Cards/Cards_Screen';
-import ExpandedCard from 'mobile/components/App/Main/Cards/ExpandedCard_Screen';
+import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
+import SocialCards from 'mobile/components/App/Main/Cards/SocialCards_Screen';
 
 // Messages & Matches
 import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
@@ -60,21 +61,25 @@ const removeHeader = {
   headerMode: 'none'
 };
 
-const CardsStack = createStackNavigator(
+const CardsSwitch = createMaterialTopTabNavigator(
   {
-    [routes.Cards]: { screen: Cards },
-    [routes.CardsExpandedCard]: { screen: ExpandedCard }
+    [routes.SmashCards]: { screen: SmashCards },
+    [routes.SocialCards]: { screen: SocialCards }
   },
   {
-    initialRouteName: routes.Cards,
-    ...removeHeader,
-    mode: 'modal'
+    swipeEnabled: false,
+    initialRouteName: routes.SmashCards,
+    animationEnabled: false,
+    order: [routes.SocialCards, routes.SmashCards],
+    // $FlowFixMe -- this is a hack but we want our own tab bar
+    tabBarComponent: null,
+    lazy: false // render all at once,
   }
 );
 
-CardsStack.navigationOptions = () => {
+CardsSwitch.navigationOptions = () => {
   return {
-    gesturesEnabled: false
+    swipeEnabled: false
   };
 };
 
@@ -84,7 +89,7 @@ const ProfileStack = createStackNavigator(
     [routes.SettingsEdit]: { screen: SettingsEdit },
     [routes.ProfileEdit]: { screen: ProfileEdit },
     [routes.ProfileHelp]: { screen: ProfileHelp },
-    [routes.ProfileExpandedCard]: { screen: ExpandedCard }
+    [routes.SelectCity]: { screen: SelectCity }
   },
   {
     initialRouteName: routes.Profile,
@@ -101,8 +106,7 @@ ProfileStack.navigationOptions = () => {
 const MatchesStack = createStackNavigator(
   {
     [routes.Matches]: { screen: Matches },
-    [routes.Message]: { screen: Message },
-    [routes.MatchesExpandedCard]: { screen: ExpandedCard }
+    [routes.Message]: { screen: Message }
   },
   {
     initialRouteName: routes.Matches,
@@ -120,7 +124,7 @@ MatchesStack.navigationOptions = () => {
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createMaterialTopTabNavigator(
   {
-    [routes.Cards]: CardsStack,
+    [routes.Cards]: CardsSwitch,
     [routes.Profile]: ProfileStack,
     [routes.Matches]: MatchesStack
   },

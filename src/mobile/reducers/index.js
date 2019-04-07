@@ -25,8 +25,9 @@ import type {
   LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
-  CreateProfileAndSettingsInitiated_Action,
-  CreateProfileAndSettingsCompleted_Action
+  CreateUserInitiated_Action,
+  CreateUserCompleted_Action,
+  CreateUserFailed_Action
 } from 'mobile/actions/app/createUser';
 import type {
   SaveProfileFieldsInitiated_Action,
@@ -78,6 +79,10 @@ import type {
   DismissPopup_Action
 } from 'mobile/actions/popup';
 import type {
+  ReadReceiptUpdateInitiated_Action,
+  ReadReceiptUpdateCompleted_Action
+} from 'mobile/actions/app/notifications/readReceiptUpdate';
+import type {
   NewMessageInitiated_Action,
   NewMessageCompleted_Action
 } from 'mobile/actions/app/notifications/newMessage';
@@ -86,14 +91,44 @@ import type {
   NewMatchCompleted_Action
 } from 'mobile/actions/app/notifications/newMatch';
 import type { CancelFailedMessage_Action } from 'mobile/actions/app/cancelFailedMessage';
+import type {
+  BlockUserInitiated_Action,
+  BlockUserCompleted_Action,
+  BlockUserFailed_Action
+} from 'mobile/actions/app/blockUser';
+import type {
+  ReportUserInitiated_Action,
+  ReportUserCompleted_Action,
+  ReportUserFailed_Action
+} from 'mobile/actions/app/reportUser';
+import type {
+  UnmatchInitiated_Action,
+  UnmatchCompleted_Action,
+  UnmatchFailed_Action
+} from 'mobile/actions/app/unmatch';
+import type {
+  SendFeedbackInitiated_Action,
+  SendFeedbackCompleted_Action,
+  SendFeedbackFailed_Action
+} from 'mobile/actions/app/meta/sendFeedback';
 
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
 import type { Dispatch as ReduxDispatch } from 'redux';
-import type { ServerMatch } from 'mobile/api/serverTypes';
+import type {
+  ServerMatch,
+  ServerMessage,
+  ServerCandidate,
+  ServerReadReceipt
+} from 'mobile/api/serverTypes';
+import type { ReadMessage_Action } from './conversations/readMessage';
+import type { NetworkChange_Action } from './offline-fork';
+import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
+import ReadMessageReducer from './conversations/readMessage';
 
 export type Scene = 'smash' | 'social' | 'stone';
+export const Scenes: Scene[] = ['smash', 'social', 'stone'];
 
 // For global popups
 export type PopupCode = 'UNAUTHORIZED' | 'SERVER_ERROR' | 'EXPIRED_VERIFY_CODE';
@@ -102,7 +137,8 @@ export type BottomToastCode =
   | 'SAVE_SETTINGS__FAILURE'
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
-  | 'UPLOAD_PHOTO_FAILURE';
+  | 'UPLOAD_PHOTO_FAILURE'
+  | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
   code: ?BottomToastCode
@@ -111,7 +147,7 @@ export type BottomToast = {
 export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
-  code: ?NewMatchToastCode,
+  code: NewMatchToastCode,
   profileId?: number,
   scene?: Scene
 };
@@ -119,12 +155,17 @@ export type NewMatchToast = {
 export type NewMessageToastCode = 'NEW_MESSAGE';
 export type NewMessageToast = {
   uuid: string,
-  code: ?NewMessageToastCode,
-  displayName: ?string
+  code: NewMessageToastCode,
+  displayName: string
+};
+
+type InitialToast = {
+  uuid: string,
+  code: 'INITIAL'
 };
 
 export type TopToastCode = NewMessageToastCode | NewMatchToastCode;
-export type TopToast = NewMatchToast | NewMessageToast;
+export type TopToast = NewMatchToast | NewMessageToast | InitialToast;
 
 // /////////////
 // USER TYPES:
@@ -149,12 +190,13 @@ export type UserSettings = {
 export type ProfileFields = {|
   displayName: string,
   birthday: string,
-  bio: string
+  bio: string,
+  postGradLocation: ?string
 |};
 
 export type UserProfile = {|
   fields: ProfileFields,
-  photoIds: number[]
+  photoUuids: string[]
 |};
 
 type SceneMatchTimes = {|
@@ -180,10 +222,10 @@ type Matches = {
   [Id: number]: Match
 };
 
-export type SceneCandidates = {|
-  smash: ?(Candidate[]),
-  social: ?(Candidate[]),
-  stone: ?(Candidate[])
+export type SceneCandidateIds = {|
+  smash: number[],
+  social: number[],
+  stone: number[]
 |};
 
 export type ExcludeSceneCandidateIds = {|
@@ -229,6 +271,16 @@ const ProfileSchema = new schema.Entity(
   }
 );
 
+const CanidateSchema = new schema.Entity(
+  'candidates',
+  {
+    profile: ProfileSchema
+  },
+  {
+    idAttribute: 'userId'
+  }
+);
+
 const MatchSchema = new schema.Entity(
   'matches',
   {
@@ -238,19 +290,26 @@ const MatchSchema = new schema.Entity(
   { idAttribute: 'userId' }
 );
 
+// We add these unconfrimed uuid's so that we can handle messages being sent from client side.
+// For those retrieved from server, we ignore this field.
 export type Message = {|
-  messageId: number,
-  content: string,
-  timestamp: string,
-  fromClient: boolean,
+  ...ServerMessage,
   unconfirmedMessageUuid: string
 |};
 
 // Extended type because in context we don't know who it is sent to.
-type MostRecentMessage = {
+type MostRecentMessage = {|
   ...Message,
   otherUserId: number
-};
+|};
+
+/**
+ * Associates a message with the time the message was read by the user the message was sent to.
+ */
+export type ReadReceipt = {|
+  messageId: number,
+  readAtTimestamp: string
+|};
 
 type GiftedChatUser = {|
   _id: string,
@@ -264,7 +323,8 @@ export type GiftedChatMessage = {|
   user?: GiftedChatUser,
   system?: boolean,
   sent: boolean,
-  failed: boolean
+  failed: boolean,
+  received?: boolean
 |};
 
 // TODO: enable if needed. This is a conceptual type.
@@ -281,8 +341,25 @@ export type ConfirmedMessages = {|
   byId: {|
     [Id: number]: Message
   |},
-  allIds: number[] // Id's in order
+  inOrderIds: number[], // Id's we know are in correct order
+  outOfOrderIds: number[] // Id's we have but are unsure of order / know there's a problem, and will fix on next getConversation
 |};
+
+//  Stored seperately than conversations because this is updated via socket primarily,
+//  so is much safer to use if seperated outside of redux state controlled by api actions.
+//  Can also easily be converted to a slice reducer because of this abstraction.
+/**
+ * Associates a user with the most recent `ReadReceipt` of that user.
+ * If the conversation has never been read than the ReadReceipt is null.
+ */
+export type ReadReceipts = {
+  [userId: number]: ?ReadReceipt
+};
+
+/**
+ * Used so that we don't send a readMessage API call if we've already confirmed we've sent one.
+ */
+export type ReadMessages = { [userId: number]: ?ReadReceipt };
 
 // Keyed by client generated ID. Fine, because client only
 // has unconfirmedMessages they generated ID's for then.
@@ -302,8 +379,35 @@ type UnconfirmedConversations = { [userId: number]: UnconfirmedMessages };
 
 // --------- //
 
+export type InProgress = {|
+  loadAuth: boolean,
+  sendVerificationEmail: boolean,
+  logout: boolean,
+  login: boolean,
+  loadApp: boolean,
+  getSceneCandidates: GetSceneCandidatesInProgress,
+  createUser: boolean,
+  saveProfile: boolean,
+  saveSettings: boolean,
+  uploadPhoto: boolean,
+  deletePhoto: boolean,
+  getMatches: boolean,
+  blockUser: boolean,
+  reportUser: boolean,
+  unmatch: boolean,
+  sendFeedback: boolean,
+
+  sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
+  readMessage: { [userId: number]: { [messageId: number]: boolean } },
+
+  // map of userID's to conversation fetches in progress
+  getConversation: { [userId: number]: boolean }
+|};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
+  network: { isConnected: boolean },
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -313,34 +417,20 @@ export type ReduxState = {|
   appLoaded: boolean,
   onboardingCompleted: boolean,
 
-  inProgress: {|
-    loadAuth: boolean,
-    sendVerificationEmail: boolean,
-    logout: boolean,
-    login: boolean,
-    loadApp: boolean,
-    getSceneCandidates: GetSceneCandidatesInProgress,
-    createUser: boolean,
-    saveProfile: boolean,
-    saveSettings: boolean,
-    uploadPhoto: boolean,
-    deletePhoto: boolean,
-    getMatches: boolean,
-
-    sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
-
-    // map of userID's to conversation fetches in progress
-    getConversation: { [userId: number]: boolean }
-  |},
+  inProgress: InProgress,
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
   response: {|
     sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response
+    login: ?Login_Response,
+    createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
+    blockUserSuccess: ?boolean,
+    reportUserSuccess: ?boolean,
+    sendFeedbackSuccess: ?boolean
   |},
 
-  sceneCandidates: SceneCandidates,
+  sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
 
   // map of userID's to messages
@@ -349,6 +439,9 @@ export type ReduxState = {|
   // Located outside of inProgress for convienence,
   // because of how different this works compared to other reducers
   unconfirmedConversations: UnconfirmedConversations,
+
+  readReceipts: ReadReceipts,
+  readMessages: ReadMessages,
 
   // map of all profiles loaded
   profiles: { [userId: number]: UserProfile },
@@ -374,8 +467,9 @@ export type Action =
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
   | LoadAppCompleted_Action
-  | CreateProfileAndSettingsInitiated_Action
-  | CreateProfileAndSettingsCompleted_Action
+  | CreateUserInitiated_Action
+  | CreateUserCompleted_Action
+  | CreateUserFailed_Action
   | SendVerificationEmailInitiated_Action
   | SendVerificationEmailCompleted_Action
   | SaveProfileFieldsInitiated_Action
@@ -386,6 +480,7 @@ export type Action =
   | NetworkError_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
+  | UploadPhotoFailed_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
   | SaveSettingsInitiated_Action
@@ -402,14 +497,29 @@ export type Action =
   | SendMessageInitiated_Action
   | SendMessageCompleted_Action
   | SendMessageFailed_Action
+  | ReadMessage_Action
   | SummonPopup_Action
   | DismissPopup_Action
   | NewMessageInitiated_Action
   | NewMessageCompleted_Action
   | NewMatchInitiated_Action
   | NewMatchCompleted_Action
+  | ReadReceiptUpdateInitiated_Action
+  | ReadReceiptUpdateCompleted_Action
   | CancelFailedMessage_Action
-  | UploadPhotoFailed_Action;
+  | BlockUserInitiated_Action
+  | BlockUserCompleted_Action
+  | BlockUserFailed_Action
+  | ReportUserInitiated_Action
+  | ReportUserCompleted_Action
+  | ReportUserFailed_Action
+  | UnmatchInitiated_Action
+  | UnmatchCompleted_Action
+  | UnmatchFailed_Action
+  | NetworkChange_Action
+  | SendFeedbackInitiated_Action
+  | SendFeedbackCompleted_Action
+  | SendFeedbackFailed_Action;
 
 export type GetState = () => ReduxState;
 
@@ -418,6 +528,7 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
+  network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   token: null,
   client: null,
   authLoaded: false,
@@ -440,17 +551,26 @@ const defaultState: ReduxState = {
     deletePhoto: false,
     getMatches: false,
     getConversation: {},
-    sendMessage: {}
+    sendMessage: {},
+    readMessage: {},
+    blockUser: false,
+    reportUser: false,
+    unmatch: false,
+    sendFeedback: false
   },
   response: {
     sendVerificationEmail: null,
-    login: null
+    login: null,
+    createUserSuccess: null,
+    blockUserSuccess: null,
+    reportUserSuccess: null,
+    sendFeedbackSuccess: null
   },
   onboardingCompleted: false,
-  sceneCandidates: {
-    smash: null,
-    social: null,
-    stone: null
+  sceneCandidateIds: {
+    smash: [],
+    social: [],
+    stone: []
   },
   excludeSceneCandidateIds: {
     smash: [],
@@ -459,6 +579,8 @@ const defaultState: ReduxState = {
   },
   confirmedConversations: {},
   unconfirmedConversations: {},
+  readReceipts: {},
+  readMessages: {},
   profiles: {},
 
   // before loaded
@@ -476,7 +598,7 @@ const defaultState: ReduxState = {
   },
   topToast: {
     uuid: '0',
-    code: null
+    code: 'INITIAL'
   }
 };
 
@@ -489,10 +611,24 @@ function normalizeMatches(
   entities: {|
     matches: { [userId: number]: Match },
     mostRecentMessages: { [userId: number]: MostRecentMessage },
-    profiles: { [userId: number]: any }
+    profiles: { [userId: number]: UserProfile }
   |}
 } {
   return normalize(matches, [MatchSchema]);
+}
+
+function normalizeCandidates(
+  canidates: ServerCandidate[]
+): {
+  result: number[],
+  entities: {|
+    profiles: { [userId: number]: UserProfile },
+
+    // Pretty useless data we happen to get. Profile Id and User Id are the same thing, and we don't really use this at all.
+    candidates: { [userId: number]: { profileId: number, userId: number } }
+  |}
+} {
+  return normalize(canidates, [CanidateSchema]);
 }
 
 function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
@@ -518,8 +654,19 @@ function updateMostRecentMessage(
   const unmessaged = unmessagedMatchIds === null ? [] : unmessagedMatchIds;
   const messaged = messagedMatchIds === null ? [] : messagedMatchIds;
 
-  // TODO: do some fancy check to ensure we HAVE a match for certain.
-  // Really unlikely we don't, but we should figure out how to handle this if somehow that occurs.
+  // If a new message comes in before the match is loaded then don't update.
+  // The messages will be fetched DURING the fetch of the match.
+  const matchLoaded = matchId in state.matchesById;
+  if (!matchLoaded) {
+    // esentially just return the default substate.
+    // (Damn, imagine having slide reducers)
+    return {
+      unmessagedMatchIds: unmessaged,
+      messagedMatchIds: messaged,
+      matchesById: state.matchesById
+    };
+  }
+
   const match = {
     ...state.matchesById[matchId],
     mostRecentMessage: messageId
@@ -542,22 +689,85 @@ function updateMostRecentMessage(
   };
 }
 
-// TODO: use this helper to determine if order was messed up
 function updateConfirmedConversation(
   state: ReduxState,
   userId: number,
-  byIdChange: { [messageId: number]: Message },
-  newOrder?: number[]
+  newMessagesMap: { [messageId: number]: Message } = {},
+  messageIds: number[] = [],
+  previousMessageId: ?number // if this is the first time this is void
 ): ConfirmedConversations {
-  const { byId = {}, allIds = [] } = state.confirmedConversations[userId] || {};
+  const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+    state.confirmedConversations[userId] || {};
+
+  let newInOrderIds;
+  let newOutOfOrderIds;
+  const prevMessageIndex = inOrderIds.indexOf(previousMessageId);
+
+  // Case 1 -- GOOD STATE
+  // Not the first message, and we have the previous message in our inOrderIds
+  if (previousMessageId && prevMessageIndex !== -1) {
+    // We could get in a state where
+    //    inOrderIds = [1, 2, 3, 4, 5]
+    //    messageIds = [5, 6, 7]
+    // In that example, previousMessageId should be 4.
+    newInOrderIds = inOrderIds
+      .slice(0, prevMessageIndex + 1) // off by one error to preserve previous message
+      .concat(messageIds);
+    newOutOfOrderIds = outOfOrderIds.filter(id => !messageIds.includes(id));
+  }
+
+  // Case 2 -- BAD STATE
+  // Not the first message, but we DON'T have the previous message in our inOrderIds
+  // This means something has gone wrong.
+  if (previousMessageId && prevMessageIndex === -1) {
+    newInOrderIds = inOrderIds;
+
+    // Note that this is kinda INVERSED from the above.
+    // That's because if somehow we got back messages we already are keeping track of, we need to make sure
+    // we preserve the previous order, otherwise the messages will swap locations.
+    newOutOfOrderIds = outOfOrderIds.concat(
+      messageIds.filter(id => !outOfOrderIds.includes(id))
+    );
+  }
+
+  // Case 3 -- BAD STATE
+  // The first message, and we have the previous message in our inOrderIds.
+  // This is a really weird case. It indicates something has MASSIVELY screwed up,
+  // as on the api request we had more messages than we do now.
+  // To handle this as nicely as possible, we throw ALL messages into outOfOrder.
+  // That way, the next getConversation should see that there is no inOrderIds, and grab all Ids.
+  if (!previousMessageId && prevMessageIndex !== -1) {
+    newInOrderIds = [];
+    const allPreviousIds = inOrderIds.concat(outOfOrderIds);
+    const newIdsWithoutDuplicates = messageIds.filter(
+      id => !allPreviousIds.includes(id)
+    );
+    newOutOfOrderIds = allPreviousIds.concat(newIdsWithoutDuplicates);
+  }
+
+  // Case 4 -- GOOD STATE
+  // The first message, and we don't have the previous message in our inOrderIds.
+  // This is typically on:
+  //    a) the first load of a conversation,
+  //    b) a reset load of the conversation, or
+  //    c) on an initial message send / recieve.
+
+  // NOTE: if outOfOrderIds contains elements NOT in messageIds, these are lost.
+  // However, as this is a clean wipe we should use this as the messaging point of truth.
+  if (!previousMessageId && prevMessageIndex === -1) {
+    newInOrderIds = messageIds;
+    newOutOfOrderIds = [];
+  }
+
   return {
     ...state.confirmedConversations,
     [userId]: {
       byId: {
         ...byId,
-        ...byIdChange
+        ...newMessagesMap
       },
-      allIds: newOrder || allIds
+      inOrderIds: newInOrderIds,
+      outOfOrderIds: newOutOfOrderIds
     }
   };
 }
@@ -569,8 +779,9 @@ function updateMostRecentConversations(
   const messageIds = Object.keys(mostRecentMessages);
   const confirmedConversations = messageIds.reduce((conversations, id) => {
     const messageId = parseInt(id, 10);
-    const { byId = {}, allIds = [] } = conversations[messageId] || {};
     const { otherUserId } = mostRecentMessages[messageId];
+    const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+      conversations[otherUserId] || {};
     return {
       ...conversations,
       [otherUserId]: {
@@ -578,12 +789,30 @@ function updateMostRecentConversations(
           ...byId,
           [messageId]: mostRecentMessages[messageId]
         },
-        allIds
+        inOrderIds,
+        outOfOrderIds
       }
     };
   }, state.confirmedConversations);
 
   return confirmedConversations;
+}
+
+// Ugh, again, just a fake slice reducer
+function updateReadReceipts(
+  state: ReduxState,
+  userId: number,
+  serverReadReceipt: ?ServerReadReceipt
+): ReadReceipts {
+  const readReceipt = serverReadReceipt && {
+    messageId: serverReadReceipt.messageId,
+    readAtTimestamp: serverReadReceipt.timestamp
+  };
+
+  return {
+    ...state.readReceipts,
+    [userId]: readReceipt
+  };
 }
 
 export default function rootReducer(
@@ -702,6 +931,10 @@ export default function rootReducer(
     case 'CREATE_PROFILE_AND_SETTINGS__INITIATED': {
       return {
         ...state,
+        response: {
+          ...state.response,
+          createUserSuccess: null
+        },
         inProgress: {
           ...state.inProgress,
           createUser: true
@@ -715,6 +948,24 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: true
+        }
+      };
+    }
+
+    case 'CREATE_PROFILE_AND_SETTINGS__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          createUser: false
+        },
+        response: {
+          ...state.response,
+          createUserSuccess: false
         }
       };
     }
@@ -819,7 +1070,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...profile,
-            photoIds: action.payload.photoIds
+            photoUuids: action.payload.photoUuids
           }
         }
       };
@@ -854,7 +1105,7 @@ export default function rootReducer(
       if (!state.client) {
         throw new Error('User null in reducer for DELETE_PHOTO__COMPLETED');
       }
-      const { photoIds } = action.payload;
+      const { photoUuids } = action.payload;
       return {
         ...state,
         inProgress: {
@@ -865,7 +1116,7 @@ export default function rootReducer(
           ...state.client,
           profile: {
             ...state.client.profile,
-            photoIds
+            photoUuids
           }
         }
       };
@@ -886,24 +1137,39 @@ export default function rootReducer(
       };
     }
 
+    // Appends new Ids to both the SceneCandidates array (the list of all candidates)
+    // and to the ExcludeSceneCandidates array (the list of candidates yet to have been confirmed judged by the server)
     case 'GET_SCENE_CANDIDATES__COMPLETED': {
       const { candidates, scene } = action.payload;
-      const getSceneCandidatesInProgress_updated = {
-        ...state.inProgress.getSceneCandidates,
-        [scene]: false
-      };
 
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: candidates
-      };
+      const { result: newIds, entities: normalizedData } = normalizeCandidates(
+        candidates
+      );
+      const { profiles = {} } = normalizedData;
+      const oldIds = state.sceneCandidateIds[scene];
+      const oldExcludeIds = state.excludeSceneCandidateIds[scene];
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          getSceneCandidates: getSceneCandidatesInProgress_updated
+          getSceneCandidates: {
+            ...state.inProgress.getSceneCandidates,
+            [scene]: false
+          }
         },
-        sceneCandidates: sceneCandidates_updated
+        profiles: {
+          ...state.profiles,
+          ...profiles
+        },
+        sceneCandidateIds: {
+          ...state.sceneCandidateIds,
+          [scene]: [...oldIds, ...newIds]
+        },
+        excludeSceneCandidateIds: {
+          ...state.excludeSceneCandidateIds,
+          [scene]: [...oldExcludeIds, ...newIds]
+        }
       };
     }
 
@@ -924,6 +1190,12 @@ export default function rootReducer(
         serverMatches
       );
 
+      const {
+        matches = {},
+        mostRecentMessages = {},
+        profiles = {}
+      } = normalizedData;
+
       const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
         serverMatches,
         orderedIds
@@ -931,7 +1203,7 @@ export default function rootReducer(
 
       const confirmedConversations = updateMostRecentConversations(
         state,
-        normalizedData.mostRecentMessages || {}
+        mostRecentMessages
       );
 
       return {
@@ -941,8 +1213,11 @@ export default function rootReducer(
           getMatches: false
         },
         confirmedConversations,
-        matchesById: normalizedData.matches,
-        profiles: normalizedData.profiles,
+        matchesById: matches,
+        profiles: {
+          ...state.profiles,
+          ...profiles
+        },
         messagedMatchIds,
         unmessagedMatchIds
       };
@@ -959,44 +1234,26 @@ export default function rootReducer(
     }
 
     case 'JUDGE_SCENE_CANDIDATE__INITIATED': {
-      const { candidateUserId, scene } = action.payload;
-      const currentSceneCandidates = state.sceneCandidates[scene];
-      if (
-        currentSceneCandidates === null ||
-        currentSceneCandidates === undefined
-      ) {
+      const { candidateUserId: judgedId, scene } = action.payload;
+      if (state.excludeSceneCandidateIds[scene].indexOf(judgedId) === -1) {
         throw new Error(
-          'currentSceneCandidates is null in judge scene candidates'
+          'Judged Candidate does not appear in reduxState.excludeSceneCandidateIds'
         );
       }
-
-      const sceneCandidates_updated = {
-        ...state.sceneCandidates,
-        [scene]: currentSceneCandidates.filter(
-          c => c.userId !== candidateUserId
-        )
-      };
-
-      const excludeSceneCandidateIds_updated = {
-        ...state.excludeSceneCandidateIds,
-        [scene]: [...state.excludeSceneCandidateIds[scene], candidateUserId]
-      };
-
-      return {
-        ...state,
-        sceneCandidates: sceneCandidates_updated,
-        excludeSceneCandidateIds: excludeSceneCandidateIds_updated
-      };
+      return state;
     }
 
     case 'SAVE_SETTINGS__COMPLETED': {
       if (!state.client) {
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__SUCCESS'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__SUCCESS'
+          };
       return {
         ...state,
         inProgress: {
@@ -1050,10 +1307,13 @@ export default function rootReducer(
     }
 
     case 'GET_CONVERSATION__COMPLETED': {
-      const { userId, messages } = action.payload;
-      // TODO: ensure 'result' for array order is preserved
-      // pretty sure it's preserved via testing, but not sure via their docs
-      // also TODO: create helper function to type return value
+      const {
+        userId,
+        messages,
+        previousMessageId,
+        readReceipt
+      } = action.payload;
+      //  TODO: create helper function to type return value
       const { result: orderedIds, entities } = normalize(messages, [
         ConfirmedMessageSchema
       ]);
@@ -1062,8 +1322,11 @@ export default function rootReducer(
         state,
         userId,
         entities.messages,
-        orderedIds
+        orderedIds,
+        previousMessageId
       );
+
+      const readReceipts = updateReadReceipts(state, userId, readReceipt);
 
       return {
         ...state,
@@ -1074,6 +1337,7 @@ export default function rootReducer(
             [userId]: false
           }
         },
+        readReceipts,
         confirmedConversations
       };
     }
@@ -1173,7 +1437,8 @@ export default function rootReducer(
         state,
         receiverUserId,
         { [id]: message },
-        [...state.confirmedConversations[receiverUserId].allIds, id]
+        [id],
+        previousMessageId
       );
 
       const {
@@ -1224,20 +1489,37 @@ export default function rootReducer(
       return { ...state, popupErrorCode: null };
     }
 
+    case 'READ_RECEIPT_UPDATE__INITIATED': {
+      return state;
+    }
+
+    case 'READ_RECEIPT_UPDATE__COMPLETED': {
+      const { readerUserId, readReceipt } = action.payload;
+      const readReceipts = updateReadReceipts(state, readerUserId, readReceipt);
+      return {
+        ...state,
+        readReceipts
+      };
+    }
+
     case 'NEW_MESSAGE__INITIATED': {
       return state;
     }
 
     case 'NEW_MESSAGE__COMPLETED': {
-      const { senderProfile, senderUserId, message } = action.payload;
-      const { allIds = [] } = state.confirmedConversations[senderUserId] || {};
-      const orderedIds = [...allIds, message.messageId];
+      const {
+        senderProfile,
+        senderUserId,
+        message,
+        previousMessageId
+      } = action.payload;
 
       const confirmedConversations = updateConfirmedConversation(
         state,
         senderUserId,
         { [message.messageId]: message },
-        orderedIds
+        [message.messageId],
+        previousMessageId
       );
 
       const {
@@ -1265,21 +1547,25 @@ export default function rootReducer(
     }
 
     case 'NEW_MATCH__COMPLETED': {
+      const { scene } = action.payload;
       return {
         ...state,
         topToast: {
           uuid: uuidv4(),
           code: 'NEW_MATCH',
-          scene: action.payload.scene
+          scene
         }
       };
     }
 
     case 'SAVE_SETTINGS__FAILED': {
-      const bottomToast = {
-        uuid: uuidv4(),
-        code: 'SAVE_SETTINGS__FAILURE'
-      };
+      const { disableToast } = action.meta;
+      const bottomToast = disableToast
+        ? state.bottomToast
+        : {
+            uuid: uuidv4(),
+            code: 'SAVE_SETTINGS__FAILURE'
+          };
       return {
         ...state,
         inProgress: {
@@ -1322,6 +1608,245 @@ export default function rootReducer(
           }
         }
       };
+    }
+
+    case 'REPORT_USER__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: true
+        },
+        response: {
+          ...state.response,
+          reportUserSuccess: null
+        }
+      };
+    }
+
+    case 'REPORT_USER__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        },
+        response: {
+          ...state.response,
+          reportUserSuccess: true
+        }
+      };
+    }
+
+    case 'REPORT_USER__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          reportUser: false
+        },
+        response: {
+          ...state.response,
+          reportUserSuccess: false
+        }
+      };
+    }
+
+    case 'UNMATCH__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: true
+        }
+      };
+    }
+
+    case 'UNMATCH__COMPLETED': {
+      const { matchId } = action.payload;
+      const updatedMatchesById = state.matchesById;
+      delete updatedMatchesById[matchId];
+
+      if (
+        state.messagedMatchIds === null ||
+        state.messagedMatchIds === undefined
+      ) {
+        throw new Error('messagedMatchIds is null or undefined');
+      }
+
+      const newMessagedMatchIds = state.messagedMatchIds.filter(
+        id => id !== matchId
+      );
+
+      if (
+        state.unmessagedMatchIds === null ||
+        state.unmessagedMatchIds === undefined
+      ) {
+        throw new Error('unmessagedMatchIds is null or undefined');
+      }
+
+      const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
+        id => id !== matchId
+      );
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        matchesById: updatedMatchesById,
+        messagedMatchIds: newMessagedMatchIds,
+        unmessagedMatchIds: newUnmessagedMatchIds
+      };
+    }
+
+    case 'UNMATCH__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'UNMATCH_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          unmatch: false
+        },
+        bottomToast
+      };
+    }
+
+    case 'BLOCK_USER__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: true
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: null
+        }
+      };
+    }
+
+    case 'BLOCK_USER__COMPLETED': {
+      const { userId } = action.payload;
+      const updatedMatchesById = state.matchesById;
+      delete updatedMatchesById[userId];
+
+      if (
+        state.messagedMatchIds === null ||
+        state.messagedMatchIds === undefined
+      ) {
+        throw new Error('messagedMatchIds is null or undefined');
+      }
+
+      const newMessagedMatchIds = state.messagedMatchIds.filter(
+        id => id !== userId
+      );
+
+      if (
+        state.unmessagedMatchIds === null ||
+        state.unmessagedMatchIds === undefined
+      ) {
+        throw new Error('unmessagedMatchIds is null or undefined');
+      }
+
+      // TODO: We need to filter out this user from sceneCandidateIds. This requires changes to the deck
+
+      const newUnmessagedMatchIds = state.unmessagedMatchIds.filter(
+        id => id !== userId
+      );
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: false
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: true
+        },
+        matchesById: updatedMatchesById,
+        messagedMatchIds: newMessagedMatchIds,
+        unmessagedMatchIds: newUnmessagedMatchIds
+      };
+    }
+
+    case 'BLOCK_USER__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          blockUser: false
+        },
+        response: {
+          ...state.response,
+          blockUserSuccess: false
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__INITIATED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: true
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: null
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__COMPLETED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: false
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: true
+        }
+      };
+    }
+
+    case 'SEND_FEEDBACK__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          sendFeedback: false
+        },
+        response: {
+          ...state.response,
+          sendFeedbackSuccess: false
+        }
+      };
+    }
+
+    // See offline-fork.js -- this allows us to use
+    // react-native-offline at a flat level in our redux state.
+    case CONNECTION_CHANGE: {
+      return handleNetworkChange(state, action.payload);
+    }
+
+    case 'READ_MESSAGE__INITIATED': {
+      return ReadMessageReducer.initiate(state, action);
+    }
+
+    case 'READ_MESSAGE__COMPLETED': {
+      return ReadMessageReducer.complete(state, action);
+    }
+
+    case 'READ_MESSAGE__FAILED': {
+      return ReadMessageReducer.fail(state, action);
     }
 
     default: {

@@ -71,6 +71,12 @@ exports.VERIFY__NO_EMAIL_SENT = {
   code: 400,
 };
 
+// Logout
+exports.LOGOUT__SUCCESS = {
+  status: 'LOGOUT__SUCCESS',
+  code: 200,
+};
+
 // USERS
 
 // Create Profile
@@ -147,6 +153,15 @@ exports.JUDGE__CANDIDATE_NOT_FOUND = {
   code: 400,
 };
 
+exports.UNMATCH__SUCCESS = {
+  status: 'UNMATCH__SUCCESS',
+  code: 200,
+};
+exports.UNMATCH__NOT_MATCHED = {
+  status: 'UNMATCH__NOT_MATCHED',
+  code: 403,
+};
+
 // Report
 exports.REPORT__SUCCESS = {
   status: 'REPORT__SUCCESS',
@@ -219,12 +234,12 @@ exports.REORDER_PHOTOS__SUCCESS = {
   status: 'REORDER_PHOTOS__SUCCESS',
   code: 200,
 };
-exports.REORDER_PHOTOS__MISMATCHED_IDS = {
-  status: 'REORDER_PHOTOS__MISMATCHED_IDS',
+exports.REORDER_PHOTOS__MISMATCHED_UUIDS = {
+  status: 'REORDER_PHOTOS__MISMATCHED_UUIDS',
   code: 400,
 };
 
-// MESSAGES
+// CONVERSATIONS
 // Send Message
 exports.SEND_MESSAGE__SUCCESS = {
   status: 'SEND_MESSAGE__SUCCESS',
@@ -247,6 +262,46 @@ exports.GET_CONVERSATION__SUCCESS = {
 exports.GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID = {
   status: 'GET_CONVERSATION__INVALID_MOST_RECENT_MESSAGE_ID',
   code: 400,
+};
+exports.GET_CONVERSATION__NOT_MATCHED = {
+  status: 'GET_CONVERSATION__NOT_MATCHED',
+  code: 403,
+};
+
+// Read Message
+exports.READ_MESSAGE__SUCCESS = {
+  status: 'READ_MESSAGE__SUCCESS',
+  code: 200,
+};
+exports.READ_MESSAGE__NOT_MATCHED = {
+  status: 'READ_MESSAGE__NOT_MATCHED',
+  code: 400,
+};
+exports.READ_MESSAGE__MESSAGE_NOT_FOUND = {
+  status: 'READ_MESSAGE__MESSAGE_NOT_FOUND',
+  code: 400,
+};
+exports.READ_MESSAGE__FAILURE = {
+  status: 'READ_MESSAGE__FAILURE',
+  code: 409,
+};
+
+// Read Message
+exports.READ_MESSAGE__SUCCESS = {
+  status: 'READ_MESSAGE__SUCCESS',
+  code: 200,
+};
+exports.READ_MESSAGE__NOT_MATCHED = {
+  status: 'READ_MESSAGE__NOT_MATCHED',
+  code: 400,
+};
+exports.READ_MESSAGE__MESSAGE_NOT_FOUND = {
+  status: 'READ_MESSAGE__MESSAGE_NOT_FOUND',
+  code: 400,
+};
+exports.READ_MESSAGE__FAILURE = {
+  status: 'READ_MESSAGE__FAILURE',
+  code: 409,
 };
 
 

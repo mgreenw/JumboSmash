@@ -41,7 +41,11 @@ Provide the normal `Authorization` token in the request header.
                     "birthday": "1997-10-10",
                     "bio": "Cool"
                 },
-                "photoIds": [1, 2, 3]
+                "photoUuids": [
+                    "50c985f7-8f73-4cd3-bbfe-9f8c8f522bfd",
+                    "4f300f7e-3513-4adf-88c0-2f1c08dd91fc",
+                    "44d9df17-9f4a-41b8-8e3d-4a290a16b881"
+                ]
             },
             "scenes": {
                 "smash": "2019-01-27 13:25:43.162-05",
@@ -52,8 +56,9 @@ Provide the normal `Authorization` token in the request header.
                 "messageId": 2,
                 "content": "Well hello there",
                 "timestamp": "2019-02-17T16:01:08.078696",
-                "fromClient": false
-            }
+                "sender": "match"
+            },
+            "conversationIsRead": true
         },
         {
             "userId": 8,
@@ -63,14 +68,19 @@ Provide the normal `Authorization` token in the request header.
                     "birthday": "1997-10-10",
                     "bio": "Cool"
                 },
-                "photoIds": [4, 5, 6]
+                "photoUuids": [
+                    "6e475ef3-c9c0-40c8-83c4-a980b662b7ad",
+                    "d576bc14-5852-48e6-918b-430f78195efc",
+                    "4f0ec97a-fb6b-423b-ad37-635fb5d7747c"
+                ]
             },
             "scenes": {
                 "smash": null,
                 "social": "2019-01-27 13:25:43.162-05",
                 "stone": null
             },
-            "mostRecentMessage": null
+            "mostRecentMessage": null,
+            "conversationIsRead": false
         }
     ]
 }
