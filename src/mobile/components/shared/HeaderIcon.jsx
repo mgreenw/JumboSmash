@@ -91,8 +91,9 @@ export default class HeaderIcon extends React.Component<Props, State> {
             left: 0
           }}
         >
-          {/* only show the badge on an actual icon */
-          name && badge && <IconBadge />}
+          {/* only show the badge on an actual icon 
+          TODO: enable when logic to display is enabled. */
+          name && badge && false && <IconBadge />}
         </View>
       </TouchableOpacity>
     );
