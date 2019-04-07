@@ -9,6 +9,7 @@
     "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
+    "scheme": "jumbosmash",
     "splash": {
       "image": "./assets/splash/ArthurSplash.png"
     },
