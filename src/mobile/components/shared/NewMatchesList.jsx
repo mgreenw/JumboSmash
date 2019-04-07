@@ -38,6 +38,7 @@ class NewMatchesList extends React.Component<Props> {
     const { profileMap, matchMap } = this.props;
     const match = matchMap[userId];
     const profile = profileMap[userId];
+    const showBadge = match.conversationIsRead === false;
     return (
       <TouchableOpacity
         onPress={() => {
@@ -47,7 +48,11 @@ class NewMatchesList extends React.Component<Props> {
           marginHorizontal: 15
         }}
       >
-        <Avatar size="Medium" photoUuid={profile.photoUuids[0]} />
+        <Avatar
+          size="Medium"
+          photoUuid={profile.photoUuids[0]}
+          showBadge={showBadge}
+        />
       </TouchableOpacity>
     );
   };
