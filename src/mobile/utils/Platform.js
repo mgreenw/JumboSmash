@@ -1,9 +1,8 @@
 // @flow
-/* eslint-disable */
 
 import { Dimensions, Platform } from 'react-native';
 
-export const isIphoneX = () => {
+const isIphoneX = () => {
   const d = Dimensions.get('window');
   const { height, width } = d;
 
@@ -14,3 +13,5 @@ export const isIphoneX = () => {
     (height >= 812 || width >= 812)
   );
 };
+
+export { isIphoneX };
