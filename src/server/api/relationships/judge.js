@@ -15,7 +15,6 @@ const db = require('../../db');
 const redis = require('../../redis');
 const logger = require('../../logger');
 const Notifications = require('../../notifications');
-const newMatchUtils = require('../../notifications/new-match/utils');
 
 /* eslint-disable */
 const schema = {
