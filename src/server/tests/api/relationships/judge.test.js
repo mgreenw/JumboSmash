@@ -260,6 +260,6 @@ describe('POST api/relationships/judge', () => {
     expect(res.body.data.messages.length).toBe(1);
     const message = res.body.data.messages[0];
     expect(message.sender).toBe('system');
-    expect(message.content).toContain('matched');
+    expect(message.content).toBe('MATCHED_SMASH');
   });
 });
