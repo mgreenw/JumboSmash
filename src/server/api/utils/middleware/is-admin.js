@@ -11,15 +11,12 @@ const isAdmin = async (req: $Request, res: $Response, next: $Next) => {
     if (req.user.isAdmin) return next();
 
     // If the user is not an admin, respond with the generic "UNAUTHORIZED"
-    return res.status(401).json({
-      status: codes.UNAUTHORIZED.status,
-      version,
-    });
+    return res.status(404).end();
   } catch (err) {
     // Server error. Ensure that the 'authenticated' middleware comes before
     // the 'onboarded' middleware
     return res.status(500).json({
-      status: 'SERVER_ERROR',
+      status: codes.SERVER_ERROR.status,
       version,
     });
   }
