@@ -53,8 +53,9 @@ describe('GET api/admin/classmates', () => {
       .get('/api/admin/classmates')
       .set('Accept', 'application/json')
       .set('Authorization', other.token);
-    expect(res.statusCode).toBe(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+    // NOTE: this is very specific for admin endpoints: we don't want users to know this exists
+    // so we give them a generic 404 if they aren't an admin
+    expect(res.statusCode).toBe(404);
 
     // Non admin with bad password
     res = await request(app)
@@ -62,8 +63,7 @@ describe('GET api/admin/classmates', () => {
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
       .set('Admin-Authorization', 'bad-auth');
-    expect(res.statusCode).toBe(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+    expect(res.statusCode).toBe(404);
 
     // Admin with bad password
     res = await request(app)
@@ -71,8 +71,7 @@ describe('GET api/admin/classmates', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', 'not-the-correct-password');
-    expect(res.statusCode).toBe(401);
-    expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
+    expect(res.statusCode).toBe(404);
   });
 
   it('should return all classmates given the correct headers', async () => {
