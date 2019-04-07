@@ -46,7 +46,6 @@ const query = `
         content,
         timestamp,
         CASE
-          WHEN from_system IS true THEN 'system'
           WHEN sender_user_id = $1 THEN 'client'
           ELSE 'match'
         END AS sender,

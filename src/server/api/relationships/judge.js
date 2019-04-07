@@ -114,9 +114,7 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
       const matched = await checkMatch(userId, candidateUserId, scene);
       if (matched) {
         // They are matched! Construct a system message.
-        const sceneEmoji = newMatchUtils.emojis[scene];
-        const jumboScene = `Jumbo${scene.charAt(0).toUpperCase() + scene.slice(1)}`;
-        const matchMessage = `${sceneEmoji} You matched in ${jumboScene}! ${sceneEmoji}`;
+        const matchMessage = `MATCHED_${scene.toUpperCase()}`;
 
         // Insert the system message
         const systemMessageResult = await db.query(`
