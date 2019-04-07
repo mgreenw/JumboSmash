@@ -38,3 +38,7 @@ h4, h5, h6 {
   font-weight: 600;
   color: #38c7cc;
 }
+img {
+  height: 500px;
+  margin-bottom: 25px;
+}
