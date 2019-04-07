@@ -1,34 +1,54 @@
 // @flow
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 
-const LENGTH = 10;
+const FILL_LENGTH = 10;
 const PADDING = 3;
-// For now, this is pretty specific for the Messages icon badge.
-// TODO: make more modular for the messages screen list icons
-export default () => {
+const TOTAL_LENGTH = FILL_LENGTH + PADDING;
+
+const styles = StyleSheet.create({
+  badgeFill: {
+    height: FILL_LENGTH,
+    width: FILL_LENGTH,
+    borderRadius: FILL_LENGTH,
+    backgroundColor: Colors.Grapefruit
+  },
+  badgeOutline: {
+    height: TOTAL_LENGTH,
+    width: TOTAL_LENGTH,
+    borderRadius: TOTAL_LENGTH,
+    backgroundColor: Colors.White,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
+
+const Badge = () => {
   return (
-    <View
-      style={{
-        height: LENGTH + PADDING,
-        width: LENGTH + PADDING,
-        borderRadius: LENGTH + PADDING,
-        backgroundColor: Colors.White,
-        justifyContent: 'center',
-        alignItems: 'center',
-        left: -LENGTH / 2
-      }}
-    >
-      <View
-        style={{
-          height: LENGTH,
-          width: LENGTH,
-          borderRadius: LENGTH,
-          backgroundColor: Colors.Grapefruit
-        }}
-      />
+    <View style={styles.badgeOutline}>
+      <View style={styles.badgeFill} />
     </View>
   );
 };
+
+// For Header Icons
+const IconBadge = () => {
+  return (
+    <View style={{ left: -TOTAL_LENGTH / 2 }}>
+      <Badge />
+    </View>
+  );
+};
+
+// For Avatar Badges in Messages
+const AvatarBadge = () => {
+  return (
+    <View style={{ right: -TOTAL_LENGTH / 2, top: -TOTAL_LENGTH / 2 }}>
+      <Badge />
+    </View>
+  );
+};
+
+export { Badge, IconBadge, AvatarBadge };

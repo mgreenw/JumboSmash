@@ -6,7 +6,7 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import routes from 'mobile/components/navigation/routes';
-import Badge from 'mobile/components/shared/Badge';
+import { IconBadge } from 'mobile/components/shared/Badge';
 
 type Props = {
   name: ?IconName,
@@ -92,7 +92,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
           }}
         >
           {/* only show the badge on an actual icon */
-          name && badge && <Badge />}
+          name && badge && <IconBadge />}
         </View>
       </TouchableOpacity>
     );
