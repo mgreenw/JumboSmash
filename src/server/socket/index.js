@@ -8,7 +8,6 @@ const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
 
-const db = require('../db');
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
 const logger = require('../logger');
 const { getUser, AuthenticationError } = require('../api/auth/utils');
@@ -42,18 +41,10 @@ class Socket {
 
     /* eslint-disable no-param-reassign */
     _io.use(async (socket, next) => {
-      console.log('running');
       Promise.resolve(getUser(socket.handshake.query.token))
         .then((user) => {
           socket.user = user;
           next();
-          // db.query(`
-          //   UPDATE classmates
-          //   SET socket_id = $1
-          //   WHERE id = $2
-          // `, [socket.id, user.id])
-          //   .then(next)
-          //   .catch(next);
         })
         .catch((error) => {
           // A caught error from getUser means the token is invalid.
@@ -119,12 +110,20 @@ class Socket {
   }
 
   disconnect(userId: number) {
-    this._io.clients((err, clients) => {
-      console.log(err, clients);
+    return new Promise<void>((resolve, reject) => {
+      this.io.in(userId).clients((getClientsErr, clients) => {
+        if (getClientsErr) return reject(getClientsErr);
+        if (clients.length === 0) {
+          logger.debug(`Socket verified with userId ${userId} not found. No socket to disconnect.`);
+          return resolve();
+        }
+
+        return this.io.sockets.adapter.remoteDisconnect(clients[0], true, (disconnectErr) => {
+          if (disconnectErr) return reject(disconnectErr);
+          return resolve();
+        });
+      });
     });
-    // this._io.of(namespace).adapter.clients((err, clients) => {
-    //   console.log(err, clients);
-    // });
   }
 }
 
