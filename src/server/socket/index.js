@@ -129,18 +129,28 @@ class Socket {
 
   disconnect(userId: number) {
     return new Promise<void>((resolve, reject) => {
+      // Do not do anything in a test env: socket is not setup here.
+      if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
+        return resolve();
+      }
+
       // Get a list of clients in the room with the user
-      this.io.in(userId).clients((getClientsErr, clients) => {
+      return this.io.in(userId).clients((getClientsErr, clients) => {
         if (getClientsErr) return reject(getClientsErr);
+
+        // If there are no clients, resolve. This is not an error as the socket does
+        // not need to be connected for the user to log out.
         if (clients.length === 0) {
           logger.debug(`Socket verified with userId ${userId} not found. No socket to disconnect.`);
           return resolve();
         }
 
+        // Log a warning if there is more than one client in a room.
         if (clients.length > 1) {
           logger.warn(`There should only be one client in room ${userId} but there are ${clients.length}`);
         }
 
+        // Disconnect the client from the socket.
         return this.io.sockets.adapter.remoteDisconnect(clients[0], true, (disconnectErr) => {
           if (disconnectErr) return reject(disconnectErr);
           return resolve();
