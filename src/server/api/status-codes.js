@@ -71,6 +71,12 @@ exports.VERIFY__NO_EMAIL_SENT = {
   code: 400,
 };
 
+// Logout
+exports.LOGOUT__SUCCESS = {
+  status: 'LOGOUT__SUCCESS',
+  code: 200,
+};
+
 // USERS
 
 // Create Profile

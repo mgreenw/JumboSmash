@@ -17,13 +17,6 @@ describe('api/auth/verify', () => {
   beforeAll(async () => {
     await db.query('DELETE FROM verification_codes');
     await db.query('DELETE FROM classmates');
-    await db.query('DELETE FROM admins');
-
-    await db.query(`
-      INSERT INTO admins
-      (utln)
-      VALUES ('mgreen14'), ('jjaffe01')
-    `);
 
     await db.query(`
       INSERT INTO testers
@@ -34,7 +27,6 @@ describe('api/auth/verify', () => {
 
   afterAll(async () => {
     await db.query('DELETE FROM verification_codes');
-    await db.query('DELETE FROM admins');
     await db.query('DELETE FROM classmates');
     await db.query('DELETE FROM testers');
   });
@@ -69,8 +61,8 @@ describe('api/auth/verify', () => {
     expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
     expect(res.body.data.token).toBeDefined();
 
-    const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
-    expect(result.rows[0].isAdmin).toBeFalsy();
+    const result = await db.query('SELECT admin_password AS "adminPassword" FROM users WHERE utln = $1', [utln]);
+    expect(result.rows[0].adminPassword).toBeFalsy();
   });
 
   // Tests VERIFY__NO_EMAIL_SENT
@@ -353,41 +345,6 @@ describe('api/auth/verify', () => {
 
     expect(res.statusCode).toBe(401);
     expect(res.body.status).toBe(codes.UNAUTHORIZED.status);
-  });
-
-  it('should set the is_admin flag for users in the admin table', async () => {
-    let res = await request(app)
-      .post('/api/auth/send-verification-email')
-      .send(
-        {
-          email: 'mgreen14@tufts.edu',
-        },
-      )
-      .set('Accept', 'application/json');
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toBe(codes.SEND_VERIFICATION_EMAIL__SUCCESS.status);
-    expect(res.body.data.email).toContain('Max.Greenwald@tufts.edu');
-    const { utln } = res.body.data;
-
-    const codeForGoodUtln = await db.query('SELECT code FROM verification_codes WHERE utln = $1 LIMIT 1', [utln]);
-    res = await request(app)
-      .post('/api/auth/verify')
-      .send(
-        {
-          utln,
-          code: codeForGoodUtln.rows[0].code,
-        },
-      )
-      .set('Accept', 'application/json');
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body.status).toEqual(codes.VERIFY__SUCCESS.status);
-    expect(res.body.data.token).toBeDefined();
-
-
-    const result = await db.query('SELECT is_admin AS "isAdmin" FROM users WHERE utln = $1', [utln]);
-    expect(result.rows[0].isAdmin).toBeTruthy();
   });
 
   it('should allow the tester@jumbosmash.com user to login with verification code 654321', async () => {
