@@ -10,11 +10,12 @@ function setTopLevelNavigator(navigatorRef: any) {
   _navigator = navigatorRef;
 }
 
-function navigate(routeName: string, params?: Object) {
+function navigate(routeName: string, params?: Object, action?: Object) {
   _navigator.dispatch(
     NavigationActions.navigate({
       routeName,
-      params
+      params,
+      action
     })
   );
 }
@@ -49,12 +50,23 @@ function navigateToCards(scene: Scene) {
  * @param {number} userId
  * attempts to go to the messaging screen for a given userId.
  * If that userId is not in the redux state of matches, navigates instead to the `matches` screen.
+ * If on a different message, navigates to the `matches` screen. This is to ensure we reset the message screen.
+ * TODO: allow staying on messages screen but changing the messaged person.
  */
 function navigateToMatch(userId: number) {
   const { matchesById } = store.getState();
   if (userId in matchesById) {
     const match = matchesById[userId];
-    navigate(routes.Message, { match });
+    navigate(
+      routes.Matches,
+      {},
+      NavigationActions.navigate({
+        routeName: routes.Message,
+        params: {
+          match
+        }
+      })
+    );
   } else {
     navigate(routes.Matches);
   }

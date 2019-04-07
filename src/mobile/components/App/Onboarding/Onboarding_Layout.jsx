@@ -68,7 +68,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
               <Text
                 style={[
                   firstScreen || lastScreen || infoScreen
-                    ? textStyles.veganTitle
+                    ? textStyles.jumboSmashStyle
                     : { ...textStyles.headline5StyleDemibold, padding: 10 },
                   { alignSelf: 'center' }
                 ]}
