@@ -18,7 +18,7 @@ type Props = {
 };
 
 const PrimaryButton = (props: Props) => {
-  const { title, disabled, loading, onPress } = props;
+  const { title, disabled = false, loading = false, onPress } = props;
   return (
     <TouchableOpacity
       onPress={() => {
@@ -27,7 +27,6 @@ const PrimaryButton = (props: Props) => {
         onPress();
       }}
       disabled={disabled}
-      loading={loading}
       style={[
         disabled || loading
           ? Arthur_Styles.buttonPrimaryDisabled
