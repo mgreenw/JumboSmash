@@ -61,7 +61,8 @@ const CardView = (props: Props) => {
 
   const firstPhoto = photos[0];
   const lastPhoto = photos.length > 1 ? photos[photos.length - 1] : null;
-  // TODO: more photo logic! Show them all!
+  const middlePhoto1 = photos.length > 2 ? photos[1] : null;
+  const middlePhoto2 = photos.length > 3 ? photos[2] : null;
 
   return (
     <View style={{ flex: 1 }}>
@@ -106,6 +107,7 @@ const CardView = (props: Props) => {
             </TouchableOpacity>
           </View>
         </View>
+        {middlePhoto1}
         <View style={styles.profileBlock}>
           <View
             style={{
@@ -120,6 +122,7 @@ const CardView = (props: Props) => {
             </Text>
           </View>
         </View>
+        {middlePhoto2}
         {lastPhoto}
         {onBlockReport && (
           <View style={styles.profileBlock}>
