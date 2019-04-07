@@ -1,13 +1,13 @@
 // @flow
 
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const logger = require('./logger');
 const api = require('./api');
+const { notFound } = require('./api/utils');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Log each incoming request
 app.use((req, res, next) => {
@@ -32,5 +32,7 @@ app.use((req, res, next) => {
 
 // Define all routes here.
 app.use('/api', api);
+
+app.use(notFound);
 
 module.exports = app;

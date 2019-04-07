@@ -3,10 +3,8 @@
 import type {
   $Request,
   $Response,
-  NextFunction,
-  Middleware,
 } from 'express';
 
-module.exports = function notFound(req: $Request, res: $Response, next: NextFunction) {
-
-}
+module.exports = function notFound(req: $Request, res: $Response) {
+  return res.status(404).send('Not all those who wander are lost. - J. R. R. Tolkien').end();
+};
