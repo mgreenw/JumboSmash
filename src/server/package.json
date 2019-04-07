@@ -24,7 +24,8 @@
     "lint": "eslint .",
     "lint:watch": "nodemon --exec eslint -- .",
     "release": "release-it",
-    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js"
+    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js",
+    "insert-admin": "node ./scripts/insert-admin.js"
   },
   "dependencies": {
     "@google-cloud/logging-winston": "^0.11.0",
@@ -35,6 +36,7 @@
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "bull": "^3.7.0",
+    "chance": "^1.0.18",
     "config": "^2.0.1",
     "expo-server-sdk": "^3.1.0",
     "express": "^4.16.4",
@@ -60,7 +62,6 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
-    "chance": "^1.0.18",
     "eslint": "^5.8.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-flowtype": "^2.50.3",
