@@ -10,7 +10,8 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
-  Easing
+  Easing,
+  Platform
 } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
@@ -241,8 +242,12 @@ function MultiDigitInput(
     _onKeyPress = (event: any) => {
       const isBackspace = event.nativeEvent.key === 'Backspace';
       const deleteOnEmpty = isBackspace && this.props.value === '';
-      const keyOnMaxLength =
-        !isBackspace && this.props.value.length === this.props.maxLength;
+      // On ios this function fires before the value updates so it's length is off by 1
+      const valueLength =
+        Platform.OS === 'ios'
+          ? this.props.value.length + 1
+          : this.props.value.length;
+      const keyOnMaxLength = !isBackspace && valueLength > this.props.maxLength;
       if (deleteOnEmpty || keyOnMaxLength) {
         this._shake();
       }
