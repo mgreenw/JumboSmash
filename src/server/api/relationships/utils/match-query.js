@@ -52,7 +52,9 @@ const query = `
         END AS sender,
         CASE WHEN sender_user_id = $1 THEN receiver_user_id ELSE sender_user_id END AS other_user_id
       FROM messages
-      WHERE $1 in (sender_user_id, receiver_user_id)
+      WHERE
+        $1 in (sender_user_id, receiver_user_id)
+        AND NOT from_system
       ) most_recent_messages
     ORDER BY other_user_id, timestamp DESC
   ) AS most_recent_message ON most_recent_message.other_user_id = they_profile.user_id
