@@ -79,7 +79,7 @@ class OnboardingStartScreen extends React.Component<Props, State> {
       <OnboardingLayout
         body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-            {"Let's get your profile setup before you begin swiping."}
+            {"Let's get your profile set up before you begin swiping."}
           </Text>
         }
         section={'profile'}
