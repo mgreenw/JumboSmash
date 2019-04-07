@@ -64,10 +64,11 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
 
   // Success! The code is verified!
   // Update the expiration date to ensure that the code can only be used once
-  db.query(
-    'UPDATE verification_codes SET expiration = $1',
-    [new Date()],
-  );
+  db.query(`
+    UPDATE verification_codes
+    SET expiration = $1
+    WHERE utln = $2
+  `, [new Date(), utln]);
 
   const isAdmin = (await db.query(`
     SELECT id
