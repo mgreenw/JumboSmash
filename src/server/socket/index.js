@@ -43,8 +43,26 @@ class Socket {
     _io.use(async (socket, next) => {
       Promise.resolve(getUser(socket.handshake.query.token))
         .then((user) => {
-          socket.user = user;
-          next();
+          // Ensure each user can only connect with one socket connection.
+          // Because each user gets placed in a room by their user id, we can
+          // just check to see if there are any clients in the room already. If
+          // so, we do not allow a new client.
+          this.io.in(user.id).clients((error, clients) => {
+            if (error) {
+              logger.error(`Failed to get clients connected to room ${user.id}`, error);
+              return next(error);
+            }
+
+            // If there is already a client connected to this room, reject the new client.
+            if (clients.length > 0) {
+              logger.warn(`User ${user.id} tried to connect with multiple sockets at once.`);
+              return next(new Error('Already a connected socket for the given client.'));
+            }
+
+            // All set! Allow the socket connection.
+            socket.user = user;
+            return next();
+          });
         })
         .catch((error) => {
           // A caught error from getUser means the token is invalid.
@@ -111,11 +129,16 @@ class Socket {
 
   disconnect(userId: number) {
     return new Promise<void>((resolve, reject) => {
+      // Get a list of clients in the room with the user
       this.io.in(userId).clients((getClientsErr, clients) => {
         if (getClientsErr) return reject(getClientsErr);
         if (clients.length === 0) {
           logger.debug(`Socket verified with userId ${userId} not found. No socket to disconnect.`);
           return resolve();
+        }
+
+        if (clients.length > 1) {
+          logger.warn(`There should only be one client in room ${userId} but there are ${clients.length}`);
         }
 
         return this.io.sockets.adapter.remoteDisconnect(clients[0], true, (disconnectErr) => {
