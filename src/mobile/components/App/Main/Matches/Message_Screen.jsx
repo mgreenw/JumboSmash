@@ -209,16 +209,15 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
-    const isSytemMessage = message.sender === 'system';
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: isSytemMessage ? formatMessage(message.content) : message.content,
+      text: formatMessage(message.content),
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,
         name: message.sender
       },
-      system: isSytemMessage,
+      system: message.sender === 'system',
       sent: true,
       failed: false,
       received: readReceipt
