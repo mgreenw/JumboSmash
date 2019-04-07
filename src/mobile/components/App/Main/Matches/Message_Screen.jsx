@@ -33,6 +33,7 @@ import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import formatMessage from 'mobile/utils/FormatMessage';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -208,15 +209,16 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
+    const isSytemMessage = message.sender === 'system';
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: message.content,
+      text: isSytemMessage ? formatMessage(message.content) : message.content,
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,
         name: message.sender
       },
-      system: message.sender === 'system',
+      system: isSytemMessage,
       sent: true,
       failed: false,
       received: readReceipt
