@@ -42,8 +42,21 @@ function validateProfile(profile: Profile) {
 
   // Check that the birthday is in a reasonable range
   if (birthday) {
-    const birthdayDate = new Date(birthday);
-    if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
+    const [year, month, day] = birthday.split('-').map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
+
+    // Note the "month - 1": Javascript's month is 0-indexed. Oof.
+    const birthdayDate = new Date(year, month - 1, day);
+    if (
+      // This ensures that the given birthdayDate is not an "Invalid Date"
+      Number.isNaN(birthdayDate.getTime())
+      // This checks if the birthday is within the reasonable maxBirthday/minBirthday range
+      || birthdayDate < minBirthday
+      || birthdayDate > maxBirthday
+      // The final check below ensures that the Date that javascript coalesces the given birthday
+      // to is actually on the same day as the given birthday. Also duh.
+      // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
+      || birthdayDate.getDate() !== day
+    ) {
       throw profileErrorMessages.BIRTHDAY_NOT_VALID;
     }
   }

@@ -5,7 +5,7 @@ import type {
   ReadMessageCompleted_Action,
   ReadMessageFailed_Action
 } from 'mobile/actions/app/readMessage';
-import type { ReduxState, ReadMessages, InProgress } from '../index';
+import type { ReduxState, ReadMessages, InProgress, Matches } from '../index';
 
 function updateReadMessages(
   state: ReduxState,
@@ -36,6 +36,16 @@ function updateInProgress(
   };
 }
 
+function updateMatchIds(state: ReduxState, matchId: number): Matches {
+  return {
+    ...state.matchesById,
+    [matchId]: {
+      ...state.matchesById[matchId],
+      conversationIsRead: true
+    }
+  };
+}
+
 function initiate(
   state: ReduxState,
   action: ReadMessageInitiated_Action
@@ -55,10 +65,12 @@ function complete(
   const { senderUserId, messageId } = action.payload;
   const readMessages = updateReadMessages(state, senderUserId, messageId);
   const inProgress = updateInProgress(state, senderUserId, messageId, false);
+  const matchesById = updateMatchIds(state, senderUserId);
   return {
     ...state,
     inProgress,
-    readMessages
+    readMessages,
+    matchesById
   };
 }
 

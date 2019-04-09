@@ -141,6 +141,7 @@ class MessagingScreen extends React.Component<Props, State> {
     const { navigation, matchMap, profileMap, conversationMap } = this.props;
     const match = matchMap[userId];
     const profile = profileMap[userId];
+    const showBadge = match.conversationIsRead === false;
     const mostRecentMessage =
       conversationMap[userId].byId[match.mostRecentMessage];
     const formattedTime = formatTime(mostRecentMessage.timestamp);
@@ -167,7 +168,11 @@ class MessagingScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <Avatar size="Small" photoUuid={profile.photoUuids[0]} />
+          <Avatar
+            size="Small"
+            photoUuid={profile.photoUuids[0]}
+            showBadge={showBadge}
+          />
           <View
             style={{
               flex: 1,

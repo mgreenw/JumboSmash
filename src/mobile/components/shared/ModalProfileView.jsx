@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, TouchableHighlight, ScrollView } from 'react-native';
+import { View, TouchableHighlight, ScrollView, StatusBar } from 'react-native';
 import type { UserProfile } from 'mobile/reducers/index';
 import Modal from 'react-native-modal';
 import CardView from 'mobile/components/shared/CardView';
@@ -39,6 +39,7 @@ export default (props: Props) => {
       <ScrollView>
         <TouchableHighlight>
           <View>
+            <StatusBar hidden />
             {profile && (
               <CardView
                 profile={profile}

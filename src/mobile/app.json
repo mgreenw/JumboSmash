@@ -5,10 +5,11 @@
     "privacy": "unlisted",
     "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "1.7.2",
+    "version": "1.8.0",
     "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
+    "scheme": "jumbosmash",
     "splash": {
       "image": "./assets/splash/ArthurSplash.png"
     },
