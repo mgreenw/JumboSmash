@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { View, Platform, Image } from 'react-native';
+import { View, Platform, Image, InteractionManager } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -10,6 +10,7 @@ import type {
 } from 'mobile/reducers/index';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-deck-swiper';
+import { NavigationEvents } from 'react-navigation';
 
 import getSceneCandidatesAction from 'mobile/actions/app/getSceneCandidates';
 import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
@@ -18,12 +19,13 @@ import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
-import SwipeButtons from './SwipeButtons';
+import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
 
 import BlockPopup from '../Matches/BlockPopup';
 import ReportPopup from '../Matches/ReportPopup';
 
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
+const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png');
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -64,7 +66,8 @@ type State = {
   expandedCardUserId: ?number,
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
-  showReportPopup: boolean
+  showReportPopup: boolean,
+  showGif: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -124,7 +127,8 @@ class cardDeck extends React.Component<Props, State> {
       expandedCardUserId: null,
       showUserActionSheet: false,
       showBlockPopup: false,
-      showReportPopup: false
+      showReportPopup: false,
+      showGif: false
     };
   }
 
@@ -373,13 +377,10 @@ class cardDeck extends React.Component<Props, State> {
       allSwiped,
       noCandidates,
       showExpandedCard,
-      expandedCardProfile
+      expandedCardProfile,
+      showGif
     } = this.state;
-    const {
-      getCandidatesInProgress,
-      getMoreCandidates,
-      getMoreCandidatesAndReset
-    } = this.props;
+    const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
 
     return (
       <View
@@ -389,6 +390,20 @@ class cardDeck extends React.Component<Props, State> {
           flex: 1
         }}
       >
+        <NavigationEvents
+          onDidFocus={() => {
+            InteractionManager.runAfterInteractions(() => {
+              this.setState({
+                showGif: true
+              });
+            });
+          }}
+          onWillBlur={() => {
+            this.setState({
+              showGif: false
+            });
+          }}
+        />
         <Swiper
           ref={swiper => {
             this.swiper = swiper;
@@ -414,38 +429,54 @@ class cardDeck extends React.Component<Props, State> {
           useViewOverflow={Platform.OS === 'ios'}
           onTapCard={this._onTapCard}
         />
-        {allSwiped && !getCandidatesInProgress && (
-          <View
-            style={{
-              /* Absolutely absurd we have to do this, but the Swiper does not
+        <View
+          style={{
+            /* Absolutely absurd we have to do this, but the Swiper does not
                correctly propogate props to its children, so we have to fake locations. */
-              position: 'absolute',
-              zIndex: 2
-            }}
-          >
-            {noCandidates && (
-              <PrimaryButton
-                onPress={getMoreCandidatesAndReset}
-                title="Refresh Stack"
-                loading={getCandidatesInProgress}
-                disabled={getCandidatesInProgress}
-              />
-            )}
-          </View>
-        )}
+            position: 'absolute',
+            bottom: SWIPE_BUTTON_HEIGHT,
+            zIndex: 2
+          }}
+        >
+          {allSwiped && noCandidates && (
+            <PrimaryButton
+              onPress={getMoreCandidatesAndReset}
+              title="Refresh Stack"
+              loading={getCandidatesInProgress}
+              disabled={getCandidatesInProgress}
+            />
+          )}
+        </View>
         <View
           style={{
             width: '100%',
             height: '100%',
             alignContent: 'center',
             zIndex: -1,
-            position: 'absolute'
+            position: 'absolute',
+            paddingBottom: SWIPE_BUTTON_HEIGHT / 2
           }}
         >
+          {showGif && (
+            <Image
+              resizeMode="contain"
+              style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute'
+              }}
+              source={ArthurLoadingGif}
+            />
+          )}
           <Image
             resizeMode="contain"
-            style={{ flex: 1, width: undefined, height: undefined }}
-            source={ArthurLoadingGif}
+            style={{
+              zIndex: -2,
+              width: '100%',
+              height: '100%',
+              position: 'absolute'
+            }}
+            source={ArthurLoadingFrame1}
           />
         </View>
         {expandedCardProfile && (

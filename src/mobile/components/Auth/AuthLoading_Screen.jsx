@@ -13,6 +13,7 @@ import Sentry from 'sentry-expo';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
+const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -117,7 +118,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       Waves1,
       ArthurIcon,
       WavesFullSCreen,
-      // ArthurLoadingImage,
+      ArthurLoadingFrame1,
       ArthurLoadingGif
     ];
 
