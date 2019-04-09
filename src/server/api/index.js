@@ -8,6 +8,7 @@ const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
 const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
+const adminRouter = require('./admin');
 
 const codes = require('./status-codes');
 const logger = require('../logger');
@@ -46,8 +47,9 @@ apiRouter.use(hasProfile);
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
 apiRouter.use('/conversations', conversationsRouter);
+apiRouter.use('/admin', adminRouter);
 
-// --> Main Erro Handler! <--
+// --> Main Error Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
   logger.error('Server Error: ', err);

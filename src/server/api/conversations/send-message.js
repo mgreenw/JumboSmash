@@ -114,6 +114,7 @@ const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
     // Ensure the user can access the other user's data
+    // NOTE: Admins get no special privileges here
     const canSendMessage = await canAccessUserData(req.params.userId, req.user.id, {
       requireMatch: true,
     });
