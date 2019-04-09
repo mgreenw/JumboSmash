@@ -39,6 +39,9 @@ describe('GET api/users/me/profile', () => {
       displayName: 'Max',
       birthday: '1999-01-07',
       bio: 'Already has a girlfriend so...',
+      springFlingAct: 'DMB',
+      postgradRegion: 'eu.de',
+      freshmanDorm: null,
     };
 
     await dbUtils.createProfile(user.id, profile);
@@ -53,5 +56,8 @@ describe('GET api/users/me/profile', () => {
     expect(res.body.data.fields.displayName).toBe(profile.displayName);
     expect(res.body.data.fields.birthday).toBe(profile.birthday);
     expect(res.body.data.fields.bio).toBe(profile.bio);
+    expect(res.body.data.fields.postgradRegion).toBe(profile.postgradRegion);
+    expect(res.body.data.fields.springFlingAct).toBe(profile.springFlingAct);
+    expect(res.body.data.fields.freshmanDorm).toBe(profile.freshmanDorm);
   });
 });
