@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-<<<<<<< HEAD
 import {
   View,
   Platform,
@@ -10,9 +9,6 @@ import {
   Animated,
   Easing
 } from 'react-native';
-=======
-import { View, Platform, Image, InteractionManager } from 'react-native';
->>>>>>> master
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -79,13 +75,9 @@ type State = {
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
-<<<<<<< HEAD
   showGif: boolean,
   // Animation
   swipeAnim: Animated.Value
-=======
-  showGif: boolean
->>>>>>> master
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -146,12 +138,8 @@ class cardDeck extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-<<<<<<< HEAD
       showGif: false,
       swipeAnim: new Animated.Value(0)
-=======
-      showGif: false
->>>>>>> master
     };
   }
 
@@ -438,7 +426,6 @@ class cardDeck extends React.Component<Props, State> {
       noCandidates,
       showExpandedCard,
       expandedCardProfile,
-<<<<<<< HEAD
       showGif,
       swipeAnim
     } = this.state;
@@ -446,11 +433,6 @@ class cardDeck extends React.Component<Props, State> {
     const { width } = Dimensions.get('window');
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
-=======
-      showGif
-    } = this.state;
-    const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
->>>>>>> master
 
     return (
       <View
