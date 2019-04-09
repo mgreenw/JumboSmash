@@ -74,6 +74,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
+          // The component decides the padding so that we can control the hitslop here.
           paddingHorizontal: 0.068 * width,
           opacity: disabled ? 0.2 : 1
         }}
@@ -95,7 +96,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
           >
             {/* only show the badge on an actual icon 
           TODO: enable when logic to display is enabled. */
-            name === 'message' && true && <IconBadge />}
+            name === 'message' && badge && <IconBadge />}
           </View>
         </View>
       </TouchableOpacity>
