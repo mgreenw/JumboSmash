@@ -209,10 +209,18 @@ class cardDeck extends React.Component<Props, State> {
 
   _onSwipedAll = () => {
     const { getMoreCandidates } = this.props;
-    this.setState({
-      allSwiped: true
-    });
-    getMoreCandidates();
+    this.setState(
+      {
+        allSwiped: true
+      },
+      () => {
+        // Force the loading to show for a second.
+        // This is a nice way to guarentee request ammounts.
+        setTimeout(() => {
+          getMoreCandidates();
+        }, 1000);
+      }
+    );
   };
 
   // These are callbacks for after swiping
