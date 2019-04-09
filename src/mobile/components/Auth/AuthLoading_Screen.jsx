@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Image, View, Text } from 'react-native';
+import { Image, View, Text, SafeAreaView } from 'react-native';
 import { Font, Asset, Constants } from 'expo';
 import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
@@ -140,22 +140,24 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1 }} />
-        <View style={{ flex: 1 }}>
-          <Image
-            resizeMode="contain"
-            style={{
-              flex: 1,
-              width: null,
-              height: null
-            }}
-            source={ArthurIcon} // TODO: investigate why  mobile/ does not work
-          />
-        </View>
-        <View style={{ flex: 1 }} />
-        <Text style={[{ textAlign: 'center' }]}>
-          {`Version ${Constants.manifest.version}`}
-        </Text>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1 }}>
+            <Image
+              resizeMode="contain"
+              style={{
+                flex: 1,
+                width: null,
+                height: null
+              }}
+              source={ArthurIcon} // TODO: investigate why  mobile/ does not work
+            />
+          </View>
+          <View style={{ flex: 1 }} />
+          <Text style={[{ textAlign: 'center' }]}>
+            {`Version ${Constants.manifest.version}`}
+          </Text>
+        </SafeAreaView>
       </View>
     );
   }
