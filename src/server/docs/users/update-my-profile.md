@@ -27,13 +27,44 @@ Provide updated profile fields
   * Type: `string`
   * Description: The user's bio. Max Length: 500 characters
   * Required: `false`
+* `postgradRegion`
+  * Type: `string`
+  * Description: The user's postgrad living region. Must be one of the following codes: [LinkedIn Geography Codes](https://developer.linkedin.com/docs/reference/geography-codes). OR, can be one of the following custom codes:
+    * `on.the.road` - This is the Jacob Jaffe condition/addition.
+    * `idk` - Some people haven't quite figured it out.
+  * Required: `false`
+* `freshmanDorm`
+  * Type: `string`
+  * Description: The user's freshman dorm. Must be one of:
+    * `Tilton`
+    * `South`
+    * `Haskell`
+    * `Houston`
+    * `Hill`
+    * `Bush`
+    * `Miller`
+    * `Wilson House`
+    * `Hodgdon`
+    * `Metcalf`
+    * `Richardson`
+    * `Lewis`
+  * Required: `false`
+* `springFlingAct`
+  * Type: `string`
+  * Description: The user's desired spring fling act. Optimally, this comes from Spotifiy.
+  * Required: `false`
+  * Length: Between 2 and 150 characters.
 
 **Request body example**
 
 ```json
 {
     "displayName": "Max",
-    "birthday": "1997-09-30",
+    "birthday": "1997-09-09",
+    "bio": "hehe",
+    "postgradRegion": "na.us.ma.7",
+    "freshmanDorm": "Haskell",
+    "springFlingAct": "A real band"
 }
 ```
 

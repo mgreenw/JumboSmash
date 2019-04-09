@@ -51,8 +51,11 @@ Provide the user's initial profile fields.
     "data": {
         "fields": {
             "displayName": "Max",
-            "birthday": "1999-01-27",
-            "bio": "Already has 2 friends so..."
+            "birthday": "1997-09-09",
+            "bio": "hehe",
+            "postgradRegion": null,
+            "freshmanDorm": null,
+            "springFlingAct": null
         },
         "photoUuids": [
             "8c67b20d-5dd6-4597-80dc-0250bc6cad2c"
