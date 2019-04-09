@@ -116,7 +116,10 @@ function profileSelectQuery(
     json_build_object(
       'displayName', ${tableName}display_name,
       'birthday', to_char(${tableName}birthday, 'YYYY-MM-DD'),
-      'bio', ${tableName}bio
+      'bio', ${tableName}bio,
+      'postgradRegion', ${tableName}postgrad_region,
+      'freshmanDorm', ${tableName}freshman_dorm,
+      'springFlingAct', ${tableName}spring_fling_act
     )
   `;
 
