@@ -215,10 +215,11 @@ type BaseUserNew = {| userId: number, profile: number |};
 export type Match = {|
   ...BaseUserNew,
   mostRecentMessage: number,
-  scenes: SceneMatchTimes
+  scenes: SceneMatchTimes,
+  conversationIsRead: boolean
 |};
 
-type Matches = {
+export type Matches = {
   [Id: number]: Match
 };
 
@@ -647,7 +648,8 @@ function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
 function updateMostRecentMessage(
   state: ReduxState,
   matchId: number,
-  messageId: number
+  messageId: number,
+  markConversationUnread: ?boolean
 ) {
   // Assert that these are neither null nor void
   const { unmessagedMatchIds = [], messagedMatchIds = [] } = state;
@@ -659,17 +661,22 @@ function updateMostRecentMessage(
   const matchLoaded = matchId in state.matchesById;
   if (!matchLoaded) {
     // esentially just return the default substate.
-    // (Damn, imagine having slide reducers)
+    // (Damn, imagine having slice reducers)
     return {
       unmessagedMatchIds: unmessaged,
       messagedMatchIds: messaged,
       matchesById: state.matchesById
     };
   }
-
+  const prevMatch = state.matchesById[matchId];
+  const conversationIsRead =
+    markConversationUnread === true
+      ? false
+      : prevMatch && prevMatch.conversationIsRead === true;
   const match = {
     ...state.matchesById[matchId],
-    mostRecentMessage: messageId
+    mostRecentMessage: messageId,
+    conversationIsRead
   };
 
   return {
@@ -1445,7 +1452,7 @@ export default function rootReducer(
         unmessagedMatchIds,
         messagedMatchIds,
         matchesById
-      } = updateMostRecentMessage(state, receiverUserId, id);
+      } = updateMostRecentMessage(state, receiverUserId, id, false);
 
       // NOTE: state.inProgress.sendMessage[receiverUserId] CAN be undefined,
       // but because it is accessed within an object, the spread operator
@@ -1526,7 +1533,7 @@ export default function rootReducer(
         unmessagedMatchIds,
         messagedMatchIds,
         matchesById
-      } = updateMostRecentMessage(state, senderUserId, message.messageId);
+      } = updateMostRecentMessage(state, senderUserId, message.messageId, true);
 
       return {
         ...state,

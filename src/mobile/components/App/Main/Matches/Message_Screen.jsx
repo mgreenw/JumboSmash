@@ -34,6 +34,7 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import formatMessage from 'mobile/utils/FormatMessage';
+import { isIphoneX } from 'mobile/utils/Platform';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -114,7 +115,8 @@ type State = {|
   showBlockPopup: boolean,
   showReportPopup: boolean,
   showUnmatchPopup: boolean,
-  showExpandedCard: boolean
+  showExpandedCard: boolean,
+  mostRecentlyReadMessageId: ?number
 |};
 
 const wrapperBase = {
@@ -304,7 +306,8 @@ class MessagingScreen extends React.Component<Props, State> {
       showBlockPopup: false,
       showReportPopup: false,
       showUnmatchPopup: false,
-      showExpandedCard: false
+      showExpandedCard: false,
+      mostRecentlyReadMessageId: null
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -334,12 +337,17 @@ class MessagingScreen extends React.Component<Props, State> {
     getConversation(match.userId);
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate() {
     const { mostRecentSenderMessageId: newId, readMessage } = this.props;
-    const { mostRecentSenderMessageId: oldId } = prevProps;
-    const { match } = this.state;
+    const { mostRecentlyReadMessageId: oldId, match } = this.state;
 
     if (newId && newId !== oldId) {
+      // TODO: offload this kind of check to the action.
+      // If read message fails then no retries will occur untill component is remounted, or a new message comes in.
+      // However, both of those happen a lot! and can be triggered by revisiting the screen, so all safe for now.
+      this.setState({
+        mostRecentlyReadMessageId: newId
+      });
       readMessage(match.userId, newId);
     }
   }
@@ -477,7 +485,7 @@ class MessagingScreen extends React.Component<Props, State> {
             : null
         }
         renderAvatar={null}
-        minInputToolbarHeight={50}
+        minInputToolbarHeight={40}
         alignTop
         renderSend={(props: any) => {
           return (
@@ -720,6 +728,7 @@ class MessagingScreen extends React.Component<Props, State> {
       showExpandedCard
     } = this.state;
     const profile = profileMap[match.userId];
+    const padBottom = isIphoneX();
     return (
       <View style={{ flex: 1 }}>
         <View>
@@ -766,6 +775,7 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
+        {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
           onSwipeComplete={this._hideExpandedCard}

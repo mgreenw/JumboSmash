@@ -104,6 +104,8 @@ class InactiveSceneCard extends React.Component<Props> {
             Welcome to
           </Text>
           <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
             style={[
               textStyles.jumboSmashStyle,
               { fontSize: 40, padding: 15, textAlign: 'center' }

@@ -59,6 +59,7 @@ export default (props: Props) => {
       name={rightIconName}
       disabled={loading}
       onPress={onRightIconPress}
+      badge
     />
   );
 

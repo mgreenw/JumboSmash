@@ -312,3 +312,12 @@ exports.SEND_FEEDBACK__SUCCESS = {
   status: 'SEND_FEEDBACK__SUCCESS',
   code: 200,
 };
+
+
+// ADMIN
+
+// Get Classmates
+exports.GET_CLASSMATES__SUCCESS = {
+  status: 'GET_CLASSMATES__SUCCESS',
+  code: 200,
+};

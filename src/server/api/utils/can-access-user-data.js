@@ -8,13 +8,14 @@ const matchedQuery = scenes.map((scene) => {
 }).join(' OR ');
 
 type Options = {
-  requireMatch: boolean
+  requireMatch: boolean,
 };
 
 async function canAccessUserData(
   requestedUserId: number,
   requestingUserId: ?number = null,
   options: Options = { requireMatch: false },
+  requestingUserIsAdmin: boolean = false, // This falsy default is very important
 ): Promise<boolean> {
   if (requestedUserId === requestingUserId) return true;
   const bannedResult = await db.query(`
@@ -26,6 +27,9 @@ async function canAccessUserData(
   // Ensure the user exists
   const requestedUserExists = bannedResult.rowCount !== 0;
   if (!requestedUserExists) return false;
+
+  // If the requesting user is an admin, they can always have access.
+  if (requestingUserIsAdmin) return true;
 
   // Ensure the user is not banned
   const requestedUserIsBanned = bannedResult.rows[0].banned === true;

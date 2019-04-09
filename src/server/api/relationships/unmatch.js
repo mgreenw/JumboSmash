@@ -15,6 +15,7 @@ const sceneQuery = utils.scenes.map(scene => `liked_${scene} = false`);
 const unmatch = async (userId: number, matchUserId: number) => {
   // If the users are matched in a scene, unmatch them in that scene and require
   // both users to re-consent to the match
+  // NOTE: Admins get no special privileges here
   const matched = await canAccessUserData(matchUserId, userId, { requireMatch: true });
   if (!matched) {
     return status(codes.UNMATCH__NOT_MATCHED).noData();
