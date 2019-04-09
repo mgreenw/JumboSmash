@@ -101,7 +101,8 @@ const updateMyProfile = async (userId: number, profile: Object) => {
       RETURNING ${profileSelectQuery(`${userParamIndex}`)}
     `, [...template.fields, userId]);
     } catch (error) {
-      // This means invalid enum
+      // This means invalid enum - respond in the same way as another invalid
+      // profile field.
       if (error.code === '22P02') {
         return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
           message: error.message,
