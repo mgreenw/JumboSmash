@@ -37,22 +37,25 @@ async function sendNotifications(notifications: Notification[]) {
 
   // Get the push token for each user in question and map them to the correct notification
   (await db.query(`
-    SELECT expo_push_token AS "expoPushToken", id AS "userId"
+    SELECT
+      expo_push_token AS "expoPushToken",
+      notifications_enabled AS "notificationsEnabled",
+      id AS "userId"
     FROM users
     WHERE id = ANY($1)
   `, [Object.keys(notificationMap)])).rows.forEach((row) => {
-    if (row.expoPushToken) {
+    if (row.expoPushToken && row.notificationsEnabled) {
       if (Expo.isExpoPushToken(row.expoPushToken)) {
         notificationMap[row.userId].to = row.expoPushToken;
       } else {
-        logger.info(`Invalid expo push token for user ${row.userId}`);
+        logger.debug(`Invalid expo push token for user ${row.userId}`);
         delete notificationMap[row.userId];
 
         // Note: no await here: this is a "fire and forget"
         db.query('UPDATE users SET expo_push_token = null WHERE id = $1', [row.userId]);
       }
     } else {
-      logger.info(`No push token for user ${row.userId} - throwing away message.`);
+      logger.debug(`No push token for user ${row.userId} OR not enabled - throwing away message.`);
       delete notificationMap[row.userId];
     }
   });
@@ -61,7 +64,7 @@ async function sendNotifications(notifications: Notification[]) {
   Object.keys(notificationMap).forEach((userId) => {
     if (!notificationMap[userId].to) {
       delete notificationMap[userId];
-      logger.info(`User ${userId} not found. Not sending a notification`);
+      logger.debug(`User ${userId} not found. Not sending a notification`);
     }
   });
 
