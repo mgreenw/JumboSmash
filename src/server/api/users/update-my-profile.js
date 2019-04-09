@@ -25,6 +25,17 @@ const schema = {
     "bio": {
       "description": "The user's bio!",
       "type": "string"
+    },
+    "postgradRegion": {
+      "type": ["string", "null"]
+    },
+    "freshmanDorm": {
+      "type": ["string", "null"]
+    },
+    "springFlingAct": {
+      "type": ["string", "null"],
+      "minLength": 2,
+      "maxLength": 150
     }
   },
   "required": []
@@ -55,6 +66,9 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     display_name: profile.displayName,
     birthday: profile.birthday,
     bio: profile.bio,
+    postgrad_region: profile.postgradRegion,
+    freshman_dorm: profile.freshmanDorm,
+    spring_fling_act: profile.springFlingAct,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
@@ -78,12 +92,23 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     // length as the parameter templates. It is ok to construct the string like
     // this because none of the values in the construction come from user input
     const userParamIndex = template.fields.length + 1;
-    result = await db.query(`
+
+    try {
+      result = await db.query(`
       UPDATE profiles
       SET ${template.templateString}
       WHERE user_id = $${userParamIndex}
       RETURNING ${profileSelectQuery(`${userParamIndex}`)}
     `, [...template.fields, userId]);
+    } catch (error) {
+      // This means invalid enum
+      if (error.code === '22P02') {
+        return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
+          message: error.message,
+        });
+      }
+      throw error;
+    }
   }
 
   // If there is an id returned, success!
