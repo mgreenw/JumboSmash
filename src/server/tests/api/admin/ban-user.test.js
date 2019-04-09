@@ -10,7 +10,7 @@ let other = {};
 let third = {};
 const adminPassword = 'test-admin-password';
 
-describe('GET api/admin/classmates', () => {
+describe('POST api/admin/ban/:userId', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');

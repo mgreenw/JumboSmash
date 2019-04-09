@@ -34,6 +34,7 @@ const banUser = async (userId: number, reason: string, adminUserId: number, admi
       SET
         banned = TRUE,
         banned_reason = CASE WHEN banned THEN banned_reason ELSE $2 END
+      WHERE id = $1
     )
     SELECT old.banned AS "alreadyBanned"
     FROM old
