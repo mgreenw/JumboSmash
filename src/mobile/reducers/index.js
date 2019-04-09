@@ -409,6 +409,8 @@ export type InProgress = {|
 export type ReduxState = {|
   network: { isConnected: boolean },
 
+  numBadges: number,
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -530,6 +532,7 @@ export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
+  numBadges: 0,
   token: null,
   client: null,
   authLoaded: false,
@@ -1203,6 +1206,11 @@ export default function rootReducer(
         profiles = {}
       } = normalizedData;
 
+      const numBadges = serverMatches.reduce(
+        (n, m) => (m.conversationIsRead ? n : n + 1),
+        0
+      );
+
       const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
         serverMatches,
         orderedIds
@@ -1226,7 +1234,8 @@ export default function rootReducer(
           ...profiles
         },
         messagedMatchIds,
-        unmessagedMatchIds
+        unmessagedMatchIds,
+        numBadges
       };
     }
 
@@ -1535,6 +1544,12 @@ export default function rootReducer(
         matchesById
       } = updateMostRecentMessage(state, senderUserId, message.messageId, true);
 
+      const { conversationIsRead } = state.matchesById[senderUserId] || {
+        conversationIsRead: false
+      };
+
+      const numBadges = state.numBadges + (conversationIsRead ? 1 : 0);
+
       return {
         ...state,
         topToast: {
@@ -1545,7 +1560,8 @@ export default function rootReducer(
         confirmedConversations,
         unmessagedMatchIds,
         messagedMatchIds,
-        matchesById
+        matchesById,
+        numBadges
       };
     }
 
