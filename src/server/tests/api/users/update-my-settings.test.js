@@ -151,6 +151,7 @@ describe('GET api/users/me/settings', () => {
           smash: true,
         },
         expoPushToken: token,
+        notificationsEnabled: true,
       });
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe(codes.UPDATE_SETTINGS__SUCCESS.status);
@@ -174,8 +175,10 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.activeScenes.smash).toBe(true);
     expect(res.body.data.activeScenes.social).toBe(false);
     expect(res.body.data.activeScenes.stone).toBe(false);
+    expect(res.body.data.notificationsEnabled).toBeTruthy();
 
-    const tokenRes = await db.query('SELECT expo_push_token FROM classmates WHERE id = $1 LIMIT 1', [user.id]);
+    const tokenRes = await db.query('SELECT expo_push_token, notifications_enabled FROM classmates WHERE id = $1 LIMIT 1', [user.id]);
     expect(tokenRes.rows[0].expo_push_token).toBe(token);
+    expect(tokenRes.rows[0].notifications_enabled).toBe(true);
   });
 });

@@ -70,5 +70,6 @@ describe('GET api/users/me/settings', () => {
     expect(res.body.data.activeScenes.stone).toBe(false);
 
     expect(res.body.data.expoPushToken).toBeDefined();
+    expect(res.body.data.notificationsEnabled).toBeFalsy();
   });
 });
