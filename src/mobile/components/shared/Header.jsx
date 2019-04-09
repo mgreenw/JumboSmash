@@ -88,14 +88,20 @@ export default (props: Props) => {
         placement="center"
         backgroundColor="transparent"
         leftComponent={LeftIcon}
-        leftContainerStyle={{ flex: 0, paddingLeft: 4 }}
-        rightComponent={RightIcon}
-        rightContainerStyle={{
+        leftContainerStyle={{
           flex: 0,
-          paddingRight: 4
+          marginRight: 0,
+          marginLeft: 0,
+          paddingRight: 0,
+          paddingLeft: 0
         }}
+        rightComponent={RightIcon}
+        rightContainerStyle={{ flex: 0 }}
         centerComponent={centerComponent || Title}
-        containerStyle={{ borderBottomWidth: borderBottom ? 1 : 0 }}
+        containerStyle={{
+          borderBottomWidth: borderBottom ? 1 : 0,
+          paddingHorizontal: 0
+        }}
       />
       <StatusBar barStyle="dark-content" />
     </View>

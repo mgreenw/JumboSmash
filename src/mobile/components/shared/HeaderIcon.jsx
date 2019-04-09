@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { View, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -66,6 +66,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
     const onPress =
       name && !disabled ? onPressProp || this._inferOnPress(name) : () => {};
     // TODO: make this styling via a style sheet, and better!
+    const { width } = Dimensions.get('window');
     return (
       <TouchableOpacity
         ref={self => (this.iconTouchableOpacity = self)}
@@ -73,6 +74,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
+          paddingHorizontal: 0.068 * width,
           opacity: disabled ? 0.2 : 1
         }}
         onPress={() => {
