@@ -13,6 +13,7 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 
 ### Authentication
 * [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
+* [Logout](auth/logout.md) : `POST /api/auth/logout`
 
 ### Users
 * [Finalize Profile Setup](users/finalize-profile-setup.md) : `POST /api/users/me/profile`
