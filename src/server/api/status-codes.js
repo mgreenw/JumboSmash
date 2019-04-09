@@ -321,3 +321,17 @@ exports.GET_CLASSMATES__SUCCESS = {
   status: 'GET_CLASSMATES__SUCCESS',
   code: 200,
 };
+
+// Ban USer
+exports.BAN_USER__SUCCESS = {
+  status: 'BAN_USER__SUCCESS',
+  code: 200,
+};
+exports.BAN_USER__ALREADY_BANNED = {
+  status: 'BAN_USER__ALREADY_BANNED',
+  code: 409,
+};
+exports.BAN_USER__USER_NOT_FOUND = {
+  status: 'BAN_USER__USER_NOT_FOUND',
+  code: 400,
+};
