@@ -82,20 +82,21 @@ export default class HeaderIcon extends React.Component<Props, State> {
           onPress();
         }}
       >
-        <CustomIcon
-          name={name || 'user'}
-          size={26}
-          color={name ? 'black' : 'transparent'}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            left: 0
-          }}
-        >
-          {/* only show the badge on an actual icon 
+        <View>
+          <CustomIcon
+            name={name || 'user'}
+            size={26}
+            color={name ? 'black' : 'transparent'}
+          />
+          <View
+            style={{
+              position: 'absolute'
+            }}
+          >
+            {/* only show the badge on an actual icon 
           TODO: enable when logic to display is enabled. */
-          name === 'message' && badge && <IconBadge />}
+            name === 'message' && true && <IconBadge />}
+          </View>
         </View>
       </TouchableOpacity>
     );
