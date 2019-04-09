@@ -50,7 +50,8 @@ export type ServerConversation = {|
 
 export type ServerMatch = ServerBaseUser & {
   scenes: ServerScenes,
-  mostRecentMessage: ServerMessage
+  mostRecentMessage: ServerMessage,
+  conversationIsRead: boolean
 };
 
 // Type for Push Notifications
