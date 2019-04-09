@@ -79,7 +79,7 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
     `, [expoPushToken]);
   }
 
-  // Check if a user exists for this utln.
+  // Upsert the user if they don't exist.
   const tokenUUID = uuid();
   result = await db.query(`
     INSERT INTO users
