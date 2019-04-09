@@ -433,17 +433,21 @@ class cardDeck extends React.Component<Props, State> {
             )}
           </View>
         )}
-        {getCandidatesInProgress && (
+        <View
+          style={{
+            width: '100%',
+            height: '100%',
+            alignContent: 'center',
+            zIndex: -1,
+            position: 'absolute'
+          }}
+        >
           <Image
             resizeMode="contain"
-            style={{
-              flex: 1,
-              marginTop: 46,
-              marginBottom: 182
-            }}
+            style={{ flex: 1, width: undefined, height: undefined }}
             source={ArthurLoadingGif}
           />
-        )}
+        </View>
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
