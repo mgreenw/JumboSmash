@@ -118,6 +118,15 @@ const updateMySettings = async (
     // Get an object of the template strings and fields
     const fieldTemplate = getFieldTemplates(definedFields);
 
+    // Ensure no other user can have this push token: they are unique!
+    if (expoPushToken) {
+      await db.query(`
+        UPDATE classmates
+        SET expo_push_token = NULL
+        WHERE expo_push_token = $1
+      `, [expoPushToken]);
+    }
+
     // Update the settings in the database. Utilize fieldTemplates and the field
     // length as the parameter templates. It is ok to construct the string like
     // this because none of the values in the construction come from user input
