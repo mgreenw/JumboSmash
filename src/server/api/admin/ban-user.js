@@ -27,14 +27,17 @@ const schema = {
  */
 const banUser = async (userId: number, reason: string, adminUserId: number, adminUtln: string) => {
   const banResult = await db.query(`
-    UPDATE classmates new
-    SET
-      banned = TRUE,
-      banned_reason = CASE WHEN banned THEN banned ELSE $1 END
-    FROM classmates old
-    WHERE id = $2
-    RETURNING old.banned AS "alreadyBanned"
-  `, [reason, userId]);
+    WITH old AS (
+      SELECT banned FROM classmates WHERE id = $1
+    ), updated AS (
+      UPDATE classmates
+      SET
+        banned = TRUE,
+        banned_reason = CASE WHEN banned THEN banned_reason ELSE $2 END
+    )
+    SELECT old.banned AS "alreadyBanned"
+    FROM old
+  `, [userId, reason]);
 
   if (banResult.rowCount === 0) {
     return status(codes.BAN_USER__USER_NOT_FOUND).noData();
