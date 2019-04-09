@@ -16,6 +16,8 @@ type Props = {
   onPressLike: () => void
 };
 
+export const SWIPE_BUTTON_HEIGHT = 100;
+
 export default (props: Props) => {
   const { onPressLike, onPressDislike, disabled } = props;
   return (
@@ -27,7 +29,7 @@ export default (props: Props) => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 100
+        height: SWIPE_BUTTON_HEIGHT
       }}
     >
       <View

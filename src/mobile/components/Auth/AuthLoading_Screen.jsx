@@ -12,8 +12,8 @@ import DevTesting from 'mobile/utils/DevTesting';
 import Sentry from 'sentry-expo';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
-// const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
-// const ArthurLoadingImage = require('../../assets/arthurLoading.png');
+const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
+const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -117,9 +117,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     const images = [
       Waves1,
       ArthurIcon,
-      WavesFullSCreen
-      // ArthurLoadingImage,
-      // ArthurLoadingGif
+      WavesFullSCreen,
+      ArthurLoadingFrame1,
+      ArthurLoadingGif
     ];
 
     const imageAssets = cacheImages(images);
