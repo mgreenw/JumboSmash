@@ -5,6 +5,7 @@ import type { $Request } from 'express';
 const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const slack = require('../../slack');
 
 /* eslint-disable */
 const schema = {
@@ -12,7 +13,7 @@ const schema = {
   "properties": {
     "reason": {
       "type": "string",
-      "minLength": 1,
+      "minLength": 4,
       "maxLength": 500,
     },
   },
@@ -24,7 +25,7 @@ const schema = {
  * @api {post} /admin/ban/:userId
  *
  */
-const banUser = async (userId: number, reason: string) => {
+const banUser = async (userId: number, reason: string, adminUserId: number, adminUtln: string) => {
   const banResult = await db.query(`
     UPDATE classmates new
     SET
@@ -39,6 +40,8 @@ const banUser = async (userId: number, reason: string) => {
     return status(codes.BAN_USER__USER_NOT_FOUND).noData();
   }
 
+  slack.postAdminUpdate(adminUserId, adminUtln, `Banned User ${userId}\nReason: ${reason}`);
+
   // If the user is already banned, alert the admin.
   const [{ alreadyBanned }] = banResult.rows;
   if (alreadyBanned) {
@@ -51,7 +54,7 @@ const banUser = async (userId: number, reason: string) => {
 const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
-    return banUser(req.params.userId, req.body.reason);
+    return banUser(req.params.userId, req.body.reason, req.user.id, req.user.utln);
   }),
 ];
 
