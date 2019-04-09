@@ -46,6 +46,11 @@ function updateMatchIds(state: ReduxState, matchId: number): Matches {
   };
 }
 
+function updateNumBadges(state: ReduxState): number {
+  // This case should never really happen, but just in case:
+  return Math.max(state.numBadges - 1, 0);
+}
+
 function initiate(
   state: ReduxState,
   action: ReadMessageInitiated_Action
@@ -66,11 +71,13 @@ function complete(
   const readMessages = updateReadMessages(state, senderUserId, messageId);
   const inProgress = updateInProgress(state, senderUserId, messageId, false);
   const matchesById = updateMatchIds(state, senderUserId);
+  const numBadges = updateNumBadges(state);
   return {
     ...state,
     inProgress,
     readMessages,
-    matchesById
+    matchesById,
+    numBadges
   };
 }
 

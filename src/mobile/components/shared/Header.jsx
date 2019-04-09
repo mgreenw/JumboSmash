@@ -12,6 +12,8 @@ import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
+import { connect } from 'react-redux';
+import type { ReduxState } from 'mobile/reducers/index';
 
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import HeaderIcon from './HeaderIcon';
@@ -19,7 +21,7 @@ import HeaderIcon from './HeaderIcon';
 /* eslint-disable react/require-default-props */
 
 // centerComponent overrides title
-type Props = {
+type ProppyProps = {
   leftIconName?: IconName,
   rightIconName?: IconName,
   onLeftIconPress?: () => void,
@@ -32,7 +34,19 @@ type Props = {
 };
 /* eslint-enable */
 
-export default (props: Props) => {
+type ReduxProps = {
+  hasUnreadMessages: boolean
+};
+
+type Props = ProppyProps & ReduxProps;
+
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  return {
+    hasUnreadMessages: reduxState.numBadges > 0
+  };
+}
+
+const GemHeader = (props: Props) => {
   // TODO: make this styling via a style sheet, and better!
   const {
     leftIconName,
@@ -43,7 +57,8 @@ export default (props: Props) => {
     loading,
     borderBottom,
     centerComponent,
-    onTitlePress
+    onTitlePress,
+    hasUnreadMessages
   } = props;
 
   const LeftIcon = (
@@ -59,7 +74,7 @@ export default (props: Props) => {
       name={rightIconName}
       disabled={loading}
       onPress={onRightIconPress}
-      badge
+      badge={hasUnreadMessages}
     />
   );
 
@@ -107,3 +122,5 @@ export default (props: Props) => {
     </View>
   );
 };
+
+export default connect(mapStateToProps)(GemHeader);
