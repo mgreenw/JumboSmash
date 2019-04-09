@@ -34,6 +34,7 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import formatMessage from 'mobile/utils/FormatMessage';
+import { isIphoneX } from 'mobile/utils/Platform';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -484,7 +485,7 @@ class MessagingScreen extends React.Component<Props, State> {
             : null
         }
         renderAvatar={null}
-        minInputToolbarHeight={50}
+        minInputToolbarHeight={40}
         alignTop
         renderSend={(props: any) => {
           return (
@@ -727,6 +728,7 @@ class MessagingScreen extends React.Component<Props, State> {
       showExpandedCard
     } = this.state;
     const profile = profileMap[match.userId];
+    const padBottom = isIphoneX();
     return (
       <View style={{ flex: 1 }}>
         <View>
@@ -773,6 +775,7 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
+        {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
           onSwipeComplete={this._hideExpandedCard}

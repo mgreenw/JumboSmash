@@ -322,7 +322,7 @@ exports.GET_CLASSMATES__SUCCESS = {
   code: 200,
 };
 
-// Ban USer
+// Ban User
 exports.BAN_USER__SUCCESS = {
   status: 'BAN_USER__SUCCESS',
   code: 200,
