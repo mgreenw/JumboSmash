@@ -9,6 +9,8 @@ import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { sceneToEmoji } from 'mobile/utils/emojis';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 
 type ReduxProps = {
   topToast: TopToast
@@ -49,7 +51,7 @@ function toastMessage(toast: TopToast): string {
   }
 }
 
-class BottomToastComponent extends React.Component<Props> {
+class TopToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { topToast } = this.props;
     const icon =
@@ -58,7 +60,10 @@ class BottomToastComponent extends React.Component<Props> {
         : '';
     if (topToast.code && topToast.uuid !== prevProps.topToast.uuid) {
       const message = toastMessage(topToast) + icon;
-      this.showToast(message);
+      const { routeName } = NavigationService.getCurrentRoute();
+      if (routeName !== routes.Message) {
+        this.showToast(message);
+      }
     }
   }
 
@@ -114,4 +119,4 @@ class BottomToastComponent extends React.Component<Props> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BottomToastComponent);
+)(TopToastComponent);
