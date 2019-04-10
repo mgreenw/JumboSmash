@@ -25,7 +25,13 @@ async function sendNotifications(notifications: Notification[]) {
   notifications.forEach((notification) => {
     const { userId, ...rest } = notification;
     const badge = getBadgeCount(userId);
-    notificationMap[userId] = { ...rest, badge };
+    notificationMap[userId] = {
+      ...rest,
+      badge,
+      // Always use high priority so they show up on Android:
+      // https://docs.expo.io/versions/latest/guides/push-notifications/#message-format
+      priority: 'high',
+    };
   });
 
   // Get and set the badge for every outgoing notification
