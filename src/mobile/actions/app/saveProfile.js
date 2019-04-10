@@ -57,8 +57,16 @@ export default (fields: ProfileFields) => (
   if (client && _.isEqual(client.profile.fields, fields)) {
     return;
   }
+  // Trim trailing whitespace here. Also prevent submitting an empty name.
+  const trimmedBio = fields.bio.trim();
+  const trimmedDisplayName = fields.displayName.trim();
+  const trimmedFields = {
+    ...fields,
+    bio: trimmedBio,
+    displayName: trimmedDisplayName.length > 0 ? trimmedDisplayName : undefined
+  };
   dispatch(initiate());
-  updateMyProfileFields(fields)
+  updateMyProfileFields(trimmedFields)
     .then(newFields => {
       dispatch(complete(newFields));
     })
