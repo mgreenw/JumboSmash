@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { Image } from 'mobile/components/shared/imageCacheFork';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
@@ -11,6 +11,9 @@ import ActionSheet from '../ActionSheet';
 type Props = {
   onAdd: () => void,
   onRemove: () => void,
+  onReorder: () => void,
+  enableReorder: boolean,
+  isReordering: boolean,
   enableRemove: boolean,
   width: number,
   photoUuid: ?string
@@ -33,8 +36,41 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
   };
 
   render() {
-    const { onAdd, onRemove, width, photoUuid, enableRemove } = this.props;
+    const {
+      onAdd,
+      onRemove,
+      width,
+      photoUuid,
+      enableRemove,
+      enableReorder,
+      onReorder,
+      isReordering
+    } = this.props;
     const { showActionSheet } = this.state;
+    const reorderOptions = enableReorder
+      ? [
+          {
+            text: 'Reorder Photo',
+            onPress: () => {
+              this.setState({ showActionSheet: false }, onReorder);
+            }
+          }
+        ]
+      : [];
+    const removeOptions = enableRemove
+      ? [
+          {
+            text: 'Delete Photo',
+            textStyle: {
+              color: Colors.Grapefruit
+            },
+            onPress: () => {
+              this.setState({ showActionSheet: false }, onRemove);
+            }
+          }
+        ]
+      : [];
+    const actionSheetOptions = [...reorderOptions, ...removeOptions];
     return (
       <View>
         <TouchableOpacity
@@ -60,16 +96,48 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
           }
         >
           {photoUuid ? (
-            <Image
+            <View
               style={{
                 flex: 1,
                 height: width,
                 width,
                 borderRadius: 8
               }}
-              resizeMode="contain"
-              uri={GET_PHOTO__ROUTE + photoUuid}
-            />
+            >
+              <Image
+                style={{
+                  flex: 1,
+                  height: width,
+                  width,
+                  borderRadius: 8
+                }}
+                resizeMode="contain"
+                uri={GET_PHOTO__ROUTE + photoUuid}
+              />
+              {isReordering && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    height: width,
+                    width,
+                    backgroundColor: Colors.Black,
+                    opacity: 0.7,
+                    borderRadius: 8,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Text
+                    style={[
+                      textStyles.headline6Style,
+                      { color: '#FFFFFF', textDecorationLine: 'underline' }
+                    ]}
+                  >
+                    {'Swap'}
+                  </Text>
+                </View>
+              )}
+            </View>
           ) : (
             <Text
               style={[
@@ -77,40 +145,13 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                 { textDecorationLine: 'underline' }
               ]}
             >
-              {photoUuid ? '' : 'Add'}
+              {'Add'}
             </Text>
           )}
         </TouchableOpacity>
         <ActionSheet
           visible={showActionSheet}
-          options={[
-            {
-              text: 'Reorder Photo',
-              onPress: () => {
-                this.setState({ showActionSheet: false }, () => {
-                  Alert.alert('Reordering Not Implemented Yet. :(');
-                });
-              }
-            },
-            {
-              text: 'Delete Photo',
-              textStyle: {
-                color: Colors.Grapefruit
-              },
-              onPress: () => {
-                this.setState(
-                  { showActionSheet: false },
-                  enableRemove
-                    ? onRemove
-                    : () => {
-                        Alert.alert(
-                          "Plz don't delete your last photo everything will break :("
-                        );
-                      }
-                );
-              }
-            }
-          ]}
+          options={actionSheetOptions}
           cancel={{
             text: 'Cancel',
             onPress: () => {

@@ -141,6 +141,9 @@ class AddMultiPhotos extends React.Component<Props> {
             onRemove={() => {
               this._onRemove(uuid1);
             }}
+            onReorder={() => {}}
+            enableReorder={uuid2 != null}
+            isReordering={false}
             width={imageWidth}
           />
         </View>
@@ -156,6 +159,9 @@ class AddMultiPhotos extends React.Component<Props> {
             onRemove={() => {
               this._onRemove(uuid2);
             }}
+            onReorder={() => {}}
+            enableReorder
+            isReordering
             width={imageWidth}
           />
         </View>
@@ -171,6 +177,9 @@ class AddMultiPhotos extends React.Component<Props> {
             onRemove={() => {
               this._onRemove(uuid3);
             }}
+            onReorder={() => {}}
+            enableReorder
+            isReordering={false}
             width={imageWidth}
           />
         </View>
@@ -186,6 +195,9 @@ class AddMultiPhotos extends React.Component<Props> {
             onRemove={() => {
               this._onRemove(uuid4);
             }}
+            onReorder={() => {}}
+            enableReorder
+            isReordering={false}
             width={imageWidth}
           />
         </View>
