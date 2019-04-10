@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { View, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -66,6 +66,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
     const onPress =
       name && !disabled ? onPressProp || this._inferOnPress(name) : () => {};
     // TODO: make this styling via a style sheet, and better!
+    const { width } = Dimensions.get('window');
     return (
       <TouchableOpacity
         ref={self => (this.iconTouchableOpacity = self)}
@@ -73,6 +74,8 @@ export default class HeaderIcon extends React.Component<Props, State> {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
+          // The component decides the padding so that we can control the hitslop here.
+          paddingHorizontal: 0.068 * width,
           opacity: disabled ? 0.2 : 1
         }}
         onPress={() => {
@@ -80,20 +83,21 @@ export default class HeaderIcon extends React.Component<Props, State> {
           onPress();
         }}
       >
-        <CustomIcon
-          name={name || 'user'}
-          size={26}
-          color={name ? 'black' : 'transparent'}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            left: 0
-          }}
-        >
-          {/* only show the badge on an actual icon 
+        <View>
+          <CustomIcon
+            name={name || 'user'}
+            size={26}
+            color={name ? 'black' : 'transparent'}
+          />
+          <View
+            style={{
+              position: 'absolute'
+            }}
+          >
+            {/* only show the badge on an actual icon 
           TODO: enable when logic to display is enabled. */
-          name === 'message' && badge && <IconBadge />}
+            name === 'message' && badge && <IconBadge />}
+          </View>
         </View>
       </TouchableOpacity>
     );
