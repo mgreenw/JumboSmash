@@ -9,8 +9,8 @@ function newMatch(matchingUserId: number, matchedUserId: number, scene: string) 
 
   // This function is called twice because it only sends the socket update
   // to the matchingUserId (first param)
-  newMatchSocket(matchingUserId, matchedUserId, scene);
-  newMatchSocket(matchedUserId, matchingUserId, scene);
+  newMatchSocket(matchingUserId, matchedUserId, scene, matchingUserId);
+  newMatchSocket(matchedUserId, matchingUserId, scene, matchingUserId);
 }
 
 module.exports = newMatch;
