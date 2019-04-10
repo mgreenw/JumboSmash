@@ -1,9 +1,11 @@
 // @flow
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-loop-func */
 
 const readline = require('readline');
 const ldap = require('../controllers/utils/ldap');
+const db = require('../db');
 
 function askQuestion(query) {
   const rl = readline.createInterface({
@@ -34,7 +36,7 @@ const attributes = [
 const ints = new Array(10).fill(0).map((e, i) => i);
 const alphabet = new Array(6).fill(0).map((e, i) => String.fromCharCode(97 + i).toUpperCase());
 
-const people = {};
+const members = {};
 const trunkFirstChars = ints.concat(alphabet);
 
 function makeQuery(firstChar: string | number, secondChar: string | number) {
@@ -46,12 +48,16 @@ That's pretty cool, but it's also dangerous. This script will call 256 unique LD
 Please only run this if it is really needed.
 To continue, type 'I solemnly swear that I am up to no good': `;
 
+const insertions = [];
+
 async function main() {
   const answer = await askQuestion(question);
   if (answer !== 'I solemnly swear that I am up to no good') {
     process.exit(1);
   }
 
+  const response = await askQuestion('Final question: do you want to insert the new users into koh? (y/n) ')
+  const insertUsers = response === 'y';
   for (const firstChar of trunkFirstChars) {
     for (const secondChar of trunkFirstChars) {
       const query = makeQuery(firstChar, secondChar);
@@ -59,13 +65,43 @@ async function main() {
       if (results.entries.length > 100) {
         console.log(`HEADS UP: you may have missed some. the query for ${firstChar}${secondChar}* had ${results.entries.length} results`);
       }
-      results.entries.forEach((person) => {
-        people[person.uid] = person;
+      results.entries.forEach((member) => {
+        switch (member.tuftsEduCollege) {
+          case 'COLLEGE OF LIBERAL ARTS':
+            member.tuftsEduCollege = 'A&S';
+            break;
+          case 'SCHOOL OF ENGINEERING':
+            member.tuftsEduCollege = 'E';
+            break;
+          default:
+            break;
+        }
+
+        // Insert the member and respond with the member info
+        if (insertUsers) {
+          const insertion = insertMember(member);
+          insertions.push(insertions);
+        }
+
+        members[member.uid] = member;
       });
     }
   }
   console.log('JSON Entries:\n\n\n');
-  console.log(JSON.stringify(people, null, 2));
+  console.log(JSON.stringify(members, null, 2));
+}
+
+async function insertMember(member) {
+  try {
+    await db.query(`
+      INSERT INTO MEMBERS
+      (utln, exists, email, given_name, college, trunk_id, class_year, last_name, display_name, major)
+      VALUES ($1, true, $2, $3, $4, $5, $6, $7, $8, $9)
+    `, [member.uid, member.mail, member.givenName, member.tuftsEduCollege, member.tuftsEduTrunk, member.tuftsEduClassYear, member.sn, member.displayName, member.tuftsEduMajor]);
+  } catch (error) {
+    console.log(`failed to insert member ${member.uid}`);
+    console.log(error);
+  }
 }
 
 main();
