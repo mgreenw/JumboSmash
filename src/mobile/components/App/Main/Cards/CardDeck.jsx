@@ -6,8 +6,7 @@ import {
   Image,
   InteractionManager,
   Dimensions,
-  Animated,
-  Easing
+  Animated
 } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
