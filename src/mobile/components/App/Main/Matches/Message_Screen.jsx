@@ -485,7 +485,7 @@ class MessagingScreen extends React.Component<Props, State> {
             : null
         }
         renderAvatar={null}
-        minInputToolbarHeight={40}
+        minInputToolbarHeight={50}
         alignTop
         renderSend={(props: any) => {
           return (
