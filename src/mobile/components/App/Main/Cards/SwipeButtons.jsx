@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, TouchableOpacity, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { LinearGradient } from 'expo';
 import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
@@ -13,13 +13,40 @@ const iconHeight = 65;
 type Props = {
   disabled: boolean,
   onPressDislike: () => void,
-  onPressLike: () => void
+  onPressLike: () => void,
+  swipeThreshold: number,
+  swipeAnimation: Animated.Value
 };
 
 export const SWIPE_BUTTON_HEIGHT = 100;
 
 export default (props: Props) => {
-  const { onPressLike, onPressDislike, disabled } = props;
+  const {
+    onPressLike,
+    onPressDislike,
+    disabled,
+    swipeAnimation,
+    swipeThreshold
+  } = props;
+
+  const inputRange = [
+    -swipeThreshold - 1,
+    -swipeThreshold,
+    0,
+    swipeThreshold,
+    swipeThreshold + 1
+  ];
+  const outPutRangeLeft = [1.1, 1.1, 1, 1, 1];
+  const outPutRangeRight = outPutRangeLeft.slice().reverse();
+  const scaleLeft = swipeAnimation.interpolate({
+    inputRange,
+    outputRange: outPutRangeLeft
+  });
+  const scaleRight = swipeAnimation.interpolate({
+    inputRange,
+    outputRange: outPutRangeRight
+  });
+
   return (
     <LinearGradient
       colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)', 'white']}
@@ -43,36 +70,40 @@ export default (props: Props) => {
           height: '100%'
         }}
       >
-        <TouchableOpacity
-          onPress={disabled ? () => {} : onPressDislike}
-          style={{
-            height: iconHeight,
-            width: iconHeight,
-            borderRadius: iconHeight / 2,
-            backgroundColor: 'white'
-          }}
-        >
-          <CustomIcon
-            name="delete-filled"
-            size={iconHeight}
-            color={disabled ? 'gray' : 'black'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={disabled ? () => {} : onPressLike}
-          style={{
-            height: iconHeight,
-            width: iconHeight,
-            borderRadius: iconHeight / 2,
-            backgroundColor: 'white'
-          }}
-        >
-          <CustomIcon
-            name="heart-filled"
-            size={iconHeight}
-            color={disabled ? 'gray' : Colors.Grapefruit}
-          />
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ scale: scaleLeft }] }}>
+          <TouchableOpacity
+            onPress={disabled ? () => {} : onPressDislike}
+            style={{
+              height: iconHeight,
+              width: iconHeight,
+              borderRadius: iconHeight / 2,
+              backgroundColor: 'white'
+            }}
+          >
+            <CustomIcon
+              name="delete-filled"
+              size={iconHeight}
+              color={disabled ? 'gray' : 'black'}
+            />
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={{ transform: [{ scale: scaleRight }] }}>
+          <TouchableOpacity
+            onPress={disabled ? () => {} : onPressLike}
+            style={{
+              height: iconHeight,
+              width: iconHeight,
+              borderRadius: iconHeight / 2,
+              backgroundColor: 'white'
+            }}
+          >
+            <CustomIcon
+              name="heart-filled"
+              size={iconHeight}
+              color={disabled ? 'gray' : Colors.Grapefruit}
+            />
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </LinearGradient>
   );

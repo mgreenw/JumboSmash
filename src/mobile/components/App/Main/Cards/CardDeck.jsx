@@ -1,6 +1,13 @@
 // @flow
 import React from 'react';
-import { View, Platform, Image, InteractionManager } from 'react-native';
+import {
+  View,
+  Platform,
+  Image,
+  InteractionManager,
+  Dimensions,
+  Animated
+} from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import type {
   ReduxState,
@@ -67,7 +74,9 @@ type State = {
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
-  showGif: boolean
+  showGif: boolean,
+  // Animation
+  swipeAnim: Animated.Value
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -128,7 +137,8 @@ class cardDeck extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showGif: false
+      showGif: false,
+      swipeAnim: new Animated.Value(0)
     };
   }
 
@@ -174,6 +184,14 @@ class cardDeck extends React.Component<Props, State> {
     this.setState({
       deckIndex: deckIndex + 1
     });
+  };
+
+  _onDragEnd = () => {
+    const { swipeAnim } = this.state;
+
+    Animated.spring(swipeAnim, {
+      toValue: 0
+    }).start();
   };
 
   // Render the correct card based on the type.
@@ -243,11 +261,13 @@ class cardDeck extends React.Component<Props, State> {
   };
 
   // These cause swipes to occur, for faking a swipe from a button
-  _onButtonLike = () => {
+  _onButtonLike = (HorizontalSwipeThreshold: number) => {
+    this._fakeSwipeAnimation(HorizontalSwipeThreshold, 'RIGHT');
     this.swiper.swipeRight();
   };
 
-  _onButtonDislike = () => {
+  _onButtonDislike = (HorizontalSwipeThreshold: number) => {
+    this._fakeSwipeAnimation(HorizontalSwipeThreshold, 'LEFT');
     this.swiper.swipeLeft();
   };
 
@@ -283,6 +303,25 @@ class cardDeck extends React.Component<Props, State> {
       };
     });
   };
+
+  _fakeSwipeAnimation(
+    HorizontalSwipeThreshold: number,
+    direction: 'RIGHT' | 'LEFT'
+  ) {
+    const { swipeAnim } = this.state;
+    Animated.sequence([
+      Animated.timing(swipeAnim, {
+        toValue:
+          direction === 'LEFT'
+            ? -HorizontalSwipeThreshold
+            : HorizontalSwipeThreshold,
+        duration: 200
+      }),
+      Animated.spring(swipeAnim, {
+        toValue: 0
+      })
+    ]).start();
+  }
 
   _renderUserActionSheet() {
     const { showUserActionSheet } = this.state;
@@ -386,9 +425,13 @@ class cardDeck extends React.Component<Props, State> {
       noCandidates,
       showExpandedCard,
       expandedCardProfile,
-      showGif
+      showGif,
+      swipeAnim
     } = this.state;
     const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
+    const { width } = Dimensions.get('window');
+    // This is the default for the swiper
+    const HorizontalSwipeThreshold = width / 4;
 
     return (
       <View
@@ -422,6 +465,7 @@ class cardDeck extends React.Component<Props, State> {
           onSwipedLeft={this._onSwipedLeft}
           onSwipedRight={this._onSwipedRight}
           onSwipedAll={this._onSwipedAll}
+          dragEnd={this._onDragEnd}
           verticalSwipe={false}
           horizontalSwipe={
             deckIndex !== 0 /* don't allow the instructions to be swiped */
@@ -436,6 +480,9 @@ class cardDeck extends React.Component<Props, State> {
           stackScale={10}
           useViewOverflow={Platform.OS === 'ios'}
           onTapCard={this._onTapCard}
+          onSwiping={pos => {
+            swipeAnim.setValue(pos);
+          }}
         />
         <View
           style={{
@@ -512,8 +559,14 @@ class cardDeck extends React.Component<Props, State> {
         {deckIndex !== 0 && (
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}
-            onPressDislike={this._onButtonDislike}
-            onPressLike={this._onButtonLike}
+            onPressDislike={() => {
+              this._onButtonDislike(HorizontalSwipeThreshold);
+            }}
+            onPressLike={() => {
+              this._onButtonLike(HorizontalSwipeThreshold);
+            }}
+            swipeThreshold={HorizontalSwipeThreshold}
+            swipeAnimation={swipeAnim}
           />
         )}
         {this._renderUserActionSheet()}
