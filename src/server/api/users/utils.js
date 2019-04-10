@@ -168,7 +168,8 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'social', ${tableName}active_social,
       'stone', ${tableName}active_stone
     ) AS "activeScenes",
-    expo_push_token AS "expoPushToken"
+    expo_push_token AS "expoPushToken",
+    notifications_enabled AS "notificationsEnabled"
   `;
 }
 

@@ -70,7 +70,16 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
     WHERE utln = $2
   `, [new Date(), utln]);
 
-  // Check if a user exists for this utln.
+  // Ensure no other user has the same push token by clearing it.
+  if (expoPushToken) {
+    await db.query(`
+      UPDATE classmates
+      SET expo_push_token = NULL
+      WHERE expo_push_token = $1
+    `, [expoPushToken]);
+  }
+
+  // Upsert the user if they don't exist.
   const tokenUUID = uuid();
   result = await db.query(`
     INSERT INTO users
