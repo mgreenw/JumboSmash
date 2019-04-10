@@ -6,7 +6,8 @@ import { VERIFY__ROUTE } from '../routes';
 
 type Request = {
   utln: string,
-  code: string
+  code: string,
+  expoPushToken: ?string
 };
 
 const VERIFY__SUCCESS = 'VERIFY__SUCCESS';

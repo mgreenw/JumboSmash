@@ -152,12 +152,18 @@ class SettingsScreen extends React.Component<Props, State> {
     NavigationService.back();
   };
 
-  _onPushNotificationSwitchChange = () => {
-    const { expoPushToken } = this.state.editedSettings;
-    if (expoPushToken !== null) {
+  /**
+   * @param {boolean} enable
+   * Enable or disable push notifications.
+   * If enabling, will get a new push notification token.
+   * If disabling, will clear the push notification token.
+   */
+  _onPushNotificationSwitchChange = (enable: boolean) => {
+    if (!enable) {
       this.setState(state => ({
         editedSettings: {
           ...state.editedSettings,
+          notificationsEnabled: false,
           expoPushToken: null
         }
       }));
@@ -167,6 +173,7 @@ class SettingsScreen extends React.Component<Props, State> {
           this.setState(state => ({
             editedSettings: {
               ...state.editedSettings,
+              notificationsEnabled: true,
               expoPushToken: newToken
             }
           }));
@@ -349,7 +356,7 @@ class SettingsScreen extends React.Component<Props, State> {
               >
                 <Text style={textStyles.body1Style}>Enable Notifications</Text>
                 <Switch
-                  value={editedSettings.expoPushToken !== null}
+                  value={editedSettings.notificationsEnabled}
                   trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onPushNotificationSwitchChange}
                 />

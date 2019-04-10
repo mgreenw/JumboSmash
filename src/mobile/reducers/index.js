@@ -184,6 +184,7 @@ export type UserSettings = {
     social: boolean,
     stone: boolean
   },
+  notificationsEnabled: boolean,
   expoPushToken: ?string
 };
 
