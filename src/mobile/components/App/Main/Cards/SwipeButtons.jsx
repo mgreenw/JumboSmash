@@ -36,7 +36,7 @@ export default (props: Props) => {
     swipeThreshold,
     swipeThreshold + 1
   ];
-  const outPutRangeLeft = [1.1, 1.1, 1, 0.95, 0.95];
+  const outPutRangeLeft = [1.1, 1.1, 1, 1, 1];
   const outPutRangeRight = outPutRangeLeft.slice().reverse();
   const scaleLeft = swipeAnimation.interpolate({
     inputRange,
