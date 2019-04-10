@@ -54,16 +54,29 @@ function toastMessage(toast: TopToast): string {
 class TopToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { topToast } = this.props;
-    const icon =
-      topToast.code === 'NEW_MATCH' && topToast.scene
-        ? sceneToEmoji(topToast.scene)
-        : '';
     if (topToast.code && topToast.uuid !== prevProps.topToast.uuid) {
-      const message = toastMessage(topToast) + icon;
       const { routeName } = NavigationService.getCurrentRoute();
-      if (routeName !== routes.Message) {
-        this.showToast(message);
+      // Don't show new messages on message screen
+      if (topToast.code === 'NEW_MESSAGE' && routeName === routes.Message) {
+        return;
       }
+
+      // Don't show new matches on matches screen that are client initiated.
+      // There is a seperate overlay for those.
+      if (
+        topToast.code === 'NEW_MATCH' &&
+        (routeName === routes.SmashCards || routeName === routes.SocialCards)
+      ) {
+        return;
+      }
+
+      // Otherwise show the toast!
+      const icon =
+        topToast.code === 'NEW_MATCH' && topToast.scene
+          ? sceneToEmoji(topToast.scene)
+          : '';
+      const message = toastMessage(topToast) + icon;
+      this.showToast(message);
     }
   }
 

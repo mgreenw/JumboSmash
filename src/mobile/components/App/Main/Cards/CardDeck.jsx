@@ -24,6 +24,7 @@ import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -49,10 +50,19 @@ type ProppyProps = {
   scene: Scene
 };
 
+/**
+ * We map NEW_MATCH toasts initiated by the client to OverlayMatches.
+ */
+type OverlayMatch = {
+  profileId: number,
+  scene: Scene
+};
+
 type ReduxProps = {
   profileCards: ProfileCard[],
   getCandidatesInProgress: boolean,
-  profileMap: { [userId: number]: UserProfile }
+  profileMap: { [userId: number]: UserProfile },
+  overlayMatch: ?OverlayMatch
 };
 
 type DispatchProps = {
@@ -76,7 +86,9 @@ type State = {
   showReportPopup: boolean,
   showGif: boolean,
   // Animation
-  swipeAnim: Animated.Value
+  swipeAnim: Animated.Value,
+  showOverlayMatch: boolean,
+  overlayMatch: ?OverlayMatch
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -92,10 +104,28 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Cards Screen');
   }
+
+  // If we have a NEW_MATCH toast for a match that was initiated by the client,
+  // We instead show it here as an overlay.
+  let overlayMatch = null;
+  if (reduxState.topToast.code === 'NEW_MATCH') {
+    const {
+      clientInitiatedMatch = false,
+      profileId = null,
+      scene: toastScene = null
+    } = reduxState.topToast;
+    if (clientInitiatedMatch === true && profileId && toastScene) {
+      overlayMatch = {
+        profileId,
+        scene: toastScene
+      };
+    }
+  }
   return {
     profileCards,
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    overlayMatch
   };
 }
 
@@ -138,14 +168,40 @@ class cardDeck extends React.Component<Props, State> {
       showBlockPopup: false,
       showReportPopup: false,
       showGif: false,
-      swipeAnim: new Animated.Value(0)
+      swipeAnim: new Animated.Value(0),
+      showOverlayMatch: false,
+      overlayMatch: null
     };
   }
 
-  // We use this to MUTATE the 'cards' array in this component's state.
-  // This is needed as the swiper uses a REFERENCE to the original array.
   componentDidUpdate(prevProps: Props) {
-    const { profileCards, getCandidatesInProgress } = this.props;
+    // If a new match initiated by user here, toggle the overlay.
+    // Don't toggle if viewing a profile, or another one up.
+    const {
+      profileCards,
+      getCandidatesInProgress,
+      overlayMatch: overlayMatch_props
+    } = this.props;
+    const {
+      showExpandedCard,
+      overlayMatch: overlayMatch_state,
+      showOverlayMatch
+    } = this.state;
+
+    if (
+      overlayMatch_props &&
+      showExpandedCard === false &&
+      overlayMatch_state === null &&
+      showOverlayMatch === false
+    ) {
+      this.setState({
+        showOverlayMatch: true,
+        overlayMatch: overlayMatch_props
+      });
+    }
+
+    // We use this to MUTATE the 'cards' array in this component's state.
+    // This is needed as the swiper uses a REFERENCE to the original array.
     const recievedNewCanidates =
       prevProps.getCandidatesInProgress && !getCandidatesInProgress;
     if (recievedNewCanidates) {
@@ -426,7 +482,9 @@ class cardDeck extends React.Component<Props, State> {
       showExpandedCard,
       expandedCardProfile,
       showGif,
-      swipeAnim
+      swipeAnim,
+      showOverlayMatch,
+      overlayMatch
     } = this.state;
     const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
     const { width } = Dimensions.get('window');
@@ -556,6 +614,7 @@ class cardDeck extends React.Component<Props, State> {
             profile={expandedCardProfile}
           />
         )}
+        {overlayMatch && <ModalMatchOverlay isVisible={showOverlayMatch} />}
         {deckIndex !== 0 && (
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}
