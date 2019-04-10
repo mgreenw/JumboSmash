@@ -30,7 +30,9 @@ Provide the normal `Authorization` token in the request header.
 ```json
 {
     "status": "AUTHORIZED",
-    "utln": "mgreen14"
+    "data": {
+        "utln": "mgreen14"
+    }
 }
 ```
 

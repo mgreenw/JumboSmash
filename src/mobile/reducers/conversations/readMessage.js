@@ -46,8 +46,15 @@ function updateMatchIds(state: ReduxState, matchId: number): Matches {
   };
 }
 
+
+/**
+ *
+ * @param {ReduxState} state
+ * @return {number} The previous number of badges decremented 1.
+ * NOTE: readMessage should never be able to be called when numBadges === 0.
+ * In the case that it somehow does occur, we keep the numBadges at 0.
+ */
 function updateNumBadges(state: ReduxState): number {
-  // This case should never really happen, but just in case:
   return Math.max(state.numBadges - 1, 0);
 }
 
