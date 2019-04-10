@@ -558,15 +558,6 @@ class cardDeck extends React.Component<Props, State> {
           />
         )}
         {deckIndex !== 0 && (
-          // <Animated.View
-          //   style={{
-          //     height: 100,
-          //     width: '100%',
-          //     backgroundColor: color,
-          //     position: 'absolute',
-          //     bottom: 0
-          //   }}
-          // />
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}
             onPressDislike={() => {
