@@ -62,7 +62,7 @@ const verify = (
   dispatch: Dispatch,
   utln: string,
   code: string,
-  expoPushToken: ?string
+  expoPushToken?: string
 ) => {
   verifyApi({ utln, code, expoPushToken })
     .then(response => {
@@ -94,10 +94,14 @@ export default (utln: string, code: string) => (dispatch: Dispatch) => {
   Permissions.getAsync(Permissions.NOTIFICATIONS).then(({ status }) => {
     if (status === 'granted') {
       requestNotificationToken().then(expoPushToken => {
-        verify(dispatch, utln, code, expoPushToken);
+        if (expoPushToken !== null) {
+          verify(dispatch, utln, code, expoPushToken);
+        } else {
+          verify(dispatch, utln, code);
+        }
       });
     } else {
-      verify(dispatch, utln, code, null);
+      verify(dispatch, utln, code);
     }
   });
 };
