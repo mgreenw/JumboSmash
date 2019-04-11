@@ -76,10 +76,7 @@ class TopToastComponent extends React.Component<Props> {
           ? sceneToEmoji(topToast.scene)
           : '';
       const message = toastMessage(topToast) + icon;
-      const { routeName } = NavigationService.getCurrentRoute();
-      if (routeName !== routes.Message) {
-        this.showToast(message);
-      }
+      this.showToast(message);
     }
   }
 

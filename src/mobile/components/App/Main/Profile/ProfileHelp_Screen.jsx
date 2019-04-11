@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View, ImageBackground, Linking } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import FeedbackPopup from 'mobile/components/App/Meta/FeedbackPopup';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
