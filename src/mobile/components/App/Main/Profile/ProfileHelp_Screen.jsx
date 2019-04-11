@@ -1,14 +1,13 @@
 // @flow
 
 import React from 'react';
-import { Text, View, ImageBackground } from 'react-native';
+import { Text, View, ImageBackground, Linking } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Colors } from 'mobile/styles/colors';
 import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
 import FeedbackPopup from 'mobile/components/App/Meta/FeedbackPopup';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
-import { WebBrowser } from 'expo';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -68,9 +67,7 @@ class ProfileHelp extends React.Component<Props, State> {
             </View>
             <View style={{ marginLeft: 10, marginRight: 10 }}>
               <PrimaryButton
-                onPress={() =>
-                  WebBrowser.openBrowserAsync('mailto:jumbosmash19@gmail.com')
-                }
+                onPress={() => Linking.openURL('mailto:jumbosmash19@gmail.com')}
                 title="support@jumbosmash.com"
               />
             </View>
