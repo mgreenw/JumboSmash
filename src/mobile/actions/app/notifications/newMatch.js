@@ -11,7 +11,7 @@ export type NewMatchInitiated_Action = {
 
 export type NewMatchCompleted_Action = {
   type: 'NEW_MATCH__COMPLETED',
-  payload: { scene: Scene, match: ServerMatch },
+  payload: { scene: Scene, match: ServerMatch, clientInitiatedMatch: boolean },
   meta: {}
 };
 
@@ -23,10 +23,14 @@ function initiate(): NewMatchInitiated_Action {
   };
 }
 
-function complete(match: ServerMatch, scene: Scene): NewMatchCompleted_Action {
+function complete(
+  match: ServerMatch,
+  scene: Scene,
+  clientInitiatedMatch: boolean
+): NewMatchCompleted_Action {
   return {
     type: 'NEW_MATCH__COMPLETED',
-    payload: { match, scene },
+    payload: { match, scene, clientInitiatedMatch },
     meta: {}
   };
 }
@@ -36,8 +40,12 @@ function complete(match: ServerMatch, scene: Scene): NewMatchCompleted_Action {
  * clicking on that toast goes to the matches screen, which would cause a match refresh anyways;
  * this handles the case when a new match occurs while on the Matches screen.
  */
-export default (match: ServerMatch, scene: Scene) => (dispatch: Dispatch) => {
+export default (
+  match: ServerMatch,
+  scene: Scene,
+  clientInitiatedMatch: boolean
+) => (dispatch: Dispatch) => {
   dispatch(initiate());
   dispatch(getMatches());
-  dispatch(complete(match, scene));
+  dispatch(complete(match, scene, clientInitiatedMatch));
 };

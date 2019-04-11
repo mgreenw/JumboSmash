@@ -17,7 +17,21 @@ type Props = {
   loading?: boolean
 };
 
-const PrimaryButton = (props: Props) => {
+type ButtonStyle = {
+  containerDisabled: any,
+  containerActive: any,
+  titleDisabled: any,
+  titleActive: any
+};
+
+const CreateStyledButton = (styleProps: ButtonStyle) => (props: Props) => {
+  const {
+    containerDisabled,
+    containerActive,
+    titleDisabled,
+    titleActive
+  } = styleProps;
+
   const { title, disabled = false, loading = false, onPress } = props;
   return (
     <TouchableOpacity
@@ -28,18 +42,14 @@ const PrimaryButton = (props: Props) => {
       }}
       disabled={disabled}
       style={[
-        disabled || loading
-          ? Arthur_Styles.buttonPrimaryDisabled
-          : Arthur_Styles.buttonPrimaryActive,
+        disabled || loading ? containerDisabled : containerActive,
         { justifyContent: 'center', alignItems: 'center', minWidth: '33%' }
       ]}
     >
       <Text
         style={[
           textStyles.subtitle1Style,
-          disabled
-            ? Arthur_Styles.buttonTitlePrimaryDisabled
-            : Arthur_Styles.buttonTitlePrimaryActive,
+          disabled ? titleDisabled : titleActive,
           loading ? { color: 'transparent' } : {}
         ]}
       >
@@ -53,4 +63,18 @@ const PrimaryButton = (props: Props) => {
   );
 };
 
-export { PrimaryButton };
+const PrimaryButton = CreateStyledButton({
+  containerActive: Arthur_Styles.buttonPrimaryActive,
+  containerDisabled: Arthur_Styles.buttonPrimaryDisabled,
+  titleActive: Arthur_Styles.buttonTitlePrimaryActive,
+  titleDisabled: Arthur_Styles.buttonTitlePrimaryDisabled
+});
+
+const SecondaryButton = CreateStyledButton({
+  containerActive: Arthur_Styles.buttonSecondaryActive,
+  titleActive: Arthur_Styles.buttonTitleSecondaryActive,
+  containerDisabled: Arthur_Styles.buttonSecondaryDisabled,
+  titleDisabled: Arthur_Styles.buttonTitleSecondaryDisabled
+});
+
+export { PrimaryButton, SecondaryButton };
