@@ -6,6 +6,7 @@ import verifyApi from 'mobile/api/auth/verify';
 import { Permissions } from 'expo';
 import Sentry from 'sentry-expo';
 import requestNotificationToken from 'mobile/utils/requestNotificationToken';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type Login_Response = {
   statusCode: 'SUCCESS' | 'BAD_CODE' | 'EXPIRED_CODE' | 'NO_EMAIL_SENT',
@@ -22,6 +23,12 @@ export type LoginCompleted_Action = {
   payload: {
     response: Login_Response
   },
+  meta: {}
+};
+
+export type LoginFailed_Action = {
+  type: 'LOGIN_FAILED',
+  payload: {},
   meta: {}
 };
 
@@ -43,28 +50,41 @@ function complete(response: Login_Response): LoginCompleted_Action {
   };
 }
 
+function fail(): LoginFailed_Action {
+  return {
+    type: 'LOGIN_FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
 const verify = (
   dispatch: Dispatch,
   utln: string,
   code: string,
   expoPushToken: ?string
 ) => {
-  verifyApi({ utln, code, expoPushToken }).then(response => {
-    const token = response.token;
-    // save valid tokens
-    if (token) {
-      AsyncStorage.multiSet([['token', token]]).then(errors => {
-        if (errors) {
-          Sentry.captureException(
-            new Error(`Error in storing token: ${JSON.stringify(errors)}`)
-          );
-        }
+  verifyApi({ utln, code, expoPushToken })
+    .then(response => {
+      const token = response.token;
+      // save valid tokens
+      if (token) {
+        AsyncStorage.multiSet([['token', token]]).then(errors => {
+          if (errors) {
+            Sentry.captureException(
+              new Error(`Error in storing token: ${JSON.stringify(errors)}`)
+            );
+          }
+          dispatch(complete(response));
+        });
+      } else {
         dispatch(complete(response));
-      });
-    } else {
-      dispatch(complete(response));
-    }
-  });
+      }
+    })
+    .catch(error => {
+      dispatch(fail());
+      dispatch(apiErrorHandler(error));
+    });
 };
 
 // Logins may indicate new devices, so use this time to set a new

@@ -10,7 +10,8 @@ import type {
 import type {
   Login_Response,
   LoginInitiated_Action,
-  LoginCompleted_Action
+  LoginCompleted_Action,
+  LoginFailed_Action
 } from 'mobile/actions/auth/login';
 import type {
   LogoutInitiated_Action,
@@ -468,6 +469,7 @@ export type Action =
   | LoginCompleted_Action
   | LogoutInitiated_Action
   | LogoutCompleted_Action
+  | LoginFailed_Action
   | LoadAuthInitiated_Action
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
@@ -860,6 +862,16 @@ export default function rootReducer(
         response: {
           ...state.response,
           login: response
+        }
+      };
+    }
+
+    case 'LOGIN_FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          login: false
         }
       };
     }
