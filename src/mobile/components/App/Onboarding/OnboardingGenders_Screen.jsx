@@ -77,7 +77,7 @@ export default class OnboardingGendersScreen extends React.Component<
   render() {
     const { settings } = this.state;
     const body = (
-      <View style={{ flex: 1, width: '100%' }}>
+      <View style={{ flex: 1, width: '110%' }}>
         <Text
           style={[
             textStyles.headline5Style,

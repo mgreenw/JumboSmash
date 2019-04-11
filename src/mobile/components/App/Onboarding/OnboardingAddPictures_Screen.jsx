@@ -82,9 +82,9 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
     const complete = photoUuids.length > 0;
 
     // A bit of a hack, but we want pictures to look nice.
-    // We have 22 padding via onboarding layout, plus an additional 40 here,
-    // and  we want 20 padding between each
-    const containerWidth = width - 44 - 80;
+    // We have 10.1% padding via onboarding layout,
+    // and  we want 15 padding between each
+    const containerWidth = width * 0.798;
     const imageWidth = (containerWidth - 15) / 2;
 
     // AddMultiPhotos gets direct redux access due to constraints on
