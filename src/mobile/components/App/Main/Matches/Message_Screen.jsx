@@ -445,9 +445,9 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderContent = (profile: UserProfile) => {
     const { messages, getConversation_inProgress } = this.props;
     const { showOtherUserTyping } = this.state;
-    const shouldRenderGenesisText =
-      messages.length === 0 ||
-      (messages.length > 1 && messages[1].system === false);
+
+    // If all messages are system messages, show genesis text!
+    const shouldRenderGenesisText = !messages.find(m => m.system === false);
     const extraData: ExtraData = {
       showOtherUserTyping,
       otherUserName: profile.fields.displayName,
