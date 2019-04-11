@@ -93,6 +93,20 @@ const GemHeader = (props: Props) => {
     paddingTop = Constants.statusBarHeight;
   }
 
+  const content = (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center'
+      }}
+    >
+      {LeftIcon}
+      {centerComponent || Title}
+      {RightIcon}
+    </View>
+  );
+
   return (
     <View
       style={{
@@ -102,17 +116,11 @@ const GemHeader = (props: Props) => {
       <Header
         placement="center"
         backgroundColor="transparent"
-        leftComponent={LeftIcon}
-        leftContainerStyle={{
-          flex: 0,
-          marginRight: 0,
-          marginLeft: 0,
-          paddingRight: 0,
-          paddingLeft: 0
-        }}
-        rightComponent={RightIcon}
+        leftComponent={null}
+        leftContainerStyle={{ flex: 0 }}
+        rightComponent={null}
         rightContainerStyle={{ flex: 0 }}
-        centerComponent={centerComponent || Title}
+        centerComponent={content}
         containerStyle={{
           borderBottomWidth: borderBottom ? 1 : 0,
           paddingHorizontal: 0
