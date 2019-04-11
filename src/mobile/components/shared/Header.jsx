@@ -97,8 +97,10 @@ const GemHeader = (props: Props) => {
     <View
       style={{
         flex: 1,
+        width: '100%',
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
       }}
     >
       {LeftIcon}
