@@ -2,6 +2,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-loop-func */
+/* eslint-disable no-console */
 
 const readline = require('readline');
 const ldap = require('../controllers/utils/ldap');
@@ -17,6 +18,19 @@ function askQuestion(query) {
     rl.close();
     resolve(ans);
   }));
+}
+
+async function insertMember(member) {
+  try {
+    await db.query(`
+      INSERT INTO MEMBERS
+      (utln, exists, email, given_name, college, trunk_id, class_year, last_name, display_name, major)
+      VALUES ($1, true, $2, $3, $4, $5, $6, $7, $8, $9)
+    `, [member.uid, member.mail, member.givenName, member.tuftsEduCollege, member.tuftsEduTrunk, member.tuftsEduClassYear, member.sn, member.displayName, member.tuftsEduMajor]);
+  } catch (error) {
+    console.log(`failed to insert member ${member.uid}`);
+    console.log(error);
+  }
 }
 
 const attributes = [
@@ -66,42 +80,34 @@ async function main() {
         console.log(`HEADS UP: you may have missed some. the query for ${firstChar}${secondChar}* had ${results.entries.length} results`);
       }
       results.entries.forEach((member) => {
+        let tuftsEduCollege;
         switch (member.tuftsEduCollege) {
           case 'COLLEGE OF LIBERAL ARTS':
-            member.tuftsEduCollege = 'A&S';
+            tuftsEduCollege = 'A&S';
             break;
           case 'SCHOOL OF ENGINEERING':
-            member.tuftsEduCollege = 'E';
+            tuftsEduCollege = 'E';
             break;
           default:
-            break;
+            throw new Error("This shouldn't happen");
         }
 
         // Insert the member and respond with the member info
         if (insertUsers) {
-          const insertion = insertMember(member);
-          insertions.push(insertions);
+          const insertion = insertMember({ ...member, tuftsEduCollege });
+          insertions.push(insertion);
         }
 
         members[member.uid] = member;
       });
     }
   }
+
+  // Makes sure all insertions are complete
+  await Promise.all(insertions);
+
   console.log('JSON Entries:\n\n\n');
   console.log(JSON.stringify(members, null, 2));
-}
-
-async function insertMember(member) {
-  try {
-    await db.query(`
-      INSERT INTO MEMBERS
-      (utln, exists, email, given_name, college, trunk_id, class_year, last_name, display_name, major)
-      VALUES ($1, true, $2, $3, $4, $5, $6, $7, $8, $9)
-    `, [member.uid, member.mail, member.givenName, member.tuftsEduCollege, member.tuftsEduTrunk, member.tuftsEduClassYear, member.sn, member.displayName, member.tuftsEduMajor]);
-  } catch (error) {
-    console.log(`failed to insert member ${member.uid}`);
-    console.log(error);
-  }
 }
 
 main();
