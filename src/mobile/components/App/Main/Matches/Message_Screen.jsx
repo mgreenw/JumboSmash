@@ -445,8 +445,9 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderContent = (profile: UserProfile) => {
     const { messages, getConversation_inProgress } = this.props;
     const { showOtherUserTyping } = this.state;
-    const shouldRenderGenesis =
-      messages === null || messages === undefined || messages.length === 0;
+    const shouldRenderGenesisText =
+      messages.length === 0 ||
+      (messages.length > 1 && messages[1].system === false);
     const extraData: ExtraData = {
       showOtherUserTyping,
       otherUserName: profile.fields.displayName,
@@ -481,7 +482,7 @@ class MessagingScreen extends React.Component<Props, State> {
         extraData={extraData}
         renderMessage={m => {
           if (m.currentMessage._id === 'GENESIS_ID') {
-            return this._renderGenesis(profile, shouldRenderGenesis);
+            return this._renderGenesis(profile, shouldRenderGenesisText);
           }
           return <Message {...m} />;
         }}
