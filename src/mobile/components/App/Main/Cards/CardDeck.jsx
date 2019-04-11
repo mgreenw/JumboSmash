@@ -24,6 +24,7 @@ import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -52,7 +53,9 @@ type ProppyProps = {
 type ReduxProps = {
   profileCards: ProfileCard[],
   getCandidatesInProgress: boolean,
-  profileMap: { [userId: number]: UserProfile }
+  profileMap: { [userId: number]: UserProfile },
+  overlayMatchId: ?number,
+  clientProfile: ?UserProfile
 };
 
 type DispatchProps = {
@@ -76,7 +79,9 @@ type State = {
   showReportPopup: boolean,
   showGif: boolean,
   // Animation
-  swipeAnim: Animated.Value
+  swipeAnim: Animated.Value,
+  showOverlayMatch: boolean,
+  overlayMatchProfile: ?UserProfile
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -92,10 +97,24 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Cards Screen');
   }
+
+  const overlayMatchId =
+    // For flow typing the parsing
+    reduxState.topToast.code === 'NEW_MATCH' &&
+    // Ensure matched in same scene.
+    ownProps.scene === reduxState.topToast.scene &&
+    // Ensure client initated this.
+    reduxState.topToast.clientInitiatedMatch === true
+      ? reduxState.topToast.userId
+      : null;
+
+  const { profile: clientProfile = null } = reduxState.client;
   return {
     profileCards,
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    overlayMatchId,
+    clientProfile
   };
 }
 
@@ -138,14 +157,42 @@ class cardDeck extends React.Component<Props, State> {
       showBlockPopup: false,
       showReportPopup: false,
       showGif: false,
-      swipeAnim: new Animated.Value(0)
+      swipeAnim: new Animated.Value(0),
+      showOverlayMatch: false,
+      overlayMatchProfile: null
     };
   }
 
-  // We use this to MUTATE the 'cards' array in this component's state.
-  // This is needed as the swiper uses a REFERENCE to the original array.
   componentDidUpdate(prevProps: Props) {
-    const { profileCards, getCandidatesInProgress } = this.props;
+    // If a new match initiated by user here, toggle the overlay.
+    // Don't toggle if viewing a profile, or another one up.
+    const {
+      profileCards,
+      getCandidatesInProgress,
+      overlayMatchId,
+      profileMap
+    } = this.props;
+    const { showExpandedCard, showOverlayMatch } = this.state;
+
+    if (
+      overlayMatchId &&
+      overlayMatchId !== prevProps.overlayMatchId &&
+      showExpandedCard === false &&
+      showOverlayMatch === false
+    ) {
+      const newOverlayMatchProfile = profileMap[overlayMatchId];
+      if (newOverlayMatchProfile !== undefined) {
+        this.setState({
+          showOverlayMatch: true,
+          // Map the overlay from props to state.
+          // If a new match occurs, we still want to show the old overlay
+          overlayMatchProfile: newOverlayMatchProfile
+        });
+      }
+    }
+
+    // We use this to MUTATE the 'cards' array in this component's state.
+    // This is needed as the swiper uses a REFERENCE to the original array.
     const recievedNewCanidates =
       prevProps.getCandidatesInProgress && !getCandidatesInProgress;
     if (recievedNewCanidates) {
@@ -304,6 +351,14 @@ class cardDeck extends React.Component<Props, State> {
     });
   };
 
+  _onStartChatting = () => {};
+
+  _onKeepSwiping = () => {
+    this.setState({
+      showOverlayMatch: false
+    });
+  };
+
   _fakeSwipeAnimation(
     HorizontalSwipeThreshold: number,
     direction: 'RIGHT' | 'LEFT'
@@ -426,9 +481,16 @@ class cardDeck extends React.Component<Props, State> {
       showExpandedCard,
       expandedCardProfile,
       showGif,
-      swipeAnim
+      swipeAnim,
+      showOverlayMatch,
+      overlayMatchProfile
     } = this.state;
-    const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
+    const {
+      getCandidatesInProgress,
+      getMoreCandidatesAndReset,
+      clientProfile,
+      scene
+    } = this.props;
     const { width } = Dimensions.get('window');
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
@@ -554,6 +616,16 @@ class cardDeck extends React.Component<Props, State> {
               });
             }}
             profile={expandedCardProfile}
+          />
+        )}
+        {overlayMatchProfile && clientProfile && (
+          <ModalMatchOverlay
+            isVisible={showOverlayMatch}
+            clientProfile={clientProfile}
+            matchProfile={overlayMatchProfile}
+            scene={scene}
+            onStartChatting={this._onStartChatting}
+            onKeepSwiping={this._onKeepSwiping}
           />
         )}
         {deckIndex !== 0 && (
