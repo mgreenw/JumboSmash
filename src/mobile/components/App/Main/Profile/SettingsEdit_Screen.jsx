@@ -31,6 +31,11 @@ import Collapsible from 'react-native-collapsible';
 import { Constants } from 'expo';
 import requestNotificationToken from 'mobile/utils/requestNotificationToken';
 import Spacer from 'mobile/components/shared/Spacer';
+import type {
+  NavigationEventPayload,
+  NavigationScreenProp,
+  NavigationEventSubscription
+} from 'react-navigation';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -46,7 +51,7 @@ const styles = StyleSheet.create({
 });
 
 type NavigationProps = {
-  navigation: any
+  navigation: NavigationScreenProp<{}>
 };
 
 type ReduxProps = {
@@ -92,6 +97,11 @@ class SettingsScreen extends React.Component<Props, State> {
     this.state = {
       editedSettings: props.settings
     };
+
+    this.willBlurListener = props.navigation.addListener(
+      'willBlur',
+      this._onWillBlur
+    );
   }
 
   componentDidUpdate(prevProps) {
@@ -146,9 +156,6 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    const { saveSettings } = this.props;
-    const { editedSettings } = this.state;
-    saveSettings(editedSettings);
     NavigationService.back();
   };
 
@@ -181,6 +188,16 @@ class SettingsScreen extends React.Component<Props, State> {
       });
     }
   };
+
+  _onWillBlur = (payload: NavigationEventPayload) => {
+    if (payload.action.type === 'Navigation/BACK') {
+      const { editedSettings } = this.state;
+      const { saveSettings } = this.props;
+      saveSettings(editedSettings);
+    }
+  };
+
+  willBlurListener: NavigationEventSubscription;
 
   render() {
     const { editedSettings } = this.state;
