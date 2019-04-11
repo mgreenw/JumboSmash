@@ -79,7 +79,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
                 style={{
                   flex: 2,
                   paddingHorizontal:
-                    firstScreen || lastScreen || infoScreen ? 25 : 40,
+                    firstScreen || lastScreen || infoScreen ? 25 : '10.1%',
                   width: '100%',
                   alignItems: 'center',
                   justifyContent: 'center'
