@@ -70,14 +70,14 @@ async function main() {
     process.exit(1);
   }
 
-  const response = await askQuestion('Final question: do you want to insert the new users into koh? (y/n) ')
+  const response = await askQuestion('Final question: do you want to insert the new users into koh? (y/n) ');
   const insertUsers = response === 'y';
   for (const firstChar of trunkFirstChars) {
     for (const secondChar of trunkFirstChars) {
       const query = makeQuery(firstChar, secondChar);
       const results = await ldap.search(query, attributes);
       if (results.entries.length > 100) {
-        console.log(`HEADS UP: you may have missed some. the query for ${firstChar}${secondChar}* had ${results.entries.length} results`);
+        console.log(`HEADS UP: you may have missed some. the query for ${firstChar.toString()}${secondChar.toString()}* had ${results.entries.length} results`);
       }
       results.entries.forEach((member) => {
         let tuftsEduCollege;
