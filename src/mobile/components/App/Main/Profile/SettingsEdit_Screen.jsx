@@ -1,14 +1,7 @@
 // @flow
 
 import React from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Switch,
-  ImageBackground,
-  Linking
-} from 'react-native';
+import { Text, View, StyleSheet, Switch, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import logoutAction from 'mobile/actions/auth/logout';
 import { GenderSelector } from 'mobile/components/shared/GenderSelector';
@@ -30,7 +23,7 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
-import { Constants } from 'expo';
+import { Constants, WebBrowser } from 'expo';
 import requestNotificationToken from 'mobile/utils/requestNotificationToken';
 import Spacer from 'mobile/components/shared/Spacer';
 import type {
@@ -306,7 +299,7 @@ class SettingsScreen extends React.Component<Props, State> {
                     }}
                     onPress={() => {
                       // TODO: Make this go to the jumbosmash.com
-                      Linking.openURL(
+                      WebBrowser.openBrowserAsync(
                         'https://arthur.jumbosmash.com/gender.html'
                       );
                     }}
@@ -399,20 +392,27 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
               </View>
               <Spacer />
-              {/* <View style={{ paddingBottom: 20 }}>
+              <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"
-                  onPress={() => {}}
+                  onPress={() => {
+                    // Todo: Make this go to the real website
+                    WebBrowser.openBrowserAsync(
+                      'https://arthur.jumbosmash.com/safety.html'
+                    );
+                  }}
                   disabled={logoutInProgress}
                   loading={false}
                 />
-              </View> */}
+              </View>
               <View style={{ paddingBottom: 20 }}>
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
                     // Todo: Make this go to the real website
-                    Linking.openURL('https://arthur.jumbosmash.com/terms.html');
+                    WebBrowser.openBrowserAsync(
+                      'https://arthur.jumbosmash.com/terms.html'
+                    );
                   }}
                   disabled={logoutInProgress}
                   loading={false}
