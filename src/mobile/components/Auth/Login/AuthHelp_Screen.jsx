@@ -11,7 +11,7 @@ import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import { textStyles } from 'mobile/styles/textStyles';
 import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import AuthLayout from 'mobile/components/Auth/Login/Layout';
 
 type navigationProps = {

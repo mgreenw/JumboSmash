@@ -148,8 +148,9 @@ export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
   code: NewMatchToastCode,
-  profileId?: number,
-  scene?: Scene
+  clientInitiatedMatch: boolean,
+  userId: number,
+  scene: Scene
 };
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
@@ -1571,12 +1572,15 @@ export default function rootReducer(
     }
 
     case 'NEW_MATCH__COMPLETED': {
-      const { scene } = action.payload;
+      const { scene, clientInitiatedMatch, match } = action.payload;
+      const userId = match.userId;
       return {
         ...state,
         topToast: {
           uuid: uuidv4(),
           code: 'NEW_MATCH',
+          clientInitiatedMatch,
+          userId,
           scene
         }
       };
