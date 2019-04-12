@@ -43,9 +43,9 @@ const createMyProfile = async (userId: number, profile: Object) => {
     if (error === profileErrorMessages.BIRTHDAY_UNDER_18) {
       await db.query(`
         UPDATE classmates
-        SET banned = true
+        SET banned = true, banned_reason = $2
         WHERE id = $1
-      `, [userId]);
+      `, [userId, profileErrorMessages.BIRTHDAY_UNDER_18]);
 
       return apiUtils.status(codes.FINALIZE_PROFILE__BIRTHDAY_UNDER_18).noData();
     }

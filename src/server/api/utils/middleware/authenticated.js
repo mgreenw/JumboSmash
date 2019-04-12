@@ -44,12 +44,14 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
       // If the user is banned, return as such.
       const reason = error.bannedReason === profileErrorMessages.BIRTHDAY_UNDER_18
         ? profileErrorMessages.BIRTHDAY_UNDER_18
-        : undefined;
+        : null;
 
       const body = {
         status: codes.BANNED.status,
         version,
-        reason,
+        data: {
+          reason,
+        },
       };
 
       return res.status(401).json(body);
