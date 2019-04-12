@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const apiUtils = require('../utils');
-const { validateProfile, profileSelectQuery } = require('./utils');
+const { validateProfile, profileSelectQuery, profileErrorMethods } = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
@@ -39,6 +39,10 @@ const createMyProfile = async (userId: number, profile: Object) => {
   try {
     validateProfile(profile);
   } catch (error) {
+
+    if (error === profileErrorMethods.BIRTHDAY_UNDER_18) {
+
+    }
     return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST).data({
       message: error,
     });
