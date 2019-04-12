@@ -55,7 +55,7 @@ const signURL = async (userId: number) => {
     Conditions: [
       { acl: 'authenticated-read' },
       { 'Content-Type': 'image/jpeg' },
-      ['content-length-range', 1, 500000], // 0.5 Mb
+      ['content-length-range', 1, 2000000], // 2 Mb = 2,000,000 bytes
     ],
   };
 
