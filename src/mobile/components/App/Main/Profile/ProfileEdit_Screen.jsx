@@ -121,10 +121,6 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 
-  componentWillUnmount() {
-    this.willBlurListener.remove();
-  }
-
   _onChangeBio = (bio: string) => {
     this.setState(state => ({
       editedProfileFields: {
@@ -176,6 +172,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
       const { editedProfileFields } = this.state;
       const { saveProfileFields } = this.props;
       saveProfileFields(editedProfileFields);
+      this.willBlurListener.remove();
     }
   };
 
