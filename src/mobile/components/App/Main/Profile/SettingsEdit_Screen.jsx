@@ -189,6 +189,7 @@ class SettingsScreen extends React.Component<Props, State> {
       const { editedSettings } = this.state;
       const { saveSettings } = this.props;
       saveSettings(editedSettings);
+      this.willBlurListener.remove();
     }
   };
 
