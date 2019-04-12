@@ -82,7 +82,7 @@ class NewMatchesList extends React.Component<Props> {
     return (
       <View>
         <View>
-          <Text style={[textStyles.subtitle1Style, { paddingLeft: 15 }]}>
+          <Text style={[textStyles.subtitle1Style, { paddingLeft: 20 }]}>
             New Matches
           </Text>
           {unmessagedMatchIds === null ||
@@ -104,7 +104,7 @@ class NewMatchesList extends React.Component<Props> {
               })}
             />
           )}
-          <Text style={[textStyles.subtitle1Style, { paddingLeft: 15 }]}>
+          <Text style={[textStyles.subtitle1Style, { paddingLeft: 20 }]}>
             Messages
           </Text>
         </View>
