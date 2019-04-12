@@ -32,7 +32,7 @@ export default function uploadPhotoToS3(
   })
     .then(response => response.status === 204)
     .catch(err => {
-      Sentry.captureException(JSON.stringify(err));
+      Sentry.captureException(new error(JSON.stringify(err)));
       return false;
     });
 }
