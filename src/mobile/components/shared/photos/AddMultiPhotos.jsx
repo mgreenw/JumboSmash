@@ -122,6 +122,8 @@ class AddMultiPhotos extends React.Component<Props> {
       popupMessage = 'Deleting Photo';
     }
 
+    const actionInProgress = uploadPhotoInProgress || deletePhotoInProgress;
+
     return (
       <View
         style={{
@@ -148,7 +150,7 @@ class AddMultiPhotos extends React.Component<Props> {
           <AddSinglePhoto
             token={token}
             photoUuid={uuid2}
-            disabled={uuid1 == null}
+            disabled={uuid1 == null || actionInProgress}
             enableRemove
             onAdd={() => {
               this._onAdd();
@@ -163,7 +165,7 @@ class AddMultiPhotos extends React.Component<Props> {
           <AddSinglePhoto
             token={token}
             photoUuid={uuid3}
-            disabled={uuid2 == null}
+            disabled={uuid2 == null || actionInProgress}
             enableRemove
             onAdd={() => {
               this._onAdd();
@@ -178,7 +180,7 @@ class AddMultiPhotos extends React.Component<Props> {
           <AddSinglePhoto
             token={token}
             photoUuid={uuid4}
-            disabled={uuid3 == null}
+            disabled={uuid3 == null || actionInProgress}
             enableRemove
             onAdd={() => {
               this._onAdd();
