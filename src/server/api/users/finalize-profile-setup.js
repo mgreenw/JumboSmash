@@ -39,9 +39,12 @@ const createMyProfile = async (userId: number, profile: Object) => {
   try {
     validateProfile(profile);
   } catch (error) {
-
+    // If the user entered a birthday under 18, ban the user immediately.
     if (error === profileErrorMethods.BIRTHDAY_UNDER_18) {
-
+      const banResult = await(`
+        UPDATE classmates
+        SET banned = true
+      `)
     }
     return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST).data({
       message: error,
