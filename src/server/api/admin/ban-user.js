@@ -44,10 +44,13 @@ const banUser = async (userId: number, reason: string, adminUserId: number, admi
     return status(codes.BAN_USER__USER_NOT_FOUND).noData();
   }
 
-  slack.postAdminUpdate(adminUserId, adminUtln, `Banned User ${userId}\nReason: ${reason}`);
-
   // If the user is already banned, alert the admin.
   const [{ alreadyBanned }] = banResult.rows;
+
+  // Update to slack. Include if the user is already banned.
+  const addendum = alreadyBanned ? '\nNote: The user was already banned. Weird.' : '';
+  slack.postAdminUpdate(adminUserId, adminUtln, `Banned User ${userId}$\n${addendum}Reason: ${reason}`);
+
   if (alreadyBanned) {
     return status(codes.BAN_USER__ALREADY_BANNED).noData();
   }
