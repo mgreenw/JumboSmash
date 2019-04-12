@@ -30,7 +30,8 @@ exports.up = (pgm) => {
       active_stone,
       token_uuid,
       admin_password,
-      expo_push_token
+      expo_push_token,
+      notifications_enabled
     FROM classmates
     WHERE NOT banned
   `);
