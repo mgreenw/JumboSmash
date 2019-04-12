@@ -76,6 +76,20 @@ Provide the user's initial profile fields.
 
 ### OR
 
+**Condition** : The user is under 18. NOTE: This bans the user immediately and will cause all endpoints to return that the user is too young
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "FINALIZE_PROFILE__BIRTHDAY_UNDER_18",
+}
+```
+
+
+### OR
+
 **Condition** : The `displayName` is too long (greater than 50 chars)
 
 **Code** : `400 BAD REQUEST`
