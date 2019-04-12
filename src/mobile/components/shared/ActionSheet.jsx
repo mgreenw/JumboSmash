@@ -23,7 +23,7 @@ type Props = {
 };
 
 export default (props: Props) => {
-  const { visible, cancel, options, cancelOnTouchOutside } = props;
+  const { visible, cancel, options, cancelOnTouchOutside = true } = props;
 
   const numOptions = options.length;
 
