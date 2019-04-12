@@ -1,11 +1,12 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Alert, Linking } from 'react-native';
+import { Text, View } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
 import { Colors } from 'mobile/styles/colors';
+import { WebBrowser } from 'expo';
 import { OnboardingLayout } from './Onboarding_Layout';
 
 type Props = {
@@ -70,7 +71,9 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
             }}
             onPress={() => {
               // TODO: Make this go to the jumbosmash.com
-              Linking.openURL('https://arthur.jumbosmash.com/gender.html');
+              WebBrowser.openBrowserAsync(
+                'https://arthur.jumbosmash.com/gender.html'
+              );
             }}
           >
             {'Statement on Gender'}

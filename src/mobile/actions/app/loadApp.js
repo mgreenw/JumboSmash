@@ -67,6 +67,7 @@ function complete(
           social: true,
           stone: true
         },
+        notificationsEnabled: false,
         expoPushToken: null
       }
     },

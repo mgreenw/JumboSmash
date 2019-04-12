@@ -2,8 +2,10 @@
 
 import * as React from 'react';
 import { View, Text, KeyboardAvoidingView } from 'react-native';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
-import { SecondaryButton } from 'mobile/components/shared/buttons/SecondaryButton';
+import {
+  PrimaryButton,
+  SecondaryButton
+} from 'mobile/components/shared/buttons';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 

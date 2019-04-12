@@ -26,7 +26,12 @@ import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import readMessageAction from 'mobile/actions/app/readMessage';
 import cancelFailedMessageAction from 'mobile/actions/app/cancelFailedMessage';
-import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
+import {
+  GiftedChat,
+  Bubble,
+  SystemMessage,
+  Message
+} from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
@@ -440,8 +445,9 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderContent = (profile: UserProfile) => {
     const { messages, getConversation_inProgress } = this.props;
     const { showOtherUserTyping } = this.state;
-    const shouldRenderGenesis =
-      messages === null || messages === undefined || messages.length === 0;
+
+    // If all messages are system messages, show genesis text!
+    const shouldRenderGenesisText = !messages.find(m => m.system === false);
     const extraData: ExtraData = {
       showOtherUserTyping,
       otherUserName: profile.fields.displayName,
@@ -453,20 +459,17 @@ class MessagingScreen extends React.Component<Props, State> {
         /* If we want to render our genesis text, we need to supply a dummy
         element for the listview. Because of the strict render method of GiftedChat,
         this element must match the GiftedChat Message type */
-        messages={
-          !shouldRenderGenesis
-            ? messages
-            : [
-                ({
-                  _id: 'GENESIS_ID',
-                  text: '',
-                  createdAt: new Date(),
-                  system: true,
-                  sent: true,
-                  failed: false
-                }: GiftedChatMessage)
-              ]
-        }
+        messages={[
+          ...messages,
+          ({
+            _id: 'GENESIS_ID',
+            text: '',
+            createdAt: new Date(),
+            system: true,
+            sent: true,
+            failed: false
+          }: GiftedChatMessage)
+        ]}
         onSend={this._onSend}
         user={{
           _id: 'client' // sent messages should have same user._id
@@ -477,15 +480,14 @@ class MessagingScreen extends React.Component<Props, State> {
         renderChatFooter={this._renderChatLoading}
         renderSystemMessage={this._renderSystemMessage}
         extraData={extraData}
-        renderMessage={
-          shouldRenderGenesis
-            ? () => {
-                return this._renderGenesis(profile);
-              }
-            : null
-        }
+        renderMessage={m => {
+          if (m.currentMessage._id === 'GENESIS_ID') {
+            return this._renderGenesis(profile, shouldRenderGenesisText);
+          }
+          return <Message {...m} />;
+        }}
         renderAvatar={null}
-        minInputToolbarHeight={40}
+        minInputToolbarHeight={50}
         alignTop
         renderSend={(props: any) => {
           return (
@@ -523,7 +525,7 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
-  _renderGenesis = (profile: UserProfile) => {
+  _renderGenesis = (profile: UserProfile, shouldRenderGenesisText: boolean) => {
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
@@ -533,11 +535,20 @@ class MessagingScreen extends React.Component<Props, State> {
         >
           <Avatar size={'Large'} photoUuid={profile.photoUuids[0]} border />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
-          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+        {shouldRenderGenesisText && (
+          <Text
+            style={[
+              textStyles.headline5Style,
+              {
+                textAlign: 'center',
+                paddingHorizontal: 84,
+                paddingVertical: 20
+              }
+            ]}
+          >
             {'Late-night Espresso’s run? ;)'}
           </Text>
-        </View>
+        )}
       </View>
     );
   };

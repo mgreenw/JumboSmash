@@ -11,18 +11,14 @@ export default function sendFeedback(
   return apiRequest('POST', SEND_FEEDBACK__ROUTE, {
     message,
     reasonCode: 'FEEDBACK'
-  })
-    .then(response => {
-      switch (response.status) {
-        case SEND_FEEDBACK__SUCCESS: {
-          return response.data;
-        }
-        default: {
-          throw new Error(response);
-        }
+  }).then(response => {
+    switch (response.status) {
+      case SEND_FEEDBACK__SUCCESS: {
+        return response.data;
       }
-    })
-    .catch(error => {
-      throw new Error(error);
-    });
+      default: {
+        throw new Error(response);
+      }
+    }
+  });
 }

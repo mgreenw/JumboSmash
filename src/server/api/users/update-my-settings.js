@@ -61,6 +61,10 @@ const schema = {
     "expoPushToken": {
       "description": "The push notification token from expo",
       "type": ["string", "null"]
+    },
+    "notificationsEnabled": {
+      "description": "Whether or not the user has opted to receive notifications",
+      "type": "boolean"
     }
   },
   "required": []
@@ -77,6 +81,7 @@ const updateMySettings = async (
   indentifyAsGenders: Object,
   activeScenes: Object,
   expoPushToken: ?string,
+  notificationsEnabled: boolean,
 ) => {
 // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
@@ -92,6 +97,7 @@ const updateMySettings = async (
     active_social: activeScenes.social,
     active_stone: activeScenes.stone,
     expo_push_token: expoPushToken,
+    notifications_enabled: notificationsEnabled,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
@@ -111,6 +117,15 @@ const updateMySettings = async (
   } else {
     // Get an object of the template strings and fields
     const fieldTemplate = getFieldTemplates(definedFields);
+
+    // Ensure no other user can have this push token: they are unique!
+    if (expoPushToken) {
+      await db.query(`
+        UPDATE classmates
+        SET expo_push_token = NULL
+        WHERE expo_push_token = $1
+      `, [expoPushToken]);
+    }
 
     // Update the settings in the database. Utilize fieldTemplates and the field
     // length as the parameter templates. It is ok to construct the string like
@@ -136,6 +151,7 @@ const handler = [
       req.body.identifyAsGenders || {},
       req.body.activeScenes || {},
       req.body.expoPushToken,
+      req.body.notificationsEnabled,
     );
   }),
 ];

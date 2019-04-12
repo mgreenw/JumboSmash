@@ -9,6 +9,8 @@ import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { sceneToEmoji } from 'mobile/utils/emojis';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 
 type ReduxProps = {
   topToast: TopToast
@@ -49,14 +51,30 @@ function toastMessage(toast: TopToast): string {
   }
 }
 
-class BottomToastComponent extends React.Component<Props> {
+class TopToastComponent extends React.Component<Props> {
   componentDidUpdate(prevProps) {
     const { topToast } = this.props;
-    const icon =
-      topToast.code === 'NEW_MATCH' && topToast.scene
-        ? sceneToEmoji(topToast.scene)
-        : '';
     if (topToast.code && topToast.uuid !== prevProps.topToast.uuid) {
+      const { routeName } = NavigationService.getCurrentRoute();
+      // Don't show new messages on message screen
+      if (topToast.code === 'NEW_MESSAGE' && routeName === routes.Message) {
+        return;
+      }
+
+      // Don't show new matches on matches screen that are client initiated.
+      // There is a seperate overlay for those.
+      if (
+        topToast.code === 'NEW_MATCH' &&
+        (routeName === routes.SmashCards || routeName === routes.SocialCards)
+      ) {
+        return;
+      }
+
+      // Otherwise show the toast!
+      const icon =
+        topToast.code === 'NEW_MATCH' && topToast.scene
+          ? sceneToEmoji(topToast.scene)
+          : '';
       const message = toastMessage(topToast) + icon;
       this.showToast(message);
     }
@@ -114,4 +132,4 @@ class BottomToastComponent extends React.Component<Props> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BottomToastComponent);
+)(TopToastComponent);

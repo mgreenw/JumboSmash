@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';

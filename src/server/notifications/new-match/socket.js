@@ -6,7 +6,12 @@ const db = require('../../db');
 const relationshipUtils = require('../../api/relationships/utils');
 
 const NEW_MATCH = 'NEW_MATCH';
-module.exports = async (matchingUserId: number, matchedUserId: number, scene: string) => {
+module.exports = async (
+  matchingUserId: number,
+  matchedUserId: number,
+  scene: string,
+  initiatorUserId: number,
+) => {
   const matchResult = await db.query(`
     ${relationshipUtils.matchQuery}
     AND me_critic.candidate_user_id = $2
@@ -19,7 +24,8 @@ module.exports = async (matchingUserId: number, matchedUserId: number, scene: st
   }
 
   const [match] = matchResult.rows;
+  const clientInitiatedMatch = matchingUserId === initiatorUserId;
 
   // Send the notification over socket to the matched user
-  return Socket.notify(matchingUserId, NEW_MATCH, { match, scene });
+  return Socket.notify(matchingUserId, NEW_MATCH, { match, scene, clientInitiatedMatch });
 };

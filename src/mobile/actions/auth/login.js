@@ -2,8 +2,11 @@
 
 import type { Dispatch } from 'mobile/reducers';
 import { AsyncStorage } from 'react-native';
-import verify from 'mobile/api/auth/verify';
-import DevTesting from '../../utils/DevTesting';
+import verifyApi from 'mobile/api/auth/verify';
+import { Permissions } from 'expo';
+import Sentry from 'sentry-expo';
+import requestNotificationToken from 'mobile/utils/requestNotificationToken';
+import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 
 export type Login_Response = {
   statusCode: 'SUCCESS' | 'BAD_CODE' | 'EXPIRED_CODE' | 'NO_EMAIL_SENT',
@@ -20,6 +23,12 @@ export type LoginCompleted_Action = {
   payload: {
     response: Login_Response
   },
+  meta: {}
+};
+
+export type LoginFailed_Action = {
+  type: 'LOGIN_FAILED',
+  payload: {},
   meta: {}
 };
 
@@ -41,24 +50,58 @@ function complete(response: Login_Response): LoginCompleted_Action {
   };
 }
 
-// TODO: consider error handling on the multiSet.
-export default (utln: string, code: string) => (dispatch: Dispatch) => {
-  dispatch(initiate());
+function fail(): LoginFailed_Action {
+  return {
+    type: 'LOGIN_FAILED',
+    payload: {},
+    meta: {}
+  };
+}
 
-  DevTesting.fakeLatency(() => {
-    verify({ utln, code }).then(response => {
+const verify = (
+  dispatch: Dispatch,
+  utln: string,
+  code: string,
+  expoPushToken?: string
+) => {
+  verifyApi({ utln, code, expoPushToken })
+    .then(response => {
       const token = response.token;
-      // should be non-null, should be non-empty
+      // save valid tokens
       if (token) {
         AsyncStorage.multiSet([['token', token]]).then(errors => {
           if (errors) {
-            DevTesting.log('Error in storing token:', errors);
+            Sentry.captureException(
+              new Error(`Error in storing token: ${JSON.stringify(errors)}`)
+            );
           }
           dispatch(complete(response));
         });
       } else {
         dispatch(complete(response));
       }
+    })
+    .catch(error => {
+      dispatch(fail());
+      dispatch(apiErrorHandler(error));
     });
+};
+
+// Logins may indicate new devices, so use this time to set a new
+// push notification, or to clear the old one.
+export default (utln: string, code: string) => (dispatch: Dispatch) => {
+  dispatch(initiate());
+  Permissions.getAsync(Permissions.NOTIFICATIONS).then(({ status }) => {
+    if (status === 'granted') {
+      requestNotificationToken().then(expoPushToken => {
+        if (expoPushToken !== null) {
+          verify(dispatch, utln, code, expoPushToken);
+        } else {
+          verify(dispatch, utln, code);
+        }
+      });
+    } else {
+      verify(dispatch, utln, code);
+    }
   });
 };
