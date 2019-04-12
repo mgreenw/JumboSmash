@@ -253,7 +253,7 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
-        <GEMHeader title="Messages" leftIconName="cards" borderBottom />
+        <GEMHeader title="Messages" leftIconName="cards" />
         {matchesLoaded ? (
           <View style={{ flex: 1 }}>
             <FlatList
