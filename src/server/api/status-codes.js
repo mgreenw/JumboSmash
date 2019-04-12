@@ -21,6 +21,10 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
+exports.BANNED = {
+  status: 'BANNED',
+  code: 401,
+};
 // AUTH
 
 // Send Verification Email
