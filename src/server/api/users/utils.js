@@ -66,7 +66,9 @@ function validateProfile(profile: Profile) {
 
     // Ensure the user is older than 18.
     const eighteenthBirthday = new Date(year + 18, month - 1, day);
-    if (birthdayDate < eighteenthBirthday) {
+
+    // Logic: if it is currently before the 18th birthday
+    if (now < eighteenthBirthday) {
       throw profileErrorMessages.BIRTHDAY_UNDER_18;
     }
   }

@@ -209,6 +209,21 @@ describe('POST api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
+  it('should fail and ban the user if the user is under 18', async () => {
+    const user = await dbUtils.createUser('maxig01');
+    const res = await request(app)
+      .post('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '2006-01-01',
+      })
+      .expect(406);
+    expect(res.body.status).toBe(codes.FINALIZE_PROFILE__BIRTHDAY_UNDER_18.status);
+  });
+
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
     const user = await dbUtils.createUser('mgreen25');
     await dbUtils.insertPhoto(user.id);
