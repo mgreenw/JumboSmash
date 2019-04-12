@@ -78,17 +78,24 @@ function connect(token: string) {
     }
   );
 
-  _socket.on('NEW_MATCH', (data: { match: ServerMatch, scene: Scene }) => {
-    const { match, scene } = data;
+  _socket.on(
+    'NEW_MATCH',
+    (data: {
+      match: ServerMatch,
+      scene: Scene,
+      clientInitiatedMatch: boolean
+    }) => {
+      const { match, scene, clientInitiatedMatch } = data;
 
-    // Ensure we type this function
-    const newMatchThunk = newMatchAction(match, scene);
+      // Ensure we type this function
+      const newMatchThunk = newMatchAction(match, scene, clientInitiatedMatch);
 
-    // TODO: correctly type thunks
-    // We have to ignore flow here because dispatch expects a normal action not a thunk.
-    // $FlowFixMe
-    store.dispatch(newMatchThunk);
-  });
+      // TODO: correctly type thunks
+      // We have to ignore flow here because dispatch expects a normal action not a thunk.
+      // $FlowFixMe
+      store.dispatch(newMatchThunk);
+    }
+  );
 
   _socket.on(
     'READ_RECEIPT_UPDATE',

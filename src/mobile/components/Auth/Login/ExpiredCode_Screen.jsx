@@ -12,7 +12,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import routes from 'mobile/components/navigation/routes';
 import AuthLayout from 'mobile/components/Auth/Login/Layout';
 import GEMHeader from 'mobile/components/shared/Header';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 
 type Props = {
   navigation: any
