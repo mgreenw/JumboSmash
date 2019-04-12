@@ -1,6 +1,7 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
+  pgm.dropView('users');
   pgm.addColumns('classmates', {
     banned_reason: {
       type: 'varchar(500)',
