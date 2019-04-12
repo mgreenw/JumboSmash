@@ -92,6 +92,36 @@ describe('GET api/admin/classmates', () => {
       expect(classmate.isBanned).toBeFalsy();
       expect(classmate.activeScenes).toBeDefined();
       expect(classmate.isAdmin).toBeDefined();
+      expect(classmate.blockedRequestingAdmin).toBeFalsy();
+    });
+  });
+
+  it('should return that the classmate blocked the requesting admin', async () => {
+    const blockingClassmate = await dbUtils.createUser('ablock01', true);
+    // Block the admin
+    await dbUtils.createRelationship(blockingClassmate.id, me.id, false, false, false, true);
+    const res = await request(app)
+      .get('/api/admin/classmates')
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .set('Admin-Authorization', adminPassword);
+    expect(res.body.status).toBe(codes.GET_CLASSMATES__SUCCESS.status);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.data.classmates).toBeDefined();
+    expect(res.body.data.classmates.length).toBe(4);
+    expect(res.body.data.classmates.filter(c => c.isAdmin).length).toBe(1);
+    res.body.data.classmates.forEach((classmate) => {
+      expect(classmate.id).toBeDefined();
+      expect(classmate.utln).toBeDefined();
+      expect(classmate.email).toBeDefined();
+      expect(classmate.isBanned).toBeFalsy();
+      expect(classmate.activeScenes).toBeDefined();
+      expect(classmate.isAdmin).toBeDefined();
+      if (classmate.id === blockingClassmate.id) {
+        expect(classmate.blockedRequestingAdmin).toBeTruthy();
+      } else {
+        expect(classmate.blockedRequestingAdmin).toBeFalsy();
+      }
     });
   });
 });
