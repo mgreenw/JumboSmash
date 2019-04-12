@@ -59,7 +59,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
 
   render() {
     const body = (
-      <View style={{ flex: 1, width: '100%' }}>
+      <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
         <Text style={textStyles.body1Style}>
           {
             'The next few questions will help us match you with the right people. We understand that gender identity is a spectrum, and believe that the way you identify should be left up to you, so please interpret the following gender options however they make sense to you. For more information, check out our '
@@ -80,7 +80,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
           </Text>
           .
         </Text>
-        <Text style={textStyles.headline6Style}>
+        <Text style={textStyles.body1StyleSemibold}>
           {'\nNone of the following information will be shown on your profile.'}
         </Text>
       </View>
