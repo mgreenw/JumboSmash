@@ -53,6 +53,9 @@ import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_S
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
 
+// ADMIN ROUTES:
+import TempAdmin from 'mobile/components/App/Admin/Temp';
+
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -60,6 +63,16 @@ import routes from './routes';
 const removeHeader = {
   headerMode: 'none'
 };
+
+const AdminStack = createStackNavigator(
+  {
+    [routes.AdminTemp]: { screen: TempAdmin }
+  },
+  {
+    initialRouteName: routes.AdminTemp,
+    ...removeHeader
+  }
+);
 
 const CardsSwitch = createMaterialTopTabNavigator(
   {
@@ -215,6 +228,7 @@ const AppSwitch = FluidNavigator(
   {
     [routes.MainSwitch]: MainContentSwitch,
     [routes.OnboardingStack]: OnboardingStack,
+    [routes.AdminStack]: AdminStack,
     [routes.AppLoading]: { screen: AppLoading }
   },
   {

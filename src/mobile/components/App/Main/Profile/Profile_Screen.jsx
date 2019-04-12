@@ -145,6 +145,12 @@ class ProfileScreen extends React.Component<Props, State> {
     });
   };
 
+  _navigateToAdmin = () => {
+    const { navigation } = this.props;
+    const { navigate } = navigation;
+    navigate(routes.AdminStack, {});
+  };
+
   render() {
     const {
       photoUuid,
@@ -156,7 +162,12 @@ class ProfileScreen extends React.Component<Props, State> {
     const { showExpandedCard } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Profile" rightIconName="cards" />
+        <GEMHeader
+          title="Profile"
+          rightIconName="cards"
+          leftIconName="ellipsis"
+          onLeftIconPress={this._navigateToAdmin}
+        />
         <ImageBackground
           source={wavesFull}
           style={{
