@@ -64,7 +64,8 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
             state => ({
               settings: {
                 ...state.settings,
-                expoPushToken: newToken
+                expoPushToken: newToken,
+                notificationsEnabled: true
               }
             }),
             () => {

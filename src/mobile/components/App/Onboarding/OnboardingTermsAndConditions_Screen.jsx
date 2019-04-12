@@ -83,7 +83,7 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
                   flex: 1,
                   flexDirection: 'row',
                   paddingTop: 35,
-                  paddingBottom: 35
+                  paddingBottom: 70
                 }}
               >
                 <View style={{ flex: 1 }} />

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Text,
   View,
-  Image,
+  ImageBackground,
   ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -15,12 +15,11 @@ import routes from 'mobile/components/navigation/routes';
 import GEMHeader from 'mobile/components/shared/Header';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
-import { Arthur_Styles as ArthurStyles } from 'mobile/styles/Arthur_Styles';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 
-const waves1 = require('../../../../assets/waves/waves1/waves.png');
+const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type cardButtonProps = {
   title: string,
@@ -158,6 +157,15 @@ class ProfileScreen extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader title="Profile" rightIconName="cards" />
+        <ImageBackground
+          source={wavesFull}
+          style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            zIndex: -1
+          }}
+        />
         <View
           style={{
             flex: 1
@@ -173,7 +181,7 @@ class ProfileScreen extends React.Component<Props, State> {
             }}
           >
             <TouchableOpacity onPress={this._showExpandedCard}>
-              <Avatar size="Large" photoUuid={photoUuid} />
+              <Avatar size="Large" photoUuid={photoUuid} border />
             </TouchableOpacity>
             <Text
               style={[
@@ -183,11 +191,6 @@ class ProfileScreen extends React.Component<Props, State> {
             >
               {displayName}
             </Text>
-            <Image
-              resizeMode="stretch"
-              source={waves1}
-              style={[ArthurStyles.waves, { zIndex: -1, bottom: -10 }]}
-            />
           </View>
           <View
             style={{

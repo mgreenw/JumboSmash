@@ -32,11 +32,12 @@ export default (props: Props) => {
         const reason = selectedReason.reason;
         const selected = selectedReason.selected;
         return (
-          <View
+          <TouchableOpacity
             style={{ flexDirection: 'row', marginTop: 22 }}
             key={reason.code}
+            onPress={() => onToggle(!selected, i)}
           >
-            <TouchableOpacity
+            <View
               style={{
                 width: 32,
                 height: 32,
@@ -49,12 +50,11 @@ export default (props: Props) => {
                 alignItems: 'center',
                 backgroundColor: selected ? Colors.AquaMarine : Colors.White
               }}
-              onPress={() => onToggle(!selected, i)}
             >
               <CustomIcon name="check" size={16} color={Colors.White} />
-            </TouchableOpacity>
+            </View>
             <Text style={textStyles.headline6Style}>{reason.text}</Text>
-          </View>
+          </TouchableOpacity>
         );
       })}
     </View>
