@@ -53,7 +53,7 @@ function validateProfile(profile: Profile) {
     if (
       // This ensures that the given birthdayDate is not an "Invalid Date"
       Number.isNaN(birthdayDate.getTime())
-      // This checks if the birthday is within the reasonable maxBirthday/oldestBirthday range
+      // This checks if the birthday is within the reasonable range.
       || birthdayDate < oldestBirthday
       || birthdayDate > now
       // The final check below ensures that the Date that javascript coalesces the given birthday
