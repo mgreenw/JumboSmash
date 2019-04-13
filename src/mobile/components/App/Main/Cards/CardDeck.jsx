@@ -247,6 +247,9 @@ class cardDeck extends React.Component<Props, State> {
   //       (and enable swiping if needed via settings)
   //    2. the preview profile card.
   _renderCard = (card: Card) => {
+    if (card === undefined) {
+      return null;
+    }
     switch (card.type) {
       case 'INACTIVE': {
         const { scene } = this.props;
@@ -321,6 +324,9 @@ class cardDeck extends React.Component<Props, State> {
   _onTapCard = (deckIndex: number) => {
     const { cards } = this.state;
     const card = cards[deckIndex];
+    if (card === undefined) {
+      return;
+    }
     if (card.type === 'PROFILE') {
       this._showExpandedCard(card.profileId);
     }
@@ -434,9 +440,9 @@ class cardDeck extends React.Component<Props, State> {
         visible={showBlockPopup}
         onCancel={() => this.setState({ showBlockPopup: false })}
         onDone={() =>
-          this.setState({ showBlockPopup: false }, () =>
-            this.swiper.swipeBottom()
-          )
+          this.setState({ showBlockPopup: false }, () => {
+            this.swiper.swipeBottom();
+          })
         }
         displayName={displayName}
         userId={expandedCardUserId}
