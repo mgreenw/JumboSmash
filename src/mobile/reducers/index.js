@@ -10,7 +10,8 @@ import type {
 import type {
   Login_Response,
   LoginInitiated_Action,
-  LoginCompleted_Action
+  LoginCompleted_Action,
+  LoginFailed_Action
 } from 'mobile/actions/auth/login';
 import type {
   LogoutInitiated_Action,
@@ -148,8 +149,9 @@ export type NewMatchToastCode = 'NEW_MATCH';
 export type NewMatchToast = {
   uuid: string,
   code: NewMatchToastCode,
-  profileId?: number,
-  scene?: Scene
+  clientInitiatedMatch: boolean,
+  userId: number,
+  scene: Scene
 };
 
 export type NewMessageToastCode = 'NEW_MESSAGE';
@@ -184,6 +186,7 @@ export type UserSettings = {
     social: boolean,
     stone: boolean
   },
+  notificationsEnabled: boolean,
   expoPushToken: ?string
 };
 
@@ -409,6 +412,8 @@ export type InProgress = {|
 export type ReduxState = {|
   network: { isConnected: boolean },
 
+  numBadges: number,
+
   // app data:
   client: ?Client,
   token: ?string,
@@ -464,6 +469,7 @@ export type Action =
   | LoginCompleted_Action
   | LogoutInitiated_Action
   | LogoutCompleted_Action
+  | LoginFailed_Action
   | LoadAuthInitiated_Action
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
@@ -530,6 +536,7 @@ export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 const defaultState: ReduxState = {
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
+  numBadges: 0,
   token: null,
   client: null,
   authLoaded: false,
@@ -855,6 +862,16 @@ export default function rootReducer(
         response: {
           ...state.response,
           login: response
+        }
+      };
+    }
+
+    case 'LOGIN_FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          login: false
         }
       };
     }
@@ -1203,6 +1220,11 @@ export default function rootReducer(
         profiles = {}
       } = normalizedData;
 
+      const numBadges = serverMatches.reduce(
+        (n, m) => (m.conversationIsRead ? n : n + 1),
+        0
+      );
+
       const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
         serverMatches,
         orderedIds
@@ -1226,7 +1248,8 @@ export default function rootReducer(
           ...profiles
         },
         messagedMatchIds,
-        unmessagedMatchIds
+        unmessagedMatchIds,
+        numBadges
       };
     }
 
@@ -1535,6 +1558,12 @@ export default function rootReducer(
         matchesById
       } = updateMostRecentMessage(state, senderUserId, message.messageId, true);
 
+      const { conversationIsRead } = state.matchesById[senderUserId] || {
+        conversationIsRead: false
+      };
+
+      const numBadges = state.numBadges + (conversationIsRead ? 1 : 0);
+
       return {
         ...state,
         topToast: {
@@ -1545,7 +1574,8 @@ export default function rootReducer(
         confirmedConversations,
         unmessagedMatchIds,
         messagedMatchIds,
-        matchesById
+        matchesById,
+        numBadges
       };
     }
 
@@ -1554,12 +1584,15 @@ export default function rootReducer(
     }
 
     case 'NEW_MATCH__COMPLETED': {
-      const { scene } = action.payload;
+      const { scene, clientInitiatedMatch, match } = action.payload;
+      const userId = match.userId;
       return {
         ...state,
         topToast: {
           uuid: uuidv4(),
           code: 'NEW_MATCH',
+          clientInitiatedMatch,
+          userId,
           scene
         }
       };

@@ -17,6 +17,11 @@ import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GEMHeader from 'mobile/components/shared/Header';
 import type {
+  NavigationEventPayload,
+  NavigationScreenProp,
+  NavigationEventSubscription
+} from 'react-navigation';
+import type {
   ReduxState,
   UserProfile,
   ProfileFields,
@@ -67,7 +72,9 @@ const styles = StyleSheet.create({
   }
 });
 
-type NavigationProps = {};
+type NavigationProps = {
+  navigation: NavigationScreenProp<{}>
+};
 
 type ReduxProps = {
   profile: UserProfile
@@ -108,6 +115,10 @@ class ProfileEditScreen extends React.Component<Props, State> {
       editedProfileFields: props.profile.fields,
       errorMessageName: ''
     };
+    this.willBlurListener = props.navigation.addListener(
+      'willBlur',
+      this._onWillBlur
+    );
   }
 
   _onChangeBio = (bio: string) => {
@@ -130,11 +141,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
-    const { editedProfileFields } = this.state;
-    const { saveProfileFields } = this.props;
     const valid = this._validateInputs();
     if (valid) {
-      saveProfileFields(editedProfileFields);
       NavigationService.back();
     }
   };
@@ -153,6 +161,22 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
     return nameValid;
   };
+
+  /**
+   * Save the profile.
+   * We do this on onWillBlur to check if this occured from either a back press OR a backswipe.
+   * If the blur is to a forward screen (e.g. city select), do NOT save.
+   */
+  _onWillBlur = (payload: NavigationEventPayload) => {
+    if (payload.action.type === 'Navigation/BACK') {
+      const { editedProfileFields } = this.state;
+      const { saveProfileFields } = this.props;
+      saveProfileFields(editedProfileFields);
+      this.willBlurListener.remove();
+    }
+  };
+
+  willBlurListener: NavigationEventSubscription;
 
   render() {
     const { width } = Dimensions.get('window');

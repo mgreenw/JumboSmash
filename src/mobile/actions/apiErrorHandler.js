@@ -35,7 +35,7 @@ export function apiErrorHandler(
   }
 
   // All other errors we should log!
-  Sentry.captureException(reject);
+  Sentry.captureException(new Error(JSON.stringify(reject)));
 
   // Just throw everything else as a Server Error for the user.
   return {

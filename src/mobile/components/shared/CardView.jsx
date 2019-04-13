@@ -107,7 +107,6 @@ const CardView = (props: Props) => {
             </TouchableOpacity>
           </View>
         </View>
-        {middlePhoto1}
         <View style={styles.profileBlock}>
           <View
             style={{
@@ -122,6 +121,7 @@ const CardView = (props: Props) => {
             </Text>
           </View>
         </View>
+        {middlePhoto1}
         {middlePhoto2}
         {lastPhoto}
         {onBlockReport && (

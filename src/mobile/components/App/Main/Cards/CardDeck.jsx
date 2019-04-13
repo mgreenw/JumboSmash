@@ -1,7 +1,14 @@
 // @flow
 import React from 'react';
-import { View, Platform, Image, InteractionManager } from 'react-native';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import {
+  View,
+  Platform,
+  Image,
+  InteractionManager,
+  Dimensions,
+  Animated
+} from 'react-native';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type {
   ReduxState,
   Scene,
@@ -17,6 +24,7 @@ import judgeSceneCandidateAction from 'mobile/actions/app/judgeSceneCandidate';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -45,7 +53,9 @@ type ProppyProps = {
 type ReduxProps = {
   profileCards: ProfileCard[],
   getCandidatesInProgress: boolean,
-  profileMap: { [userId: number]: UserProfile }
+  profileMap: { [userId: number]: UserProfile },
+  overlayMatchId: ?number,
+  clientProfile: ?UserProfile
 };
 
 type DispatchProps = {
@@ -67,7 +77,11 @@ type State = {
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
-  showGif: boolean
+  showGif: boolean,
+  // Animation
+  swipeAnim: Animated.Value,
+  showOverlayMatch: boolean,
+  overlayMatchProfile: ?UserProfile
 };
 
 function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
@@ -83,10 +97,24 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Cards Screen');
   }
+
+  const overlayMatchId =
+    // For flow typing the parsing
+    reduxState.topToast.code === 'NEW_MATCH' &&
+    // Ensure matched in same scene.
+    ownProps.scene === reduxState.topToast.scene &&
+    // Ensure client initated this.
+    reduxState.topToast.clientInitiatedMatch === true
+      ? reduxState.topToast.userId
+      : null;
+
+  const { profile: clientProfile = null } = reduxState.client;
   return {
     profileCards,
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
-    profileMap: reduxState.profiles
+    profileMap: reduxState.profiles,
+    overlayMatchId,
+    clientProfile
   };
 }
 
@@ -128,14 +156,43 @@ class cardDeck extends React.Component<Props, State> {
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
-      showGif: false
+      showGif: false,
+      swipeAnim: new Animated.Value(0),
+      showOverlayMatch: false,
+      overlayMatchProfile: null
     };
   }
 
-  // We use this to MUTATE the 'cards' array in this component's state.
-  // This is needed as the swiper uses a REFERENCE to the original array.
   componentDidUpdate(prevProps: Props) {
-    const { profileCards, getCandidatesInProgress } = this.props;
+    // If a new match initiated by user here, toggle the overlay.
+    // Don't toggle if viewing a profile, or another one up.
+    const {
+      profileCards,
+      getCandidatesInProgress,
+      overlayMatchId,
+      profileMap
+    } = this.props;
+    const { showExpandedCard, showOverlayMatch } = this.state;
+
+    if (
+      overlayMatchId &&
+      overlayMatchId !== prevProps.overlayMatchId &&
+      showExpandedCard === false &&
+      showOverlayMatch === false
+    ) {
+      const newOverlayMatchProfile = profileMap[overlayMatchId];
+      if (newOverlayMatchProfile !== undefined) {
+        this.setState({
+          showOverlayMatch: true,
+          // Map the overlay from props to state.
+          // If a new match occurs, we still want to show the old overlay
+          overlayMatchProfile: newOverlayMatchProfile
+        });
+      }
+    }
+
+    // We use this to MUTATE the 'cards' array in this component's state.
+    // This is needed as the swiper uses a REFERENCE to the original array.
     const recievedNewCanidates =
       prevProps.getCandidatesInProgress && !getCandidatesInProgress;
     if (recievedNewCanidates) {
@@ -174,6 +231,14 @@ class cardDeck extends React.Component<Props, State> {
     this.setState({
       deckIndex: deckIndex + 1
     });
+  };
+
+  _onDragEnd = () => {
+    const { swipeAnim } = this.state;
+
+    Animated.spring(swipeAnim, {
+      toValue: 0
+    }).start();
   };
 
   // Render the correct card based on the type.
@@ -243,11 +308,13 @@ class cardDeck extends React.Component<Props, State> {
   };
 
   // These cause swipes to occur, for faking a swipe from a button
-  _onButtonLike = () => {
+  _onButtonLike = (HorizontalSwipeThreshold: number) => {
+    this._fakeSwipeAnimation(HorizontalSwipeThreshold, 'RIGHT');
     this.swiper.swipeRight();
   };
 
-  _onButtonDislike = () => {
+  _onButtonDislike = (HorizontalSwipeThreshold: number) => {
+    this._fakeSwipeAnimation(HorizontalSwipeThreshold, 'LEFT');
     this.swiper.swipeLeft();
   };
 
@@ -283,6 +350,33 @@ class cardDeck extends React.Component<Props, State> {
       };
     });
   };
+
+  _onStartChatting = () => {};
+
+  _onKeepSwiping = () => {
+    this.setState({
+      showOverlayMatch: false
+    });
+  };
+
+  _fakeSwipeAnimation(
+    HorizontalSwipeThreshold: number,
+    direction: 'RIGHT' | 'LEFT'
+  ) {
+    const { swipeAnim } = this.state;
+    Animated.sequence([
+      Animated.timing(swipeAnim, {
+        toValue:
+          direction === 'LEFT'
+            ? -HorizontalSwipeThreshold
+            : HorizontalSwipeThreshold,
+        duration: 200
+      }),
+      Animated.spring(swipeAnim, {
+        toValue: 0
+      })
+    ]).start();
+  }
 
   _renderUserActionSheet() {
     const { showUserActionSheet } = this.state;
@@ -386,9 +480,20 @@ class cardDeck extends React.Component<Props, State> {
       noCandidates,
       showExpandedCard,
       expandedCardProfile,
-      showGif
+      showGif,
+      swipeAnim,
+      showOverlayMatch,
+      overlayMatchProfile
     } = this.state;
-    const { getCandidatesInProgress, getMoreCandidatesAndReset } = this.props;
+    const {
+      getCandidatesInProgress,
+      getMoreCandidatesAndReset,
+      clientProfile,
+      scene
+    } = this.props;
+    const { width } = Dimensions.get('window');
+    // This is the default for the swiper
+    const HorizontalSwipeThreshold = width / 4;
 
     return (
       <View
@@ -422,6 +527,7 @@ class cardDeck extends React.Component<Props, State> {
           onSwipedLeft={this._onSwipedLeft}
           onSwipedRight={this._onSwipedRight}
           onSwipedAll={this._onSwipedAll}
+          dragEnd={this._onDragEnd}
           verticalSwipe={false}
           horizontalSwipe={
             deckIndex !== 0 /* don't allow the instructions to be swiped */
@@ -436,6 +542,9 @@ class cardDeck extends React.Component<Props, State> {
           stackScale={10}
           useViewOverflow={Platform.OS === 'ios'}
           onTapCard={this._onTapCard}
+          onSwiping={pos => {
+            swipeAnim.setValue(pos);
+          }}
         />
         <View
           style={{
@@ -509,11 +618,27 @@ class cardDeck extends React.Component<Props, State> {
             profile={expandedCardProfile}
           />
         )}
+        {overlayMatchProfile && clientProfile && (
+          <ModalMatchOverlay
+            isVisible={showOverlayMatch}
+            clientProfile={clientProfile}
+            matchProfile={overlayMatchProfile}
+            scene={scene}
+            onStartChatting={this._onStartChatting}
+            onKeepSwiping={this._onKeepSwiping}
+          />
+        )}
         {deckIndex !== 0 && (
           <SwipeButtons
             disabled={noCandidates || allSwiped || deckIndex === 0}
-            onPressDislike={this._onButtonDislike}
-            onPressLike={this._onButtonLike}
+            onPressDislike={() => {
+              this._onButtonDislike(HorizontalSwipeThreshold);
+            }}
+            onPressLike={() => {
+              this._onButtonLike(HorizontalSwipeThreshold);
+            }}
+            swipeThreshold={HorizontalSwipeThreshold}
+            swipeAnimation={swipeAnim}
           />
         )}
         {this._renderUserActionSheet()}

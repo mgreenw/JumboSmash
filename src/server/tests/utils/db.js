@@ -69,7 +69,7 @@ async function createProfile(userId, body) {
 async function banUser(id) {
   await db.query(`
     UPDATE classmates
-    SET banned = true
+    SET banned = true, banned_reason = 'TEST_BAN_REASON'
     WHERE id = $1
   `, [id]);
 }
