@@ -4,6 +4,7 @@ import type { $Request, $Response, $Next } from 'express';
 
 const codes = require('../../status-codes');
 const { getUser, AuthenticationError } = require('../../auth/utils');
+const { profileErrorMessages } = require('../../users/utils');
 const { version } = require('../../../utils');
 
 // Middleware to check if the user is authenticated
@@ -32,10 +33,28 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   // return with UNAUTHORIZED
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      return res.status(401).json({
-        status: codes.UNAUTHORIZED.status,
+      // If the user is not banned, return unauthorized
+      if (!error.banned) {
+        return res.status(401).json({
+          status: codes.UNAUTHORIZED.status,
+          version,
+        });
+      }
+
+      // If the user is banned, return as such.
+      const reason = error.bannedReason === profileErrorMessages.BIRTHDAY_UNDER_18
+        ? profileErrorMessages.BIRTHDAY_UNDER_18
+        : null;
+
+      const body = {
+        status: codes.BANNED.status,
         version,
-      });
+        data: {
+          reason,
+        },
+      };
+
+      return res.status(401).json(body);
     }
     return next(error);
   }

@@ -21,6 +21,10 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
+exports.BANNED = {
+  status: 'BANNED',
+  code: 401,
+};
 // AUTH
 
 // Send Verification Email
@@ -95,6 +99,10 @@ exports.FINALIZE_PROFILE_SETUP__INVALID_REQUEST = {
 exports.FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED = {
   status: 'FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED',
   code: 409,
+};
+exports.FINALIZE_PROFILE__BIRTHDAY_UNDER_18 = {
+  status: 'FINALIZE_PROFILE__BIRTHDAY_UNDER_18',
+  code: 406,
 };
 
 // Update Profile

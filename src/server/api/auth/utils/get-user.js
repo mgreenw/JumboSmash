@@ -23,8 +23,10 @@ function getUser(token: string, adminPassword: ?string = null): Promise<any> {
             u.utln,
             u.token_uuid AS "tokenUUID",
             u.expo_push_token AS "expoPushToken",
-            (u.admin_password IS NOT NULL AND u.admin_password = $1) AS "isAdmin"
-          FROM users u
+            (u.admin_password IS NOT NULL AND u.admin_password = $1) AS "isAdmin",
+            u.banned AS "banned",
+            u.banned_reason AS "bannedReason"
+          FROM classmates u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $2
           LIMIT 1`,
@@ -36,10 +38,16 @@ function getUser(token: string, adminPassword: ?string = null): Promise<any> {
           return reject(new AuthenticationError('User does not exist'));
         }
 
+        const {
+          tokenUUID,
+          banned,
+          bannedReason,
+          ...user
+        } = result.rows[0];
+
         // Check if the user's token's uuid is valid
-        const { tokenUUID, ...user } = result.rows[0];
-        if (tokenUUID === null || decoded.uuid !== tokenUUID) {
-          return reject(new AuthenticationError('User token invalid'));
+        if (tokenUUID === null || decoded.uuid !== tokenUUID || banned) {
+          return reject(new AuthenticationError('User token invalid', banned, bannedReason));
         }
         // If a user exists, return the user!
         return resolve(user);
