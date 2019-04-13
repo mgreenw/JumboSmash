@@ -6,7 +6,8 @@ import {
   Image,
   InteractionManager,
   Dimensions,
-  Animated
+  Animated,
+  Text
 } from 'react-native';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type {
@@ -25,6 +26,7 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
+import { textStyles } from 'mobile/styles/textStyles';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -495,6 +497,38 @@ class cardDeck extends React.Component<Props, State> {
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
 
+    const renderSwiper = (
+      <Swiper
+        ref={swiper => {
+          this.swiper = swiper;
+        }}
+        cards={cards}
+        renderCard={this._renderCard}
+        onSwiped={this._onSwiped}
+        onSwipedLeft={this._onSwipedLeft}
+        onSwipedRight={this._onSwipedRight}
+        onSwipedAll={this._onSwipedAll}
+        dragEnd={this._onDragEnd}
+        verticalSwipe={false}
+        horizontalSwipe={
+          deckIndex !== 0 /* don't allow the instructions to be swiped */
+        }
+        backgroundColor={'transparent'}
+        deckIndex={deckIndex}
+        stackSize={2}
+        cardVerticalMargin={0}
+        cardHorizontalMargin={0}
+        stackSeparation={0}
+        marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+        stackScale={10}
+        useViewOverflow={Platform.OS === 'ios'}
+        onTapCard={this._onTapCard}
+        onSwiping={pos => {
+          swipeAnim.setValue(pos);
+        }}
+      />
+    );
+
     return (
       <View
         style={{
@@ -517,54 +551,56 @@ class cardDeck extends React.Component<Props, State> {
             });
           }}
         />
-        <Swiper
-          ref={swiper => {
-            this.swiper = swiper;
-          }}
-          cards={cards}
-          renderCard={this._renderCard}
-          onSwiped={this._onSwiped}
-          onSwipedLeft={this._onSwipedLeft}
-          onSwipedRight={this._onSwipedRight}
-          onSwipedAll={this._onSwipedAll}
-          dragEnd={this._onDragEnd}
-          verticalSwipe={false}
-          horizontalSwipe={
-            deckIndex !== 0 /* don't allow the instructions to be swiped */
-          }
-          backgroundColor={'transparent'}
-          deckIndex={deckIndex}
-          stackSize={2}
-          cardVerticalMargin={0}
-          cardHorizontalMargin={0}
-          stackSeparation={0}
-          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
-          stackScale={10}
-          useViewOverflow={Platform.OS === 'ios'}
-          onTapCard={this._onTapCard}
-          onSwiping={pos => {
-            swipeAnim.setValue(pos);
-          }}
-        />
+        {/* {renderSwiper} */}
         <View
           style={{
             /* Absolutely absurd we have to do this, but the Swiper does not
                correctly propogate props to its children, so we have to fake locations. */
-            position: 'absolute',
-            bottom: SWIPE_BUTTON_HEIGHT,
-            zIndex: 2
+            zIndex: 2,
+            alignContent: 'center',
+            justifyContent: 'center',
+            width: '100%'
           }}
         >
-          {allSwiped && noCandidates && (
+          <Text
+            style={[
+              textStyles.headline6Style,
+              { marginBottom: -width / 4, zIndex: 2 }
+            ]}
+          >
+            Someone’s good with their hands;)
+          </Text>
+          <View
+            style={{
+              height: width,
+              width,
+              zIndex: -1,
+              backgroundColor: 'red'
+            }}
+            />
+            <Image>
+
+            </View>
+
+          <Text
+            style={[
+              textStyles.headline6Style,
+              { marginTop: -width / 4, zIndex: 2 }
+            ]}
+          >
+            Looks like you’ve swiped through everyone in your stack. Refresh it
+            to see the people you swiped left on.
+          </Text>
+          <View style={{ width: '33%', alignSelf: 'center', zIndex: 2 }}>
             <PrimaryButton
               onPress={getMoreCandidatesAndReset}
               title="Refresh Stack"
               loading={getCandidatesInProgress}
               disabled={getCandidatesInProgress}
             />
-          )}
+          </View>
         </View>
-        <View
+        {/* <View
           style={{
             width: '100%',
             height: '100%',
@@ -595,7 +631,7 @@ class cardDeck extends React.Component<Props, State> {
             }}
             source={ArthurLoadingFrame1}
           />
-        </View>
+        </View> */}
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
