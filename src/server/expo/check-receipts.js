@@ -69,7 +69,7 @@ async function checkReceipts(job: { data: string[] }) {
   // Create the paramaeter strings for the update query
   logger.info('Updating notification receipts.');
   const generateValueTemplate = (startIndex: number): string => {
-    return `($${startIndex + 1}, $${startIndex + 2}::notification_status, $${startIndex + 3}, $${startIndex + 4})`;
+    return `($${startIndex + 1}::integer, $${startIndex + 2}::notification_status, $${startIndex + 3}, $${startIndex + 4})`;
   };
   const template = Object.keys(notifications).map(
     (ticketId, index) => generateValueTemplate(index * 4),
