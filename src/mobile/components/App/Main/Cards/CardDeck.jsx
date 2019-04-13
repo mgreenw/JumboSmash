@@ -557,79 +557,74 @@ class cardDeck extends React.Component<Props, State> {
             /* Absolutely absurd we have to do this, but the Swiper does not
                correctly propogate props to its children, so we have to fake locations. */
             zIndex: 2,
-            alignContent: 'center',
-            justifyContent: 'center',
-            width: '100%'
+            justifyContent: 'space-between',
+            flex: 1,
+            marginBottom: SWIPE_BUTTON_HEIGHT
           }}
         >
-          <Text
-            style={[
-              textStyles.headline6Style,
-              {
-                marginBottom: -width / 4,
-                zIndex: 2,
-                textAlign: 'center',
-                paddingHorizontal: '10.1%',
-                paddingVertical: '5.1%'
-              }
-            ]}
-          >
-            Someone’s good with their hands;)
-          </Text>
           <View
             style={{
-              height: width,
-              width,
-              zIndex: -1,
-              backgroundColor: 'red'
+              flex: 1,
+              backgroundColor: 'red',
+              justifyContent: 'flex-end'
             }}
           >
-            <Image
-              resizeMode="contain"
-              style={{
-                zIndex: -2,
-                width: '100%',
-                height: '100%',
-                position: 'absolute'
-              }}
-              source={ArthurLoadingFrame1}
-            />
-            {showGif && (
-              <Image
-                resizeMode="contain"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  position: 'absolute'
-                }}
-                source={ArthurLoadingGif}
-              />
-            )}
+            <Text
+              style={[
+                textStyles.headline6Style,
+                {
+                  zIndex: 2,
+                  textAlign: 'center',
+                  paddingHorizontal: '10.1%',
+                  paddingVertical: '5.1%'
+                }
+              ]}
+            >
+              Someone’s good with their hands;)
+            </Text>
           </View>
-
-          <Text
-            style={[
-              textStyles.headline6Style,
-              {
-                marginTop: -width / 4,
-                zIndex: 2,
-                paddingHorizontal: '10.1%',
-                paddingVertical: '5.1%'
-              }
-            ]}
-          >
-            Looks like you’ve swiped through everyone in your stack. Refresh it
-            to see the people you swiped left on.
-          </Text>
           <View
-            style={{ width: '33%', height: 40, alignSelf: 'center', zIndex: 2 }}
+            style={{
+              height: width / 3,
+              width: width / 3,
+              backgroundColor: 'yellow'
+            }}
+          />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'blue',
+              justifyContent: 'flex-start'
+            }}
           >
-            <PrimaryButton
-              onPress={getMoreCandidatesAndReset}
-              title="Refresh Stack"
-              loading={getCandidatesInProgress}
-              disabled={getCandidatesInProgress}
-            />
+            <Text
+              style={[
+                textStyles.subtitle1StyleSemibold,
+                {
+                  zIndex: 2,
+                  paddingHorizontal: '10.1%',
+                  paddingVertical: '5.1%'
+                }
+              ]}
+            >
+              Looks like you’ve swiped through everyone in your stack. Refresh
+              it to see the people you swiped left on.
+            </Text>
+            <View
+              style={{
+                width: '33%',
+                height: 40,
+                alignSelf: 'center',
+                zIndex: 2
+              }}
+            >
+              <PrimaryButton
+                onPress={getMoreCandidatesAndReset}
+                title="Refresh Stack"
+                loading={getCandidatesInProgress}
+                disabled={getCandidatesInProgress}
+              />
+            </View>
           </View>
         </View>
         {/* <View
