@@ -169,7 +169,8 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'stone', ${tableName}active_stone
     ) AS "activeScenes",
     expo_push_token AS "expoPushToken",
-    notifications_enabled AS "notificationsEnabled"
+    notifications_enabled AS "notificationsEnabled",
+    ${tableName}admin_password IS NOT NULL AS "isAdmin"
   `;
 }
 
