@@ -3,13 +3,10 @@ import React from 'react';
 import {
   View,
   Platform,
-  Image,
   InteractionManager,
   Dimensions,
-  Animated,
-  Text
+  Animated
 } from 'react-native';
-import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type {
   ReduxState,
   Scene,
@@ -26,16 +23,14 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
-import { textStyles } from 'mobile/styles/textStyles';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
+import CardDeckBackground from './CardDeckBackground';
 
 import BlockPopup from '../Matches/BlockPopup';
 import ReportPopup from '../Matches/ReportPopup';
-
-const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
-const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png');
+import { PrimaryButton } from '../../../shared/buttons/MainButtons';
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -552,100 +547,41 @@ class cardDeck extends React.Component<Props, State> {
           }}
         />
         {renderSwiper}
+
         <View
           style={{
-            /* Absolutely absurd we have to do this, but the Swiper does not
-               correctly propogate props to its children, so we have to fake locations. */
-            zIndex: -2,
-            justifyContent: 'space-between',
-            flex: 1,
-            marginBottom: SWIPE_BUTTON_HEIGHT
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+            paddingBottom: SWIPE_BUTTON_HEIGHT,
+            zIndex: -1
           }}
         >
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'flex-end'
-            }}
-          >
-            <Text
-              style={[
-                textStyles.headline6Style,
-                {
-                  zIndex: 2,
-                  textAlign: 'center',
-                  paddingHorizontal: '10.1%',
-                  paddingVertical: '7.8%'
-                }
-              ]}
-            >
-              Someone’s good with their hands;)
-            </Text>
-          </View>
-          <View
-            style={{
-              height: width / 3,
-              width: width / 3
-            }}
-          />
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'flex-start'
-            }}
-          >
-            <Text
-              style={[
-                textStyles.subtitle1Style,
-                {
-                  zIndex: 2,
-                  paddingHorizontal: '10.1%',
-                  paddingVertical: '7.8%'
-                }
-              ]}
-            >
-              Looks like you’ve swiped through everyone in your stack. Refresh
-              it to see the people you swiped left on.
-            </Text>
-            <View
-              style={{
-                width: '33%',
-                height: 40,
-                alignSelf: 'center',
-                zIndex: 2
-              }}
-            >
-              <PrimaryButton
-                onPress={getMoreCandidatesAndReset}
-                title="Refresh Stack"
-                loading={getCandidatesInProgress}
-                disabled={getCandidatesInProgress}
-              />
-            </View>
-          </View>
-          {showGif && (
-            <Image
-              resizeMode="contain"
-              style={{
-                zIndex: -2,
-                width: '100%',
-                height: '100%',
-                position: 'absolute'
-              }}
-              source={ArthurLoadingGif}
-            />
-          )}
-          <Image
-            resizeMode="contain"
-            style={{
-              zIndex: -2,
-              width: '100%',
-              height: '100%',
-              position: 'absolute'
-            }}
-            source={ArthurLoadingFrame1}
+          <CardDeckBackground
+            animate={showGif && getCandidatesInProgress}
+            noCandidates={allSwiped && noCandidates}
+            getCandidatesInProgress={getCandidatesInProgress}
           />
         </View>
+        {noCandidates && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: SWIPE_BUTTON_HEIGHT,
+              marginBottom: '5.1%',
+              width: '100%',
+              alignItems: 'center'
+            }}
+          >
+            <PrimaryButton
+              title={'Refresh Stack'}
+              disabled={getCandidatesInProgress || !noCandidates}
+              loading={getCandidatesInProgress}
+              onPress={getMoreCandidatesAndReset}
+            />
+          </View>
+        )}
+
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
