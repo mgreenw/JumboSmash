@@ -551,12 +551,12 @@ class cardDeck extends React.Component<Props, State> {
             });
           }}
         />
-        {/* {renderSwiper} */}
+        {renderSwiper}
         <View
           style={{
             /* Absolutely absurd we have to do this, but the Swiper does not
                correctly propogate props to its children, so we have to fake locations. */
-            zIndex: 2,
+            zIndex: -2,
             justifyContent: 'space-between',
             flex: 1,
             marginBottom: SWIPE_BUTTON_HEIGHT
@@ -565,7 +565,6 @@ class cardDeck extends React.Component<Props, State> {
           <View
             style={{
               flex: 1,
-              backgroundColor: 'red',
               justifyContent: 'flex-end'
             }}
           >
@@ -576,7 +575,7 @@ class cardDeck extends React.Component<Props, State> {
                   zIndex: 2,
                   textAlign: 'center',
                   paddingHorizontal: '10.1%',
-                  paddingVertical: '5.1%'
+                  paddingVertical: '7.8%'
                 }
               ]}
             >
@@ -586,24 +585,22 @@ class cardDeck extends React.Component<Props, State> {
           <View
             style={{
               height: width / 3,
-              width: width / 3,
-              backgroundColor: 'yellow'
+              width: width / 3
             }}
           />
           <View
             style={{
               flex: 1,
-              backgroundColor: 'blue',
               justifyContent: 'flex-start'
             }}
           >
             <Text
               style={[
-                textStyles.subtitle1StyleSemibold,
+                textStyles.subtitle1Style,
                 {
                   zIndex: 2,
                   paddingHorizontal: '10.1%',
-                  paddingVertical: '5.1%'
+                  paddingVertical: '7.8%'
                 }
               ]}
             >
@@ -626,21 +623,11 @@ class cardDeck extends React.Component<Props, State> {
               />
             </View>
           </View>
-        </View>
-        {/* <View
-          style={{
-            width: '100%',
-            height: '100%',
-            alignContent: 'center',
-            zIndex: -1,
-            position: 'absolute',
-            paddingBottom: SWIPE_BUTTON_HEIGHT / 2
-          }}
-        >
           {showGif && (
             <Image
               resizeMode="contain"
               style={{
+                zIndex: -2,
                 width: '100%',
                 height: '100%',
                 position: 'absolute'
@@ -658,7 +645,7 @@ class cardDeck extends React.Component<Props, State> {
             }}
             source={ArthurLoadingFrame1}
           />
-        </View> */}
+        </View>
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
