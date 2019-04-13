@@ -48,7 +48,8 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                     "social": true,
                     "stone": true
                 },
-                "isAdmin": false
+                "isAdmin": false,
+                "blockedRequestingAdmin": false
             },
             {
                 "id": 6,
@@ -60,7 +61,8 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                     "social": true,
                     "stone": true
                 },
-                "isAdmin": false
+                "isAdmin": false,
+                "blockedRequestingAdmin": true
             },
             {
                 "id": 1,
@@ -72,7 +74,8 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                     "social": true,
                     "stone": true
                 },
-                "isAdmin": true
+                "isAdmin": true,
+                "blockedRequestingAdmin": false
             }
         ]
     },

@@ -46,7 +46,8 @@ Provide the normal `Authorization` token in the request header.
             "stone": false
         },
         "expoPushToken": "SOME_EXPO_TOKEN",
-        "notificationsEnabled": true
+        "notificationsEnabled": true,
+        "isAdmin": false
     }
 }
 ```

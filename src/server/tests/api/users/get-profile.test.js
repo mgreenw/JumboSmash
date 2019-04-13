@@ -29,6 +29,9 @@ describe('GET api/users/:userId/profile', () => {
       displayName: 'Max16',
       birthday: '1999-01-27',
       bio: 'Already has 2 friends so...',
+      springFlingAct: 'Real Instruments',
+      postgradRegion: null,
+      freshmanDorm: 'Tilton',
     };
     await dbUtils.createProfile(otherUser.id, otherUser.profile);
 
@@ -84,6 +87,9 @@ describe('GET api/users/:userId/profile', () => {
     expect(res.body.data.fields.displayName).toBe(otherUser.profile.displayName);
     expect(res.body.data.fields.birthday).toBe(otherUser.profile.birthday);
     expect(res.body.data.fields.bio).toBe(otherUser.profile.bio);
+    expect(res.body.data.fields.springFlingAct).toBe(otherUser.profile.springFlingAct);
+    expect(res.body.data.fields.postgradRegion).toBe(otherUser.profile.postgradRegion);
+    expect(res.body.data.fields.freshmanDorm).toBe(otherUser.profile.freshmanDorm);
   });
 
   it('should fail to get another user profile if that user has not setup a profile', async () => {

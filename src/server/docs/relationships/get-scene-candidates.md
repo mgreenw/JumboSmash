@@ -58,7 +58,10 @@ Provide the normal `Authorization` token in the request header.
                 "fields": {
                     "displayName": "Anthony",
                     "birthday": "2019-02-19",
-                    "bio": "He is the president"
+                    "bio": "He is the president",
+                    "postgradRegion": "na.us.ma.7",
+                    "freshmanDorm": "Haskell",
+                    "springFlingAct": "A real band"
                 },
                 "photoUuids": ["5e6f2885-8539-4460-a7f0-af80eef662cf"]
             }

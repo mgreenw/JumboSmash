@@ -2,8 +2,8 @@
 
 const _ = require('lodash');
 
-const minBirthday = new Date('01/01/1988');
-const maxBirthday = new Date('01/01/2001');
+// About 30 years old.
+const oldestBirthday = new Date('01/01/1988');
 const displayNameMaxLength = 50;
 const bioMaxLength = 500;
 
@@ -11,6 +11,7 @@ const bioMaxLength = 500;
 const profileErrorMessages = {
   DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
+  BIRTHDAY_UNDER_18: 'BIRTHDAY_UNDER_18',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
 };
 
@@ -46,18 +47,29 @@ function validateProfile(profile: Profile) {
 
     // Note the "month - 1": Javascript's month is 0-indexed. Oof.
     const birthdayDate = new Date(year, month - 1, day);
+    const now = new Date();
+
+
     if (
       // This ensures that the given birthdayDate is not an "Invalid Date"
       Number.isNaN(birthdayDate.getTime())
-      // This checks if the birthday is within the reasonable maxBirthday/minBirthday range
-      || birthdayDate < minBirthday
-      || birthdayDate > maxBirthday
+      // This checks if the birthday is within the reasonable range.
+      || birthdayDate < oldestBirthday
+      || birthdayDate > now
       // The final check below ensures that the Date that javascript coalesces the given birthday
       // to is actually on the same day as the given birthday. Also duh.
       // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
       || birthdayDate.getDate() !== day
     ) {
       throw profileErrorMessages.BIRTHDAY_NOT_VALID;
+    }
+
+    // Ensure the user is older than 18.
+    const eighteenthBirthday = new Date(year + 18, month - 1, day);
+
+    // Logic: if it is currently before the 18th birthday
+    if (now < eighteenthBirthday) {
+      throw profileErrorMessages.BIRTHDAY_UNDER_18;
     }
   }
 
@@ -116,7 +128,10 @@ function profileSelectQuery(
     json_build_object(
       'displayName', ${tableName}display_name,
       'birthday', to_char(${tableName}birthday, 'YYYY-MM-DD'),
-      'bio', ${tableName}bio
+      'bio', ${tableName}bio,
+      'postgradRegion', ${tableName}postgrad_region,
+      'freshmanDorm', ${tableName}freshman_dorm,
+      'springFlingAct', ${tableName}spring_fling_act
     )
   `;
 
@@ -169,7 +184,8 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'stone', ${tableName}active_stone
     ) AS "activeScenes",
     expo_push_token AS "expoPushToken",
-    notifications_enabled AS "notificationsEnabled"
+    notifications_enabled AS "notificationsEnabled",
+    ${tableName}admin_password IS NOT NULL AS "isAdmin"
   `;
 }
 

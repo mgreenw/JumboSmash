@@ -3,12 +3,10 @@ import React from 'react';
 import {
   View,
   Platform,
-  Image,
   InteractionManager,
   Dimensions,
   Animated
 } from 'react-native';
-import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type {
   ReduxState,
   Scene,
@@ -28,12 +26,11 @@ import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
+import CardDeckBackground from './CardDeckBackground';
 
 import BlockPopup from '../Matches/BlockPopup';
 import ReportPopup from '../Matches/ReportPopup';
-
-const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
-const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png');
+import { PrimaryButton } from '../../../shared/buttons/MainButtons';
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -247,6 +244,9 @@ class cardDeck extends React.Component<Props, State> {
   //       (and enable swiping if needed via settings)
   //    2. the preview profile card.
   _renderCard = (card: Card) => {
+    if (card === undefined) {
+      return null;
+    }
     switch (card.type) {
       case 'INACTIVE': {
         const { scene } = this.props;
@@ -321,6 +321,9 @@ class cardDeck extends React.Component<Props, State> {
   _onTapCard = (deckIndex: number) => {
     const { cards } = this.state;
     const card = cards[deckIndex];
+    if (card === undefined) {
+      return;
+    }
     if (card.type === 'PROFILE') {
       this._showExpandedCard(card.profileId);
     }
@@ -434,9 +437,9 @@ class cardDeck extends React.Component<Props, State> {
         visible={showBlockPopup}
         onCancel={() => this.setState({ showBlockPopup: false })}
         onDone={() =>
-          this.setState({ showBlockPopup: false }, () =>
-            this.swiper.swipeBottom()
-          )
+          this.setState({ showBlockPopup: false }, () => {
+            this.swiper.swipeBottom();
+          })
         }
         displayName={displayName}
         userId={expandedCardUserId}
@@ -495,6 +498,38 @@ class cardDeck extends React.Component<Props, State> {
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
 
+    const renderSwiper = (
+      <Swiper
+        ref={swiper => {
+          this.swiper = swiper;
+        }}
+        cards={cards}
+        renderCard={this._renderCard}
+        onSwiped={this._onSwiped}
+        onSwipedLeft={this._onSwipedLeft}
+        onSwipedRight={this._onSwipedRight}
+        onSwipedAll={this._onSwipedAll}
+        dragEnd={this._onDragEnd}
+        verticalSwipe={false}
+        horizontalSwipe={
+          deckIndex !== 0 /* don't allow the instructions to be swiped */
+        }
+        backgroundColor={'transparent'}
+        deckIndex={deckIndex}
+        stackSize={2}
+        cardVerticalMargin={0}
+        cardHorizontalMargin={0}
+        stackSeparation={0}
+        marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+        stackScale={10}
+        useViewOverflow={Platform.OS === 'ios'}
+        onTapCard={this._onTapCard}
+        onSwiping={pos => {
+          swipeAnim.setValue(pos);
+        }}
+      />
+    );
+
     return (
       <View
         style={{
@@ -517,85 +552,42 @@ class cardDeck extends React.Component<Props, State> {
             });
           }}
         />
-        <Swiper
-          ref={swiper => {
-            this.swiper = swiper;
-          }}
-          cards={cards}
-          renderCard={this._renderCard}
-          onSwiped={this._onSwiped}
-          onSwipedLeft={this._onSwipedLeft}
-          onSwipedRight={this._onSwipedRight}
-          onSwipedAll={this._onSwipedAll}
-          dragEnd={this._onDragEnd}
-          verticalSwipe={false}
-          horizontalSwipe={
-            deckIndex !== 0 /* don't allow the instructions to be swiped */
-          }
-          backgroundColor={'transparent'}
-          deckIndex={deckIndex}
-          stackSize={2}
-          cardVerticalMargin={0}
-          cardHorizontalMargin={0}
-          stackSeparation={0}
-          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
-          stackScale={10}
-          useViewOverflow={Platform.OS === 'ios'}
-          onTapCard={this._onTapCard}
-          onSwiping={pos => {
-            swipeAnim.setValue(pos);
-          }}
-        />
+        {renderSwiper}
+
         <View
           style={{
-            /* Absolutely absurd we have to do this, but the Swiper does not
-               correctly propogate props to its children, so we have to fake locations. */
             position: 'absolute',
-            bottom: SWIPE_BUTTON_HEIGHT,
-            zIndex: 2
-          }}
-        >
-          {allSwiped && noCandidates && (
-            <PrimaryButton
-              onPress={getMoreCandidatesAndReset}
-              title="Refresh Stack"
-              loading={getCandidatesInProgress}
-              disabled={getCandidatesInProgress}
-            />
-          )}
-        </View>
-        <View
-          style={{
-            width: '100%',
             height: '100%',
-            alignContent: 'center',
-            zIndex: -1,
-            position: 'absolute',
-            paddingBottom: SWIPE_BUTTON_HEIGHT / 2
+            width: '100%',
+            paddingBottom: SWIPE_BUTTON_HEIGHT,
+            zIndex: -1
           }}
         >
-          {showGif && (
-            <Image
-              resizeMode="contain"
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute'
-              }}
-              source={ArthurLoadingGif}
-            />
-          )}
-          <Image
-            resizeMode="contain"
-            style={{
-              zIndex: -2,
-              width: '100%',
-              height: '100%',
-              position: 'absolute'
-            }}
-            source={ArthurLoadingFrame1}
+          <CardDeckBackground
+            animate={showGif && getCandidatesInProgress}
+            noCandidates={allSwiped && noCandidates}
+            getCandidatesInProgress={getCandidatesInProgress}
           />
         </View>
+        {noCandidates && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: SWIPE_BUTTON_HEIGHT,
+              marginBottom: '5.1%',
+              width: '100%',
+              alignItems: 'center'
+            }}
+          >
+            <PrimaryButton
+              title={'Refresh Stack'}
+              disabled={getCandidatesInProgress || !noCandidates}
+              loading={getCandidatesInProgress}
+              onPress={getMoreCandidatesAndReset}
+            />
+          </View>
+        )}
+
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
