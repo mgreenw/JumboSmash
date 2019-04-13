@@ -565,7 +565,13 @@ class cardDeck extends React.Component<Props, State> {
           <Text
             style={[
               textStyles.headline6Style,
-              { marginBottom: -width / 4, zIndex: 2 }
+              {
+                marginBottom: -width / 4,
+                zIndex: 2,
+                textAlign: 'center',
+                paddingHorizontal: '10.1%',
+                paddingVertical: '5.1%'
+              }
             ]}
           >
             Someone’s good with their hands;)
@@ -588,12 +594,28 @@ class cardDeck extends React.Component<Props, State> {
               }}
               source={ArthurLoadingFrame1}
             />
+            {showGif && (
+              <Image
+                resizeMode="contain"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute'
+                }}
+                source={ArthurLoadingGif}
+              />
+            )}
           </View>
 
           <Text
             style={[
               textStyles.headline6Style,
-              { marginTop: -width / 4, zIndex: 2 }
+              {
+                marginTop: -width / 4,
+                zIndex: 2,
+                paddingHorizontal: '10.1%',
+                paddingVertical: '5.1%'
+              }
             ]}
           >
             Looks like you’ve swiped through everyone in your stack. Refresh it
