@@ -279,11 +279,7 @@ class cardDeck extends React.Component<Props, State> {
         allSwiped: true
       },
       () => {
-        // Force the loading to show for a second.
-        // This is a nice way to guarentee request ammounts.
-        setTimeout(() => {
-          getMoreCandidates();
-        }, 1000);
+        getMoreCandidates();
       }
     );
   };
