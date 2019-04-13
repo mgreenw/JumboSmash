@@ -176,6 +176,108 @@ describe('PATCH api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
+  it('should ensure the postgrad region is between 1 and 100 chars', async () => {
+    const user = await dbUtils.createUser('mbeans01');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    let res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        postgradRegion: '',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+
+    res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        postgradRegion: 'tRiRIMFROCmJRxix7Kkw87mRIxFR1coKiUf3EO23V4oQcMZI64GmPwZ9HT3szPBXPiyf0VxxIzYkn0OUiA2cnuhVa0QhLFIYO58al',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+  });
+
+  it('should ensure the dorm is between 1 and 100 chars', async () => {
+    const user = await dbUtils.createUser('mgrean02');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    let res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        freshmanDorm: '',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+
+    res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        freshmanDorm: 'tRiRIMFROCmJRxix7Kkw87mRIxFR1coKiUf3EO23V4oQcMZI64GmPwZ9HT3szPBXPiyf0VxxIzYkn0OUiA2cnuhVa0QhLFIYO58al',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+  });
+
+  it('should ensure the spring fling artist is not too many chars or too few chars', async () => {
+    const user = await dbUtils.createUser('mgrean03');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    let res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        springFlingAct: '',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+
+    res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        springFlingAct: '3Tisde0zeYbGmac1cnsAKPRL7p6j1AtD4lUEbQz4vOrRIXyfwInDENTtCcawvOQsWV70yDKJSNoRvU7vFKpLz7D2OypwUd43uiZxOnU54M1xVocNRr3dGhUkoFE7Jo7RcHrUXtZrlXgIouh7ad5qbBOXRwM5w3cXIx0MDIQMHGW2LeCvUt4DSf5O46Z241fNCBbIBmG5q',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+  });
+
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
     const user = await dbUtils.createUser('mgreen25');
     await dbUtils.createProfile(user.id, {
@@ -192,6 +294,9 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max',
         birthday,
+        postgradRegion: 'eu.dk.*.5041',
+        freshmanDorm: 'Haskell',
+        springFlingAct: 'Dave Matthews Band',
       })
       .expect(201);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS.status);
@@ -206,5 +311,46 @@ describe('PATCH api/users/me/profile', () => {
     expect(profile.bio).toBe('Someone likes Star Trek');
     expect(profile.display_name).toBe('Max');
     expect(profile.birthday_date).toBe(birthday);
+    expect(profile.postgrad_region).toBe('eu.dk.*.5041');
+    expect(profile.freshman_dorm).toBe('Haskell');
+    expect(profile.spring_fling_act).toBe('Dave Matthews Band');
+  });
+
+  it('should allow the three extra fields to be null', async () => {
+    const user = await dbUtils.createUser('mgreao01');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    const birthday = '1997-10-09';
+    const res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max',
+        birthday,
+        postgradRegion: null,
+        freshmanDorm: null,
+        springFlingAct: null,
+      })
+      .expect(201);
+    expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS.status);
+
+    const profileResult = await db.query(`
+    SELECT *, to_char("birthday", 'YYYY-MM-DD') AS birthday_date
+    FROM profiles
+    WHERE user_id = $1`, [user.id]);
+    expect(profileResult.rowCount).toBe(1);
+    const profile = profileResult.rows[0];
+
+    expect(profile.bio).toBe('Someone likes Star Trek');
+    expect(profile.display_name).toBe('Max');
+    expect(profile.birthday_date).toBe(birthday);
+    expect(profile.postgrad_region).toBeNull();
+    expect(profile.freshman_dorm).toBeNull();
+    expect(profile.spring_fling_act).toBeNull();
   });
 });

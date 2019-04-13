@@ -42,7 +42,7 @@ async function insertPhoto(userId, index = 1, photoUUID = uuid()) {
 
 async function createProfile(userId, body) {
   const {
-    displayName, birthday, bio,
+    displayName, birthday, bio, postgradRegion, freshmanDorm, springFlingAct,
   } = body;
 
   if (displayName === undefined
@@ -55,11 +55,11 @@ async function createProfile(userId, body) {
   try {
     const result = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, bio)
-      VALUES ($1, $2, $3, $4)
+      (user_id, display_name, birthday, bio, postgrad_region, freshman_dorm, spring_fling_act)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING user_id AS "userId"
     `,
-    [userId, displayName, birthday, bio]);
+    [userId, displayName, birthday, bio, postgradRegion, freshmanDorm, springFlingAct]);
     return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');
