@@ -621,7 +621,9 @@ class cardDeck extends React.Component<Props, State> {
             Looks like you’ve swiped through everyone in your stack. Refresh it
             to see the people you swiped left on.
           </Text>
-          <View style={{ width: '33%', alignSelf: 'center', zIndex: 2 }}>
+          <View
+            style={{ width: '33%', height: 40, alignSelf: 'center', zIndex: 2 }}
+          >
             <PrimaryButton
               onPress={getMoreCandidatesAndReset}
               title="Refresh Stack"
