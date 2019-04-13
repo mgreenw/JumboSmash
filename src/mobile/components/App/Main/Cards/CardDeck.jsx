@@ -577,10 +577,18 @@ class cardDeck extends React.Component<Props, State> {
               zIndex: -1,
               backgroundColor: 'red'
             }}
+          >
+            <Image
+              resizeMode="contain"
+              style={{
+                zIndex: -2,
+                width: '100%',
+                height: '100%',
+                position: 'absolute'
+              }}
+              source={ArthurLoadingFrame1}
             />
-            <Image>
-
-            </View>
+          </View>
 
           <Text
             style={[
