@@ -176,36 +176,14 @@ describe('PATCH api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
-  it('should ensure the postgrad region is valid', async () => {
-    const user = await dbUtils.createUser('mgrean01');
+  it('should ensure the postgrad region is between 1 and 100 chars', async () => {
+    const user = await dbUtils.createUser('mbeans01');
     await dbUtils.createProfile(user.id, {
       displayName: 'Max',
       bio: 'He is a guy',
       birthday: '1997-09-09',
     });
-    const res = await request(app)
-      .patch('/api/users/me/profile')
-      .set('Accept', 'application/json')
-      .set('Authorization', user.token)
-      .send({
-        bio: 'Someone likes Star Trek',
-        displayName: 'Max is a person who likes going on long hikes',
-        birthday: '1998-10-09',
-        postgradRegion: 'not-a-region',
-      })
-      .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
-    expect(res.body.data.message).toContain('geography_code');
-  });
-
-  it('should ensure the dorm is valid', async () => {
-    const user = await dbUtils.createUser('mgrean02');
-    await dbUtils.createProfile(user.id, {
-      displayName: 'Max',
-      bio: 'He is a guy',
-      birthday: '1997-09-09',
-    });
-    const res = await request(app)
+    let res = await request(app)
       .patch('/api/users/me/profile')
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
@@ -213,11 +191,57 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1997-10-09',
-        freshmanDorm: 'Not A Valid Dorm',
+        postgradRegion: '',
       })
       .expect(400);
-    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
-    expect(res.body.data.message).toContain('dorm');
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+
+    res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        postgradRegion: 'tRiRIMFROCmJRxix7Kkw87mRIxFR1coKiUf3EO23V4oQcMZI64GmPwZ9HT3szPBXPiyf0VxxIzYkn0OUiA2cnuhVa0QhLFIYO58al',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+  });
+
+  it('should ensure the dorm is between 1 and 100 chars', async () => {
+    const user = await dbUtils.createUser('mgrean02');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    let res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        freshmanDorm: '',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+
+    res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        freshmanDorm: 'tRiRIMFROCmJRxix7Kkw87mRIxFR1coKiUf3EO23V4oQcMZI64GmPwZ9HT3szPBXPiyf0VxxIzYkn0OUiA2cnuhVa0QhLFIYO58al',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
   });
 
   it('should ensure the spring fling artist is not too many chars or too few chars', async () => {
@@ -235,7 +259,7 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1997-10-09',
-        springFlingAct: 'N',
+        springFlingAct: '',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
@@ -248,28 +272,7 @@ describe('PATCH api/users/me/profile', () => {
         bio: 'Someone likes Star Trek',
         displayName: 'Max is a person who likes going on long hikes',
         birthday: '1997-10-09',
-        springFlingAct: 'Os7zVu2xU2LpPI83aHcV7kj6XUabyoGSomnK6IuYymDYP399cTeomTGRGnLKe5XYL64f8co0czGJMpvUYZHur3drIgbNDL1cFp9ojhwF2mMk8f8qpqH5BNYCn9Uj1znIJoYPIreNrOc34uxldzLZ5mJ',
-      })
-      .expect(400);
-    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
-  });
-
-  it('should ensure the spring fling artist is not too many chars or too few chars', async () => {
-    const user = await dbUtils.createUser('mgrean04');
-    await dbUtils.createProfile(user.id, {
-      displayName: 'Max',
-      bio: 'He is a guy',
-      birthday: '1997-09-09',
-    });
-    const res = await request(app)
-      .patch('/api/users/me/profile')
-      .set('Accept', 'application/json')
-      .set('Authorization', user.token)
-      .send({
-        bio: 'Someone likes Star Trek',
-        displayName: 'Max is a person who likes going on long hikes',
-        birthday: '1997-10-09',
-        springFlingAct: 'N',
+        springFlingAct: '3Tisde0zeYbGmac1cnsAKPRL7p6j1AtD4lUEbQz4vOrRIXyfwInDENTtCcawvOQsWV70yDKJSNoRvU7vFKpLz7D2OypwUd43uiZxOnU54M1xVocNRr3dGhUkoFE7Jo7RcHrUXtZrlXgIouh7ad5qbBOXRwM5w3cXIx0MDIQMHGW2LeCvUt4DSf5O46Z241fNCBbIBmG5q',
       })
       .expect(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
