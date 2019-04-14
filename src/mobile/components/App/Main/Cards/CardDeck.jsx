@@ -358,7 +358,10 @@ class cardDeck extends React.Component<Props, State> {
       {
         showOverlayMatch: false
       },
-      NavigationService.navigateToMatch(overlayMatchId)
+      () => {
+        // If no ID, this will navigate to the messages screen.
+        NavigationService.navigateToMatch(overlayMatchId || -1);
+      }
     );
   };
 
