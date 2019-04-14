@@ -206,7 +206,7 @@ type ProfileReview = {
 
 type AccountTermination = {
   type: 'ACCOUNT_TERMINATION',
-  admin: Admin,
+  admin: Admin | 'server', // Null here means the server did it
   reason: string,
 };
 

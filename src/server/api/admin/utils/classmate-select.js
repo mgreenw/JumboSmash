@@ -7,7 +7,7 @@ module.exports = `
   terminated AS "isTerminated",
   can_be_swiped_on AS "canBeSwipedOn",
   can_be_active_in_scenes AS "canBeActiveInScenes",
-  review_log AS "reviewLog",
+  account_updates AS "accountUpdates",
   profile_status AS "profileStatus",
   COALESCE((SELECT TRUE FROM profiles where user_id = classmates.id), false) AS "hasProfile",
   json_build_object(
