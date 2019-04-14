@@ -14,7 +14,9 @@ type Location = {
 
 type LocationWithCode = Location & { code: string };
 
-const LOCATIONS_MAP: { [code: string]: Location } = require('./Locations');
+const LOCATIONS_MAP: {
+  [code: string]: Location
+} = require('../../../../../mobile/data/FormatedLocations.json');
 
 const LOCATIONS_ARRAY: LocationWithCode[] = Object.keys(LOCATIONS_MAP).map(
   code => ({
@@ -22,9 +24,6 @@ const LOCATIONS_ARRAY: LocationWithCode[] = Object.keys(LOCATIONS_MAP).map(
     ...LOCATIONS_MAP[code]
   })
 );
-
-console.log(LOCATIONS_MAP);
-console.log(LOCATIONS_ARRAY);
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
