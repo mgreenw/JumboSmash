@@ -81,15 +81,23 @@ async function getToken(): Promise<string> {
 
 async function get(resource: string): Promise<any> {
   const token = await getToken();
-  const response = await axios({
-    method: 'GET',
-    url: `https://api.spotify.com/v1/${resource}`,
-    headers: {
-      Authorization: token,
-    },
-  });
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `https://api.spotify.com/v1/${resource}`,
+      headers: {
+        Authorization: token,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      logger.warn(`Spotify resource not found: ${resource}`);
+      return null;
+    }
 
-  return response.data;
+    throw error;
+  }
 }
 
 module.exports = {

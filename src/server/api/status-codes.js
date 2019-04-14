@@ -358,3 +358,7 @@ exports.GET_ARTIST__SUCCESS = {
   status: 'GET_ARTIST__SUCCESS',
   code: 200,
 };
+exports.GET_ARTIST__NOT_FOUND = {
+  status: 'GET_ARTIST__NOT_FOUND',
+  code: 404,
+};
