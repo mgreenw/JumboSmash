@@ -10,11 +10,6 @@ const fs = require('fs');
 const LOCATIONS = require('../data/Locations.json');
 const LOCATION_EDITS = require('../data/LocationEdits.json');
 
-// const LOCATIONS_ARRAY = Object.keys(LOCATIONS_MAP).map(code => ({
-//   code,
-//   ...LOCATIONS_MAP[code]
-// }));
-
 function writeToFile(content) {
   fs.writeFileSync('./data/FormatedLocations.json', JSON.stringify(content));
 }
