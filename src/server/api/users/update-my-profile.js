@@ -4,7 +4,13 @@ import type { $Request } from 'express';
 
 const _ = require('lodash');
 
-const { validateProfile, profileSelectQuery, getFieldTemplates } = require('./utils');
+const {
+  validateProfile,
+  profileSelectQuery,
+  constructAccountUpdate,
+  getFieldTemplates,
+} = require('./utils');
+
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
@@ -102,6 +108,20 @@ const updateMyProfile = async (userId: number, profile: Object) => {
       WHERE user_id = $${userParamIndex}
       RETURNING ${profileSelectQuery(`${userParamIndex}`)}
     `, [...template.fields, userId]);
+
+    // Mark the profile as needing review.
+    const profileUpdated = constructAccountUpdate({
+      type: 'PROFILE_UPDATE',
+      changedFields: definedFields,
+    });
+
+    await db.query(`
+      UPDATE classmates
+      SET
+        profile_status = 'updated',
+        account_updates = account_updates || jsonb_build_array($2::jsonb)
+      WHERE id = $1
+    `, [userId, profileUpdated]);
   }
 
   // If there is an id returned, success!
