@@ -343,3 +343,9 @@ exports.TERMINATE_USER__USER_NOT_FOUND = {
   status: 'TERMINATE_USER__USER_NOT_FOUND',
   code: 400,
 };
+
+// Review Profile
+exports.REVIEW_PROFILE__SUCCESS = {
+  status: 'REVIEW_PROFILE__SUCCESS',
+  code: 200,
+};
