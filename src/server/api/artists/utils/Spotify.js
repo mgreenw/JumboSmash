@@ -8,6 +8,8 @@ const logger = require('../../../logger');
 const CLIENT_ID = config.get('spotify_client_id');
 const CLIENT_SECRET = config.get('spotify_client_secret');
 
+console.log(CLIENT_ID, CLIENT_SECRET);
+
 const BasicAuthorization = `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`;
 
 type SpotifyAuthorization = {
@@ -20,6 +22,7 @@ let authorizationRequest: ?Promise<SpotifyAuthorization> = null;
 
 async function requestAuthorization(): Promise<SpotifyAuthorization> {
   try {
+    logger.debug('Spotify: requesting authorization token');
     const response = await axios({
       method: 'POST',
       url: 'https://accounts.spotify.com/api/token',
@@ -52,7 +55,8 @@ async function requestAuthorization(): Promise<SpotifyAuthorization> {
 async function getToken(): Promise<string> {
   // If there is already a token, use it.
   if (authorization) {
-    if (authorization.expiration < new Date()) {
+    if (authorization.expiration > new Date()) {
+      logger.debug('Spotify: reusing cached auth token');
       return authorization.token;
     }
 

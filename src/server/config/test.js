@@ -17,5 +17,5 @@ module.exports = {
     db: 1,
   },
   spotify_client_id: 'd300522fd10f4f02b164d97bcfd9390b',
-  spotify_client_secret: fs.readFileSync(`${__dirname}/../spotify_client_secret`, 'utf8'),
+  spotify_client_secret: fs.readFileSync(`${__dirname}/../spotify_client_secret`, 'utf8').trim(),
 };
