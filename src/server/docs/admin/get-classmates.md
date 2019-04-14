@@ -39,10 +39,33 @@ Provide the normal `Authorization` token in the request header. Additionally, in
     "data": {
         "classmates": [
             {
-                "id": 12,
-                "utln": "jjaffe01",
-                "email": "Jacob.Jaffe@tufts.edu",
+                "id": 2470,
+                "utln": "tester",
+                "email": "tester@jumbosmash.com",
                 "isTerminated": false,
+                "canBeSwipedOn": false,
+                "canBeActiveInScenes": true,
+                "accountUpdates": [],
+                "profileStatus": "unreviewed",
+                "hasProfile": false,
+                "activeScenes": {
+                    "smash": false,
+                    "social": false,
+                    "stone": false
+                },
+                "isAdmin": false,
+                "blockedRequestingAdmin": false
+            },
+            {
+                "id": 3,
+                "utln": "mgreen14",
+                "email": "Max.Greenwald@tufts.edu",
+                "isTerminated": false,
+                "canBeSwipedOn": false,
+                "canBeActiveInScenes": true,
+                "accountUpdates": [],
+                "profileStatus": "unreviewed",
+                "hasProfile": true,
                 "activeScenes": {
                     "smash": true,
                     "social": true,
@@ -52,34 +75,97 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "blockedRequestingAdmin": false
             },
             {
-                "id": 6,
-                "utln": "jfasse01",
-                "email": "Julia.Fasse@tufts.edu",
+                "id": 2469,
+                "utln": "jjaffe01",
+                "email": "Jacob.Jaffe@tufts.edu",
                 "isTerminated": false,
+                "canBeSwipedOn": false,
+                "canBeActiveInScenes": true,
+                "accountUpdates": [
+                    {
+                        "update": {
+                            "type": "PROFILE_UPDATE",
+                            "changedFields": [
+                                [
+                                    "spring_fling_act",
+                                    "e"
+                                ]
+                            ]
+                        },
+                        "timestamp": "2019-04-14T23:30:08.175Z"
+                    }
+                ],
+                "profileStatus": "updated",
+                "hasProfile": true,
                 "activeScenes": {
                     "smash": true,
-                    "social": true,
-                    "stone": true
+                    "social": false,
+                    "stone": false
                 },
-                "isAdmin": false,
-                "blockedRequestingAdmin": true
+                "isAdmin": true,
+                "blockedRequestingAdmin": false
             },
             {
                 "id": 1,
-                "utln": "mgreen14",
-                "email": "Max.Greenwald@tufts.edu",
-                "isTerminated": false,
+                "utln": "jfasse01",
+                "email": "Julia.Fasse@tufts.edu",
+                "isTerminated": true,
+                "canBeSwipedOn": false,
+                "canBeActiveInScenes": true,
+                "accountUpdates": [
+                    {
+                        "update": {
+                            "type": "PROFILE_REVIEW",
+                            "comment": "Test review",
+                            "reviewer": {
+                                "id": 2469,
+                                "utln": "jjaffe01"
+                            },
+                            "canBeSwipedOn": false,
+                            "canBeActiveInScenes": true
+                        },
+                        "timestamp": "2019-04-14T23:38:59.878Z"
+                    },
+                    {
+                        "update": {
+                            "type": "PROFILE_REVIEW",
+                            "comment": "Test review",
+                            "reviewer": {
+                                "id": 2469,
+                                "utln": "jjaffe01"
+                            },
+                            "canBeSwipedOn": false,
+                            "canBeActiveInScenes": true
+                        },
+                        "timestamp": "2019-04-14T23:39:47.492Z"
+                    },
+                    {
+                        "update": {
+                            "type": "PROFILE_REVIEW",
+                            "comment": "Test review",
+                            "reviewer": {
+                                "id": 2469,
+                                "utln": "jjaffe01"
+                            },
+                            "canBeSwipedOn": false,
+                            "canBeActiveInScenes": true
+                        },
+                        "timestamp": "2019-04-14T23:44:45.463Z"
+                    }
+                ],
+                "profileStatus": "reviewed",
+                "hasProfile": true,
                 "activeScenes": {
                     "smash": true,
                     "social": true,
-                    "stone": true
+                    "stone": false
                 },
-                "isAdmin": true,
+                "isAdmin": false,
                 "blockedRequestingAdmin": false
             }
         ]
     },
-    "version": "1.3.1"
+    "version": "1.5.0"
 }
 ```
 
