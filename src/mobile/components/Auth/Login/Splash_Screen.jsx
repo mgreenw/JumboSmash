@@ -14,6 +14,7 @@ import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
 import Collapsible from 'react-native-collapsible';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -315,6 +316,7 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           </Transition>
         </KeyboardView>
+        <AndroidBackHandler onBackPress={() => true} />
       </View>
     );
   }

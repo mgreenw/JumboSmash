@@ -23,6 +23,7 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -632,6 +633,12 @@ class cardDeck extends React.Component<Props, State> {
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
+        <AndroidBackHandler
+          onBackPress={() => {
+            this._hideExpandedCard();
+            return true;
+          }}
+        />
       </View>
     );
   }
