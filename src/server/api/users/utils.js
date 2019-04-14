@@ -29,7 +29,7 @@ type Profile = {
 
 // Given a profile, validate the fields. If there is an error, throw an error
 // with the "message" as the error
-function validateProfile(profile: Profile) {
+async function validateProfile(profile: Profile) {
   const {
     displayName,
     birthday,
