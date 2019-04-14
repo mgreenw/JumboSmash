@@ -2,7 +2,6 @@
 
 const _ = require('lodash');
 const Spotify = require('../artists/utils/Spotify');
-const codes = require('../status-codes');
 
 // About 30 years old.
 const oldestBirthday = new Date('01/01/1988');
