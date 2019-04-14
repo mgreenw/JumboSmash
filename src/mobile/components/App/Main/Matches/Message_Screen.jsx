@@ -10,6 +10,7 @@ import {
   StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
+import instantiateEmojiRegex from 'emoji-regex';
 import type {
   ReduxState,
   Dispatch,
@@ -43,6 +44,13 @@ import { isIphoneX } from 'mobile/utils/Platform';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
+
+const emojiRegex = instantiateEmojiRegex();
+function shouldDisplayLargeMessage(content: string): boolean {
+  const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
+  const numberOfEmojis = (content.match(emojiRegex) || []).length;
+  return onlyEmojis && numberOfEmojis <= 3;
+}
 
 /**
  *
@@ -191,7 +199,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: true
+            failed: true,
+             displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -207,7 +216,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: false
+            failed: false,
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -216,6 +226,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
+
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
       text: formatMessage(message.content),
@@ -225,6 +236,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
         name: message.sender
       },
       system: message.sender === 'system',
+      displayLarge: shouldDisplayLargeMessage(message.content),
       sent: true,
       failed: false,
       received: readReceipt

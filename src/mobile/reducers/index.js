@@ -328,7 +328,8 @@ export type GiftedChatMessage = {|
   system?: boolean,
   sent: boolean,
   failed: boolean,
-  received?: boolean
+  received?: boolean,
+  displayLarge?: boolean
 |};
 
 // TODO: enable if needed. This is a conceptual type.
