@@ -109,20 +109,21 @@ type DispatchProps = {
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
+type MessageActionSheet = 'FAILED' | 'SENT';
+type ChatActionSheet = MessageActionSheet | 'USER';
+
 type State = {|
   match: Match,
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
-  showFailedMessageActionSheet: boolean,
   selectedMessage: ?GiftedChatMessage,
-  showUserActionSheet: boolean,
-  showMessageInteractionActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
   showUnmatchPopup: boolean,
   showExpandedCard: boolean,
-  mostRecentlyReadMessageId: ?number
+  mostRecentlyReadMessageId: ?number,
+  activeActionSheet: ?ChatActionSheet
 |};
 
 const wrapperBase = {
@@ -306,15 +307,13 @@ class MessagingScreen extends React.Component<Props, State> {
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
-      showFailedMessageActionSheet: false,
-      showMessageInteractionActionSheet: false,
       selectedMessage: null,
-      showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
       showUnmatchPopup: false,
       showExpandedCard: false,
-      mostRecentlyReadMessageId: null
+      mostRecentlyReadMessageId: null,
+      activeActionSheet: null
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -597,35 +596,42 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _toggleFailedMessageActionSheet = (
-    showFailedMessageActionSheet: boolean,
-    selectedMessage?: GiftedChatMessage
+  _showMessageActionSheet = (
+    activeActionSheet: MessageActionSheet,
+    selectedMessage: GiftedChatMessage
   ) => {
     this.setState({
-      showFailedMessageActionSheet,
-      selectedMessage: selectedMessage || null
+      activeActionSheet,
+      selectedMessage
     });
   };
 
-  _toggleMessageInteractionActionSheet = (
-    showMessageInteractionActionSheet: boolean,
-    selectedMessage?: GiftedChatMessage
-  ) => {
+  _showUserActionSheet = () => {
     this.setState({
-      showMessageInteractionActionSheet,
-      selectedMessage: selectedMessage || null
+      activeActionSheet: 'USER'
     });
   };
 
-  _toggleUserActionSheet = (showUserActionSheet: boolean) => {
-    this.setState({ showUserActionSheet });
-  };
+  _renderActionSheet(actionSheetInstance: ChatActionSheet) {
+    const { activeActionSheet, selectedMessage } = this.state;
+    const options: { onPress: () => void, text: string } = [];
+    switch (actionSheetInstance) {
+      case 'USER':
+        break;
+      case 'FAILED':
+        break;
+      case 'SENT':
+        break;
 
-  _renderMessageInteractionActionSheet() {
-    const { showMessageInteractionActionSheet, selectedMessage } = this.state;
+      default:
+        // eslint-disable-next-line no-unused-expressions
+        (actionSheetInstance: empty);
+        break;
+    }
+
     return (
       <ActionSheet
-        visible={showMessageInteractionActionSheet}
+        visible={actionSheetInstance === activeActionSheet}
         options={[
           {
             text: 'Copy Text',
