@@ -164,6 +164,15 @@ class cardDeck extends React.Component<Props, State> {
     };
   }
 
+  // mounting and unmounting occurs via navigation also,
+  // so we make extra checks to ensure this is safe.
+  componentDidMount() {
+    const { sceneEnabled } = this.props;
+    const { deckIndex } = this.state;
+    if (sceneEnabled && deckIndex === 0 && this.swiper)
+      this.swiper.swipeBottom();
+  }
+
   componentDidUpdate(prevProps: Props) {
     // If a new match initiated by user here, toggle the overlay.
     // Don't toggle if viewing a profile, or another one up.
