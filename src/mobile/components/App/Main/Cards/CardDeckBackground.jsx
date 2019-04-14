@@ -38,19 +38,25 @@ export default ({
           alignItems: 'center'
         }}
       >
-        <Text
-          style={[
-            textStyles.headline6Style,
-            {
-              opacity: noCandidates && !getCandidatesInProgress ? 1 : 0,
-              textAlign: 'center',
-              paddingHorizontal: '10.1%',
-              paddingVertical: '10.1%'
-            }
-          ]}
+        <View
+          style={{
+            paddingHorizontal: '10.1%',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          Someone’s good with their hands;)
-        </Text>
+          <Text
+            style={[
+              textStyles.headline4StyleSwiping,
+              {
+                opacity: noCandidates && !getCandidatesInProgress ? 1 : 0,
+                marginVertical: '10.1%'
+              }
+            ]}
+          >
+            {'Someone’s good\nwith their hands ;)'}
+          </Text>
+        </View>
         <View
           style={{
             width: windowWidth,
@@ -80,19 +86,26 @@ export default ({
             />
           )}
         </View>
-        <Text
-          style={[
-            textStyles.subtitle1Style,
-            {
-              opacity: noCandidates && !getCandidatesInProgress ? 1 : 0,
-              paddingHorizontal: '10.1%',
-              paddingTop: '10.1%'
-            }
-          ]}
+        <View
+          style={{
+            paddingHorizontal: '10.1%',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          Looks like you’ve swiped through everyone in your stack. Refresh it to
-          see the people you swiped left on.
-        </Text>
+          <Text
+            style={[
+              textStyles.subtitle1Style,
+              {
+                opacity: noCandidates && !getCandidatesInProgress ? 1 : 0,
+                marginVertical: '10.1%'
+              }
+            ]}
+          >
+            Looks like you’ve swiped through everyone in your stack. Refresh it
+            to see the people you swiped left on.
+          </Text>
+        </View>
       </View>
       {/* The button can't live here, because it needs to be at the top level view. 
           However, we need to make space for it still */}

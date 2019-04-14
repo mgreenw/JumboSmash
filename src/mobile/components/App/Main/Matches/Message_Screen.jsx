@@ -7,7 +7,8 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  Clipboard
 } from 'react-native';
 import { connect } from 'react-redux';
 import instantiateEmojiRegex from 'emoji-regex';
@@ -52,10 +53,17 @@ const emojiRegex = instantiateEmojiRegex();
  * @param {string} content Message Text
  * @returns {boolean} if the message all emojis, 3 or less.
  * Terminates early if the message is longer than 6 characters,
+<<<<<<< HEAD
  * because emojis can only be about 10 .
  */
 function shouldDisplayLargeMessage(content: string): boolean {
   if (content.length > 30) {
+=======
+ * because emojis can only be 2 .
+ */
+function shouldDisplayLargeMessage(content: string): boolean {
+  if (content.length > 6) {
+>>>>>>> aa2637e38d9471f10c6f4e301e2a099fdf470559
     return false;
   }
   const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
@@ -133,7 +141,7 @@ type State = {|
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
-  showFailedMessageActionSheet: boolean,
+  showMessageActionSheet: boolean,
   selectedMessage: ?GiftedChatMessage,
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
@@ -341,7 +349,7 @@ class MessagingScreen extends React.Component<Props, State> {
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
-      showFailedMessageActionSheet: false,
+      showMessageActionSheet: false,
       selectedMessage: null,
       showUserActionSheet: false,
       showBlockPopup: false,
@@ -440,11 +448,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
-          if (failed) {
-            this._toggleFailedMessageActionSheet(true, currentMessage);
-          } else {
-            Alert.alert('TODO: Allow interacting with old messages');
-          }
+          this._toggleMessageActionSheet(true, currentMessage);
         }}
       />
     );
@@ -643,12 +647,12 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _toggleFailedMessageActionSheet = (
-    showFailedMessageActionSheet: boolean,
+  _toggleMessageActionSheet = (
+    showMessageActionSheet: boolean,
     selectedMessage?: GiftedChatMessage
   ) => {
     this.setState({
-      showFailedMessageActionSheet,
+      showMessageActionSheet,
       selectedMessage: selectedMessage || null
     });
   };
@@ -710,6 +714,66 @@ class MessagingScreen extends React.Component<Props, State> {
             this._toggleUserActionSheet(false);
           }
         }}
+      />
+    );
+  }
+
+  _renderMessageActionSheet() {
+    const { showMessageActionSheet, selectedMessage, match } = this.state;
+    const { cancelFailedMessage } = this.props;
+    const CopyAction = {
+      text: 'Copy Text',
+      onPress: () => {
+        if (selectedMessage) {
+          Clipboard.setString(selectedMessage.text);
+        } else {
+          throw new Error('No message selected during interaction');
+        }
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const ResendAction = {
+      text: 'Resend',
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error('no message during resend');
+          }
+          this._onSend([selectedMessage]);
+        });
+      }
+    };
+    const DoNotResendAction = {
+      text: "Don't Send",
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error("no message during don't send");
+          }
+          cancelFailedMessage(match.userId, selectedMessage._id);
+        });
+      }
+    };
+    const CancelAction = {
+      text: 'Cancel',
+      onPress: () => {
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const failedMessageOptions = [CopyAction, ResendAction, DoNotResendAction];
+    const normalMessageOptions = [CopyAction];
+    const { failed = false } = selectedMessage || {};
+    return (
+      <ActionSheet
+        visible={showMessageActionSheet}
+        options={failed ? failedMessageOptions : normalMessageOptions}
+        cancel={CancelAction}
       />
     );
   }
@@ -782,7 +846,7 @@ class MessagingScreen extends React.Component<Props, State> {
     const { profileMap, cancelFailedMessage } = this.props;
     const {
       match,
-      showFailedMessageActionSheet,
+      showMessageActionSheet,
       selectedMessage,
       showExpandedCard
     } = this.state;
@@ -801,39 +865,6 @@ class MessagingScreen extends React.Component<Props, State> {
           />
         </View>
         {this._renderContent(profile)}
-        <ActionSheet
-          visible={showFailedMessageActionSheet}
-          options={[
-            {
-              text: 'Resend',
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error('no message during resend');
-                  }
-                  this._onSend([selectedMessage]);
-                });
-              }
-            },
-            {
-              text: "Don't Send",
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error("no message during don't send");
-                  }
-                  cancelFailedMessage(match.userId, selectedMessage._id);
-                });
-              }
-            }
-          ]}
-          cancel={{
-            text: 'Cancel',
-            onPress: () => {
-              this._toggleFailedMessageActionSheet(false);
-            }
-          }}
-        />
         {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
@@ -856,6 +887,7 @@ class MessagingScreen extends React.Component<Props, State> {
           profile={profile}
         />
         {this._renderUserActionSheet()}
+        {this._renderMessageActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
         {this._renderUnmatchPopup()}

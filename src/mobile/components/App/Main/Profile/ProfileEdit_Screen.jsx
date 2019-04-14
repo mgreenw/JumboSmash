@@ -206,7 +206,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
             <View style={styles.profileBlock}>
               <PrimaryInput
                 value={editedProfileFields.displayName}
-                label="Preferred Name"
+                label="Preferred First Name"
                 onChange={this._onChangeName}
                 error={errorMessageName}
                 containerStyle={{ width: '100%' }}
