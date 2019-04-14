@@ -102,6 +102,20 @@ const createMyProfile = async (userId: number, profile: Object) => {
 
   const [{ existed, ...finalizedProfile }] = results.rows;
 
+  // Add an account update if the profile is being created.
+  if (!existed) {
+    const profileCreatedUpdate = constructAccountUpdate({
+      type: 'PROFILE_UPDATE',
+      changedFields: { displayName, birthday, bio },
+    });
+
+    await db.query(`
+      UPDATE classmates
+      SET account_updates = account_updates || jsonb_build_array($3::jsonb)
+      WHERE id = $1
+    `, [userId, profileCreatedUpdate]);
+  }
+
   return apiUtils.status(
     existed
       ? codes.FINALIZE_PROFILE_SETUP__PROFILE_ALREADY_CREATED
