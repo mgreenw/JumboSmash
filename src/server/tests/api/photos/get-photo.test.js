@@ -87,8 +87,8 @@ describe('GET api/photos/:photoUuid', () => {
     await utils.deletePhoto(key);
   });
 
-  it('should fail if the user is banned', async () => {
-    await dbUtils.banUser(me.id);
+  it('should fail if the user is terminated', async () => {
+    await dbUtils.terminateUser(me.id);
     const person = await dbUtils.createUser('person04', true);
 
     const res = await request(app)

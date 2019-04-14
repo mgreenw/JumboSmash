@@ -1,10 +1,10 @@
-# Ban User
+# Terminate User
 
-Ban a user. The user will no longer be able to use JumboSmash and will be logged out.
+Terminate a user. The user will no longer be able to use JumboSmash and will be logged out.
 
 NOTE: This will automatically post an update to #admin in slack.
 
-**URL** : `/api/admin/ban/:userId`
+**URL** : `/api/admin/classmates/:userId/terminate`
 
 **Method** : `POST`
 
@@ -31,7 +31,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 * `reason`
   * Type: `string`
-  * Description: The reason to ban the user. This should be an enum of sorts.
+  * Description: The reason to terminate the user. This should be an enum of sorts.
   * Required: `true`
 
 **Request body example**
@@ -52,7 +52,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 ```json
 {
-    "status": "BAN_USER__SUCCESS",
+    "status": "TERMINATE_USER__SUCCESS",
     "version": "1.3.1"
 }
 ```
@@ -67,14 +67,14 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 ```json
 {
-    "status": "BAN_USER__USER_NOT_FOUND",
+    "status": "TERMINATE_USER__USER_NOT_FOUND",
     "version": "1.3.1"
 }
 ```
 
 ### OR
 
-**Condition** : The user is already banned. The reason has not been updated.
+**Condition** : The user is already terminated. The reason has not been updated.
 
 **Code** : `409 CONFLICT`
 
@@ -82,7 +82,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 ```json
 {
-    "status": "BAN_USER__ALREADY_BANNED",
+    "status": "TERMINATE_USER__ALREADY_TERMINATED",
     "version": "1.3.1"
 }
 ```

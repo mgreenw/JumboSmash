@@ -8,7 +8,7 @@ Get an artist by Spotify id.
 
 **Auth required** : YES
 
-**Admin required** : YES
+**Admin required** : NO
 
 **Permissions required** : Any user with a profile.
 

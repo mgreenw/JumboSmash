@@ -17,7 +17,7 @@ const getClassmates = async (adminUserId: number) => {
       id,
       utln,
       email,
-      banned AS "isBanned",
+      terminated AS "isTerminated",
       json_build_object(
         'smash', active_smash,
         'social', active_social,

@@ -77,7 +77,6 @@ const routes = {
   MainSwitch: MAIN_SWITCH,
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
-  AppSwitch: APP_SWITCH,
   AuthSwitch: AUTH_SWITCH
 };
 

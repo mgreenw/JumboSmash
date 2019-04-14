@@ -79,7 +79,7 @@ Provide the user's initial profile fields.
 
 ### OR
 
-**Condition** : The user is under 18. NOTE: This bans the user immediately and will cause all endpoints to return that the user is too young
+**Condition** : The user is under 18. NOTE: This terminates the user immediately and will cause all endpoints to return that the user is too young
 
 **Code** : `400 BAD REQUEST`
 

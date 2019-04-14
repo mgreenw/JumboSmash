@@ -209,7 +209,7 @@ describe('POST api/users/me/profile', () => {
     expect(res.body.data.message).toBe(profileErrorMessages.BIRTHDAY_NOT_VALID);
   });
 
-  it('should fail and ban the user if the user is under 18', async () => {
+  it('should fail and terminate the user if the user is under 18', async () => {
     const user = await dbUtils.createUser('maxig01');
     let res = await request(app)
       .post('/api/users/me/profile')
@@ -233,7 +233,7 @@ describe('POST api/users/me/profile', () => {
         birthday: '2006-01-01',
       })
       .expect(401);
-    expect(res.body.status).toBe(codes.BANNED.status);
+    expect(res.body.status).toBe(codes.TERMINATED.status);
     expect(res.body.data.reason).toBe('BIRTHDAY_UNDER_18');
   });
 
