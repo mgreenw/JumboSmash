@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  Alert,
   View,
   Text,
   TouchableOpacity,
@@ -52,11 +51,11 @@ const emojiRegex = instantiateEmojiRegex();
  *
  * @param {string} content Message Text
  * @returns {boolean} if the message all emojis, 3 or less.
- * Terminates early if the message is longer than 6 characters,
- * because emojis can only be 2 .
+ * Terminates early if the message is longer than 30 characters,
+ * because emojis can only be about 10 .
  */
 function shouldDisplayLargeMessage(content: string): boolean {
-  if (content.length > 6) {
+  if (content.length > 30) {
     return false;
   }
   const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
@@ -165,16 +164,29 @@ const BubbleStyles = StyleSheet.create({
     ...wrapperBase,
     borderColor: Colors.AquaMarine
   },
+  wrapperLarge: {
+    ...wrapperBase,
+    borderWidth: 0,
+    margin: 0
+  },
   wrapperFailed: {
     ...wrapperBase,
     borderColor: Colors.Grapefruit
   },
-  messageText: {
+  messageTextNormal: {
     ...textStyles.subtitle1Style,
     color: Colors.Black
   },
+  messageTextLarge: {
+    ...textStyles.subtitle1Style,
+    color: Colors.Black,
+    fontSize: 70,
+    lineHeight: 85,
+    marginBottom: -10
+  },
   timeText: {
-    fontSize: 10
+    fontSize: 10,
+    lineHeight: 12
   },
   tickStyle: {
     color: Colors.Black
@@ -389,18 +401,34 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
     const { currentMessage } = props;
     const { failed = false } = currentMessage;
+    const { displayLarge = false } = currentMessage;
+
+    let rightWrapperStyle = BubbleStyles.wrapperRight;
+    if (failed) rightWrapperStyle = BubbleStyles.wrapperFailed;
+    else if (displayLarge) rightWrapperStyle = BubbleStyles.wrapperLarge;
+
     return (
       <Bubble
         {...props}
         wrapperStyle={{
-          right: failed
-            ? BubbleStyles.wrapperFailed
-            : BubbleStyles.wrapperRight,
-          left: BubbleStyles.wrapperLeft
+          right: rightWrapperStyle,
+          left: displayLarge
+            ? BubbleStyles.wrapperLarge
+            : BubbleStyles.wrapperLeft
         }}
         textStyle={{
-          right: BubbleStyles.messageText,
-          left: BubbleStyles.messageText
+          right:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal,
+          left:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal
+        }}
+        linkStyle={{
+          right: BubbleStyles.messageTextNormal,
+          left: BubbleStyles.messageTextNormal
         }}
         timeTextStyle={{
           right: BubbleStyles.timeText,
@@ -811,13 +839,8 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { profileMap, cancelFailedMessage } = this.props;
-    const {
-      match,
-      showMessageActionSheet,
-      selectedMessage,
-      showExpandedCard
-    } = this.state;
+    const { profileMap } = this.props;
+    const { match, showExpandedCard } = this.state;
     const profile = profileMap[match.userId];
     const padBottom = isIphoneX();
     return (

@@ -24,6 +24,7 @@ import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -42,6 +43,10 @@ type InactiveCard = {
   type: 'INACTIVE'
 };
 
+const INACTIVE_CARD: InactiveCard = {
+  type: 'INACTIVE'
+};
+
 type Card = InactiveCard | ProfileCard;
 
 type ProppyProps = {
@@ -53,7 +58,8 @@ type ReduxProps = {
   getCandidatesInProgress: boolean,
   profileMap: { [userId: number]: UserProfile },
   overlayMatchId: ?number,
-  clientProfile: ?UserProfile
+  clientProfile: ?UserProfile,
+  sceneEnabled: boolean
 };
 
 type DispatchProps = {
@@ -112,7 +118,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
     profileMap: reduxState.profiles,
     overlayMatchId,
-    clientProfile
+    clientProfile,
+    sceneEnabled: reduxState.client.settings.activeScenes[ownProps.scene]
   };
 }
 
@@ -139,12 +146,9 @@ function mapDispatchToProps(
 
 class cardDeck extends React.Component<Props, State> {
   constructor(props: Props) {
-    const inactiveCard: InactiveCard = {
-      type: 'INACTIVE'
-    };
     super(props);
     this.state = {
-      cards: [inactiveCard, ...props.profileCards],
+      cards: [INACTIVE_CARD, ...props.profileCards],
       deckIndex: 0,
       allSwiped: false,
       noCandidates: false, // wait until we check -- allow a load
@@ -161,6 +165,15 @@ class cardDeck extends React.Component<Props, State> {
     };
   }
 
+  // mounting and unmounting occurs via navigation also,
+  // so we make extra checks to ensure this is safe.
+  componentDidMount() {
+    const { sceneEnabled } = this.props;
+    const { deckIndex } = this.state;
+    if (sceneEnabled && deckIndex === 0 && this.swiper)
+      this.swiper.swipeBottom();
+  }
+
   componentDidUpdate(prevProps: Props) {
     // If a new match initiated by user here, toggle the overlay.
     // Don't toggle if viewing a profile, or another one up.
@@ -168,7 +181,8 @@ class cardDeck extends React.Component<Props, State> {
       profileCards,
       getCandidatesInProgress,
       overlayMatchId,
-      profileMap
+      profileMap,
+      sceneEnabled
     } = this.props;
     const { showExpandedCard, showOverlayMatch } = this.state;
 
@@ -187,6 +201,33 @@ class cardDeck extends React.Component<Props, State> {
           overlayMatchProfile: newOverlayMatchProfile
         });
       }
+    }
+
+    // Reset to initial state!
+    if (prevProps.sceneEnabled && !sceneEnabled) {
+      const { cards } = this.state;
+      const len = cards.length;
+      cards.splice(0, len, INACTIVE_CARD);
+      this.setState(
+        {
+          deckIndex: 0,
+          allSwiped: false,
+          noCandidates: false,
+          showExpandedCard: false,
+          expandedCardProfile: null,
+          expandedCardUserId: null,
+          showUserActionSheet: false,
+          showBlockPopup: false,
+          showReportPopup: false,
+          showGif: false,
+          showOverlayMatch: false,
+          overlayMatchProfile: null
+        },
+        () => {
+          this.swiper.jumpToCardIndex(0);
+        }
+      );
+      return;
     }
 
     // We use this to MUTATE the 'cards' array in this component's state.
@@ -351,7 +392,18 @@ class cardDeck extends React.Component<Props, State> {
     });
   };
 
-  _onStartChatting = () => {};
+  _onStartChatting = () => {
+    const { overlayMatchId } = this.props;
+    this.setState(
+      {
+        showOverlayMatch: false
+      },
+      () => {
+        // If no ID, this will navigate to the messages screen.
+        NavigationService.navigateToMatch(overlayMatchId || -1);
+      }
+    );
+  };
 
   _onKeepSwiping = () => {
     this.setState({
