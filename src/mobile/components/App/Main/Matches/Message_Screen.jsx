@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {
-  Alert,
+  Clipboard,
   View,
   Text,
   TouchableOpacity,
@@ -117,6 +117,7 @@ type State = {|
   showFailedMessageActionSheet: boolean,
   selectedMessage: ?GiftedChatMessage,
   showUserActionSheet: boolean,
+  showMessageInteractionActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
   showUnmatchPopup: boolean,
@@ -306,6 +307,7 @@ class MessagingScreen extends React.Component<Props, State> {
       showOtherUserTyping: false,
       lastRecievedTyping: null,
       showFailedMessageActionSheet: false,
+      showMessageInteractionActionSheet: false,
       selectedMessage: null,
       showUserActionSheet: false,
       showBlockPopup: false,
@@ -395,7 +397,7 @@ class MessagingScreen extends React.Component<Props, State> {
           if (failed) {
             this._toggleFailedMessageActionSheet(true, currentMessage);
           } else {
-            Alert.alert('TODO: Allow interacting with old messages');
+            this._toggleMessageInteractionActionSheet(true, currentMessage);
           }
         }}
       />
@@ -605,9 +607,47 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
+  _toggleMessageInteractionActionSheet = (
+    showMessageInteractionActionSheet: boolean,
+    selectedMessage?: GiftedChatMessage
+  ) => {
+    this.setState({
+      showMessageInteractionActionSheet,
+      selectedMessage: selectedMessage || null
+    });
+  };
+
   _toggleUserActionSheet = (showUserActionSheet: boolean) => {
     this.setState({ showUserActionSheet });
   };
+
+  _renderMessageInteractionActionSheet() {
+    const { showMessageInteractionActionSheet, selectedMessage } = this.state;
+    return (
+      <ActionSheet
+        visible={showMessageInteractionActionSheet}
+        options={[
+          {
+            text: 'Copy Text',
+            onPress: () => {
+              if (selectedMessage) {
+                Clipboard.setString(selectedMessage.text);
+              } else {
+                throw new Error('No message selected during interaction');
+              }
+              this._toggleMessageInteractionActionSheet(false);
+            }
+          }
+        ]}
+        cancel={{
+          text: 'Cancel',
+          onPress: () => {
+            this._toggleMessageInteractionActionSheet(false);
+          }
+        }}
+      />
+    );
+  }
 
   _renderUserActionSheet() {
     const { showUserActionSheet } = this.state;
@@ -807,6 +847,7 @@ class MessagingScreen extends React.Component<Props, State> {
           }}
           profile={profile}
         />
+        {this._renderMessageInteractionActionSheet()}
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
