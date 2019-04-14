@@ -11,7 +11,7 @@ const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
-const LOG_DIR = 'log';
+const LOG_DIR = 'logs';
 const LOG_ENV_DIR = `${LOG_DIR}/${NODE_ENV}`;
 
 // Make the log directory if needed
