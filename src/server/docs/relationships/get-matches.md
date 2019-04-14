@@ -42,7 +42,7 @@ Provide the normal `Authorization` token in the request header.
                     "bio": "Cool",
                     "postgradRegion": "na.us.ma.7",
                     "freshmanDorm": "Haskell",
-                    "springFlingAct": "A real band"
+                    "springFlingAct": "A real actual show"
                 },
                 "photoUuids": [
                     "50c985f7-8f73-4cd3-bbfe-9f8c8f522bfd",
@@ -72,7 +72,7 @@ Provide the normal `Authorization` token in the request header.
                     "bio": "Cool",
                     "postgradRegion": "na.us.ma.7",
                     "freshmanDorm": "Haskell",
-                    "springFlingAct": "A real band"
+                    "springFlingAct": "A real good musical group"
                 },
                 "photoUuids": [
                     "6e475ef3-c9c0-40c8-83c4-a980b662b7ad",

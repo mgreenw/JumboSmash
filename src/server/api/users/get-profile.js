@@ -43,8 +43,8 @@ const getProfile = async (userId: number) => {
 
 const handler = [
   asyncHandler(async (req: $Request) => {
-    // Ensure the user is not banned. This happens here so the logic
-    // of getProfile does not need to take banning into account, it just
+    // Ensure the user is not terminated. This happens here so the logic
+    // of getProfile does not need to take account termination into account, it just
     // gets the profile!
     // NOTE: Admins DO GET special privileges here. Admins can access all profiles.
     const requestedProfileUserId = parseInt(req.params.userId, 10);
