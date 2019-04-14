@@ -181,7 +181,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId].settings.activeSmash;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
 
     // Stone
     res = await request(app)
@@ -192,7 +192,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId.toString()].settings.activeSocial;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
 
     // Social
     res = await request(app)
@@ -203,7 +203,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId.toString()].settings.activeStone;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
   });
 
   // Check that only profiles that have not yet been liked show up
