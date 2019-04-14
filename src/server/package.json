@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "JumboSmash 2019",
   "engines": {
-    "node": "^8.12.0",
+    "node": "^8.15.0",
     "postgres": "^10.5.x"
   },
   "scripts": {
