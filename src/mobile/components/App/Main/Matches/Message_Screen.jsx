@@ -53,17 +53,10 @@ const emojiRegex = instantiateEmojiRegex();
  * @param {string} content Message Text
  * @returns {boolean} if the message all emojis, 3 or less.
  * Terminates early if the message is longer than 6 characters,
-<<<<<<< HEAD
  * because emojis can only be about 10 .
  */
 function shouldDisplayLargeMessage(content: string): boolean {
   if (content.length > 30) {
-=======
- * because emojis can only be 2 .
- */
-function shouldDisplayLargeMessage(content: string): boolean {
-  if (content.length > 6) {
->>>>>>> aa2637e38d9471f10c6f4e301e2a099fdf470559
     return false;
   }
   const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
