@@ -91,9 +91,13 @@ async function get(resource: string): Promise<any> {
     });
     return response.data;
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      logger.warn(`Spotify resource not found: ${resource}`);
-      return null;
+    if (error.response) {
+      // 400 or 404 means the artist id is bad. All other responses are the fault
+      // of the server.
+      if (error.response.status === 404 || error.response.status === 400) {
+        logger.warn(`Spotify resource not found: ${resource}`, error);
+        return null;
+      }
     }
 
     throw error;

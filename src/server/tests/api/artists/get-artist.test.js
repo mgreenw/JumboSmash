@@ -26,98 +26,31 @@ describe('GET api/admin/classmates', () => {
     await db.query('DELETE FROM messages');
   });
 
-  it('must require the user to exist and have a profile setup', async () => {
-    let res = await request(app)
+  it('must require the user to exist', async () => {
+    const res = await request(app)
       .get('/api/artists/hehe')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
-
-    third = await dbUtils.createUser('jjaffe01');
-    res = await request(app)
-      .get('/api/admin/classmates')
-      .set('Authorization', me.token)
-      .set('Accept', 'application/json');
-    expect(res.statusCode).toBe(403);
-    expect(res.body.status).toBe(codes.PROFILE_SETUP_INCOMPLETE.status);
   });
 
-  it('must require the user to be an admin and submit the Admin-Authorization header', async () => {
-    // Missing admin header
-    let res = await request(app)
-      .get('/api/admin/classmates')
-      .set('Accept', 'application/json')
-      .set('Authorization', other.token);
-    // NOTE: this is very specific for admin endpoints: we don't want users to know this exists
-    // so we give them a generic 404 if they aren't an admin
-    expect(res.statusCode).toBe(404);
-
-    // Non admin with bad password
-    res = await request(app)
-      .get('/api/admin/classmates')
-      .set('Accept', 'application/json')
-      .set('Authorization', other.token)
-      .set('Admin-Authorization', 'bad-auth');
-    expect(res.statusCode).toBe(404);
-
-    // Admin with bad password
-    res = await request(app)
-      .get('/api/admin/classmates')
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .set('Admin-Authorization', 'not-the-correct-password');
-    expect(res.statusCode).toBe(404);
-  });
-
-  it('should return all classmates given the correct headers', async () => {
+  it('should return the artist on a correct artist id', async () => {
     const res = await request(app)
-      .get('/api/admin/classmates')
+      .get('/api/artists/2TI7qyDE0QfyOlnbtfDo7L')
       .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .set('Admin-Authorization', adminPassword);
-    expect(res.body.status).toBe(codes.GET_CLASSMATES__SUCCESS.status);
+      .set('Authorization', me.token);
+    expect(res.body.status).toBe(codes.GET_ARTIST__SUCCESS.status);
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.classmates).toBeDefined();
-    expect(res.body.data.classmates.length).toBe(3);
-    expect(res.body.data.classmates.filter(c => c.isAdmin).length).toBe(1);
-    res.body.data.classmates.forEach((classmate) => {
-      expect(classmate.id).toBeDefined();
-      expect(classmate.utln).toBeDefined();
-      expect(classmate.email).toBeDefined();
-      expect(classmate.isBanned).toBeFalsy();
-      expect(classmate.activeScenes).toBeDefined();
-      expect(classmate.isAdmin).toBeDefined();
-      expect(classmate.blockedRequestingAdmin).toBeFalsy();
-    });
+    expect(res.body.data.artist.name).toBe('Dave Matthews Band');
   });
 
-  it('should return that the classmate blocked the requesting admin', async () => {
-    const blockingClassmate = await dbUtils.createUser('ablock01', true);
-    // Block the admin
-    await dbUtils.createRelationship(blockingClassmate.id, me.id, false, false, false, true);
+  it('should return not found if the id is bad', async () => {
     const res = await request(app)
-      .get('/api/admin/classmates')
+      .get('/api/artists/not-a-valid-id')
       .set('Accept', 'application/json')
-      .set('Authorization', me.token)
-      .set('Admin-Authorization', adminPassword);
-    expect(res.body.status).toBe(codes.GET_CLASSMATES__SUCCESS.status);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.data.classmates).toBeDefined();
-    expect(res.body.data.classmates.length).toBe(4);
-    expect(res.body.data.classmates.filter(c => c.isAdmin).length).toBe(1);
-    res.body.data.classmates.forEach((classmate) => {
-      expect(classmate.id).toBeDefined();
-      expect(classmate.utln).toBeDefined();
-      expect(classmate.email).toBeDefined();
-      expect(classmate.isBanned).toBeFalsy();
-      expect(classmate.activeScenes).toBeDefined();
-      expect(classmate.isAdmin).toBeDefined();
-      if (classmate.id === blockingClassmate.id) {
-        expect(classmate.blockedRequestingAdmin).toBeTruthy();
-      } else {
-        expect(classmate.blockedRequestingAdmin).toBeFalsy();
-      }
-    });
+      .set('Authorization', me.token);
+    expect(res.body.status).toBe(codes.GET_ARTIST__NOT_FOUND.status);
+    expect(res.statusCode).toBe(404);
   });
 });
