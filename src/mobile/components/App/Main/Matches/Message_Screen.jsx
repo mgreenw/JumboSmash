@@ -378,6 +378,10 @@ class MessagingScreen extends React.Component<Props, State> {
           right: BubbleStyles.messageText,
           left: BubbleStyles.messageText
         }}
+        linkStyle={{
+          right: BubbleStyles.messageText,
+          left: BubbleStyles.messageText
+        }}
         timeTextStyle={{
           right: BubbleStyles.timeText,
           left: BubbleStyles.timeText
