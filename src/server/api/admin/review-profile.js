@@ -6,6 +6,7 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
+const { classmateSelect } = require('./utils');
 
 /* eslint-disable */
 const schema = {
@@ -79,15 +80,16 @@ const reviewProfile = async (
   };
 
   // Insert the review
-  await db.query(`
+  const updatedClassmateResult = await db.query(`
     UPDATE classmates
     SET
       profile_status = 'reviewed',
-      can_be_swiped_on = $1,
-      can_be_active_in_scenes = $2,
-      review_log = review_log || jsonb_build_array($3::jsonb)
-    WHERE id = $4
-  `, [canBeSwipedOn, canBeActiveInScenes, review, userId]);
+      can_be_swiped_on = $2,
+      can_be_active_in_scenes = $3,
+      review_log = review_log || jsonb_build_array($4::jsonb)
+    WHERE id = $5
+    RETURNING ${classmateSelect}
+  `, [adminUserId, canBeSwipedOn, canBeActiveInScenes, review, userId]);
 
   // If the review is "negative", alert slack. There will be lots of positive rewiews
   // so we don't want to overload slack.
@@ -98,7 +100,9 @@ const reviewProfile = async (
   }
 
   // If "negative", alert slack.
-  return status(codes.REVIEW_PROFILE__SUCCESS).noData();
+  return status(codes.REVIEW_PROFILE__SUCCESS).data({
+    classmate: updatedClassmateResult.rows[0],
+  });
 };
 
 const handler = [
