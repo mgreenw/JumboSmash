@@ -92,7 +92,7 @@ const reviewProfile = async (
   // so we don't want to overload slack.
   if (isNegativeReview) {
     slack.postAdminUpdate(adminUserId, adminUtln, `
-      Profile Reviewed\n\nUser: ${utln}\nReview: ${JSON.stringify(review, null, 2)}
+      Profile Reviewed\n\nUser: ${utln}\nReview: ${'```'}${JSON.stringify(review, null, 2)}${'```'}
     `.trim());
   }
 
