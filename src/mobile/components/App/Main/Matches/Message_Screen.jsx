@@ -46,7 +46,18 @@ import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
 
 const emojiRegex = instantiateEmojiRegex();
+
+/**
+ *
+ * @param {string} content Message Text
+ * @returns {boolean} if the message all emojis, 3 or less.
+ * Terminates early if the message is longer than 6 characters,
+ * because emojis can only be 2 .
+ */
 function shouldDisplayLargeMessage(content: string): boolean {
+  if (content.length > 6) {
+    return false;
+  }
   const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
   const numberOfEmojis = (content.match(emojiRegex) || []).length;
   return onlyEmojis && numberOfEmojis <= 3;
@@ -200,7 +211,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             createdAt: null,
             sent: false,
             failed: true,
-             displayLarge: shouldDisplayLargeMessage(message.text)
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
