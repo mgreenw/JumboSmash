@@ -6,6 +6,7 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
+const { classmateSelect } = require('./utils');
 
 /* eslint-disable */
 const schema = {
@@ -31,36 +32,40 @@ const terminateUser = async (
   adminUserId: number,
   adminUtln: string,
 ) => {
+  // Note: This does not update the termination_reason if the user is already terminated.
   const terminatedResults = await db.query(`
-    WITH old AS (
-      SELECT terminated FROM classmates WHERE id = $1
-    ), updated AS (
-      UPDATE classmates
-      SET
-        terminated = TRUE,
-        termination_reason = CASE WHEN terminated THEN termination_reason ELSE $2 END
-      WHERE id = $1
-    )
-    SELECT old.terminated AS "alreadyTerminated"
-    FROM old
-  `, [userId, reason]);
+    UPDATE classmates
+    SET
+      terminated = TRUE,
+      termination_reason = CASE WHEN terminated THEN termination_reason ELSE $3 END
+    WHERE id = $2
+    RETURNING
+      ${classmateSelect},
+      (SELECT terminated FROM classmates WHERE id = $2) AS "alreadyTerminated"
+  `, [adminUserId, userId, reason]);
 
   if (terminatedResults.rowCount === 0) {
     return status(codes.TERMINATE_USER__USER_NOT_FOUND).noData();
   }
 
   // If the user's account is already terminated, alert the admin.
-  const [{ alreadyTerminated }] = terminatedResults.rows;
+  const [{ alreadyTerminated, ...classmate }] = terminatedResults.rows;
 
   // Update to slack. Include if the user is already terminated.
-  const addendum = alreadyTerminated ? '\nNote: The user was already terminated. Weird.' : '';
-  slack.postAdminUpdate(adminUserId, adminUtln, `Terminated User ${userId}$\n${addendum}Reason: ${reason}`);
+  const addendum = alreadyTerminated ? '\n*Note: The user was already terminated. Weird.*\n' : '';
+  slack.postAdminUpdate(adminUserId, adminUtln, `Terminated User: ${userId}\n${addendum}Reason: ${reason}`);
 
+  // If already terminated, return that it wasn't normal...
   if (alreadyTerminated) {
-    return status(codes.TERMINATE_USER__ALREADY_TERMINATED).noData();
+    return status(codes.TERMINATE_USER__ALREADY_TERMINATED).data({
+      classmate,
+    });
   }
 
-  return status(codes.TERMINATE_USER__SUCCESS).noData();
+  // Return the classmate
+  return status(codes.TERMINATE_USER__SUCCESS).data({
+    classmate,
+  });
 };
 
 const handler = [
