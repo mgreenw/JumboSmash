@@ -6,7 +6,7 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
-const { classmateSelect } = require('./utils');
+const { classmateSelect, generateReviewLog } = require('./utils');
 
 /* eslint-disable */
 const schema = {
@@ -86,7 +86,7 @@ const reviewProfile = async (
       profile_status = 'reviewed',
       can_be_swiped_on = $2,
       can_be_active_in_scenes = $3,
-      review_log = review_log || jsonb_build_array($4::jsonb)
+      account_updates = account_updates || jsonb_build_array($4::jsonb)
     WHERE id = $5
     RETURNING ${classmateSelect}
   `, [adminUserId, canBeSwipedOn, canBeActiveInScenes, review, userId]);

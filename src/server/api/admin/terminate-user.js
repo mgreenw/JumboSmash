@@ -6,7 +6,7 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
-const { classmateSelect } = require('./utils');
+const { classmateSelect, generateReviewLog } = require('./utils');
 
 /* eslint-disable */
 const schema = {

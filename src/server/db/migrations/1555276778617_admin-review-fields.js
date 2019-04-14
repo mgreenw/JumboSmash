@@ -18,7 +18,7 @@ exports.up = (pgm) => {
       default: 'unreviewed',
       notNull: true,
     },
-    review_log: {
+    account_updates: {
       type: 'jsonb',
       default: '[]',
       notNull: true,
@@ -27,6 +27,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropColumns('classmates', ['can_be_swiped_on', 'can_be_active_in_scenes', 'profile_status', 'review_log']);
+  pgm.dropColumns('classmates', ['can_be_swiped_on', 'can_be_active_in_scenes', 'profile_status', 'account_updates']);
   pgm.dropType('profile_status');
 };
