@@ -12,7 +12,7 @@ NOTE: This will automatically post an update to #admin in slack.
 
 **Admin required** : YES
 
-**Permissions required** : Any user with a profile
+**Permissions required** : Any admin with a profile
 
 **Request Headers**
 
