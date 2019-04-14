@@ -43,6 +43,7 @@ describe('GET api/admin/classmates', () => {
     expect(res.body.status).toBe(codes.GET_ARTIST__SUCCESS.status);
     expect(res.statusCode).toBe(200);
     expect(res.body.data.artist.name).toBe('Dave Matthews Band');
+    expect(res.body.data.artist.id).toBe('2TI7qyDE0QfyOlnbtfDo7L');
   });
 
   it('should return not found if the id is bad', async () => {

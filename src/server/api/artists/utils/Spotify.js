@@ -8,8 +8,6 @@ const logger = require('../../../logger');
 const CLIENT_ID = config.get('spotify_client_id');
 const CLIENT_SECRET = config.get('spotify_client_secret');
 
-console.log(CLIENT_ID, CLIENT_SECRET);
-
 const BasicAuthorization = `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`;
 
 type SpotifyAuthorization = {
@@ -95,7 +93,7 @@ async function get(resource: string): Promise<any> {
       // 400 or 404 means the artist id is bad. All other responses are the fault
       // of the server.
       if (error.response.status === 404 || error.response.status === 400) {
-        logger.warn(`Spotify resource not found: ${resource}`, error);
+        logger.info(`Spotify resource not found: ${resource}. Code: ${error.response.status}`);
         return null;
       }
     }
