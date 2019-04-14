@@ -118,9 +118,9 @@ describe('GET api/users/:userId/profile', () => {
     expect(res.body.status).toBe(codes.GET_PROFILE__PROFILE_NOT_FOUND.status);
   });
 
-  it('should fail if the user is banned', async () => {
+  it('should fail if the user is terminated', async () => {
     const person = await dbUtils.createUser('person04', true);
-    await dbUtils.banUser(person.id);
+    await dbUtils.terminateUser(person.id);
 
     const res = await request(app)
       .get(`/api/users/${person.id}/profile`)

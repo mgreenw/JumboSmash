@@ -265,16 +265,16 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(res.body.data.length).toBeLessThanOrEqual(4);
   });
 
-  it('should not return a banned user', async () => {
-    const nonLikedNotBlockedNotBanned = activeSmash.slice(-5, -2);
-    await dbUtils.banUser(activeSmash[activeSmash.length - 2].id);
+  it('should not return a terminated user', async () => {
+    const nonLikedNotBlockedNotTerminated = activeSmash.slice(-5, -2);
+    await dbUtils.terminateUser(activeSmash[activeSmash.length - 2].id);
     const res = await request(app)
       .get('/api/relationships/candidates/smash')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(_.every(res.body.data, (candidate) => {
-      return _.find(nonLikedNotBlockedNotBanned, (person) => {
+      return _.find(nonLikedNotBlockedNotTerminated, (person) => {
         return person.id === candidate.userId;
       });
     })).toBeTruthy();
