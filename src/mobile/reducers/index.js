@@ -1587,6 +1587,12 @@ export default function rootReducer(
     case 'NEW_MATCH__COMPLETED': {
       const { scene, clientInitiatedMatch, match } = action.payload;
       const userId = match.userId;
+
+      // Update our matchesById with the new match,
+      // so that we can navigate to it.
+      const { entities } = normalizeMatches([match]);
+      const { matches = {} } = entities;
+
       return {
         ...state,
         topToast: {
@@ -1595,6 +1601,10 @@ export default function rootReducer(
           clientInitiatedMatch,
           userId,
           scene
+        },
+        matchesById: {
+          ...state.matchesById,
+          ...matches
         }
       };
     }

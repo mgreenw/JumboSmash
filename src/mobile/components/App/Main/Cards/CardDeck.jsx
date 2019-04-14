@@ -24,6 +24,7 @@ import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -351,7 +352,18 @@ class cardDeck extends React.Component<Props, State> {
     });
   };
 
-  _onStartChatting = () => {};
+  _onStartChatting = () => {
+    const { overlayMatchId } = this.props;
+    this.setState(
+      {
+        showOverlayMatch: false
+      },
+      () => {
+        // If no ID, this will navigate to the messages screen.
+        NavigationService.navigateToMatch(overlayMatchId || -1);
+      }
+    );
+  };
 
   _onKeepSwiping = () => {
     this.setState({
