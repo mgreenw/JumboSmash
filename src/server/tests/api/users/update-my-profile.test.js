@@ -285,7 +285,7 @@ describe('PATCH api/users/me/profile', () => {
       bio: 'He is a guy',
       birthday: '1997-09-09',
     });
-    let res = await request(app)
+    const res = await request(app)
       .patch('/api/users/me/profile')
       .set('Accept', 'application/json')
       .set('Authorization', user.token)
