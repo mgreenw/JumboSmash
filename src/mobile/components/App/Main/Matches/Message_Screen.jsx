@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  Alert,
   View,
   Text,
   TouchableOpacity,
@@ -428,8 +427,8 @@ class MessagingScreen extends React.Component<Props, State> {
               : BubbleStyles.messageTextNormal
         }}
         linkStyle={{
-          right: BubbleStyles.messageText,
-          left: BubbleStyles.messageText
+          right: BubbleStyles.messageTextNormal,
+          left: BubbleStyles.messageTextNormal
         }}
         timeTextStyle={{
           right: BubbleStyles.timeText,
@@ -840,13 +839,8 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { profileMap, cancelFailedMessage } = this.props;
-    const {
-      match,
-      showMessageActionSheet,
-      selectedMessage,
-      showExpandedCard
-    } = this.state;
+    const { profileMap } = this.props;
+    const { match, showExpandedCard } = this.state;
     const profile = profileMap[match.userId];
     const padBottom = isIphoneX();
     return (
