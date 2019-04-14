@@ -46,8 +46,8 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
       (utln, code, expiration, email)
       VALUES($1, $2, $3, $4)
       ON CONFLICT (utln) DO UPDATE
-      SET (code, expiration, email)
-        = ($2, $3, $4)
+      SET (code, expiration, email, attempts)
+        = ($2, $3, $4, 0)
       RETURNING id
     `, [utln, '654321', expirationDate, email]);
     return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
