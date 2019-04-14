@@ -7,9 +7,24 @@ import GEMHeader from 'mobile/components/shared/Header';
 import React from 'react';
 import { ListItem, SearchBar } from 'react-native-elements';
 
-const LOCATIONS = require('./Locations');
+type Location = {
+  name: string,
+  image?: string
+};
 
-console.log(LOCATIONS);
+type LocationWithCode = Location & { code: string };
+
+const LOCATIONS_MAP: { [code: string]: Location } = require('./Locations');
+
+const LOCATIONS_ARRAY: LocationWithCode[] = Object.keys(LOCATIONS_MAP).map(
+  code => ({
+    code,
+    ...LOCATIONS_MAP[code]
+  })
+);
+
+console.log(LOCATIONS_MAP);
+console.log(LOCATIONS_ARRAY);
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -59,7 +74,7 @@ type State = {
   postGradLocation: ?string,
   onSave: () => void,
   search: string,
-  locations: string[]
+  locations: LocationWithCode[]
 };
 
 function mapStateToProps(): ReduxProps {
@@ -80,7 +95,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       postGradLocation: null,
       onSave: navigation.getParam('onSave', null),
       search: '',
-      locations: LOCATIONS.locations
+      locations: LOCATIONS_ARRAY
     };
   }
 
@@ -101,8 +116,8 @@ class SelectCityScreen extends React.Component<Props, State> {
       search
     });
 
-    const newLocations = LOCATIONS.filter(item => {
-      const itemData = item;
+    const newLocations = LOCATIONS_ARRAY.filter(item => {
+      const itemData = item.name;
       const textData = search.toUpperCase();
 
       return itemData.indexOf(textData) > -1;
