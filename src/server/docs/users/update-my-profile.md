@@ -54,7 +54,7 @@ Provide updated profile fields
     "bio": "hehe",
     "postgradRegion": "na.us.ma.7",
     "freshmanDorm": "Haskell",
-    "springFlingAct": "A real band"
+    "springFlingAct": "A real group"
 }
 ```
 

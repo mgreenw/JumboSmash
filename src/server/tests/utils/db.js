@@ -66,10 +66,10 @@ async function createProfile(userId, body) {
   }
 }
 
-async function banUser(id) {
+async function terminateUser(id) {
   await db.query(`
     UPDATE classmates
-    SET banned = true, banned_reason = 'TEST_BAN_REASON'
+    SET terminated = true, termination_reason = 'TEST_TERMINATION_REASON'
     WHERE id = $1
   `, [id]);
 }
@@ -192,5 +192,5 @@ module.exports = {
   signToken,
   createRelationship,
   insertPhoto,
-  banUser,
+  terminateUser,
 };

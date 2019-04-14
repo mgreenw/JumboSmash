@@ -1,6 +1,6 @@
 # Get Classmates
 
-Gets all the classmates in the app. This includes banned users and users that are not logged in.
+Gets all the classmates in the app. This includes terminated users and users that are not logged in.
 
 **URL** : `/api/admin/classmates`
 
@@ -42,7 +42,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "id": 12,
                 "utln": "jjaffe01",
                 "email": "Jacob.Jaffe@tufts.edu",
-                "isBanned": false,
+                "isTerminated": false,
                 "activeScenes": {
                     "smash": true,
                     "social": true,
@@ -55,7 +55,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "id": 6,
                 "utln": "jfasse01",
                 "email": "Julia.Fasse@tufts.edu",
-                "isBanned": false,
+                "isTerminated": false,
                 "activeScenes": {
                     "smash": true,
                     "social": true,
@@ -68,7 +68,7 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "id": 1,
                 "utln": "mgreen14",
                 "email": "Max.Greenwald@tufts.edu",
-                "isBanned": false,
+                "isTerminated": false,
                 "activeScenes": {
                     "smash": true,
                     "social": true,

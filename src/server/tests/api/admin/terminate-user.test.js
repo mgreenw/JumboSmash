@@ -10,7 +10,7 @@ let other = {};
 let third = {};
 const adminPassword = 'test-admin-password';
 
-describe('POST api/admin/ban/:userId', () => {
+describe('POST api/admin/classmates/:userId/terminate', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');
@@ -32,7 +32,7 @@ describe('POST api/admin/ban/:userId', () => {
 
   it('must require the user to exist and have a profile setup', async () => {
     let res = await request(app)
-      .post('/api/admin/ban/1')
+      .post('/api/admin/classmates/1/terminate')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
@@ -40,7 +40,7 @@ describe('POST api/admin/ban/:userId', () => {
 
     third = await dbUtils.createUser('jjaffe01');
     res = await request(app)
-      .post('/api/admin/ban/1')
+      .post('/api/admin/classmates/1/terminate')
       .set('Authorization', third.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(403);
@@ -50,7 +50,7 @@ describe('POST api/admin/ban/:userId', () => {
   it('must require the user to be an admin and submit the Admin-Authorization header', async () => {
     // Missing admin header
     let res = await request(app)
-      .post('/api/admin/ban/1')
+      .post('/api/admin/classmates/1/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', other.token);
     // NOTE: this is very specific for admin endpoints: we don't want users to know this exists
@@ -59,7 +59,7 @@ describe('POST api/admin/ban/:userId', () => {
 
     // Non admin with bad password
     res = await request(app)
-      .post('/api/admin/ban/1')
+      .post('/api/admin/classmates/1/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', other.token)
       .set('Admin-Authorization', 'bad-auth');
@@ -67,7 +67,7 @@ describe('POST api/admin/ban/:userId', () => {
 
     // Admin with bad password
     res = await request(app)
-      .post('/api/admin/ban/1')
+      .post('/api/admin/classmates/1/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', 'not-the-correct-password');
@@ -76,7 +76,7 @@ describe('POST api/admin/ban/:userId', () => {
 
   it('should require a reason', async () => {
     let res = await request(app)
-      .post('/api/admin/ban/0')
+      .post('/api/admin/classmates/0/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
@@ -85,7 +85,7 @@ describe('POST api/admin/ban/:userId', () => {
     expect(res.statusCode).toBe(400);
 
     res = await request(app)
-      .post('/api/admin/ban/0')
+      .post('/api/admin/classmates/0/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
@@ -94,7 +94,7 @@ describe('POST api/admin/ban/:userId', () => {
     expect(res.statusCode).toBe(400);
 
     res = await request(app)
-      .post('/api/admin/ban/0')
+      .post('/api/admin/classmates/0/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
@@ -104,7 +104,7 @@ describe('POST api/admin/ban/:userId', () => {
 
     // reason length > 500
     res = await request(app)
-      .post('/api/admin/ban/0')
+      .post('/api/admin/classmates/0/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
@@ -115,34 +115,34 @@ describe('POST api/admin/ban/:userId', () => {
 
   it('should fail given an invalid user id', async () => {
     const res = await request(app)
-      .post('/api/admin/ban/0')
+      .post('/api/admin/classmates/0/terminate')
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
       .send({ reason: 'SPAM' });
-    expect(res.body.status).toBe(codes.BAN_USER__USER_NOT_FOUND.status);
+    expect(res.body.status).toBe(codes.TERMINATE_USER__USER_NOT_FOUND.status);
     expect(res.statusCode).toBe(400);
   });
 
   it('should succeed if the user exists', async () => {
     const res = await request(app)
-      .post(`/api/admin/ban/${other.id}`)
+      .post(`/api/admin/classmates/${other.id}/terminate`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
       .send({ reason: 'SPAM' });
-    expect(res.body.status).toBe(codes.BAN_USER__SUCCESS.status);
+    expect(res.body.status).toBe(codes.TERMINATE_USER__SUCCESS.status);
     expect(res.statusCode).toBe(200);
   });
 
-  it('should fail if the other user is already banned', async () => {
+  it('should fail if the other user is already terminated', async () => {
     const res = await request(app)
-      .post(`/api/admin/ban/${other.id}`)
+      .post(`/api/admin/classmates/${other.id}/terminate`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
       .send({ reason: 'SPAM' });
-    expect(res.body.status).toBe(codes.BAN_USER__ALREADY_BANNED.status);
+    expect(res.body.status).toBe(codes.TERMINATE_USER__ALREADY_TERMINATED.status);
     expect(res.statusCode).toBe(409);
   });
 });
