@@ -224,7 +224,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
         <AppLoading
           startAsync={loadAssetsForLoadingScreenAsync}
           onFinish={() => {
-            console.log('done!');
             this.setState({ isReady: true });
             this._loadAssets();
           }}
