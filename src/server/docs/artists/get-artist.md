@@ -78,4 +78,14 @@ Provide the normal `Authorization` token in the request header.
 
 ## Error Responses
 
-No specific error case.
+**Condition** : The artist id is not found from Spotify
+
+**Code** : `404 NOT FOUND`
+
+**Content**
+
+```json
+{
+    "status": "GET_ARTIST__NOT_FOUND"
+}
+```
