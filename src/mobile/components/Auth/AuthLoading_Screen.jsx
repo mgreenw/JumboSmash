@@ -10,6 +10,7 @@ import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
 import Sentry from 'sentry-expo';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
@@ -158,6 +159,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             {`Version ${Constants.manifest.version}`}
           </Text>
         </SafeAreaView>
+        <AndroidBackHandler onBackPress={() => true} />
       </View>
     );
   }
