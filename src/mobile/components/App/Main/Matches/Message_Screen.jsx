@@ -52,7 +52,7 @@ const emojiRegex = instantiateEmojiRegex();
  *
  * @param {string} content Message Text
  * @returns {boolean} if the message all emojis, 3 or less.
- * Terminates early if the message is longer than 6 characters,
+ * Terminates early if the message is longer than 30 characters,
  * because emojis can only be about 10 .
  */
 function shouldDisplayLargeMessage(content: string): boolean {
