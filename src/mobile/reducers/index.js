@@ -178,14 +178,16 @@ export type Genders = {
   nonBinary: boolean
 };
 
+type ActiveScenes = {
+  smash: boolean,
+  social: boolean,
+  stone: boolean
+};
+
 export type UserSettings = {
   identifyAsGenders: Genders,
   lookingForGenders: Genders,
-  activeScenes: {
-    smash: boolean,
-    social: boolean,
-    stone: boolean
-  },
+  activeScenes: ActiveScenes,
   notificationsEnabled: boolean,
   expoPushToken: ?string
 };
@@ -830,6 +832,30 @@ function updateReadReceipts(
   };
 }
 
+/**
+ * Clear the candidates from scenes no longer enabled.
+ */
+function resetInactiveScenes(
+  state: ReduxState,
+  activeScenes: ActiveScenes
+): {
+  excludeSceneCandidateIds: ExcludeSceneCandidateIds,
+  sceneCandidateIds: SceneCandidateIds
+} {
+  return {
+    excludeSceneCandidateIds: {
+      smash: activeScenes.smash ? state.excludeSceneCandidateIds.smash : [],
+      social: activeScenes.social ? state.excludeSceneCandidateIds.social : [],
+      stone: activeScenes.stone ? state.excludeSceneCandidateIds.stone : []
+    },
+    sceneCandidateIds: {
+      smash: activeScenes.smash ? state.sceneCandidateIds.smash : [],
+      social: activeScenes.social ? state.sceneCandidateIds.social : [],
+      stone: activeScenes.stone ? state.sceneCandidateIds.stone : []
+    }
+  };
+}
+
 export default function rootReducer(
   state: ReduxState = defaultState,
   action: Action
@@ -1279,12 +1305,20 @@ export default function rootReducer(
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
       const { disableToast } = action.meta;
+      const settings = action.payload;
       const bottomToast = disableToast
         ? state.bottomToast
         : {
             uuid: uuidv4(),
             code: 'SAVE_SETTINGS__SUCCESS'
           };
+
+      const { activeScenes } = settings;
+      const {
+        excludeSceneCandidateIds,
+        sceneCandidateIds
+      } = resetInactiveScenes(state, activeScenes);
+
       return {
         ...state,
         inProgress: {
@@ -1293,9 +1327,11 @@ export default function rootReducer(
         },
         client: {
           ...state.client,
-          settings: action.payload
+          settings
         },
-        bottomToast
+        bottomToast,
+        excludeSceneCandidateIds,
+        sceneCandidateIds
       };
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
