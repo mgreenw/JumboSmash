@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Image, View, Text, SafeAreaView } from 'react-native';
-import { Font, Asset, Constants } from 'expo';
+import { Font, Asset, Constants, SplashScreen, AppLoading } from 'expo';
 import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
@@ -11,17 +11,53 @@ import routes from 'mobile/components/navigation/routes';
 import DevTesting from 'mobile/utils/DevTesting';
 import Sentry from 'sentry-expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import loadAppAction from 'mobile/actions/app/loadApp';
+import ProgressBar from 'react-native-progress/Bar';
+import { Colors } from 'mobile/styles/colors';
 
+const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
 const ArthurIcon = require('../../assets/arthurIcon.png');
+
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
 const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
+const SanFransisco = require('../../assets/icons/locations/SanFransisco.png');
+const NewYork = require('../../assets/icons/locations/NewYork.png');
+const DC = require('../../assets/icons/locations/DC.png');
+const Seattle = require('../../assets/icons/locations/Seattle.png');
+const Boston = require('../../assets/icons/locations/Boston.png');
+const Austin = require('../../assets/icons/locations/Austin.png');
+const Chicago = require('../../assets/icons/locations/Chicago.png');
+const LosAngeles = require('../../assets/icons/locations/LosAngeles.png');
+const OnTheRoad = require('../../assets/icons/locations/OnTheRoad.png');
+const Miami = require('../../assets/icons/locations/Miami.png');
+const Minneapolis = require('../../assets/icons/locations/Minneapolis.png');
+const Philadelphia = require('../../assets/icons/locations/Philadelphia.png');
+
+const CityIcons = [
+  SanFransisco,
+  NewYork,
+  DC,
+  Seattle,
+  Boston,
+  Austin,
+  Chicago,
+  LosAngeles,
+  OnTheRoad,
+  Miami,
+  Minneapolis,
+  Philadelphia
+];
+
 type ReduxProps = {
   token: ?string,
   loadAuthInProgress: boolean,
-  authLoaded: boolean
+  authLoaded: boolean,
+  appLoaded: boolean,
+  loadAppInProgress: boolean,
+  onboardingCompleted: boolean
 };
 
 type NavigationProps = {
@@ -29,17 +65,23 @@ type NavigationProps = {
 };
 
 type DispatchProps = {
-  loadAuth: void => void
+  loadAuth: () => void,
+  loadApp: () => void
 };
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
-type State = {};
+type State = {
+  isReady: boolean
+};
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     token: reduxState.token,
     loadAuthInProgress: reduxState.inProgress.loadAuth,
-    authLoaded: reduxState.authLoaded
+    authLoaded: reduxState.authLoaded,
+    appLoaded: reduxState.appLoaded,
+    loadAppInProgress: reduxState.inProgress.loadApp,
+    onboardingCompleted: reduxState.onboardingCompleted
   };
 }
 
@@ -47,6 +89,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     loadAuth: () => {
       dispatch(loadAuthAction());
+    },
+    loadApp: () => {
+      dispatch(loadAppAction());
     }
   };
 }
@@ -65,27 +110,60 @@ function cacheFonts(fonts) {
   return fonts.map(font => Font.loadAsync(font));
 }
 
+/**
+ * Light weight load -- the bare minimum we need to show the real loading screen.
+ */
+async function loadAssetsForLoadingScreenAsync() {
+  const fonts = [{ VeganStyle }];
+  const images = [ArthurIcon];
+  const imageAssets = cacheImages(images);
+  const fontAssets = cacheFonts(fonts);
+
+  return Promise.all([...imageAssets, ...fontAssets]);
+}
+
 // This component is the screen we see on initial app startup, as we are
 // loading the state of the app / determining if the user is already logged in.
 // If the user is logged in, we then navigate to App, otherwise to Auth.
 class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
-    this._loadAssets();
+    this.state = {
+      isReady: false
+    };
+  }
+
+  componentDidMount() {
+    SplashScreen.preventAutoHide();
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { navigation } = this.props;
-    const { token, authLoaded, loadAuthInProgress } = this.props;
+    const {
+      token,
+      authLoaded,
+      loadAuthInProgress,
+      loadApp,
+      navigation,
+      appLoaded,
+      loadAppInProgress,
+      onboardingCompleted
+    } = this.props;
 
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
     if (authLoaded && prevProps.loadAuthInProgress !== loadAuthInProgress) {
       if (token) {
-        navigation.navigate(routes.AppSwitch, {});
+        loadApp();
       } else {
         navigation.navigate(routes.LoginStack);
+      }
+    }
+
+    if (appLoaded && prevProps.loadAppInProgress !== loadAppInProgress) {
+      if (!onboardingCompleted) {
+        navigation.navigate(routes.OnboardingStack);
+      } else {
+        navigation.navigate(routes.MainSwitch, {});
       }
     }
   }
@@ -120,7 +198,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       ArthurIcon,
       WavesFullSCreen,
       ArthurLoadingFrame1,
-      ArthurLoadingGif
+      ArthurLoadingGif,
+      ...CityIcons
     ];
 
     const imageAssets = cacheImages(images);
@@ -139,10 +218,29 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   }
 
   render() {
+    const { isReady } = this.state;
+    if (!isReady) {
+      return (
+        <AppLoading
+          startAsync={loadAssetsForLoadingScreenAsync}
+          onFinish={() => {
+            console.log('done!');
+            this.setState({ isReady: true });
+            this._loadAssets();
+          }}
+          onError={console.warn}
+          autoHideSplash={false}
+        />
+      );
+    }
+
     return (
       <View style={Arthur_Styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ flex: 1 }} />
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Text style={Arthur_Styles.title}>JumboSmash</Text>
+          </View>
+
           <View style={{ flex: 1 }}>
             <Image
               resizeMode="contain"
@@ -151,10 +249,34 @@ class AuthLoadingScreen extends React.Component<Props, State> {
                 width: null,
                 height: null
               }}
-              source={ArthurIcon} // TODO: investigate why  mobile/ does not work
+              onLoadEnd={() => {
+                setTimeout(() => {
+                  SplashScreen.hide();
+                }, 50);
+              }}
+              source={ArthurIcon}
             />
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'stretch',
+              paddingLeft: 60,
+              paddingRight: 60
+            }}
+          >
+            <ProgressBar
+              progress={0.3}
+              height={10}
+              unfilledColor={Colors.IceBlue}
+              borderWidth={0}
+              color={Colors.Grapefruit}
+              indeterminate
+              borderRadius={6}
+              width={null}
+            />
+          </View>
           <Text style={[{ textAlign: 'center' }]}>
             {`Version ${Constants.manifest.version}`}
           </Text>

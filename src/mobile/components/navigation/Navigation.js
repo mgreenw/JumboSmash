@@ -214,11 +214,10 @@ OnboardingStack.navigationOptions = () => {
 const AppSwitch = FluidNavigator(
   {
     [routes.MainSwitch]: MainContentSwitch,
-    [routes.OnboardingStack]: OnboardingStack,
-    [routes.AppLoading]: { screen: AppLoading }
+    [routes.OnboardingStack]: OnboardingStack
   },
   {
-    initialRouteName: routes.AppLoading,
+    initialRouteName: routes.MainSwitch,
     ...removeHeader
   }
 );
