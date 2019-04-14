@@ -189,10 +189,56 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
   `;
 }
 
+// Account Updates
+
+type Admin = {
+  id: number,
+  utln: string,
+};
+
+type ProfileReview = {
+  type: 'PROFILE_REVIEW',
+  reviewer: Admin,
+  comment: string | null,
+  canBeSwipedOn: boolean,
+  canBeActiveInScenes: boolean,
+};
+
+type AccountTermination = {
+  type: 'ACCOUNT_TERMINATION',
+  admin: Admin,
+  reason: string,
+};
+
+type ProfileUpdate = {
+  type: 'PROFILE_UPDATE',
+  changedFields: Profile,
+};
+
+type NewPhoto = {
+  type: 'NEW_PHOTO',
+  photoUUID: string,
+}
+
+type AccountUpdate = ProfileReview | AccountTermination | ProfileUpdate | NewPhoto;
+
+type AccountUpdateMeta = {
+  timestamp: string,
+  update: AccountUpdate
+};
+
+function constructAccountUpdate(update: AccountUpdate): AccountUpdateMeta {
+  return {
+    timestamp: new Date().toISOString(),
+    update,
+  };
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
   getFieldTemplates,
   profileSelectQuery,
   settingsSelectQuery,
+  constructAccountUpdate,
 };

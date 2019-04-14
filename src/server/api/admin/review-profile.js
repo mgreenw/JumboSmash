@@ -6,7 +6,8 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
-const { classmateSelect, generateReviewLog } = require('./utils');
+const { classmateSelect } = require('./utils');
+const { constructAccountUpdate } = require('../users/utils');
 
 /* eslint-disable */
 const schema = {
@@ -64,20 +65,16 @@ const reviewProfile = async (
 
   // NOTE: A terminated user can be reviewed. This may be useful in "too young" terminations.
   // There is no negative impact here - reviewing a terminated user does not affect anything else.
-
-  const review = {
-    type: 'review',
-    timestamp: new Date().toISOString(),
-    data: {
-      reviewer: {
-        id: adminUserId,
-        utln: adminUtln,
-      },
-      comment,
-      canBeSwipedOn,
-      canBeActiveInScenes,
+  const review = constructAccountUpdate({
+    type: 'PROFILE_REVIEW',
+    reviewer: {
+      id: adminUserId,
+      utln: adminUtln,
     },
-  };
+    comment,
+    canBeSwipedOn,
+    canBeActiveInScenes,
+  });
 
   // Insert the review
   const updatedClassmateResult = await db.query(`

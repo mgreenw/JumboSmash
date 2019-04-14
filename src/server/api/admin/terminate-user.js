@@ -6,7 +6,8 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
-const { classmateSelect, generateReviewLog } = require('./utils');
+const { classmateSelect } = require('./utils');
+const { constructAccountUpdate } = require('../users/utils');
 
 /* eslint-disable */
 const schema = {
@@ -32,17 +33,27 @@ const terminateUser = async (
   adminUserId: number,
   adminUtln: string,
 ) => {
+  const terminationUpdate = constructAccountUpdate({
+    type: 'ACCOUNT_TERMINATION',
+    admin: {
+      id: adminUserId,
+      utln: adminUtln,
+    },
+    reason,
+  });
+
   // Note: This does not update the termination_reason if the user is already terminated.
   const terminatedResults = await db.query(`
     UPDATE classmates
     SET
       terminated = TRUE,
-      termination_reason = CASE WHEN terminated THEN termination_reason ELSE $3 END
+      termination_reason = CASE WHEN terminated THEN termination_reason ELSE $3 END,
+      account_updates = CASE WHEN terminated THEN account_updates ELSE account_updates || jsonb_build_array($4::jsonb) END
     WHERE id = $2
     RETURNING
       ${classmateSelect},
       (SELECT terminated FROM classmates WHERE id = $2) AS "alreadyTerminated"
-  `, [adminUserId, userId, reason]);
+  `, [adminUserId, userId, reason, terminationUpdate]);
 
   if (terminatedResults.rowCount === 0) {
     return status(codes.TERMINATE_USER__USER_NOT_FOUND).noData();
