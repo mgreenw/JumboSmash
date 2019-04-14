@@ -66,6 +66,7 @@ const reviewProfile = async (
 
   const review = {
     type: 'review',
+    timestamp: new Date().toISOString(),
     data: {
       reviewer: {
         id: adminUserId,
