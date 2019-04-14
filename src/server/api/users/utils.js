@@ -1,6 +1,8 @@
 // @flow
 
 const _ = require('lodash');
+const Spotify = require('../artists/utils/Spotify');
+const codes = require('../status-codes');
 
 // About 30 years old.
 const oldestBirthday = new Date('01/01/1988');
@@ -13,6 +15,7 @@ const profileErrorMessages = {
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
   BIRTHDAY_UNDER_18: 'BIRTHDAY_UNDER_18',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
+  ARTIST_NOT_FOUND: 'ARTIST_NOT_FOUND',
 };
 
 // This type here is to ensure that calls to the validateProfile function
@@ -25,6 +28,9 @@ type Profile = {
   displayName: ?string,
   birthday: ?string,
   bio: ?string,
+  postgradRegion?: string,
+  springFlingAct?: string,
+  freshmanDorm?: string,
 }
 
 // Given a profile, validate the fields. If there is an error, throw an error
@@ -34,6 +40,7 @@ async function validateProfile(profile: Profile) {
     displayName,
     birthday,
     bio,
+    springFlingAct,
   } = profile;
 
   // Check if the user's display name is too long
@@ -76,6 +83,13 @@ async function validateProfile(profile: Profile) {
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
     throw profileErrorMessages.BIO_TOO_LONG;
+  }
+
+  if (springFlingAct) {
+    const artistResponse = await Spotify.get(`artists/${springFlingAct}`);
+    if (!artistResponse) {
+      throw profileErrorMessages.ARTIST_NOT_FOUND;
+    }
   }
 }
 
