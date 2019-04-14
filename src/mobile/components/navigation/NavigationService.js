@@ -68,6 +68,7 @@ function navigateToMatch(userId: number) {
       })
     );
   } else {
+    console.log({ userId, matchesById });
     navigate(routes.Matches);
   }
 }
