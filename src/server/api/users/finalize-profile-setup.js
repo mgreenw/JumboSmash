@@ -39,11 +39,11 @@ const createMyProfile = async (userId: number, profile: Object) => {
   try {
     validateProfile(profile);
   } catch (error) {
-    // If the user entered a birthday under 18, ban the user immediately.
+    // If the user entered a birthday under 18, terminated the user immediately.
     if (error === profileErrorMessages.BIRTHDAY_UNDER_18) {
       await db.query(`
         UPDATE classmates
-        SET banned = true, banned_reason = $2
+        SET terminated = true, termination_reason = $2
         WHERE id = $1
       `, [userId, profileErrorMessages.BIRTHDAY_UNDER_18]);
 

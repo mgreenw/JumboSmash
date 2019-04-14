@@ -21,8 +21,8 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
-exports.BANNED = {
-  status: 'BANNED',
+exports.TERMINATED = {
+  status: 'TERMINATED',
   code: 401,
 };
 // AUTH
@@ -330,7 +330,7 @@ exports.GET_CLASSMATES__SUCCESS = {
   code: 200,
 };
 
-// Ban User
+// Terminate User
 exports.TERMINATE_USER__SUCCESS = {
   status: 'TERMINATE_USER__SUCCESS',
   code: 200,

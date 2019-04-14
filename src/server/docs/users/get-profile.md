@@ -43,7 +43,7 @@ Provide the normal `Authorization` token in the request header.
             "bio": "hehe",
             "postgradRegion": "na.us.ma.7",
             "freshmanDorm": "Haskell",
-            "springFlingAct": "A real band"
+            "springFlingAct": "A real group"
         },
         "photoUuids": [
             "27b737bc-0e64-4e0e-8e9f-59787b44f792"
