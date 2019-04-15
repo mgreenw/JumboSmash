@@ -687,7 +687,6 @@ class cardDeck extends React.Component<Props, State> {
         {this._renderReportPopup()}
         <AndroidBackHandler
           onBackPress={() => {
-            this._hideExpandedCard();
             return true;
           }}
         />
