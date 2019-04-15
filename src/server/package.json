@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "JumboSmash 2019",
   "engines": {
-    "node": "^8.12.0",
+    "node": "^8.15.0",
     "postgres": "^10.5.x"
   },
   "scripts": {
@@ -33,6 +33,7 @@
     "@slack/client": "^4.8.0",
     "ajv": "^6.5.4",
     "aws-sdk": "^2.382.0",
+    "axios": "^0.18.0",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "bull": "^3.7.0",
@@ -75,6 +76,8 @@
   "jest": {
     "setupFilesAfterEnv": [
       "./scripts/jest-setup.js"
-    ]
+    ],
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": ["/node_modules/", "/config/"]
   }
 }

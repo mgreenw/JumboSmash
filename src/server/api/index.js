@@ -9,6 +9,7 @@ const photosRouter = require('./photos');
 const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
 const adminRouter = require('./admin');
+const artistsRouter = require('./artists');
 
 const codes = require('./status-codes');
 const logger = require('../logger');
@@ -39,6 +40,7 @@ apiRouter.use(authenticated);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/photos', photosRouter);
 apiRouter.use('/meta', metaRouter);
+apiRouter.use('/artists', artistsRouter);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
