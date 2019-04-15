@@ -14,6 +14,7 @@ import { AndroidBackHandler } from 'react-navigation-backhandler';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import ProgressBar from 'react-native-progress/Bar';
 import { Colors } from 'mobile/styles/colors';
+import Sentry from 'sentry-expo';
 
 const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
 const ArthurIcon = require('../../assets/arthurIcon.png');
@@ -212,8 +213,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       })
       .catch(e => {
         Sentry.captureException(e);
-
-        DevTesting.log('Error importing fonts:', e);
       });
   }
 
@@ -227,7 +226,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             this.setState({ isReady: true });
             this._loadAssets();
           }}
-          onError={console.warn}
+          onError={err => {
+            Sentry.captureException(err);
+          }}
           autoHideSplash={false}
         />
       );
