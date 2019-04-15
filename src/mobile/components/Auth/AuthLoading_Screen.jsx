@@ -14,7 +14,6 @@ import { AndroidBackHandler } from 'react-navigation-backhandler';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import ProgressBar from 'react-native-progress/Bar';
 import { Colors } from 'mobile/styles/colors';
-import Sentry from 'sentry-expo';
 
 const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
 const ArthurIcon = require('../../assets/arthurIcon.png');
