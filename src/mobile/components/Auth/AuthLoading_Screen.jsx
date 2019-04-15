@@ -163,7 +163,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       if (!onboardingCompleted) {
         navigation.navigate(routes.OnboardingStack);
       } else {
-        navigation.navigate(routes.MainSwitch, {});
+        navigation.navigate(routes.SelectCity, {});
       }
     }
   }

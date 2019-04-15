@@ -4,10 +4,6 @@
     "go.ph.er": { "name": "IDK" }
   },
   "linkdin": {
-    "na.us.ca.49": {
-      "name": "Greater Los Angeles Area",
-      "image": "LosAngeles"
-    },
     "na.us.ma.7": {
       "name": "Greater Boston Area",
       "image": "Boston"
@@ -15,6 +11,18 @@
     "na.us.ca.84": {
       "name": "San Francisco Bay Area",
       "image": "SanFransisco"
+    },
+    "na.us.ca.49": {
+      "name": "Greater Los Angeles Area",
+      "image": "LosAngeles"
+    },
+    "na.us.ny.70": {
+      "name": "Greater New York City Area",
+      "image": "NewYork"
+    },
+    "na.us.wa.91": {
+      "name": "Greater Seattle Area",
+      "image": "Seattle"
     },
     "na.us.dc.97": {
       "name": "Washington D.C. Metro Area",
@@ -28,10 +36,6 @@
       "name": "Greater Minneapolis-St. Paul Area",
       "image": "Minneapolis"
     },
-    "na.us.ny.70": {
-      "name": "Greater New York City Area",
-      "image": "NewYork"
-    },
     "na.us.pa.77": {
       "name": "Greater Philadelphia Area",
       "image": "Philadelphia"
@@ -39,10 +43,6 @@
     "na.us.tx.64": {
       "name": "Austin, Texas Area",
       "image": "Austin"
-    },
-    "na.us.wa.91": {
-      "name": "Greater Seattle Area",
-      "image": "Seattle"
     },
     "af": { "name": "Africa" },
     "af.dz": {

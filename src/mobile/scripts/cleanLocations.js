@@ -97,12 +97,13 @@ function FilterLocation(len, source, greaterThan = false) {
     // skip adding a DELETE edit.
     if (!deleted) {
       const { code: codeEdit = code } = edits;
-      locations[codeEdit] = {
+      const location = {
         ...source[code],
         alias: [],
         ...edits,
         type
       };
+      locations[codeEdit] = addCode(code, location);
     } else {
       console.log('DELETED: ', LOCATIONS.linkdin[code]);
     }
@@ -138,6 +139,9 @@ function AddParents(locations) {
       '.'
     );
 
+    // don't show state for state, country for country, etc.
+    const { type } = locations[code];
+
     const continentCode = continentSufix || null;
     const countryCode = countryCodeSuffix
       ? `${continentCode}.${countryCodeSuffix}`
@@ -148,15 +152,18 @@ function AddParents(locations) {
         : null;
 
     const ancestors = {
-      continent: continentCode
-        ? { code: continentCode, name: Continents[continentCode].name }
-        : null,
-      country: countryCode
-        ? { code: countryCode, name: Countries[countryCode].name }
-        : null,
-      state: stateCode
-        ? { code: stateCode, name: States[stateCode].name }
-        : null
+      continent:
+        continentCode && type !== 'CONTINENT'
+          ? { code: continentCode, name: Continents[continentCode].name }
+          : null,
+      country:
+        countryCode && type !== 'COUNTRY'
+          ? { code: countryCode, name: Countries[countryCode].name }
+          : null,
+      state:
+        stateCode && type !== 'STATE'
+          ? { code: stateCode, name: States[stateCode].name }
+          : null
     };
 
     newLocations[code] = {
@@ -173,10 +180,11 @@ function main() {
     ...AddedCities
   };
   const data = {
-    Continents,
+    Continents: AddParents(Continents),
     Countries: AddParents(Countries),
     States: AddParents(States),
-    Cities: AddParents(cities)
+    Cities: AddParents(cities),
+    Priority: LOCATION_EDITS.priority
   };
 
   // Clean the names of all cities

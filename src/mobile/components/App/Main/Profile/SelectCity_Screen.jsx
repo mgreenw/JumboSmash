@@ -1,12 +1,13 @@
 // @flow
-
+import * as React from 'react';
 import { View, FlatList, ImageBackground, Text } from 'react-native';
 import { connect } from 'react-redux';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import GEMHeader from 'mobile/components/shared/Header';
-import React from 'react';
 import { ListItem, SearchBar } from 'react-native-elements';
 import _ from 'lodash';
+import { textStyles } from 'mobile/styles/textStyles';
+import { Colors } from 'mobile/styles/colors';
 
 import type {
   NavigationEventPayload,
@@ -20,29 +21,76 @@ type LocationAncestor = {
 type LocationAncestors = {
   continent: ?LocationAncestor,
   country: ?LocationAncestor,
-  state: ?LocationAncestor
+  state: ?LocationAncestor,
+  type: 'CITY' | 'STATE' | 'COUNTRY' | 'CONTINENT'
 };
 
 type Location = {
   name: string,
+  code: String,
   type: string,
   alias: string[],
-  ancestors: ?LocationAncestors
+  ancestors: LocationAncestors
 };
 
 const LOCATIONS: {
-  [type: string]: { [code: string]: Location }
+  Continents: { [code: string]: Location },
+  Countries: { [code: string]: Location },
+  States: { [code: string]: Location },
+  Cities: { [code: string]: Location },
+  Priority: string[]
 } = require('../../../../../mobile/data/FormatedLocations.json');
 
 const States = Object.keys(LOCATIONS.States).map(
   code => LOCATIONS.States[code]
 );
-const Countries = Object.keys(LOCATIONS.Countries).map(
-  code => LOCATIONS.Countries[code]
-);
+
 const Cities = Object.keys(LOCATIONS.Cities).map(
   code => LOCATIONS.Cities[code]
 );
+
+// const Countries = Object.keys(LOCATIONS.Countries).map(
+//   code => LOCATIONS.Countries[code]
+// );
+
+// Place the priortized cities at the front
+function priorityCompare(a, b) {
+  const indexA = LOCATIONS.Priority.indexOf(a.code);
+  const indexB = LOCATIONS.Priority.indexOf(b.code);
+  if (indexA >= 0) {
+    if (indexB >= 0) {
+      return indexA - indexB;
+    }
+    return -1;
+  }
+  return 0;
+}
+
+function compare(a, b) {
+  const countryA = a.type === 'COUNTRY' ? a : a.ancestors.country;
+  const countryB = b.type === 'COUNTRY' ? b : b.ancestors.country;
+
+  if (countryA && countryB) {
+    if (countryA.name < countryB.name) return -1;
+    if (countryA.name > countryB.name) return 1;
+  }
+
+  const stateA = a.type === 'STATE' ? a : a.ancestors.state;
+  const stateB = b.type === 'STATE' ? b : b.ancestors.state;
+
+  if (stateA && stateB) {
+    if (stateA.name < stateB.name) return -1;
+    if (stateA.name > stateB.name) return 1;
+  }
+
+  if (a.name < b.name) return -1;
+  if (a.name > b.name) return 1;
+  return 0;
+}
+
+const AlphabeticalLocations = [...Cities, ...States].sort(compare);
+
+const GenesisLocations = [...AlphabeticalLocations].sort(priorityCompare);
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -61,27 +109,92 @@ function formatSubtitle(location: Location): string {
 }
 
 /**
- *
- * @param {string} search
- * @param {Location} item
- * Show the alias text that matches the search
+ * @param {string} substring
+ * @param {string} string
+ * @returns {{preBold: string, bold: string, postBold: string}}
  */
-function aliasText(search, item) {
-  const searchName = search.toUpperCase();
-  const alias = [...item.alias];
-  if (alias.length !== 0) {
-    // // Don't show alias if a real match
-    // const searchName = search.toUpperCase();
-    // const locationName = item.name.toUppperCase();
-    // if (locationName.indexOf(searchName) > -1) return '';
+function splitBoldText(substring: string, string: string) {
+  const matchStart = string.toUpperCase().lastIndexOf(substring.toUpperCase());
+  const matchEnd = matchStart + substring.length;
+
+  return {
+    preBold: string.substring(0, matchStart),
+    bold: string.substring(matchStart, matchEnd),
+    postBold: string.substring(matchEnd)
+  };
+}
+
+/**
+ * Show the alias text that matches the search
+ * @param {string} search
+ * @param {string[]} alias
+ * @param {boolean} skipFormatting Signifies whether to not do any checks. Useful for eficeincy when parrent knows there is no match, e.g. when there is no search
+ */
+function formatAliasText(
+  search: string,
+  alias: string[],
+  skipFormatting: boolean = false
+): { component: React.Node, isMatch: boolean } {
+  // Anything after this point happens so infrequently we can be a little lazy computationally.
+  // (> 1% of our data has alias, max # of alias is 10)
+  if (!skipFormatting && alias.length !== 0) {
+    const searchName = search.toUpperCase();
 
     // Check if alias matches
+    // Use the first matching one, same as we do in the actual search algo.
+    // Bold the first part of the string that matches.
     const aliasName = alias.find(a => a.toUpperCase().indexOf(searchName) > -1);
     if (aliasName) {
-      return <Text>{aliasName}</Text>;
+      // We have guarenteed to be > -1 by above.
+      const { preBold, bold, postBold } = splitBoldText(searchName, aliasName);
+      const component = (
+        <Text>
+          <Text style={textStyles.body2Style}>{preBold}</Text>
+          <Text style={textStyles.body2StyleBold}>{bold}</Text>
+          <Text style={textStyles.body2Style}>{postBold}</Text>
+        </Text>
+      );
+      return { component, isMatch: true };
     }
   }
-  return null;
+  return { component: null, isMatch: false };
+}
+
+/**
+ * Show the title text that matches the search
+ * @param {string} search
+ * @param {string} title
+ * @param {boolean} subtitle for text size
+ * @param {?boolean} skipFormatting for effeciency in chaining these parses. e.g. if Title matches, subtitle can be skipped
+ */
+function formatTitle(
+  search,
+  title,
+  subtitle: boolean,
+  skipFormatting: ?boolean = false
+): { component: React.Node, isMatch: boolean } {
+  const normalFont = subtitle ? textStyles.body2Style : textStyles.body1Style;
+  const boldFont = subtitle
+    ? textStyles.body2StyleBold
+    : textStyles.body1StyleSemibold;
+  if (!skipFormatting && search.length > 0) {
+    if (title.toUpperCase().indexOf(search.toUpperCase()) === -1) {
+      return { component: <Text>{title}</Text>, isMatch: false };
+    }
+    const { preBold, bold, postBold } = splitBoldText(search, title);
+    const component = (
+      <Text>
+        <Text style={normalFont}>{preBold}</Text>
+        <Text style={boldFont}>{bold}</Text>
+        <Text style={normalFont}>{postBold}</Text>
+      </Text>
+    );
+    return {
+      component,
+      isMatch: bold.length > 0
+    };
+  }
+  return { component: <Text style={normalFont}>{title}</Text>, isMatch: true };
 }
 
 type NavigationProps = {
@@ -116,7 +229,7 @@ class SelectCityScreen extends React.Component<Props, State> {
     this.state = {
       postGradLocation: null,
       search: '',
-      locations: Cities
+      locations: GenesisLocations
     };
 
     this.willBlurListener = props.navigation.addListener(
@@ -142,18 +255,27 @@ class SelectCityScreen extends React.Component<Props, State> {
     this.setState({
       search
     });
+
+    // Both terminate early AND show the special ordering if empty
+    if (search.length === 0) {
+      this.setState({
+        locations: GenesisLocations
+      });
+      return;
+    }
+
     const searchName = search.toUpperCase();
 
-    const [citiesMatchingByOwnName, citiesRestByName] = _.partition(
-      Cities,
+    const [matchingByOwnName, restByName] = _.partition(
+      AlphabeticalLocations,
       (location: Location) => {
         const locationName = location.name.toUpperCase();
         return locationName.indexOf(searchName) > -1;
       }
     );
 
-    const [citiesMatchingByAlias, citiesRestByAlias] = _.partition(
-      citiesRestByName,
+    const [matchingByAlias, restByAlias] = _.partition(
+      restByName,
       (location: Location) => {
         if (location.alias.length > 0) {
           return (
@@ -166,8 +288,8 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
-    const [citiesMatchingByStateName, citiesRestByState] = _.partition(
-      citiesRestByAlias,
+    const [matchingByStateName, restByState] = _.partition(
+      restByAlias,
       (location: Location) => {
         if (location.ancestors && location.ancestors.state) {
           const stateName = location.ancestors.state.name.toUpperCase();
@@ -177,10 +299,22 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
+    const [matchingByCountryName, restByCountry] = _.partition(
+      restByState,
+      (location: Location) => {
+        if (location.ancestors && location.ancestors.country) {
+          const countryName = location.ancestors.country.name.toUpperCase();
+          return countryName.indexOf(searchName) > -1;
+        }
+        return false;
+      }
+    );
+
     const newLocations = [
-      ...citiesMatchingByOwnName,
-      ...citiesMatchingByAlias,
-      ...citiesMatchingByStateName
+      ...matchingByOwnName,
+      ...matchingByAlias,
+      ...matchingByStateName,
+      ...matchingByCountryName
     ];
 
     this.setState({
@@ -192,6 +326,8 @@ class SelectCityScreen extends React.Component<Props, State> {
     const { search } = this.state;
     return (
       <SearchBar
+        containerStyle={{ backgroundColor: Colors.White }}
+        inputContainerStyle={{ backgroundColor: Colors.IceBlue }}
         placeholder="Type Here..."
         lightTheme
         round
@@ -240,14 +376,27 @@ class SelectCityScreen extends React.Component<Props, State> {
           <FlatList
             data={locations}
             renderItem={({ item }) => {
+              const {
+                component: titleComponent,
+                isMatch: titleMatches
+              } = formatTitle(search, item.name, false);
+              const {
+                component: subtitleComponent,
+                isMatch: subTitleMatches
+              } = formatTitle(search, formatSubtitle(item), true, titleMatches);
+              const { component: aliasComponent } = formatAliasText(
+                search,
+                item.alias,
+                titleMatches || subTitleMatches
+              );
               return (
                 <ListItem
                   onPress={() => {
                     console.log(item);
                   }}
-                  rightElement={aliasText(search, item)}
-                  title={item.name}
-                  subtitle={formatSubtitle(item)}
+                  title={titleComponent}
+                  subtitle={subtitleComponent}
+                  rightElement={aliasComponent}
                 />
               );
             }}

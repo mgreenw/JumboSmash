@@ -3,6 +3,18 @@
     "na.us.fl.896": true,
     "na.us.hi.332": true
   },
+  "priority": [
+    "na.us.ma.7",
+    "na.us.ny.70",
+    "na.us.ca.84",
+    "na.us.wa.91",
+    "na.us.il.14",
+    "na.us.tx.64",
+    "na.us.dc.97",
+    "na.us.mn.512",
+    "na.us.fl.56",
+    "na.us.pa.77"
+  ],
   "added": {
     "cities": {
       "na.us.ny.999": {
@@ -60,6 +72,7 @@
         ]
       },
       "na.us.dc.97": {
+        "name": "Washington D.C.",
         "alias": ["Aurora", "Joliet", "Naperville"]
       },
       "na.us.mn.512": {
