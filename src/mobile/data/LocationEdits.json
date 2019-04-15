@@ -49,6 +49,7 @@
       "na.us.ga.824": { "code": "na.us.fl.996" },
       "na.us.mi.276": { "code": "na.us.in.995" },
       "na.us.ca.84": {
+        "name": "San Fransisco",
         "alias": [
           "Oakland",
           "Santa Clara",

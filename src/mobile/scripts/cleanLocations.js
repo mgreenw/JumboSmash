@@ -10,14 +10,6 @@ const fs = require('fs');
 const LOCATIONS = require('../data/Locations.json');
 const LOCATION_EDITS = require('../data/LocationEdits.json');
 
-<<<<<<< HEAD
-// const LOCATIONS_ARRAY = Object.keys(LOCATIONS_MAP).map(code => ({
-//   code,
-//   ...LOCATIONS_MAP[code]
-// }));
-
-=======
->>>>>>> 473ea25ad78d700962bb0a6c13fa4fc5ca0b3870
 function writeToFile(content) {
   fs.writeFileSync('./data/FormatedLocations.json', JSON.stringify(content));
 }
@@ -69,6 +61,7 @@ function formatName(name) {
   const greaterIndex = formattedName.indexOf('Greater ');
   if (greaterIndex !== -1) {
     const removeGreater = formattedName.replace('Greater ', '');
+    formattedName = removeGreater;
     history = changeHistory(history, removeGreater);
   }
 
