@@ -19,6 +19,7 @@
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
+      "supportsTablet": false,
       "bundleIdentifier": "com.jumbosmash.mobile"
     },
     "primaryColor": "#fbcc23",
