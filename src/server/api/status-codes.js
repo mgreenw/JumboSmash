@@ -343,3 +343,22 @@ exports.TERMINATE_USER__USER_NOT_FOUND = {
   status: 'TERMINATE_USER__USER_NOT_FOUND',
   code: 400,
 };
+
+
+// ARTISTS
+
+// Search Artists
+exports.SEARCH_ARTISTS__SUCCESS = {
+  status: 'SEARCH_ARTISTS__SUCCESS',
+  code: 200,
+};
+
+// Get Artist
+exports.GET_ARTIST__SUCCESS = {
+  status: 'GET_ARTIST__SUCCESS',
+  code: 200,
+};
+exports.GET_ARTIST__NOT_FOUND = {
+  status: 'GET_ARTIST__NOT_FOUND',
+  code: 404,
+};

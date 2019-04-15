@@ -62,8 +62,8 @@
         "alias": ["Aurora", "Joliet", "Naperville"]
       },
       "na.us.mn.512": {
-        "name": "Greater Minneapolis-St. Paul Area",
-        "alias": "St. Paul"
+        "name": "Minneapolis",
+        "alias": ["St. Paul"]
       },
       "na.us.ny.70": {
         "alias": [
