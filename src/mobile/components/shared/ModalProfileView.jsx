@@ -54,7 +54,7 @@ export default (props: Props) => {
       <AndroidBackHandler
         onBackPress={() => {
           onMinimize();
-          return true;
+          return false;
         }}
       />
     </Modal>
