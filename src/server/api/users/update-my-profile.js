@@ -23,6 +23,11 @@ const schema = {
       "description": "The user's display name. It should be their first name.",
       "type": "string"
     },
+    "birthday": {
+      "description": "The user's birthday",
+      "type": "string",
+      "format": "date",
+    },
     "bio": {
       "description": "The user's bio!",
       "type": "string"
@@ -69,6 +74,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // field that relates to this value
   const allFields = {
     display_name: profile.displayName,
+    birthday: profile.birthday,
     bio: profile.bio,
     postgrad_region: profile.postgradRegion,
     freshman_dorm: profile.freshmanDorm,
@@ -115,7 +121,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     await db.query(`
       UPDATE classmates
       SET
-        profile_status = CASE $3 THEN 'updated' ELSE profile_status END,
+        profile_status = CASE WHEN $3 THEN 'updated' ELSE profile_status END,
         account_updates = account_updates || jsonb_build_array($2::jsonb)
       WHERE id = $1
     `, [userId, profileUpdated, requireReview]);

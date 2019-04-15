@@ -111,7 +111,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
 
     await db.query(`
       UPDATE classmates
-      SET account_updates = account_updates || jsonb_build_array($3::jsonb)
+      SET account_updates = account_updates || jsonb_build_array($2::jsonb)
       WHERE id = $1
     `, [userId, profileCreatedUpdate]);
   }

@@ -167,7 +167,7 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: false, canBeActiveInScenes: true, comment: 'No comment' });
+      .send({ canBeSwipedOn: false, canBeActiveInScenes: true, comment: null });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__COMMENT_REQUIRED.status);
     expect(res.statusCode).toBe(400);
 
@@ -176,7 +176,7 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: false, comment: 'No comment' });
+      .send({ canBeSwipedOn: true, canBeActiveInScenes: false, comment: null });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__COMMENT_REQUIRED.status);
     expect(res.statusCode).toBe(400);
   });
@@ -188,15 +188,15 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
       .send({ canBeSwipedOn: false, canBeActiveInScenes: true, comment: 'No comment' });
-    expect(res.body.status).toBe(codes.TERMINATE_USER__SUCCESS.status);
+    expect(res.body.status).toBe(codes.REVIEW_PROFILE__SUCCESS.status);
     expect(res.statusCode).toBe(200);
     expect(res.body.data.classmate).toBeDefined();
     expect(res.body.data.classmate.id).toBe(other.id);
-    expect(res.body.data.canBeSwipedOn).toBeFalsy();
-    expect(res.body.data.canBeActiveInScenes).toBeTruthy();
-    expect(res.body.data.accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
+    expect(res.body.data.classmate.canBeSwipedOn).toBeFalsy();
+    expect(res.body.data.classmate.canBeActiveInScenes).toBeTruthy();
+    expect(res.body.data.classmate.accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
 
-    expect(res.body.data.accountUpdates[0].update.canBeSwipedOn).toBeFalsy();
-    expect(res.body.data.accountUpdates[0].update.canBeActiveInScenes).toBeTruthy();
+    expect(res.body.data.classmate.accountUpdates[0].update.canBeSwipedOn).toBeFalsy();
+    expect(res.body.data.classmate.accountUpdates[0].update.canBeActiveInScenes).toBeTruthy();
   });
 });
