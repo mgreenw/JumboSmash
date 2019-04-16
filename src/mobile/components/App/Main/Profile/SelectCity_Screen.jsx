@@ -299,7 +299,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
-    const [matchingByCountryName, restByCountry] = _.partition(
+    const [matchingByCountryName] = _.partition(
       restByState,
       (location: Location) => {
         if (location.ancestors && location.ancestors.country) {
@@ -392,6 +392,7 @@ class SelectCityScreen extends React.Component<Props, State> {
               return (
                 <ListItem
                   onPress={() => {
+                    // TODO:
                     console.log(item);
                   }}
                   title={titleComponent}
