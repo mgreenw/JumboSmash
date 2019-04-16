@@ -44,4 +44,22 @@ const PrioritizedAlphabeticalLocations = prioritizeLocations(
   LOCATIONS.Priority
 );
 
-export { AlphabeticalLocations, PrioritizedAlphabeticalLocations };
+/**
+ *
+ * @param {Location} location
+ * @returns {string} a nicely formatted version of where the location is.
+ */
+function formatLocationAncestors(location: Location): string {
+  if (!location.ancestors) return '';
+  const { country, state } = location.ancestors;
+  if (state && country) return `${state.name}, ${country.name}`;
+  if (state) return state.name;
+  if (country) return country.name;
+  return '';
+}
+
+export {
+  AlphabeticalLocations,
+  PrioritizedAlphabeticalLocations,
+  formatLocationAncestors
+};

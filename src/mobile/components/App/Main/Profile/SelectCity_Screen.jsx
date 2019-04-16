@@ -12,7 +12,8 @@ import { Colors } from 'mobile/styles/colors';
 import type { Location } from 'mobile/data/Locations';
 import {
   AlphabeticalLocations,
-  PrioritizedAlphabeticalLocations as GenesisLocations
+  PrioritizedAlphabeticalLocations as GenesisLocations,
+  formatLocationAncestors
 } from 'mobile/data/Locations';
 
 import type {
@@ -21,20 +22,6 @@ import type {
 } from 'react-navigation';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
-
-/**
- *
- * @param {Location} location
- * @returns {string} a nicely formatted version of where the location is.
- */
-function formatSubtitle(location: Location): string {
-  if (!location.ancestors) return '';
-  const { country, state } = location.ancestors;
-  if (state && country) return `${state.name}, ${country.name}`;
-  if (state) return state.name;
-  if (country) return country.name;
-  return '';
-}
 
 /**
  * @param {string} substring
@@ -178,6 +165,7 @@ class SelectCityScreen extends React.Component<Props, State> {
     );
   };
 
+  // Controls the filerting of the location list.
   onSearchChange = (search: string) => {
     // Show the search immediately
     this.setState({
@@ -194,6 +182,7 @@ class SelectCityScreen extends React.Component<Props, State> {
 
     const searchName = search.toUpperCase();
 
+    // Partition the locations by those that match the search by name, and those that don't.
     const [matchingByOwnName, restByName] = _.partition(
       AlphabeticalLocations,
       (location: Location) => {
@@ -202,6 +191,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
+    // Partition remaining locations by those that match the search by and Alias name, and those that don't.
     const [matchingByAlias, restByAlias] = _.partition(
       restByName,
       (location: Location) => {
@@ -216,6 +206,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
+    // Partition remaining locations by those that match the search by their state name, and those that don't.
     const [matchingByStateName, restByState] = _.partition(
       restByAlias,
       (location: Location) => {
@@ -227,6 +218,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       }
     );
 
+    // Partition remaining locations by those that match the search by their country name, and those that don't.
     const [matchingByCountryName] = _.partition(
       restByState,
       (location: Location) => {
@@ -311,7 +303,12 @@ class SelectCityScreen extends React.Component<Props, State> {
               const {
                 component: subtitleComponent,
                 isMatch: subTitleMatches
-              } = formatTitle(search, formatSubtitle(item), true, titleMatches);
+              } = formatTitle(
+                search,
+                formatLocationAncestors(item),
+                true,
+                titleMatches
+              );
               const { component: aliasComponent } = formatAliasText(
                 search,
                 item.alias,
