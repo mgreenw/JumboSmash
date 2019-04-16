@@ -4,7 +4,7 @@ exports.up = (pgm) => {
   pgm.addConstraint(
     'relationships',
     'critic_not_candidate',
-    'CHECK critic_user_id != candidate_user_id',
+    'CHECK (critic_user_id != candidate_user_id)',
   );
 };
 
