@@ -159,7 +159,6 @@ class SelectCityScreen extends React.Component<Props, State> {
         style={{
           height: 1,
           width: '100%'
-          // backgroundColor: '#CED0CE',
         }}
       />
     );
