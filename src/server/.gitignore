@@ -75,4 +75,7 @@ typings/
 dist
 
 dump.rdb
+
+# Musical Madness
+spotify_client_secret
 spotify_client_*

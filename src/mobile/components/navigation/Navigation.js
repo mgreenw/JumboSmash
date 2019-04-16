@@ -211,29 +211,13 @@ OnboardingStack.navigationOptions = () => {
   };
 };
 
-const AppSwitch = FluidNavigator(
-  {
-    [routes.MainSwitch]: MainContentSwitch,
-    [routes.OnboardingStack]: OnboardingStack,
-    [routes.AppLoading]: { screen: AppLoading }
-  },
-  {
-    initialRouteName: routes.AppLoading,
-    ...removeHeader
-  }
-);
-
-AppSwitch.navigationOptions = () => {
-  return {
-    gesturesEnabled: false
-  };
-};
-
 const createRootNavigator = () =>
   FluidNavigator(
     {
-      [routes.AppSwitch]: AppSwitch,
-      [routes.AuthSwitch]: AuthSwitch
+      [routes.AuthSwitch]: AuthSwitch,
+      [routes.OnboardingStack]: OnboardingStack,
+      [routes.MainSwitch]: MainContentSwitch,
+      [routes.AppLoading]: { screen: AppLoading }
     },
     {
       initialRouteName: routes.AuthSwitch,

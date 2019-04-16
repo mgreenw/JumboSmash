@@ -89,7 +89,7 @@ describe('GET api/admin/classmates', () => {
       expect(classmate.id).toBeDefined();
       expect(classmate.utln).toBeDefined();
       expect(classmate.email).toBeDefined();
-      expect(classmate.isBanned).toBeFalsy();
+      expect(classmate.isTerminated).toBeFalsy();
       expect(classmate.activeScenes).toBeDefined();
       expect(classmate.isAdmin).toBeDefined();
       expect(classmate.blockedRequestingAdmin).toBeFalsy();
@@ -114,7 +114,7 @@ describe('GET api/admin/classmates', () => {
       expect(classmate.id).toBeDefined();
       expect(classmate.utln).toBeDefined();
       expect(classmate.email).toBeDefined();
-      expect(classmate.isBanned).toBeFalsy();
+      expect(classmate.isTerminated).toBeFalsy();
       expect(classmate.activeScenes).toBeDefined();
       expect(classmate.isAdmin).toBeDefined();
       if (classmate.id === blockingClassmate.id) {

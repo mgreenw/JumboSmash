@@ -33,21 +33,21 @@ const authenticated = async (req: $Request, res: $Response, next: $Next) => {
   // return with UNAUTHORIZED
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      // If the user is not banned, return unauthorized
-      if (!error.banned) {
+      // If the user is not terminated, return unauthorized
+      if (!error.terminated) {
         return res.status(401).json({
           status: codes.UNAUTHORIZED.status,
           version,
         });
       }
 
-      // If the user is banned, return as such.
-      const reason = error.bannedReason === profileErrorMessages.BIRTHDAY_UNDER_18
+      // If the user is terminated, return as such.
+      const reason = error.terminationReason === profileErrorMessages.BIRTHDAY_UNDER_18
         ? profileErrorMessages.BIRTHDAY_UNDER_18
         : null;
 
       const body = {
-        status: codes.BANNED.status,
+        status: codes.TERMINATED.status,
         version,
         data: {
           reason,

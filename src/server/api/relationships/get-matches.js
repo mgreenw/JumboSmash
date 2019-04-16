@@ -43,7 +43,7 @@ const getMatches = async (userId: number) => {
     db.query(`
       ${utils.matchQuery}
         AND me_critic.candidate_user_id = they_critic.critic_user_id
-        AND NOT them.banned
+        AND NOT them.terminated
         AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
         AND
           (${matchedScenesChecks.join(' OR ')})

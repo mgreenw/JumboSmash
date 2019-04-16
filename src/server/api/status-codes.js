@@ -21,8 +21,8 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
-exports.BANNED = {
-  status: 'BANNED',
+exports.TERMINATED = {
+  status: 'TERMINATED',
   code: 401,
 };
 // AUTH
@@ -330,17 +330,17 @@ exports.GET_CLASSMATES__SUCCESS = {
   code: 200,
 };
 
-// Ban User
-exports.BAN_USER__SUCCESS = {
-  status: 'BAN_USER__SUCCESS',
+// Terminate User
+exports.TERMINATE_USER__SUCCESS = {
+  status: 'TERMINATE_USER__SUCCESS',
   code: 200,
 };
-exports.BAN_USER__ALREADY_BANNED = {
-  status: 'BAN_USER__ALREADY_BANNED',
+exports.TERMINATE_USER__ALREADY_TERMINATED = {
+  status: 'TERMINATE_USER__ALREADY_TERMINATED',
   code: 409,
 };
-exports.BAN_USER__USER_NOT_FOUND = {
-  status: 'BAN_USER__USER_NOT_FOUND',
+exports.TERMINATE_USER__USER_NOT_FOUND = {
+  status: 'TERMINATE_USER__USER_NOT_FOUND',
   code: 400,
 };
 

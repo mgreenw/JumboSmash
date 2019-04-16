@@ -147,7 +147,7 @@ describe('GET api/relationships/matches', () => {
     const person = await dbUtils.createUser('person04', true);
     await dbUtils.createRelationship(me.id, person.id, true, true, true);
     await dbUtils.createRelationship(person.id, me.id, true, true, true);
-    await dbUtils.banUser(person.id);
+    await dbUtils.terminateUser(person.id);
     const res = await request(app)
       .get('/api/relationships/matches')
       .set('Authorization', me.token)
@@ -155,7 +155,7 @@ describe('GET api/relationships/matches', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe(codes.GET_MATCHES__SUCCESS.status);
-    // We should not recieve a result for the banned one
+    // We should not recieve a result for the terminated user
     expect(res.body.data.length).toBe(1);
   });
 

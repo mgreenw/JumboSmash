@@ -18,22 +18,22 @@ async function canAccessUserData(
   requestingUserIsAdmin: boolean = false, // This falsy default is very important
 ): Promise<boolean> {
   if (requestedUserId === requestingUserId) return true;
-  const bannedResult = await db.query(`
-    SELECT banned
+  const terminatedResult = await db.query(`
+    SELECT terminated
     FROM classmates
     WHERE id = $1
   `, [requestedUserId]);
 
   // Ensure the user exists
-  const requestedUserExists = bannedResult.rowCount !== 0;
+  const requestedUserExists = terminatedResult.rowCount !== 0;
   if (!requestedUserExists) return false;
 
   // If the requesting user is an admin, they can always have access.
   if (requestingUserIsAdmin) return true;
 
-  // Ensure the user is not banned
-  const requestedUserIsBanned = bannedResult.rows[0].banned === true;
-  if (requestedUserIsBanned) return false;
+  // Ensure the user is not terminated
+  const requestedUserIsTerminated = terminatedResult.rows[0].terminated === true;
+  if (requestedUserIsTerminated) return false;
 
   // If there is no requsting user id, we are done!
   if (!requestingUserId) return true;

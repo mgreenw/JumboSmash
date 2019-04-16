@@ -1,0 +1,1442 @@
+{
+  "custom": {
+    "go.bl.in": { "name": "On the Road", "image": "OnTheRoad" },
+    "go.ph.er": { "name": "IDK" }
+  },
+  "linkdin": {
+    "na.us.ca.49": {
+      "name": "Greater Los Angeles Area",
+      "image": "LosAngeles"
+    },
+    "na.us.ma.7": {
+      "name": "Greater Boston Area",
+      "image": "Boston"
+    },
+    "na.us.ca.84": {
+      "name": "San Francisco Bay Area",
+      "image": "SanFransisco"
+    },
+    "na.us.dc.97": {
+      "name": "Washington D.C. Metro Area",
+      "image": "DC"
+    },
+    "na.us.il.14": {
+      "name": "Greater Chicago Area",
+      "image": "Chicago"
+    },
+    "na.us.mn.512": {
+      "name": "Greater Minneapolis-St. Paul Area",
+      "image": "Minneapolis"
+    },
+    "na.us.ny.70": {
+      "name": "Greater New York City Area",
+      "image": "NewYork"
+    },
+    "na.us.pa.77": {
+      "name": "Greater Philadelphia Area",
+      "image": "Philadelphia"
+    },
+    "na.us.tx.64": {
+      "name": "Austin, Texas Area",
+      "image": "Austin"
+    },
+    "na.us.wa.91": {
+      "name": "Greater Seattle Area",
+      "image": "Seattle"
+    },
+    "af": { "name": "Africa" },
+    "af.dz": {
+      "name": "Algeria"
+    },
+    "af.cm": {
+      "name": "Cameroon"
+    },
+    "af.eg": {
+      "name": "Egypt"
+    },
+    "af.gh": {
+      "name": "Ghana"
+    },
+    "af.ke": {
+      "name": "Kenya"
+    },
+    "af.ma": {
+      "name": "Morocco"
+    },
+    "af.ng": {
+      "name": "Nigeria"
+    },
+    "af.za": {
+      "name": "South Africa"
+    },
+    "af.za.*.5852": {
+      "name": "Cape Town Area, South Africa"
+    },
+    "af.za.*.5855": {
+      "name": "Durban Area, South Africa"
+    },
+    "af.za.*.5862": {
+      "name": "Johannesburg Area, South Africa"
+    },
+    "af.tz": {
+      "name": "Tanzania"
+    },
+    "af.tn": {
+      "name": "Tunisia"
+    },
+    "af.ug": {
+      "name": "Uganda"
+    },
+    "af.zw": {
+      "name": "Zimbabwe"
+    },
+    "aq": {
+      "name": "Antarctica"
+    },
+    "as": {
+      "name": "Asia"
+    },
+    "as.bd": {
+      "name": "Bangladesh"
+    },
+    "as.cn": {
+      "name": "China"
+    },
+    "as.cn.*.8911": {
+      "name": "Beijing City, China"
+    },
+    "as.cn.*.8919": {
+      "name": "Guangzhou, Guangdong, China"
+    },
+    "as.cn.*.8909": {
+      "name": "Shanghai City, China"
+    },
+    "as.cn.*.8910": {
+      "name": "Shenzhen, Guangdong, China"
+    },
+    "as.hk": {
+      "name": "Hong Kong"
+    },
+    "as.in": {
+      "name": "India"
+    },
+    "as.in.an": {
+      "name": "Andaman & Nicobar Islands"
+    },
+    "as.in.ap": {
+      "name": "Andhra Pradesh"
+    },
+    "as.in.ap.6508": {
+      "name": "Hyderabad Area, India"
+    },
+    "as.in.ar": {
+      "name": "Arunachal Pradesh"
+    },
+    "as.in.as": {
+      "name": "Assam"
+    },
+    "as.in.br": {
+      "name": "Bihar"
+    },
+    "as.in.ch": {
+      "name": "Chandigarh"
+    },
+    "as.in.cg": {
+      "name": "Chattisgarh"
+    },
+    "as.in.dn": {
+      "name": "Dadra& Nagar Haveli"
+    },
+    "as.in.dd": {
+      "name": "Daman & Diu"
+    },
+    "as.in.dl": {
+      "name": "Delhi"
+    },
+    "as.in.ga": {
+      "name": "Goa"
+    },
+    "as.in.gj": {
+      "name": "Gujarat"
+    },
+    "as.in.gj.7065": {
+      "name": "Ahmedabad Area, India"
+    },
+    "as.in.gj.6552": {
+      "name": "Vadodara Area, India"
+    },
+    "as.in.hr": {
+      "name": "Haryana"
+    },
+    "as.in.hr.7391": {
+      "name": "Gurgaon, India"
+    },
+    "as.in.hr.7151": {
+      "name": "New Delhi Area, India"
+    },
+    "as.in.hp": {
+      "name": "Himachal Pradesh"
+    },
+    "as.in.jk": {
+      "name": "Jammu & Kashmir"
+    },
+    "as.in.jh": {
+      "name": "Jharkhand"
+    },
+    "as.in.ka": {
+      "name": "Karnataka"
+    },
+    "as.in.ka.7127": {
+      "name": "Bengaluru Area, India"
+    },
+    "as.in.kl": {
+      "name": "Kerala"
+    },
+    "as.in.kl.6477": {
+      "name": "Cochin Area, India"
+    },
+    "as.in.ld": {
+      "name": "Lakshadweep"
+    },
+    "as.in.mp": {
+      "name": "Madhya Pradesh"
+    },
+    "as.in.mp.7382": {
+      "name": "Indore Area, India"
+    },
+    "as.in.mh": {
+      "name": "Maharashtra"
+    },
+    "as.in.mh.7150": {
+      "name": "Mumbai Area, India"
+    },
+    "as.in.mh.6751": {
+      "name": "Nagpur Area, India"
+    },
+    "as.in.mh.7350": {
+      "name": "Pune Area, India"
+    },
+    "as.in.mn": {
+      "name": "Manipur"
+    },
+    "as.in.ml": {
+      "name": "Meghalaya"
+    },
+    "as.in.mz": {
+      "name": "Mizoram"
+    },
+    "as.in.nl": {
+      "name": "Nagaland"
+    },
+    "as.in.or": {
+      "name": "Orissa"
+    },
+    "as.in.py": {
+      "name": "Pondicherry"
+    },
+    "as.in.pb": {
+      "name": "Punjab"
+    },
+    "as.in.pb.6879": {
+      "name": "Chandigarh Area, India"
+    },
+    "as.in.rj": {
+      "name": "Rajasthan"
+    },
+    "as.in.rj.7287": {
+      "name": "Jaipur Area, India"
+    },
+    "as.in.sk": {
+      "name": "Sikkim"
+    },
+    "as.in.tn": {
+      "name": "Tamil Nadu"
+    },
+    "as.in.tn.6891": {
+      "name": "Chennai Area, India"
+    },
+    "as.in.tn.6472": {
+      "name": "Coimbatore Area, India"
+    },
+    "as.in.tr": {
+      "name": "Tripura"
+    },
+    "as.in.up": {
+      "name": "Uttar Pradesh"
+    },
+    "as.in.up.7093": {
+      "name": "Lucknow Area, India"
+    },
+    "as.in.up.7392": {
+      "name": "Noida Area, India"
+    },
+    "as.in.ul": {
+      "name": "Uttarakhand"
+    },
+    "as.in.wb": {
+      "name": "West Bengal"
+    },
+    "as.in.wb.7003": {
+      "name": "Kolkata Area, India"
+    },
+    "as.id": {
+      "name": "Indonesia"
+    },
+    "as.id.*.8594": {
+      "name": "Greater Jakarta Area, Indonesia"
+    },
+    "as.jp": {
+      "name": "Japan"
+    },
+    "as.kr": {
+      "name": "Korea"
+    },
+    "as.kr.*.7700": {
+      "name": "Gangnam-gu, Seoul, Korea"
+    },
+    "as.my": {
+      "name": "Malaysia"
+    },
+    "as.my.*.7960": {
+      "name": "Kuala Lumpur, Malaysia"
+    },
+    "as.my.*.7945": {
+      "name": "Selangor, Malaysia"
+    },
+    "as.np": {
+      "name": "Nepal"
+    },
+    "as.ph": {
+      "name": "Philippines"
+    },
+    "as.sg": {
+      "name": "Singapore"
+    },
+    "as.lk": {
+      "name": "Sri Lanka"
+    },
+    "as.tw": {
+      "name": "Taiwan"
+    },
+    "as.th": {
+      "name": "Thailand"
+    },
+    "as.vn": {
+      "name": "Vietnam"
+    },
+    "eu": {
+      "name": "Europe"
+    },
+    "eu.at": {
+      "name": "Austria"
+    },
+    "eu.be": {
+      "name": "Belgium"
+    },
+    "eu.be.*.4918": {
+      "name": "Antwerp Area, Belgium"
+    },
+    "eu.be.*.4920": {
+      "name": "Brussels Area, Belgium"
+    },
+    "eu.bg": {
+      "name": "Bulgaria"
+    },
+    "eu.hr": {
+      "name": "Croatia"
+    },
+    "eu.cz": {
+      "name": "Czech Republic"
+    },
+    "eu.dk": {
+      "name": "Denmark"
+    },
+    "eu.dk.*.5038": {
+      "name": "Copenhagen Area, Denmark"
+    },
+    "eu.dk.*.5041": {
+      "name": "Odense Area, Denmark"
+    },
+    "eu.dk.*.5044": {
+      "name": "Ålborg Area, Denmark"
+    },
+    "eu.dk.*.5045": {
+      "name": "Århus Area, Denmark"
+    },
+    "eu.fi": {
+      "name": "Finland"
+    },
+    "eu.fr": {
+      "name": "France"
+    },
+    "eu.fr.*.5205": {
+      "name": "Lille Area, France"
+    },
+    "eu.fr.*.5210": {
+      "name": "Lyon Area, France"
+    },
+    "eu.fr.*.5211": {
+      "name": "Marseille Area, France"
+    },
+    "eu.fr.*.5221": {
+      "name": "Nice Area, France"
+    },
+    "eu.fr.*.5227": {
+      "name": "Paris Area, France"
+    },
+    "eu.fr.*.5249": {
+      "name": "Toulouse Area, France"
+    },
+    "eu.de": {
+      "name": "Germany"
+    },
+    "eu.de.*.4953": {
+      "name": "Cologne Area, Germany"
+    },
+    "eu.de.*.4966": {
+      "name": "Frankfurt Am Main Area, Germany"
+    },
+    "eu.de.*.5000": {
+      "name": "Munich Area, Germany"
+    },
+    "eu.gr": {
+      "name": "Greece"
+    },
+    "eu.hu": {
+      "name": "Hungary"
+    },
+    "eu.ie": {
+      "name": "Ireland"
+    },
+    "eu.it": {
+      "name": "Italy"
+    },
+    "eu.it.*.5587": {
+      "name": "Bologna Area, Italy"
+    },
+    "eu.it.*.5616": {
+      "name": "Milan Area, Italy"
+    },
+    "eu.it.*.5636": {
+      "name": "Rome Area, Italy"
+    },
+    "eu.it.*.5652": {
+      "name": "Turin Area, Italy"
+    },
+    "eu.it.*.5657": {
+      "name": "Venice Area, Italy"
+    },
+    "eu.lt": {
+      "name": "Lithuania"
+    },
+    "eu.nl": {
+      "name": "Netherlands"
+    },
+    "eu.nl.*.5663": {
+      "name": "Almere Stad Area, Netherlands"
+    },
+    "eu.nl.*.5664": {
+      "name": "Amsterdam Area, Netherlands"
+    },
+    "eu.nl.*.5665": {
+      "name": "Apeldoorn Area, Netherlands"
+    },
+    "eu.nl.*.5906": {
+      "name": "Breda Area, Netherlands"
+    },
+    "eu.nl.*.5668": {
+      "name": "Eindhoven Area, Netherlands"
+    },
+    "eu.nl.*.5669": {
+      "name": "Enschede Area, Netherlands"
+    },
+    "eu.nl.*.5673": {
+      "name": "Groningen Area, Netherlands"
+    },
+    "eu.nl.*.5681": {
+      "name": "Nijmegen Area, Netherlands"
+    },
+    "eu.nl.*.5908": {
+      "name": "Rotterdam Area, Netherlands"
+    },
+    "eu.nl.*.5688": {
+      "name": "The Hague Area, Netherlands"
+    },
+    "eu.nl.*.5907": {
+      "name": "Tilburg Area, Netherlands"
+    },
+    "eu.nl.*.5690": {
+      "name": "Utrecht Area, Netherlands"
+    },
+    "eu.no": {
+      "name": "Norway"
+    },
+    "eu.no.*.5712": {
+      "name": "Oslo Area, Norway"
+    },
+    "eu.pl": {
+      "name": "Poland"
+    },
+    "eu.pt": {
+      "name": "Portugal"
+    },
+    "eu.pt.*.7405": {
+      "name": "Lisbon Area, Portugal"
+    },
+    "eu.pt.*.7397": {
+      "name": "Porto Area, Portugal"
+    },
+    "eu.ro": {
+      "name": "Romania"
+    },
+    "eu.ru": {
+      "name": "Russian Federation"
+    },
+    "eu.rs": {
+      "name": "Serbia"
+    },
+    "eu.sk": {
+      "name": "Slovak Republic"
+    },
+    "eu.es": {
+      "name": "Spain"
+    },
+    "eu.es.*.5064": {
+      "name": "Barcelona Area, Spain"
+    },
+    "eu.es.*.5113": {
+      "name": "Madrid Area, Spain"
+    },
+    "eu.se": {
+      "name": "Sweden"
+    },
+    "eu.ch": {
+      "name": "Switzerland"
+    },
+    "eu.ch.*.4930": {
+      "name": "Geneva Area, Switzerland"
+    },
+    "eu.ch.*.4938": {
+      "name": "Zürich Area, Switzerland"
+    },
+    "eu.tr": {
+      "name": "Turkey"
+    },
+    "eu.tr.*.7585": {
+      "name": "Istanbul, Turkey"
+    },
+    "eu.ua": {
+      "name": "Ukraine"
+    },
+    "eu.gb": {
+      "name": "United Kingdom"
+    },
+    "eu.gb.*.4544": {
+      "name": "Birmingham, United Kingdom"
+    },
+    "eu.gb.*.4550": {
+      "name": "Brighton, United Kingdom"
+    },
+    "eu.gb.*.4552": {
+      "name": "Bristol, United Kingdom"
+    },
+    "eu.gb.*.4555": {
+      "name": "Cambridge, United Kingdom"
+    },
+    "eu.gb.*.4558": {
+      "name": "Chelmsford, United Kingdom"
+    },
+    "eu.gb.*.4562": {
+      "name": "Coventry, United Kingdom"
+    },
+    "eu.gb.*.4574": {
+      "name": "Edinburgh, United Kingdom"
+    },
+    "eu.gb.*.4579": {
+      "name": "Glasgow, United Kingdom"
+    },
+    "eu.gb.*.4580": {
+      "name": "Gloucester, United Kingdom"
+    },
+    "eu.gb.*.4582": {
+      "name": "Guildford, United Kingdom"
+    },
+    "eu.gb.*.4583": {
+      "name": "Harrow, United Kingdom"
+    },
+    "eu.gb.*.4586": {
+      "name": "Hemel Hempstead, United Kingdom"
+    },
+    "eu.gb.*.4597": {
+      "name": "Kingston upon Thames, United Kingdom"
+    },
+    "eu.gb.*.4606": {
+      "name": "Leeds, United Kingdom"
+    },
+    "eu.gb.*.4603": {
+      "name": "Leicester, United Kingdom"
+    },
+    "eu.gb.*.4573": {
+      "name": "London, United Kingdom"
+    },
+    "eu.gb.*.4608": {
+      "name": "Manchester, United Kingdom"
+    },
+    "eu.gb.*.4610": {
+      "name": "Milton Keynes, United Kingdom"
+    },
+    "eu.gb.*.4612": {
+      "name": "Newcastle upon Tyne, United Kingdom"
+    },
+    "eu.gb.*.4614": {
+      "name": "Northampton, United Kingdom"
+    },
+    "eu.gb.*.4613": {
+      "name": "Nottingham, United Kingdom"
+    },
+    "eu.gb.*.4618": {
+      "name": "Oxford, United Kingdom"
+    },
+    "eu.gb.*.4623": {
+      "name": "Portsmouth, United Kingdom"
+    },
+    "eu.gb.*.4625": {
+      "name": "Reading, United Kingdom"
+    },
+    "eu.gb.*.4626": {
+      "name": "Redhill, United Kingdom"
+    },
+    "eu.gb.*.4628": {
+      "name": "Sheffield, United Kingdom"
+    },
+    "eu.gb.*.4632": {
+      "name": "Slough, United Kingdom"
+    },
+    "eu.gb.*.4635": {
+      "name": "Southampton, United Kingdom"
+    },
+    "eu.gb.*.4644": {
+      "name": "Tonbridge, United Kingdom"
+    },
+    "eu.gb.*.4648": {
+      "name": "Twickenham, United Kingdom"
+    },
+    "la": {
+      "name": "Latin America"
+    },
+    "la.ar": {
+      "name": "Argentina"
+    },
+    "la.bo": {
+      "name": "Bolivia"
+    },
+    "la.br": {
+      "name": "Brazil"
+    },
+    "la.br.ac": {
+      "name": "Acre"
+    },
+    "la.br.al": {
+      "name": "Alagoas"
+    },
+    "la.br.ap": {
+      "name": "Amapá"
+    },
+    "la.br.am": {
+      "name": "Amazonas"
+    },
+    "la.br.ba": {
+      "name": "Bahia"
+    },
+    "la.br.ce": {
+      "name": "Ceará"
+    },
+    "la.br.df": {
+      "name": "Distrito Federal"
+    },
+    "la.br.es": {
+      "name": "Espírito Santo"
+    },
+    "la.br.go": {
+      "name": "Goiás"
+    },
+    "la.br.ma": {
+      "name": "Maranhão"
+    },
+    "la.br.mt": {
+      "name": "Mato Grosso"
+    },
+    "la.br.ms": {
+      "name": "Mato Grosso do Sul"
+    },
+    "la.br.mg": {
+      "name": "Minas Gerais"
+    },
+    "la.br.mg.6156": {
+      "name": "Belo Horizonte Area, Brazil"
+    },
+    "la.br.pr": {
+      "name": "Paraná"
+    },
+    "la.br.pr.6399": {
+      "name": "Curitiba Area, Brazil"
+    },
+    "la.br.pb": {
+      "name": "Paraíba"
+    },
+    "la.br.pa": {
+      "name": "Pará"
+    },
+    "la.br.pe": {
+      "name": "Pernambuco"
+    },
+    "la.br.pi": {
+      "name": "Piauí"
+    },
+    "la.br.rn": {
+      "name": "Rio Grande do Norte"
+    },
+    "la.br.rs": {
+      "name": "Rio Grande do Sul"
+    },
+    "la.br.rs.6467": {
+      "name": "Porto Alegre Area, Brazil"
+    },
+    "la.br.rj": {
+      "name": "Rio de Janeiro"
+    },
+    "la.br.rj.6034": {
+      "name": "Rio de Janeiro Area, Brazil"
+    },
+    "la.br.ro": {
+      "name": "Rondônia"
+    },
+    "la.br.rr": {
+      "name": "Roraima"
+    },
+    "la.br.sc": {
+      "name": "Santa Catarina"
+    },
+    "la.br.se": {
+      "name": "Sergipe"
+    },
+    "la.br.sp": {
+      "name": "São Paulo"
+    },
+    "la.br.sp.6104": {
+      "name": "Campinas Area, Brazil"
+    },
+    "la.br.sp.6368": {
+      "name": "São Paulo Area, Brazil"
+    },
+    "la.br.to": {
+      "name": "Tocantins"
+    },
+    "la.cl": {
+      "name": "Chile"
+    },
+    "la.co": {
+      "name": "Colombia"
+    },
+    "la.cr": {
+      "name": "Costa Rica"
+    },
+    "la.do": {
+      "name": "Dominican Republic"
+    },
+    "la.ec": {
+      "name": "Ecuador"
+    },
+    "la.gt": {
+      "name": "Guatemala"
+    },
+    "la.mx": {
+      "name": "Mexico"
+    },
+    "la.mx.*.5921": {
+      "name": "Mexico City Area, Mexico"
+    },
+    "la.mx.*.5955": {
+      "name": "Naucalpan de Juárez Area, Mexico"
+    },
+    "la.pa": {
+      "name": "Panama"
+    },
+    "la.pe": {
+      "name": "Peru"
+    },
+    "la.pr": {
+      "name": "Puerto Rico"
+    },
+    "la.tt": {
+      "name": "Trinidad and Tobago"
+    },
+    "la.uy": {
+      "name": "Uruguay"
+    },
+    "la.ve": {
+      "name": "Venezuela"
+    },
+    "me": {
+      "name": "Middle East"
+    },
+    "me.bh": {
+      "name": "Bahrain"
+    },
+    "me.il": {
+      "name": "Israel"
+    },
+    "me.jo": {
+      "name": "Jordan"
+    },
+    "me.kw": {
+      "name": "Kuwait"
+    },
+    "me.pk": {
+      "name": "Pakistan"
+    },
+    "me.qa": {
+      "name": "Qatar"
+    },
+    "me.sa": {
+      "name": "Saudi Arabia"
+    },
+    "me.ae": {
+      "name": "United Arab Emirates"
+    },
+    "na": {
+      "name": "North America"
+    },
+    "na.ca": {
+      "name": "Canada"
+    },
+    "na.ca.ab": {
+      "name": "Alberta"
+    },
+    "na.ca.ab.4882": {
+      "name": "Calgary, Canada Area"
+    },
+    "na.ca.ab.4872": {
+      "name": "Edmonton, Canada Area"
+    },
+    "na.ca.bc": {
+      "name": "British Columbia"
+    },
+    "na.ca.bc.4873": {
+      "name": "British Columbia, Canada"
+    },
+    "na.ca.bc.4880": {
+      "name": "Vancouver, Canada Area"
+    },
+    "na.ca.mb": {
+      "name": "Manitoba"
+    },
+    "na.ca.nb": {
+      "name": "New Brunswick"
+    },
+    "na.ca.nl": {
+      "name": "Newfoundland And Labrador"
+    },
+    "na.ca.nt": {
+      "name": "Northwest Territories"
+    },
+    "na.ca.ns": {
+      "name": "Nova Scotia"
+    },
+    "na.ca.ns.4874": {
+      "name": "Halifax, Canada Area"
+    },
+    "na.ca.nu": {
+      "name": "Nunavut"
+    },
+    "na.ca.on": {
+      "name": "Ontario"
+    },
+    "na.ca.on.4865": {
+      "name": "Kitchener, Canada Area"
+    },
+    "na.ca.on.4869": {
+      "name": "London, Canada Area"
+    },
+    "na.ca.on.4864": {
+      "name": "Ontario, Canada"
+    },
+    "na.ca.on.4876": {
+      "name": "Toronto, Canada Area"
+    },
+    "na.ca.pe": {
+      "name": "Prince Edward Island"
+    },
+    "na.ca.qc": {
+      "name": "Quebec"
+    },
+    "na.ca.qc.4863": {
+      "name": "Montreal, Canada Area"
+    },
+    "na.ca.qc.4884": {
+      "name": "Ottawa, Canada Area"
+    },
+    "na.ca.qc.4875": {
+      "name": "Quebec, Canada"
+    },
+    "na.ca.qc.4866": {
+      "name": "Winnipeg, Canada Area"
+    },
+    "na.ca.sk": {
+      "name": "Saskatchewan"
+    },
+    "na.ca.yt": {
+      "name": "Yukon"
+    },
+    "na.us": {
+      "name": "United States"
+    },
+    "na.us.al": {
+      "name": "Alabama"
+    },
+    "na.us.al.100": {
+      "name": "Birmingham, Alabama Area"
+    },
+    "na.us.ak": {
+      "name": "Alaska"
+    },
+    "na.us.ak.38": {
+      "name": "Anchorage, Alaska Area"
+    },
+    "na.us.az": {
+      "name": "Arizona"
+    },
+    "na.us.az.620": {
+      "name": "Phoenix, Arizona Area"
+    },
+    "na.us.az.852": {
+      "name": "Tucson, Arizona Area"
+    },
+    "na.us.ar": {
+      "name": "Arkansas"
+    },
+    "na.us.ar.440": {
+      "name": "Little Rock, Arkansas Area"
+    },
+    "na.us.ca": {
+      "name": "California"
+    },
+    "na.us.ca.284": {
+      "name": "Fresno, California Area"
+    },
+
+    "na.us.ca.732": {
+      "name": "Greater San Diego Area"
+    },
+    "na.us.ca.51": {
+      "name": "Orange County, California Area"
+    },
+    "na.us.ca.82": {
+      "name": "Sacramento, California Area"
+    },
+    "na.us.ca.712": {
+      "name": "Salinas, California Area"
+    },
+    "na.us.ca.748": {
+      "name": "Santa Barbara, California Area"
+    },
+    "na.us.ca.812": {
+      "name": "Stockton, California Area"
+    },
+    "na.us.co": {
+      "name": "Colorado"
+    },
+    "na.us.co.172": {
+      "name": "Colorado Springs, Colorado Area"
+    },
+    "na.us.co.267": {
+      "name": "Fort Collins, Colorado Area"
+    },
+    "na.us.co.34": {
+      "name": "Greater Denver Area"
+    },
+    "na.us.ct": {
+      "name": "Connecticut"
+    },
+    "na.us.ct.327": {
+      "name": "Hartford, Connecticut Area"
+    },
+    "na.us.ct.552": {
+      "name": "New London/Norwich, Connecticut Area"
+    },
+    "na.us.de": {
+      "name": "Delaware"
+    },
+    "na.us.dc": {
+      "name": "District Of Columbia"
+    },
+
+    "na.us.fl": {
+      "name": "Florida"
+    },
+    "na.us.fl.202": {
+      "name": "Daytona Beach, Florida Area"
+    },
+    "na.us.fl.270": {
+      "name": "Fort Myers, Florida Area"
+    },
+    "na.us.fl.271": {
+      "name": "Fort Pierce, Florida Area"
+    },
+    "na.us.fl.290": {
+      "name": "Gainesville, Florida Area"
+    },
+    "na.us.fl.398": {
+      "name": "Lakeland, Florida Area"
+    },
+    "na.us.fl.490": {
+      "name": "Melbourne, Florida Area"
+    },
+    "na.us.fl.56": {
+      "name": "Miami/Fort Lauderdale Area",
+      "Image": "Miami"
+    },
+    "na.us.fl.596": {
+      "name": "Orlando, Florida Area"
+    },
+    "na.us.fl.751": {
+      "name": "Sarasota, Florida Area"
+    },
+    "na.us.fl.828": {
+      "name": "Tampa/St. Petersburg, Florida Area"
+    },
+    "na.us.fl.896": {
+      "name": "West Palm Beach, Florida Area"
+    },
+    "na.us.ga": {
+      "name": "Georgia"
+    },
+    "na.us.ga.52": {
+      "name": "Greater Atlanta Area"
+    },
+    "na.us.ga.359": {
+      "name": "Jacksonville, Florida Area"
+    },
+    "na.us.ga.824": {
+      "name": "Tallahassee, Florida Area"
+    },
+    "na.us.hi": {
+      "name": "Hawaii"
+    },
+    "na.us.hi.332": {
+      "name": "Hawaiian Islands"
+    },
+    "na.us.id": {
+      "name": "Idaho"
+    },
+    "na.us.id.108": {
+      "name": "Boise, Idaho Area"
+    },
+    "na.us.il": {
+      "name": "Illinois"
+    },
+
+    "na.us.il.612": {
+      "name": "Peoria, Illinois Area"
+    },
+    "na.us.il.140": {
+      "name": "Urbana-Champaign, Illinois Area"
+    },
+    "na.us.in": {
+      "name": "Indiana"
+    },
+    "na.us.in.244": {
+      "name": "Evansville, Indiana Area"
+    },
+    "na.us.in.348": {
+      "name": "Indianapolis, Indiana Area"
+    },
+    "na.us.ia": {
+      "name": "Iowa"
+    },
+    "na.us.ks": {
+      "name": "Kansas"
+    },
+    "na.us.ks.904": {
+      "name": "Wichita, Kansas Area"
+    },
+    "na.us.ky": {
+      "name": "Kentucky"
+    },
+    "na.us.ky.428": {
+      "name": "Lexington, Kentucky Area"
+    },
+    "na.us.ky.452": {
+      "name": "Louisville, Kentucky Area"
+    },
+    "na.us.la": {
+      "name": "Louisiana"
+    },
+    "na.us.me": {
+      "name": "Maine"
+    },
+    "na.us.me.640": {
+      "name": "Portland, Maine Area"
+    },
+    "na.us.md": {
+      "name": "Maryland"
+    },
+    "na.us.md.7416": {
+      "name": "Baltimore, Maryland Area"
+    },
+    "na.us.ma": {
+      "name": "Massachusetts"
+    },
+
+    "na.us.mi": {
+      "name": "Michigan"
+    },
+    "na.us.mi.276": {
+      "name": "Fort Wayne, Indiana Area"
+    },
+    "na.us.mi.35": {
+      "name": "Greater Detroit Area"
+    },
+    "na.us.mi.300": {
+      "name": "Greater Grand Rapids, Michigan Area"
+    },
+    "na.us.mi.372": {
+      "name": "Kalamazoo, Michigan Area"
+    },
+    "na.us.mi.404": {
+      "name": "Lansing, Michigan Area"
+    },
+    "na.us.mi.696": {
+      "name": "Saginaw, Michigan Area"
+    },
+    "na.us.mn": {
+      "name": "Minnesota"
+    },
+
+    "na.us.ms": {
+      "name": "Mississippi"
+    },
+    "na.us.ms.76": {
+      "name": "Baton Rouge, Louisiana Area"
+    },
+    "na.us.ms.556": {
+      "name": "Greater New Orleans Area"
+    },
+    "na.us.ms.356": {
+      "name": "Jackson, Mississippi Area"
+    },
+    "na.us.ms.516": {
+      "name": "Mobile, Alabama Area"
+    },
+    "na.us.mo": {
+      "name": "Missouri"
+    },
+    "na.us.mo.174": {
+      "name": "Columbia, Missouri Area"
+    },
+    "na.us.mo.196": {
+      "name": "Davenport, Iowa Area"
+    },
+    "na.us.mo.212": {
+      "name": "Des Moines, Iowa Area"
+    },
+    "na.us.mo.258": {
+      "name": "Fayetteville, Arkansas Area"
+    },
+    "na.us.mo.704": {
+      "name": "Greater St. Louis Area"
+    },
+    "na.us.mo.376": {
+      "name": "Kansas City, Missouri Area"
+    },
+    "na.us.mo.792": {
+      "name": "Springfield, Missouri Area"
+    },
+    "na.us.mt": {
+      "name": "Montana"
+    },
+    "na.us.ne": {
+      "name": "Nebraska"
+    },
+    "na.us.ne.592": {
+      "name": "Greater Omaha Area"
+    },
+    "na.us.ne.436": {
+      "name": "Lincoln, Nebraska Area"
+    },
+    "na.us.nv": {
+      "name": "Nevada"
+    },
+    "na.us.nv.412": {
+      "name": "Las Vegas, Nevada Area"
+    },
+    "na.us.nv.672": {
+      "name": "Reno, Nevada Area"
+    },
+    "na.us.nh": {
+      "name": "New Hampshire"
+    },
+    "na.us.nj": {
+      "name": "New Jersey"
+    },
+    "na.us.nm": {
+      "name": "New Mexico"
+    },
+    "na.us.nm.20": {
+      "name": "Albuquerque, New Mexico Area"
+    },
+    "na.us.ny": {
+      "name": "New York"
+    },
+    "na.us.ny.16": {
+      "name": "Albany, New York Area"
+    },
+    "na.us.ny.128": {
+      "name": "Buffalo/Niagara, New York Area"
+    },
+
+    "na.us.ny.684": {
+      "name": "Rochester, New York Area"
+    },
+    "na.us.ny.816": {
+      "name": "Syracuse, New York Area"
+    },
+    "na.us.nc": {
+      "name": "North Carolina"
+    },
+    "na.us.nc.152": {
+      "name": "Charlotte, North Carolina Area"
+    },
+    "na.us.nc.664": {
+      "name": "Raleigh-Durham, North Carolina Area"
+    },
+    "na.us.nc.920": {
+      "name": "Wilmington, North Carolina Area"
+    },
+    "na.us.nd": {
+      "name": "North Dakota"
+    },
+    "na.us.oh": {
+      "name": "Ohio"
+    },
+    "na.us.oh.21": {
+      "name": "Cincinnati Area"
+    },
+    "na.us.oh.28": {
+      "name": "Cleveland/Akron, Ohio Area"
+    },
+    "na.us.oh.184": {
+      "name": "Columbus, Ohio Area"
+    },
+    "na.us.oh.200": {
+      "name": "Dayton, Ohio Area"
+    },
+    "na.us.oh.840": {
+      "name": "Toledo, Ohio Area"
+    },
+    "na.us.ok": {
+      "name": "Oklahoma"
+    },
+    "na.us.ok.588": {
+      "name": "Oklahoma City, Oklahoma Area"
+    },
+    "na.us.ok.856": {
+      "name": "Tulsa, Oklahoma Area"
+    },
+    "na.us.or": {
+      "name": "Oregon"
+    },
+    "na.us.or.240": {
+      "name": "Eugene, Oregon Area"
+    },
+    "na.us.or.79": {
+      "name": "Portland, Oregon Area"
+    },
+    "na.us.pa": {
+      "name": "Pennsylvania"
+    },
+    "na.us.pa.24": {
+      "name": "Allentown, Pennsylvania Area"
+    },
+
+    "na.us.pa.628": {
+      "name": "Greater Pittsburgh Area"
+    },
+    "na.us.pa.324": {
+      "name": "Harrisburg, Pennsylvania Area"
+    },
+    "na.us.pa.96": {
+      "name": "Ithaca, New York Area"
+    },
+    "na.us.pa.400": {
+      "name": "Lancaster, Pennsylvania Area"
+    },
+    "na.us.pa.756": {
+      "name": "Scranton, Pennsylvania Area"
+    },
+    "na.us.ri": {
+      "name": "Rhode Island"
+    },
+    "na.us.ri.648": {
+      "name": "Providence, Rhode Island Area"
+    },
+    "na.us.sc": {
+      "name": "South Carolina"
+    },
+    "na.us.sc.60": {
+      "name": "Augusta, Georgia Area"
+    },
+    "na.us.sc.144": {
+      "name": "Charleston, South Carolina Area"
+    },
+    "na.us.sc.176": {
+      "name": "Columbia, South Carolina Area"
+    },
+    "na.us.sc.316": {
+      "name": "Greenville, South Carolina Area"
+    },
+    "na.us.sc.752": {
+      "name": "Savannah, Georgia Area"
+    },
+    "na.us.sd": {
+      "name": "South Dakota"
+    },
+    "na.us.sd.776": {
+      "name": "Sioux Falls, South Dakota Area"
+    },
+    "na.us.tn": {
+      "name": "Tennessee"
+    },
+    "na.us.tn.48": {
+      "name": "Asheville, North Carolina Area"
+    },
+    "na.us.tn.156": {
+      "name": "Chattanooga, Tennessee Area"
+    },
+    "na.us.tn.492": {
+      "name": "Greater Memphis Area"
+    },
+    "na.us.tn.536": {
+      "name": "Greater Nashville Area"
+    },
+    "na.us.tn.344": {
+      "name": "Huntsville, Alabama Area"
+    },
+    "na.us.tn.366": {
+      "name": "Johnson City, Tennessee Area"
+    },
+    "na.us.tn.384": {
+      "name": "Knoxville, Tennessee Area"
+    },
+    "na.us.tx": {
+      "name": "Texas"
+    },
+
+    "na.us.tx.31": {
+      "name": "Dallas/Fort Worth Area"
+    },
+    "na.us.tx.232": {
+      "name": "El Paso, Texas Area"
+    },
+    "na.us.tx.42": {
+      "name": "Houston, Texas Area"
+    },
+    "na.us.tx.724": {
+      "name": "San Antonio, Texas Area"
+    },
+    "na.us.ut": {
+      "name": "Utah"
+    },
+    "na.us.ut.716": {
+      "name": "Greater Salt Lake City Area"
+    },
+    "na.us.ut.652": {
+      "name": "Provo, Utah Area"
+    },
+    "na.us.vt": {
+      "name": "Vermont"
+    },
+    "na.us.vt.130": {
+      "name": "Burlington, Vermont Area"
+    },
+    "na.us.vt.800": {
+      "name": "Springfield, Massachusetts Area"
+    },
+    "na.us.va": {
+      "name": "Virginia"
+    },
+    "na.us.va.154": {
+      "name": "Charlottesville, Virginia Area"
+    },
+    "na.us.va.312": {
+      "name": "Greensboro/Winston-Salem, North Carolina Area"
+    },
+    "na.us.va.572": {
+      "name": "Norfolk, Virginia Area"
+    },
+    "na.us.va.676": {
+      "name": "Richmond, Virginia Area"
+    },
+    "na.us.va.680": {
+      "name": "Roanoke, Virginia Area"
+    },
+    "na.us.wa": {
+      "name": "Washington"
+    },
+
+    "na.us.wa.784": {
+      "name": "Spokane, Washington Area"
+    },
+    "na.us.wv": {
+      "name": "West Virginia"
+    },
+    "na.us.wi": {
+      "name": "Wisconsin"
+    },
+    "na.us.wi.63": {
+      "name": "Greater Milwaukee Area"
+    },
+    "na.us.wi.308": {
+      "name": "Green Bay, Wisconsin Area"
+    },
+    "na.us.wi.472": {
+      "name": "Madison, Wisconsin Area"
+    },
+    "na.us.wi.46": {
+      "name": "Oshkosh, Wisconsin Area"
+    },
+    "na.us.wi.688": {
+      "name": "Rockford, Illinois Area"
+    },
+    "na.us.wy": {
+      "name": "Wyoming"
+    },
+    "oc": {
+      "name": "Oceania"
+    },
+    "oc.au": {
+      "name": "Australia"
+    },
+    "oc.au.*.4886": {
+      "name": "Adelaide Area, Australia"
+    },
+    "oc.au.*.4909": {
+      "name": "Brisbane Area, Australia"
+    },
+    "oc.au.*.4893": {
+      "name": "Canberra Area, Australia"
+    },
+    "oc.au.*.4900": {
+      "name": "Melbourne Area, Australia"
+    },
+    "oc.au.*.4905": {
+      "name": "Perth Area, Australia"
+    },
+    "oc.au.*.4910": {
+      "name": "Sydney Area, Australia"
+    },
+    "oc.nz": {
+      "name": "New Zealand"
+    }
+  }
+}
