@@ -15,7 +15,7 @@
     },
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 11,
+      "versionCode": 12,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
