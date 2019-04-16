@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 type BadgeProps = {
-  badgeContainerStyle: ?StyleSheet.Styles
+  badgeContainerStyle?: StyleSheet.Styles
 };
 
 const Badge = ({ badgeContainerStyle }: BadgeProps) => {
