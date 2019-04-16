@@ -7,8 +7,8 @@
  */
 
 const fs = require('fs');
-const LOCATIONS = require('../data/Locations.json');
-const LOCATION_EDITS = require('../data/LocationEdits.json');
+const LOCATIONS = require('../data/Locations/Locations.json');
+const LOCATION_EDITS = require('../data/Locations/LocationEdits.json');
 
 function writeToFile(content) {
   fs.writeFileSync('./data/FormatedLocations.json', JSON.stringify(content));
