@@ -9,6 +9,12 @@ import _ from 'lodash';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 
+import type { Location } from 'mobile/data/Locations';
+import {
+  AlphabeticalLocations,
+  PrioritizedAlphabeticalLocations as GenesisLocations
+} from 'mobile/data/Locations';
+
 import type {
   NavigationEventPayload,
   NavigationEventSubscription
