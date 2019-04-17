@@ -71,12 +71,8 @@ const verify = (
       if (token) {
         AsyncStorage.multiSet([['token', token]]).then(errors => {
           if (errors) {
-<<<<<<< HEAD
-            Sentry.captureException(new Error(errors));
-=======
             const [error] = errors;
             Sentry.captureException(error);
->>>>>>> b0621a002eaef7c5f4ae8dc4b7de5e60a9e5b0c4
           }
           dispatch(complete(response));
         });
