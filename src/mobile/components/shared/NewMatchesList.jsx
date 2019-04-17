@@ -104,7 +104,12 @@ class NewMatchesList extends React.Component<Props> {
               })}
             />
           )}
-          <Text style={[textStyles.subtitle1Style, { paddingLeft: 20 }]}>
+          <Text
+            style={[
+              textStyles.subtitle1Style,
+              { paddingLeft: 20, paddingBottom: 10 }
+            ]}
+          >
             Messages
           </Text>
         </View>

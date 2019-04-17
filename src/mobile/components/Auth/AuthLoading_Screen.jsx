@@ -212,8 +212,6 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       })
       .catch(e => {
         Sentry.captureException(e);
-
-        DevTesting.log('Error importing fonts:', e);
       });
   }
 
@@ -227,7 +225,9 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             this.setState({ isReady: true });
             this._loadAssets();
           }}
-          onError={console.warn}
+          onError={err => {
+            Sentry.captureException(err);
+          }}
           autoHideSplash={false}
         />
       );
