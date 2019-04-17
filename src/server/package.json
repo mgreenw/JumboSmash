@@ -1,6 +1,6 @@
 {
   "name": "jumbosmash-server",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.15.0",
@@ -78,6 +78,9 @@
       "./scripts/jest-setup.js"
     ],
     "testEnvironment": "node",
-    "testPathIgnorePatterns": ["/node_modules/", "/config/"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/config/"
+    ]
   }
 }
