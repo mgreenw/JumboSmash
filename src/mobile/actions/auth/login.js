@@ -71,9 +71,7 @@ const verify = (
       if (token) {
         AsyncStorage.multiSet([['token', token]]).then(errors => {
           if (errors) {
-            Sentry.captureException(
-              new Error(`Error in storing token: ${JSON.stringify(errors)}`)
-            );
+            Sentry.captureException(new Error(errors));
           }
           dispatch(complete(response));
         });

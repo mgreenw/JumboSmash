@@ -13,10 +13,7 @@ import type {
   LoginCompleted_Action,
   LoginFailed_Action
 } from 'mobile/actions/auth/login';
-import type {
-  LogoutInitiated_Action,
-  LogoutCompleted_Action
-} from 'mobile/actions/auth/logout';
+import type { Logout_Action } from 'mobile/reducers/auth/logout';
 import type {
   LoadAuthCompleted_Action,
   LoadAuthInitiated_Action
@@ -127,6 +124,7 @@ import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
+import LogoutReducer from './auth/logout';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -470,9 +468,8 @@ export type ReduxState = {|
 export type Action =
   | LoginInitiated_Action
   | LoginCompleted_Action
-  | LogoutInitiated_Action
-  | LogoutCompleted_Action
   | LoginFailed_Action
+  | Logout_Action
   | LoadAuthInitiated_Action
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
@@ -537,7 +534,7 @@ export type GetState = () => ReduxState;
 export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
-const defaultState: ReduxState = {
+export const initialState: ReduxState = {
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   numBadges: 0,
   token: null,
@@ -857,7 +854,7 @@ function resetInactiveScenes(
 }
 
 export default function rootReducer(
-  state: ReduxState = defaultState,
+  state: ReduxState = initialState,
   action: Action
 ): ReduxState {
   // Sanity check for our actions abiding FSA format.
@@ -903,26 +900,16 @@ export default function rootReducer(
       };
     }
 
-    // LOGOUT:
-    case 'LOGOUT_INITIATED': {
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          logout: true
-        }
-      };
+    case 'LOGOUT__INITIATED': {
+      return LogoutReducer.initiate(state, action);
     }
 
-    case 'LOGOUT_COMPLETED': {
-      return {
-        ...state,
-        token: null,
-        inProgress: {
-          ...state.inProgress,
-          logout: false
-        }
-      };
+    case 'LOGOUT__COMPLETED': {
+      return LogoutReducer.complete(state, action);
+    }
+
+    case 'LOGOUT__FAILED': {
+      return LogoutReducer.fail(state, action);
     }
 
     // LOAD AUTH:
