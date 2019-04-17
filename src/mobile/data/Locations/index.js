@@ -68,7 +68,7 @@ const CODE_COUNT_TYPE: LocationLevelType[] = [
 ];
 
 /**
- * Turn a Location code into a nice name to display
+ * Turn a Location code into a nice name to display.
  * @param {string} code
  * @returns {string} location display name
  */
