@@ -409,6 +409,16 @@ export type InProgress = {|
   getConversation: { [userId: number]: boolean }
 |};
 
+export type ApiResponse = {|
+  sendVerificationEmail: ?SendVerificationEmail_Response,
+  login: ?Login_Response,
+  logoutSuccess: ?boolean,
+  createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
+  blockUserSuccess: ?boolean,
+  reportUserSuccess: ?boolean,
+  sendFeedbackSuccess: ?boolean
+|};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
   network: { isConnected: boolean },
@@ -428,14 +438,7 @@ export type ReduxState = {|
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
-  response: {|
-    sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response,
-    createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
-    blockUserSuccess: ?boolean,
-    reportUserSuccess: ?boolean,
-    sendFeedbackSuccess: ?boolean
-  |},
+  response: ApiResponse,
 
   sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
@@ -569,6 +572,7 @@ export const initialState: ReduxState = {
   response: {
     sendVerificationEmail: null,
     login: null,
+    logoutSuccess: null,
     createUserSuccess: null,
     blockUserSuccess: null,
     reportUserSuccess: null,

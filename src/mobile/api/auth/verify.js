@@ -18,9 +18,7 @@ const VERIFY__NO_EMAIL_SENT = 'VERIFY__NO_EMAIL_SENT';
 export default function verify(request: Request): Promise<Login_Response> {
   // Send a request to the server to check if UTLN is valid. If it is, send
   // a verification email, and return that email address.
-  console.log('requesting');
   return apiRequest('POST', VERIFY__ROUTE, request).then(response => {
-    console.log(response);
     // We use this to ASSERT what the type of the response is.
     switch (response.status) {
       case VERIFY__SUCCESS:

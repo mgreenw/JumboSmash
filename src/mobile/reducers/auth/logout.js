@@ -5,8 +5,7 @@ import type {
   LogoutCompleted_Action,
   LogoutFailed_Action
 } from 'mobile/actions/auth/logout';
-import type { ReduxState, InProgress } from '../index';
-import { initialState } from '../index';
+import type { ReduxState, InProgress, ApiResponse } from '../index';
 
 // NOTE: we disable eslint's no-unused-vars in this file on
 //       functions where we may later want to use the action.
@@ -18,6 +17,16 @@ function updateInProgress(
   return {
     ...state.inProgress,
     logout: logoutInProgress
+  };
+}
+
+function updateResponse(
+  state: ReduxState,
+  logoutSuccess: boolean
+): ApiResponse {
+  return {
+    ...state.response,
+    logoutSuccess
   };
 }
 
@@ -44,8 +53,10 @@ function complete(
   action: LogoutCompleted_Action
 ): ReduxState {
   const inProgress = updateInProgress(state, false);
+  const response = updateResponse(state, true);
   return {
     ...state,
+    response,
     inProgress
   };
 }
@@ -53,8 +64,10 @@ function complete(
 /* eslint-disable-next-line no-unused-vars */
 function fail(state: ReduxState, action: LogoutFailed_Action): ReduxState {
   const inProgress = updateInProgress(state, false);
+  const response = updateResponse(state, false);
   return {
     ...state,
+    response,
     inProgress
   };
 }
