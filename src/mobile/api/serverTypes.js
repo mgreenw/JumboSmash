@@ -6,14 +6,15 @@ import type { Scene } from 'mobile/reducers/';
 // Here we keep track of how the server represents the data we pass back so our parsers operate
 // in a well typed way.
 
-export type ServerProfile = {
-  fields: {
+export type ServerProfile = {|
+  fields: {|
     displayName: string,
     bio: string,
-    birthday: string
-  },
-  photoUuids: number[]
-};
+    birthday: string,
+    postgradRegion: ?string
+  |},
+  photoUuids: string[]
+|};
 
 export type ServerBaseUser = {
   userId: number,
