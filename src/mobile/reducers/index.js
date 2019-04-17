@@ -194,7 +194,7 @@ export type ProfileFields = {|
   displayName: string,
   birthday: string,
   bio: string,
-  postGradLocation: ?string
+  postgradRegion: ?string
 |};
 
 export type UserProfile = {|

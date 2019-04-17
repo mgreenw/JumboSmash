@@ -3,6 +3,18 @@
     "na.us.fl.896": true,
     "na.us.hi.332": true
   },
+  "priority": [
+    "na.us.ma.7",
+    "na.us.ny.70",
+    "na.us.ca.84",
+    "na.us.wa.91",
+    "na.us.il.14",
+    "na.us.tx.64",
+    "na.us.dc.97",
+    "na.us.mn.512",
+    "na.us.fl.56",
+    "na.us.pa.77"
+  ],
   "added": {
     "cities": {
       "na.us.ny.999": {
@@ -49,6 +61,7 @@
       "na.us.ga.824": { "code": "na.us.fl.996" },
       "na.us.mi.276": { "code": "na.us.in.995" },
       "na.us.ca.84": {
+        "name": "San Fransisco",
         "alias": [
           "Oakland",
           "Santa Clara",
@@ -59,11 +72,12 @@
         ]
       },
       "na.us.dc.97": {
+        "name": "Washington D.C.",
         "alias": ["Aurora", "Joliet", "Naperville"]
       },
       "na.us.mn.512": {
-        "name": "Greater Minneapolis-St. Paul Area",
-        "alias": "St. Paul"
+        "name": "Minneapolis",
+        "alias": ["St. Paul"]
       },
       "na.us.ny.70": {
         "alias": [
@@ -89,7 +103,7 @@
       "na.us.ma.7": {
         "name": "Boston",
         "alias": [
-          "Sommerville",
+          "Somerville",
           "Medford",
           "Cambridge",
           "Tufts",

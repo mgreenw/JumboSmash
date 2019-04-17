@@ -1,13 +1,13 @@
 // @flow
 
-import type { UserProfile } from 'mobile/reducers';
+import type { ServerProfile } from 'mobile/api/serverTypes';
 import apiRequest from '../utils/apiRequest';
 import { MY_PROFILE__ROUTE } from '../routes';
 
 const GET_PROFILE__SUCCESS = 'GET_PROFILE__SUCCESS';
 const PROFILE_SETUP_INCOMPLETE = 'PROFILE_SETUP_INCOMPLETE';
 
-export default function getMyProfile(): Promise<?UserProfile> {
+export default function getMyProfile(): Promise<?ServerProfile> {
   return apiRequest('GET', MY_PROFILE__ROUTE).then(response => {
     switch (response.status) {
       case GET_PROFILE__SUCCESS:
