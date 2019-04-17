@@ -102,6 +102,11 @@ async function get(resource: string): Promise<any> {
   }
 }
 
+function getArtist(artistId: string): Promise<any> {
+  return get(`artists/${artistId}`);
+}
+
 module.exports = {
   get,
+  getArtist,
 };

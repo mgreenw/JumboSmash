@@ -278,6 +278,29 @@ describe('PATCH api/users/me/profile', () => {
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
   });
 
+  it('should ensure the spring fling artist a valid spotify artist id', async () => {
+    const user = await dbUtils.createUser('mgrung01');
+    await dbUtils.createProfile(user.id, {
+      displayName: 'Max',
+      bio: 'He is a guy',
+      birthday: '1997-09-09',
+    });
+    const res = await request(app)
+      .patch('/api/users/me/profile')
+      .set('Accept', 'application/json')
+      .set('Authorization', user.token)
+      .send({
+        bio: 'Someone likes Star Trek',
+        displayName: 'Max is a person who likes going on long hikes',
+        birthday: '1997-10-09',
+        springFlingAct: 'not-an-id',
+      })
+      .expect(400);
+    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.status).toBe(codes.UPDATE_PROFILE__INVALID_REQUEST.status);
+    expect(res.body.data.message).toBe(profileErrorMessages.ARTIST_NOT_FOUND);
+  });
+
   it('should allow for all fields to be present and ensure they get stored in the db', async () => {
     const user = await dbUtils.createUser('mgreen25');
     await dbUtils.createProfile(user.id, {
@@ -296,7 +319,7 @@ describe('PATCH api/users/me/profile', () => {
         birthday,
         postgradRegion: 'eu.dk.*.5041',
         freshmanDorm: 'Haskell',
-        springFlingAct: 'Dave Matthews Band',
+        springFlingAct: '2TI7qyDE0QfyOlnbtfDo7L', // DMB
       })
       .expect(201);
     expect(res.body.status).toBe(codes.UPDATE_PROFILE__SUCCESS.status);
@@ -313,7 +336,7 @@ describe('PATCH api/users/me/profile', () => {
     expect(profile.birthday_date).toBe(birthday);
     expect(profile.postgrad_region).toBe('eu.dk.*.5041');
     expect(profile.freshman_dorm).toBe('Haskell');
-    expect(profile.spring_fling_act).toBe('Dave Matthews Band');
+    expect(profile.spring_fling_act).toBe('2TI7qyDE0QfyOlnbtfDo7L');
   });
 
   it('should allow the three extra fields to be null', async () => {
