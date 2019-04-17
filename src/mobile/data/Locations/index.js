@@ -21,7 +21,8 @@ export type Location = {
   code: string,
   type: LocationLevelType,
   alias: string[],
-  ancestors: LocationAncestors
+  ancestors: LocationAncestors,
+  image?: string
 };
 
 const LOCATIONS: {
