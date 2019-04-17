@@ -136,8 +136,6 @@ function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
-// const LOCATIONS = ['HELLO', 'YOU', 'CATS', 'AND', 'DOGS'];
-
 class SelectCityScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
