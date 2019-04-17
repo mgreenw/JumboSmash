@@ -15,7 +15,6 @@ import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVer
 import { Transition } from 'react-navigation-fluid-transitions';
 import Collapsible from 'react-native-collapsible';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
-import type { NavigationEventSubscription } from 'react-navigation';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -70,7 +69,6 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentWillMount() {
-    const { navigation } = this.props;
     const showEvent =
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent =
@@ -83,9 +81,6 @@ class SplashScreen extends React.Component<Props, State> {
       hideEvent,
       this._keyboardWillHide
     );
-    this.focusListener = navigation.addListener('didFocus', () => {
-      console.log('SPLASH SCREEN MOUNTED');
-    });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -149,7 +144,6 @@ class SplashScreen extends React.Component<Props, State> {
   componentWillUnmount() {
     this.keyboardWillShowListener.remove();
     this.keyboardWillHideListener.remove();
-    this.focusListener.remove();
   }
 
   _onNotTuftsEmail = () => {
@@ -258,8 +252,6 @@ class SplashScreen extends React.Component<Props, State> {
   keyboardWillShowListener: any;
 
   keyboardWillHideListener: any;
-
-  focusListener: NavigationEventSubscription;
 
   render() {
     // this is the navigator we passed in from App.js

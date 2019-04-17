@@ -874,10 +874,11 @@ export default function rootReducer(
       };
     }
 
+    // reset to initial state, besides responses to this action.
     case 'LOGIN_COMPLETED': {
       const { response } = action.payload;
       return {
-        ...state,
+        ...initialState,
         token: response ? response.token : null,
         inProgress: {
           ...state.inProgress,
