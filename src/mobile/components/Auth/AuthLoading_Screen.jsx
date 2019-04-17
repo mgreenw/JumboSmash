@@ -8,12 +8,12 @@ import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import routes from 'mobile/components/navigation/routes';
-import DevTesting from 'mobile/utils/DevTesting';
 import Sentry from 'sentry-expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import ProgressBar from 'react-native-progress/Bar';
 import { Colors } from 'mobile/styles/colors';
+import { CityIconsList } from 'mobile/assets/icons/locations/';
 
 const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
 const ArthurIcon = require('../../assets/arthurIcon.png');
@@ -22,34 +22,6 @@ const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
 const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
-
-const SanFransisco = require('../../assets/icons/locations/SanFransisco.png');
-const NewYork = require('../../assets/icons/locations/NewYork.png');
-const DC = require('../../assets/icons/locations/DC.png');
-const Seattle = require('../../assets/icons/locations/Seattle.png');
-const Boston = require('../../assets/icons/locations/Boston.png');
-const Austin = require('../../assets/icons/locations/Austin.png');
-const Chicago = require('../../assets/icons/locations/Chicago.png');
-const LosAngeles = require('../../assets/icons/locations/LosAngeles.png');
-const OnTheRoad = require('../../assets/icons/locations/OnTheRoad.png');
-const Miami = require('../../assets/icons/locations/Miami.png');
-const Minneapolis = require('../../assets/icons/locations/Minneapolis.png');
-const Philadelphia = require('../../assets/icons/locations/Philadelphia.png');
-
-const CityIcons = [
-  SanFransisco,
-  NewYork,
-  DC,
-  Seattle,
-  Boston,
-  Austin,
-  Chicago,
-  LosAngeles,
-  OnTheRoad,
-  Miami,
-  Minneapolis,
-  Philadelphia
-];
 
 type ReduxProps = {
   token: ?string,
@@ -199,7 +171,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       WavesFullSCreen,
       ArthurLoadingFrame1,
       ArthurLoadingGif,
-      ...CityIcons
+      ...CityIconsList
     ];
 
     const imageAssets = cacheImages(images);
