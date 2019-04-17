@@ -51,7 +51,8 @@ type NavigationProps = {
 
 type ReduxProps = {
   settings: UserSettings,
-  logoutInProgress: boolean
+  logoutInProgress: boolean,
+  logoutSuccess: ?boolean
 };
 
 type DispatchProps = {
@@ -71,7 +72,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   }
   return {
     logoutInProgress: reduxState.inProgress.logout,
-    settings: reduxState.client.settings
+    settings: reduxState.client.settings,
+    logoutSuccess: reduxState.response.logoutSuccess
   };
 }
 
@@ -101,8 +103,12 @@ class SettingsScreen extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps) {
     const { navigation } = this.props;
-    const { logoutInProgress } = this.props;
-    if (!logoutInProgress && prevProps.logoutInProgress !== logoutInProgress) {
+    const { logoutInProgress, logoutSuccess } = this.props;
+    if (
+      logoutSuccess &&
+      !logoutInProgress &&
+      prevProps.logoutInProgress !== logoutInProgress
+    ) {
       // For recieving the logout completion
       navigation.navigate(routes.Splash, {});
     }
