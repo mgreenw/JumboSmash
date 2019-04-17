@@ -2,11 +2,8 @@
 
 // Auth:
 import uuidv4 from 'uuid/v4';
-import type {
-  SendVerificationEmail_Response,
-  SendVerificationEmailCompleted_Action,
-  SendVerificationEmailInitiated_Action
-} from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Action } from 'mobile/reducers/auth/sendVerificationEmail';
 import type {
   Login_Response,
   LoginInitiated_Action,
@@ -125,6 +122,7 @@ import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
+import SendVerificationEmailReducer from './auth/sendVerificationEmail';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -480,8 +478,7 @@ export type Action =
   | CreateUserInitiated_Action
   | CreateUserCompleted_Action
   | CreateUserFailed_Action
-  | SendVerificationEmailInitiated_Action
-  | SendVerificationEmailCompleted_Action
+  | SendVerificationEmail_Action
   | SaveProfileFieldsInitiated_Action
   | SaveProfileFieldsCompleted_Action
   | SaveProfileFieldsFailed_Action
@@ -1013,29 +1010,16 @@ export default function rootReducer(
       };
     }
 
-    case 'SEND_VERIFICATION_EMAIL_INITIATED': {
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendVerificationEmail: true
-        }
-      };
+    case 'SEND_VERIFICATION_EMAIL__INITIATED': {
+      return SendVerificationEmailReducer.initiate(state, action);
     }
 
-    case 'SEND_VERIFICATION_EMAIL_COMPLETED': {
-      const { response } = action.payload;
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendVerificationEmail: false
-        },
-        response: {
-          ...state.response,
-          sendVerificationEmail: response
-        }
-      };
+    case 'SEND_VERIFICATION_EMAIL__COMPLETED': {
+      return SendVerificationEmailReducer.complete(state, action);
+    }
+
+    case 'SEND_VERIFICATION_EMAIL__FAILED': {
+      return SendVerificationEmailReducer.fail(state, action);
     }
 
     case 'SAVE_PROFILE__INITIATED': {
