@@ -84,18 +84,15 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { sendVerificationEmail_inProgress: sendingEmail } = this.props;
+    const {
+      sendVerificationEmail_inProgress: sendingEmail,
+      sendVerificationEmail_response: response
+    } = this.props;
     const { sendVerificationEmail_inProgress: wasSendingEmail } = prevProps;
 
     // This logic determines that an email has been sent, because we maintain
     // as an invariant that the progress of this action defaults to false.
-    if (sendingEmail !== wasSendingEmail && !sendingEmail) {
-      const { sendVerificationEmail_response: response } = this.props;
-      if (!response) {
-        throw new Error(
-          'Error in Login: Send Verification Email complete but no response'
-        );
-      }
+    if (response && sendingEmail !== wasSendingEmail && !sendingEmail) {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
