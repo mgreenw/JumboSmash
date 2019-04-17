@@ -5,8 +5,10 @@ module.exports = `
   utln,
   email,
   terminated AS "isTerminated",
-  can_be_swiped_on AS "canBeSwipedOn",
-  can_be_active_in_scenes AS "canBeActiveInScenes",
+  json_build_object(
+    'canBeSwipedOn', can_be_swiped_on,
+    'canBeActiveInScenes', can_be_active_in_scenes
+  ) AS "capabilities",
   account_updates AS "accountUpdates",
   profile_status AS "profileStatus",
   COALESCE((SELECT TRUE FROM profiles where user_id = classmates.id), false) AS "hasProfile",

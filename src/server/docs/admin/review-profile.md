@@ -29,16 +29,34 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 **Request body fields**
 
-* `canBeSwipedOn`
-  * Type: `boolean`
-  * Description: If the user can be swiped on by other users
-  * Required: `true`
-* `canBeActiveInScenes`
-  * Type: `boolean`
-  * Description: If the user can be active/can set themselves active in scenes.
-  * Required: `true`
+* `updatedCapabilites`
+  * Type `object`
+  * Description: The new capabilities to give a user
+  * Requried: `true`
+  * Properties:
+    * `canBeSwipedOn`
+        * Type: `boolean`
+        * Description: If the user can be swiped on by other users
+        * Required: `true`
+    * `canBeActiveInScenes`
+        * Type: `boolean`
+        * Description: If the user can be active/can set themselves active in scenes.
+        * Required: `true`
+* `previousCapabilities`
+  * Type `object`
+  * Description: The previous capabilities the user had. This is used to ensure the admin does not overwrite capabilites changed by another admin without knowledge of the change.
+  * Requried: `true`
+  * Properties:
+    * `canBeSwipedOn`
+        * Type: `boolean`
+        * Description: If the user can be swiped on by other users
+        * Required: `true`
+    * `canBeActiveInScenes`
+        * Type: `boolean`
+        * Description: If the user can be active/can set themselves active in scenes.
+        * Required: `true`
 * `comment`
-  * Type: `boolean | null`: Cannot be null if either `canBeSwipedOn` or `canBeActiveInScenes` is false
+  * Type: `boolean | null`: Cannot be null if either `canBeSwipedOn` or `canBeActiveInScenes` is false in `updatedCapabilites`
   * Description: If the user can be active/can set themselves active in scenes.
   * Required: `true`
 
@@ -127,6 +145,21 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 ```json
 {
     "status": "REVIEW_PROFILE__NOT_FOUND",
+    "version": "1.3.1"
+}
+```
+
+### OR
+
+**Condition** : The previous capabilities supplied do not match the "current" capabilities (before update).
+
+**Code** : `404 BAD REQUEST`
+
+**Content example**
+
+```json
+{
+    "status": "REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES",
     "version": "1.3.1"
 }
 ```

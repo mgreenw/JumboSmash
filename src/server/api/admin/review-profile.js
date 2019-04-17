@@ -13,11 +13,29 @@ const { constructAccountUpdate } = require('../users/utils');
 const schema = {
   "type": "object",
   "properties": {
-    "canBeSwipedOn": {
-      "type": "boolean"
+    "updatedCapabilities": {
+      "type": "object",
+      "properties": {
+        "canBeSwipedOn": {
+          "type": "boolean"
+        },
+        "canBeActiveInScenes": {
+          "type": "boolean"
+        },
+      },
+      "required": ["canBeSwipedOn", "canBeActiveInScenes"]
     },
-    "canBeActiveInScenes": {
-      "type": "boolean"
+    "previousCapabilities": {
+      "type": "object",
+      "properties": {
+        "canBeSwipedOn": {
+          "type": "boolean"
+        },
+        "canBeActiveInScenes": {
+          "type": "boolean"
+        },
+      },
+      "required": ["canBeSwipedOn", "canBeActiveInScenes"]
     },
     "comment": {
       "type": ["string", "null"],
@@ -25,9 +43,14 @@ const schema = {
       "maxLength": 500,
     },
   },
-  "required": ["canBeSwipedOn", "canBeActiveInScenes", "comment"]
+  "required": ["updatedCapabilities", "previousCapabilities", "comment"]
 };
 /* eslint-enable */
+
+export type Capabilities = {
+  canBeSwipedOn: boolean,
+  canBeActiveInScenes: boolean,
+};
 
 /**
  * @api {post} /admin/classmates/:userId/review
@@ -37,11 +60,14 @@ const reviewProfile = async (
   adminUserId: number,
   adminUtln: string,
   userId: number,
-  canBeSwipedOn: boolean,
-  canBeActiveInScenes: boolean,
+  updatedCapabilities: Capabilities,
+  previousCapabilities: Capabilities,
   comment: string | null,
 ) => {
-  const isNegativeReview = !(canBeSwipedOn && canBeActiveInScenes);
+  const isNegativeReview = !(
+    updatedCapabilities.canBeSwipedOn
+    && updatedCapabilities.canBeActiveInScenes
+  );
   // If can be swiped on or can be active in scenes is false, ensure there is a comment
   if (isNegativeReview) {
     if (!comment) {
@@ -72,8 +98,7 @@ const reviewProfile = async (
       utln: adminUtln,
     },
     comment,
-    canBeSwipedOn,
-    canBeActiveInScenes,
+    capabilities: updatedCapabilities,
   });
 
   // Insert the review
@@ -84,9 +109,23 @@ const reviewProfile = async (
       can_be_swiped_on = $2,
       can_be_active_in_scenes = $3,
       account_updates = account_updates || jsonb_build_array($4::jsonb)
-    WHERE id = $5
+    WHERE id = $5 AND can_be_swiped_on = $6 AND can_be_active_in_scenes = $7
     RETURNING ${classmateSelect}
-  `, [adminUserId, canBeSwipedOn, canBeActiveInScenes, review, userId]);
+  `, [
+    adminUserId,
+    updatedCapabilities.canBeSwipedOn,
+    updatedCapabilities.canBeActiveInScenes,
+    review,
+    userId,
+    previousCapabilities.canBeSwipedOn,
+    previousCapabilities.canBeActiveInScenes,
+  ]);
+
+  // If the query returned no data it means that the previous capabilites are out
+  // of date. The admin should reload the user and try again.
+  if (updatedClassmateResult.rowCount === 0) {
+    return status(codes.REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES).noData();
+  }
 
   // If the review is "negative", alert slack. There will be lots of positive rewiews
   // so we don't want to overload slack.
@@ -109,8 +148,8 @@ const handler = [
       req.user.id,
       req.user.utln,
       req.params.userId,
-      req.body.canBeSwipedOn,
-      req.body.canBeActiveInScenes,
+      req.body.updatedCapabilities,
+      req.body.previousCapabilities,
       req.body.comment,
     );
   }),

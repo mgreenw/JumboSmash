@@ -1,5 +1,7 @@
 // @flow
 
+import { type Capabilities } from '../admin/review-profile';
+
 const _ = require('lodash');
 
 // About 30 years old.
@@ -200,8 +202,7 @@ type ProfileReview = {
   type: 'PROFILE_REVIEW',
   reviewer: Admin,
   comment: string | null,
-  canBeSwipedOn: boolean,
-  canBeActiveInScenes: boolean,
+  capabilities: Capabilities,
 };
 
 type AccountTermination = {
