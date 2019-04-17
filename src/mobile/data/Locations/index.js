@@ -70,28 +70,28 @@ const CODE_COUNT_TYPE: LocationLevelType[] = [
 /**
  * Turn a Location code into a nice name to display.
  * @param {string} code
- * @returns {string} location display name
+ * @returns {?Location} Location, or null if not found
  */
-function codeToName(code: string): string {
+function codeToLocation(code: string): ?Location {
   const type = CODE_COUNT_TYPE[[...code].filter(char => char === '.').length];
   switch (type) {
     case 'CITY': {
-      return LOCATIONS.Cities[code].name || '';
+      return LOCATIONS.Cities[code] || null;
     }
     case 'CONTINENT': {
-      return LOCATIONS.Continents[code].name || '';
+      return LOCATIONS.Continents[code] || null;
     }
     case 'COUNTRY': {
-      return LOCATIONS.Countries[code].name || '';
+      return LOCATIONS.Countries[code] || null;
     }
     case 'STATE': {
-      return LOCATIONS.States[code].name || '';
+      return LOCATIONS.States[code] || null;
     }
 
     default: {
       // eslint-disable-next-line no-unused-expressions
       (type: empty);
-      return '';
+      return null;
     }
   }
 }
@@ -100,5 +100,5 @@ export {
   AlphabeticalLocations,
   PrioritizedAlphabeticalLocations,
   formatLocationAncestors,
-  codeToName
+  codeToLocation
 };
