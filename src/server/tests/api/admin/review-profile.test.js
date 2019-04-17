@@ -107,7 +107,7 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeActiveInScenes: true, comment: null });
+      .send({ previousCapabilities: {}, comment: null });
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.statusCode).toBe(400);
 
@@ -116,7 +116,7 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, comment: 'test' });
+      .send({ updatedCapabilities: {}, comment: 'test' });
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.statusCode).toBe(400);
 
@@ -125,7 +125,16 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: false });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+      });
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.statusCode).toBe(400);
 
@@ -134,7 +143,36 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: false, comment: 12344 });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+        comment: 12344,
+      });
+    expect(res.body.status).toBe(codes.BAD_REQUEST.status);
+    expect(res.statusCode).toBe(400);
+
+    res = await request(app)
+      .post('/api/admin/classmates/0/review')
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .set('Admin-Authorization', adminPassword)
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: 1234,
+        },
+        comment: 'This is a comment',
+      });
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.statusCode).toBe(400);
   });
@@ -145,7 +183,17 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: true, comment: 'No comment' });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        comment: 'This is a comment',
+      });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__NOT_FOUND.status);
     expect(res.statusCode).toBe(404);
   });
@@ -156,7 +204,17 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: true, comment: 'No comment' });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        comment: 'This is a comment',
+      });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__NOT_FOUND.status);
     expect(res.statusCode).toBe(404);
   });
@@ -167,7 +225,17 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: false, canBeActiveInScenes: true, comment: null });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: false,
+          canBeActiveInScenes: true,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        comment: null,
+      });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__COMMENT_REQUIRED.status);
     expect(res.statusCode).toBe(400);
 
@@ -176,7 +244,17 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: true, canBeActiveInScenes: false, comment: null });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: false,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        comment: null,
+      });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__COMMENT_REQUIRED.status);
     expect(res.statusCode).toBe(400);
   });
@@ -187,16 +265,47 @@ describe('POST api/admin/classmates/:userId/review', () => {
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
       .set('Admin-Authorization', adminPassword)
-      .send({ canBeSwipedOn: false, canBeActiveInScenes: true, comment: 'No comment' });
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: true,
+          canBeActiveInScenes: true,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: false,
+          canBeActiveInScenes: true,
+        },
+        comment: 'This is a comment',
+      });
     expect(res.body.status).toBe(codes.REVIEW_PROFILE__SUCCESS.status);
     expect(res.statusCode).toBe(200);
     expect(res.body.data.classmate).toBeDefined();
     expect(res.body.data.classmate.id).toBe(other.id);
-    expect(res.body.data.classmate.canBeSwipedOn).toBeFalsy();
-    expect(res.body.data.classmate.canBeActiveInScenes).toBeTruthy();
+    expect(res.body.data.classmate.capabilities.canBeSwipedOn).toBeTruthy();
+    expect(res.body.data.classmate.capabilities.canBeActiveInScenes).toBeTruthy();
     expect(res.body.data.classmate.accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
 
-    expect(res.body.data.classmate.accountUpdates[0].update.canBeSwipedOn).toBeFalsy();
-    expect(res.body.data.classmate.accountUpdates[0].update.canBeActiveInScenes).toBeTruthy();
+    expect(res.body.data.classmate.accountUpdates[0].update.capabilities.canBeSwipedOn).toBeTruthy();
+    expect(res.body.data.classmate.accountUpdates[0].update.capabilities.canBeActiveInScenes).toBeTruthy();
+  });
+
+  it('should fail the previous capabilities are not the current capabilitites', async () => {
+    const res = await request(app)
+      .post(`/api/admin/classmates/${other.id}/review`)
+      .set('Accept', 'application/json')
+      .set('Authorization', me.token)
+      .set('Admin-Authorization', adminPassword)
+      .send({
+        updatedCapabilities: {
+          canBeSwipedOn: false,
+          canBeActiveInScenes: false,
+        },
+        previousCapabilities: {
+          canBeSwipedOn: false,
+          canBeActiveInScenes: false,
+        },
+        comment: 'This is a comment',
+      });
+    expect(res.body.status).toBe(codes.REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES.status);
+    expect(res.statusCode).toBe(400);
   });
 });

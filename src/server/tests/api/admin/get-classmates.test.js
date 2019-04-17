@@ -92,6 +92,9 @@ describe('GET api/admin/classmates', () => {
       expect(classmate.isTerminated).toBeFalsy();
       expect(classmate.activeScenes).toBeDefined();
       expect(classmate.isAdmin).toBeDefined();
+      expect(classmate.capabilities).toBeDefined();
+      expect(classmate.capabilities.canBeSwipedOn).toBeFalsy();
+      expect(classmate.capabilities.canBeActiveInScenes).toBeTruthy();
       expect(classmate.blockedRequestingAdmin).toBeFalsy();
     });
   });
@@ -117,6 +120,8 @@ describe('GET api/admin/classmates', () => {
       expect(classmate.isTerminated).toBeFalsy();
       expect(classmate.activeScenes).toBeDefined();
       expect(classmate.isAdmin).toBeDefined();
+      expect(classmate.capabilities.canBeSwipedOn).toBeFalsy();
+      expect(classmate.capabilities.canBeActiveInScenes).toBeTruthy();
       if (classmate.id === blockingClassmate.id) {
         expect(classmate.blockedRequestingAdmin).toBeTruthy();
       } else {
