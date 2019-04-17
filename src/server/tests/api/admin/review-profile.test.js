@@ -284,8 +284,12 @@ describe('POST api/admin/classmates/:userId/review', () => {
     expect(res.body.data.classmate.capabilities.canBeActiveInScenes).toBeTruthy();
     expect(res.body.data.classmate.accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
 
-    expect(res.body.data.classmate.accountUpdates[0].update.capabilities.canBeSwipedOn).toBeTruthy();
-    expect(res.body.data.classmate.accountUpdates[0].update.capabilities.canBeActiveInScenes).toBeTruthy();
+    expect(
+      res.body.data.classmate.accountUpdates[0].update.capabilities.canBeSwipedOn,
+    ).toBeTruthy();
+    expect(
+      res.body.data.classmate.accountUpdates[0].update.capabilities.canBeActiveInScenes,
+    ).toBeTruthy();
   });
 
   it('should fail the previous capabilities are not the current capabilitites', async () => {
