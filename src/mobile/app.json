@@ -20,7 +20,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.jumbosmash.mobile"
+      "bundleIdentifier": "com.jumbosmash.mobile",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "JumboSmash needs access to your photos so you can include them in your profile."
+      }
     },
     "primaryColor": "#fbcc23",
     "hooks": {
