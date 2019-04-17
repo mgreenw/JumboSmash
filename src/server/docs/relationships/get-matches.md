@@ -34,7 +34,7 @@ Provide the normal `Authorization` token in the request header.
     "status": "GET_MATCHES__SUCCESS",
     "data": [
         {
-            "newMatch": false
+            "newMatch": false,
             "userId": 6,
             "profile": {
                 "fields": {
