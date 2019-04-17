@@ -155,7 +155,12 @@ class MessagingScreen extends React.Component<Props, State> {
 
     return (
       <TouchableOpacity
-        style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+        style={{
+          height: 90,
+          width: '100%',
+          paddingHorizontal: 15,
+          backgroundColor: showBadge ? Colors.IceBlue : Colors.White
+        }}
         onPress={() => {
           navigation.navigate(routes.Message, { match });
         }}
@@ -172,6 +177,7 @@ class MessagingScreen extends React.Component<Props, State> {
             size="Small"
             photoUuid={profile.photoUuids[0]}
             showBadge={showBadge}
+            badgeContainerStyle={{ backgroundColor: Colors.IceBlue }}
           />
           <View
             style={{
