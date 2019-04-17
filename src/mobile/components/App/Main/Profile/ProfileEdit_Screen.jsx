@@ -38,7 +38,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
-import { codeToName } from 'mobile/data/Locations';
+import { codeToLocation } from 'mobile/data/Locations';
 
 const manifest = Constants.manifest;
 const isDev =
@@ -188,7 +188,13 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const imageWidth = (containerWidth - 15) / 2;
 
     const { editedProfileFields, errorMessageName } = this.state;
-    const { postgradRegion } = editedProfileFields;
+    const { postgradRegion: postgradLocationCode } = editedProfileFields;
+    const postgradLocation = postgradLocationCode
+      ? codeToLocation(postgradLocationCode)
+      : null;
+    const postgradLocationName = postgradLocation
+      ? postgradLocation.name
+      : null;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -236,7 +242,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <View style={styles.profileBlock}>
                 <PopupInput
                   title={'Post-Grad Location'}
-                  value={postgradRegion ? codeToName(postgradRegion) : null}
+                  value={postgradLocationName}
                   placeholder={'No Selected Location'}
                   onChange={() => {
                     NavigationService.navigate(routes.SelectCity, {
