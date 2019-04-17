@@ -44,6 +44,6 @@ export default function apiRequest(
         throw err;
       }
       Sentry.captureException(err);
-      throw new Error({ err, route });
+      throw err;
     });
 }
