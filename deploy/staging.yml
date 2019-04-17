@@ -86,6 +86,7 @@ services:
       - SENDGRID_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
+      - SPOTIFY_CLIENT_SECRET
     networks:
       - traefik-net
     deploy:
@@ -157,6 +158,8 @@ secrets:
    AWS_SECRET_ACCESS_KEY:
     external: true
    DOCKER_PASSWORD:
+    external: true
+   SPOTIFY_CLIENT_SECRET:
     external: true
 
 networks:
