@@ -16,11 +16,6 @@ import {
   formatLocationAncestors
 } from 'mobile/data/Locations';
 
-import type {
-  NavigationEventPayload,
-  NavigationEventSubscription
-} from 'react-navigation';
-
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 /**
@@ -123,7 +118,6 @@ type DispatchProps = {};
 type Props = ReduxProps & NavigationProps & DispatchProps;
 
 type State = {
-  postGradLocation: ?string,
   search: string,
   locations: Location[]
 };
@@ -140,15 +134,9 @@ class SelectCityScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      postGradLocation: null,
       search: '',
       locations: GenesisLocations
     };
-
-    this.willBlurListener = props.navigation.addListener(
-      'willBlur',
-      this._onWillBlur
-    );
   }
 
   renderSeparator = () => {
@@ -255,26 +243,20 @@ class SelectCityScreen extends React.Component<Props, State> {
     );
   };
 
-  _save = () => {
+  _save = (code: string) => {
     const { navigation } = this.props;
-    const { postGradLocation } = this.state;
     const onSave: ?(?string) => void = navigation.getParam('onSave', null);
-    if (onSave) onSave(postGradLocation);
+    if (onSave) onSave(code);
   };
 
   _onBack = () => {
-    this._save();
     NavigationService.back();
   };
 
-  _onWillBlur = (payload: NavigationEventPayload) => {
-    if (payload.action.type === 'Navigation/BACK') {
-      this._save();
-      this.willBlurListener.remove();
-    }
+  _onPress = (code: string) => {
+    this._save(code);
+    this._onBack();
   };
-
-  willBlurListener: NavigationEventSubscription;
 
   render() {
     const { locations, search } = this.state;
@@ -292,7 +274,7 @@ class SelectCityScreen extends React.Component<Props, State> {
           />
           <FlatList
             data={locations}
-            renderItem={({ item }) => {
+            renderItem={({ item }: { item: Location }) => {
               const {
                 component: titleComponent,
                 isMatch: titleMatches
@@ -314,8 +296,7 @@ class SelectCityScreen extends React.Component<Props, State> {
               return (
                 <ListItem
                   onPress={() => {
-                    // TODO:
-                    console.log(item);
+                    this._onPress(item.code);
                   }}
                   title={titleComponent}
                   subtitle={subtitleComponent}

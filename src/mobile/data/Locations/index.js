@@ -2,6 +2,8 @@
 
 import { alphabetizeLocations, prioritizeLocations } from './sortLocations';
 
+type LocationLevelType = 'CITY' | 'STATE' | 'COUNTRY' | 'CONTINENT';
+
 export type LocationAncestor = {
   code: string,
   name: string
@@ -11,13 +13,13 @@ export type LocationAncestors = {
   continent: ?LocationAncestor,
   country: ?LocationAncestor,
   state: ?LocationAncestor,
-  type: 'CITY' | 'STATE' | 'COUNTRY' | 'CONTINENT'
+  type: LocationLevelType
 };
 
 export type Location = {
   name: string,
-  code: String,
-  type: string,
+  code: string,
+  type: LocationLevelType,
   alias: string[],
   ancestors: LocationAncestors
 };
@@ -58,8 +60,45 @@ function formatLocationAncestors(location: Location): string {
   return '';
 }
 
+const CODE_COUNT_TYPE: LocationLevelType[] = [
+  'CONTINENT',
+  'COUNTRY',
+  'STATE',
+  'CITY'
+];
+
+/**
+ * Turn a Location code into a nice name to display
+ * @param {string} code
+ * @returns {string} location display name
+ */
+function codeToName(code: string): string {
+  const type = CODE_COUNT_TYPE[[...code].filter(char => char === '.').length];
+  switch (type) {
+    case 'CITY': {
+      return LOCATIONS.Cities[code].name || '';
+    }
+    case 'CONTINENT': {
+      return LOCATIONS.Continents[code].name || '';
+    }
+    case 'COUNTRY': {
+      return LOCATIONS.Countries[code].name || '';
+    }
+    case 'STATE': {
+      return LOCATIONS.States[code].name || '';
+    }
+
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (type: empty);
+      return '';
+    }
+  }
+}
+
 export {
   AlphabeticalLocations,
   PrioritizedAlphabeticalLocations,
-  formatLocationAncestors
+  formatLocationAncestors,
+  codeToName
 };

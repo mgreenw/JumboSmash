@@ -38,6 +38,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
+import { codeToName } from 'mobile/data/Locations';
 
 const manifest = Constants.manifest;
 const isDev =
@@ -235,7 +236,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <View style={styles.profileBlock}>
                 <PopupInput
                   title={'Post-Grad Location'}
-                  value={postgradRegion}
+                  value={postgradRegion ? codeToName(postgradRegion) : null}
                   placeholder={'No Selected Location'}
                   onChange={() => {
                     NavigationService.navigate(routes.SelectCity, {
@@ -253,6 +254,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
                 <PopupInput
                   title={'Dream Spring Fling Artist'}
+                  value={null}
                   placeholder={'No Selected Artist'}
                   onChange={() => {
                     Alert.alert('not yet implemented');
@@ -261,6 +263,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
                 <PopupInput
                   title={'1st Year Dorm'}
+                  value={null}
                   placeholder={'No Selected Dorm'}
                   onChange={() => {
                     Alert.alert('not yet implemented');
@@ -295,6 +298,7 @@ const PopupInput = (props: PopupInputProps) => {
         }}
       >
         <Text
+          adjustsFontSizeToFit
           style={[
             textStyles.headline6Style,
             { color: value ? Colors.Black : Colors.BlueyGrey }
