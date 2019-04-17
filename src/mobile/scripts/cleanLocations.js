@@ -11,7 +11,10 @@ const LOCATIONS = require('../data/Locations/Locations.json');
 const LOCATION_EDITS = require('../data/Locations/LocationEdits.json');
 
 function writeToFile(content) {
-  fs.writeFileSync('./data/FormatedLocations.json', JSON.stringify(content));
+  fs.writeFileSync(
+    './data/Locations/FormatedLocations.json',
+    JSON.stringify(content)
+  );
 }
 
 /**
