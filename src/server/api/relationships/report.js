@@ -55,7 +55,7 @@ const report = async (
   const reportedUserResult = await db.query(`
     SELECT utln, email
     FROM classmates
-    WHERE id = $1 AND id <> $2
+    WHERE id = $1 AND id != $2
   `, [reportedUserId, reportingUserId]);
 
   if (reportedUserResult.rowCount === 0) {
