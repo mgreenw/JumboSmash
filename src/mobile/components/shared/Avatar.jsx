@@ -18,7 +18,8 @@ type Props = {
   photoUuid: string,
   size: 'Large' | 'Medium' | 'Small',
   border?: boolean,
-  showBadge?: boolean
+  showBadge?: boolean,
+  badgeContainerStyle?: StyleSheet.Styles
 };
 
 export const LargeWidth = 135;
@@ -26,7 +27,13 @@ export const MediumWidth = 75;
 export const SmallWidth = 70;
 
 export default (props: Props) => {
-  const { photoUuid, size, border, showBadge = false } = props;
+  const {
+    photoUuid,
+    size,
+    border,
+    showBadge = false,
+    badgeContainerStyle
+  } = props;
   let width = 0;
   if (size === 'Large') {
     width = LargeWidth;
@@ -61,7 +68,7 @@ export default (props: Props) => {
             top: width / 2
           }}
         >
-          <AvatarBadge />
+          <AvatarBadge badgeContainerStyle={badgeContainerStyle} />
         </View>
       )}
     </View>

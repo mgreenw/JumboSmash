@@ -41,9 +41,8 @@ Provide updated profile fields
   * Length: Between 1 and 100 characters.
 * `springFlingAct`
   * Type: `string`
-  * Description: The user's desired spring fling act. Optimally, this comes from Spotifiy.
+  * Description: The user's desired spring fling act Artist ID from Spotify. See Search Artists to get this id.
   * Required: `false`
-  * Length: Between 1 and 200 characters.
 
 **Request body example**
 
@@ -98,6 +97,20 @@ Provide updated profile fields
 {
     "status": "UPDATE_PROFILE__INVALID_REQUEST",
     "message": "BIRTHDAY_NOT_VALID"
+}
+```
+
+### OR
+
+**Condition** : The springFlingAct is not a valid spotify artist id.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "UPDATE_PROFILE__INVALID_REQUEST",
+    "message": "ARTIST_NOT_FOUND"
 }
 ```
 
