@@ -238,45 +238,47 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-            {isDev && (
-              <View style={styles.profileBlock}>
-                <PopupInput
-                  title={'Post-Grad Location'}
-                  value={postgradLocationName}
-                  placeholder={'No Selected Location'}
-                  onChange={() => {
-                    NavigationService.navigate(routes.SelectCity, {
-                      onSave: newPostgradRegion => {
-                        this.setState(state => ({
-                          editedProfileFields: {
-                            ...state.editedProfileFields,
-                            postgradRegion: newPostgradRegion
-                          }
-                        }));
-                      }
-                    });
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'Dream Spring Fling Artist'}
-                  value={null}
-                  placeholder={'No Selected Artist'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'1st Year Dorm'}
-                  value={null}
-                  placeholder={'No Selected Dorm'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-              </View>
-            )}
+            <View style={styles.profileBlock}>
+              <PopupInput
+                title={'Post-Grad Location'}
+                value={postgradLocationName}
+                placeholder={'No Selected Location'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectCity, {
+                    onSave: newPostgradRegion => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          postgradRegion: newPostgradRegion
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
+              {isDev && (
+                <View>
+                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                  <PopupInput
+                    title={'Dream Spring Fling Artist'}
+                    value={null}
+                    placeholder={'No Selected Artist'}
+                    onChange={() => {
+                      Alert.alert('not yet implemented');
+                    }}
+                  />
+                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                  <PopupInput
+                    title={'1st Year Dorm'}
+                    value={null}
+                    placeholder={'No Selected Dorm'}
+                    onChange={() => {
+                      Alert.alert('not yet implemented');
+                    }}
+                  />
+                </View>
+              )}
+            </View>
           </PlatformSpecificScrollView>
         </View>
       </View>
