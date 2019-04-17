@@ -187,6 +187,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const imageWidth = (containerWidth - 15) / 2;
 
     const { editedProfileFields, errorMessageName } = this.state;
+    const { postgradRegion } = editedProfileFields;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -234,14 +235,15 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <View style={styles.profileBlock}>
                 <PopupInput
                   title={'Post-Grad Location'}
+                  value={postgradRegion}
                   placeholder={'No Selected Location'}
                   onChange={() => {
                     NavigationService.navigate(routes.SelectCity, {
-                      onSave: postGradLocation => {
+                      onSave: newPostgradRegion => {
                         this.setState(state => ({
                           editedProfileFields: {
                             ...state.editedProfileFields,
-                            postGradLocation
+                            postgradRegion: newPostgradRegion
                           }
                         }));
                       }
@@ -275,11 +277,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
 type PopupInputProps = {
   title: string,
+  value: ?string,
   placeholder: string,
   onChange: () => void
 };
 const PopupInput = (props: PopupInputProps) => {
-  const { title, placeholder, onChange } = props;
+  const { title, placeholder, onChange, value } = props;
   return (
     <View>
       <Text style={textStyles.body2Style}>{title}</Text>
@@ -291,8 +294,13 @@ const PopupInput = (props: PopupInputProps) => {
           marginTop: 5
         }}
       >
-        <Text style={[textStyles.headline6Style, { color: Colors.BlueyGrey }]}>
-          {placeholder}
+        <Text
+          style={[
+            textStyles.headline6Style,
+            { color: value ? Colors.Black : Colors.BlueyGrey }
+          ]}
+        >
+          {value || placeholder}
         </Text>
         <View style={{ bottom: 4 }}>
           <TertiaryButton title={'change'} onPress={onChange} />
