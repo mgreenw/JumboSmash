@@ -1,8 +1,9 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { Dimensions, Animated, Easing, Platform } from 'react-native';
 
 type Props = {
-  children: React.node,
+  children: React.Node,
   onSwipeComplete: () => void
 };
 
@@ -37,33 +38,34 @@ export default class DismissableScrollview extends React.Component<
     this._startDragValue = 0;
   }
 
-  _onScrollBeginDrag = e => {
+  // Scroll event is available because of the import * as React
+  _onScrollBeginDrag = (e: ScrollEvent) => {
     this._startDragValue = e.nativeEvent.contentOffset.y;
   };
 
-  _onScrollEndDrag = e => {
-    const { onSwipeComplete } = this.props;
+  _onScrollEndDrag = (e: ScrollEvent) => {
     if (Platform.OS === 'android' && this._startDragValue >= 5) return;
     if (
       e.nativeEvent.contentOffset.y <= onSwipeDownThreshold ||
       (e.nativeEvent.velocity.y <= -0.5 &&
         e.nativeEvent.contentOffset.y <= onSwipeDownThreshold / 4)
     ) {
-      this.animateAway(() => {
-        onSwipeComplete();
-      });
+      this.animateAway();
     }
   };
 
-  animateAway(onCompleteCb = () => {}) {
+  _startDragValue: number;
+
+  animateAway() {
     const { cardLocation } = this.state;
+    const { onSwipeComplete } = this.props;
     Animated.timing(cardLocation, {
       toValue: Dimensions.get('screen').height,
       easing: Easing.out(Easing.quad),
       duration: 100,
       delay: 0,
       useNativeDriver: true
-    }).start(onCompleteCb);
+    }).start(onSwipeComplete);
   }
 
   render() {
