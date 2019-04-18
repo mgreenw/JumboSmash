@@ -15,7 +15,7 @@ module.exports = {
     host: 'localhost',
     port: 6379,
   },
-  launch_date: '2019-04-06T14:11:23.952Z',
+  launch_date: '2019-04-18T04:23:49.561Z',
   spotify_client_id: 'd300522fd10f4f02b164d97bcfd9390b',
   spotify_client_secret: fs.readFileSync(`${__dirname}/../spotify_client_secret`, 'utf8').trim(),
 };
