@@ -60,7 +60,8 @@ import type {
 } from 'mobile/actions/app/getSceneCandidates';
 import type {
   GetMatchesInitiated_Action,
-  GetMatchesCompleted_Action
+  GetMatchesCompleted_Action,
+  GetMatchesFailed_Action
 } from 'mobile/actions/app/getMatches';
 import type {
   JudgeSceneCandidateInitiated_Action,
@@ -500,6 +501,7 @@ export type Action =
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
   | GetMatchesCompleted_Action
+  | GetMatchesFailed_Action
   | JudgeSceneCandidateInitiated_Action
   | JudgeSceneCandidateCompleted_Action
   | GetConversationInitiated_Action
@@ -1277,6 +1279,16 @@ export default function rootReducer(
         messagedMatchIds,
         unmessagedMatchIds,
         numBadges
+      };
+    }
+
+    case 'GET_MATCHES__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: false
+        }
       };
     }
 
