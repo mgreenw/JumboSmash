@@ -105,7 +105,7 @@ const CardView = (props: Props) => {
           </Text>
         </View>
         <ReactNativeImage
-          style={{ width: 50, height: 50 }}
+          style={{ width: 60, height: 60, bottom: 6 }}
           source={CityIconsMap[postgradLocationImage]}
         />
       </View>
