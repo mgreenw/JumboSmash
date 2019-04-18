@@ -7,15 +7,39 @@
     "na.us.ma.7",
     "na.us.ny.70",
     "na.us.ca.84",
-    "na.us.wa.91",
-    "na.us.il.14",
-    "na.us.tx.64",
     "na.us.dc.97",
-    "na.us.mn.512",
-    "na.us.fl.56",
-    "na.us.pa.77"
+    "xx.xx.01",
+    "xx.yy.01"
   ],
   "added": {
+    "continents": {
+      "xx": {
+        "name": "Goblin Island",
+        "code": "go"
+      }
+    },
+    "states": {
+      "xx.xx.01": {
+        "name": "Idk!",
+        "code": "xx.xx.01",
+        "image": "Idk"
+      },
+      "xx.yy.01": {
+        "name": "On the Road",
+        "code": "xx.yy.01",
+        "image": "OnTheRoad"
+      }
+    },
+    "countries": {
+      "xx.xx": {
+        "name": "...Somewhere?",
+        "code": "xx.xx"
+      },
+      "xx.yy": {
+        "name": "Everywhere!",
+        "code": "xx.yy"
+      }
+    },
     "cities": {
       "na.us.ny.999": {
         "name": "Westchester",
@@ -63,6 +87,7 @@
       "na.us.ca.84": {
         "name": "San Fransisco",
         "alias": [
+          "Bay Area",
           "Oakland",
           "Santa Clara",
           "Palo Alto",
