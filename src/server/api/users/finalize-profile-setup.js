@@ -42,7 +42,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    validateProfile(profile);
+    await validateProfile(profile);
   } catch (error) {
     // If the user entered a birthday under 18, terminated the user immediately.
     if (error === profileErrorMessages.BIRTHDAY_UNDER_18) {
