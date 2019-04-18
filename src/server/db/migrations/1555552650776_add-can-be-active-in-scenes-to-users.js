@@ -25,9 +25,16 @@ exports.up = (pgm) => {
     FROM classmates
     WHERE NOT terminated
   `);
+
+  pgm.addConstraint(
+    'classmates',
+    'can_be_active_in_scenes_check',
+    'CHECK (can_be_active_in_scenes OR (NOT (active_smash AND active_social AND active_stone)))',
+  );
 };
 
 exports.down = (pgm) => {
+  pgm.dropConstraint('classmates', 'can_be_active_in_scenes_check');
   pgm.dropView('users');
   pgm.createView('users', { replace: true }, `
     SELECT
