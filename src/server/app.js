@@ -7,7 +7,6 @@ const logger = require('./logger');
 const api = require('./api');
 const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
-const slack = require('./slack');
 const utils = require('./utils');
 const { version } = require('./package.json');
 
