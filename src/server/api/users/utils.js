@@ -200,7 +200,8 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
     ) AS "activeScenes",
     expo_push_token AS "expoPushToken",
     notifications_enabled AS "notificationsEnabled",
-    ${tableName}admin_password IS NOT NULL AS "isAdmin"
+    ${tableName}admin_password IS NOT NULL AS "isAdmin",
+    ${tableName}can_be_active_in_scenes AS "canBeActiveInScenes"
   `;
 }
 
