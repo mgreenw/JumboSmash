@@ -92,6 +92,7 @@ const getSceneCandidates = async (
       NOT profile.user_id = ANY($2) AND
       profile.user_id != $1 AND
       candidate.active_${scene} AND
+      candidate.can_be_swiped_on AND
       NOT COALESCE(r_critic.blocked, false) AND
       NOT COALESCE(r_candidate.blocked, false) AND
       NOT COALESCE(r_critic.liked_${scene}, false) AND

@@ -21,7 +21,8 @@ exports.up = (pgm) => {
       admin_password,
       expo_push_token,
       notifications_enabled,
-      can_be_active_in_scenes
+      can_be_active_in_scenes,
+      can_be_swiped_on
     FROM classmates
     WHERE NOT terminated
   `);
