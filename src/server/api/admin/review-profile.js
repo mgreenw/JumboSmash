@@ -8,6 +8,7 @@ const db = require('../../db');
 const slack = require('../../slack');
 const { classmateSelect } = require('./utils');
 const { constructAccountUpdate } = require('../users/utils');
+const { scenes } = require('../relationships/utils');
 
 /* eslint-disable */
 const schema = {
@@ -51,6 +52,8 @@ export type Capabilities = {
   canBeSwipedOn: boolean,
   canBeActiveInScenes: boolean,
 };
+
+const activeScenesQuery = param => scenes.map(scene => `active_${scene} = CASE WHEN ${param} THEN active_${scene} ELSE false END`).join(',');
 
 /**
  * @api {post} /admin/classmates/:userId/review
@@ -108,6 +111,7 @@ const reviewProfile = async (
       profile_status = 'reviewed',
       can_be_swiped_on = $2,
       can_be_active_in_scenes = $3,
+      ${activeScenesQuery('$3')},
       account_updates = account_updates || jsonb_build_array($4::jsonb)
     WHERE id = $5 AND can_be_swiped_on = $6 AND can_be_active_in_scenes = $7
     RETURNING ${classmateSelect}
