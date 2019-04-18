@@ -44,6 +44,8 @@ const APP_LOADING_ROUTE = 'APP_LOADING_ROUTE';
 const APP_SWITCH = 'APP_SWITCH';
 const AUTH_SWITCH = 'AUTH_SWITCH';
 
+const TERMINATED = 'TERMINATED';
+
 const routes = {
   Profile: PROFILE_ROUTE,
   Matches: MATCHES_ROUTE,
@@ -79,7 +81,8 @@ const routes = {
   MainSwitch: MAIN_SWITCH,
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
-  AuthSwitch: AUTH_SWITCH
+  AuthSwitch: AUTH_SWITCH,
+  Terminated: TERMINATED
 };
 
 export default routes;

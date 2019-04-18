@@ -16,4 +16,6 @@ export const TIMEOUT = 'TIMEOUT';
 export const AUTHORIZED = 'AUTHORIZED';
 export const UNAUTHORIZED = 'UNAUTHORIZED';
 
+export const TERMINATED = 'TERMINATED';
+
 export const NETWORK_REQUEST_FAILED = 'NETWORK_REQUEST_FAILED';

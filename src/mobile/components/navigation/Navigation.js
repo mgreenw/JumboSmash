@@ -54,6 +54,8 @@ import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_S
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
 
+import TerminatedScreen from 'mobile/components/Auth/Terminated_Screen';
+
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -219,7 +221,8 @@ const createRootNavigator = () =>
       [routes.AuthSwitch]: AuthSwitch,
       [routes.OnboardingStack]: OnboardingStack,
       [routes.MainSwitch]: MainContentSwitch,
-      [routes.AppLoading]: { screen: AppLoading }
+      [routes.AppLoading]: { screen: AppLoading },
+      [routes.Terminated]: { screen: TerminatedScreen }
     },
     {
       initialRouteName: routes.AuthSwitch,
