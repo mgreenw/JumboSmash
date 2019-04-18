@@ -5,12 +5,15 @@ const utils = require('../utils');
 
 const NODE_ENV = utils.getNodeEnv();
 
+const enabled = false;
+
 const verificationCodes = new IncomingWebhook('https://hooks.slack.com/services/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');
 exports.postVerificationCode = (
   verificationCode: string,
   utln: string,
   email: string,
 ) => {
+  if (!enabled) return;
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     verificationCodes.send(`
       code:  *${verificationCode}*
@@ -28,6 +31,7 @@ exports.postReport = (
   message: string,
   block: boolean,
 ) => {
+  if (!enabled) return;
   // TODO: Send an email as a backup in case slack fails to send the report.
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     reporting.send(`
@@ -47,6 +51,7 @@ exports.postFeedback = (
   message: string,
   reasonCode: string,
 ) => {
+  if (!enabled) return;
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
     feedback.send(`
 ---------------------------
@@ -65,6 +70,7 @@ const server = new IncomingWebhook('https://hooks.slack.com/services/TCR3CCRDL/B
 exports.postServerUpdate = (
   message: string,
 ) => {
+  if (!enabled) return;
   if (NODE_ENV === 'production') {
     server.send(message);
   }
@@ -76,6 +82,7 @@ exports.postAdminUpdate = (
   adminUtln: string,
   message: string,
 ) => {
+  if (!enabled) return;
   if (NODE_ENV === 'production' || NODE_ENV === 'development') {
     admin.send(`New admin action. NODE_ENV: ${NODE_ENV}
 Admin: ${adminUtln} (${adminUserId})
