@@ -64,32 +64,35 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
 
   // Success! The code is verified!
   // Update the expiration date to ensure that the code can only be used once
-  db.query(
-    'UPDATE verification_codes SET expiration = $1',
-    [new Date()],
-  );
+  db.query(`
+    UPDATE verification_codes
+    SET expiration = $1
+    WHERE utln = $2
+  `, [new Date(), utln]);
 
-  const isAdmin = (await db.query(`
-    SELECT id
-    FROM admins
-    WHERE utln = $1
-  `, [utln])).rowCount > 0;
+  // Ensure no other user has the same push token by clearing it.
+  if (expoPushToken) {
+    await db.query(`
+      UPDATE classmates
+      SET expo_push_token = NULL
+      WHERE expo_push_token = $1
+    `, [expoPushToken]);
+  }
 
-  // Check if a user exists for this utln.
+  // Upsert the user if they don't exist.
   const tokenUUID = uuid();
   result = await db.query(`
     INSERT INTO users
-      (utln, email, token_uuid, is_admin, expo_push_token)
-      VALUES ($1, $2, $3, $4, $5)
+      (utln, email, token_uuid, expo_push_token)
+      VALUES ($1, $2, $3, $4)
     ON CONFLICT (utln)
       DO UPDATE
         SET
           successful_logins = users.successful_logins + EXCLUDED.successful_logins,
           token_uuid = $3,
-          is_admin = $4,
-          expo_push_token = $5
+          expo_push_token = $4
     RETURNING id
-  `, [utln, verification.email, tokenUUID, isAdmin, expoPushToken]);
+  `, [utln, verification.email, tokenUUID, expoPushToken]);
 
   // Get the user from the query results
   const user = result.rows[0];

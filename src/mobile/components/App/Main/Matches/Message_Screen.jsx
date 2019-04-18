@@ -2,14 +2,15 @@
 
 import React from 'react';
 import {
-  Alert,
   View,
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  Clipboard
 } from 'react-native';
 import { connect } from 'react-redux';
+import instantiateEmojiRegex from 'emoji-regex';
 import type {
   ReduxState,
   Dispatch,
@@ -26,16 +27,41 @@ import getConversationAction from 'mobile/actions/app/getConversation';
 import sendMessageAction from 'mobile/actions/app/sendMessage';
 import readMessageAction from 'mobile/actions/app/readMessage';
 import cancelFailedMessageAction from 'mobile/actions/app/cancelFailedMessage';
-import { GiftedChat, Bubble, SystemMessage } from 'react-native-gifted-chat';
+import {
+  GiftedChat,
+  Bubble,
+  SystemMessage,
+  Message
+} from 'react-native-gifted-chat';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { Colors } from 'mobile/styles/colors';
 import Socket from 'mobile/utils/Socket';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import formatMessage from 'mobile/utils/FormatMessage';
+import { isIphoneX } from 'mobile/utils/Platform';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
+
+const emojiRegex = instantiateEmojiRegex();
+
+/**
+ *
+ * @param {string} content Message Text
+ * @returns {boolean} if the message all emojis, 3 or less.
+ * Terminates early if the message is longer than 30 characters,
+ * because emojis can only be about 10 .
+ */
+function shouldDisplayLargeMessage(content: string): boolean {
+  if (content.length > 30) {
+    return false;
+  }
+  const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
+  const numberOfEmojis = (content.match(emojiRegex) || []).length;
+  return onlyEmojis && numberOfEmojis <= 3;
+}
 
 /**
  *
@@ -107,13 +133,14 @@ type State = {|
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
-  showFailedMessageActionSheet: boolean,
+  showMessageActionSheet: boolean,
   selectedMessage: ?GiftedChatMessage,
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
   showReportPopup: boolean,
   showUnmatchPopup: boolean,
-  showExpandedCard: boolean
+  showExpandedCard: boolean,
+  mostRecentlyReadMessageId: ?number
 |};
 
 const wrapperBase = {
@@ -137,16 +164,29 @@ const BubbleStyles = StyleSheet.create({
     ...wrapperBase,
     borderColor: Colors.AquaMarine
   },
+  wrapperLarge: {
+    ...wrapperBase,
+    borderWidth: 0,
+    margin: 0
+  },
   wrapperFailed: {
     ...wrapperBase,
     borderColor: Colors.Grapefruit
   },
-  messageText: {
+  messageTextNormal: {
     ...textStyles.subtitle1Style,
     color: Colors.Black
   },
+  messageTextLarge: {
+    ...textStyles.subtitle1Style,
+    color: Colors.Black,
+    fontSize: 70,
+    lineHeight: 85,
+    marginBottom: -10
+  },
   timeText: {
-    fontSize: 10
+    fontSize: 10,
+    lineHeight: 12
   },
   tickStyle: {
     color: Colors.Black
@@ -183,7 +223,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: true
+            failed: true,
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -199,7 +240,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: false
+            failed: false,
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -208,15 +250,17 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
+
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: message.content,
+      text: formatMessage(message.content),
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,
         name: message.sender
       },
       system: message.sender === 'system',
+      displayLarge: shouldDisplayLargeMessage(message.content),
       sent: true,
       failed: false,
       received: readReceipt
@@ -297,13 +341,14 @@ class MessagingScreen extends React.Component<Props, State> {
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
-      showFailedMessageActionSheet: false,
+      showMessageActionSheet: false,
       selectedMessage: null,
       showUserActionSheet: false,
       showBlockPopup: false,
       showReportPopup: false,
       showUnmatchPopup: false,
-      showExpandedCard: false
+      showExpandedCard: false,
+      mostRecentlyReadMessageId: null
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -333,12 +378,17 @@ class MessagingScreen extends React.Component<Props, State> {
     getConversation(match.userId);
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate() {
     const { mostRecentSenderMessageId: newId, readMessage } = this.props;
-    const { mostRecentSenderMessageId: oldId } = prevProps;
-    const { match } = this.state;
+    const { mostRecentlyReadMessageId: oldId, match } = this.state;
 
     if (newId && newId !== oldId) {
+      // TODO: offload this kind of check to the action.
+      // If read message fails then no retries will occur untill component is remounted, or a new message comes in.
+      // However, both of those happen a lot! and can be triggered by revisiting the screen, so all safe for now.
+      this.setState({
+        mostRecentlyReadMessageId: newId
+      });
       readMessage(match.userId, newId);
     }
   }
@@ -351,18 +401,34 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
     const { currentMessage } = props;
     const { failed = false } = currentMessage;
+    const { displayLarge = false } = currentMessage;
+
+    let rightWrapperStyle = BubbleStyles.wrapperRight;
+    if (failed) rightWrapperStyle = BubbleStyles.wrapperFailed;
+    else if (displayLarge) rightWrapperStyle = BubbleStyles.wrapperLarge;
+
     return (
       <Bubble
         {...props}
         wrapperStyle={{
-          right: failed
-            ? BubbleStyles.wrapperFailed
-            : BubbleStyles.wrapperRight,
-          left: BubbleStyles.wrapperLeft
+          right: rightWrapperStyle,
+          left: displayLarge
+            ? BubbleStyles.wrapperLarge
+            : BubbleStyles.wrapperLeft
         }}
         textStyle={{
-          right: BubbleStyles.messageText,
-          left: BubbleStyles.messageText
+          right:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal,
+          left:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal
+        }}
+        linkStyle={{
+          right: BubbleStyles.messageTextNormal,
+          left: BubbleStyles.messageTextNormal
         }}
         timeTextStyle={{
           right: BubbleStyles.timeText,
@@ -378,11 +444,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
-          if (failed) {
-            this._toggleFailedMessageActionSheet(true, currentMessage);
-          } else {
-            Alert.alert('TODO: Allow interacting with old messages');
-          }
+          this._toggleMessageActionSheet(true, currentMessage);
         }}
       />
     );
@@ -431,8 +493,9 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderContent = (profile: UserProfile) => {
     const { messages, getConversation_inProgress } = this.props;
     const { showOtherUserTyping } = this.state;
-    const shouldRenderGenesis =
-      messages === null || messages === undefined || messages.length === 0;
+
+    // If all messages are system messages, show genesis text!
+    const shouldRenderGenesisText = !messages.find(m => m.system === false);
     const extraData: ExtraData = {
       showOtherUserTyping,
       otherUserName: profile.fields.displayName,
@@ -444,20 +507,17 @@ class MessagingScreen extends React.Component<Props, State> {
         /* If we want to render our genesis text, we need to supply a dummy
         element for the listview. Because of the strict render method of GiftedChat,
         this element must match the GiftedChat Message type */
-        messages={
-          !shouldRenderGenesis
-            ? messages
-            : [
-                ({
-                  _id: 'GENESIS_ID',
-                  text: '',
-                  createdAt: new Date(),
-                  system: true,
-                  sent: true,
-                  failed: false
-                }: GiftedChatMessage)
-              ]
-        }
+        messages={[
+          ...messages,
+          ({
+            _id: 'GENESIS_ID',
+            text: '',
+            createdAt: new Date(),
+            system: true,
+            sent: true,
+            failed: false
+          }: GiftedChatMessage)
+        ]}
         onSend={this._onSend}
         user={{
           _id: 'client' // sent messages should have same user._id
@@ -468,13 +528,12 @@ class MessagingScreen extends React.Component<Props, State> {
         renderChatFooter={this._renderChatLoading}
         renderSystemMessage={this._renderSystemMessage}
         extraData={extraData}
-        renderMessage={
-          shouldRenderGenesis
-            ? () => {
-                return this._renderGenesis(profile);
-              }
-            : null
-        }
+        renderMessage={m => {
+          if (m.currentMessage._id === 'GENESIS_ID') {
+            return this._renderGenesis(profile, shouldRenderGenesisText);
+          }
+          return <Message {...m} />;
+        }}
         renderAvatar={null}
         minInputToolbarHeight={50}
         alignTop
@@ -514,7 +573,7 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
-  _renderGenesis = (profile: UserProfile) => {
+  _renderGenesis = (profile: UserProfile, shouldRenderGenesisText: boolean) => {
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
@@ -524,11 +583,20 @@ class MessagingScreen extends React.Component<Props, State> {
         >
           <Avatar size={'Large'} photoUuid={profile.photoUuids[0]} border />
         </TouchableOpacity>
-        <View style={{ paddingHorizontal: 84, paddingVertical: 20 }}>
-          <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
+        {shouldRenderGenesisText && (
+          <Text
+            style={[
+              textStyles.headline5Style,
+              {
+                textAlign: 'center',
+                paddingHorizontal: 84,
+                paddingVertical: 20
+              }
+            ]}
+          >
             {'Late-night Espresso’s run? ;)'}
           </Text>
-        </View>
+        )}
       </View>
     );
   };
@@ -575,12 +643,12 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _toggleFailedMessageActionSheet = (
-    showFailedMessageActionSheet: boolean,
+  _toggleMessageActionSheet = (
+    showMessageActionSheet: boolean,
     selectedMessage?: GiftedChatMessage
   ) => {
     this.setState({
-      showFailedMessageActionSheet,
+      showMessageActionSheet,
       selectedMessage: selectedMessage || null
     });
   };
@@ -642,6 +710,66 @@ class MessagingScreen extends React.Component<Props, State> {
             this._toggleUserActionSheet(false);
           }
         }}
+      />
+    );
+  }
+
+  _renderMessageActionSheet() {
+    const { showMessageActionSheet, selectedMessage, match } = this.state;
+    const { cancelFailedMessage } = this.props;
+    const CopyAction = {
+      text: 'Copy Text',
+      onPress: () => {
+        if (selectedMessage) {
+          Clipboard.setString(selectedMessage.text);
+        } else {
+          throw new Error('No message selected during interaction');
+        }
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const ResendAction = {
+      text: 'Resend',
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error('no message during resend');
+          }
+          this._onSend([selectedMessage]);
+        });
+      }
+    };
+    const DoNotResendAction = {
+      text: "Don't Send",
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error("no message during don't send");
+          }
+          cancelFailedMessage(match.userId, selectedMessage._id);
+        });
+      }
+    };
+    const CancelAction = {
+      text: 'Cancel',
+      onPress: () => {
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const failedMessageOptions = [CopyAction, ResendAction, DoNotResendAction];
+    const normalMessageOptions = [CopyAction];
+    const { failed = false } = selectedMessage || {};
+    return (
+      <ActionSheet
+        visible={showMessageActionSheet}
+        options={failed ? failedMessageOptions : normalMessageOptions}
+        cancel={CancelAction}
       />
     );
   }
@@ -711,14 +839,10 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { profileMap, cancelFailedMessage } = this.props;
-    const {
-      match,
-      showFailedMessageActionSheet,
-      selectedMessage,
-      showExpandedCard
-    } = this.state;
+    const { profileMap } = this.props;
+    const { match, showExpandedCard } = this.state;
     const profile = profileMap[match.userId];
+    const padBottom = isIphoneX();
     return (
       <View style={{ flex: 1 }}>
         <View>
@@ -732,39 +856,7 @@ class MessagingScreen extends React.Component<Props, State> {
           />
         </View>
         {this._renderContent(profile)}
-        <ActionSheet
-          visible={showFailedMessageActionSheet}
-          options={[
-            {
-              text: 'Resend',
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error('no message during resend');
-                  }
-                  this._onSend([selectedMessage]);
-                });
-              }
-            },
-            {
-              text: "Don't Send",
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error("no message during don't send");
-                  }
-                  cancelFailedMessage(match.userId, selectedMessage._id);
-                });
-              }
-            }
-          ]}
-          cancel={{
-            text: 'Cancel',
-            onPress: () => {
-              this._toggleFailedMessageActionSheet(false);
-            }
-          }}
-        />
+        {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
           onSwipeComplete={this._hideExpandedCard}
@@ -786,6 +878,7 @@ class MessagingScreen extends React.Component<Props, State> {
           profile={profile}
         />
         {this._renderUserActionSheet()}
+        {this._renderMessageActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
         {this._renderUnmatchPopup()}

@@ -1,9 +1,10 @@
 // @flow
 
 const _ = require('lodash');
+const Spotify = require('../artists/utils/Spotify');
 
-const minBirthday = new Date('01/01/1988');
-const maxBirthday = new Date('01/01/2001');
+// About 30 years old.
+const oldestBirthday = new Date('01/01/1988');
 const displayNameMaxLength = 50;
 const bioMaxLength = 500;
 
@@ -11,7 +12,9 @@ const bioMaxLength = 500;
 const profileErrorMessages = {
   DISPLAY_NAME_TOO_LONG: 'DISPLAY_NAME_TOO_LONG',
   BIRTHDAY_NOT_VALID: 'BIRTHDAY_NOT_VALID',
+  BIRTHDAY_UNDER_18: 'BIRTHDAY_UNDER_18',
   BIO_TOO_LONG: 'BIO_TOO_LONG',
+  ARTIST_NOT_FOUND: 'ARTIST_NOT_FOUND',
 };
 
 // This type here is to ensure that calls to the validateProfile function
@@ -24,15 +27,19 @@ type Profile = {
   displayName: ?string,
   birthday: ?string,
   bio: ?string,
+  postgradRegion?: string,
+  springFlingAct?: string,
+  freshmanDorm?: string,
 }
 
 // Given a profile, validate the fields. If there is an error, throw an error
 // with the "message" as the error
-function validateProfile(profile: Profile) {
+async function validateProfile(profile: Profile) {
   const {
     displayName,
     birthday,
     bio,
+    springFlingAct,
   } = profile;
 
   // Check if the user's display name is too long
@@ -42,15 +49,46 @@ function validateProfile(profile: Profile) {
 
   // Check that the birthday is in a reasonable range
   if (birthday) {
-    const birthdayDate = new Date(birthday);
-    if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
+    const [year, month, day] = birthday.split('-').map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
+
+    // Note the "month - 1": Javascript's month is 0-indexed. Oof.
+    const birthdayDate = new Date(year, month - 1, day);
+    const now = new Date();
+
+
+    if (
+      // This ensures that the given birthdayDate is not an "Invalid Date"
+      Number.isNaN(birthdayDate.getTime())
+      // This checks if the birthday is within the reasonable range.
+      || birthdayDate < oldestBirthday
+      || birthdayDate > now
+      // The final check below ensures that the Date that javascript coalesces the given birthday
+      // to is actually on the same day as the given birthday. Also duh.
+      // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
+      || birthdayDate.getDate() !== day
+    ) {
       throw profileErrorMessages.BIRTHDAY_NOT_VALID;
+    }
+
+    // Ensure the user is older than 18.
+    const eighteenthBirthday = new Date(year + 18, month - 1, day);
+
+    // Logic: if it is currently before the 18th birthday
+    if (now < eighteenthBirthday) {
+      throw profileErrorMessages.BIRTHDAY_UNDER_18;
     }
   }
 
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
     throw profileErrorMessages.BIO_TOO_LONG;
+  }
+
+  if (springFlingAct) {
+    const artistResponse = await Spotify.get(`artists/${springFlingAct}`);
+    if (!artistResponse) {
+      throw profileErrorMessages.ARTIST_NOT_FOUND;
+    }
   }
 }
 
@@ -103,7 +141,10 @@ function profileSelectQuery(
     json_build_object(
       'displayName', ${tableName}display_name,
       'birthday', to_char(${tableName}birthday, 'YYYY-MM-DD'),
-      'bio', ${tableName}bio
+      'bio', ${tableName}bio,
+      'postgradRegion', ${tableName}postgrad_region,
+      'freshmanDorm', ${tableName}freshman_dorm,
+      'springFlingAct', ${tableName}spring_fling_act
     )
   `;
 
@@ -155,7 +196,9 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
       'social', ${tableName}active_social,
       'stone', ${tableName}active_stone
     ) AS "activeScenes",
-    expo_push_token AS "expoPushToken"
+    expo_push_token AS "expoPushToken",
+    notifications_enabled AS "notificationsEnabled",
+    ${tableName}admin_password IS NOT NULL AS "isAdmin"
   `;
 }
 

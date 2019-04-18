@@ -53,6 +53,10 @@ Provide updated settings fields
   * Type: `string`
   * Description: The push token that expo gives on mobile
   * Required: `false`
+* `notificationsEnabled`
+  * Type: `boolean`
+  * Description: If the user would like to receive push notifications
+  * Required: `false`
 
 **Request body examples**
 
@@ -81,7 +85,8 @@ Provide updated settings fields
         "man": true,
         "nonBinary": true
     },
-    "expoPushToken": "thisisatokenitreallyisipromise"
+    "expoPushToken": "thisisatokenitreallyisipromise",
+    "notificationsEnabled": true
 }
 ```
 
@@ -111,7 +116,9 @@ Provide updated settings fields
             "smash": false,
             "social": false,
             "stone": false
-        }
+        },
+        "expoPushToken": "thisisatokenitreallyisipromise",
+        "notificationsEnabled": true,
     }
 }
 ```

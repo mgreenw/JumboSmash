@@ -43,8 +43,26 @@ class Socket {
     _io.use(async (socket, next) => {
       Promise.resolve(getUser(socket.handshake.query.token))
         .then((user) => {
-          socket.user = user;
-          next();
+          // Ensure each user can only connect with one socket connection.
+          // Because each user gets placed in a room by their user id, we can
+          // just check to see if there are any clients in the room already. If
+          // so, we do not allow a new client.
+          this.io.in(user.id).clients((error, clients) => {
+            if (error) {
+              logger.error(`Failed to get clients connected to room ${user.id}`, error);
+              return next(error);
+            }
+
+            // If there is already a client connected to this room, reject the new client.
+            if (clients.length > 0) {
+              logger.warn(`User ${user.id} tried to connect with multiple sockets at once.`);
+              return next(new Error('Already a connected socket for the given client.'));
+            }
+
+            // All set! Allow the socket connection.
+            socket.user = user;
+            return next();
+          });
         })
         .catch((error) => {
           // A caught error from getUser means the token is invalid.
@@ -78,6 +96,7 @@ class Socket {
       });
 
       socket.on('TYPING', async (otherUserId: number) => {
+        // NOTE: Admins don't get special privileges here
         const hasAccess = await canAccessUserData(otherUserId, socket.user.id, {
           requireMatch: true,
         });
@@ -107,6 +126,38 @@ class Socket {
     } catch (error) {
       logger.warn('Failed to send update to user', error);
     }
+  }
+
+  disconnect(userId: number) {
+    return new Promise<void>((resolve, reject) => {
+      // Do not do anything in a test env: socket is not setup here.
+      if (NODE_ENV === 'test' || NODE_ENV === 'travis') {
+        return resolve();
+      }
+
+      // Get a list of clients in the room with the user
+      return this.io.in(userId).clients((getClientsErr, clients) => {
+        if (getClientsErr) return reject(getClientsErr);
+
+        // If there are no clients, resolve. This is not an error as the socket does
+        // not need to be connected for the user to log out.
+        if (clients.length === 0) {
+          logger.debug(`Socket verified with userId ${userId} not found. No socket to disconnect.`);
+          return resolve();
+        }
+
+        // Log a warning if there is more than one client in a room.
+        if (clients.length > 1) {
+          logger.warn(`There should only be one client in room ${userId} but there are ${clients.length}`);
+        }
+
+        // Disconnect the client from the socket.
+        return this.io.sockets.adapter.remoteDisconnect(clients[0], true, (disconnectErr) => {
+          if (disconnectErr) return reject(disconnectErr);
+          return resolve();
+        });
+      });
+    });
   }
 }
 

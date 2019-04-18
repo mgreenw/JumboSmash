@@ -3,7 +3,7 @@
 import type { $Request } from 'express';
 
 const apiUtils = require('../utils');
-const { validateProfile, profileSelectQuery } = require('./utils');
+const { validateProfile, profileSelectQuery, profileErrorMessages } = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
@@ -37,8 +37,19 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    validateProfile(profile);
+    await validateProfile(profile);
   } catch (error) {
+    // If the user entered a birthday under 18, terminated the user immediately.
+    if (error === profileErrorMessages.BIRTHDAY_UNDER_18) {
+      await db.query(`
+        UPDATE classmates
+        SET terminated = true, termination_reason = $2
+        WHERE id = $1
+      `, [userId, profileErrorMessages.BIRTHDAY_UNDER_18]);
+
+      return apiUtils.status(codes.FINALIZE_PROFILE__BIRTHDAY_UNDER_18).noData();
+    }
+
     return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST).data({
       message: error,
     });

@@ -141,6 +141,7 @@ class MessagingScreen extends React.Component<Props, State> {
     const { navigation, matchMap, profileMap, conversationMap } = this.props;
     const match = matchMap[userId];
     const profile = profileMap[userId];
+    const showBadge = match.conversationIsRead === false;
     const mostRecentMessage =
       conversationMap[userId].byId[match.mostRecentMessage];
     const formattedTime = formatTime(mostRecentMessage.timestamp);
@@ -154,7 +155,12 @@ class MessagingScreen extends React.Component<Props, State> {
 
     return (
       <TouchableOpacity
-        style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+        style={{
+          height: 90,
+          width: '100%',
+          paddingHorizontal: 15,
+          backgroundColor: showBadge ? Colors.IceBlue : Colors.White
+        }}
         onPress={() => {
           navigation.navigate(routes.Message, { match });
         }}
@@ -167,7 +173,12 @@ class MessagingScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <Avatar size="Small" photoUuid={profile.photoUuids[0]} />
+          <Avatar
+            size="Small"
+            photoUuid={profile.photoUuids[0]}
+            showBadge={showBadge}
+            badgeContainerStyle={{ backgroundColor: Colors.IceBlue }}
+          />
           <View
             style={{
               flex: 1,
@@ -248,7 +259,7 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
-        <GEMHeader title="Messages" leftIconName="cards" borderBottom />
+        <GEMHeader title="Messages" leftIconName="cards" />
         {matchesLoaded ? (
           <View style={{ flex: 1 }}>
             <FlatList

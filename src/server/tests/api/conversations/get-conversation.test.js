@@ -204,7 +204,7 @@ describe('GET api/conversations/:userId', () => {
     expect(res.body.data.conversationIsRead).toBeFalsy();
   });
 
-  it('should fail if the other user is banned', async () => {
+  it('should fail if the other user is terminated', async () => {
     const person = await dbUtils.createUser('person04', true);
     await dbUtils.createRelationship(person.id, me.id, true);
     await dbUtils.createRelationship(me.id, person.id, true);
@@ -213,10 +213,10 @@ describe('GET api/conversations/:userId', () => {
       .post(`/api/conversations/${person.id}`)
       .set('Accept', 'application/json')
       .set('Authorization', me.token)
-      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey I will ban you' });
+      .send({ unconfirmedMessageUuid: uuidv4(), content: 'hey I will terminate you' });
     expect(res.body.status).toBe(codes.SEND_MESSAGE__SUCCESS.status);
 
-    await dbUtils.banUser(person.id);
+    await dbUtils.terminateUser(person.id);
 
     res = await request(app)
       .get(`/api/conversations/${person.id}`)

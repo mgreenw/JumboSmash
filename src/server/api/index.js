@@ -8,6 +8,8 @@ const relationshipsRouter = require('./relationships');
 const photosRouter = require('./photos');
 const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
+const adminRouter = require('./admin');
+const artistsRouter = require('./artists');
 
 const codes = require('./status-codes');
 const logger = require('../logger');
@@ -38,6 +40,7 @@ apiRouter.use(authenticated);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/photos', photosRouter);
 apiRouter.use('/meta', metaRouter);
+apiRouter.use('/artists', artistsRouter);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
@@ -52,8 +55,9 @@ apiRouter.use(isAfterLaunch);
 // We need other routes to interact with profiles and potentially relationships
 // to block other users.
 apiRouter.use('/conversations', conversationsRouter);
+apiRouter.use('/admin', adminRouter);
 
-// --> Main Erro Handler! <--
+// --> Main Error Handler! <--
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 apiRouter.use((err, req, res, _next) => {
   logger.error('Server Error: ', err);

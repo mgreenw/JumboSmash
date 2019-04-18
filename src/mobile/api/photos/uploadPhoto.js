@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { SignedUrlPayload } from 'mobile/api/photos/getSignedUrl';
+import Sentry from 'sentry-expo';
 
 // Uploads a photo to S3 via the signed photo payload we recieve from
 // the get-signed-url endpoint.
@@ -30,5 +31,8 @@ export default function uploadPhotoToS3(
     body: formdata
   })
     .then(response => response.status === 204)
-    .catch(err => false);
+    .catch(err => {
+      Sentry.captureException(new Error(JSON.stringify(err)));
+      return false;
+    });
 }

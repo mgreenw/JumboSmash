@@ -6,6 +6,7 @@ const { status, asyncHandler, canAccessUserData } = require('../utils');
 const utils = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
+const redis = require('../../redis');
 
 const sceneQuery = utils.scenes.map(scene => `liked_${scene} = false`);
 /**
@@ -15,6 +16,7 @@ const sceneQuery = utils.scenes.map(scene => `liked_${scene} = false`);
 const unmatch = async (userId: number, matchUserId: number) => {
   // If the users are matched in a scene, unmatch them in that scene and require
   // both users to re-consent to the match
+  // NOTE: Admins get no special privileges here
   const matched = await canAccessUserData(matchUserId, userId, { requireMatch: true });
   if (!matched) {
     return status(codes.UNMATCH__NOT_MATCHED).noData();
@@ -26,6 +28,13 @@ const unmatch = async (userId: number, matchUserId: number) => {
     WHERE critic_user_id = $1 AND candidate_user_id = $2
     OR critic_user_id = $2 AND candidate_user_id = $1
   `, [userId, matchUserId]);
+
+  // Clear the unread conversation between the two users, if it exists.
+  await Promise.all([
+    redis.shared.hdel(userId, matchUserId),
+    redis.shared.hdel(matchUserId, userId),
+  ]);
+
 
   return status(codes.UNMATCH__SUCCESS).noData();
 };

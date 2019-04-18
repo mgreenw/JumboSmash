@@ -46,7 +46,9 @@ export default (scene: Scene, resetCandidates?: boolean) => (
   dispatch: Dispatch
 ) => {
   dispatch(initiate(scene));
-  DevTesting.fakeLatency(() => {
+  // Force the loading to show for a second.
+  // This is a nice way to guarentee request ammounts.
+  setTimeout(() => {
     getSceneCandidates(scene, resetCandidates)
       .then(candidates => {
         dispatch(complete(candidates, scene));
@@ -54,5 +56,5 @@ export default (scene: Scene, resetCandidates?: boolean) => (
       .catch(error => {
         dispatch(apiErrorHandler(error));
       });
-  });
+  }, 1500);
 };

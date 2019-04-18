@@ -12,6 +12,8 @@ import { Header } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
 import { isIphoneX } from 'mobile/utils/Platform';
 import { Constants } from 'expo';
+import { connect } from 'react-redux';
+import type { ReduxState } from 'mobile/reducers/index';
 
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import HeaderIcon from './HeaderIcon';
@@ -19,7 +21,7 @@ import HeaderIcon from './HeaderIcon';
 /* eslint-disable react/require-default-props */
 
 // centerComponent overrides title
-type Props = {
+type ProppyProps = {
   leftIconName?: IconName,
   rightIconName?: IconName,
   onLeftIconPress?: () => void,
@@ -32,7 +34,19 @@ type Props = {
 };
 /* eslint-enable */
 
-export default (props: Props) => {
+type ReduxProps = {
+  hasUnreadMessages: boolean
+};
+
+type Props = ProppyProps & ReduxProps;
+
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  return {
+    hasUnreadMessages: reduxState.numBadges > 0
+  };
+}
+
+const GemHeader = (props: Props) => {
   // TODO: make this styling via a style sheet, and better!
   const {
     leftIconName,
@@ -43,7 +57,8 @@ export default (props: Props) => {
     loading,
     borderBottom,
     centerComponent,
-    onTitlePress
+    onTitlePress,
+    hasUnreadMessages
   } = props;
 
   const LeftIcon = (
@@ -59,6 +74,7 @@ export default (props: Props) => {
       name={rightIconName}
       disabled={loading}
       onPress={onRightIconPress}
+      badge={hasUnreadMessages}
     />
   );
 
@@ -77,6 +93,22 @@ export default (props: Props) => {
     paddingTop = Constants.statusBarHeight;
   }
 
+  const content = (
+    <View
+      style={{
+        flex: 1,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}
+    >
+      {LeftIcon}
+      {centerComponent || Title}
+      {RightIcon}
+    </View>
+  );
+
   return (
     <View
       style={{
@@ -86,17 +118,19 @@ export default (props: Props) => {
       <Header
         placement="center"
         backgroundColor="transparent"
-        leftComponent={LeftIcon}
-        leftContainerStyle={{ flex: 0, paddingLeft: 4 }}
-        rightComponent={RightIcon}
-        rightContainerStyle={{
-          flex: 0,
-          paddingRight: 4
+        leftComponent={null}
+        leftContainerStyle={{ flex: 0 }}
+        rightComponent={null}
+        rightContainerStyle={{ flex: 0 }}
+        centerComponent={content}
+        containerStyle={{
+          borderBottomWidth: borderBottom ? 1 : 0,
+          paddingHorizontal: 0
         }}
-        centerComponent={centerComponent || Title}
-        containerStyle={{ borderBottomWidth: borderBottom ? 1 : 0 }}
       />
       <StatusBar barStyle="dark-content" />
     </View>
   );
 };
+
+export default connect(mapStateToProps)(GemHeader);

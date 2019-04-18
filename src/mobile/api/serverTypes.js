@@ -6,14 +6,15 @@ import type { Scene } from 'mobile/reducers/';
 // Here we keep track of how the server represents the data we pass back so our parsers operate
 // in a well typed way.
 
-export type ServerProfile = {
-  fields: {
+export type ServerProfile = {|
+  fields: {|
     displayName: string,
     bio: string,
-    birthday: string
-  },
-  photoUuids: number[]
-};
+    birthday: string,
+    postgradRegion: ?string
+  |},
+  photoUuids: string[]
+|};
 
 export type ServerBaseUser = {
   userId: number,
@@ -50,7 +51,8 @@ export type ServerConversation = {|
 
 export type ServerMatch = ServerBaseUser & {
   scenes: ServerScenes,
-  mostRecentMessage: ServerMessage
+  mostRecentMessage: ServerMessage,
+  conversationIsRead: boolean
 };
 
 // Type for Push Notifications
@@ -75,3 +77,11 @@ export type NewMessage_PushNotificationData = {
     senderUserId: number
   }
 };
+
+/**
+ * Message body for system messages.
+ */
+export type SystemMessage =
+  | 'MATCHED_SOCIAL'
+  | 'MATCHED_SMASH'
+  | 'MATCHED_STONE';

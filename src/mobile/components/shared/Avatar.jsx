@@ -4,6 +4,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GET_PHOTO__ROUTE } from 'mobile/api/routes';
 import { Colors } from 'mobile/styles/colors';
+import { AvatarBadge } from 'mobile/components/shared/Badge';
 import { Image } from './imageCacheFork';
 
 const styles = StyleSheet.create({
@@ -16,7 +17,9 @@ const styles = StyleSheet.create({
 type Props = {
   photoUuid: string,
   size: 'Large' | 'Medium' | 'Small',
-  border?: boolean
+  border?: boolean,
+  showBadge?: boolean,
+  badgeContainerStyle?: StyleSheet.Styles
 };
 
 export const LargeWidth = 135;
@@ -24,7 +27,13 @@ export const MediumWidth = 75;
 export const SmallWidth = 70;
 
 export default (props: Props) => {
-  const { photoUuid, size, border } = props;
+  const {
+    photoUuid,
+    size,
+    border,
+    showBadge = false,
+    badgeContainerStyle
+  } = props;
   let width = 0;
   if (size === 'Large') {
     width = LargeWidth;
@@ -51,6 +60,17 @@ export default (props: Props) => {
         ]}
         {...{ preview }}
       />
+      {showBadge && (
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: width / 2
+          }}
+        >
+          <AvatarBadge badgeContainerStyle={badgeContainerStyle} />
+        </View>
+      )}
     </View>
   );
 };

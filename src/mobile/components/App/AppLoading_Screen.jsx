@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Image, View, Text } from 'react-native';
+import { Image, View, Text, SafeAreaView } from 'react-native';
 import { connect } from 'react-redux';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
@@ -10,6 +10,7 @@ import ProgressBar from 'react-native-progress/Bar';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import routes from 'mobile/components/navigation/routes';
 import { Constants } from 'expo';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 
@@ -74,44 +75,47 @@ class AppLoadingScreen extends React.Component<Props, State> {
   render() {
     return (
       <View style={Arthur_Styles.container}>
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <Text style={Arthur_Styles.title}>JumboSmash</Text>
-        </View>
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Text style={Arthur_Styles.title}>JumboSmash</Text>
+          </View>
 
-        <View style={{ flex: 1 }}>
-          <Image
-            resizeMode="contain"
+          <View style={{ flex: 1 }}>
+            <Image
+              resizeMode="contain"
+              style={{
+                flex: 1,
+                width: null,
+                height: null
+              }}
+              source={ArthurIcon}
+            />
+          </View>
+          <View
             style={{
               flex: 1,
-              width: null,
-              height: null
+              justifyContent: 'center',
+              alignItems: 'stretch',
+              paddingLeft: 60,
+              paddingRight: 60
             }}
-            source={ArthurIcon}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'stretch',
-            paddingLeft: 60,
-            paddingRight: 60
-          }}
-        >
-          <ProgressBar
-            progress={0.3}
-            height={10}
-            unfilledColor={Colors.IceBlue}
-            borderWidth={0}
-            color={Colors.Grapefruit}
-            indeterminate
-            borderRadius={6}
-            width={null}
-          />
-        </View>
-        <Text style={[{ textAlign: 'center' }]}>
-          {`Version ${Constants.manifest.version}`}
-        </Text>
+          >
+            <ProgressBar
+              progress={0.3}
+              height={10}
+              unfilledColor={Colors.IceBlue}
+              borderWidth={0}
+              color={Colors.Grapefruit}
+              indeterminate
+              borderRadius={6}
+              width={null}
+            />
+          </View>
+          <Text style={[{ textAlign: 'center' }]}>
+            {`Version ${Constants.manifest.version}`}
+          </Text>
+        </SafeAreaView>
+        <AndroidBackHandler onBackPress={() => true} />
       </View>
     );
   }

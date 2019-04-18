@@ -7,13 +7,14 @@ import { connect } from 'react-redux';
 import { sendVerificationEmailAction } from 'mobile/actions/auth/sendVerificationEmail';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import routes from 'mobile/components/navigation/routes';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { Transition } from 'react-navigation-fluid-transitions';
 import Collapsible from 'react-native-collapsible';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 
 const ArthurUri = require('../../../assets/arthurIcon.png');
 
@@ -83,18 +84,15 @@ class SplashScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { sendVerificationEmail_inProgress: sendingEmail } = this.props;
+    const {
+      sendVerificationEmail_inProgress: sendingEmail,
+      sendVerificationEmail_response: response
+    } = this.props;
     const { sendVerificationEmail_inProgress: wasSendingEmail } = prevProps;
 
     // This logic determines that an email has been sent, because we maintain
     // as an invariant that the progress of this action defaults to false.
-    if (sendingEmail !== wasSendingEmail && !sendingEmail) {
-      const { sendVerificationEmail_response: response } = this.props;
-      if (!response) {
-        throw new Error(
-          'Error in Login: Send Verification Email complete but no response'
-        );
-      }
+    if (response && sendingEmail !== wasSendingEmail && !sendingEmail) {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
@@ -213,7 +211,7 @@ class SplashScreen extends React.Component<Props, State> {
       return false;
     }
     // Hardcoded for apple / google tester
-    if (utln === 'tester@jumbosmash.com') {
+    if (utln === 'tester@jumbosmash.com' || utln === 'tester2@jumbosmash.com') {
       return true;
     }
     if (utln.includes('@') && !utln.includes('@tufts.edu')) {
@@ -315,6 +313,7 @@ class SplashScreen extends React.Component<Props, State> {
             </View>
           </Transition>
         </KeyboardView>
+        <AndroidBackHandler onBackPress={() => true} />
       </View>
     );
   }

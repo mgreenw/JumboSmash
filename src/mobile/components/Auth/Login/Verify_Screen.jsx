@@ -7,7 +7,7 @@ import loginAction from 'mobile/actions/auth/login';
 import type { ReduxState, Dispatch, PopupCode } from 'mobile/reducers/index';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { CodeInput } from 'mobile/components/shared/DigitInput';
 import routes from 'mobile/components/navigation/routes';
@@ -72,7 +72,7 @@ class SplashScreen extends React.Component<Props, State> {
       if (!login_inProgress && !!login_response) {
         const { statusCode } = login_response;
         if (statusCode === 'SUCCESS') {
-          navigation.navigate(routes.AppSwitch, {});
+          navigation.navigate(routes.AppLoading, {});
         } else if (statusCode === 'BAD_CODE') {
           this._codeInputError('Incorrect verification code');
         } else if (statusCode === 'EXPIRED_CODE') {

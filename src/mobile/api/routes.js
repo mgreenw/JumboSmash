@@ -47,6 +47,9 @@ export const GET_TOKEN_UTLN__ROUTE = AUTH_ROUTE + GET_TOKEN_UTLN;
 const VERIFY = 'verify/';
 export const VERIFY__ROUTE = AUTH_ROUTE + VERIFY;
 
+const LOGOUT = 'logout/';
+export const LOGOUT__ROUTE = AUTH_ROUTE + LOGOUT;
+
 // //////////////
 // APP ROUTES:
 // //////////////

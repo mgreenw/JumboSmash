@@ -168,6 +168,7 @@ const handler = [
     // endpoint to handle the weird system message needing to call the readMessage()
     // function directly. We don't want to double-check the match check, so we
     // handle it here.
+    // NOTE: Admins cannot read messages from users that blocked them or are not matched with them
     const canReadMessage = await canAccessUserData(req.params.matchUserId, req.user.id, {
       requireMatch: true,
     });

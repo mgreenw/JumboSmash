@@ -46,7 +46,7 @@ function complete(
           bio: '',
           birthday: '',
           displayName: '',
-          postGradLocation: null // optional field
+          postgradRegion: null // optional field
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },
@@ -67,6 +67,7 @@ function complete(
           social: true,
           stone: true
         },
+        notificationsEnabled: false,
         expoPushToken: null
       }
     },

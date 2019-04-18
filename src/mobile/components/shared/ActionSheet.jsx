@@ -9,7 +9,7 @@ import Dialog, {
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
 
-type Option = {
+export type Option = {
   text: string,
   textStyle?: Object,
   onPress: () => void
@@ -23,7 +23,7 @@ type Props = {
 };
 
 export default (props: Props) => {
-  const { visible, cancel, options, cancelOnTouchOutside } = props;
+  const { visible, cancel, options, cancelOnTouchOutside = true } = props;
 
   const numOptions = options.length;
 

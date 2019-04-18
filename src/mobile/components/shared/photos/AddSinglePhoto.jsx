@@ -85,14 +85,6 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
           visible={showActionSheet}
           options={[
             {
-              text: 'Reorder Photo',
-              onPress: () => {
-                this.setState({ showActionSheet: false }, () => {
-                  Alert.alert('Reordering Not Implemented Yet. :(');
-                });
-              }
-            },
-            {
               text: 'Delete Photo',
               textStyle: {
                 color: Colors.Grapefruit
@@ -104,7 +96,7 @@ export default class AddSinglePhoto extends React.Component<Props, State> {
                     ? onRemove
                     : () => {
                         Alert.alert(
-                          "Plz don't delete your last photo everything will break :("
+                          'Please add another photo before deleting your first photo.'
                         );
                       }
                 );

@@ -15,7 +15,6 @@ const db = require('../../db');
 const redis = require('../../redis');
 const logger = require('../../logger');
 const Notifications = require('../../notifications');
-const newMatchUtils = require('../../notifications/new-match/utils');
 
 /* eslint-disable */
 const schema = {
@@ -70,6 +69,11 @@ async function checkMatch(
  *
  */
 const judge = async (userId: number, scene: string, candidateUserId: number, liked: boolean) => {
+  // There is also a db constraint to check this.
+  if (userId === candidateUserId) {
+    return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+  }
+
   // NOTES:
   // 1) This query will fail if the candidate does not have a profile. We handle
   //    this specific error in the "catch" block
@@ -114,9 +118,7 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
       const matched = await checkMatch(userId, candidateUserId, scene);
       if (matched) {
         // They are matched! Construct a system message.
-        const sceneEmoji = newMatchUtils.emojis[scene];
-        const jumboScene = `Jumbo${scene.charAt(0).toUpperCase() + scene.slice(1)}`;
-        const matchMessage = `${sceneEmoji} You matched in ${jumboScene}! ${sceneEmoji}`;
+        const matchMessage = `MATCHED_${scene.toUpperCase()}`;
 
         // Insert the system message
         const systemMessageResult = await db.query(`
@@ -170,6 +172,7 @@ const judge = async (userId: number, scene: string, candidateUserId: number, lik
 const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
+    // NOTE: Admins get no special privileges here
     const canJudge = await canAccessUserData(req.body.candidateUserId, req.user.id);
     if (!canJudge) {
       return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();

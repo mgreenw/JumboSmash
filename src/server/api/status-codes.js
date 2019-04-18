@@ -25,7 +25,10 @@ exports.PRELAUNCH_WALL_ACTIVE = {
   status: 'PRELAUNCH_WALL_ACTIVE',
   code: 510,
 };
-
+exports.TERMINATED = {
+  status: 'TERMINATED',
+  code: 401,
+};
 // AUTH
 
 // Send Verification Email
@@ -76,6 +79,12 @@ exports.VERIFY__NO_EMAIL_SENT = {
   code: 400,
 };
 
+// Logout
+exports.LOGOUT__SUCCESS = {
+  status: 'LOGOUT__SUCCESS',
+  code: 200,
+};
+
 // USERS
 
 // Create Profile
@@ -94,6 +103,10 @@ exports.FINALIZE_PROFILE_SETUP__INVALID_REQUEST = {
 exports.FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED = {
   status: 'FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED',
   code: 409,
+};
+exports.FINALIZE_PROFILE__BIRTHDAY_UNDER_18 = {
+  status: 'FINALIZE_PROFILE__BIRTHDAY_UNDER_18',
+  code: 406,
 };
 
 // Update Profile
@@ -310,4 +323,46 @@ exports.READ_MESSAGE__FAILURE = {
 exports.SEND_FEEDBACK__SUCCESS = {
   status: 'SEND_FEEDBACK__SUCCESS',
   code: 200,
+};
+
+
+// ADMIN
+
+// Get Classmates
+exports.GET_CLASSMATES__SUCCESS = {
+  status: 'GET_CLASSMATES__SUCCESS',
+  code: 200,
+};
+
+// Terminate User
+exports.TERMINATE_USER__SUCCESS = {
+  status: 'TERMINATE_USER__SUCCESS',
+  code: 200,
+};
+exports.TERMINATE_USER__ALREADY_TERMINATED = {
+  status: 'TERMINATE_USER__ALREADY_TERMINATED',
+  code: 409,
+};
+exports.TERMINATE_USER__USER_NOT_FOUND = {
+  status: 'TERMINATE_USER__USER_NOT_FOUND',
+  code: 400,
+};
+
+
+// ARTISTS
+
+// Search Artists
+exports.SEARCH_ARTISTS__SUCCESS = {
+  status: 'SEARCH_ARTISTS__SUCCESS',
+  code: 200,
+};
+
+// Get Artist
+exports.GET_ARTIST__SUCCESS = {
+  status: 'GET_ARTIST__SUCCESS',
+  code: 200,
+};
+exports.GET_ARTIST__NOT_FOUND = {
+  status: 'GET_ARTIST__NOT_FOUND',
+  code: 404,
 };

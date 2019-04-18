@@ -25,7 +25,13 @@ async function sendNotifications(notifications: Notification[]) {
   notifications.forEach((notification) => {
     const { userId, ...rest } = notification;
     const badge = getBadgeCount(userId);
-    notificationMap[userId] = { ...rest, badge };
+    notificationMap[userId] = {
+      ...rest,
+      badge,
+      // Always use high priority so they show up on Android:
+      // https://docs.expo.io/versions/latest/guides/push-notifications/#message-format
+      priority: 'high',
+    };
   });
 
   // Get and set the badge for every outgoing notification
@@ -37,22 +43,25 @@ async function sendNotifications(notifications: Notification[]) {
 
   // Get the push token for each user in question and map them to the correct notification
   (await db.query(`
-    SELECT expo_push_token AS "expoPushToken", id AS "userId"
+    SELECT
+      expo_push_token AS "expoPushToken",
+      notifications_enabled AS "notificationsEnabled",
+      id AS "userId"
     FROM users
     WHERE id = ANY($1)
   `, [Object.keys(notificationMap)])).rows.forEach((row) => {
-    if (row.expoPushToken) {
+    if (row.expoPushToken && row.notificationsEnabled) {
       if (Expo.isExpoPushToken(row.expoPushToken)) {
         notificationMap[row.userId].to = row.expoPushToken;
       } else {
-        logger.info(`Invalid expo push token for user ${row.userId}`);
+        logger.debug(`Invalid expo push token for user ${row.userId}`);
         delete notificationMap[row.userId];
 
         // Note: no await here: this is a "fire and forget"
         db.query('UPDATE users SET expo_push_token = null WHERE id = $1', [row.userId]);
       }
     } else {
-      logger.info(`No push token for user ${row.userId} - throwing away message.`);
+      logger.debug(`No push token for user ${row.userId} OR not enabled - throwing away message.`);
       delete notificationMap[row.userId];
     }
   });
@@ -61,7 +70,7 @@ async function sendNotifications(notifications: Notification[]) {
   Object.keys(notificationMap).forEach((userId) => {
     if (!notificationMap[userId].to) {
       delete notificationMap[userId];
-      logger.info(`User ${userId} not found. Not sending a notification`);
+      logger.debug(`User ${userId} not found. Not sending a notification`);
     }
   });
 
@@ -100,7 +109,7 @@ async function sendNotifications(notifications: Notification[]) {
 
       // Queue this set of notifications for receipt retrieval
       const ticketIds = chunk.map(notification => notification[1].ticketId);
-      notificationReceiptQueue.add(ticketIds, { delay: 900000 }); // Delay by 15 minutes
+      notificationReceiptQueue.add(ticketIds, { delay: 600000 }); // Delay by 15 minutes
 
       logger.info(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
     } catch (error) {

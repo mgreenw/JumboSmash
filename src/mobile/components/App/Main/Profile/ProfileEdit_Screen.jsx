@@ -17,6 +17,11 @@ import { Colors } from 'mobile/styles/colors';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GEMHeader from 'mobile/components/shared/Header';
 import type {
+  NavigationEventPayload,
+  NavigationScreenProp,
+  NavigationEventSubscription
+} from 'react-navigation';
+import type {
   ReduxState,
   UserProfile,
   ProfileFields,
@@ -33,6 +38,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
+import { codeToLocation } from 'mobile/data/Locations';
 
 const manifest = Constants.manifest;
 const isDev =
@@ -67,7 +73,9 @@ const styles = StyleSheet.create({
   }
 });
 
-type NavigationProps = {};
+type NavigationProps = {
+  navigation: NavigationScreenProp<{}>
+};
 
 type ReduxProps = {
   profile: UserProfile
@@ -108,6 +116,10 @@ class ProfileEditScreen extends React.Component<Props, State> {
       editedProfileFields: props.profile.fields,
       errorMessageName: ''
     };
+    this.willBlurListener = props.navigation.addListener(
+      'willBlur',
+      this._onWillBlur
+    );
   }
 
   _onChangeBio = (bio: string) => {
@@ -130,11 +142,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
-    const { editedProfileFields } = this.state;
-    const { saveProfileFields } = this.props;
     const valid = this._validateInputs();
     if (valid) {
-      saveProfileFields(editedProfileFields);
       NavigationService.back();
     }
   };
@@ -154,6 +163,22 @@ class ProfileEditScreen extends React.Component<Props, State> {
     return nameValid;
   };
 
+  /**
+   * Save the profile.
+   * We do this on onWillBlur to check if this occured from either a back press OR a backswipe.
+   * If the blur is to a forward screen (e.g. city select), do NOT save.
+   */
+  _onWillBlur = (payload: NavigationEventPayload) => {
+    if (payload.action.type === 'Navigation/BACK') {
+      const { editedProfileFields } = this.state;
+      const { saveProfileFields } = this.props;
+      saveProfileFields(editedProfileFields);
+      this.willBlurListener.remove();
+    }
+  };
+
+  willBlurListener: NavigationEventSubscription;
+
   render() {
     const { width } = Dimensions.get('window');
     // A bit of a hack, but we want pictures to look nice.
@@ -163,6 +188,13 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const imageWidth = (containerWidth - 15) / 2;
 
     const { editedProfileFields, errorMessageName } = this.state;
+    const { postgradRegion: postgradLocationCode } = editedProfileFields;
+    const postgradLocation = postgradLocationCode
+      ? codeToLocation(postgradLocationCode)
+      : null;
+    const postgradLocationName = postgradLocation
+      ? postgradLocation.name
+      : null;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -182,7 +214,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
             <View style={styles.profileBlock}>
               <PrimaryInput
                 value={editedProfileFields.displayName}
-                label="Preferred Name"
+                label="Preferred First Name"
                 onChange={this._onChangeName}
                 error={errorMessageName}
                 containerStyle={{ width: '100%' }}
@@ -206,42 +238,47 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-            {isDev && (
-              <View style={styles.profileBlock}>
-                <PopupInput
-                  title={'Post-Grad Location'}
-                  placeholder={'No Selected Location'}
-                  onChange={() => {
-                    NavigationService.navigate(routes.SelectCity, {
-                      onSave: postGradLocation => {
-                        this.setState(state => ({
-                          editedProfileFields: {
-                            ...state.editedProfileFields,
-                            postGradLocation
-                          }
-                        }));
-                      }
-                    });
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'Dream Spring Fling Artist'}
-                  placeholder={'No Selected Artist'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'1st Year Dorm'}
-                  placeholder={'No Selected Dorm'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-              </View>
-            )}
+            <View style={styles.profileBlock}>
+              <PopupInput
+                title={'Post-Grad Location'}
+                value={postgradLocationName}
+                placeholder={'No Selected Location'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectCity, {
+                    onSave: newPostgradRegion => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          postgradRegion: newPostgradRegion
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
+              {isDev && (
+                <View>
+                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                  <PopupInput
+                    title={'Dream Spring Fling Artist'}
+                    value={null}
+                    placeholder={'No Selected Artist'}
+                    onChange={() => {
+                      Alert.alert('not yet implemented');
+                    }}
+                  />
+                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                  <PopupInput
+                    title={'1st Year Dorm'}
+                    value={null}
+                    placeholder={'No Selected Dorm'}
+                    onChange={() => {
+                      Alert.alert('not yet implemented');
+                    }}
+                  />
+                </View>
+              )}
+            </View>
           </PlatformSpecificScrollView>
         </View>
       </View>
@@ -251,11 +288,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
 type PopupInputProps = {
   title: string,
+  value: ?string,
   placeholder: string,
   onChange: () => void
 };
 const PopupInput = (props: PopupInputProps) => {
-  const { title, placeholder, onChange } = props;
+  const { title, placeholder, onChange, value } = props;
   return (
     <View>
       <Text style={textStyles.body2Style}>{title}</Text>
@@ -267,8 +305,14 @@ const PopupInput = (props: PopupInputProps) => {
           marginTop: 5
         }}
       >
-        <Text style={[textStyles.headline6Style, { color: Colors.BlueyGrey }]}>
-          {placeholder}
+        <Text
+          adjustsFontSizeToFit
+          style={[
+            textStyles.headline6Style,
+            { color: value ? Colors.Black : Colors.BlueyGrey }
+          ]}
+        >
+          {value || placeholder}
         </Text>
         <View style={{ bottom: 4 }}>
           <TertiaryButton title={'change'} onPress={onChange} />

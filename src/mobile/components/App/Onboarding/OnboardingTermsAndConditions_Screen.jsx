@@ -12,7 +12,7 @@ import routes from 'mobile/components/navigation/routes';
 import { Arthur_Styles } from 'mobile/styles/Arthur_Styles';
 import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import { OnboardingLayout } from './Onboarding_Layout';
 import TermsAndConditions from 'mobile/assets/copy/termsAndConditions';
 
@@ -83,7 +83,7 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
                   flex: 1,
                   flexDirection: 'row',
                   paddingTop: 35,
-                  paddingBottom: 35
+                  paddingBottom: 70
                 }}
               >
                 <View style={{ flex: 1 }} />

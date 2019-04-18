@@ -81,3 +81,4 @@ production.json
 .vscode
 
 /flow-typed
+spotify_client_secret

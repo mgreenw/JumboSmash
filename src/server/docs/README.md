@@ -11,8 +11,13 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 
 ## Private Endpoints
 
+### Admin
+* [Get Classmates](admin/get-classmates.md): `GET /api/admin/classmates`
+* [Ban User](admin/ban-user.md): `POST /api/admin/ban/:userId`
+
 ### Authentication
 * [Get Token UTLN](auth/get-token-utln.md) : `GET /api/auth/get-token-utln`
+* [Logout](auth/logout.md) : `POST /api/auth/logout`
 
 ### Users
 * [Finalize Profile Setup](users/finalize-profile-setup.md) : `POST /api/users/me/profile`

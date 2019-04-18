@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Colors } from 'mobile/styles/colors';
 import { textStyles } from 'mobile/styles/textStyles';
-import { PrimaryButton } from 'mobile/components/shared/buttons/PrimaryButton';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type { Scene, ReduxState, Dispatch } from 'mobile/reducers';
 import { connect } from 'react-redux';
 import { enableScene as enableSceneAction } from 'mobile/actions/app/saveSettings';
@@ -104,6 +104,8 @@ class InactiveSceneCard extends React.Component<Props> {
             Welcome to
           </Text>
           <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
             style={[
               textStyles.jumboSmashStyle,
               { fontSize: 40, padding: 15, textAlign: 'center' }

@@ -94,8 +94,7 @@ const getConversation = async (
 
 const handler = [
   asyncHandler(async (req: $Request) => {
-    // If the user is banned, return an emtpy array (which is the default
-    // if the user couldn't be found otherwise)
+    // NOTE: Admins cannot access conversations between themselves and users that blocked them.
     const allowedAccess = await canAccessUserData(req.params.userId, req.user.id, {
       requireMatch: true,
     });

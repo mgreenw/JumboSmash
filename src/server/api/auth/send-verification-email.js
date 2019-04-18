@@ -38,21 +38,22 @@ const schema = {
 
 const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   // If the email is the testers, email, return immediately
-  if (email === 'tester@jumbosmash.com') {
-    const utln = 'tester';
+  // TODO: Comment this out when we don't need
+  if (email === 'tester@jumbosmash.com' || email === 'tester2@jumbosmash.com') {
+    const utln = email.split('@')[0];
     const expirationDate = new Date(new Date().getTime() + 10 * 60000);
     await db.query(`
       INSERT INTO verification_codes
       (utln, code, expiration, email)
       VALUES($1, $2, $3, $4)
       ON CONFLICT (utln) DO UPDATE
-      SET (code, expiration, email)
-        = ($2, $3, $4)
+      SET (code, expiration, email, attempts)
+        = ($2, $3, $4, 0)
       RETURNING id
     `, [utln, '654321', expirationDate, email]);
     return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({
       email,
-      utln: 'tester',
+      utln,
     });
   }
 

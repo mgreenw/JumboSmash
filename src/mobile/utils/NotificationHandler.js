@@ -6,6 +6,9 @@ import type {
 } from 'mobile/api/serverTypes';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import routes from 'mobile/components/navigation/routes';
+import store from 'mobile/store';
+import type { ReduxState } from 'mobile/reducers';
+import Sentry from 'sentry-expo';
 
 /**
  *  https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -31,6 +34,19 @@ type Notification = {
  * @param {*} notification The Notification object recieved when the listener is called by clicking a notification
  */
 function handler(notification: Notification) {
+  const state: ReduxState = store.getState();
+
+  // All kinds of reasons the app might not be ready to go into the main app:
+  const { client, token, authLoaded, appLoaded, onboardingCompleted } = state;
+
+  // If ANY of those are not true, then we are NOT in the main app.
+  if (!client || !token || !authLoaded || !appLoaded || !onboardingCompleted) {
+    Sentry.captureMessage('Notification opened, but not in main app', {
+      level: 'info'
+    });
+    return;
+  }
+
   switch (notification.origin) {
     // Notification occured in app.
     // This should have a corresponding socket notification, so we handle these there,
@@ -40,10 +56,6 @@ function handler(notification: Notification) {
     }
 
     // App opened in response to a notification.
-    // TODO: Replace body of this statement with:
-    // 1) Action to fetch latest conversation for that match
-    // 2 a) If a message, go to conversation
-    // 2 b) If a new match, go to messages screen (we don't have the match in redux yet so this is way safer than awaiting the fetch)
     case 'selected': {
       const { data } = notification;
       switch (data.type) {

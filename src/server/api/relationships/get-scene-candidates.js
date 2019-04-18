@@ -102,7 +102,7 @@ const getSceneCandidates = async (
         (critic.want_they AND candidate.use_they)
       )` : ''}
     ORDER BY RANDOM()
-    LIMIT 10
+    LIMIT 20
   `, [userId, excludedUsers]);
 
   return apiUtils.status(codes.GET_SCENE_CANDIDATES__SUCCESS).data(_.shuffle(result.rows));

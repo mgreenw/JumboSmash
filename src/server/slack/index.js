@@ -65,7 +65,21 @@ const server = new IncomingWebhook('https://hooks.slack.com/services/TCR3CCRDL/B
 exports.postServerUpdate = (
   message: string,
 ) => {
-  if (NODE_ENV === 'staging' || NODE_ENV === 'production') {
+  if (NODE_ENV === 'production') {
     server.send(message);
+  }
+};
+
+const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
+exports.postAdminUpdate = (
+  adminUserId: number,
+  adminUtln: string,
+  message: string,
+) => {
+  if (NODE_ENV === 'production' || NODE_ENV === 'development') {
+    admin.send(`New admin action. NODE_ENV: ${NODE_ENV}
+Admin: ${adminUtln} (${adminUserId})
+
+${message}`);
   }
 };
