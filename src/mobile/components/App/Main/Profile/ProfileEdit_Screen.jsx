@@ -261,26 +261,26 @@ class ProfileEditScreen extends React.Component<Props, State> {
                   });
                 }}
               />
+              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+              <PopupInput
+                title={'1st Year Dorm'}
+                value={freshmanDorm}
+                placeholder={'No Selected Dorm'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectDorm, {
+                    onSave: newFreshmanDorm => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          freshmanDorm: newFreshmanDorm
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
               {isDev && (
                 <View>
-                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                  <PopupInput
-                    title={'1st Year Dorm'}
-                    value={freshmanDorm}
-                    placeholder={'No Selected Dorm'}
-                    onChange={() => {
-                      NavigationService.navigate(routes.SelectDorm, {
-                        onSave: newFreshmanDorm => {
-                          this.setState(state => ({
-                            editedProfileFields: {
-                              ...state.editedProfileFields,
-                              freshmanDorm: newFreshmanDorm
-                            }
-                          }));
-                        }
-                      });
-                    }}
-                  />
                   <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
                   <PopupInput
                     title={'Dream Spring Fling Artist'}

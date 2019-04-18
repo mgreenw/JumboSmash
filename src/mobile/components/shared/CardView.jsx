@@ -21,6 +21,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { codeToLocation } from 'mobile/data/Locations';
 import { CityIconsMap } from 'mobile/assets/icons/locations/';
+import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -67,7 +68,11 @@ const CardView = (props: Props) => {
   const middlePhoto1 = photos.length > 2 ? photos[1] : null;
   const middlePhoto2 = photos.length > 3 ? photos[2] : null;
 
-  const { postgradRegion: postgradLocationCode } = profile.fields;
+  const {
+    postgradRegion: postgradLocationCode,
+    freshmanDorm: freshmanDormCode
+  } = profile.fields;
+
   const postgradLocation = postgradLocationCode
     ? codeToLocation(postgradLocationCode)
     : null;
@@ -103,6 +108,36 @@ const CardView = (props: Props) => {
           style={{ width: 50, height: 50 }}
           source={CityIconsMap[postgradLocationImage]}
         />
+      </View>
+    </View>
+  ) : null;
+
+  const freshmanDormName = freshmanDormCode
+    ? dormCodeToName(freshmanDormCode)
+    : null;
+  const freshmanDormBlock = freshmanDormName ? (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%',
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}
+      >
+        <View>
+          <Text
+            style={[
+              textStyles.body2StyleBold,
+              { textAlign: 'left', paddingBottom: 5 }
+            ]}
+          >
+            {'1st Year Dorm'}
+          </Text>
+
+          <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+            {freshmanDormName}
+          </Text>
+        </View>
       </View>
     </View>
   ) : null;
@@ -178,6 +213,7 @@ const CardView = (props: Props) => {
           </View>
         </View>
         {postGradLocationBlock}
+        {freshmanDormBlock}
         {middlePhoto1}
         {middlePhoto2}
         {lastPhoto}
