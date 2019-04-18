@@ -9,6 +9,7 @@ import { textStyles } from 'mobile/styles/textStyles';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import { WebBrowser } from 'expo';
 import { Colors } from 'mobile/styles/colors';
+import * as Animatable from 'react-native-animatable';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -30,9 +31,14 @@ class TerminatedScreen extends React.Component<Props, State> {
         <KeyboardView waves={1}>
           <View style={{ flex: 1, paddingHorizontal: '6.4%' }}>
             <GEMHeader title="" />
-            <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
-              {'Your Account Has Been Terminated'}
-            </Text>
+            <Animatable.View>
+              <Text
+                style={[textStyles.headline4Style, { textAlign: 'center' }]}
+                transition="fadeIn"
+              >
+                {'Your Account Has Been Terminated'}
+              </Text>
+            </Animatable.View>
             <View
               style={{
                 flex: 1,
@@ -40,23 +46,41 @@ class TerminatedScreen extends React.Component<Props, State> {
                 paddingBottom: '25%'
               }}
             >
-              <Text style={textStyles.body1Style}>
-                {'Your account has been terminated for violating the '}
-                <Terms />
-                {
-                  '. You won’t be able to log into this account and no one else will be able to see it.'
-                }
-              </Text>
-              <Text style={textStyles.body1Style}>
-                {'As per the '}
-                <Terms />
-                {
-                  ', JumboSmash reserves the right to make the final determination with respect to such matters, and this decision will not be reversed.'
-                }
-              </Text>
-              <Text style={textStyles.body1Style}>
-                {'Congrats to you and the rest of the class of 2019! 🥂🎓🐘'}
-              </Text>
+              <Animatable.View>
+                <Text
+                  style={textStyles.body1Style}
+                  transition="fadeIn"
+                  delay={1000}
+                >
+                  {'Your account has been terminated for violating the '}
+                  <Terms />
+                  {
+                    '. You won’t be able to log into this account and no one else will be able to see it.'
+                  }
+                </Text>
+              </Animatable.View>
+              <Animatable.View>
+                <Text
+                  style={textStyles.body1Style}
+                  transition="fadeIn"
+                  delay={2000}
+                >
+                  {'As per the '}
+                  <Terms />
+                  {
+                    ', JumboSmash reserves the right to make the final determination with respect to such matters, and this decision will not be reversed.'
+                  }
+                </Text>
+              </Animatable.View>
+              <Animatable.View>
+                <Text
+                  style={textStyles.body1Style}
+                  transition="fadeIn"
+                  delay={10000}
+                >
+                  {'Congrats to you and the rest of the class of 2019! 🥂🎓🐘'}
+                </Text>
+              </Animatable.View>
             </View>
             <AndroidBackHandler onBackPress={() => true} />
           </View>
@@ -77,7 +101,6 @@ const Terms = () => (
       WebBrowser.openBrowserAsync('https://arthur.jumbosmash.com/terms.html');
     }}
   >
-    {' '}
     Terms and Conditions
   </Text>
 );
