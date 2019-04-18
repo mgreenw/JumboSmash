@@ -95,6 +95,7 @@ describe('GET api/relationships/matches', () => {
     expect(match.scenes.smash).not.toBeNull();
     expect(match.scenes.social).toBeNull();
     expect(match.scenes.stone).toBeNull();
+    expect(match.newMatch).toBeTruthy();
   });
 
 
@@ -126,6 +127,7 @@ describe('GET api/relationships/matches', () => {
     expect(match.scenes.smash).not.toBeNull();
     expect(match.scenes.social).not.toBeNull();
     expect(match.scenes.stone).not.toBeNull();
+    expect(match.newMatch).toBeTruthy();
   });
 
   it('should return a match given a relationship with inverse likes on smash', async () => {
@@ -171,6 +173,7 @@ describe('GET api/relationships/matches', () => {
     const matchIds = res.body.data.map((match) => {
       expect(match.mostRecentMessage).toBeNull();
       expect(match.conversationIsRead).toBeTruthy();
+      expect(match.newMatch).toBeTruthy();
       return match.userId;
     });
 
@@ -221,5 +224,34 @@ describe('GET api/relationships/matches', () => {
     expect(match.mostRecentMessage.timestamp).toBeDefined();
     expect(match.mostRecentMessage.sender).toBe('client');
     expect(match.conversationIsRead).toBeTruthy();
+  });
+
+  it('should return new match is false if there is a non-system message between the two users', async () => {
+    const personSeven = await dbUtils.createUser('person07', true);
+    const personEight = await dbUtils.createUser('person08', true);
+    await dbUtils.createRelationship(personSeven.id, personEight.id, true, true, true);
+    await dbUtils.createRelationship(personEight.id, personSeven.id, true, true, true);
+    let res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', personSeven.token)
+      .set('Accept', 'application/json');
+
+    let match = res.body.data[0];
+    expect(match.newMatch).toBeTruthy();
+
+    res = await request(app)
+      .post(`/api/conversations/${personEight.id}`)
+      .set('Authorization', personSeven.token)
+      .set('Accept', 'application/json')
+      .send({ content: 'hey', unconfirmedMessageUuid: uuidv4() });
+    expect(res.statusCode).toBe(201);
+
+    res = await request(app)
+      .get('/api/relationships/matches')
+      .set('Authorization', personSeven.token)
+      .set('Accept', 'application/json');
+
+    [match] = res.body.data;
+    expect(match.newMatch).toBeFalsy();
   });
 });

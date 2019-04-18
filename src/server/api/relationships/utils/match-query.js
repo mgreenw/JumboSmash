@@ -17,7 +17,7 @@ const matchedScenesSelect = utilScenes.map((scene) => {
 
 const query = `
   SELECT
-    NOT exists (SELECT id FROM messages WHERE they_profile.user_id in (sender_user_id, receiver_user_id) AND $1 in (sender_user_id, receiver_user_id) AND NOT from_system) AS new_match,
+    NOT exists (SELECT id FROM messages WHERE they_profile.user_id in (sender_user_id, receiver_user_id) AND $1 in (sender_user_id, receiver_user_id) AND NOT from_system) AS "newMatch",
     they_profile.user_id as "userId",
     ${profileSelectQuery('they_profile.user_id', { tableAlias: 'they_profile', buildJSON: true })} AS profile,
     json_object(ARRAY[${scenes}], ARRAY[
