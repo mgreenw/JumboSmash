@@ -87,12 +87,6 @@ app.use(notFound);
 app.use(Sentry.Handlers.errorHandler());
 app.use((err, req, res, _next) => {
   logger.error('Server Error: ', err);
-  slack.postServerUpdate(`SERVER ERROR
-    Environment: *${NODE_ENV}*
-
-    ${err.message}
-    ${err.stack}
-  `);
   return res.status(500).json({
     status: codes.SERVER_ERROR.status,
     version: utils.version,
