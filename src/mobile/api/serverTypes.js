@@ -11,7 +11,8 @@ export type ServerProfile = {|
     displayName: string,
     bio: string,
     birthday: string,
-    postgradRegion: ?string
+    postgradRegion: ?string,
+    freshmanDorm: ?string
   |},
   photoUuids: string[]
 |};
