@@ -53,7 +53,7 @@ export type Capabilities = {
   canBeActiveInScenes: boolean,
 };
 
-const activeScenesQuery = param => scenes.map(scene => `active_${scene} = CASE WHEN ${param} THEN active_${scene} ELSE false END`).join(',');
+const activeScenesQuery = canBeActiveInScenes => scenes.map(scene => `active_${scene} = CASE WHEN ${canBeActiveInScenes} THEN active_${scene} ELSE false END`).join(',');
 
 /**
  * @api {post} /admin/classmates/:userId/review
