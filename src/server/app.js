@@ -13,8 +13,9 @@ const { version } = require('./package.json');
 
 const NODE_ENV = utils.getNodeEnv();
 
+const SENTRY_ENVS = ['production', 'staging', 'development'];
 Sentry.init({
-  dsn: 'https://79851436560a4133a55510f62d656e6f@sentry.io/1441637',
+  dsn: SENTRY_ENVS.includes(NODE_ENV) ? 'https://79851436560a4133a55510f62d656e6f@sentry.io/1441637' : '',
   release: version,
   environment: NODE_ENV,
 });
