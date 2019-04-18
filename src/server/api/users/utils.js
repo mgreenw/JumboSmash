@@ -1,5 +1,7 @@
 // @flow
 
+import { type Capabilities } from '../admin/review-profile';
+
 const _ = require('lodash');
 const Spotify = require('../artists/utils/Spotify');
 
@@ -202,10 +204,57 @@ function settingsSelectQuery(settingsTableAlias: string = '') {
   `;
 }
 
+// Account Updates
+
+type Admin = {
+  id: number,
+  utln: string,
+};
+
+type ProfileReview = {
+  type: 'PROFILE_REVIEW',
+  reviewer: Admin,
+  comment: string | null,
+  capabilities: Capabilities,
+};
+
+type AccountTermination = {
+  type: 'ACCOUNT_TERMINATION',
+  admin: Admin | 'server', // Null here means the server did it
+  reason: string,
+};
+
+type ProfileFieldsUpdate = {
+  type: 'PROFILE_FIELDS_UPDATE',
+  changedFields: Profile,
+};
+
+type ProfileNewPhoto = {
+  type: 'PROFILE_NEW_PHOTO',
+  photoUUID: string,
+}
+
+type AccountUpdate = ProfileReview | AccountTermination | ProfileFieldsUpdate | ProfileNewPhoto;
+
+type AccountUpdateMeta = {
+  timestamp: string,
+  update: AccountUpdate
+};
+
+function constructAccountUpdate(
+  update: AccountUpdate,
+): AccountUpdateMeta {
+  return {
+    timestamp: new Date().toISOString(),
+    update,
+  };
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
   getFieldTemplates,
   profileSelectQuery,
   settingsSelectQuery,
+  constructAccountUpdate,
 };
