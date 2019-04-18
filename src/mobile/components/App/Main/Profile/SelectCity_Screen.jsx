@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, FlatList, ImageBackground, Text } from 'react-native';
+import { View, ImageBackground, Text } from 'react-native';
 import { connect } from 'react-redux';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import GEMHeader from 'mobile/components/shared/Header';
@@ -8,6 +8,7 @@ import { ListItem, SearchBar } from 'react-native-elements';
 import _ from 'lodash';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 
 import type { Location } from 'mobile/data/Locations';
 import {
@@ -89,7 +90,10 @@ function formatTitle(
     : textStyles.body1StyleSemibold;
   if (!skipFormatting && search.length > 0) {
     if (title.toUpperCase().indexOf(search.toUpperCase()) === -1) {
-      return { component: <Text>{title}</Text>, isMatch: false };
+      return {
+        component: <Text style={normalFont}>{title}</Text>,
+        isMatch: false
+      };
     }
     const { preBold, bold, postBold } = splitBoldText(search, title);
     const component = (
@@ -272,7 +276,8 @@ class SelectCityScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
-          <FlatList
+          <KeyboardAwareFlatList
+            enableResetScrollToCoords={false}
             data={locations}
             renderItem={({ item }: { item: Location }) => {
               const {
