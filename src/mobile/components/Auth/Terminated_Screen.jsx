@@ -31,10 +31,9 @@ class TerminatedScreen extends React.Component<Props, State> {
         <KeyboardView waves={1}>
           <View style={{ flex: 1, paddingHorizontal: '6.4%' }}>
             <GEMHeader title="" />
-            <Animatable.View>
+            <Animatable.View animation="fadeIn" delay={0} duration={1500}>
               <Text
                 style={[textStyles.headline4Style, { textAlign: 'center' }]}
-                transition="fadeIn"
               >
                 {'Your Account Has Been Terminated'}
               </Text>
@@ -46,12 +45,8 @@ class TerminatedScreen extends React.Component<Props, State> {
                 paddingBottom: '25%'
               }}
             >
-              <Animatable.View>
-                <Text
-                  style={textStyles.body1Style}
-                  transition="fadeIn"
-                  delay={1000}
-                >
+              <Animatable.View animation="fadeIn" delay={700} duration={1500}>
+                <Text style={textStyles.body1Style}>
                   {'Your account has been terminated for violating the '}
                   <Terms />
                   {
@@ -59,12 +54,8 @@ class TerminatedScreen extends React.Component<Props, State> {
                   }
                 </Text>
               </Animatable.View>
-              <Animatable.View>
-                <Text
-                  style={textStyles.body1Style}
-                  transition="fadeIn"
-                  delay={2000}
-                >
+              <Animatable.View animation="fadeIn" delay={1200} duration={1500}>
+                <Text style={textStyles.body1Style}>
                   {'As per the '}
                   <Terms />
                   {
@@ -72,12 +63,12 @@ class TerminatedScreen extends React.Component<Props, State> {
                   }
                 </Text>
               </Animatable.View>
-              <Animatable.View>
-                <Text
-                  style={textStyles.body1Style}
-                  transition="fadeIn"
-                  delay={10000}
-                >
+              <Animatable.View
+                animation="bounceIn"
+                delay={3000}
+                duration={1000}
+              >
+                <Text style={textStyles.body1Style}>
                   {'Congrats to you and the rest of the class of 2019! 🥂🎓🐘'}
                 </Text>
               </Animatable.View>
