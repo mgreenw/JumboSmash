@@ -69,6 +69,11 @@ async function checkMatch(
  *
  */
 const judge = async (userId: number, scene: string, candidateUserId: number, liked: boolean) => {
+  // There is also a db constraint to check this.
+  if (userId === candidateUserId) {
+    return status(codes.JUDGE__CANDIDATE_NOT_FOUND).noData();
+  }
+
   // NOTES:
   // 1) This query will fail if the candidate does not have a profile. We handle
   //    this specific error in the "catch" block

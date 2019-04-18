@@ -23,7 +23,7 @@ export type SendVerificationEmail_Response = {
 };
 
 export type SendVerificationEmailCompleted_Action = {
-  type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
+  type: 'SEND_VERIFICATION_EMAIL__COMPLETED',
   payload: {
     response: SendVerificationEmail_Response
   },
@@ -31,14 +31,20 @@ export type SendVerificationEmailCompleted_Action = {
 };
 
 export type SendVerificationEmailInitiated_Action = {
-  type: 'SEND_VERIFICATION_EMAIL_INITIATED',
+  type: 'SEND_VERIFICATION_EMAIL__INITIATED',
+  payload: {},
+  meta: {}
+};
+
+export type SendVerificationEmailFailed_Action = {
+  type: 'SEND_VERIFICATION_EMAIL__FAILED',
   payload: {},
   meta: {}
 };
 
 function initiate(): SendVerificationEmailInitiated_Action {
   return {
-    type: 'SEND_VERIFICATION_EMAIL_INITIATED',
+    type: 'SEND_VERIFICATION_EMAIL__INITIATED',
     payload: {},
     meta: {}
   };
@@ -48,8 +54,16 @@ function complete(
   response: SendVerificationEmail_Response
 ): SendVerificationEmailCompleted_Action {
   return {
-    type: 'SEND_VERIFICATION_EMAIL_COMPLETED',
+    type: 'SEND_VERIFICATION_EMAIL__COMPLETED',
     payload: { response },
+    meta: {}
+  };
+}
+
+function fail(): SendVerificationEmailFailed_Action {
+  return {
+    type: 'SEND_VERIFICATION_EMAIL__FAILED',
+    payload: {},
     meta: {}
   };
 }
@@ -66,6 +80,7 @@ export function sendVerificationEmailAction(
           dispatch(complete(response));
         })
         .catch(error => {
+          dispatch(fail());
           dispatch(apiErrorHandler(error));
         });
     });
