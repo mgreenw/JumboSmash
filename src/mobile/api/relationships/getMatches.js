@@ -9,6 +9,7 @@ export default function getMatches(): Promise<ServerMatch[]> {
   return apiRequest('GET', GET_MATCHES__ROUTE).then(response => {
     switch (response.status) {
       case GET_MATCHES__SUCCESS:
+        console.log(response.data);
         return response.data;
       default:
         throw new Error(response);

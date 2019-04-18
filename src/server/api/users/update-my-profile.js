@@ -56,7 +56,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    validateProfile(profile);
+    await validateProfile(profile);
   } catch (error) {
     return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
       message: error,

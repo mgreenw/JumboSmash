@@ -46,7 +46,6 @@ function updateMatchIds(state: ReduxState, matchId: number): Matches {
   };
 }
 
-
 /**
  *
  * @param {ReduxState} state

@@ -46,7 +46,7 @@ function complete(
           bio: '',
           birthday: '',
           displayName: '',
-          postGradLocation: null // optional field
+          postgradRegion: null // optional field
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },
@@ -63,9 +63,9 @@ function complete(
         },
         // start all selected true untill we add to onboarding
         activeScenes: {
-          smash: true,
-          social: true,
-          stone: true
+          smash: false,
+          social: false,
+          stone: false
         },
         notificationsEnabled: false,
         expoPushToken: null
