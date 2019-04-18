@@ -29,7 +29,7 @@ exports.up = (pgm) => {
   pgm.addConstraint(
     'classmates',
     'can_be_active_in_scenes_check',
-    'CHECK (can_be_active_in_scenes OR (NOT (active_smash AND active_social AND active_stone)))',
+    'CHECK (can_be_active_in_scenes OR (NOT (active_smash OR active_social OR active_stone)))',
   );
 };
 
