@@ -34,7 +34,7 @@ function systemMessageScene(systemMessage: SystemMessage): Scene {
  * @param {string} message Message text to format. If a systemMessage, formats. Otherwise, returns the messsage.
  * @returns {string} The formated message
  */
-function formatMessage(message: string): string {
+function formatMessage(message: string, showEmojis: boolean): string {
   if (
     message !== 'MATCHED_SOCIAL' &&
     message !== 'MATCHED_SMASH' &&
@@ -43,9 +43,14 @@ function formatMessage(message: string): string {
     return message;
   }
   const scene = systemMessageScene(message);
-  const emoji = sceneToEmoji(scene);
   const capitalizedScene = capitalize(scene);
-  return `${emoji} You matched in Jumbo${capitalizedScene} ${emoji}`;
+  const text = `You matched in Jumbo${capitalizedScene}${
+    showEmojis ? '' : '!'
+  }`;
+  if (!showEmojis) return text;
+
+  const emoji = sceneToEmoji(scene);
+  return `${emoji} ${text} ${emoji}`;
 }
 
 export default formatMessage;
