@@ -104,7 +104,7 @@ const confirmUpload = async (userId: number) => {
 
     // Mark the profile as needing review.
     const newPhotoUpdate = constructAccountUpdate({
-      type: 'NEW_PHOTO',
+      type: 'PROFILE_NEW_PHOTO',
       photoUUID: uuid,
     });
 

@@ -211,24 +211,26 @@ type AccountTermination = {
   reason: string,
 };
 
-type ProfileUpdate = {
-  type: 'PROFILE_UPDATE',
+type ProfileFieldsUpdate = {
+  type: 'PROFILE_FIELDS_UPDATE',
   changedFields: Profile,
 };
 
-type NewPhoto = {
-  type: 'NEW_PHOTO',
+type ProfileNewPhoto = {
+  type: 'PROFILE_NEW_PHOTO',
   photoUUID: string,
 }
 
-type AccountUpdate = ProfileReview | AccountTermination | ProfileUpdate | NewPhoto;
+type AccountUpdate = ProfileReview | AccountTermination | ProfileFieldsUpdate | ProfileNewPhoto;
 
 type AccountUpdateMeta = {
   timestamp: string,
   update: AccountUpdate
 };
 
-function constructAccountUpdate(update: AccountUpdate): AccountUpdateMeta {
+function constructAccountUpdate(
+  update: AccountUpdate,
+): AccountUpdateMeta {
   return {
     timestamp: new Date().toISOString(),
     update,

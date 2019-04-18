@@ -105,7 +105,7 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Add an account update if the profile is being created.
   if (!existed) {
     const profileCreatedUpdate = constructAccountUpdate({
-      type: 'PROFILE_UPDATE',
+      type: 'PROFILE_FIELDS_UPDATE',
       changedFields: { displayName, birthday, bio },
     });
 

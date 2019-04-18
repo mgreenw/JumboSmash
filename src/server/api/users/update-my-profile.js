@@ -114,7 +114,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     const requireReview = updatedFields.includes('bio') || updatedFields.includes('display_name');
 
     const profileUpdated = constructAccountUpdate({
-      type: 'PROFILE_UPDATE',
+      type: 'PROFILE_FIELDS_UPDATE',
       changedFields: definedFields,
     });
 
