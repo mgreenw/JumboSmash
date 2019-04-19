@@ -103,8 +103,8 @@ function FilterLocation(len, source, greaterThan = false) {
       const location = {
         ...source[code],
         alias: [],
-        ...edits,
-        type
+        type,
+        ...edits
       };
       locations[codeEdit] = addCode(code, location);
     } else {
@@ -117,12 +117,19 @@ function FilterLocation(len, source, greaterThan = false) {
   return locationsWidthAdded;
 }
 
-const Continents = FilterLocation(2, LOCATIONS.linkdin);
+const Continents = {
+  ...FilterLocation(2, LOCATIONS.linkdin),
+  ...FilterLocation(2, LOCATION_EDITS.added.continents)
+};
 
-const Countries = FilterLocation(5, LOCATIONS.linkdin);
+const Countries = {
+  ...FilterLocation(5, LOCATIONS.linkdin),
+  ...FilterLocation(5, LOCATION_EDITS.added.countries)
+};
 
 // (And state like things, like providences)
 const States = FilterLocation(8, LOCATIONS.linkdin);
+const AddedStates = FilterLocation(8, LOCATION_EDITS.added.states);
 
 const Cities = FilterLocation(10, LOCATIONS.linkdin, true);
 const AddedCities = FilterLocation(10, LOCATION_EDITS.added.cities, true);
@@ -153,7 +160,6 @@ function AddParents(locations) {
       stateCodeSuffix && stateCodeSuffix !== '*'
         ? `${continentCode}.${countryCodeSuffix}.${stateCodeSuffix}`
         : null;
-
     const ancestors = {
       continent:
         continentCode && type !== 'CONTINENT'
@@ -178,14 +184,24 @@ function AddParents(locations) {
 }
 
 function main() {
+  const continents = {
+    ...Continents
+  };
   const cities = {
     ...Cities,
     ...AddedCities
   };
+  const countries = {
+    ...Countries
+  };
+  const states = {
+    ...States,
+    ...AddedStates
+  };
   const data = {
-    Continents: AddParents(Continents),
-    Countries: AddParents(Countries),
-    States: AddParents(States),
+    Continents: AddParents(continents),
+    Countries: AddParents(countries),
+    States: AddParents(states),
     Cities: AddParents(cities),
     Priority: LOCATION_EDITS.priority
   };

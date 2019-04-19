@@ -34,6 +34,7 @@ Provide the normal `Authorization` token in the request header.
     "status": "GET_MATCHES__SUCCESS",
     "data": [
         {
+            "newMatch": false,
             "userId": 6,
             "profile": {
                 "fields": {
@@ -86,7 +87,8 @@ Provide the normal `Authorization` token in the request header.
                 "stone": null
             },
             "mostRecentMessage": null,
-            "conversationIsRead": false
+            "conversationIsRead": false,
+            "newMatch": true
         }
     ]
 }

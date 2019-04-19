@@ -13,6 +13,7 @@ const Miami = require('./Miami.png');
 const Minneapolis = require('./Minneapolis.png');
 const Philadelphia = require('./Philadelphia.png');
 const Marker = require('./Marker.png');
+const Idk = require('./Idk.png');
 
 const CityIconsList = [
   SanFransisco,
@@ -27,7 +28,8 @@ const CityIconsList = [
   Miami,
   Minneapolis,
   Philadelphia,
-  Marker
+  Marker,
+  Idk
 ];
 
 const CityIconsMap = {
@@ -43,7 +45,8 @@ const CityIconsMap = {
   Miami,
   Minneapolis,
   Philadelphia,
-  Marker
+  Marker,
+  Idk
 };
 
 export { CityIconsList, CityIconsMap };

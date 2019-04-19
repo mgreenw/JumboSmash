@@ -46,7 +46,8 @@ function complete(
           bio: '',
           birthday: '',
           displayName: '',
-          postgradRegion: null // optional field
+          postgradRegion: null, // optional field
+          freshmanDorm: null
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },

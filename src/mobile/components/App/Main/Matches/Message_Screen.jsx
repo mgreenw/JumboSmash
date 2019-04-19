@@ -253,7 +253,7 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
 
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: formatMessage(message.content),
+      text: formatMessage(message.content, true),
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,
