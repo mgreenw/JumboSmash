@@ -162,7 +162,8 @@ class ProfileScreen extends React.Component<Props, State> {
         <GEMHeader
           title="Profile"
           rightIconName="cards"
-          leftIcon={isAdmin ? 'admin' : null}
+          leftIconName={isAdmin ? 'user-secret' : null}
+          onLeftIconPress={isAdmin ? () => {} : null}
         />
         <ImageBackground
           source={wavesFull}
