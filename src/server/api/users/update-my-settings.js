@@ -130,12 +130,22 @@ const updateMySettings = async (
     // Update the settings in the database. Utilize fieldTemplates and the field
     // length as the parameter templates. It is ok to construct the string like
     // this because none of the values in the construction come from user input
-    result = await db.query(`
+    try {
+      result = await db.query(`
       UPDATE users
       SET ${fieldTemplate.templateString}
       WHERE id = $${fieldTemplate.fields.length + 1}
       RETURNING ${settingsSelectQuery()}
     `, [...fieldTemplate.fields, userId]);
+    } catch (error) {
+      // If the request violates the can be active in scenes check, return a bad request.
+      if (error.code === '23514' && error.constraint === 'can_be_active_in_scenes_check') {
+        return apiUtils.status(codes.BAD_REQUEST).data({
+          message: 'Cannot be active in scenes',
+        });
+      }
+      throw error;
+    }
   }
 
   // If there is an id returned, success!

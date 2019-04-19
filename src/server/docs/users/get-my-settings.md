@@ -47,7 +47,8 @@ Provide the normal `Authorization` token in the request header.
         },
         "expoPushToken": "SOME_EXPO_TOKEN",
         "notificationsEnabled": true,
-        "isAdmin": false
+        "isAdmin": false,
+        "canBeActiveInScenes": true
     }
 }
 ```
