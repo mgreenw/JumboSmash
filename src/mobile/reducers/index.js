@@ -118,14 +118,17 @@ import type {
   ServerMatch,
   ServerMessage,
   ServerCandidate,
-  ServerReadReceipt
+  ServerReadReceipt,
+  ServerClassmate
 } from 'mobile/api/serverTypes';
+import type { GetClassmates_Action } from './admin/getClassmates';
 import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
+import GetClassmatesReducer from './admin/getClassmates';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -405,6 +408,7 @@ export type InProgress = {|
   reportUser: boolean,
   unmatch: boolean,
   sendFeedback: boolean,
+  getClassmates: boolean,
 
   sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
   readMessage: { [userId: number]: { [messageId: number]: boolean } },
@@ -469,7 +473,11 @@ export type ReduxState = {|
 
   // Toast
   bottomToast: BottomToast,
-  topToast: TopToast
+  topToast: TopToast,
+
+  // Classmates (ADMIN)
+  classmateIds: number[],
+  classmatesById: { [number]: ServerClassmate }
 |};
 
 export type Action =
@@ -534,7 +542,8 @@ export type Action =
   | NetworkChange_Action
   | SendFeedbackInitiated_Action
   | SendFeedbackCompleted_Action
-  | SendFeedbackFailed_Action;
+  | SendFeedbackFailed_Action
+  | GetClassmates_Action;
 
 export type GetState = () => ReduxState;
 
@@ -572,7 +581,8 @@ export const initialState: ReduxState = {
     blockUser: false,
     reportUser: false,
     unmatch: false,
-    sendFeedback: false
+    sendFeedback: false,
+    getClassmates: false
   },
   response: {
     sendVerificationEmail: null,
@@ -616,7 +626,9 @@ export const initialState: ReduxState = {
   topToast: {
     uuid: '0',
     code: 'INITIAL'
-  }
+  },
+  classmateIds: [],
+  classmatesById: {}
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -1922,6 +1934,18 @@ export default function rootReducer(
 
     case 'READ_MESSAGE__FAILED': {
       return ReadMessageReducer.fail(state, action);
+    }
+
+    case 'GET_CLASSMATES__INITIATED': {
+      return GetClassmatesReducer.initiate(state, action);
+    }
+
+    case 'GET_CLASSMATES__COMPLETED': {
+      return GetClassmatesReducer.complete(state, action);
+    }
+
+    case 'GET_CLASSMATES__FAILED': {
+      return GetClassmatesReducer.fail(state, action);
     }
 
     default: {
