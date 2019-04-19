@@ -75,6 +75,17 @@ class ClassmateListScreen extends React.Component<Props, State> {
     navigation.navigate(routes.AdminClassmateOverview, { id });
   };
 
+  _renderClassmateListItem = (id: number) => {
+    return (
+      <ListItem
+        onPress={() => {
+          this._onPress(id);
+        }}
+        title={id.toString()}
+      />
+    );
+  };
+
   render() {
     const { classmateIds, getClassmatesInProgress } = this.props;
     return (
@@ -89,14 +100,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             enableResetScrollToCoords={false}
             data={classmateIds}
             renderItem={({ item: id }: { item: number }) => {
-              return (
-                <ListItem
-                  onPress={() => {
-                    this._onPress(id);
-                  }}
-                  title={id.toString()}
-                />
-              );
+              return this._renderClassmateListItem(id);
             }}
             keyExtractor={id => id.toString()}
             ItemSeparatorComponent={this.renderSeparator}
