@@ -21,6 +21,10 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
+exports.PRELAUNCH_WALL_ACTIVE = {
+  status: 'PRELAUNCH_WALL_ACTIVE',
+  code: 510,
+};
 exports.TERMINATED = {
   status: 'TERMINATED',
   code: 401,
