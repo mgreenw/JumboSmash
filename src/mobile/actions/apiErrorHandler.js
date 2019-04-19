@@ -2,7 +2,8 @@
 
 import {
   UNAUTHORIZED,
-  NETWORK_REQUEST_FAILED
+  NETWORK_REQUEST_FAILED,
+  TERMINATED
 } from 'mobile/api/sharedResponseCodes';
 import Sentry from 'sentry-expo';
 
@@ -18,10 +19,18 @@ export type NetworkError_Action = {
   type: 'NETWORK_ERROR'
 };
 
+export type Terminated_Action = {
+  type: 'TERMINATED'
+};
+
 // eslint-disable-next-line
 export function apiErrorHandler(
   reject: empty
-): Unauthorized_Action | ServerError_Action | NetworkError_Action {
+):
+  | Unauthorized_Action
+  | ServerError_Action
+  | NetworkError_Action
+  | Terminated_Action {
   if (reject === NETWORK_REQUEST_FAILED) {
     return {
       type: 'NETWORK_ERROR'
@@ -31,6 +40,12 @@ export function apiErrorHandler(
   if (reject === UNAUTHORIZED) {
     return {
       type: 'UNAUTHORIZED'
+    };
+  }
+
+  if (reject === TERMINATED) {
+    return {
+      type: 'TERMINATED'
     };
   }
 

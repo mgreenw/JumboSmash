@@ -4,7 +4,7 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import type { Store as ReduxStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import loggerMiddleware from 'mobile/reduxMiddleware/loggerMiddleware';
-import tokenMiddleware from 'mobile/reduxMiddleware/tokenMiddleware';
+import authMiddleware from 'mobile/reduxMiddleware/authMiddleware';
 import errorMiddleware from 'mobile/reduxMiddleware/errorMiddleware';
 import badgesMiddleware from 'mobile/reduxMiddleware/badgesMiddleware';
 import rootReducer from 'mobile/reducers';
@@ -14,7 +14,7 @@ import type { ReduxState, Action } from 'mobile/reducers';
 const enchancers = compose(
   applyMiddleware(thunkMiddleware),
   applyMiddleware(errorMiddleware),
-  applyMiddleware(tokenMiddleware),
+  applyMiddleware(authMiddleware),
   applyMiddleware(loggerMiddleware),
   applyMiddleware(badgesMiddleware)
 );

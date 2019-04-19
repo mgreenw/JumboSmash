@@ -3,7 +3,11 @@
 import store from 'mobile/store';
 import Sentry from 'sentry-expo';
 import { timeout } from './timeout';
-import { UNAUTHORIZED, NETWORK_REQUEST_FAILED } from '../sharedResponseCodes';
+import {
+  UNAUTHORIZED,
+  TERMINATED,
+  NETWORK_REQUEST_FAILED
+} from '../sharedResponseCodes';
 
 type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
 export default function apiRequest(
@@ -30,6 +34,9 @@ export default function apiRequest(
     .then(response => {
       if (response.status === UNAUTHORIZED) {
         throw UNAUTHORIZED;
+      }
+      if (response.status === TERMINATED) {
+        throw TERMINATED;
       }
       return response;
     })

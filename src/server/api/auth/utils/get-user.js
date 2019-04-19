@@ -11,7 +11,11 @@ const AuthenticationError = require('./authentication-error');
 function getUser(token: string, adminPassword: ?string = null): Promise<any> {
   return new Promise((resolve, reject) => {
     jwt.verify(token, config.get('secret'), async (err, decoded) => {
-      if (err) return reject(new AuthenticationError('Invalid secret used in decoding'));
+      if (err) {
+        return reject(
+          new AuthenticationError('Invalid secret used in decoding'),
+        );
+      }
       try {
         // Get the user from the users table. If the user has a profile setup,
         // join with that profile. If not, the 'profile' field will be null
@@ -47,7 +51,13 @@ function getUser(token: string, adminPassword: ?string = null): Promise<any> {
 
         // Check if the user's token's uuid is valid
         if (tokenUUID === null || decoded.uuid !== tokenUUID || terminated) {
-          return reject(new AuthenticationError('User token invalid', terminated, terminationReason));
+          return reject(
+            new AuthenticationError(
+              'User token invalid',
+              terminated,
+              terminationReason,
+            ),
+          );
         }
         // If a user exists, return the user!
         return resolve(user);

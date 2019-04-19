@@ -33,7 +33,8 @@ import type {
 import type {
   Unauthorized_Action,
   ServerError_Action,
-  NetworkError_Action
+  NetworkError_Action,
+  Terminated_Action
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
@@ -489,6 +490,7 @@ export type Action =
   | Unauthorized_Action
   | ServerError_Action
   | NetworkError_Action
+  | Terminated_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | UploadPhotoFailed_Action
@@ -1059,6 +1061,10 @@ export default function rootReducer(
     }
 
     case 'NETWORK_ERROR': {
+      return state;
+    }
+
+    case 'TERMINATED': {
       return state;
     }
 
