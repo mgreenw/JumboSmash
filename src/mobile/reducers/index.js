@@ -188,7 +188,8 @@ export type UserSettings = {
   lookingForGenders: Genders,
   activeScenes: ActiveScenes,
   notificationsEnabled: boolean,
-  expoPushToken: ?string
+  expoPushToken: ?string,
+  isAdmin: boolean
 };
 
 export type ProfileFields = {|

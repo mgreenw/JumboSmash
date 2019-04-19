@@ -66,27 +66,28 @@ class CardButton extends React.PureComponent<cardButtonProps> {
   }
 }
 
-type navigationProps = {
+type NavigationProps = {
   navigation: any
 };
 
-type dispatchProps = {};
+type DispatchProps = {};
 
-type reduxProps = {
+type ReduxProps = {
   photoUuid: string,
   displayName: string,
   profile: UserProfile,
   saveProfileInProgress: boolean,
-  saveSettingsInProgress: boolean
+  saveSettingsInProgress: boolean,
+  isAdmin: boolean
 };
 
-type Props = navigationProps & dispatchProps & reduxProps;
+type Props = NavigationProps & DispatchProps & ReduxProps;
 
 type State = {
   showExpandedCard: boolean
 };
 
-function mapStateToProps(reduxState: ReduxState): reduxProps {
+function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('client is null in Profile Screen');
   }
@@ -99,11 +100,12 @@ function mapStateToProps(reduxState: ReduxState): reduxProps {
     photoUuid: photoUuids[0],
     profile: reduxState.client.profile,
     saveProfileInProgress: reduxState.inProgress.saveProfile,
-    saveSettingsInProgress: reduxState.inProgress.saveSettings
+    saveSettingsInProgress: reduxState.inProgress.saveSettings,
+    isAdmin: reduxState.client.settings.isAdmin
   };
 }
 
-function mapDispatchToProps(): dispatchProps {
+function mapDispatchToProps(): DispatchProps {
   return {};
 }
 
@@ -151,12 +153,17 @@ class ProfileScreen extends React.Component<Props, State> {
       displayName,
       profile,
       saveProfileInProgress,
-      saveSettingsInProgress
+      saveSettingsInProgress,
+      isAdmin
     } = this.props;
     const { showExpandedCard } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Profile" rightIconName="cards" />
+        <GEMHeader
+          title="Profile"
+          rightIconName="cards"
+          leftIcon={isAdmin ? 'admin' : null}
+        />
         <ImageBackground
           source={wavesFull}
           style={{
