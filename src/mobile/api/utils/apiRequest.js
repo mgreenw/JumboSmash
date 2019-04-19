@@ -9,20 +9,31 @@ type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
 export default function apiRequest(
   method: Method,
   route: string,
-  request: ?Object
+  request: ?Object,
+  password: ?string
 ): Promise<Object> {
   const { token } = store.getState();
   const auth = token || 'NO_TOKEN';
+  let headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: auth
+  };
+
+  // If an admin password is supplied, add it to the request.
+  if (password) {
+    headers = {
+      ...headers,
+      'Admin-Authorization': password
+    };
+  }
+
   return timeout(
     30000,
     // eslint-disable-next-line no-undef
     fetch(route, {
       method,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: auth
-      },
+      headers,
       body: request && JSON.stringify(request)
     })
   )
