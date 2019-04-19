@@ -134,7 +134,7 @@ type AccountUpdateMeta = {
   update: AccountUpdate
 };
 
-type ProfileStatus = 'unreviewed' | 'updated' | 'reviewed';
+export type ProfileStatus = 'unreviewed' | 'updated' | 'reviewed';
 
 export type ServerClassmate = {
   id: number,
