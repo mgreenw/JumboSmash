@@ -33,6 +33,7 @@ import ProfileEdit from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
 import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen';
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
+import SelectDorm from 'mobile/components/App/Main/Profile/SelectDorm_Screen';
 
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
@@ -52,6 +53,8 @@ import OnboardingNotifications from 'mobile/components/App/Onboarding/Onboarding
 import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_Screen';
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
+
+import TerminatedScreen from 'mobile/components/Auth/Terminated_Screen';
 
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
@@ -89,7 +92,8 @@ const ProfileStack = createStackNavigator(
     [routes.SettingsEdit]: { screen: SettingsEdit },
     [routes.ProfileEdit]: { screen: ProfileEdit },
     [routes.ProfileHelp]: { screen: ProfileHelp },
-    [routes.SelectCity]: { screen: SelectCity }
+    [routes.SelectCity]: { screen: SelectCity },
+    [routes.SelectDorm]: { screen: SelectDorm }
   },
   {
     initialRouteName: routes.Profile,
@@ -217,7 +221,8 @@ const createRootNavigator = () =>
       [routes.AuthSwitch]: AuthSwitch,
       [routes.OnboardingStack]: OnboardingStack,
       [routes.MainSwitch]: MainContentSwitch,
-      [routes.AppLoading]: { screen: AppLoading }
+      [routes.AppLoading]: { screen: AppLoading },
+      [routes.Terminated]: { screen: TerminatedScreen }
     },
     {
       initialRouteName: routes.AuthSwitch,

@@ -81,6 +81,13 @@ function reset() {
 }
 
 /**
+ * ONLY USE IN CASES TO PERMENATELY SEND A USER TO THE TERMINATED SCREEN.
+ */
+function terminate() {
+  navigate(routes.Terminated);
+}
+
+/**
  * Get the route of the top level screen.
  * See for details:
  * https://github.com/react-navigation/react-navigation/issues/962
@@ -101,6 +108,7 @@ export default {
   setTopLevelNavigator,
   navigateToCards,
   reset,
+  terminate,
   getCurrentRoute,
   navigateToMatch
 };

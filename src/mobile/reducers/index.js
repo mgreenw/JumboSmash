@@ -2,6 +2,7 @@
 
 // Auth:
 import uuidv4 from 'uuid/v4';
+import _ from 'lodash';
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import type { SendVerificationEmail_Action } from 'mobile/reducers/auth/sendVerificationEmail';
 import type {
@@ -32,7 +33,8 @@ import type {
 import type {
   Unauthorized_Action,
   ServerError_Action,
-  NetworkError_Action
+  NetworkError_Action,
+  Terminated_Action
 } from 'mobile/actions/apiErrorHandler';
 import type {
   UploadPhotoInitiated_Action,
@@ -54,7 +56,8 @@ import type {
 } from 'mobile/actions/app/getSceneCandidates';
 import type {
   GetMatchesInitiated_Action,
-  GetMatchesCompleted_Action
+  GetMatchesCompleted_Action,
+  GetMatchesFailed_Action
 } from 'mobile/actions/app/getMatches';
 import type {
   JudgeSceneCandidateInitiated_Action,
@@ -192,7 +195,8 @@ export type ProfileFields = {|
   displayName: string,
   birthday: string,
   bio: string,
-  postgradRegion: ?string
+  postgradRegion: ?string,
+  freshmanDorm: ?string
 |};
 
 export type UserProfile = {|
@@ -217,7 +221,8 @@ export type Match = {|
   ...BaseUserNew,
   mostRecentMessage: number,
   scenes: SceneMatchTimes,
-  conversationIsRead: boolean
+  conversationIsRead: boolean,
+  newMatch: boolean
 |};
 
 export type Matches = {
@@ -269,7 +274,7 @@ const ProfileSchema = new schema.Entity(
   'profiles',
   {},
   {
-    idAttribute: (_, parent) => parent.userId
+    idAttribute: (__, parent) => parent.userId
   }
 );
 
@@ -485,6 +490,7 @@ export type Action =
   | Unauthorized_Action
   | ServerError_Action
   | NetworkError_Action
+  | Terminated_Action
   | UploadPhotoCompleted_Action
   | UploadPhotoInitiated_Action
   | UploadPhotoFailed_Action
@@ -497,6 +503,7 @@ export type Action =
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
   | GetMatchesCompleted_Action
+  | GetMatchesFailed_Action
   | JudgeSceneCandidateInitiated_Action
   | JudgeSceneCandidateCompleted_Action
   | GetConversationInitiated_Action
@@ -638,19 +645,6 @@ function normalizeCandidates(
   |}
 } {
   return normalize(canidates, [CanidateSchema]);
-}
-
-function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
-  // split between messaged and non-messaged matcehs
-  const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
-
-  // If we don't have any messages yet then the index of findIndex will be -1
-  const noMessages = index === -1;
-  const unmessagedMatchIds = noMessages
-    ? orderedIds
-    : orderedIds.slice(0, index);
-  const messagedMatchIds = noMessages ? [] : orderedIds.slice(index).reverse();
-  return { unmessagedMatchIds, messagedMatchIds };
 }
 
 function updateMostRecentMessage(
@@ -1070,6 +1064,10 @@ export default function rootReducer(
       return state;
     }
 
+    case 'TERMINATED': {
+      return state;
+    }
+
     case 'UPLOAD_PHOTO__INITIATED': {
       return {
         ...state,
@@ -1228,9 +1226,12 @@ export default function rootReducer(
         0
       );
 
-      const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
-        serverMatches,
-        orderedIds
+      const [unmessagedMatchIds, messagedMatchIds] = _.partition(
+        orderedIds,
+        (id: number) => {
+          const match = matches[id];
+          return match && match.newMatch;
+        }
       );
 
       const confirmedConversations = updateMostRecentConversations(
@@ -1253,6 +1254,16 @@ export default function rootReducer(
         messagedMatchIds,
         unmessagedMatchIds,
         numBadges
+      };
+    }
+
+    case 'GET_MATCHES__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: false
+        }
       };
     }
 

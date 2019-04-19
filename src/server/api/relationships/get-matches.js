@@ -48,7 +48,7 @@ const getMatches = async (userId: number) => {
         AND
           (${matchedScenesChecks.join(' OR ')})
       ORDER BY
-        most_recent_message.timestamp NULLS FIRST,
+        most_recent_message.timestamp DESC NULLS FIRST,
         GREATEST(${sceneTimestampList.join(',')}) DESC
     `, [userId]),
     redis.shared.hkeys(redis.unreadConversationsKey(userId)),

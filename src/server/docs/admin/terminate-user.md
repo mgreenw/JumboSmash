@@ -12,7 +12,7 @@ NOTE: This will automatically post an update to #admin in slack.
 
 **Admin required** : YES
 
-**Permissions required** : Any user with a profile
+**Permissions required** : Any admin with a profile
 
 **Request Headers**
 
@@ -53,7 +53,39 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 ```json
 {
     "status": "TERMINATE_USER__SUCCESS",
-    "version": "1.3.1"
+    "data": {
+        "classmate": {
+            "id": 1,
+            "utln": "jfasse01",
+            "email": "Julia.Fasse@tufts.edu",
+            "isTerminated": true,
+            "canBeSwipedOn": false,
+            "canBeActiveInScenes": true,
+            "accountUpdates": [
+                {
+                    "update": {
+                        "type": "ACCOUNT_TERMINATION",
+                        "admin": {
+                            "id": 2469,
+                            "utln": "jjaffe01"
+                        },
+                        "reason": "BAD_PERSON"
+                    },
+                    "timestamp": "2019-04-14T23:15:15.995Z"
+                }
+            ],
+            "profileStatus": "unreviewed",
+            "hasProfile": true,
+            "activeScenes": {
+                "smash": true,
+                "social": true,
+                "stone": false
+            },
+            "isAdmin": false,
+            "blockedRequestingAdmin": false
+        }
+    },
+    "version": "1.5.0"
 }
 ```
 

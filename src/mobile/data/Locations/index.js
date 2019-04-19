@@ -88,7 +88,6 @@ function codeToLocation(code: string): ?Location {
     case 'STATE': {
       return LOCATIONS.States[code] || null;
     }
-
     default: {
       // eslint-disable-next-line no-unused-expressions
       (type: empty);

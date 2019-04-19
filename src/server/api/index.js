@@ -20,7 +20,6 @@ const NODE_ENV = utils.getNodeEnv();
 
 const { authenticated, hasProfile, isAfterLaunch } = require('./utils').middleware;
 
-
 const apiRouter = express.Router();
 
 // API ROUTES
@@ -56,21 +55,5 @@ apiRouter.use(isAfterLaunch);
 // to block other users.
 apiRouter.use('/conversations', conversationsRouter);
 apiRouter.use('/admin', adminRouter);
-
-// --> Main Error Handler! <--
-/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
-apiRouter.use((err, req, res, _next) => {
-  logger.error('Server Error: ', err);
-  slack.postServerUpdate(`SERVER ERROR
-    Environment: *${NODE_ENV}*
-
-    ${err.message}
-    ${err.stack}
-  `);
-  return res.status(500).json({
-    status: codes.SERVER_ERROR.status,
-    version: utils.version,
-  });
-});
 
 module.exports = apiRouter;

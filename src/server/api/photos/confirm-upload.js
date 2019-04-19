@@ -9,6 +9,7 @@ const db = require('../../db');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const serverUtils = require('../../utils');
+const { constructAccountUpdate } = require('../users/utils');
 
 const NODE_ENV = serverUtils.getNodeEnv();
 
@@ -100,6 +101,20 @@ const confirmUpload = async (userId: number) => {
       DELETE FROM unconfirmed_photos
       WHERE uuid = $1
     `, [uuid]);
+
+    // Mark the profile as needing review.
+    const newPhotoUpdate = constructAccountUpdate({
+      type: 'PROFILE_NEW_PHOTO',
+      photoUUID: uuid,
+    });
+
+    await client.query(`
+      UPDATE classmates
+      SET
+        profile_status = 'updated',
+        account_updates = account_updates || jsonb_build_array($2::jsonb)
+      WHERE id = $1
+    `, [userId, newPhotoUpdate]);
 
     // Commit the transaction and RELASE the client
     await client.query('COMMIT');

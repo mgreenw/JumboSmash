@@ -348,6 +348,23 @@ exports.TERMINATE_USER__USER_NOT_FOUND = {
   code: 400,
 };
 
+// Review Profile
+exports.REVIEW_PROFILE__SUCCESS = {
+  status: 'REVIEW_PROFILE__SUCCESS',
+  code: 200,
+};
+exports.REVIEW_PROFILE__COMMENT_REQUIRED = {
+  status: 'REVIEW_PROFILE__COMMENT_REQUIRED',
+  code: 400,
+};
+exports.REVIEW_PROFILE__NOT_FOUND = {
+  status: 'REVIEW_PROFILE__NOT_FOUND',
+  code: 404,
+};
+exports.REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES = {
+  status: 'REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES',
+  code: 400,
+};
 
 // ARTISTS
 

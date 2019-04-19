@@ -4,7 +4,6 @@ import type { Dispatch } from 'mobile/reducers';
 import type { ServerMatch } from 'mobile/api/serverTypes';
 import getMatchesApi from 'mobile/api/relationships/getMatches';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import DevTesting from '../../utils/DevTesting';
 
 export type GetMatchesInitiated_Action = {
   type: 'GET_MATCHES__INITIATED',
@@ -15,6 +14,12 @@ export type GetMatchesInitiated_Action = {
 export type GetMatchesCompleted_Action = {
   type: 'GET_MATCHES__COMPLETED',
   payload: ServerMatch[],
+  meta: {}
+};
+
+export type GetMatchesFailed_Action = {
+  type: 'GET_MATCHES__FAILED',
+  payload: {},
   meta: {}
 };
 
@@ -34,15 +39,21 @@ function complete(matches: ServerMatch[]): GetMatchesCompleted_Action {
   };
 }
 
+function fail(): GetMatchesFailed_Action {
+  return {
+    type: 'GET_MATCHES__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  DevTesting.fakeLatency(() => {
-    getMatchesApi()
-      .then(matches => {
-        dispatch(complete(matches));
-      })
-      .catch(error => {
-        dispatch(apiErrorHandler(error));
-      });
-  });
+  getMatchesApi()
+    .then(matches => {
+      dispatch(complete(matches));
+    })
+    .catch(error => {
+      fail();
+      dispatch(apiErrorHandler(error));
+    });
 };
