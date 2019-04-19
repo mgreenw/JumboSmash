@@ -10,6 +10,7 @@ import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { ListItem } from 'react-native-elements';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import getClassmatesAction from 'mobile/actions/admin/getClassmates';
+import type { ServerClassmate } from 'mobile/api/serverTypes';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
