@@ -43,6 +43,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     /* eslint-disable no-await-in-loop */
     const createUsers = [...Array(200).keys()].map(async (i) => {
       const user = await dbUtils.createUser(`mgre${i}`, true);
+      await dbUtils.setCanBeSwipedOn(user.id, true);
       const settings = {
         useHe: (i % 3) === 0,
         useShe: (i % 2) === 0,
@@ -297,5 +298,23 @@ describe('GET api/relationships/candidates/:scene', () => {
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.body.data.length).toBe(3);
+  });
+
+  it('should not show a user that cannot be swiped on', async () => {
+    const invisibleUser = await dbUtils.createUser('ttttt01', true);
+    await dbUtils.updateSettings(invisibleUser.id, meSettings);
+    let res = await request(app)
+      .get('/api/relationships/candidates/smash')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+    expect(res.body.data.length).toBe(3);
+
+    await dbUtils.setCanBeSwipedOn(invisibleUser.id, true);
+
+    res = await request(app)
+      .get('/api/relationships/candidates/smash')
+      .set('Authorization', me.token)
+      .set('Accept', 'application/json');
+    expect(res.body.data.length).toBe(4);
   });
 });

@@ -147,6 +147,12 @@ async function updateSettings(id, settings) {
   }
 }
 
+async function setCanBeSwipedOn(userId: number, canBeSwipedOn: boolean) {
+  await db.query(`
+    UPDATE classmates SET can_be_swiped_on = $1 WHERE id = $2
+  `, [canBeSwipedOn, userId]);
+}
+
 async function createRelationship(
   critic,
   candidate,
@@ -193,4 +199,5 @@ module.exports = {
   createRelationship,
   insertPhoto,
   terminateUser,
+  setCanBeSwipedOn,
 };
