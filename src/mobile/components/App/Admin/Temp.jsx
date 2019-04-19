@@ -11,18 +11,26 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import getClassmatesAction from 'mobile/actions/app/getClassmates';
 
+import { type ServerClassmate } from 'mobile/api/serverTypes';
+
 const wavesFull = require('../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type DispatchProps = {
   getClassmates: string => void
 };
 
-type ReduxProps = {};
+type ReduxProps = {
+  classmates: { [number]: ServerClassmate },
+  classmateIds: number[]
+};
 
 type Props = DispatchProps & ReduxProps;
 
-function mapStateToProps(): ReduxProps {
-  return {};
+function mapStateToProps(state: ReduxState): ReduxProps {
+  return {
+    classmates: state.classmates,
+    classmateIds: state.classmateIds
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
@@ -34,10 +42,23 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 }
 
 const AdminTempPage = (props: Props) => {
-  const { getClassmates } = props;
+  const { getClassmates, classmateIds, classmates } = props;
   AlertIOS.prompt('Enter your password', null, text => {
     getClassmates(text);
   });
+
+  function renderItem(classmateId: number) {
+    const classmate = classmates[classmateId];
+    return (
+      <ListItem
+        onPress={() => {
+          console.log('pressed');
+        }}
+        title={classmate.utln}
+        subtitle={classmate.id}
+      />
+    )
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -48,16 +69,8 @@ const AdminTempPage = (props: Props) => {
           style={{ width: '100%', height: '100%', position: 'absolute' }}
         />
         <FlatList
-          data={['test']}
-          renderItem={({ item }) => (
-            <ListItem
-              onPress={() => {
-                console.log('pressed');
-              }}
-              title={item}
-            />
-          )}
-          keyExtractor={code => code}
+          data={classmateIds}
+          renderItem={({ item }) => renderItem(item)}
         />
       </View>
     </View>
