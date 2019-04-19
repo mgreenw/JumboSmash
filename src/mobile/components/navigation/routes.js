@@ -41,10 +41,13 @@ const AUTH_LOADING_ROUTE = 'AUTH_LOADING_ROUTE';
 const MAIN_SWITCH = 'MAIN_SWITCH';
 const ONBOARDING_STACK = 'ONBOARDING_STACK';
 const APP_LOADING_ROUTE = 'APP_LOADING_ROUTE';
-const APP_SWITCH = 'APP_SWITCH';
 const AUTH_SWITCH = 'AUTH_SWITCH';
 
 const TERMINATED = 'TERMINATED';
+
+const ADMIN_STACK = 'ADMN_STACK';
+const ADMIN_CLASSMATE_LIST = 'ADMIN_CLASSMATES';
+const ADMIN_CLASSMATE_OVERVIEW = 'ADMIN_CLASSMATE_OVERVIEW';
 
 const routes = {
   Profile: PROFILE_ROUTE,
@@ -82,7 +85,10 @@ const routes = {
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
   AuthSwitch: AUTH_SWITCH,
-  Terminated: TERMINATED
+  Terminated: TERMINATED,
+  AdminStack: ADMIN_STACK,
+  AdminClassmateList: ADMIN_CLASSMATE_LIST,
+  AdminClassmateOverview: ADMIN_CLASSMATE_OVERVIEW
 };
 
 export default routes;

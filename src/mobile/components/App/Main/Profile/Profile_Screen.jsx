@@ -18,6 +18,7 @@ import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import type { NavigationScreenProp } from 'react-navigation';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -67,7 +68,7 @@ class CardButton extends React.PureComponent<cardButtonProps> {
 }
 
 type NavigationProps = {
-  navigation: any
+  navigation: NavigationScreenProp<{}>
 };
 
 type DispatchProps = {};
@@ -147,6 +148,15 @@ class ProfileScreen extends React.Component<Props, State> {
     });
   };
 
+  _onAdminPress = () => {
+    const { navigation, isAdmin } = this.props;
+    // Icon should not be enabled if not an admin, but just in case.
+    if (isAdmin) {
+      const { navigate } = navigation;
+      navigate(routes.AdminStack, {});
+    }
+  };
+
   render() {
     const {
       photoUuid,
@@ -163,7 +173,7 @@ class ProfileScreen extends React.Component<Props, State> {
           title="Profile"
           rightIconName="cards"
           leftIconName={isAdmin ? 'user-secret' : null}
-          onLeftIconPress={isAdmin ? () => {} : null}
+          onLeftIconPress={isAdmin ? this._onAdminPress : null}
         />
         <ImageBackground
           source={wavesFull}
