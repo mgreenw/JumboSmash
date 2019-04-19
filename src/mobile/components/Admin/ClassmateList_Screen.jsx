@@ -100,7 +100,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             }}
             keyExtractor={id => id.toString()}
             ItemSeparatorComponent={this.renderSeparator}
-            ListHeaderComponent={null /* TODO: Hedaer searchbar */}
+            ListHeaderComponent={null /* TODO: Header search bar */}
             refreshing={getClassmatesInProgress}
             onRefresh={this._onRefresh}
           />
