@@ -11,13 +11,6 @@ const metaRouter = require('./meta');
 const adminRouter = require('./admin');
 const artistsRouter = require('./artists');
 
-const codes = require('./status-codes');
-const logger = require('../logger');
-const slack = require('../slack');
-const utils = require('../utils');
-
-const NODE_ENV = utils.getNodeEnv();
-
 const { authenticated, hasProfile, isAfterLaunch } = require('./utils').middleware;
 
 const apiRouter = express.Router();
