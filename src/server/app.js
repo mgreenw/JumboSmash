@@ -52,11 +52,11 @@ app.use((req, res, next) => {
         requestUrl: req.originalUrl,
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
-        latency,
-        timeout,
+        latency: `${latency / 1000}s`,
         user: req.user,
         // etc.
       },
+      timeout,
     });
 
     logged = true;
