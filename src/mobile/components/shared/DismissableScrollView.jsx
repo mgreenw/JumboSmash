@@ -38,12 +38,12 @@ export default class DismissableScrollview extends React.Component<
     this._startDragValue = 0;
   }
 
-  // Scroll event is available because of the import * as React
-  _onScrollBeginDrag = (e: ScrollEvent) => {
+  // any type because I couldn't figure out how to flow type it
+  _onScrollBeginDrag = (e: any) => {
     this._startDragValue = e.nativeEvent.contentOffset.y;
   };
 
-  _onScrollEndDrag = (e: ScrollEvent) => {
+  _onScrollEndDrag = (e: any) => {
     if (Platform.OS === 'android' && this._startDragValue >= 5) return;
     if (
       e.nativeEvent.contentOffset.y <= onSwipeDownThreshold ||
