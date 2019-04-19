@@ -69,14 +69,14 @@ async function checkReceipts(job: { data: string[] }) {
   // Create the paramaeter strings for the update query
   logger.info('Updating notification receipts.');
   const generateValueTemplate = (startIndex: number): string => {
-    return `($${startIndex + 1}::notification_status, $${startIndex + 2}, $${startIndex + 3})`;
+    return `($${startIndex + 1}::integer, $${startIndex + 2}::notification_status, $${startIndex + 3}, $${startIndex + 4})`;
   };
   const template = Object.keys(notifications).map(
-    (ticketId, index) => generateValueTemplate(index * 3),
+    (ticketId, index) => generateValueTemplate(index * 4),
   ).join(',');
   const params = Object.keys(notifications).map((ticketId) => {
     const notification = notifications[ticketId];
-    return [notification.status, notification.message, notification.errorDetails];
+    return [notification.id, notification.status, notification.message, notification.errorDetails];
   });
 
   // Update the notifications and finish!
@@ -88,7 +88,8 @@ async function checkReceipts(job: { data: string[] }) {
       error_details = updated.error_details
     FROM (VALUES
       ${template}
-    ) AS updated(status, message, error_details)
+    ) AS updated(id, status, message, error_details)
+    WHERE notifications.id = updated.id
   `, _.flatten(params));
 
   logger.info('Done checking notification receipts.');

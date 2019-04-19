@@ -39,8 +39,11 @@ Provide the normal `Authorization` token in the request header.
     "data": {
         "fields": {
             "displayName": "Max",
-            "birthday": "1999-01-27",
-            "bio": "Already has 2 friends so..."
+            "birthday": "1997-09-09",
+            "bio": "hehe",
+            "postgradRegion": "na.us.ma.7",
+            "freshmanDorm": "Haskell",
+            "springFlingAct": "A real group"
         },
         "photoUuids": [
             "27b737bc-0e64-4e0e-8e9f-59787b44f792"

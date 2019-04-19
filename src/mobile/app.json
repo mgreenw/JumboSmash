@@ -5,7 +5,7 @@
     "privacy": "unlisted",
     "name": "JumboSmash",
     "slug": "projectgem-dev",
-    "version": "1.8.4",
+    "version": "2.1.0",
     "description": "Swipe, Swipe, Smash.",
     "githubUrl": "https://github.com/mgreenw/ProjectGEM",
     "icon": "./assets/AppStoreIcon.png",
@@ -15,13 +15,17 @@
     },
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 10,
+      "versionCode": 12,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
-      "bundleIdentifier": "com.jumbosmash.mobile"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.jumbosmash.mobile",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "JumboSmash needs access to your photos so you can include them in your profile."
+      }
     },
-    "primaryColor": "#ff6262",
+    "primaryColor": "#fbcc23",
     "hooks": {
       "postPublish": [
         {

@@ -181,7 +181,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId].settings.activeSmash;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
 
     // Stone
     res = await request(app)
@@ -192,7 +192,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId.toString()].settings.activeSocial;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
 
     // Social
     res = await request(app)
@@ -203,7 +203,7 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(_.every(res.body.data, (candidate) => {
       return users[candidate.userId.toString()].settings.activeStone;
     })).toBeTruthy();
-    expect(res.body.data.length).toBeLessThanOrEqual(10);
+    expect(res.body.data.length).toBeLessThanOrEqual(20);
   });
 
   // Check that only profiles that have not yet been liked show up
@@ -265,16 +265,16 @@ describe('GET api/relationships/candidates/:scene', () => {
     expect(res.body.data.length).toBeLessThanOrEqual(4);
   });
 
-  it('should not return a banned user', async () => {
-    const nonLikedNotBlockedNotBanned = activeSmash.slice(-5, -2);
-    await dbUtils.banUser(activeSmash[activeSmash.length - 2].id);
+  it('should not return a terminated user', async () => {
+    const nonLikedNotBlockedNotTerminated = activeSmash.slice(-5, -2);
+    await dbUtils.terminateUser(activeSmash[activeSmash.length - 2].id);
     const res = await request(app)
       .get('/api/relationships/candidates/smash')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(200);
     expect(_.every(res.body.data, (candidate) => {
-      return _.find(nonLikedNotBlockedNotBanned, (person) => {
+      return _.find(nonLikedNotBlockedNotTerminated, (person) => {
         return person.id === candidate.userId;
       });
     })).toBeTruthy();

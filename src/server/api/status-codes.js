@@ -21,6 +21,10 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
+exports.TERMINATED = {
+  status: 'TERMINATED',
+  code: 401,
+};
 // AUTH
 
 // Send Verification Email
@@ -95,6 +99,10 @@ exports.FINALIZE_PROFILE_SETUP__INVALID_REQUEST = {
 exports.FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED = {
   status: 'FINALIZE_PROFILE_SETUP__PHOTO_REQUIRED',
   code: 409,
+};
+exports.FINALIZE_PROFILE__BIRTHDAY_UNDER_18 = {
+  status: 'FINALIZE_PROFILE__BIRTHDAY_UNDER_18',
+  code: 406,
 };
 
 // Update Profile
@@ -322,16 +330,52 @@ exports.GET_CLASSMATES__SUCCESS = {
   code: 200,
 };
 
-// Ban User
-exports.BAN_USER__SUCCESS = {
-  status: 'BAN_USER__SUCCESS',
+// Terminate User
+exports.TERMINATE_USER__SUCCESS = {
+  status: 'TERMINATE_USER__SUCCESS',
   code: 200,
 };
-exports.BAN_USER__ALREADY_BANNED = {
-  status: 'BAN_USER__ALREADY_BANNED',
+exports.TERMINATE_USER__ALREADY_TERMINATED = {
+  status: 'TERMINATE_USER__ALREADY_TERMINATED',
   code: 409,
 };
-exports.BAN_USER__USER_NOT_FOUND = {
-  status: 'BAN_USER__USER_NOT_FOUND',
+exports.TERMINATE_USER__USER_NOT_FOUND = {
+  status: 'TERMINATE_USER__USER_NOT_FOUND',
   code: 400,
+};
+
+// Review Profile
+exports.REVIEW_PROFILE__SUCCESS = {
+  status: 'REVIEW_PROFILE__SUCCESS',
+  code: 200,
+};
+exports.REVIEW_PROFILE__COMMENT_REQUIRED = {
+  status: 'REVIEW_PROFILE__COMMENT_REQUIRED',
+  code: 400,
+};
+exports.REVIEW_PROFILE__NOT_FOUND = {
+  status: 'REVIEW_PROFILE__NOT_FOUND',
+  code: 404,
+};
+exports.REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES = {
+  status: 'REVIEW_PROFILE__INVALID_PREVIOUS_CAPABILITES',
+  code: 400,
+};
+
+// ARTISTS
+
+// Search Artists
+exports.SEARCH_ARTISTS__SUCCESS = {
+  status: 'SEARCH_ARTISTS__SUCCESS',
+  code: 200,
+};
+
+// Get Artist
+exports.GET_ARTIST__SUCCESS = {
+  status: 'GET_ARTIST__SUCCESS',
+  code: 200,
+};
+exports.GET_ARTIST__NOT_FOUND = {
+  status: 'GET_ARTIST__NOT_FOUND',
+  code: 404,
 };

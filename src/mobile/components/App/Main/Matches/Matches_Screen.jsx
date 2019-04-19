@@ -27,6 +27,7 @@ import routes from 'mobile/components/navigation/routes';
 import formatTime from 'mobile/utils/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 import { NavigationEvents } from 'react-navigation';
+import formatMessage from 'mobile/utils/FormatMessage';
 
 const Seperator = () => {
   return (
@@ -155,7 +156,12 @@ class MessagingScreen extends React.Component<Props, State> {
 
     return (
       <TouchableOpacity
-        style={{ height: 90, width: '100%', paddingHorizontal: 15 }}
+        style={{
+          height: 90,
+          width: '100%',
+          paddingHorizontal: 15,
+          backgroundColor: showBadge ? Colors.IceBlue : Colors.White
+        }}
         onPress={() => {
           navigation.navigate(routes.Message, { match });
         }}
@@ -172,6 +178,7 @@ class MessagingScreen extends React.Component<Props, State> {
             size="Small"
             photoUuid={profile.photoUuids[0]}
             showBadge={showBadge}
+            badgeContainerStyle={{ backgroundColor: Colors.IceBlue }}
           />
           <View
             style={{
@@ -192,9 +199,14 @@ class MessagingScreen extends React.Component<Props, State> {
             </View>
             <Text
               numberOfLines={2}
-              style={[textStyles.subtitle1Style, { flex: 1 }]}
+              style={[
+                mostRecentMessage.sender === 'system'
+                  ? textStyles.subtitle1StyleSemibold
+                  : textStyles.subtitle1Style,
+                { flex: 1, color: Colors.Black }
+              ]}
             >
-              {mostRecentMessage.content}
+              {formatMessage(mostRecentMessage.content, false)}
             </Text>
           </View>
           <View

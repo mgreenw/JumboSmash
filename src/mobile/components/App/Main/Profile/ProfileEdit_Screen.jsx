@@ -38,6 +38,8 @@ import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
+import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
+import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 
 const manifest = Constants.manifest;
 const isDev =
@@ -187,6 +189,17 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const imageWidth = (containerWidth - 15) / 2;
 
     const { editedProfileFields, errorMessageName } = this.state;
+    const { postgradRegion: postgradLocationCode } = editedProfileFields;
+    const { freshmanDorm: freshmanDormCode } = editedProfileFields;
+    const freshmanDorm = freshmanDormCode
+      ? dormCodeToName(freshmanDormCode)
+      : null;
+    const postgradLocation = postgradLocationCode
+      ? postgradCodeToLocation(postgradLocationCode)
+      : null;
+    const postgradLocationName = postgradLocation
+      ? postgradLocation.name
+      : null;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -206,7 +219,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
             <View style={styles.profileBlock}>
               <PrimaryInput
                 value={editedProfileFields.displayName}
-                label="Preferred Name"
+                label="Preferred First Name"
                 onChange={this._onChangeName}
                 error={errorMessageName}
                 containerStyle={{ width: '100%' }}
@@ -230,42 +243,56 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 />
               </View>
             </View>
-            {isDev && (
-              <View style={styles.profileBlock}>
-                <PopupInput
-                  title={'Post-Grad Location'}
-                  placeholder={'No Selected Location'}
-                  onChange={() => {
-                    NavigationService.navigate(routes.SelectCity, {
-                      onSave: postGradLocation => {
-                        this.setState(state => ({
-                          editedProfileFields: {
-                            ...state.editedProfileFields,
-                            postGradLocation
-                          }
-                        }));
-                      }
-                    });
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'Dream Spring Fling Artist'}
-                  placeholder={'No Selected Artist'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-                <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                <PopupInput
-                  title={'1st Year Dorm'}
-                  placeholder={'No Selected Dorm'}
-                  onChange={() => {
-                    Alert.alert('not yet implemented');
-                  }}
-                />
-              </View>
-            )}
+            <View style={styles.profileBlock}>
+              <PopupInput
+                title={'Post-Grad Location'}
+                value={postgradLocationName}
+                placeholder={'No Selected Location'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectCity, {
+                    onSave: newPostgradRegion => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          postgradRegion: newPostgradRegion
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
+              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+              <PopupInput
+                title={'1st Year Dorm'}
+                value={freshmanDorm}
+                placeholder={'No Selected Dorm'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectDorm, {
+                    onSave: newFreshmanDorm => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          freshmanDorm: newFreshmanDorm
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
+              {isDev && (
+                <View>
+                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+                  <PopupInput
+                    title={'Dream Spring Fling Artist'}
+                    value={null}
+                    placeholder={'No Selected Artist'}
+                    onChange={() => {
+                      Alert.alert('not yet implemented');
+                    }}
+                  />
+                </View>
+              )}
+            </View>
           </PlatformSpecificScrollView>
         </View>
       </View>
@@ -275,11 +302,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
 type PopupInputProps = {
   title: string,
+  value: ?string,
   placeholder: string,
   onChange: () => void
 };
 const PopupInput = (props: PopupInputProps) => {
-  const { title, placeholder, onChange } = props;
+  const { title, placeholder, onChange, value } = props;
   return (
     <View>
       <Text style={textStyles.body2Style}>{title}</Text>
@@ -291,8 +319,14 @@ const PopupInput = (props: PopupInputProps) => {
           marginTop: 5
         }}
       >
-        <Text style={[textStyles.headline6Style, { color: Colors.BlueyGrey }]}>
-          {placeholder}
+        <Text
+          adjustsFontSizeToFit
+          style={[
+            textStyles.headline6Style,
+            { color: value ? Colors.Black : Colors.BlueyGrey }
+          ]}
+        >
+          {value || placeholder}
         </Text>
         <View style={{ bottom: 4 }}>
           <TertiaryButton title={'change'} onPress={onChange} />

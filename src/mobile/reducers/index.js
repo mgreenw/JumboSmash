@@ -2,21 +2,16 @@
 
 // Auth:
 import uuidv4 from 'uuid/v4';
-import type {
-  SendVerificationEmail_Response,
-  SendVerificationEmailCompleted_Action,
-  SendVerificationEmailInitiated_Action
-} from 'mobile/actions/auth/sendVerificationEmail';
+import _ from 'lodash';
+import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
+import type { SendVerificationEmail_Action } from 'mobile/reducers/auth/sendVerificationEmail';
 import type {
   Login_Response,
   LoginInitiated_Action,
   LoginCompleted_Action,
   LoginFailed_Action
 } from 'mobile/actions/auth/login';
-import type {
-  LogoutInitiated_Action,
-  LogoutCompleted_Action
-} from 'mobile/actions/auth/logout';
+import type { Logout_Action } from 'mobile/reducers/auth/logout';
 import type {
   LoadAuthCompleted_Action,
   LoadAuthInitiated_Action
@@ -60,7 +55,8 @@ import type {
 } from 'mobile/actions/app/getSceneCandidates';
 import type {
   GetMatchesInitiated_Action,
-  GetMatchesCompleted_Action
+  GetMatchesCompleted_Action,
+  GetMatchesFailed_Action
 } from 'mobile/actions/app/getMatches';
 import type {
   JudgeSceneCandidateInitiated_Action,
@@ -127,6 +123,8 @@ import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
+import LogoutReducer from './auth/logout';
+import SendVerificationEmailReducer from './auth/sendVerificationEmail';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -178,14 +176,16 @@ export type Genders = {
   nonBinary: boolean
 };
 
+type ActiveScenes = {
+  smash: boolean,
+  social: boolean,
+  stone: boolean
+};
+
 export type UserSettings = {
   identifyAsGenders: Genders,
   lookingForGenders: Genders,
-  activeScenes: {
-    smash: boolean,
-    social: boolean,
-    stone: boolean
-  },
+  activeScenes: ActiveScenes,
   notificationsEnabled: boolean,
   expoPushToken: ?string
 };
@@ -194,7 +194,8 @@ export type ProfileFields = {|
   displayName: string,
   birthday: string,
   bio: string,
-  postGradLocation: ?string
+  postgradRegion: ?string,
+  freshmanDorm: ?string
 |};
 
 export type UserProfile = {|
@@ -219,7 +220,8 @@ export type Match = {|
   ...BaseUserNew,
   mostRecentMessage: number,
   scenes: SceneMatchTimes,
-  conversationIsRead: boolean
+  conversationIsRead: boolean,
+  newMatch: boolean
 |};
 
 export type Matches = {
@@ -271,7 +273,7 @@ const ProfileSchema = new schema.Entity(
   'profiles',
   {},
   {
-    idAttribute: (_, parent) => parent.userId
+    idAttribute: (__, parent) => parent.userId
   }
 );
 
@@ -328,7 +330,8 @@ export type GiftedChatMessage = {|
   system?: boolean,
   sent: boolean,
   failed: boolean,
-  received?: boolean
+  received?: boolean,
+  displayLarge?: boolean
 |};
 
 // TODO: enable if needed. This is a conceptual type.
@@ -408,6 +411,16 @@ export type InProgress = {|
   getConversation: { [userId: number]: boolean }
 |};
 
+export type ApiResponse = {|
+  sendVerificationEmail: ?SendVerificationEmail_Response,
+  login: ?Login_Response,
+  logoutSuccess: ?boolean,
+  createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
+  blockUserSuccess: ?boolean,
+  reportUserSuccess: ?boolean,
+  sendFeedbackSuccess: ?boolean
+|};
+
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
   network: { isConnected: boolean },
@@ -427,14 +440,7 @@ export type ReduxState = {|
 
   // Unfortunately, we really need case analysis for a few calls that we
   // trigger different component states for different errors.
-  response: {|
-    sendVerificationEmail: ?SendVerificationEmail_Response,
-    login: ?Login_Response,
-    createUserSuccess: ?boolean, // So we can determine whether onboarding has been succesful
-    blockUserSuccess: ?boolean,
-    reportUserSuccess: ?boolean,
-    sendFeedbackSuccess: ?boolean
-  |},
+  response: ApiResponse,
 
   sceneCandidateIds: SceneCandidateIds,
   excludeSceneCandidateIds: ExcludeSceneCandidateIds,
@@ -467,9 +473,8 @@ export type ReduxState = {|
 export type Action =
   | LoginInitiated_Action
   | LoginCompleted_Action
-  | LogoutInitiated_Action
-  | LogoutCompleted_Action
   | LoginFailed_Action
+  | Logout_Action
   | LoadAuthInitiated_Action
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
@@ -477,8 +482,7 @@ export type Action =
   | CreateUserInitiated_Action
   | CreateUserCompleted_Action
   | CreateUserFailed_Action
-  | SendVerificationEmailInitiated_Action
-  | SendVerificationEmailCompleted_Action
+  | SendVerificationEmail_Action
   | SaveProfileFieldsInitiated_Action
   | SaveProfileFieldsCompleted_Action
   | SaveProfileFieldsFailed_Action
@@ -497,6 +501,7 @@ export type Action =
   | GetSceneCandidatesCompleted_Action
   | GetMatchesInitiated_Action
   | GetMatchesCompleted_Action
+  | GetMatchesFailed_Action
   | JudgeSceneCandidateInitiated_Action
   | JudgeSceneCandidateCompleted_Action
   | GetConversationInitiated_Action
@@ -534,7 +539,7 @@ export type GetState = () => ReduxState;
 export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
-const defaultState: ReduxState = {
+export const initialState: ReduxState = {
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   numBadges: 0,
   token: null,
@@ -569,6 +574,7 @@ const defaultState: ReduxState = {
   response: {
     sendVerificationEmail: null,
     login: null,
+    logoutSuccess: null,
     createUserSuccess: null,
     blockUserSuccess: null,
     reportUserSuccess: null,
@@ -637,19 +643,6 @@ function normalizeCandidates(
   |}
 } {
   return normalize(canidates, [CanidateSchema]);
-}
-
-function splitMatchIds(serverMatches: ServerMatch[], orderedIds: number[]) {
-  // split between messaged and non-messaged matcehs
-  const index = serverMatches.findIndex(m => m.mostRecentMessage !== null);
-
-  // If we don't have any messages yet then the index of findIndex will be -1
-  const noMessages = index === -1;
-  const unmessagedMatchIds = noMessages
-    ? orderedIds
-    : orderedIds.slice(0, index);
-  const messagedMatchIds = noMessages ? [] : orderedIds.slice(index).reverse();
-  return { unmessagedMatchIds, messagedMatchIds };
 }
 
 function updateMostRecentMessage(
@@ -829,8 +822,32 @@ function updateReadReceipts(
   };
 }
 
+/**
+ * Clear the candidates from scenes no longer enabled.
+ */
+function resetInactiveScenes(
+  state: ReduxState,
+  activeScenes: ActiveScenes
+): {
+  excludeSceneCandidateIds: ExcludeSceneCandidateIds,
+  sceneCandidateIds: SceneCandidateIds
+} {
+  return {
+    excludeSceneCandidateIds: {
+      smash: activeScenes.smash ? state.excludeSceneCandidateIds.smash : [],
+      social: activeScenes.social ? state.excludeSceneCandidateIds.social : [],
+      stone: activeScenes.stone ? state.excludeSceneCandidateIds.stone : []
+    },
+    sceneCandidateIds: {
+      smash: activeScenes.smash ? state.sceneCandidateIds.smash : [],
+      social: activeScenes.social ? state.sceneCandidateIds.social : [],
+      stone: activeScenes.stone ? state.sceneCandidateIds.stone : []
+    }
+  };
+}
+
 export default function rootReducer(
-  state: ReduxState = defaultState,
+  state: ReduxState = initialState,
   action: Action
 ): ReduxState {
   // Sanity check for our actions abiding FSA format.
@@ -850,10 +867,11 @@ export default function rootReducer(
       };
     }
 
+    // reset to initial state, besides responses to this action.
     case 'LOGIN_COMPLETED': {
       const { response } = action.payload;
       return {
-        ...state,
+        ...initialState,
         token: response ? response.token : null,
         inProgress: {
           ...state.inProgress,
@@ -876,26 +894,16 @@ export default function rootReducer(
       };
     }
 
-    // LOGOUT:
-    case 'LOGOUT_INITIATED': {
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          logout: true
-        }
-      };
+    case 'LOGOUT__INITIATED': {
+      return LogoutReducer.initiate(state, action);
     }
 
-    case 'LOGOUT_COMPLETED': {
-      return {
-        ...state,
-        token: null,
-        inProgress: {
-          ...state.inProgress,
-          logout: false
-        }
-      };
+    case 'LOGOUT__COMPLETED': {
+      return LogoutReducer.complete(state, action);
+    }
+
+    case 'LOGOUT__FAILED': {
+      return LogoutReducer.fail(state, action);
     }
 
     // LOAD AUTH:
@@ -994,29 +1002,16 @@ export default function rootReducer(
       };
     }
 
-    case 'SEND_VERIFICATION_EMAIL_INITIATED': {
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendVerificationEmail: true
-        }
-      };
+    case 'SEND_VERIFICATION_EMAIL__INITIATED': {
+      return SendVerificationEmailReducer.initiate(state, action);
     }
 
-    case 'SEND_VERIFICATION_EMAIL_COMPLETED': {
-      const { response } = action.payload;
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          sendVerificationEmail: false
-        },
-        response: {
-          ...state.response,
-          sendVerificationEmail: response
-        }
-      };
+    case 'SEND_VERIFICATION_EMAIL__COMPLETED': {
+      return SendVerificationEmailReducer.complete(state, action);
+    }
+
+    case 'SEND_VERIFICATION_EMAIL__FAILED': {
+      return SendVerificationEmailReducer.fail(state, action);
     }
 
     case 'SAVE_PROFILE__INITIATED': {
@@ -1225,9 +1220,12 @@ export default function rootReducer(
         0
       );
 
-      const { unmessagedMatchIds, messagedMatchIds } = splitMatchIds(
-        serverMatches,
-        orderedIds
+      const [unmessagedMatchIds, messagedMatchIds] = _.partition(
+        orderedIds,
+        (id: number) => {
+          const match = matches[id];
+          return match && match.newMatch;
+        }
       );
 
       const confirmedConversations = updateMostRecentConversations(
@@ -1250,6 +1248,16 @@ export default function rootReducer(
         messagedMatchIds,
         unmessagedMatchIds,
         numBadges
+      };
+    }
+
+    case 'GET_MATCHES__FAILED': {
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getMatches: false
+        }
       };
     }
 
@@ -1278,12 +1286,20 @@ export default function rootReducer(
         throw new Error('User null in reducer for SAVE_SETTINGS__COMPLETED');
       }
       const { disableToast } = action.meta;
+      const settings = action.payload;
       const bottomToast = disableToast
         ? state.bottomToast
         : {
             uuid: uuidv4(),
             code: 'SAVE_SETTINGS__SUCCESS'
           };
+
+      const { activeScenes } = settings;
+      const {
+        excludeSceneCandidateIds,
+        sceneCandidateIds
+      } = resetInactiveScenes(state, activeScenes);
+
       return {
         ...state,
         inProgress: {
@@ -1292,9 +1308,11 @@ export default function rootReducer(
         },
         client: {
           ...state.client,
-          settings: action.payload
+          settings
         },
-        bottomToast
+        bottomToast,
+        excludeSceneCandidateIds,
+        sceneCandidateIds
       };
     }
     case 'JUDGE_SCENE_CANDIDATE__COMPLETED': {
@@ -1586,6 +1604,12 @@ export default function rootReducer(
     case 'NEW_MATCH__COMPLETED': {
       const { scene, clientInitiatedMatch, match } = action.payload;
       const userId = match.userId;
+
+      // Update our matchesById with the new match,
+      // so that we can navigate to it.
+      const { entities } = normalizeMatches([match]);
+      const { matches = {} } = entities;
+
       return {
         ...state,
         topToast: {
@@ -1594,6 +1618,10 @@ export default function rootReducer(
           clientInitiatedMatch,
           userId,
           scene
+        },
+        matchesById: {
+          ...state.matchesById,
+          ...matches
         }
       };
     }

@@ -109,7 +109,7 @@ async function sendNotifications(notifications: Notification[]) {
 
       // Queue this set of notifications for receipt retrieval
       const ticketIds = chunk.map(notification => notification[1].ticketId);
-      notificationReceiptQueue.add(ticketIds, { delay: 900000 }); // Delay by 15 minutes
+      notificationReceiptQueue.add(ticketIds, { delay: 600000 }); // Delay by 15 minutes
 
       logger.info(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
     } catch (error) {

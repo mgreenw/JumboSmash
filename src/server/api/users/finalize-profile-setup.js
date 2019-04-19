@@ -3,7 +3,12 @@
 import type { $Request } from 'express';
 
 const apiUtils = require('../utils');
-const { validateProfile, profileSelectQuery } = require('./utils');
+const {
+  validateProfile,
+  profileSelectQuery,
+  profileErrorMessages,
+  constructAccountUpdate,
+} = require('./utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 
@@ -37,8 +42,28 @@ const createMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    validateProfile(profile);
+    await validateProfile(profile);
   } catch (error) {
+    // If the user entered a birthday under 18, terminated the user immediately.
+    if (error === profileErrorMessages.BIRTHDAY_UNDER_18) {
+      const terminationUpdate = constructAccountUpdate({
+        type: 'ACCOUNT_TERMINATION',
+        admin: 'server',
+        reason: profileErrorMessages.BIRTHDAY_UNDER_ID,
+      });
+
+      await db.query(`
+        UPDATE classmates
+        SET
+          terminated = true,
+          termination_reason = $2,
+          account_updates = account_updates || jsonb_build_array($3::jsonb)
+        WHERE id = $1
+      `, [userId, profileErrorMessages.BIRTHDAY_UNDER_18, terminationUpdate]);
+
+      return apiUtils.status(codes.FINALIZE_PROFILE__BIRTHDAY_UNDER_18).noData();
+    }
+
     return apiUtils.status(codes.FINALIZE_PROFILE_SETUP__INVALID_REQUEST).data({
       message: error,
     });
@@ -76,6 +101,20 @@ const createMyProfile = async (userId: number, profile: Object) => {
   [userId, displayName, birthday, bio, userId]);
 
   const [{ existed, ...finalizedProfile }] = results.rows;
+
+  // Add an account update if the profile is being created.
+  if (!existed) {
+    const profileCreatedUpdate = constructAccountUpdate({
+      type: 'PROFILE_FIELDS_UPDATE',
+      changedFields: { displayName, birthday, bio },
+    });
+
+    await db.query(`
+      UPDATE classmates
+      SET account_updates = account_updates || jsonb_build_array($2::jsonb)
+      WHERE id = $1
+    `, [userId, profileCreatedUpdate]);
+  }
 
   return apiUtils.status(
     existed

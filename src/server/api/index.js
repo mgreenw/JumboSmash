@@ -9,13 +9,7 @@ const photosRouter = require('./photos');
 const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
 const adminRouter = require('./admin');
-
-const codes = require('./status-codes');
-const logger = require('../logger');
-const slack = require('../slack');
-const utils = require('../utils');
-
-const NODE_ENV = utils.getNodeEnv();
+const artistsRouter = require('./artists');
 
 const { authenticated, hasProfile } = require('./utils').middleware;
 
@@ -39,6 +33,7 @@ apiRouter.use(authenticated);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/photos', photosRouter);
 apiRouter.use('/meta', metaRouter);
+apiRouter.use('/artists', artistsRouter);
 
 // --> Profile-Only Routers <--
 apiRouter.use(hasProfile);
@@ -48,21 +43,5 @@ apiRouter.use(hasProfile);
 apiRouter.use('/relationships', relationshipsRouter);
 apiRouter.use('/conversations', conversationsRouter);
 apiRouter.use('/admin', adminRouter);
-
-// --> Main Error Handler! <--
-/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
-apiRouter.use((err, req, res, _next) => {
-  logger.error('Server Error: ', err);
-  slack.postServerUpdate(`SERVER ERROR
-    Environment: *${NODE_ENV}*
-
-    ${err.message}
-    ${err.stack}
-  `);
-  return res.status(500).json({
-    status: codes.SERVER_ERROR.status,
-    version: utils.version,
-  });
-});
 
 module.exports = apiRouter;

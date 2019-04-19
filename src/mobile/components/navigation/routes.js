@@ -12,6 +12,7 @@ const SETTINGS_EDIT_ROUTE = 'SETTINGS_EDIT_ROUTE';
 const PROFILE_EDIT_ROUTE = 'PROFILE_EDIT_ROUTE';
 const PROFILE_HELP_ROUTE = 'PROFILE_HELP_ROUTE';
 const SELECT_CITY_ROUTE = 'SELECT_CITY_ROUTE';
+const SELECT_DORM_ROUTE = 'SELECT_DORM_ROUTE';
 
 const CARDS_STACK = 'CARDS_STACK';
 const PROFILE_STACK = 'PROFILE_STACK';
@@ -57,6 +58,7 @@ const routes = {
   ProfileEdit: PROFILE_EDIT_ROUTE,
   ProfileHelp: PROFILE_HELP_ROUTE,
   SelectCity: SELECT_CITY_ROUTE,
+  SelectDorm: SELECT_DORM_ROUTE,
   CardsStack: CARDS_STACK,
   ProfileStack: PROFILE_STACK,
   MatchesStack: MATCHES_STACK,
@@ -80,10 +82,9 @@ const routes = {
   MainSwitch: MAIN_SWITCH,
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
-  AppSwitch: APP_SWITCH,
-  AuthSwitch: AUTH_SWITCH,
   AdminTemp: ADMIN_TEMP,
-  AdminStack: ADMIN_STACK
+  AdminStack: ADMIN_STACK,
+  AuthSwitch: AUTH_SWITCH
 };
 
 export default routes;

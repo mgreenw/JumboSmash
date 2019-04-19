@@ -3,12 +3,10 @@ import React from 'react';
 import {
   View,
   Platform,
-  Image,
   InteractionManager,
   Dimensions,
   Animated
 } from 'react-native';
-import { PrimaryButton } from 'mobile/components/shared/buttons';
 import type {
   ReduxState,
   Scene,
@@ -25,15 +23,16 @@ import ActionSheet from 'mobile/components/shared/ActionSheet';
 import { Colors } from 'mobile/styles/colors';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
+import CardDeckBackground from './CardDeckBackground';
 
 import BlockPopup from '../Matches/BlockPopup';
 import ReportPopup from '../Matches/ReportPopup';
-
-const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
-const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png');
+import { PrimaryButton } from '../../../shared/buttons/MainButtons';
 
 type ProfileCard = {
   type: 'PROFILE',
@@ -41,6 +40,10 @@ type ProfileCard = {
 };
 
 type InactiveCard = {
+  type: 'INACTIVE'
+};
+
+const INACTIVE_CARD: InactiveCard = {
   type: 'INACTIVE'
 };
 
@@ -55,7 +58,8 @@ type ReduxProps = {
   getCandidatesInProgress: boolean,
   profileMap: { [userId: number]: UserProfile },
   overlayMatchId: ?number,
-  clientProfile: ?UserProfile
+  clientProfile: ?UserProfile,
+  sceneEnabled: boolean
 };
 
 type DispatchProps = {
@@ -114,7 +118,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
     getCandidatesInProgress: reduxState.inProgress.getSceneCandidates[scene],
     profileMap: reduxState.profiles,
     overlayMatchId,
-    clientProfile
+    clientProfile,
+    sceneEnabled: reduxState.client.settings.activeScenes[ownProps.scene]
   };
 }
 
@@ -141,12 +146,9 @@ function mapDispatchToProps(
 
 class cardDeck extends React.Component<Props, State> {
   constructor(props: Props) {
-    const inactiveCard: InactiveCard = {
-      type: 'INACTIVE'
-    };
     super(props);
     this.state = {
-      cards: [inactiveCard, ...props.profileCards],
+      cards: [INACTIVE_CARD, ...props.profileCards],
       deckIndex: 0,
       allSwiped: false,
       noCandidates: false, // wait until we check -- allow a load
@@ -163,6 +165,15 @@ class cardDeck extends React.Component<Props, State> {
     };
   }
 
+  // mounting and unmounting occurs via navigation also,
+  // so we make extra checks to ensure this is safe.
+  componentDidMount() {
+    const { sceneEnabled } = this.props;
+    const { deckIndex } = this.state;
+    if (sceneEnabled && deckIndex === 0 && this.swiper)
+      this.swiper.swipeBottom();
+  }
+
   componentDidUpdate(prevProps: Props) {
     // If a new match initiated by user here, toggle the overlay.
     // Don't toggle if viewing a profile, or another one up.
@@ -170,7 +181,8 @@ class cardDeck extends React.Component<Props, State> {
       profileCards,
       getCandidatesInProgress,
       overlayMatchId,
-      profileMap
+      profileMap,
+      sceneEnabled
     } = this.props;
     const { showExpandedCard, showOverlayMatch } = this.state;
 
@@ -189,6 +201,33 @@ class cardDeck extends React.Component<Props, State> {
           overlayMatchProfile: newOverlayMatchProfile
         });
       }
+    }
+
+    // Reset to initial state!
+    if (prevProps.sceneEnabled && !sceneEnabled) {
+      const { cards } = this.state;
+      const len = cards.length;
+      cards.splice(0, len, INACTIVE_CARD);
+      this.setState(
+        {
+          deckIndex: 0,
+          allSwiped: false,
+          noCandidates: false,
+          showExpandedCard: false,
+          expandedCardProfile: null,
+          expandedCardUserId: null,
+          showUserActionSheet: false,
+          showBlockPopup: false,
+          showReportPopup: false,
+          showGif: false,
+          showOverlayMatch: false,
+          overlayMatchProfile: null
+        },
+        () => {
+          this.swiper.jumpToCardIndex(0);
+        }
+      );
+      return;
     }
 
     // We use this to MUTATE the 'cards' array in this component's state.
@@ -247,6 +286,9 @@ class cardDeck extends React.Component<Props, State> {
   //       (and enable swiping if needed via settings)
   //    2. the preview profile card.
   _renderCard = (card: Card) => {
+    if (card === undefined) {
+      return null;
+    }
     switch (card.type) {
       case 'INACTIVE': {
         const { scene } = this.props;
@@ -279,11 +321,7 @@ class cardDeck extends React.Component<Props, State> {
         allSwiped: true
       },
       () => {
-        // Force the loading to show for a second.
-        // This is a nice way to guarentee request ammounts.
-        setTimeout(() => {
-          getMoreCandidates();
-        }, 1000);
+        getMoreCandidates();
       }
     );
   };
@@ -321,6 +359,9 @@ class cardDeck extends React.Component<Props, State> {
   _onTapCard = (deckIndex: number) => {
     const { cards } = this.state;
     const card = cards[deckIndex];
+    if (card === undefined) {
+      return;
+    }
     if (card.type === 'PROFILE') {
       this._showExpandedCard(card.profileId);
     }
@@ -351,7 +392,18 @@ class cardDeck extends React.Component<Props, State> {
     });
   };
 
-  _onStartChatting = () => {};
+  _onStartChatting = () => {
+    const { overlayMatchId } = this.props;
+    this.setState(
+      {
+        showOverlayMatch: false
+      },
+      () => {
+        // If no ID, this will navigate to the messages screen.
+        NavigationService.navigateToMatch(overlayMatchId || -1);
+      }
+    );
+  };
 
   _onKeepSwiping = () => {
     this.setState({
@@ -434,9 +486,9 @@ class cardDeck extends React.Component<Props, State> {
         visible={showBlockPopup}
         onCancel={() => this.setState({ showBlockPopup: false })}
         onDone={() =>
-          this.setState({ showBlockPopup: false }, () =>
-            this.swiper.swipeBottom()
-          )
+          this.setState({ showBlockPopup: false }, () => {
+            this.swiper.swipeBottom();
+          })
         }
         displayName={displayName}
         userId={expandedCardUserId}
@@ -495,6 +547,38 @@ class cardDeck extends React.Component<Props, State> {
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
 
+    const renderSwiper = (
+      <Swiper
+        ref={swiper => {
+          this.swiper = swiper;
+        }}
+        cards={cards}
+        renderCard={this._renderCard}
+        onSwiped={this._onSwiped}
+        onSwipedLeft={this._onSwipedLeft}
+        onSwipedRight={this._onSwipedRight}
+        onSwipedAll={this._onSwipedAll}
+        dragEnd={this._onDragEnd}
+        verticalSwipe={false}
+        horizontalSwipe={
+          deckIndex !== 0 /* don't allow the instructions to be swiped */
+        }
+        backgroundColor={'transparent'}
+        deckIndex={deckIndex}
+        stackSize={2}
+        cardVerticalMargin={0}
+        cardHorizontalMargin={0}
+        stackSeparation={0}
+        marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+        stackScale={10}
+        useViewOverflow={Platform.OS === 'ios'}
+        onTapCard={this._onTapCard}
+        onSwiping={pos => {
+          swipeAnim.setValue(pos);
+        }}
+      />
+    );
+
     return (
       <View
         style={{
@@ -517,85 +601,42 @@ class cardDeck extends React.Component<Props, State> {
             });
           }}
         />
-        <Swiper
-          ref={swiper => {
-            this.swiper = swiper;
-          }}
-          cards={cards}
-          renderCard={this._renderCard}
-          onSwiped={this._onSwiped}
-          onSwipedLeft={this._onSwipedLeft}
-          onSwipedRight={this._onSwipedRight}
-          onSwipedAll={this._onSwipedAll}
-          dragEnd={this._onDragEnd}
-          verticalSwipe={false}
-          horizontalSwipe={
-            deckIndex !== 0 /* don't allow the instructions to be swiped */
-          }
-          backgroundColor={'transparent'}
-          deckIndex={deckIndex}
-          stackSize={2}
-          cardVerticalMargin={0}
-          cardHorizontalMargin={0}
-          stackSeparation={0}
-          marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
-          stackScale={10}
-          useViewOverflow={Platform.OS === 'ios'}
-          onTapCard={this._onTapCard}
-          onSwiping={pos => {
-            swipeAnim.setValue(pos);
-          }}
-        />
+        {renderSwiper}
+
         <View
           style={{
-            /* Absolutely absurd we have to do this, but the Swiper does not
-               correctly propogate props to its children, so we have to fake locations. */
             position: 'absolute',
-            bottom: SWIPE_BUTTON_HEIGHT,
-            zIndex: 2
-          }}
-        >
-          {allSwiped && noCandidates && (
-            <PrimaryButton
-              onPress={getMoreCandidatesAndReset}
-              title="Refresh Stack"
-              loading={getCandidatesInProgress}
-              disabled={getCandidatesInProgress}
-            />
-          )}
-        </View>
-        <View
-          style={{
-            width: '100%',
             height: '100%',
-            alignContent: 'center',
-            zIndex: -1,
-            position: 'absolute',
-            paddingBottom: SWIPE_BUTTON_HEIGHT / 2
+            width: '100%',
+            paddingBottom: SWIPE_BUTTON_HEIGHT,
+            zIndex: -1
           }}
         >
-          {showGif && (
-            <Image
-              resizeMode="contain"
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute'
-              }}
-              source={ArthurLoadingGif}
-            />
-          )}
-          <Image
-            resizeMode="contain"
-            style={{
-              zIndex: -2,
-              width: '100%',
-              height: '100%',
-              position: 'absolute'
-            }}
-            source={ArthurLoadingFrame1}
+          <CardDeckBackground
+            animate={showGif && getCandidatesInProgress}
+            noCandidates={allSwiped && noCandidates}
+            getCandidatesInProgress={getCandidatesInProgress}
           />
         </View>
+        {noCandidates && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: SWIPE_BUTTON_HEIGHT,
+              marginBottom: '5.1%',
+              width: '100%',
+              alignItems: 'center'
+            }}
+          >
+            <PrimaryButton
+              title={'Refresh Stack'}
+              disabled={getCandidatesInProgress || !noCandidates}
+              loading={getCandidatesInProgress}
+              onPress={getMoreCandidatesAndReset}
+            />
+          </View>
+        )}
+
         {expandedCardProfile && (
           <ModalProfileView
             isVisible={showExpandedCard}
@@ -644,6 +685,11 @@ class cardDeck extends React.Component<Props, State> {
         {this._renderUserActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
+        <AndroidBackHandler
+          onBackPress={() => {
+            return true;
+          }}
+        />
       </View>
     );
   }

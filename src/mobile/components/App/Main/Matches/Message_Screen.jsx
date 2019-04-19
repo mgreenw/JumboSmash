@@ -2,14 +2,15 @@
 
 import React from 'react';
 import {
-  Alert,
   View,
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  StyleSheet
+  StyleSheet,
+  Clipboard
 } from 'react-native';
 import { connect } from 'react-redux';
+import instantiateEmojiRegex from 'emoji-regex';
 import type {
   ReduxState,
   Dispatch,
@@ -43,6 +44,24 @@ import { isIphoneX } from 'mobile/utils/Platform';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
+
+const emojiRegex = instantiateEmojiRegex();
+
+/**
+ *
+ * @param {string} content Message Text
+ * @returns {boolean} if the message all emojis, 3 or less.
+ * Terminates early if the message is longer than 30 characters,
+ * because emojis can only be about 10 .
+ */
+function shouldDisplayLargeMessage(content: string): boolean {
+  if (content.length > 30) {
+    return false;
+  }
+  const onlyEmojis = content.replace(emojiRegex, '').trim() === '';
+  const numberOfEmojis = (content.match(emojiRegex) || []).length;
+  return onlyEmojis && numberOfEmojis <= 3;
+}
 
 /**
  *
@@ -114,7 +133,7 @@ type State = {|
   nextTyping: ?Date,
   showOtherUserTyping: boolean,
   lastRecievedTyping: ?Date,
-  showFailedMessageActionSheet: boolean,
+  showMessageActionSheet: boolean,
   selectedMessage: ?GiftedChatMessage,
   showUserActionSheet: boolean,
   showBlockPopup: boolean,
@@ -145,16 +164,29 @@ const BubbleStyles = StyleSheet.create({
     ...wrapperBase,
     borderColor: Colors.AquaMarine
   },
+  wrapperLarge: {
+    ...wrapperBase,
+    borderWidth: 0,
+    margin: 0
+  },
   wrapperFailed: {
     ...wrapperBase,
     borderColor: Colors.Grapefruit
   },
-  messageText: {
+  messageTextNormal: {
     ...textStyles.subtitle1Style,
     color: Colors.Black
   },
+  messageTextLarge: {
+    ...textStyles.subtitle1Style,
+    color: Colors.Black,
+    fontSize: 70,
+    lineHeight: 85,
+    marginBottom: -10
+  },
   timeText: {
-    fontSize: 10
+    fontSize: 10,
+    lineHeight: 12
   },
   tickStyle: {
     color: Colors.Black
@@ -191,7 +223,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: true
+            failed: true,
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -207,7 +240,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
             ...message,
             createdAt: null,
             sent: false,
-            failed: false
+            failed: false,
+            displayLarge: shouldDisplayLargeMessage(message.text)
           };
         })
         .reverse()
@@ -216,15 +250,17 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   const _confirmedIdToMessage = id => {
     // TODO: consider have render function of bubble be redux-smart, so it only access the actual object
     const message = confirmedConversation.byId[id];
+
     const giftedChatMessage: GiftedChatMessage = {
       _id: message.messageId.toString(),
-      text: formatMessage(message.content),
+      text: formatMessage(message.content, true),
       createdAt: Date.parse(message.timestamp),
       user: {
         _id: message.sender,
         name: message.sender
       },
       system: message.sender === 'system',
+      displayLarge: shouldDisplayLargeMessage(message.content),
       sent: true,
       failed: false,
       received: readReceipt
@@ -305,7 +341,7 @@ class MessagingScreen extends React.Component<Props, State> {
       nextTyping: null,
       showOtherUserTyping: false,
       lastRecievedTyping: null,
-      showFailedMessageActionSheet: false,
+      showMessageActionSheet: false,
       selectedMessage: null,
       showUserActionSheet: false,
       showBlockPopup: false,
@@ -365,18 +401,34 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderBubble = (props: { currentMessage: GiftedChatMessage }) => {
     const { currentMessage } = props;
     const { failed = false } = currentMessage;
+    const { displayLarge = false } = currentMessage;
+
+    let rightWrapperStyle = BubbleStyles.wrapperRight;
+    if (failed) rightWrapperStyle = BubbleStyles.wrapperFailed;
+    else if (displayLarge) rightWrapperStyle = BubbleStyles.wrapperLarge;
+
     return (
       <Bubble
         {...props}
         wrapperStyle={{
-          right: failed
-            ? BubbleStyles.wrapperFailed
-            : BubbleStyles.wrapperRight,
-          left: BubbleStyles.wrapperLeft
+          right: rightWrapperStyle,
+          left: displayLarge
+            ? BubbleStyles.wrapperLarge
+            : BubbleStyles.wrapperLeft
         }}
         textStyle={{
-          right: BubbleStyles.messageText,
-          left: BubbleStyles.messageText
+          right:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal,
+          left:
+            displayLarge && !failed
+              ? BubbleStyles.messageTextLarge
+              : BubbleStyles.messageTextNormal
+        }}
+        linkStyle={{
+          right: BubbleStyles.messageTextNormal,
+          left: BubbleStyles.messageTextNormal
         }}
         timeTextStyle={{
           right: BubbleStyles.timeText,
@@ -392,11 +444,7 @@ class MessagingScreen extends React.Component<Props, State> {
         }}
         tickStyle={BubbleStyles.tickStyle}
         onPress={() => {
-          if (failed) {
-            this._toggleFailedMessageActionSheet(true, currentMessage);
-          } else {
-            Alert.alert('TODO: Allow interacting with old messages');
-          }
+          this._toggleMessageActionSheet(true, currentMessage);
         }}
       />
     );
@@ -595,12 +643,12 @@ class MessagingScreen extends React.Component<Props, State> {
     return null;
   };
 
-  _toggleFailedMessageActionSheet = (
-    showFailedMessageActionSheet: boolean,
+  _toggleMessageActionSheet = (
+    showMessageActionSheet: boolean,
     selectedMessage?: GiftedChatMessage
   ) => {
     this.setState({
-      showFailedMessageActionSheet,
+      showMessageActionSheet,
       selectedMessage: selectedMessage || null
     });
   };
@@ -662,6 +710,66 @@ class MessagingScreen extends React.Component<Props, State> {
             this._toggleUserActionSheet(false);
           }
         }}
+      />
+    );
+  }
+
+  _renderMessageActionSheet() {
+    const { showMessageActionSheet, selectedMessage, match } = this.state;
+    const { cancelFailedMessage } = this.props;
+    const CopyAction = {
+      text: 'Copy Text',
+      onPress: () => {
+        if (selectedMessage) {
+          Clipboard.setString(selectedMessage.text);
+        } else {
+          throw new Error('No message selected during interaction');
+        }
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const ResendAction = {
+      text: 'Resend',
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error('no message during resend');
+          }
+          this._onSend([selectedMessage]);
+        });
+      }
+    };
+    const DoNotResendAction = {
+      text: "Don't Send",
+      textStyle: {
+        color: Colors.Grapefruit
+      },
+      onPress: () => {
+        this.setState({ showMessageActionSheet: false }, () => {
+          if (!selectedMessage) {
+            throw new Error("no message during don't send");
+          }
+          cancelFailedMessage(match.userId, selectedMessage._id);
+        });
+      }
+    };
+    const CancelAction = {
+      text: 'Cancel',
+      onPress: () => {
+        this._toggleMessageActionSheet(false);
+      }
+    };
+    const failedMessageOptions = [CopyAction, ResendAction, DoNotResendAction];
+    const normalMessageOptions = [CopyAction];
+    const { failed = false } = selectedMessage || {};
+    return (
+      <ActionSheet
+        visible={showMessageActionSheet}
+        options={failed ? failedMessageOptions : normalMessageOptions}
+        cancel={CancelAction}
       />
     );
   }
@@ -731,13 +839,8 @@ class MessagingScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { profileMap, cancelFailedMessage } = this.props;
-    const {
-      match,
-      showFailedMessageActionSheet,
-      selectedMessage,
-      showExpandedCard
-    } = this.state;
+    const { profileMap } = this.props;
+    const { match, showExpandedCard } = this.state;
     const profile = profileMap[match.userId];
     const padBottom = isIphoneX();
     return (
@@ -753,39 +856,6 @@ class MessagingScreen extends React.Component<Props, State> {
           />
         </View>
         {this._renderContent(profile)}
-        <ActionSheet
-          visible={showFailedMessageActionSheet}
-          options={[
-            {
-              text: 'Resend',
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error('no message during resend');
-                  }
-                  this._onSend([selectedMessage]);
-                });
-              }
-            },
-            {
-              text: "Don't Send",
-              onPress: () => {
-                this.setState({ showFailedMessageActionSheet: false }, () => {
-                  if (!selectedMessage) {
-                    throw new Error("no message during don't send");
-                  }
-                  cancelFailedMessage(match.userId, selectedMessage._id);
-                });
-              }
-            }
-          ]}
-          cancel={{
-            text: 'Cancel',
-            onPress: () => {
-              this._toggleFailedMessageActionSheet(false);
-            }
-          }}
-        />
         {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
@@ -808,6 +878,7 @@ class MessagingScreen extends React.Component<Props, State> {
           profile={profile}
         />
         {this._renderUserActionSheet()}
+        {this._renderMessageActionSheet()}
         {this._renderBlockPopup()}
         {this._renderReportPopup()}
         {this._renderUnmatchPopup()}

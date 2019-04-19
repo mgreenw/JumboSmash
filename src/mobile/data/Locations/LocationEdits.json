@@ -1,0 +1,165 @@
+{
+  "deleted": {
+    "na.us.fl.896": true,
+    "na.us.hi.332": true
+  },
+  "priority": [
+    "na.us.ma.7",
+    "na.us.ny.70",
+    "na.us.ca.84",
+    "na.us.dc.97",
+    "xx.xx.01",
+    "xx.yy.01"
+  ],
+  "added": {
+    "continents": {
+      "xx": {
+        "name": "Goblin Island",
+        "code": "go"
+      }
+    },
+    "states": {
+      "xx.xx.01": {
+        "name": "Idk!",
+        "code": "xx.xx.01",
+        "image": "Idk"
+      },
+      "xx.yy.01": {
+        "name": "On the Road",
+        "code": "xx.yy.01",
+        "image": "OnTheRoad"
+      }
+    },
+    "countries": {
+      "xx.xx": {
+        "name": "...Somewhere?",
+        "code": "xx.xx"
+      },
+      "xx.yy": {
+        "name": "Everywhere!",
+        "code": "xx.yy"
+      }
+    },
+    "cities": {
+      "na.us.ny.999": {
+        "name": "Westchester",
+        "code": "na.us.ny.999"
+      },
+      "na.us.ny.998": {
+        "name": "Long Island",
+        "code": "na.us.ny.998"
+      },
+      "na.us.wa.997": {
+        "name": "Tacoma",
+        "code": "na.us.wa.997"
+      }
+    }
+  },
+  "edited": {
+    "states": {
+      "na.us.hi": {
+        "name": "Hawaii",
+        "alias": [
+          "Maui",
+          "Oahu",
+          "Molokai",
+          "Lanai",
+          "Niihau",
+          "Kahoolawe",
+          "Honolulu"
+        ]
+      }
+    },
+    "cities": {
+      "na.us.fl.56": {
+        "name": "Miami",
+        "alias": ["Fort Lauderdale", "Palm Beach"]
+      },
+      "na.us.fl.828": {
+        "name": "Tampa",
+        "alias": ["St. Petersburg"]
+      },
+      "na.us.ga.359": {
+        "code": "na.us.fl.359"
+      },
+      "na.us.ga.824": { "code": "na.us.fl.996" },
+      "na.us.mi.276": { "code": "na.us.in.995" },
+      "na.us.ca.84": {
+        "name": "San Fransisco",
+        "alias": [
+          "Bay Area",
+          "Oakland",
+          "Santa Clara",
+          "Palo Alto",
+          "Mountain View",
+          "San Jose",
+          "Silicon Valley"
+        ]
+      },
+      "na.us.dc.97": {
+        "name": "Washington D.C.",
+        "alias": ["Aurora", "Joliet", "Naperville"]
+      },
+      "na.us.mn.512": {
+        "name": "Minneapolis",
+        "alias": ["St. Paul"]
+      },
+      "na.us.ny.70": {
+        "alias": [
+          "Brooklyn",
+          "Queens",
+          "The Bronx",
+          "Staten Island",
+          "Manhatten"
+        ]
+      },
+      "na.us.pa.77": {
+        "name": "Philadelphia",
+        "alias": ["Atlantic City", "Dover", "Camden"]
+      },
+      "na.us.tx.64": {
+        "name": "Austin",
+        "alias": ["Round Rock"]
+      },
+      "na.us.wa.91": {
+        "name": "Seattle",
+        "alias": ["Bellevue", "Kirkland", "Redmond", "Renton"]
+      },
+      "na.us.ma.7": {
+        "name": "Boston",
+        "alias": [
+          "Somerville",
+          "Medford",
+          "Cambridge",
+          "Tufts",
+          "Allston",
+          "Brookline",
+          "Brighton",
+          "Worcester",
+          "Lowell",
+          "Quincy"
+        ]
+      },
+      "na.us.ct.552": { "name": "Norwich", "alias": ["New London"] },
+      "na.us.ny.128": { "name": "Buffalo", "alias": ["Niagara "] },
+      "na.us.pa.96": { "code": "na.us.ny.994" },
+      "na.us.sc.60": { "code": "na.us.ga.993" },
+      "na.us.sc.752": { "code": "na.us.ga.992" },
+      "na.us.tx.31": { "name": "Dallas", "alias": ["Fort Worth"] },
+      "na.us.va.312": {
+        "name": "Winston-Salem",
+        "code": "na.us.nc.312",
+        "alias": ["Greensboro"]
+      },
+      "na.us.wi.688": { "name": "Rockford" },
+      "na.us.vt.800": {
+        "name": "Springfield",
+        "code": "na.us.ma.991"
+      },
+      "na.us.oh.28": {
+        "name": "Cleaveland",
+        "alias": ["Akron"]
+      }
+    }
+  }
+}

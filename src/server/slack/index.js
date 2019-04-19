@@ -65,7 +65,7 @@ const server = new IncomingWebhook('https://hooks.slack.com/services/TCR3CCRDL/B
 exports.postServerUpdate = (
   message: string,
 ) => {
-  if (NODE_ENV === 'staging' || NODE_ENV === 'production') {
+  if (NODE_ENV === 'production') {
     server.send(message);
   }
 };

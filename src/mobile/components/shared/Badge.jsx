@@ -25,28 +25,32 @@ const styles = StyleSheet.create({
   }
 });
 
-const Badge = () => {
+type BadgeProps = {
+  badgeContainerStyle?: StyleSheet.Styles
+};
+
+const Badge = ({ badgeContainerStyle }: BadgeProps) => {
   return (
-    <View style={styles.badgeOutline}>
+    <View style={{ ...styles.badgeOutline, ...badgeContainerStyle }}>
       <View style={styles.badgeFill} />
     </View>
   );
 };
 
 // For Header Icons
-const IconBadge = () => {
+const IconBadge = (props: BadgeProps) => {
   return (
     <View style={{ left: -TOTAL_LENGTH / 2 }}>
-      <Badge />
+      <Badge {...props} />
     </View>
   );
 };
 
 // For Avatar Badges in Messages
-const AvatarBadge = () => {
+const AvatarBadge = (props: BadgeProps) => {
   return (
     <View style={{ right: -TOTAL_LENGTH / 2, top: -TOTAL_LENGTH / 2 }}>
-      <Badge />
+      <Badge {...props} />
     </View>
   );
 };

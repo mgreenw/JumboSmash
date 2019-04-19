@@ -4,7 +4,13 @@ import type { $Request } from 'express';
 
 const _ = require('lodash');
 
-const { validateProfile, profileSelectQuery, getFieldTemplates } = require('./utils');
+const {
+  validateProfile,
+  profileSelectQuery,
+  constructAccountUpdate,
+  getFieldTemplates,
+} = require('./utils');
+
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
@@ -25,6 +31,21 @@ const schema = {
     "bio": {
       "description": "The user's bio!",
       "type": "string"
+    },
+    "postgradRegion": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "freshmanDorm": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "springFlingAct": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "maxLength": 200
     }
   },
   "required": []
@@ -41,7 +62,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
   try {
-    validateProfile(profile);
+    await validateProfile(profile);
   } catch (error) {
     return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
       message: error,
@@ -55,6 +76,9 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     display_name: profile.displayName,
     birthday: profile.birthday,
     bio: profile.bio,
+    postgrad_region: profile.postgradRegion,
+    freshman_dorm: profile.freshmanDorm,
+    spring_fling_act: profile.springFlingAct,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
@@ -84,6 +108,23 @@ const updateMyProfile = async (userId: number, profile: Object) => {
       WHERE user_id = $${userParamIndex}
       RETURNING ${profileSelectQuery(`${userParamIndex}`)}
     `, [...template.fields, userId]);
+
+    // Mark the profile as needing review ONLY IF display name or bio are updated
+    const updatedFields = Object.keys(definedFields);
+    const requireReview = updatedFields.includes('bio') || updatedFields.includes('display_name');
+
+    const profileUpdated = constructAccountUpdate({
+      type: 'PROFILE_FIELDS_UPDATE',
+      changedFields: definedFields,
+    });
+
+    await db.query(`
+      UPDATE classmates
+      SET
+        profile_status = CASE WHEN $3 THEN 'updated' ELSE profile_status END,
+        account_updates = account_updates || jsonb_build_array($2::jsonb)
+      WHERE id = $1
+    `, [userId, profileUpdated, requireReview]);
   }
 
   // If there is an id returned, success!

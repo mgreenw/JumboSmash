@@ -43,12 +43,12 @@ const getMatches = async (userId: number) => {
     db.query(`
       ${utils.matchQuery}
         AND me_critic.candidate_user_id = they_critic.critic_user_id
-        AND NOT them.banned
+        AND NOT them.terminated
         AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
         AND
           (${matchedScenesChecks.join(' OR ')})
       ORDER BY
-        most_recent_message.timestamp NULLS FIRST,
+        most_recent_message.timestamp DESC NULLS FIRST,
         GREATEST(${sceneTimestampList.join(',')}) DESC
     `, [userId]),
     redis.shared.hkeys(redis.unreadConversationsKey(userId)),
