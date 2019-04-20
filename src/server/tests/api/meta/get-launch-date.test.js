@@ -7,7 +7,7 @@ const dbUtils = require('../../utils/db');
 
 let me = {};
 
-describe('GET api/artists/:artistId', () => {
+describe('GET api/meta/launch-date', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');
@@ -28,30 +28,21 @@ describe('GET api/artists/:artistId', () => {
 
   it('must require the user to exist', async () => {
     const res = await request(app)
-      .get('/api/artists/hehe')
+      .get('/api/meta/launch-date')
       .set('Accept', 'application/json');
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe(codes.BAD_REQUEST.status);
     expect(res.body.message).toBe('Missing Authorization header.');
   });
 
-  it('should return the artist on a correct artist id', async () => {
+  it('should return a launch date', async () => {
     const res = await request(app)
-      .get('/api/artists/2TI7qyDE0QfyOlnbtfDo7L')
+      .get('/api/meta/launch-date')
       .set('Accept', 'application/json')
       .set('Authorization', me.token);
-    expect(res.body.status).toBe(codes.GET_ARTIST__SUCCESS.status);
+    expect(res.body.status).toBe(codes.GET_LAUNCH_DATE__SUCCESS.status);
     expect(res.statusCode).toBe(200);
-    expect(res.body.data.artist.name).toBe('Dave Matthews Band');
-    expect(res.body.data.artist.id).toBe('2TI7qyDE0QfyOlnbtfDo7L');
-  });
-
-  it('should return not found if the id is bad', async () => {
-    const res = await request(app)
-      .get('/api/artists/not-a-valid-id')
-      .set('Accept', 'application/json')
-      .set('Authorization', me.token);
-    expect(res.body.status).toBe(codes.GET_ARTIST__NOT_FOUND.status);
-    expect(res.statusCode).toBe(404);
+    const launchDate = new Date(res.body.data.launchDate);
+    expect(Number.isNaN(launchDate.getTime())).toBeFalsy();
   });
 });
