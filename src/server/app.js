@@ -3,10 +3,6 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 
-const logger = require('./logger');
-const api = require('./api');
-const { notFound } = require('./api/utils');
-const codes = require('./api/status-codes');
 const utils = require('./utils');
 const { version } = require('./package.json');
 
@@ -18,6 +14,12 @@ Sentry.init({
   release: version,
   environment: NODE_ENV,
 });
+
+const logger = require('./logger');
+const api = require('./api');
+const { notFound } = require('./api/utils');
+const codes = require('./api/status-codes');
+
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
