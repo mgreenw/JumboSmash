@@ -14,9 +14,15 @@ import loadAppAction from 'mobile/actions/app/loadApp';
 import ProgressBar from 'react-native-progress/Bar';
 import { Colors } from 'mobile/styles/colors';
 import { CityIconsList } from 'mobile/assets/icons/locations/';
+import { randomLoadingStatement } from 'mobile/data/Copy';
+import { textStyles } from 'mobile/styles/textStyles';
+import * as Animatable from 'react-native-animatable';
 import NavigationService from '../navigation/NavigationService';
 
+// pre fonts for the inital text:
 const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
+const SourceSansPro_Regular = require('../../assets/fonts/SourceSansPro-Regular.ttf');
+
 const ArthurIcon = require('../../assets/arthurIcon.png');
 
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
@@ -45,7 +51,8 @@ type DispatchProps = {
 
 type Props = ReduxProps & NavigationProps & DispatchProps;
 type State = {
-  isReady: boolean
+  isReady: boolean,
+  loadingStatement: string
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -88,7 +95,7 @@ function cacheFonts(fonts) {
  * Light weight load -- the bare minimum we need to show the real loading screen.
  */
 async function loadAssetsForLoadingScreenAsync() {
-  const fonts = [{ VeganStyle }];
+  const fonts = [{ VeganStyle, SourceSansPro_Regular }];
   const images = [ArthurIcon];
   const imageAssets = cacheImages(images);
   const fontAssets = cacheFonts(fonts);
@@ -103,7 +110,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isReady: false
+      isReady: false,
+      loadingStatement: randomLoadingStatement()
     };
   }
 
@@ -190,8 +198,15 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       });
   }
 
+  // .fadeInLeft() is a promise
+  animateLoadingTextEntrance = () => this.animLoadingTextView.fadeInLeft(1000);
+
+  handleViewRef = ref => (this.animLoadingTextView = ref);
+
+  animLoadingTextView: any;
+
   render() {
-    const { isReady } = this.state;
+    const { isReady, loadingStatement } = this.state;
     if (!isReady) {
       return (
         <AppLoading
@@ -225,6 +240,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               }}
               onLoadEnd={() => {
                 setTimeout(() => {
+                  this.animateLoadingTextEntrance();
                   SplashScreen.hide();
                 }, 50);
               }}
@@ -249,9 +265,24 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               indeterminate
               borderRadius={6}
               width={null}
+              useNativeDriver
             />
+            <Animatable.View ref={this.handleViewRef} useNativeDriver>
+              <Text
+                style={[
+                  textStyles.body1Style,
+                  {
+                    textAlign: 'center',
+                    color: Colors.Black,
+                    padding: 15
+                  }
+                ]}
+              >
+                {loadingStatement}
+              </Text>
+            </Animatable.View>
           </View>
-          <Text style={[{ textAlign: 'center' }]}>
+          <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
             {`Version ${Constants.manifest.version}`}
           </Text>
         </SafeAreaView>
