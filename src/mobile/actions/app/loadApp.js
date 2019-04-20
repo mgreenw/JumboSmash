@@ -72,7 +72,8 @@ function complete(
           stone: false
         },
         notificationsEnabled: false,
-        expoPushToken: null
+        expoPushToken: null,
+        isAdmin: false
       },
       launchDate
     },
