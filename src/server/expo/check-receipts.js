@@ -3,6 +3,7 @@
 
 const _ = require('lodash');
 const { Expo } = require('expo-server-sdk');
+const Sentry = require('@sentry/node');
 
 const db = require('../db');
 const logger = require('../logger');
@@ -44,7 +45,7 @@ async function checkReceipts(job: { data: string[] }) {
   });
 
   // Retrieve the receipts from expo
-  logger.info('Querying expo for receipts.');
+  logger.debug('Querying expo for receipts.');
   const receipts: {[ticketId: string]: Receipt } = await expo.getPushNotificationReceiptsAsync(
     Object.keys(notifications),
   );
@@ -57,17 +58,18 @@ async function checkReceipts(job: { data: string[] }) {
       notifications[ticketId].message = receipt.message;
       if (receipt.details && receipt.details.error) {
         notifications[ticketId].errorDetails = receipt.details.error;
+        Sentry.captureMessage(`Failed to send push notification: ${JSON.stringify(notifications[ticketId], null, 2)}`);
       }
     }
   });
 
   if (Object.keys(notifications).length === 0) {
-    logger.warn('No notification receipts to check.');
+    logger.debug('No notification receipts to check.');
     return;
   }
 
   // Create the paramaeter strings for the update query
-  logger.info('Updating notification receipts.');
+  logger.debug('Updating notification receipts.');
   const generateValueTemplate = (startIndex: number): string => {
     return `($${startIndex + 1}::integer, $${startIndex + 2}::notification_status, $${startIndex + 3}, $${startIndex + 4})`;
   };
@@ -92,7 +94,7 @@ async function checkReceipts(job: { data: string[] }) {
     WHERE notifications.id = updated.id
   `, _.flatten(params));
 
-  logger.info('Done checking notification receipts.');
+  logger.debug('Done checking notification receipts.');
 }
 
 module.exports = checkReceipts;
