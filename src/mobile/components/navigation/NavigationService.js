@@ -100,7 +100,20 @@ function getCurrentRoute(): { routeName: string, params: Object } {
   return route;
 }
 
-// add other navigation functions that you need and export them
+/**
+ * Enter app if after launch, otherwise go to the wall screen.
+ */
+function enterApp() {
+  const { launchDate } = store.getState();
+  if (!launchDate)
+    throw new Error('No launchDate in NavigationServce.enterApp()');
+  const now = new Date();
+  if (launchDate > now) {
+    navigate(routes.PrelaunchWall);
+  } else {
+    navigate(routes.MainSwitch);
+  }
+}
 
 export default {
   navigate,
@@ -110,5 +123,6 @@ export default {
   reset,
   terminate,
   getCurrentRoute,
-  navigateToMatch
+  navigateToMatch,
+  enterApp
 };

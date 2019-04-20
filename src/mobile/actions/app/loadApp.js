@@ -6,6 +6,7 @@ import getMySettings from 'mobile/api/users/GetMySettings';
 import getClientUtln from 'mobile/api/auth/getClientUtln';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import getMyPhotos from 'mobile/api/users/GetMyPhotos';
+import checkLaunchDate from 'mobile/api/meta/checkLaunchDate';
 import Sentry from 'sentry-expo';
 
 export type LoadAppInitiated_Action = {
@@ -18,7 +19,8 @@ export type LoadAppCompleted_Action = {
   payload: {
     onboardingCompleted: boolean,
     profile: UserProfile,
-    settings: UserSettings
+    settings: UserSettings,
+    launchDate: Date
   },
   meta: {}
 };
@@ -35,6 +37,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
+  launchDate: Date,
   photoUuids: ?(string[])
 ): LoadAppCompleted_Action {
   return {
@@ -70,7 +73,8 @@ function complete(
         },
         notificationsEnabled: false,
         expoPushToken: null
-      }
+      },
+      launchDate
     },
     meta: {}
   };
@@ -78,29 +82,32 @@ function complete(
 
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  getMyProfile()
-    .then(profile => {
-      // if profile is null, onboarding has not been completed, though
-      // some photos may have been uploaded.
-      if (profile === null || profile === undefined) {
-        getMyPhotos().then(photoUuids => {
-          dispatch(complete(null, null, false, photoUuids));
-        });
-      } else {
-        getMySettings().then(settings => {
-          getClientUtln().then(utln => {
-            // TODO: add UserId, need it retrieved somewhere, preferably the same utln endpoint
-            Sentry.setUserContext({
-              username: utln
-            });
-            Sentry.captureMessage('User Logged In!', {
-              level: 'info'
-            });
-
-            dispatch(complete(profile, settings, true));
+  checkLaunchDate()
+    .then(launchDate => {
+      console.log(launchDate);
+      getMyProfile().then(profile => {
+        // if profile is null, onboarding has not been completed, though
+        // some photos may have been uploaded.
+        if (profile === null || profile === undefined) {
+          getMyPhotos().then(photoUuids => {
+            dispatch(complete(null, null, false, launchDate, photoUuids));
           });
-        });
-      }
+        } else {
+          getMySettings().then(settings => {
+            getClientUtln().then(utln => {
+              // TODO: add UserId, need it retrieved somewhere, preferably the same utln endpoint
+              Sentry.setUserContext({
+                username: utln
+              });
+              Sentry.captureMessage('User Logged In!', {
+                level: 'info'
+              });
+
+              dispatch(complete(profile, settings, true, launchDate));
+            });
+          });
+        }
+      });
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
