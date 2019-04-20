@@ -16,6 +16,7 @@ function formatTime(
   return `0 H : 0 M : 0 S`;
 }
 
+
 type State = {
   timer: any,
   days: number,
@@ -28,7 +29,8 @@ type Props = {
   date: Date
 };
 
-export default class Loading extends React.Component<Props, State> {
+
+export default class CountDownTimer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { days, hours, minutes, seconds } = timeDifference(
@@ -67,6 +69,7 @@ export default class Loading extends React.Component<Props, State> {
   render() {
     const { days, hours, minutes, seconds } = this.state;
     const displayTime = formatTime(days, hours, minutes, seconds);
+
     return (
       <View
         style={{
