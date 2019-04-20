@@ -198,8 +198,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       });
   }
 
-  animateLoadingTextEntrance = () =>
-    this.animLoadingTextView.fadeInLeft(1000).then();
+  // .fadeInLeft() is a promise
+  animateLoadingTextEntrance = () => this.animLoadingTextView.fadeInLeft(1000);
 
   handleViewRef = ref => (this.animLoadingTextView = ref);
 
