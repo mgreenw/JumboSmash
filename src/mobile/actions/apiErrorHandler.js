@@ -71,6 +71,8 @@ export function apiErrorHandler(
 
   // Just throw everything else as a Server Error for the user.
   return {
-    type: 'SERVER_ERROR'
+    type: 'SERVER_ERROR',
+    payload: {},
+    meta: {}
   };
 }
