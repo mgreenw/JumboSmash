@@ -1,10 +1,11 @@
 // @flow
 
-export default function(timestamp: string) {
-  const oldDate = new Date(timestamp);
-  const nowDate = new Date();
+export default function(priorTime: Date | string, laterTime: Date | string) {
+  const laterDate = new Date(laterTime);
+  const priorDate = new Date(priorTime);
+
   // get total seconds between the times
-  let delta = Math.abs(nowDate - oldDate) / 1000;
+  let delta = Math.abs(laterDate - priorDate) / 1000;
 
   // calculate (and subtract) whole days
   const days = Math.floor(delta / 86400);
@@ -19,15 +20,12 @@ export default function(timestamp: string) {
   delta -= minutes * 60;
 
   // what's left is seconds
-  const seconds = delta % 60; // in theory the modulus is not required
-  if (days > 0) {
-    return `${days}d`;
-  }
-  if (hours > 0) {
-    return `${hours}h`;
-  }
-  if (minutes > 0) {
-    return `${minutes}m`;
-  }
-  return `1m`;
+  const seconds = Math.floor(delta % 60); // in theory the modulus is not required
+
+  return {
+    days,
+    hours,
+    minutes,
+    seconds
+  };
 }

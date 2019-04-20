@@ -9,26 +9,10 @@ import { Colors } from 'mobile/styles/colors';
 import { SecondaryButton } from 'mobile/components/shared/buttons';
 import { connect } from 'react-redux';
 import type { ReduxState } from 'mobile/reducers/index';
+import CountDownTimer from './CountDownTimer';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 const ArthurUri = require('../../assets/arthurIcon.png');
-
-const CountDownTimer = () => {
-  return (
-    <View
-      style={{
-        backgroundColor: Colors.White,
-        paddingHorizontal: 26,
-        paddingVertical: 10,
-        borderRadius: 4
-      }}
-    >
-      <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
-        {'2 D : 3 H : 45 M'}
-      </Text>
-    </View>
-  );
-};
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -86,7 +70,7 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <CountDownTimer launchDate={launchDate} />
+          <CountDownTimer date={launchDate} />
           <Image
             resizeMode="contain"
             style={{
