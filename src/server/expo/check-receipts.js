@@ -28,7 +28,7 @@ type Notification = {
 
 async function checkReceipts(job: { data: string[] }) {
   // Get the notifications in question from the database
-  logger.info(`Beginning receipt check for ${job.data.length} notifications`);
+  logger.debug(`Beginning receipt check for ${job.data.length} notifications`);
   const results = (await db.query(`
     SELECT id, ticket_id AS "ticketId", user_id AS "userId", status
     FROM notifications

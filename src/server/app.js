@@ -7,6 +7,7 @@ const logger = require('./logger');
 const api = require('./api');
 const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
+const utils = require('./utils');
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
