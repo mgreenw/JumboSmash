@@ -76,8 +76,6 @@ class Socket {
     });
     /* eslint-enable no-param-reassign */
 
-    logger.info(`Socket listening at ${namespace}`);
-
     _io.on('connection', (socket) => {
       logger.info(`Connection via socket: ${JSON.stringify(socket.user, null, 2)}`);
 
