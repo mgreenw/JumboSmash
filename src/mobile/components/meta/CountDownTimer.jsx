@@ -5,6 +5,17 @@ import { Text, View } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import timeDifference from 'mobile/utils/time/timeDifference';
 
+function formatTime(
+  days: number,
+  hours: number,
+  minutes: number,
+  seconds: number
+) {
+  if (days > 0) return `${days} D : ${hours} H : ${minutes} M `;
+  if (days === 0) return `${hours} H : ${minutes} M : ${seconds} S`;
+  return `0 H : 0 M : 0 S`;
+}
+
 type State = {
   timer: any,
   days: number,
@@ -55,10 +66,7 @@ export default class Loading extends React.Component<Props, State> {
 
   render() {
     const { days, hours, minutes, seconds } = this.state;
-    const displayTime =
-      days > 0
-        ? `${days} D : ${hours} H : ${minutes} M `
-        : `${hours} H : ${minutes} M : ${seconds} S`;
+    const displayTime = formatTime(days, hours, minutes, seconds);
     return (
       <View
         style={{
