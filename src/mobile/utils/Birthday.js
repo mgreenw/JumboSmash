@@ -2,9 +2,12 @@
 import moment from 'moment';
 
 // See server/users/utils.js
-const oldestBirthday = new Date('01/01/2001');
+const oldestBirthday = new Date('01/01/1988');
 
-export function validateBirthday(birthday: string) {
+type Reason = 'VALID' | 'NOT_REAL_DATE' | 'FUTURE' | 'TOO_OLD';
+type BirthdayValidation = { valid: boolean, reason: Reason };
+
+export function validateBirthday(birthday: string): BirthdayValidation {
   const [year, month, day] = birthday
     .split('-')
     .map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
@@ -13,21 +16,43 @@ export function validateBirthday(birthday: string) {
   const birthdayDate = new Date(year, month - 1, day);
   const now = new Date();
 
-  if (
-    // This ensures that the given birthdayDate is not an "Invalid Date"
-    Number.isNaN(birthdayDate.getTime()) ||
-    // This checks if the birthday is within the reasonable range.
-    birthdayDate < oldestBirthday ||
-    birthdayDate > now ||
-    // The final check below ensures that the Date that javascript coalesces the given birthday
-    // to is actually on the same day as the given birthday. Also duh.
-    // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
-    birthdayDate.getDate() !== day
-  ) {
-    return false;
+  if (Number.isNaN(birthdayDate.getTime()) || birthdayDate.getDate() !== day) {
+    return { valid: false, reason: 'NOT_REAL_DATE' };
   }
 
-  return true;
+  if (birthdayDate < oldestBirthday) return { valid: false, reason: 'TOO_OLD' };
+  if (birthdayDate > now) return { valid: false, reason: 'FUTURE' };
+  return { valid: true, reason: 'VALID' };
+}
+
+/**
+ *
+ * @param {Reason} reason map a name error enum to an error message
+ */
+export function birthdayErrorCopy(reason: Reason): string {
+  switch (reason) {
+    case 'FUTURE': {
+      return "Oops, that's in the future!";
+    }
+
+    case 'NOT_REAL_DATE': {
+      return "Oops, that's not a real date!";
+    }
+
+    case 'TOO_OLD': {
+      return "Oops, you're not that old!";
+    }
+
+    case 'VALID': {
+      return '';
+    }
+
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (reason: empty); // ensures we have handled all cases
+      return '';
+    }
+  }
 }
 
 export function getAge(birthday: string): number {

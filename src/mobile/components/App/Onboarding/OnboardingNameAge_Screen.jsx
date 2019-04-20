@@ -6,7 +6,7 @@ import { PrimaryInput } from 'mobile/components/shared/PrimaryInput';
 import { BirthdayInput } from 'mobile/components/shared/DigitInput';
 import type { UserSettings, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
-import { validateBirthday } from 'mobile/utils/Birthday';
+import { validateBirthday, birthdayErrorCopy } from 'mobile/utils/Birthday';
 import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import { OnboardingLayout } from './Onboarding_Layout';
 
@@ -95,13 +95,17 @@ export default class NameAgeScreen extends React.Component<Props, State> {
   _validateInputs = () => {
     // validate birthday to be the correct
     const { profile } = this.state;
-    const validBirthday = validateBirthday(profile.fields.birthday);
+    console.log(profile.fields.birthday);
+    const {
+      valid: validBirthday,
+      reason: validBirthdayReason
+    } = validateBirthday(profile.fields.birthday);
     const { valid: validName, reason: validNameReason } = validateName(
       profile.fields.displayName
     );
     if (!validBirthday) {
       this.setState({
-        errorMessageBirthday: 'Invalid Birthday'
+        errorMessageBirthday: birthdayErrorCopy(validBirthdayReason)
       });
     }
     if (!validName) {
