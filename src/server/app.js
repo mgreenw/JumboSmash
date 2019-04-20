@@ -3,10 +3,6 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 
-const logger = require('./logger');
-const api = require('./api');
-const { notFound } = require('./api/utils');
-const codes = require('./api/status-codes');
 const utils = require('./utils');
 const { version } = require('./package.json');
 
@@ -18,6 +14,12 @@ Sentry.init({
   release: version,
   environment: NODE_ENV,
 });
+
+const logger = require('./logger');
+const api = require('./api');
+const { notFound } = require('./api/utils');
+const codes = require('./api/status-codes');
+
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
@@ -46,17 +48,22 @@ app.use((req, res, next) => {
     const end = new Date().getTime();
     const latency = end - start;
 
+    // Nanos represents the remaining nanos after seconds is counted.
+    // This is somewhat silly but Google requires this format
+    const seconds = Math.floor(latency / 1000);
+    const nanos = (latency - (seconds * 1000)) * 1000000;
+
     logger.info(`${req.method} ${req.originalUrl} (${latency}ms) ${body}`, {
       httpRequest: {
         status: res.statusCode,
         requestUrl: req.originalUrl,
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
-        latency,
-        timeout,
+        latency: { seconds, nanos },
         user: req.user,
         // etc.
       },
+      timeout,
     });
 
     logged = true;

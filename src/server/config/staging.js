@@ -22,6 +22,7 @@ module.exports = {
     host: 'gem_staging_redis',
     port: 6379,
   },
+  launch_date: secrets.get('LAUNCH_DATE'),
   spotify_client_id: 'd300522fd10f4f02b164d97bcfd9390b',
   spotify_client_secret: secrets.get('SPOTIFY_CLIENT_SECRET'),
 };

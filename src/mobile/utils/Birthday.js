@@ -2,21 +2,31 @@
 import moment from 'moment';
 
 // See server/users/utils.js
-const minBirthday = new Date('01/01/1988');
-const maxBirthday = new Date('01/01/2001');
+const oldestBirthday = new Date('01/01/2001');
 
 export function validateBirthday(birthday: string) {
-  const birthdayDate = new Date(birthday);
+  const [year, month, day] = birthday
+    .split('-')
+    .map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
 
-  // if this fails, this is an invalid date FORMAT
-  if (Number.isNaN(birthdayDate)) {
+  // Note the "month - 1": Javascript's month is 0-indexed. Oof.
+  const birthdayDate = new Date(year, month - 1, day);
+  const now = new Date();
+
+  if (
+    // This ensures that the given birthdayDate is not an "Invalid Date"
+    Number.isNaN(birthdayDate.getTime()) ||
+    // This checks if the birthday is within the reasonable range.
+    birthdayDate < oldestBirthday ||
+    birthdayDate > now ||
+    // The final check below ensures that the Date that javascript coalesces the given birthday
+    // to is actually on the same day as the given birthday. Also duh.
+    // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
+    birthdayDate.getDate() !== day
+  ) {
     return false;
   }
 
-  // Check that the birthday is in a reasonable range
-  if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
-    return false;
-  }
   return true;
 }
 

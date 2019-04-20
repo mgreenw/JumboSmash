@@ -32,6 +32,7 @@ module.exports = {
     client_email: 'projectgem-server@projectgem.iam.gserviceaccount.com',
     project_id: 'projectgem',
   },
+  launch_date: secrets.get('LAUNCH_DATE'),
   spotify_client_id: 'd300522fd10f4f02b164d97bcfd9390b',
   spotify_client_secret: secrets.get('SPOTIFY_CLIENT_SECRET'),
 };

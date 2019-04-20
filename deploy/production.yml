@@ -75,7 +75,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:1.6.0
+    image: maxgreenwald/projectgem:1.6.3
     environment:
       NODE_ENV: production
     secrets:
@@ -89,6 +89,7 @@ services:
       - AWS_SECRET_ACCESS_KEY
       - GOOGLE_PRIVATE_KEY
       - SPOTIFY_CLIENT_SECRET
+      - LAUNCH_DATE
     networks:
       - traefik-net
     deploy:
@@ -164,6 +165,8 @@ secrets:
   GOOGLE_PRIVATE_KEY:
     external: true
   SPOTIFY_CLIENT_SECRET:
+    external: true
+  LAUNCH_DATE:
     external: true
 
 networks:
