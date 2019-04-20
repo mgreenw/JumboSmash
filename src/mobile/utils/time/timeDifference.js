@@ -5,7 +5,7 @@ export default function(priorTime: Date | string, laterTime: Date | string) {
   const priorDate = new Date(priorTime);
 
   // get total seconds between the times
-  let delta = Math.abs(laterDate - priorDate) / 1000;
+  let delta = (laterDate - priorDate) / 1000;
 
   // calculate (and subtract) whole days
   const days = Math.floor(delta / 86400);
