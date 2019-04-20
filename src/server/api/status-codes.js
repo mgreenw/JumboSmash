@@ -325,6 +325,12 @@ exports.SEND_FEEDBACK__SUCCESS = {
   code: 200,
 };
 
+// Get Launch Date
+exports.GET_LAUNCH_DATE__SUCCESS = {
+  status: 'GET_LAUNCH_DATE__SUCCESS',
+  code: 200,
+};
+
 
 // ADMIN
 
