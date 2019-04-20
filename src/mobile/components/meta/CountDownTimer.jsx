@@ -17,7 +17,7 @@ type Props = {
   date: Date
 };
 
-export default class Loading extends React.Component<Props, State> {
+export default class CountDownTimer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { days, hours, minutes, seconds } = timeDifference(
