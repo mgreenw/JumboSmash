@@ -3,24 +3,35 @@
 import {
   UNAUTHORIZED,
   NETWORK_REQUEST_FAILED,
+  BIRTHDAY_UNDER_18,
   TERMINATED
 } from 'mobile/api/sharedResponseCodes';
 import Sentry from 'sentry-expo';
 
 export type Unauthorized_Action = {
-  type: 'UNAUTHORIZED'
+  type: 'UNAUTHORIZED',
+  payload: {},
+  meta: {}
 };
 
 export type ServerError_Action = {
-  type: 'SERVER_ERROR'
+  type: 'SERVER_ERROR',
+  payload: {},
+  meta: {}
 };
 
 export type NetworkError_Action = {
-  type: 'NETWORK_ERROR'
+  type: 'NETWORK_ERROR',
+  payload: {},
+  meta: {}
 };
 
 export type Terminated_Action = {
-  type: 'TERMINATED'
+  type: 'TERMINATED',
+  payload: {
+    isUnder18: boolean
+  },
+  meta: {}
 };
 
 // eslint-disable-next-line
@@ -33,19 +44,25 @@ export function apiErrorHandler(
   | Terminated_Action {
   if (reject === NETWORK_REQUEST_FAILED) {
     return {
-      type: 'NETWORK_ERROR'
+      type: 'NETWORK_ERROR',
+      payload: {},
+      meta: {}
     };
   }
 
   if (reject === UNAUTHORIZED) {
     return {
-      type: 'UNAUTHORIZED'
+      type: 'UNAUTHORIZED',
+      payload: {},
+      meta: {}
     };
   }
 
-  if (reject === TERMINATED) {
+  if (reject === TERMINATED || reject === BIRTHDAY_UNDER_18) {
     return {
-      type: 'TERMINATED'
+      type: 'TERMINATED',
+      payload: { isUnder18: reject === BIRTHDAY_UNDER_18 },
+      meta: {}
     };
   }
 

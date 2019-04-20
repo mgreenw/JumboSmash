@@ -83,8 +83,8 @@ function reset() {
 /**
  * ONLY USE IN CASES TO PERMENATELY SEND A USER TO THE TERMINATED SCREEN.
  */
-function terminate() {
-  navigate(routes.Terminated);
+function terminate(isUnder18?: boolean = false) {
+  navigate(routes.Terminated, { isUnder18 });
 }
 
 /**
