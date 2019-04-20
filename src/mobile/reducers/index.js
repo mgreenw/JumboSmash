@@ -109,7 +109,6 @@ import type {
   SendFeedbackCompleted_Action,
   SendFeedbackFailed_Action
 } from 'mobile/actions/app/meta/sendFeedback';
-
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
@@ -404,6 +403,7 @@ export type InProgress = {|
   reportUser: boolean,
   unmatch: boolean,
   sendFeedback: boolean,
+  checkLaunchDate: boolean,
 
   sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
   readMessage: { [userId: number]: { [messageId: number]: boolean } },
@@ -424,6 +424,7 @@ export type ApiResponse = {|
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
+  launchDate: ?Date,
   network: { isConnected: boolean },
 
   numBadges: number,
@@ -542,6 +543,7 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 export const initialState: ReduxState = {
+  launchDate: null,
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   numBadges: 0,
   token: null,
@@ -571,7 +573,8 @@ export const initialState: ReduxState = {
     blockUser: false,
     reportUser: false,
     unmatch: false,
-    sendFeedback: false
+    sendFeedback: false,
+    checkLaunchDate: false
   },
   response: {
     sendVerificationEmail: null,
@@ -945,7 +948,12 @@ export default function rootReducer(
     }
 
     case 'LOAD_APP__COMPLETED': {
-      const { profile, settings, onboardingCompleted } = action.payload;
+      const {
+        profile,
+        settings,
+        onboardingCompleted,
+        launchDate
+      } = action.payload;
       return {
         ...state,
         appLoaded: true,
@@ -958,7 +966,8 @@ export default function rootReducer(
           ...state.inProgress,
           loadApp: false
         },
-        onboardingCompleted
+        onboardingCompleted,
+        launchDate
       };
     }
 
