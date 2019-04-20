@@ -14,6 +14,7 @@ import loadAppAction from 'mobile/actions/app/loadApp';
 import ProgressBar from 'react-native-progress/Bar';
 import { Colors } from 'mobile/styles/colors';
 import { CityIconsList } from 'mobile/assets/icons/locations/';
+import NavigationService from '../navigation/NavigationService';
 
 const VeganStyle = require('../../assets/fonts/Vegan-Regular.ttf');
 const ArthurIcon = require('../../assets/arthurIcon.png');
@@ -21,7 +22,8 @@ const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
 const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
-const WavesFullSCreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+const WavesFullScreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+const WavesFullScreen2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 
 type ReduxProps = {
   token: ?string,
@@ -135,7 +137,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       if (!onboardingCompleted) {
         navigation.navigate(routes.OnboardingStack);
       } else {
-        navigation.navigate(routes.MainSwitch, {});
+        NavigationService.enterApp();
       }
     }
   }
@@ -168,7 +170,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
     const images = [
       Waves1,
       ArthurIcon,
-      WavesFullSCreen,
+      WavesFullScreen,
+      WavesFullScreen2,
       ArthurLoadingFrame1,
       ArthurLoadingGif,
       ...CityIconsList

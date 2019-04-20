@@ -45,6 +45,7 @@ const APP_SWITCH = 'APP_SWITCH';
 const AUTH_SWITCH = 'AUTH_SWITCH';
 
 const TERMINATED = 'TERMINATED';
+const PRELAUNCH_WALL = 'PRELAUNCH_WALL';
 
 const routes = {
   Profile: PROFILE_ROUTE,
@@ -82,7 +83,8 @@ const routes = {
   OnboardingStack: ONBOARDING_STACK,
   AppLoading: APP_LOADING_ROUTE,
   AuthSwitch: AUTH_SWITCH,
-  Terminated: TERMINATED
+  Terminated: TERMINATED,
+  PrelaunchWall: PRELAUNCH_WALL
 };
 
 export default routes;
