@@ -10,12 +10,12 @@ const RemainingStatements = {
 };
 
 function randomLoadingStatement(): string {
-  const s = RemainingStatements.loading.pop();
+  const statement = RemainingStatements.loading.pop();
   // Not using RemainingStatments immutably because this is so straightforward.
   if (RemainingStatements.loading.length === 0) {
     RemainingStatements.loading = _.shuffle(COPY.loading);
   }
-  return s;
+  return statement;
 }
 
 export { randomLoadingStatement };

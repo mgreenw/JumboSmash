@@ -16,6 +16,7 @@ import { Colors } from 'mobile/styles/colors';
 import { CityIconsList } from 'mobile/assets/icons/locations/';
 import { randomLoadingStatement } from 'mobile/data/Copy';
 import { textStyles } from 'mobile/styles/textStyles';
+import * as Animatable from 'react-native-animatable';
 import NavigationService from '../navigation/NavigationService';
 
 // pre fonts for the inital text:
@@ -197,6 +198,13 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       });
   }
 
+  animateLoadingTextEntrance = () =>
+    this.animLoadingTextView.fadeInLeft(1000).then();
+
+  handleViewRef = ref => (this.animLoadingTextView = ref);
+
+  animLoadingTextView: any;
+
   render() {
     const { isReady, loadingStatement } = this.state;
     if (!isReady) {
@@ -232,6 +240,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               }}
               onLoadEnd={() => {
                 setTimeout(() => {
+                  this.animateLoadingTextEntrance();
                   SplashScreen.hide();
                 }, 50);
               }}
@@ -256,15 +265,22 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               indeterminate
               borderRadius={6}
               width={null}
+              useNativeDriver
             />
-            <Text
-              style={[
-                textStyles.body1Style,
-                { textAlign: 'center', color: Colors.Black, padding: 15 }
-              ]}
-            >
-              {loadingStatement}
-            </Text>
+            <Animatable.View ref={this.handleViewRef} useNativeDriver>
+              <Text
+                style={[
+                  textStyles.body1Style,
+                  {
+                    textAlign: 'center',
+                    color: Colors.Black,
+                    padding: 15
+                  }
+                ]}
+              >
+                {loadingStatement}
+              </Text>
+            </Animatable.View>
           </View>
           <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
             {`Version ${Constants.manifest.version}`}
