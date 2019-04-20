@@ -84,7 +84,6 @@ export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   checkLaunchDate()
     .then(launchDate => {
-      console.log(launchDate);
       getMyProfile().then(profile => {
         // if profile is null, onboarding has not been completed, though
         // some photos may have been uploaded.

@@ -22,8 +22,8 @@ const ArthurIcon = require('../../assets/arthurIcon.png');
 const ArthurLoadingGif = require('../../assets/arthurLoading.gif');
 const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
-const WavesFullScreen = require('../../assets/waves/wavesFullScreen/WavesFullScreen.png');
-const WavesFullScreen2 = require('../../assets/waves/wavesFullScreen/WavesFullScreen2.png');
+const WavesFullScreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+const WavesFullScreen2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 
 type ReduxProps = {
   token: ?string,
