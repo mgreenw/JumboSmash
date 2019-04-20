@@ -46,13 +46,18 @@ app.use((req, res, next) => {
     const end = new Date().getTime();
     const latency = end - start;
 
+    // Nanos represents the remaining nanos after seconds is counted.
+    // This is somewhat silly but Google requires this format
+    const seconds = Math.floor(latency / 1000);
+    const nanos = (latency - (seconds * 1000)) * 1000000;
+
     logger.info(`${req.method} ${req.originalUrl} (${latency}ms) ${body}`, {
       httpRequest: {
         status: res.statusCode,
         requestUrl: req.originalUrl,
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
-        latency: `${latency / 1000}s`,
+        latency: { seconds, nanos },
         user: req.user,
         // etc.
       },
