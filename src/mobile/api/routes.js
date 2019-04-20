@@ -117,3 +117,6 @@ export const READ_MESSAGE__ROUTE__GENERATOR = (
 // Send Feedback
 const FEEDBACK = 'feedback/';
 export const SEND_FEEDBACK__ROUTE = META_ROUTE + FEEDBACK;
+
+const LAUNCH_DATE = 'launch-date/';
+export const GET_LAUNCH_DATE__ROUTE = META_ROUTE + LAUNCH_DATE;

@@ -82,31 +82,21 @@ function complete(
 
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  checkLaunchDate()
-    .then(launchDate => {
-      getMyProfile().then(profile => {
-        // if profile is null, onboarding has not been completed, though
-        // some photos may have been uploaded.
-        if (profile === null || profile === undefined) {
-          getMyPhotos().then(photoUuids => {
-            dispatch(complete(null, null, false, launchDate, photoUuids));
-          });
-        } else {
-          getMySettings().then(settings => {
-            getClientUtln().then(utln => {
-              // TODO: add UserId, need it retrieved somewhere, preferably the same utln endpoint
-              Sentry.setUserContext({
-                username: utln
-              });
-              Sentry.captureMessage('User Logged In!', {
-                level: 'info'
-              });
-
-              dispatch(complete(profile, settings, true, launchDate));
-            });
-          });
-        }
+  Promise.all([
+    checkLaunchDate(),
+    getMyProfile(),
+    getMySettings(),
+    getClientUtln()
+  ])
+    .then(([launchDate, profile, settings, utln]) => {
+      Sentry.setUserContext({
+        username: utln
       });
+      Sentry.captureMessage('User Logged In!', {
+        level: 'info'
+      });
+
+      dispatch(complete(profile, settings, profile === null, launchDate));
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
