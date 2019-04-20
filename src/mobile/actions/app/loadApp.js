@@ -85,10 +85,11 @@ export default () => (dispatch: Dispatch) => {
   Promise.all([
     checkLaunchDate(),
     getMyProfile(),
+    getMyPhotos(),
     getMySettings(),
     getClientUtln()
   ])
-    .then(([launchDate, profile, settings, utln]) => {
+    .then(([launchDate, profile, photoIds, settings, utln]) => {
       Sentry.setUserContext({
         username: utln
       });
@@ -96,7 +97,9 @@ export default () => (dispatch: Dispatch) => {
         level: 'info'
       });
 
-      dispatch(complete(profile, settings, profile === null, launchDate));
+      dispatch(
+        complete(profile, settings, profile !== null, launchDate, photoIds)
+      );
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
