@@ -95,7 +95,6 @@ export default class NameAgeScreen extends React.Component<Props, State> {
   _validateInputs = () => {
     // validate birthday to be the correct
     const { profile } = this.state;
-    console.log(profile.fields.birthday);
     const {
       valid: validBirthday,
       reason: validBirthdayReason
