@@ -170,7 +170,7 @@ const CardView = (props: Props) => {
               { textAlign: 'left', paddingBottom: 5 }
             ]}
           >
-            {'1st Year Dorm'}
+            {'First Year Dorm'}
           </Text>
 
           <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
