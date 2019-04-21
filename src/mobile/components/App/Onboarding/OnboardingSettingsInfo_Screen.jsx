@@ -70,10 +70,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
               textDecorationLine: 'underline'
             }}
             onPress={() => {
-              // TODO: Make this go to the jumbosmash.com
-              WebBrowser.openBrowserAsync(
-                'https://arthur.jumbosmash.com/gender.html'
-              );
+              WebBrowser.openBrowserAsync('https://jumbosmash.com/gender.html');
             }}
           >
             {'Statement on Gender'}
