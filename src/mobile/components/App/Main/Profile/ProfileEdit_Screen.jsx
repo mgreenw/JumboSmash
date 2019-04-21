@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
 });
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type ReduxProps = {
@@ -139,9 +139,10 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
+    const { navigation } = this.props;
     const valid = this._validateInputs();
     if (valid) {
-      NavigationService.back();
+      NavigationService.back(navigation.state.key);
     }
   };
 
@@ -203,8 +204,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Edit Profile"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
