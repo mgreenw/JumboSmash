@@ -50,6 +50,18 @@ const styles = StyleSheet.create({
   }
 });
 
+/**
+ * Order of elements:
+ * First Photo
+ * Name
+ * Bio
+ * ?Middle Photo 1
+ * ?Extended Field 1
+ * ?Extended Field 2
+ * ?Middle Photo 3
+ * ?Extended Field 3
+ * ?Last Photo
+ */
 const CardView = (props: Props) => {
   const { profile, onMinimize, onBlockReport } = props;
 
@@ -181,6 +193,73 @@ const CardView = (props: Props) => {
     </View>
   ) : null;
 
+  const extendedProfileFields = [
+    postGradLocationBlock,
+    artistBlock,
+    freshmanDormBlock
+  ].sort((a, b) => {
+    // move null fields to end of list.
+    if (a === null && b === null) return 0;
+    if (a === null) return -1;
+    return 1;
+  });
+
+  const nameBlock = (
+    <View style={styles.titleBlock}>
+      <View>
+        <Text
+          style={[
+            textStyles.headline4StyleSwiping,
+            { textAlign: 'center', paddingVertical: 35 }
+          ]}
+        >
+          {`${profile.fields.displayName}, ${getAge(profile.fields.birthday)}`}
+        </Text>
+        <View
+          style={{
+            height: '100%',
+            position: 'absolute',
+            right: 0,
+            width: 50
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onPress={onMinimize}
+          >
+            <CustomIcon name="down" size={40} color={Colors.SunYellow} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
+  const bioBlock = (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%'
+        }}
+      >
+        <Text
+          style={[
+            textStyles.body2StyleBold,
+            { textAlign: 'left', paddingBottom: 5 }
+          ]}
+        >
+          {'About Me'}
+        </Text>
+        <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+          {profile.fields.bio}
+        </Text>
+      </View>
+    </View>
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <ImageBackground
@@ -199,63 +278,13 @@ const CardView = (props: Props) => {
         }}
       >
         {firstPhoto}
-        <View style={styles.titleBlock}>
-          <View>
-            <Text
-              style={[
-                textStyles.headline4StyleSwiping,
-                { textAlign: 'center', paddingVertical: 35 }
-              ]}
-            >
-              {`${profile.fields.displayName}, ${getAge(
-                profile.fields.birthday
-              )}`}
-            </Text>
-            <View
-              style={{
-                height: '100%',
-                position: 'absolute',
-                right: 0,
-                width: 50
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onPress={onMinimize}
-              >
-                <CustomIcon name="down" size={40} color={Colors.SunYellow} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.profileBlock}>
-          <View
-            style={{
-              paddingHorizontal: '10.1%'
-            }}
-          >
-            <Text
-              style={[
-                textStyles.body2StyleBold,
-                { textAlign: 'left', paddingBottom: 5 }
-              ]}
-            >
-              {'About Me'}
-            </Text>
-            <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
-              {profile.fields.bio}
-            </Text>
-          </View>
-        </View>
-        {postGradLocationBlock}
-        {freshmanDormBlock}
-        {artistBlock}
+        {nameBlock}
+        {bioBlock}
         {middlePhoto1}
+        {extendedProfileFields[0]}
+        {extendedProfileFields[1]}
         {middlePhoto2}
+        {extendedProfileFields[2]}
         {lastPhoto}
         {onBlockReport && (
           <View style={styles.profileBlock}>
