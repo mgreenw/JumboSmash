@@ -2,6 +2,7 @@
 
 import type { $Request } from 'express';
 
+const Sentry = require('@sentry/node');
 const db = require('../../db');
 const codes = require('../status-codes');
 const apiUtils = require('../utils');
@@ -30,6 +31,7 @@ const logout = async (userId: number) => {
   try {
     await socket.disconnect(userId);
   } catch (error) {
+    Sentry.captureException(error);
     logger.error('Failed to disconnect user socket connection', error);
   }
 

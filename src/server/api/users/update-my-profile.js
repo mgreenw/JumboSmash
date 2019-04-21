@@ -3,12 +3,14 @@
 import type { $Request } from 'express';
 
 const _ = require('lodash');
+const Spotify = require('../artists/utils/Spotify');
 
 const {
   validateProfile,
   profileSelectQuery,
   constructAccountUpdate,
   getFieldTemplates,
+  profileErrorMessages,
 } = require('./utils');
 
 const apiUtils = require('../utils');
@@ -61,8 +63,17 @@ const definedSelect = profileSelectQuery('$1');
 const updateMyProfile = async (userId: number, profile: Object) => {
   // Validate the profile. If validate profile throws, there was a problem with
   // the given profile, which means it was a bad request
+  let springFlingActArtist;
   try {
     await validateProfile(profile);
+
+    // This is an annoying temorary hack because we want to grab the artist
+    if (profile.springFlingAct) {
+      springFlingActArtist = await Spotify.get(`artists/${profile.springFlingAct}`);
+      if (!springFlingActArtist) {
+        throw profileErrorMessages.ARTIST_NOT_FOUND;
+      }
+    }
   } catch (error) {
     return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
       message: error,
@@ -79,6 +90,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     postgrad_region: profile.postgradRegion,
     freshman_dorm: profile.freshmanDorm,
     spring_fling_act: profile.springFlingAct,
+    spring_fling_act_artist: springFlingActArtist,
   };
 
   // Remove all undefined values. Switch the object to an array of pairs
