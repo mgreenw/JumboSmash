@@ -83,8 +83,7 @@ const Terms = () => (
       textDecorationLine: 'underline'
     }}
     onPress={() => {
-      // TODO: Make this go to the jumbosmash.com
-      WebBrowser.openBrowserAsync('https://arthur.jumbosmash.com/terms.html');
+      WebBrowser.openBrowserAsync('https://jumbosmash.com/terms.html');
     }}
   >
     {' '}

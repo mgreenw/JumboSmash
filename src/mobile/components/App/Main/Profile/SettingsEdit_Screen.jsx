@@ -305,9 +305,8 @@ class SettingsScreen extends React.Component<Props, State> {
                       textDecorationLine: 'underline'
                     }}
                     onPress={() => {
-                      // TODO: Make this go to the jumbosmash.com
                       WebBrowser.openBrowserAsync(
-                        'https://arthur.jumbosmash.com/gender.html'
+                        'https://jumbosmash.com/gender.html'
                       );
                     }}
                   >
@@ -403,9 +402,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 <SecondaryButton
                   title="Safety on JumboSmash"
                   onPress={() => {
-                    // Todo: Make this go to the real website
                     WebBrowser.openBrowserAsync(
-                      'https://arthur.jumbosmash.com/safety.html'
+                      'https://jumbosmash.com/safety.html'
                     );
                   }}
                   disabled={logoutInProgress}
@@ -416,9 +414,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
-                    // Todo: Make this go to the real website
                     WebBrowser.openBrowserAsync(
-                      'https://arthur.jumbosmash.com/terms.html'
+                      'https://jumbosmash.com/terms.html'
                     );
                   }}
                   disabled={logoutInProgress}
