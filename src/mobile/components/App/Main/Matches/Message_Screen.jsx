@@ -612,7 +612,7 @@ class MessagingScreen extends React.Component<Props, State> {
   _renderOtherUserTyping = ({ extraData }: { extraData: ExtraData }) => {
     const { showOtherUserTyping } = extraData;
     return (
-      <Collapsible collapsed={!showOtherUserTyping}>
+      <Collapsible collapsed={showOtherUserTyping} style={{ height: 48 }}>
         <View
           style={[
             BubbleStyles.containerLeft,
@@ -621,7 +621,6 @@ class MessagingScreen extends React.Component<Props, State> {
               borderColor: Colors.Grey80,
               marginLeft: 10,
               height: 40,
-              top: -8,
               width: 72,
               paddingLeft: 18
             }
