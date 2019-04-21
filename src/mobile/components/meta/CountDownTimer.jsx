@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
 import { Colors } from 'mobile/styles/colors';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
 import timeDifference from 'mobile/utils/time/timeDifference';
+import * as Animatable from 'react-native-animatable';
 
 function formatTime(
   days: number,
@@ -16,7 +17,6 @@ function formatTime(
   return `0 H : 0 M : 0 S`;
 }
 
-
 type State = {
   timer: any,
   days: number,
@@ -28,7 +28,6 @@ type State = {
 type Props = {
   date: Date
 };
-
 
 export default class CountDownTimer extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -64,14 +63,27 @@ export default class CountDownTimer extends React.Component<Props, State> {
     const { date } = this.props;
     const { days, hours, minutes, seconds } = timeDifference(new Date(), date);
     this.setState({ days, hours, minutes, seconds });
+    this._pulse();
   };
+
+  _handleViewRef = (ref: Animatable.View) => (this._view = ref);
+
+  _pulse = () =>
+    this._view
+      .pulse(800)
+      .then(endState =>
+        console.log(endState.finished ? 'bounce finished' : 'bounce cancelled')
+      );
+
+  _view: Animatable.View;
 
   render() {
     const { days, hours, minutes, seconds } = this.state;
     const displayTime = formatTime(days, hours, minutes, seconds);
 
     return (
-      <View
+      <Animatable.View
+        ref={this._handleViewRef}
         style={{
           backgroundColor: Colors.White,
           paddingHorizontal: 26,
@@ -82,7 +94,7 @@ export default class CountDownTimer extends React.Component<Props, State> {
         <Text style={[textStyles.headline5Style, { textAlign: 'center' }]}>
           {displayTime}
         </Text>
-      </View>
+      </Animatable.View>
     );
   }
 }
