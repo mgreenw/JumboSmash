@@ -76,17 +76,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
   }
 
-  // Beta-specific code. Should be removed or put behind a beta flag in the future
-  const testerResults = await db.query(`
-    SELECT id
-    FROM testers
-    WHERE utln = $1
-  `, [memberInfo.utln]);
-
-  // Don't allow not-tester users
-  if (testerResults.rowCount === 0) {
-    return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_FOUND).noData();
-  }
+  // NOTE: Ensuring a user is a "tester" went here. The `testers` table is now deprecated
 
   // Back to the regular functionality!
   const oldCodeResults = await db.query(
