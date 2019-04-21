@@ -28,7 +28,7 @@ export default class DismissableScrollview extends React.Component<
     const { cardLocation } = this.state;
 
     Animated.timing(cardLocation, {
-      duration: 250,
+      duration: 400,
       easing: Easing.inOut(Easing.quad),
       toValue: 0,
       delay: 0,
@@ -62,7 +62,7 @@ export default class DismissableScrollview extends React.Component<
     Animated.timing(cardLocation, {
       toValue: Dimensions.get('screen').height,
       easing: Easing.out(Easing.quad),
-      duration: 100,
+      duration: 150,
       delay: 0,
       useNativeDriver: true
     }).start(onSwipeComplete);
