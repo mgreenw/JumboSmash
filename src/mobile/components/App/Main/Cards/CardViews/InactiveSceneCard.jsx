@@ -155,7 +155,7 @@ class InactiveSceneCard extends React.Component<Props> {
             <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
               {`You won’t be shown in ${
                 sceneData.display
-              } unless you turn it on in Settings.`}
+              } unless you enable it. You can always turn it off in settings.`}
             </Text>
           )}
         </View>
