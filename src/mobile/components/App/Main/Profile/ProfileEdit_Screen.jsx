@@ -38,7 +38,6 @@ import Spacer from 'mobile/components/shared/Spacer';
 import routes from 'mobile/components/navigation/routes';
 import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
-import type { Artist } from 'mobile/reducers/artists';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -74,8 +73,7 @@ type NavigationProps = {
 };
 
 type ReduxProps = {
-  profile: UserProfile,
-  artistMap: { [id: string]: Artist }
+  profile: UserProfile
 };
 
 type DispatchProps = {
@@ -94,8 +92,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('Redux Client is null in Profile Edit');
   }
   return {
-    profile: reduxState.client.profile,
-    artistMap: reduxState.artists.byId
+    profile: reduxState.client.profile
   };
 }
 
@@ -178,7 +175,6 @@ class ProfileEditScreen extends React.Component<Props, State> {
   willBlurListener: NavigationEventSubscription;
 
   render() {
-    const { artistMap } = this.props;
     const { width } = Dimensions.get('window');
     // A bit of a hack, but we want pictures to look nice.
     // We have 32 padding around this screen,
@@ -189,7 +185,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const { editedProfileFields, errorMessageName } = this.state;
     const { postgradRegion: postgradLocationCode } = editedProfileFields;
     const { freshmanDorm: freshmanDormCode } = editedProfileFields;
-    const { springFlingAct: artistId } = editedProfileFields;
+    const { springFlingActArtist } = editedProfileFields;
     const freshmanDorm = freshmanDormCode
       ? dormCodeToName(freshmanDormCode)
       : null;
@@ -199,8 +195,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const postgradLocationName = postgradLocation
       ? postgradLocation.name
       : null;
-    const artist = artistId ? artistMap[artistId] : null;
-    const artistName = artist ? artist.name : null;
+    const artistName = springFlingActArtist ? springFlingActArtist.name : null;
 
     return (
       <View style={{ flex: 1 }}>
