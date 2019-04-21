@@ -3,6 +3,7 @@
 
 import { StyleSheet } from 'react-native';
 import { Colors as colors } from './colors';
+import { isAndroid } from 'mobile/utils/Platform';
 
 // Keep synced with Zeplin export!
 /*
@@ -53,6 +54,7 @@ const textStyles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: 'center',
     padding: 15,
+    width: isAndroid() ? '100%' : null,
     color: colors.Grapefruit
   },
   headline4Style: {
