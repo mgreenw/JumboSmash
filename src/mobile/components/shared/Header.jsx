@@ -41,8 +41,9 @@ type ReduxProps = {
 type Props = ProppyProps & ReduxProps;
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  const { numBadges } = reduxState;
   return {
-    hasUnreadMessages: reduxState.numBadges > 0
+    hasUnreadMessages: numBadges !== null && numBadges > 0
   };
 }
 
