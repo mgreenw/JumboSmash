@@ -240,6 +240,8 @@ class SelectCityScreen extends React.Component<Props, State> {
         placeholder="Type Here..."
         lightTheme
         round
+        placeholderTextColor={Colors.Grey80}
+        inputStyle={[textStyles.body1Style, { color: Colors.Black }]}
         onChangeText={text => this.onSearchChange(text)}
         autoCorrect={false}
         value={search}

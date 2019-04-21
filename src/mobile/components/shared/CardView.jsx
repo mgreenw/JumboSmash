@@ -70,7 +70,8 @@ const CardView = (props: Props) => {
 
   const {
     postgradRegion: postgradLocationCode,
-    freshmanDorm: freshmanDormCode
+    freshmanDorm: freshmanDormCode,
+    springFlingActArtist
   } = profile.fields;
 
   const postgradLocation = postgradLocationCode
@@ -108,6 +109,44 @@ const CardView = (props: Props) => {
           style={{ width: 60, height: 60, bottom: 6 }}
           source={CityIconsMap[postgradLocationImage]}
         />
+      </View>
+    </View>
+  ) : null;
+
+  const [{ url: artistUrl = null }] = springFlingActArtist
+    ? springFlingActArtist.images.slice(-1)
+    : [{}];
+  const artistBlock = springFlingActArtist ? (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%',
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}
+      >
+        <View>
+          <Text
+            style={[
+              textStyles.body2StyleBold,
+              { textAlign: 'left', paddingBottom: 5 }
+            ]}
+          >
+            {'Spring Fling Artist'}
+          </Text>
+
+          <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+            {springFlingActArtist.name}
+          </Text>
+        </View>
+
+        {artistUrl && (
+          <Image
+            style={{ width: 60, height: 60, borderRadius: 30 }}
+            uri={artistUrl}
+            resizeMode="contain"
+          />
+        )}
       </View>
     </View>
   ) : null;
@@ -214,6 +253,7 @@ const CardView = (props: Props) => {
         </View>
         {postGradLocationBlock}
         {freshmanDormBlock}
+        {artistBlock}
         {middlePhoto1}
         {middlePhoto2}
         {lastPhoto}
