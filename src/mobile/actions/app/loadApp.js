@@ -50,7 +50,8 @@ function complete(
           birthday: '',
           displayName: '',
           postgradRegion: null, // optional field
-          freshmanDorm: null
+          freshmanDorm: null,
+          springFlingAct: null
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },

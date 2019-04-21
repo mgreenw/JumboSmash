@@ -8,7 +8,7 @@ const SEARCH_ARTISTS__SUCCESS = 'SEARCH_ARTISTS__SUCCESS';
 export default function getArtist(
   search: string
 ): Promise<{ artists: Artist[] }> {
-  return apiRequest('GET', `${ARTIST_ROUTE}?name${search}`).then(response => {
+  return apiRequest('GET', `${ARTIST_ROUTE}?name=${search}`).then(response => {
     switch (response.status) {
       case SEARCH_ARTISTS__SUCCESS: {
         return response.data;

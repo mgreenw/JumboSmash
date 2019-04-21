@@ -8,8 +8,7 @@ import {
   ImageBackground,
   ScrollView,
   Platform,
-  Text,
-  Alert
+  Text
 } from 'react-native';
 import { connect } from 'react-redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
@@ -36,14 +35,10 @@ import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
-import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
 import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
-
-const manifest = Constants.manifest;
-const isDev =
-  typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev;
+import type { Artist } from 'mobile/reducers/artists';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -79,7 +74,8 @@ type NavigationProps = {
 };
 
 type ReduxProps = {
-  profile: UserProfile
+  profile: UserProfile,
+  artistMap: { [id: string]: Artist }
 };
 
 type DispatchProps = {
@@ -98,7 +94,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('Redux Client is null in Profile Edit');
   }
   return {
-    profile: reduxState.client.profile
+    profile: reduxState.client.profile,
+    artistMap: reduxState.artists.byId
   };
 }
 
@@ -181,6 +178,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
   willBlurListener: NavigationEventSubscription;
 
   render() {
+    const { artistMap } = this.props;
     const { width } = Dimensions.get('window');
     // A bit of a hack, but we want pictures to look nice.
     // We have 32 padding around this screen,
@@ -191,6 +189,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const { editedProfileFields, errorMessageName } = this.state;
     const { postgradRegion: postgradLocationCode } = editedProfileFields;
     const { freshmanDorm: freshmanDormCode } = editedProfileFields;
+    const { springFlingAct: artistId } = editedProfileFields;
     const freshmanDorm = freshmanDormCode
       ? dormCodeToName(freshmanDormCode)
       : null;
@@ -200,6 +199,9 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const postgradLocationName = postgradLocation
       ? postgradLocation.name
       : null;
+    const artist = artistId ? artistMap[artistId] : null;
+    const artistName = artist ? artist.name : null;
+
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -279,19 +281,24 @@ class ProfileEditScreen extends React.Component<Props, State> {
                   });
                 }}
               />
-              {isDev && (
-                <View>
-                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                  <PopupInput
-                    title={'Dream Spring Fling Artist'}
-                    value={null}
-                    placeholder={'No Selected Artist'}
-                    onChange={() => {
-                      Alert.alert('not yet implemented');
-                    }}
-                  />
-                </View>
-              )}
+              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+              <PopupInput
+                title={'Dream Spring Fling Artist'}
+                value={artistName}
+                placeholder={'No Selected Artist'}
+                onChange={() => {
+                  NavigationService.navigate(routes.SelectArtist, {
+                    onSave: newArtistId => {
+                      this.setState(state => ({
+                        editedProfileFields: {
+                          ...state.editedProfileFields,
+                          springFlingAct: newArtistId
+                        }
+                      }));
+                    }
+                  });
+                }}
+              />
             </View>
           </PlatformSpecificScrollView>
         </View>

@@ -42,7 +42,7 @@ function complete(
   const { artist, id } = action.payload;
   const byId = {
     ...state.byId,
-    [artist.id]: artist
+    [id]: artist
   };
   return {
     ...state,
@@ -54,9 +54,14 @@ function complete(
 /* eslint-disable-next-line no-unused-vars */
 function fail(state: ReduxState, action: GetArtistFailed_Action): ReduxState {
   const { id } = action.payload;
+  const byId = {
+    ...state.byId,
+    [id]: null
+  };
   return {
     ...state,
-    inProgress: updateInProgress(state, id, false)
+    inProgress: updateInProgress(state, id, false),
+    byId
   };
 }
 

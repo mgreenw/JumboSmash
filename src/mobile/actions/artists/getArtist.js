@@ -1,8 +1,8 @@
 // @flow
 import type { Dispatch } from 'mobile/reducers';
 import type { Artist } from 'mobile/reducers/artists';
-import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import getArtist from 'mobile/api/artists/getArtist';
+import Sentry from 'sentry-expo';
 
 export type GetArtistInitiated_Action = {
   type: 'GET_ARTIST__INITIATED',
@@ -52,6 +52,7 @@ export default (id: string) => (dispatch: Dispatch) => {
     })
     .catch(error => {
       dispatch(fail(id));
-      dispatch(apiErrorHandler(error));
+      // This should fail in the background only because of how often we fire these requests.
+      Sentry.captureException(new Error(JSON.stringify(error)));
     });
 };

@@ -12,7 +12,8 @@ export type ServerProfile = {|
     bio: string,
     birthday: string,
     postgradRegion: ?string,
-    freshmanDorm: ?string
+    freshmanDorm: ?string,
+    springFlingAct: ?string
   |},
   photoUuids: string[]
 |};

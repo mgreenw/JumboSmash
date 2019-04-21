@@ -201,7 +201,8 @@ export type ProfileFields = {|
   birthday: string,
   bio: string,
   postgradRegion: ?string,
-  freshmanDorm: ?string
+  freshmanDorm: ?string,
+  springFlingAct: ?string
 |};
 
 export type UserProfile = {|
