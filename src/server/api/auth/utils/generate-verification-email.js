@@ -1,10 +1,10 @@
 // @flow
 
-function generateVerificationEmail(code: string, link: string = 'https://jumbosmash.com') {
+function generateVerificationEmail(code: string) {
   // TO UPDATE:
   // 1. Delete copy the following string into an empty file for reference.
   // 2. Copy the new template string here.
-  // 3. Add the ${code} and ${link} paramaters into the correct places using the
+  // 3. Add the ${code} into the correct places using the
   //    reference file you made. NOTE: There are 2 places where ${code} is used
   // That's all folks!
   return `
