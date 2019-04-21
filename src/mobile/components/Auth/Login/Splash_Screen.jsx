@@ -170,7 +170,11 @@ class SplashScreen extends React.Component<Props, State> {
       this._utlnInputError('Ya already graduated!');
     }
     if (yearsLeft > 0) {
-      this._utlnInputError(`Try again in ${yearsLeft} years!`);
+      if (yearsLeft === 1) {
+        this._utlnInputError(`Try again next year!`);
+      } else {
+        this._utlnInputError(`Try again in ${yearsLeft} years!`);
+      }
     }
   };
 
