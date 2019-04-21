@@ -263,7 +263,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               />
               <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
               <PopupInput
-                title={'1st Year Dorm'}
+                title={'First Year Dorm'}
                 value={freshmanDorm}
                 placeholder={'No Selected Dorm'}
                 onChange={() => {

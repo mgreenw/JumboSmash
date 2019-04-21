@@ -51,7 +51,7 @@ class SelectDormScreen extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="1st Year Dorm"
+          title="First Year Dorm"
           leftIconName="back"
           onLeftIconPress={this._onBack}
         />
