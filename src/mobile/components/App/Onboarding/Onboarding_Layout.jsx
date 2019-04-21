@@ -13,8 +13,11 @@ import GEMHeader from 'mobile/components/shared/Header';
 import { Transition } from 'react-navigation-fluid-transitions';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import OnboardingProgress from 'mobile/components/shared/OnboardingProgress';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import type { NavigationScreenProp } from 'react-navigation';
 
 type Props = {
+  navigationKey: string,
   body: React.Node,
   onButtonPress: () => void,
   title: string,
@@ -28,10 +31,15 @@ type Props = {
   section: 'profile' | 'settings',
   onSkipPress?: () => void
 };
+
 type State = {};
 
 export class OnboardingLayout extends React.Component<Props, State> {
-  // TODO: Progress bar
+  _onBack = () => {
+    const { navigationKey } = this.props;
+    NavigationService.back(navigationKey);
+  };
+
   render() {
     const {
       firstScreen,
@@ -50,6 +58,14 @@ export class OnboardingLayout extends React.Component<Props, State> {
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
+          leftIcon={
+            firstScreen
+              ? null
+              : {
+                  name: 'back',
+                  onBack: this._onBack
+                }
+          }
           leftIconName={firstScreen ? undefined : 'back'}
           title={section === 'settings' ? 'Settings' : 'Profile Setup'}
           loading={loading}
