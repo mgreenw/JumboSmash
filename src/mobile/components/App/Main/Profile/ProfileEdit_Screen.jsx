@@ -38,6 +38,7 @@ import Spacer from 'mobile/components/shared/Spacer';
 import routes from 'mobile/components/navigation/routes';
 import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
+import type { Artist } from 'mobile/reducers/artists';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -283,11 +284,12 @@ class ProfileEditScreen extends React.Component<Props, State> {
                 placeholder={'No Selected Artist'}
                 onChange={() => {
                   NavigationService.navigate(routes.SelectArtist, {
-                    onSave: newArtistId => {
+                    onSave: (id: null | string, artist: null | Artist) => {
                       this.setState(state => ({
                         editedProfileFields: {
                           ...state.editedProfileFields,
-                          springFlingAct: newArtistId
+                          springFlingAct: id,
+                          springFlingActArtist: artist
                         }
                       }));
                     }

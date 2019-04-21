@@ -110,9 +110,12 @@ class SelectCityScreen extends React.Component<Props, State> {
   };
 
   _save = (id: string) => {
-    const { navigation } = this.props;
-    const onSave: ?(?string) => void = navigation.getParam('onSave', null);
-    if (onSave) onSave(id);
+    const { navigation, artistMap } = this.props;
+    const onSave: ?(
+      id: null | string,
+      artist: null | Artist
+    ) => void = navigation.getParam('onSave', null);
+    if (onSave) onSave(id, artistMap[id]);
   };
 
   _onBack = () => {
