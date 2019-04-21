@@ -101,41 +101,7 @@ services:
         - traefik.frontend.rule=Host:server.jumbosmash.com
         - traefik.backend.loadbalancer.stickiness=true
 
-  #
-  # Prod Redis Service
-  #
 
-  redis:
-    image: redis
-    networks:
-       - traefik-net
-    deploy:
-      labels:
-        - traefik.backend=redis
-        - traefik.port=6379
-        - traefik.backend.loadbalancer.stickiness=true
-
-
-  #
-  #  Prod Deployment Service
-  #
-
-  deployment:
-    image: sperrys/deploy:node
-    environment:
-      NODE_ENV: production
-    networks:
-      - traefik-net
-    secrets:
-      - DOCKER_PASSWORD
-    volumes:
-      - /usr/local/bin/docker:/usr/bin/docker
-    deploy:
-      labels:
-        - traefik.frontend.entryPoints=http,https
-        - traefik.backend=deploy
-        - traefik.port=3004
-        - traefik.frontend.rule=Host:deploy.jumbosmash.com
 
 # https://docs.docker.com/engine/swarm/secrets/
 secrets:
