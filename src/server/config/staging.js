@@ -19,7 +19,7 @@ module.exports = {
   },
   s3_bucket: 'projectgem-prod',
   redis: {
-    host: secrets.get('AWS_REDIS_HOST'),
+    host: secrets.get('REDIS_HOST'),
     port: 6379,
   },
   spotify_client_id: 'd300522fd10f4f02b164d97bcfd9390b',
