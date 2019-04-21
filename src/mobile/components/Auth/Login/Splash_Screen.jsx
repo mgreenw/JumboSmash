@@ -165,10 +165,13 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onNot2019 = (classYear: string) => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.Not2019, {
-      classYear
-    });
+    const yearsLeft = parseInt(classYear, 10) - 19;
+    if (yearsLeft < 0) {
+      this._utlnInputError('Ya already graduated!');
+    }
+    if (yearsLeft > 0) {
+      this._utlnInputError(`Try again in ${yearsLeft} years!`);
+    }
   };
 
   _onNotFound = () => {
