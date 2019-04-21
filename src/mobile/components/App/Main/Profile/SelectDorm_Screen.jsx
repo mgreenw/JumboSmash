@@ -72,6 +72,7 @@ class SelectDormScreen extends React.Component<Props, State> {
             )}
             keyExtractor={code => code}
             ItemSeparatorComponent={this.renderSeparator}
+            ListHeaderComponent={this.renderSeparator}
           />
         </View>
       </View>
