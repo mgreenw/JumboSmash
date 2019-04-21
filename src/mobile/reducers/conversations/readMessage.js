@@ -54,7 +54,9 @@ function updateMatchIds(state: ReduxState, matchId: number): Matches {
  * In the case that it somehow does occur, we keep the numBadges at 0.
  */
 function updateNumBadges(state: ReduxState): number {
-  return Math.max(state.numBadges - 1, 0);
+  const { numBadges } = state;
+  if (numBadges === null) return 0;
+  return Math.max(numBadges - 1, 0);
 }
 
 function initiate(
