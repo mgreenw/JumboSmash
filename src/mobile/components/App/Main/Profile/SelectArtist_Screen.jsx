@@ -119,7 +119,8 @@ class SelectCityScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   _onPress = (id: string) => {
@@ -133,8 +134,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Spring Fling Artist"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
