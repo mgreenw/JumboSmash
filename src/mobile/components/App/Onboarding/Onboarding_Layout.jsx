@@ -63,7 +63,7 @@ export class OnboardingLayout extends React.Component<Props, State> {
               ? null
               : {
                   name: 'back',
-                  onBack: this._onBack
+                  onPress: this._onBack
                 }
           }
           leftIconName={firstScreen ? undefined : 'back'}

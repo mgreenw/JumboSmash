@@ -15,6 +15,7 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
 import { OnboardingLayout } from './Onboarding_Layout';
 import TermsAndConditions from 'mobile/assets/copy/termsAndConditions';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 type Props = {
   navigation: any
@@ -64,11 +65,16 @@ export default class OnboardingTermsAndConditionsScreen extends React.Component<
     });
   };
 
+  _onBack = () => {
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
+  };
+
   render() {
     return (
       <View style={Arthur_Styles.container}>
         <GEMHeader
-          leftIconName="back"
+          leftIcon={{ name: 'back', onPress: this._onBack }}
           title="Terms & Conditions"
           loading={false}
         />
