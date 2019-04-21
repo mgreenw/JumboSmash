@@ -55,11 +55,19 @@ async function createProfile(userId, body) {
   try {
     const result = await db.query(`
       INSERT INTO profiles
-      (user_id, display_name, birthday, bio, postgrad_region, freshman_dorm, spring_fling_act)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      (user_id, display_name, birthday, bio, postgrad_region, freshman_dorm, spring_fling_act, spring_fling_act_artist)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING user_id AS "userId"
     `,
-    [userId, displayName, birthday, bio, postgradRegion, freshmanDorm, springFlingAct]);
+    [
+      userId,
+      displayName,
+      birthday,
+      bio,
+      postgradRegion,
+      freshmanDorm,
+      springFlingAct, springFlingAct ? {} : null, // TODO: allow actual insertion of artist
+    ]);
     return result.rows[0].userId;
   } catch (error) {
     throw new Error('Failed to insert profile');
