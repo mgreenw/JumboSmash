@@ -46,7 +46,13 @@ const APP_SWITCH = 'APP_SWITCH';
 const AUTH_SWITCH = 'AUTH_SWITCH';
 
 const TERMINATED = 'TERMINATED';
+
+const PRELAUNCH = 'PRELAUNCH';
 const PRELAUNCH_WALL = 'PRELAUNCH_WALL';
+const PRELAUNCH__PROFILE_EDIT = 'PRELAUNCH__PROFILE_EDIT';
+const PRELAUNCH__SELECT_CITY = 'PRELAUNCH__SELECT_CITY';
+const PRELAUNCH___SELECT_DORM = 'PRELAUNCH___SELECT_DORM';
+const PRELAUNCH__SELECT_ARTIST = 'PRELAUNCH__SELECT_ARTIST';
 
 const routes = {
   Profile: PROFILE_ROUTE,
@@ -86,7 +92,12 @@ const routes = {
   AppLoading: APP_LOADING_ROUTE,
   AuthSwitch: AUTH_SWITCH,
   Terminated: TERMINATED,
-  PrelaunchWall: PRELAUNCH_WALL
+  Prelaunch: PRELAUNCH,
+  PrelaunchWall: PRELAUNCH_WALL,
+  Prelaunch_ProfileEdit: PRELAUNCH__PROFILE_EDIT,
+  Prelaunch_SelectCity: PRELAUNCH__SELECT_CITY,
+  Prelaunch_SelectDorm: PRELAUNCH___SELECT_DORM,
+  Prelaunch_SelectArtist: PRELAUNCH__SELECT_ARTIST
 };
 
 export default routes;
