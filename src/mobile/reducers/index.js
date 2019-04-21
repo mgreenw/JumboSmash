@@ -125,6 +125,11 @@ import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
+import type { Artist_Action, ReduxState as Artist_ReduxState } from './artists';
+import {
+  DefaultReduxState as Artist_DefaultReduxState,
+  Reducers as Artist_Reducers
+} from './artists';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -470,7 +475,9 @@ export type ReduxState = {|
 
   // Toast
   bottomToast: BottomToast,
-  topToast: TopToast
+  topToast: TopToast,
+
+  artists: Artist_ReduxState
 |};
 
 export type Action =
@@ -535,7 +542,8 @@ export type Action =
   | NetworkChange_Action
   | SendFeedbackInitiated_Action
   | SendFeedbackCompleted_Action
-  | SendFeedbackFailed_Action;
+  | SendFeedbackFailed_Action
+  | Artist_Action;
 
 export type GetState = () => ReduxState;
 
@@ -619,7 +627,8 @@ export const initialState: ReduxState = {
   topToast: {
     uuid: '0',
     code: 'INITIAL'
-  }
+  },
+  artists: Artist_DefaultReduxState
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -1931,6 +1940,48 @@ export default function rootReducer(
 
     case 'READ_MESSAGE__FAILED': {
       return ReadMessageReducer.fail(state, action);
+    }
+
+    case 'GET_ARTIST__INITIATED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Get.initiate(state.artists, action)
+      };
+    }
+
+    case 'GET_ARTIST__COMPLETED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Get.complete(state.artists, action)
+      };
+    }
+
+    case 'GET_ARTIST__FAILED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Get.fail(state.artists, action)
+      };
+    }
+
+    case 'SEARCH_ARTISTS__INITIATED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.initiate(state.artists, action)
+      };
+    }
+
+    case 'SEARCH_ARTISTS__COMPLETED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.complete(state.artists, action)
+      };
+    }
+
+    case 'SEARCH_ARTISTS__FAILED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.fail(state.artists, action)
+      };
     }
 
     default: {
