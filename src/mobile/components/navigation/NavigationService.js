@@ -72,8 +72,8 @@ function navigateToMatch(userId: number) {
   }
 }
 
-function back() {
-  _navigator.dispatch(NavigationActions.back());
+function back(key: string) {
+  _navigator.dispatch(NavigationActions.back({ key }));
 }
 
 function reset() {

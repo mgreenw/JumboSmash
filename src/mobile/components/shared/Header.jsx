@@ -18,21 +18,21 @@ import type { ReduxState } from 'mobile/reducers/index';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import HeaderIcon from './HeaderIcon';
 
-/* eslint-disable react/require-default-props */
+type IconProps = {
+  name: IconName,
+  onPress: () => void
+};
 
 // centerComponent overrides title
 type ProppyProps = {
-  leftIconName?: IconName,
-  rightIconName?: IconName,
-  onLeftIconPress?: () => void,
-  onRightIconPress?: () => void,
+  leftIcon: ?IconProps,
+  rightIcon: ?IconProps,
   title: string,
   loading?: boolean,
   borderBottom?: boolean,
   centerComponent?: React.Node,
   onTitlePress?: () => void
 };
-/* eslint-enable */
 
 type ReduxProps = {
   hasUnreadMessages: boolean
@@ -49,10 +49,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
 const GemHeader = (props: Props) => {
   // TODO: make this styling via a style sheet, and better!
   const {
-    leftIconName,
-    rightIconName,
-    onLeftIconPress,
-    onRightIconPress,
+    leftIcon,
+    rightIcon,
     title,
     loading,
     borderBottom,
@@ -63,17 +61,17 @@ const GemHeader = (props: Props) => {
 
   const LeftIcon = (
     <HeaderIcon
-      name={leftIconName}
+      name={leftIcon ? leftIcon.name : null}
       disabled={loading}
-      onPress={onLeftIconPress}
+      onPress={leftIcon ? leftIcon.onPress : () => {}}
     />
   );
 
   const RightIcon = (
     <HeaderIcon
-      name={rightIconName}
+      name={rightIcon ? rightIcon.name : null}
       disabled={loading}
-      onPress={onRightIconPress}
+      onPress={rightIcon ? rightIcon.onPress : () => {}}
       badge={hasUnreadMessages}
     />
   );

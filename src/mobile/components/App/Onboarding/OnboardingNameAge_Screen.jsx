@@ -145,6 +145,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
     const {
       profile,
       errorMessageName,
@@ -188,6 +189,7 @@ export default class NameAgeScreen extends React.Component<Props, State> {
     );
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         section="profile"
         body={body}
         onButtonPress={this._onContinue}

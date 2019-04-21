@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type ReduxProps = {
@@ -157,7 +157,8 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   /**
@@ -209,7 +210,7 @@ class SettingsScreen extends React.Component<Props, State> {
         <GEMHeader
           title="Edit Settings"
           leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground

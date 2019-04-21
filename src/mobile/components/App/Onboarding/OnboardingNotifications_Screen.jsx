@@ -78,6 +78,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
     const body = (
       <View style={{ flex: 1 }}>
         <Text
@@ -94,6 +95,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         section={'settings'}
         onButtonPress={this._enableNotificationsAndContinue}

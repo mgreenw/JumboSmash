@@ -78,7 +78,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
   render() {
     const { width } = Dimensions.get('window');
-    const { photoUuids } = this.props;
+    const { photoUuids, navigation } = this.props;
     const complete = photoUuids.length > 0;
 
     // A bit of a hack, but we want pictures to look nice.
@@ -100,6 +100,7 @@ class OnboardingAddPicturesScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         section="profile"
         body={body}
         onButtonPress={this._goToNextPage}

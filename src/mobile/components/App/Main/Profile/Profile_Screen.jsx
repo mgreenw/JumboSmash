@@ -18,6 +18,7 @@ import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import type { IconName } from 'mobile/assets/icons/CustomIcon';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -147,6 +148,11 @@ class ProfileScreen extends React.Component<Props, State> {
     });
   };
 
+  _goBack = () => {
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
+  };
+
   render() {
     const {
       photoUuid,
@@ -161,9 +167,16 @@ class ProfileScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Profile"
-          rightIconName="cards"
-          leftIconName={isAdmin ? 'user-secret' : null}
-          onLeftIconPress={isAdmin ? () => {} : null}
+          rightIcon={{
+            name: 'cards',
+            onPress: () => {
+              NavigationService.navigate(routes.Cards);
+            }
+          }}
+          leftIcon={{
+            name: isAdmin ? 'user-secret' : null,
+            onPress: isAdmin ? () => {} : null
+          }}
         />
         <ImageBackground
           source={wavesFull}

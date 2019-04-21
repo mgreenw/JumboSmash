@@ -81,7 +81,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { createUserInProgress } = this.props;
+    const { createUserInProgress, navigation } = this.props;
     const body = (
       <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
         {"You're all set. \n\nGet in losers, we’re going smashing."}
@@ -89,6 +89,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     );
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}

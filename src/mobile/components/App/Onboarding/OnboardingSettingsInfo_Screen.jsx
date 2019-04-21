@@ -58,6 +58,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
   };
 
   render() {
+    const { navigation } = this.props;
     const body = (
       <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
         <Text style={textStyles.body1Style}>
@@ -84,6 +85,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
     );
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         infoScreen
         section="settings"
