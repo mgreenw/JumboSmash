@@ -3,7 +3,6 @@
 import { type Capabilities } from '../admin/review-profile';
 
 const _ = require('lodash');
-const Spotify = require('../artists/utils/Spotify');
 
 // About 30 years old.
 const oldestBirthday = new Date('01/01/1988');
@@ -41,7 +40,6 @@ async function validateProfile(profile: Profile) {
     displayName,
     birthday,
     bio,
-    springFlingAct,
   } = profile;
 
   // Check if the user's display name is too long
@@ -84,13 +82,6 @@ async function validateProfile(profile: Profile) {
   // Check if the user's bio is too long
   if (bio && bio.length > bioMaxLength) {
     throw profileErrorMessages.BIO_TOO_LONG;
-  }
-
-  if (springFlingAct) {
-    const artistResponse = await Spotify.get(`artists/${springFlingAct}`);
-    if (!artistResponse) {
-      throw profileErrorMessages.ARTIST_NOT_FOUND;
-    }
   }
 }
 
@@ -146,7 +137,8 @@ function profileSelectQuery(
       'bio', ${tableName}bio,
       'postgradRegion', ${tableName}postgrad_region,
       'freshmanDorm', ${tableName}freshman_dorm,
-      'springFlingAct', ${tableName}spring_fling_act
+      'springFlingAct', ${tableName}spring_fling_act,
+      'springFlingActArtist', ${tableName}spring_fling_act_artist
     )
   `;
 
