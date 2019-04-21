@@ -162,7 +162,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   // Create the verification url and send the email!
   mail.send({
     to: memberInfo.email,
-    from: 'beta@jumbosmash.com',
+    from: 'team@jumbosmash.com',
     subject: 'JumboSmash Verification Code',
     html: authUtils.generateVerificationEmail(verificationCode),
   });
