@@ -237,7 +237,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       <SearchBar
         containerStyle={{ backgroundColor: Colors.White }}
         inputContainerStyle={{ backgroundColor: Colors.IceBlue }}
-        placeholder="Type Here..."
+        placeholder='"Scranton"'
         lightTheme
         round
         placeholderTextColor={Colors.Grey80}
