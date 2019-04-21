@@ -16,7 +16,7 @@ function updateInProgress(
 ): inProgress {
   return {
     ...state.inProgress,
-    searchArtists: isInProgress
+    search: isInProgress
   };
 }
 

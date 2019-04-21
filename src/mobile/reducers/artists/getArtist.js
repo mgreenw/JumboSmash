@@ -17,8 +17,8 @@ function updateInProgress(
 ): inProgress {
   return {
     ...state.inProgress,
-    getArtist: {
-      ...state.inProgress.getArtist,
+    get: {
+      ...state.inProgress.get,
       [id]: isInProgress
     }
   };
