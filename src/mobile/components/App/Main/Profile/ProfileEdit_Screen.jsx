@@ -8,7 +8,8 @@ import {
   ImageBackground,
   ScrollView,
   Platform,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
@@ -245,7 +246,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <PopupInput
                 title={'Post-Grad Location'}
                 value={postgradLocationName}
-                placeholder={'No Selected Location'}
+                placeholder={'Add Location'}
                 onChange={() => {
                   NavigationService.navigate(routes.SelectCity, {
                     onSave: newPostgradRegion => {
@@ -263,7 +264,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <PopupInput
                 title={'First Year Dorm'}
                 value={freshmanDorm}
-                placeholder={'No Selected Dorm'}
+                placeholder={'Add Dorm'}
                 onChange={() => {
                   NavigationService.navigate(routes.SelectDorm, {
                     onSave: newFreshmanDorm => {
@@ -281,7 +282,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
               <PopupInput
                 title={'Dream Spring Fling Artist'}
                 value={artistName}
-                placeholder={'No Selected Artist'}
+                placeholder={'Add Artist'}
                 onChange={() => {
                   NavigationService.navigate(routes.SelectArtist, {
                     onSave: (id: null | string, artist: null | Artist) => {
@@ -313,30 +314,30 @@ type PopupInputProps = {
 const PopupInput = (props: PopupInputProps) => {
   const { title, placeholder, onChange, value } = props;
   return (
-    <View>
-      <Text style={textStyles.body2Style}>{title}</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          marginTop: 5
-        }}
-      >
-        <Text
-          adjustsFontSizeToFit
-          style={[
-            textStyles.headline6Style,
-            { color: value ? Colors.Black : Colors.BlueyGrey }
-          ]}
+    <TouchableOpacity onPress={onChange}>
+      <View>
+        <Text style={textStyles.body2Style}>{title}</Text>
+        <View
+          onPress={onChange}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            marginTop: 5
+          }}
         >
-          {value || placeholder}
-        </Text>
-        <View style={{ bottom: 4 }}>
-          <TertiaryButton title={'change'} onPress={onChange} />
+          <Text
+            adjustsFontSizeToFit
+            style={[
+              textStyles.headline6Style,
+              { color: value ? Colors.Black : Colors.BlueyGrey }
+            ]}
+          >
+            {value || placeholder}
+          </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
