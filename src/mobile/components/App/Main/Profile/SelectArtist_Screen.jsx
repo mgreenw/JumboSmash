@@ -132,7 +132,7 @@ class SelectCityScreen extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="Post-Grad Location"
+          title="Spring Fling Artist"
           leftIconName="back"
           onLeftIconPress={this._onBack}
         />
@@ -144,14 +144,25 @@ class SelectCityScreen extends React.Component<Props, State> {
           <KeyboardAwareFlatList
             enableResetScrollToCoords={false}
             data={searchResultIds}
-            renderItem={({ item: id }) => (
-              <ListItem
-                onPress={() => {
-                  this._onPress(id);
-                }}
-                title={artistMap[id].name}
-              />
-            )}
+            renderItem={({ item: id }) => {
+              const { name, images } = artistMap[id];
+              const [{ url = null }] =
+                images && images.length > 0 ? images.slice(-1) : [{}];
+              return (
+                <ListItem
+                  onPress={() => {
+                    this._onPress(id);
+                  }}
+                  leftAvatar={{
+                    title: artistMap[id].name[0],
+                    source: url ? { uri: url } : null,
+                    size: 'medium'
+                  }}
+                  titleStyle={textStyles.body1Style}
+                  title={name}
+                />
+              );
+            }}
             keyExtractor={id => id}
             ItemSeparatorComponent={this.renderSeparator}
             ListHeaderComponent={this.renderHeader}
