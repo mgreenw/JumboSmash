@@ -439,7 +439,7 @@ export type ReduxState = {|
   launchDate: ?Date,
   network: { isConnected: boolean },
 
-  numBadges: number,
+  numBadges: null | number, // one of the few numbers in the app that quite frequently IS 0, so !!number is inacurate, so we don't have a maybe type.
 
   // app data:
   client: ?Client,
@@ -560,7 +560,7 @@ export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 export const initialState: ReduxState = {
   launchDate: null,
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
-  numBadges: 0,
+  numBadges: null, // indicate we have not yet determined how many badges
   token: null,
   client: null,
   authLoaded: false,
