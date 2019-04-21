@@ -139,9 +139,9 @@ class ProfileEditScreen extends React.Component<Props, State> {
 
   // we intercept errors as notifications to user, not as a lock.
   _onBack = () => {
-    const { navigation } = this.props;
     const valid = this._validateInputs();
     if (valid) {
+      const { navigation } = this.props;
       NavigationService.back(navigation.state.key);
     }
   };
