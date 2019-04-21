@@ -37,11 +37,11 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 function messageFromCode(code: PopupCode) {
   switch (code) {
     case 'UNAUTHORIZED': {
-      return 'Your session token has expired. Please login again!';
+      return 'Looks like you were logged out. Please sign in again!';
     }
 
     case 'EXPIRED_VERIFY_CODE': {
-      return 'Looks like you were logged out. Please sign in again!';
+      return 'Looks like your verification code has expired. Probably TuftsSecure’s fault.';
     }
 
     case 'SERVER_ERROR': {
