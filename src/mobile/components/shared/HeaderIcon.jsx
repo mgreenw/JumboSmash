@@ -12,7 +12,7 @@ type Props = {
   name: ?IconName,
   disabled?: boolean,
   badge?: boolean,
-  onPress?: () => void
+  onPress: () => void
 };
 
 type State = {};
@@ -31,40 +31,12 @@ export default class HeaderIcon extends React.Component<Props, State> {
     }
   }
 
-  _inferOnPress = (name: IconName): (() => void) => {
-    switch (name) {
-      case 'user': {
-        return () => {
-          NavigationService.navigate(routes.Profile);
-        };
-      }
-      case 'message': {
-        return () => {
-          NavigationService.navigate(routes.Matches);
-        };
-      }
-      case 'cards': {
-        return () => {
-          NavigationService.navigate(routes.Cards);
-        };
-      }
-      case 'back': {
-        return () => {
-          NavigationService.back();
-        };
-      }
-      default:
-        throw new Error(`Could not parse icon name: ${name}`);
-    }
-  };
-
   // for refs
   iconTouchableOpacity: TouchableOpacity;
 
   render() {
     const { name, disabled, onPress: onPressProp, badge } = this.props;
-    const onPress =
-      name && !disabled ? onPressProp || this._inferOnPress(name) : () => {};
+    const onPress = name && !disabled ? onPressProp : () => {};
     // TODO: make this styling via a style sheet, and better!
     const { width } = Dimensions.get('window');
     return (
@@ -78,6 +50,7 @@ export default class HeaderIcon extends React.Component<Props, State> {
           paddingHorizontal: 0.068 * width,
           opacity: disabled ? 0.2 : 1
         }}
+        disabled={disabled}
         onPress={() => {
           Keyboard.dismiss(); // in case a keyboard is up, buttons close them
           onPress();
