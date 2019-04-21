@@ -271,7 +271,6 @@ class MessagingScreen extends React.Component<Props, State> {
           leftIcon={{
             name: 'cards',
             onPress: () => {
-              console.log(this.props.navigation.state);
               NavigationService.navigate(routes.Cards);
             }
           }}

@@ -50,7 +50,6 @@ export default class HeaderIcon extends React.Component<Props, State> {
           paddingHorizontal: 0.068 * width,
           opacity: disabled ? 0.2 : 1
         }}
-        disabled={disabled}
         onPress={() => {
           Keyboard.dismiss(); // in case a keyboard is up, buttons close them
           onPress();
