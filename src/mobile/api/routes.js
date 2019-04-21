@@ -25,6 +25,7 @@ const PHOTOS = 'photos/';
 const RELATIONSHIPS = 'relationships/';
 const CONVERSATIONS = 'conversations/';
 const META = 'meta/';
+const ARTISTS = 'artists/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
@@ -32,6 +33,7 @@ const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
 const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
 const CONVERSATIONS_ROUTE = SERVER_ROUTE + API + CONVERSATIONS;
 const META_ROUTE = SERVER_ROUTE + API + META;
+export const ARTIST_ROUTE = SERVER_ROUTE + API + ARTISTS;
 
 // //////////////
 // AUTH ROUTES:
