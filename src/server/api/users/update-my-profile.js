@@ -73,6 +73,9 @@ const updateMyProfile = async (userId: number, profile: Object) => {
       if (!springFlingActArtist) {
         throw profileErrorMessages.ARTIST_NOT_FOUND;
       }
+    // Set both springFlingAct and artist to null at once.
+    } else if (profile.springFlingAct === null) {
+      springFlingActArtist = null;
     }
   } catch (error) {
     return apiUtils.status(codes.UPDATE_PROFILE__INVALID_REQUEST).data({
