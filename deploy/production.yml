@@ -75,7 +75,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:1.7.0
+    image: maxgreenwald/projectgem:1.8.0
     environment:
       NODE_ENV: production
     secrets:
