@@ -51,7 +51,8 @@ function complete(
           displayName: '',
           postgradRegion: null, // optional field
           freshmanDorm: null,
-          springFlingAct: null
+          springFlingAct: null,
+          springFlingActArtist: null
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },

@@ -1,16 +1,11 @@
 // @flow
 import Search from './searchArtists';
-import Get from './getArtist';
 import type { SearchArtists_Action } from './searchArtists';
-import type { GetArtist_Action } from './getArtist';
 
-export type Artist_Action = SearchArtists_Action | GetArtist_Action;
+export type Artist_Action = SearchArtists_Action;
 
 export type inProgress = {|
-  search: boolean,
-  get: {
-    [id: string]: boolean
-  }
+  search: boolean
 |};
 
 export type ArtistImage = {|
@@ -36,14 +31,12 @@ const DefaultReduxState: ReduxState = {
   byId: {},
   searchResultIds: [],
   inProgress: {
-    search: false,
-    get: {}
+    search: false
   }
 };
 
 const Reducers = {
-  Search,
-  Get
+  Search
 };
 
 export { DefaultReduxState, Reducers };

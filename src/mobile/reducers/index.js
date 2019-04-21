@@ -125,7 +125,11 @@ import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
-import type { Artist_Action, ReduxState as Artist_ReduxState } from './artists';
+import type {
+  Artist,
+  Artist_Action,
+  ReduxState as Artist_ReduxState
+} from './artists';
 import {
   DefaultReduxState as Artist_DefaultReduxState,
   Reducers as Artist_Reducers
@@ -202,7 +206,8 @@ export type ProfileFields = {|
   bio: string,
   postgradRegion: ?string,
   freshmanDorm: ?string,
-  springFlingAct: ?string
+  springFlingAct: ?string, // THIS IS THE ID WE USE TO SET IT
+  springFlingActArtist: ?Artist // THIS IS ANYTHING WE RENDER
 |};
 
 export type UserProfile = {|
@@ -1941,27 +1946,6 @@ export default function rootReducer(
 
     case 'READ_MESSAGE__FAILED': {
       return ReadMessageReducer.fail(state, action);
-    }
-
-    case 'GET_ARTIST__INITIATED': {
-      return {
-        ...state,
-        artists: Artist_Reducers.Get.initiate(state.artists, action)
-      };
-    }
-
-    case 'GET_ARTIST__COMPLETED': {
-      return {
-        ...state,
-        artists: Artist_Reducers.Get.complete(state.artists, action)
-      };
-    }
-
-    case 'GET_ARTIST__FAILED': {
-      return {
-        ...state,
-        artists: Artist_Reducers.Get.fail(state.artists, action)
-      };
     }
 
     case 'SEARCH_ARTISTS__INITIATED': {
