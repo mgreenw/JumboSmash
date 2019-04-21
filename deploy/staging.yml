@@ -87,6 +87,7 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - SPOTIFY_CLIENT_SECRET
+      - REDIS_HOST
       - LAUNCH_DATE
     networks:
       - traefik-net
@@ -96,20 +97,6 @@ services:
         - traefik.frontend.entryPoints=http,https
         - traefik.port=3000
         - traefik.frontend.rule=Host:stagingserver.jumbosmash.com
-        - traefik.backend.loadbalancer.stickiness=true
-
-  #
-  # redis service
-  #
-
-  redis:
-    image: redis
-    networks:
-       - traefik-net
-    deploy:
-      labels:
-        - traefik.backend=redis
-        - traefik.port=6379
         - traefik.backend.loadbalancer.stickiness=true
 
 
@@ -161,6 +148,8 @@ secrets:
    DOCKER_PASSWORD:
     external: true
    SPOTIFY_CLIENT_SECRET:
+    external: true
+   REDIS_HOST:
     external: true
    LAUNCH_DATE:
     external: true

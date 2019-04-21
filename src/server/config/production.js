@@ -20,7 +20,7 @@ module.exports = {
   },
   s3_bucket: 'projectgem-prod',
   redis: {
-    host: 'gem_redis',
+    host: secrets.get('REDIS_HOST'),
     port: 6379,
   },
   // These keys are used for Google Stackdriver, which we use for their logging service

@@ -89,6 +89,7 @@ services:
       - AWS_SECRET_ACCESS_KEY
       - GOOGLE_PRIVATE_KEY
       - SPOTIFY_CLIENT_SECRET
+      - REDIS_HOST
       - LAUNCH_DATE
     networks:
       - traefik-net
@@ -167,6 +168,8 @@ secrets:
   SPOTIFY_CLIENT_SECRET:
     external: true
   LAUNCH_DATE:
+    external: true
+  REDIS_HOST:
     external: true
 
 networks:
