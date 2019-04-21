@@ -3,23 +3,11 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 
-const utils = require('./utils');
-const { version } = require('./package.json');
-
-const NODE_ENV = utils.getNodeEnv();
-
-const SENTRY_ENV = ['production', 'staging', 'development'];
-Sentry.init({
-  dsn: SENTRY_ENV.includes(NODE_ENV) ? 'https://79851436560a4133a55510f62d656e6f@sentry.io/1441637' : '',
-  release: version,
-  environment: NODE_ENV,
-});
-
 const logger = require('./logger');
 const api = require('./api');
 const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
-
+const utils = require('./utils');
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
@@ -60,10 +48,10 @@ app.use((req, res, next) => {
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
         latency: { seconds, nanos },
-        user: req.user,
         // etc.
       },
       timeout,
+      user: req.user,
     });
 
     logged = true;
