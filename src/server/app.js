@@ -11,8 +11,8 @@ const utils = require('./utils');
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
-
 app.use(express.json());
+app.enable('trust proxy');
 
 // Log each incoming request
 app.use((req, res, next) => {
