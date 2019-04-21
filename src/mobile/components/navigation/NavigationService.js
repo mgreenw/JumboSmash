@@ -109,7 +109,7 @@ function enterApp() {
     throw new Error('No launchDate in NavigationServce.enterApp()');
   const now = new Date();
   if (launchDate > now) {
-    navigate(routes.PrelaunchWall);
+    navigate(routes.Prelaunch);
   } else {
     navigate(routes.MainSwitch);
   }

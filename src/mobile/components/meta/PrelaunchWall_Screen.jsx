@@ -9,6 +9,7 @@ import { Colors } from 'mobile/styles/colors';
 import { SecondaryButton } from 'mobile/components/shared/buttons';
 import { connect } from 'react-redux';
 import type { ReduxState } from 'mobile/reducers/index';
+import routes from 'mobile/components/navigation/routes';
 import CountDownTimer from './CountDownTimer';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
@@ -44,6 +45,12 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
     super(props);
     this.state = {};
   }
+
+  _onProfileEditPress = () => {
+    const { navigation } = this.props;
+    const { navigate } = navigation;
+    navigate(routes.ProfileEdit, {});
+  };
 
   render() {
     const { launchDate } = this.props;
@@ -117,7 +124,10 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
               'Your profile is ready. In the meantime, don’t forget to tell your friends.'
             }
           </Text>
-          <SecondaryButton title={'Edit Profile'} onPress={() => {}} />
+          <SecondaryButton
+            title={'Edit Profile'}
+            onPress={this._onProfileEditPress}
+          />
         </View>
       </SafeAreaView>
     );

@@ -66,6 +66,26 @@ const removeHeader = {
   headerMode: 'none'
 };
 
+const PrelaunchStack = createStackNavigator(
+  {
+    [routes.PrelaunchWall]: { screen: PrelaunchWallScreen },
+    [routes.ProfileEdit]: { screen: ProfileEdit },
+    [routes.SelectCity]: { screen: SelectCity },
+    [routes.SelectDorm]: { screen: SelectDorm },
+    [routes.SelectArtist]: { screen: SelectArtist }
+  },
+  {
+    initialRouteName: routes.PrelaunchWall,
+    ...removeHeader
+  }
+);
+
+PrelaunchStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const CardsSwitch = createMaterialTopTabNavigator(
   {
     [routes.SmashCards]: { screen: SmashCards },
@@ -226,7 +246,7 @@ const createRootNavigator = () =>
       [routes.MainSwitch]: MainContentSwitch,
       [routes.AppLoading]: { screen: AppLoading },
       [routes.Terminated]: { screen: TerminatedScreen },
-      [routes.PrelaunchWall]: { screen: PrelaunchWallScreen }
+      [routes.Prelaunch]: PrelaunchStack
     },
     {
       initialRouteName: routes.AuthSwitch,
