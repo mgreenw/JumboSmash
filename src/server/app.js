@@ -58,8 +58,17 @@ app.use((req, res, next) => {
   }
 
   const timeout = setTimeout(() => {
-    res.status(503).send('Too many wanderers are lost.').end();
-    logRequest(true);
+    // Send a 503 to indicate a timeout
+    if (!res.finished) {
+      res.status(503).send('Too many wanderers are lost.').end();
+    }
+
+    // If the request hasn't already been logged, log it.
+    // This is silly, but it semes to happen that requests hit this even though
+    // they already logged...maybe it's an async problem
+    if (!logged) {
+      logRequest(true);
+    }
   }, 30000);
 
   // Log all incoming api requests!
