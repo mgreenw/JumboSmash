@@ -34,7 +34,7 @@ import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
 import SelectDorm from 'mobile/components/App/Main/Profile/SelectDorm_Screen';
-import SelectArtist from 'mobile/components/App/Main/Profile/SelectArtist';
+import SelectArtist from 'mobile/components/App/Main/Profile/SelectArtist_Screen';
 
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
