@@ -58,7 +58,10 @@ async function checkReceipts(job: { data: string[] }) {
       notifications[ticketId].message = receipt.message;
       if (receipt.details && receipt.details.error) {
         notifications[ticketId].errorDetails = receipt.details.error;
-        Sentry.captureMessage(`Failed to send push notification: ${JSON.stringify(notifications[ticketId], null, 2)}`);
+        Sentry.withScope((scope) => {
+          scope.setExtra('notification', notifications[ticketId]);
+          Sentry.captureMessage('Failed to send push notification');
+        });
       }
     }
   });
