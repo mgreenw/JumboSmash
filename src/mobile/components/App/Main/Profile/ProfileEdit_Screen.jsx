@@ -243,58 +243,40 @@ class ProfileEditScreen extends React.Component<Props, State> {
               </View>
             </View>
             <View style={styles.profileBlock}>
-              <PopupInput
-                title={'Post-Grad Location'}
-                value={postgradLocationName}
-                placeholder={'Add Location'}
-                onChange={() => {
-                  NavigationService.navigate(routes.SelectCity, {
-                    onSave: newPostgradRegion => {
-                      this.setState(state => ({
-                        editedProfileFields: {
-                          ...state.editedProfileFields,
-                          postgradRegion: newPostgradRegion
-                        }
-                      }));
-                    }
-                  });
+              <ExtendedProfileInputs
+                location={{
+                  value: postgradLocationName,
+                  onSave: newPostgradRegion => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        postgradRegion: newPostgradRegion
+                      }
+                    }));
+                  }
                 }}
-              />
-              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-              <PopupInput
-                title={'First Year Dorm'}
-                value={freshmanDorm}
-                placeholder={'Add Dorm'}
-                onChange={() => {
-                  NavigationService.navigate(routes.SelectDorm, {
-                    onSave: newFreshmanDorm => {
-                      this.setState(state => ({
-                        editedProfileFields: {
-                          ...state.editedProfileFields,
-                          freshmanDorm: newFreshmanDorm
-                        }
-                      }));
-                    }
-                  });
+                dorm={{
+                  value: freshmanDorm,
+                  onSave: newFreshmanDorm => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        freshmanDorm: newFreshmanDorm
+                      }
+                    }));
+                  }
                 }}
-              />
-              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-              <PopupInput
-                title={'Dream Spring Fling Artist'}
-                value={artistName}
-                placeholder={'Add Artist'}
-                onChange={() => {
-                  NavigationService.navigate(routes.SelectArtist, {
-                    onSave: (id: null | string, artist: null | Artist) => {
-                      this.setState(state => ({
-                        editedProfileFields: {
-                          ...state.editedProfileFields,
-                          springFlingAct: id,
-                          springFlingActArtist: artist
-                        }
-                      }));
-                    }
-                  });
+                artist={{
+                  value: artistName,
+                  onSave: (id: null | string, artist: null | Artist) => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        springFlingAct: id,
+                        springFlingActArtist: artist
+                      }
+                    }));
+                  }
                 }}
               />
             </View>
@@ -304,6 +286,62 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const ExtendedProfileInputs = ({
+  location,
+  dorm,
+  artist
+}: {
+  location: {
+    value: ?string,
+    onSave: (newPostgradRegion: string) => void
+  },
+  dorm: {
+    value: ?string,
+    onSave: (newDorm: string) => void
+  },
+  artist: {
+    value: ?string,
+    onSave: (id: null | string, artist: null | Artist) => void
+  }
+}) => {
+  return (
+    <View>
+      <PopupInput
+        title={'Post-Grad Location'}
+        value={location.value}
+        placeholder={'Add Location'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectCity, {
+            onSave: location.onSave
+          });
+        }}
+      />
+      <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+      <PopupInput
+        title={'First Year Dorm'}
+        value={dorm.value}
+        placeholder={'Add Dorm'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectDorm, {
+            onSave: dorm.onSave
+          });
+        }}
+      />
+      <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+      <PopupInput
+        title={'Dream Spring Fling Artist'}
+        value={artist.value}
+        placeholder={'Add Artist'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectArtist, {
+            onSave: artist.onSave
+          });
+        }}
+      />
+    </View>
+  );
+};
 
 type PopupInputProps = {
   title: string,
