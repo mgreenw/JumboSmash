@@ -25,6 +25,7 @@ module.exports = {
     'prettier/prettier': ['error'],
     'react/require-default-props': 'off',
     'no-return-assign': 'off',
-    'react/jsx-curly-brace-presence': 'off'
+    'react/jsx-curly-brace-presence': 'off',
+    'import/no-cycle': 'off'
   }
 };

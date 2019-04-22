@@ -22,11 +22,13 @@ type State = {
   days: number,
   hours: number,
   minutes: number,
-  seconds: number
+  seconds: number,
+  complete: boolean
 };
 
 type Props = {
-  date: Date
+  date: Date,
+  onZero: () => void
 };
 
 export default class CountDownTimer extends React.Component<Props, State> {
@@ -41,13 +43,23 @@ export default class CountDownTimer extends React.Component<Props, State> {
       days,
       hours,
       minutes,
-      seconds
+      seconds,
+      complete: false
     };
   }
 
   componentDidMount() {
     const timer = setInterval(this.tick, 1000);
     this.setState({ timer });
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { complete: wasComplete } = prevState;
+    const { complete: nowComplete } = this.state;
+    const { onZero } = this.props;
+    if (!wasComplete && nowComplete) {
+      onZero();
+    }
   }
 
   componentWillUnmount() {
@@ -62,7 +74,13 @@ export default class CountDownTimer extends React.Component<Props, State> {
   tick = () => {
     const { date } = this.props;
     const { days, hours, minutes, seconds } = timeDifference(new Date(), date);
-    this.setState({ days, hours, minutes, seconds });
+    this.setState({
+      days,
+      hours,
+      minutes,
+      seconds,
+      complete: new Date() > date
+    });
     this._pulse();
   };
 

@@ -90,3 +90,9 @@ export type SystemMessage =
   | 'MATCHED_SOCIAL'
   | 'MATCHED_SMASH'
   | 'MATCHED_STONE';
+
+export type LaunchDateStatus = {
+  launchDate: string,
+  currentDate: string,
+  wallIsUp: boolean
+};

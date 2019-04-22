@@ -10,7 +10,9 @@ import { SecondaryButton } from 'mobile/components/shared/buttons';
 import { connect } from 'react-redux';
 import type { ReduxState } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
+import { Transition } from 'react-navigation-fluid-transitions';
 import CountDownTimer from './CountDownTimer';
+import NavigationService from '../navigation/NavigationService';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 const ArthurUri = require('../../assets/arthurIcon.png');
@@ -20,6 +22,7 @@ type NavigationProps = {
 };
 type DispatchProps = {};
 type ReduxProps = {
+  isLive: boolean,
   launchDate: Date
 };
 type Props = NavigationProps & DispatchProps & ReduxProps;
@@ -27,12 +30,13 @@ type Props = NavigationProps & DispatchProps & ReduxProps;
 type State = {};
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
-  const { launchDate } = reduxState;
-  if (!launchDate) {
-    throw new Error('No launch date on Prelaunch Wall Screen');
+  const { status: launchDateStatus } = reduxState.launchDate;
+  if (!launchDateStatus) {
+    throw new Error('No launch date status on Prelaunch Wall Screen');
   }
   return {
-    launchDate
+    isLive: !launchDateStatus.wallIsUp,
+    launchDate: new Date(launchDateStatus.launchDate)
   };
 }
 
@@ -77,7 +81,12 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <CountDownTimer date={launchDate} />
+          <CountDownTimer
+            date={launchDate}
+            onZero={() => {
+              console.log('done!');
+            }}
+          />
           <Image
             resizeMode="contain"
             style={{
@@ -88,47 +97,49 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
           />
         </View>
 
-        <View
-          style={{
-            backgroundColor: Colors.White,
-            width: '100%',
-            paddingHorizontal: 30,
-            alignItems: 'center',
-            paddingTop: 25,
-            paddingBottom: 35,
-            shadowColor: '#6F6F6F',
-            shadowOpacity: 0.57,
-            shadowRadius: 2,
-            shadowOffset: {
-              height: 2,
-              width: 1
-            },
-            borderRadius: 10
-          }}
-        >
-          <Text
-            style={[
-              textStyles.headline5Style,
-              { textAlign: 'center', paddingBottom: 15 }
-            ]}
+        <Transition inline appear="bottom">
+          <View
+            style={{
+              backgroundColor: Colors.White,
+              width: '100%',
+              paddingHorizontal: 30,
+              alignItems: 'center',
+              paddingTop: 25,
+              paddingBottom: 35,
+              shadowColor: '#6F6F6F',
+              shadowOpacity: 0.57,
+              shadowRadius: 2,
+              shadowOffset: {
+                height: 2,
+                width: 1
+              },
+              borderRadius: 10
+            }}
           >
-            {"You're all set."}
-          </Text>
-          <Text
-            style={[
-              textStyles.body1Style,
-              { textAlign: 'center', paddingBottom: 35 }
-            ]}
-          >
-            {
-              'Your profile is ready. In the meantime, don’t forget to tell your friends.'
-            }
-          </Text>
-          <SecondaryButton
-            title={'Edit Profile'}
-            onPress={this._onProfileEditPress}
-          />
-        </View>
+            <Text
+              style={[
+                textStyles.headline5Style,
+                { textAlign: 'center', paddingBottom: 15 }
+              ]}
+            >
+              {"You're all set."}
+            </Text>
+            <Text
+              style={[
+                textStyles.body1Style,
+                { textAlign: 'center', paddingBottom: 35 }
+              ]}
+            >
+              {
+                'Your profile is ready. In the meantime, don’t forget to tell your friends.'
+              }
+            </Text>
+            <SecondaryButton
+              title={'Edit Profile'}
+              onPress={this._onProfileEditPress}
+            />
+          </View>
+        </Transition>
       </SafeAreaView>
     );
   }
