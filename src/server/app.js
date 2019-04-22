@@ -48,7 +48,7 @@ app.use((req, res, next) => {
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
         latency: { seconds, nanos },
-        // etc.
+        userAgent: req.get('User-Agent'),
       },
       timeout,
       user: req.user,
