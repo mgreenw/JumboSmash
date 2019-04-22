@@ -3,6 +3,7 @@
 import type { $Request } from 'express';
 
 const _ = require('lodash');
+const Sentry = require('@sentry/node');
 
 const logger = require('../../logger');
 const db = require('../../db');
@@ -108,6 +109,14 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     // They should contact us at this point.
     if (emailSends > 3) {
       return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS).noData();
+    }
+
+    if (emailSends > 2) {
+      Sentry.withScope((scope) => {
+        scope.setExtra('email', email);
+        scope.setExtra('code', code);
+        Sentry.captureException(new Error('More than two email sends for a single login cycle. This is unexected and should be investigated. This does not cause a SERVER_ERROR, but instead logs a warning so we can look into it.'));
+      });
     }
 
     // Check if the old verification code expried
