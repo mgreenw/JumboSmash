@@ -8,8 +8,11 @@ import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
 import { SecondaryButton } from 'mobile/components/shared/buttons';
 import { connect } from 'react-redux';
-import type { ReduxState } from 'mobile/reducers/index';
+import type { ReduxState, UserProfile } from 'mobile/reducers/index';
 import routes from 'mobile/components/navigation/routes';
+import { ExtendedProfileInputs } from 'mobile/components/App/Main/Profile/ProfileEdit_Screen';
+import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
+import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 import CountDownTimer from './CountDownTimer';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
@@ -20,7 +23,9 @@ type NavigationProps = {
 };
 type DispatchProps = {};
 type ReduxProps = {
-  launchDate: Date
+  launchDate: Date,
+  profile: UserProfile,
+  saveProfileInProgress: boolean
 };
 type Props = NavigationProps & DispatchProps & ReduxProps;
 
@@ -31,8 +36,13 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!launchDate) {
     throw new Error('No launch date on Prelaunch Wall Screen');
   }
+  if (!reduxState.client) {
+    throw new Error('client is null in launch wall Screen');
+  }
   return {
-    launchDate
+    launchDate,
+    profile: reduxState.client.profile,
+    saveProfileInProgress: reduxState.inProgress.saveProfile
   };
 }
 
@@ -52,8 +62,60 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
     navigate(routes.ProfileEdit, {});
   };
 
+  _renderEditProfile = () => {
+    return (
+      <View>
+        <Text
+          style={[
+            textStyles.headline5Style,
+            { textAlign: 'center', paddingBottom: 15 }
+          ]}
+        >
+          {"You're all set."}
+        </Text>
+        <Text
+          style={[
+            textStyles.body1Style,
+            { textAlign: 'center', paddingBottom: 35 }
+          ]}
+        >
+          {
+            'Your profile is ready. In the meantime, don’t forget to tell your friends.'
+          }
+        </Text>
+        <SecondaryButton
+          title={'Edit Profile'}
+          onPress={this._onProfileEditPress}
+        />
+      </View>
+    );
+  };
+
   render() {
-    const { launchDate } = this.props;
+    const { launchDate, profile, saveProfileInProgress } = this.props;
+    const {
+      postgradRegion: postgradLocationCode,
+      freshmanDorm: freshmanDormCode,
+      springFlingAct,
+      springFlingActArtist
+    } = profile.fields;
+    const hasAllExtendedProfileFields =
+      postgradLocationCode &&
+      freshmanDormCode &&
+      springFlingAct &&
+      springFlingActArtist;
+
+    const freshmanDormName = freshmanDormCode
+      ? dormCodeToName(freshmanDormCode)
+      : null;
+    const postgradLocation = postgradLocationCode
+      ? postgradCodeToLocation(postgradLocationCode)
+      : null;
+    const postgradLocationName = postgradLocation
+      ? postgradLocation.name
+      : null;
+    const artistName = springFlingActArtist ? springFlingActArtist.name : null;
+
     return (
       <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
         <AndroidBackHandler onBackPress={() => true} />
@@ -106,28 +168,25 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
             borderRadius: 10
           }}
         >
-          <Text
-            style={[
-              textStyles.headline5Style,
-              { textAlign: 'center', paddingBottom: 15 }
-            ]}
-          >
-            {"You're all set."}
-          </Text>
-          <Text
-            style={[
-              textStyles.body1Style,
-              { textAlign: 'center', paddingBottom: 35 }
-            ]}
-          >
-            {
-              'Your profile is ready. In the meantime, don’t forget to tell your friends.'
-            }
-          </Text>
-          <SecondaryButton
-            title={'Edit Profile'}
-            onPress={this._onProfileEditPress}
-          />
+          {hasAllExtendedProfileFields ? (
+            this._renderEditProfile()
+          ) : (
+            <ExtendedProfileInputs
+              artist={{
+                value: artistName,
+                onSave: () => {}
+              }}
+              dorm={{
+                value: freshmanDormName,
+                onSave: () => {}
+              }}
+              location={{
+                value: postgradLocationName,
+                onSave: () => {}
+              }}
+              loading={saveProfileInProgress}
+            />
+          )}
         </View>
       </SafeAreaView>
     );

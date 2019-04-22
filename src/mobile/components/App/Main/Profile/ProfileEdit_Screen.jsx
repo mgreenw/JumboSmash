@@ -33,7 +33,6 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import BioInput from 'mobile/components/shared/BioInput';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
-import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
 import routes from 'mobile/components/navigation/routes';
@@ -189,7 +188,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const { postgradRegion: postgradLocationCode } = editedProfileFields;
     const { freshmanDorm: freshmanDormCode } = editedProfileFields;
     const { springFlingActArtist } = editedProfileFields;
-    const freshmanDorm = freshmanDormCode
+    const freshmanDormName = freshmanDormCode
       ? dormCodeToName(freshmanDormCode)
       : null;
     const postgradLocation = postgradLocationCode
@@ -256,7 +255,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                   }
                 }}
                 dorm={{
-                  value: freshmanDorm,
+                  value: freshmanDormName,
                   onSave: newFreshmanDorm => {
                     this.setState(state => ({
                       editedProfileFields: {
@@ -278,6 +277,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
                     }));
                   }
                 }}
+                loading={false /* all saves here occur on screen exit */}
               />
             </View>
           </PlatformSpecificScrollView>
@@ -287,7 +287,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
   }
 }
 
-const ExtendedProfileInputs = ({
+export const ExtendedProfileInputs = ({
   location,
   dorm,
   artist
@@ -303,7 +303,8 @@ const ExtendedProfileInputs = ({
   artist: {
     value: ?string,
     onSave: (id: null | string, artist: null | Artist) => void
-  }
+  },
+  loading: boolean
 }) => {
   return (
     <View>
