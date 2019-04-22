@@ -309,7 +309,11 @@ export const ExtendedProfileInputs = ({
   return (
     <View>
       <PopupInput
-        title={'Post-Grad Location'}
+        title={
+          location.value
+            ? 'Post-Grad Location'
+            : 'Where are you headed after graduation?'
+        }
         value={location.value}
         placeholder={'Add Location'}
         onChange={() => {
@@ -320,7 +324,11 @@ export const ExtendedProfileInputs = ({
       />
       <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
       <PopupInput
-        title={'First Year Dorm'}
+        title={
+          dorm.value
+            ? 'First Year Dorm'
+            : 'Where did you live your first year at Tufts?'
+        }
         value={dorm.value}
         placeholder={'Add Dorm'}
         onChange={() => {
@@ -331,7 +339,11 @@ export const ExtendedProfileInputs = ({
       />
       <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
       <PopupInput
-        title={'Dream Spring Fling Artist'}
+        title={
+          artist.value
+            ? 'Dream Spring Fling Artist'
+            : 'What is your dream Spring Fling act?'
+        }
         value={artist.value}
         placeholder={'Add Artist'}
         onChange={() => {
