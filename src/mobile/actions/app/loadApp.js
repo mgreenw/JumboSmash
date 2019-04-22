@@ -96,9 +96,11 @@ export default () => (dispatch: Dispatch) => {
       Sentry.setUserContext({
         username: utln
       });
+      /* 
+      Commeting this out so we don't burn through sentry limits
       Sentry.captureMessage('User Logged In!', {
         level: 'info'
-      });
+      }); */
 
       dispatch(
         complete(profile, settings, profile !== null, launchDate, photoIds)
