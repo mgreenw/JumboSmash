@@ -1,7 +1,6 @@
 // @flow
 import { Permissions, Notifications } from 'expo';
 import openAppSettings from 'mobile/utils/OpenAppSettings';
-import Sentry from 'sentry-expo';
 
 export default async function requestNotificationToken(): Promise<?string> {
   // https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -30,13 +29,5 @@ export default async function requestNotificationToken(): Promise<?string> {
 
   // Get the token that uniquely identifies this device
   const token = await Notifications.getExpoPushTokenAsync();
-
-  Sentry.captureMessage(
-    `Push Notification Token Retrieved: ${token || 'NO TOKEN FOUND'}`,
-    {
-      level: 'info'
-    }
-  );
-
   return token;
 }
