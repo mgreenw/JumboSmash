@@ -310,12 +310,13 @@ class SplashScreen extends React.Component<Props, State> {
                   title="Verify I'm a Senior!"
                   disabled={sendVerificationEmail_inProgress || utln === ''}
                   loading={sendVerificationEmail_inProgress}
-                  hidden={!hasHadError}
                 />
-                <TertiaryButton
-                  onPress={this._onHelp}
-                  title="Having Trouble?"
-                />
+                <Collapsible collapsed={!hasHadError}>
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Trouble?"
+                  />
+                </Collapsible>
               </View>
             </View>
           </Transition>
