@@ -31,9 +31,11 @@ Provide the normal `Authorization` token in the request header.
 {
     "status": "GET_LAUNCH_DATE__SUCCESS",
     "data": {
-        "launchDate": "2019-04-18T04:23:49.561Z"
+        "launchDate": "2019-04-23T19:20:37.883Z",
+        "currentDate": "2019-04-22T19:21:34.294Z",
+        "wallIsUp": true
     },
-    "version": "1.6.1"
+    "version": "1.9.0"
 }
 ```
 
