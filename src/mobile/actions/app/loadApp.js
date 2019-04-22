@@ -86,35 +86,30 @@ function complete(
 
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  checkLaunchDate()
-    .then(launchDateStatus => {
-      Promise.all([
-        getMyProfile(),
-        getMyPhotos(),
-        getMySettings(),
-        getClientUtln()
-      ])
-        .then(([profile, photoIds, settings, utln]) => {
-          Sentry.setUserContext({
-            username: utln
-          });
-          Sentry.captureMessage('User Logged In!', {
-            level: 'info'
-          });
+  Promise.all([
+    checkLaunchDate(),
+    getMyProfile(),
+    getMyPhotos(),
+    getMySettings(),
+    getClientUtln()
+  ])
+    .then(([launchDateStatus, profile, photoIds, settings, utln]) => {
+      Sentry.setUserContext({
+        username: utln
+      });
+      Sentry.captureMessage('User Logged In!', {
+        level: 'info'
+      });
 
-          dispatch(
-            complete(
-              profile,
-              settings,
-              profile !== null,
-              launchDateStatus,
-              photoIds
-            )
-          );
-        })
-        .catch(error => {
-          dispatch(apiErrorHandler(error));
-        });
+      dispatch(
+        complete(
+          profile,
+          settings,
+          profile !== null,
+          launchDateStatus,
+          photoIds
+        )
+      );
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));
