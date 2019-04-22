@@ -97,23 +97,17 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
     /* eslint-disable-next-line prefer-destructuring */
     emailSends = code.emailSends;
     const {
-      lastEmailSend,
       attempts,
       expiration,
       code: currentVerificationCode,
     } = code;
-
-    // If it has been less than 60 seconds since the last email send, don't allow the send
-    if (new Date().getTime() - lastEmailSend.getTime() < 60000) {
-      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SLOW_DOWN).noData();
-    }
 
     // If the user has sent more than 3 emails, fail. This number gets reset when a user logs in.
     // They should contact us if they really can't get the code. This is really important
     // for security, otherwise user's could iterate this endpoint and try random codes
     // They should contact us at this point.
     if (emailSends > 3) {
-      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILs).noData();
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS).noData();
     }
 
     // Check if the old verification code expried
