@@ -130,6 +130,10 @@ class SplashScreen extends React.Component<Props, State> {
           this._onNotTuftsEmail();
           break;
         }
+        case 'TOO_MANY_EMAILS': {
+          this._onTooManyEmails();
+          break;
+        }
         default: {
           // eslint-disable-next-line no-unused-expressions
           (statusCode: empty); // ensures we have handled all cases
@@ -184,6 +188,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigation } = this.props;
+    navigation.navigate(routes.AuthHelp, {});
+  };
+
+  _onTooManyEmails = () => {
+    const { navigation } = this.props;
+    this._utlnInputError('Too many emails sent');
     navigation.navigate(routes.AuthHelp, {});
   };
 
