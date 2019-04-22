@@ -79,25 +79,51 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   // NOTE: Ensuring a user is a "tester" went here. The `testers` table is now deprecated
 
   // Back to the regular functionality!
-  const oldCodeResults = await db.query(
-    'SELECT code, email, email_sends, last_email_send, expiration, attempts FROM verification_codes WHERE utln = $1',
-    [memberInfo.utln],
-  );
+  const oldCodeResults = await db.query(`
+    SELECT
+      code,
+      email,
+      email_sends AS "emailSends",
+      last_email_send AS "lastEmailSend",
+      expiration,
+      attempts
+    FROM verification_codes WHERE utln = $1
+  `, [memberInfo.utln]);
 
   // Get the number of email sends if an email has already been sent.
   let emailSends = 0;
   if (oldCodeResults.rowCount > 0) {
     const code = oldCodeResults.rows[0];
-    emailSends = code.email_sends;
+    /* eslint-disable-next-line prefer-destructuring */
+    emailSends = code.emailSends;
+    const {
+      lastEmailSend,
+      attempts,
+      expiration,
+      code: currentVerificationCode,
+    } = code;
+
+    // If it has been less than 60 seconds since the last email send, don't allow the send
+    if (new Date().getTime() - lastEmailSend.getTime() < 60000) {
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SLOW_DOWN).noData();
+    }
+
+    // If the user has sent more than 3 emails, fail. This number gets reset when a user logs in.
+    // They should contact us if they really can't get the code. This is really important
+    // for security, otherwise user's could iterate this endpoint and try random codes
+    // They should contact us at this point.
+    if (emailSends > 3) {
+      return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILs).noData();
+    }
 
     // Check if the old verification code expried
-    const expired = new Date(code.expiration).getTime() < new Date().getTime();
-    const oldCodeExpired = expired || code.attempts >= 3;
+    const expired = new Date(expiration).getTime() < new Date().getTime();
+    const oldCodeExpired = expired || attempts >= 3;
 
     // If it has not expired AND we are not forcing a resend,
     // respond that the email has already been sent
     if (forceResend !== true && !oldCodeExpired) {
-      logger.info(`Already sent code: ${code.code}`);
+      logger.debug(`Already sent code: ${currentVerificationCode}`);
       return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT).data({
         email: code.email,
         utln: memberInfo.utln,
