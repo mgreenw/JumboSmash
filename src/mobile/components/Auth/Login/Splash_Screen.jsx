@@ -96,7 +96,12 @@ class SplashScreen extends React.Component<Props, State> {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
-          this._onTooManyEmails();
+          this._onSuccess(
+            response.requestEmail,
+            response.responseEmail,
+            response.utln,
+            false
+          );
           break;
         }
         case 'ALREADY_SENT': {
