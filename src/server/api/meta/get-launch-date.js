@@ -13,8 +13,11 @@ const launchDate = new Date(config.get('launch_date'));
  *
  */
 const getLaunchDate = async () => {
+  const now = new Date();
   return apiUtils.status(codes.GET_LAUNCH_DATE__SUCCESS).data({
     launchDate,
+    currentDate: now,
+    wallIsUp: now < launchDate,
   });
 };
 
