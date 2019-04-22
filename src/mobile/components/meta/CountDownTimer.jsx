@@ -68,12 +68,7 @@ export default class CountDownTimer extends React.Component<Props, State> {
 
   _handleViewRef = (ref: Animatable.View) => (this._view = ref);
 
-  _pulse = () =>
-    this._view
-      .pulse(800)
-      .then(endState =>
-        console.log(endState.finished ? 'bounce finished' : 'bounce cancelled')
-      );
+  _pulse = () => this._view.pulse(800);
 
   _view: Animatable.View;
 
