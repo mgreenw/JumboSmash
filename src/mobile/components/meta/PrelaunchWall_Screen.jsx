@@ -22,7 +22,6 @@ type NavigationProps = {
 };
 type DispatchProps = {};
 type ReduxProps = {
-  isLive: boolean,
   launchDate: Date
 };
 type Props = NavigationProps & DispatchProps & ReduxProps;
@@ -35,7 +34,6 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('No launch date status on Prelaunch Wall Screen');
   }
   return {
-    isLive: !launchDateStatus.wallIsUp,
     launchDate: new Date(launchDateStatus.launchDate)
   };
 }
@@ -65,14 +63,16 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
           source={wavesFull2}
           style={{ width: '100%', height: '100%', position: 'absolute' }}
         />
-        <Text
-          style={[
-            textStyles.headline4StyleDemibold,
-            { textAlign: 'center', paddingVertical: '5.5%' }
-          ]}
-        >
-          {'READY. SET. SMASH.'}
-        </Text>
+        <Transition inline appear="top">
+          <Text
+            style={[
+              textStyles.headline4StyleDemibold,
+              { textAlign: 'center', paddingVertical: '5.5%' }
+            ]}
+          >
+            {'READY. SET. SMASH.'}
+          </Text>
+        </Transition>
         <View
           style={{
             flex: 1,
@@ -81,12 +81,14 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          <CountDownTimer
-            date={launchDate}
-            onZero={() => {
-              console.log('done!');
-            }}
-          />
+          <Transition inline appear="top">
+            <CountDownTimer
+              date={launchDate}
+              onZero={() => {
+                NavigationService.navigate(routes.PrelaunchStartStack);
+              }}
+            />
+          </Transition>
           <Image
             resizeMode="contain"
             style={{

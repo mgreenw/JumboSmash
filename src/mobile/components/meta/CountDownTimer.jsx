@@ -64,11 +64,7 @@ export default class CountDownTimer extends React.Component<Props, State> {
 
   componentWillUnmount() {
     const { timer } = this.state;
-
-    // See: https://medium.com/the-react-native-log/getting-eslint-right-in-react-native-bd27524cc77b
-    // Esentially this is a Browser API. This is totally safe, but non-standard in react-native untill recently (part of deprecating Mixins)
-    // $FlowFixMe
-    this.clearInterval(timer);
+    clearInterval(timer);
   }
 
   tick = () => {
