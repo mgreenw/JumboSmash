@@ -54,27 +54,22 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
   };
 
   _enableNotificationsAndContinue = () => {
-    const { expoPushToken } = this.state.settings;
-    if (expoPushToken !== null) {
-      this._goToNextPage();
-    } else {
-      requestNotificationToken().then(newToken => {
-        if (newToken !== null) {
-          this.setState(
-            state => ({
-              settings: {
-                ...state.settings,
-                expoPushToken: newToken,
-                notificationsEnabled: true
-              }
-            }),
-            () => {
-              this._goToNextPage();
+    requestNotificationToken().then(newToken => {
+      if (newToken !== null) {
+        this.setState(
+          state => ({
+            settings: {
+              ...state.settings,
+              expoPushToken: newToken,
+              notificationsEnabled: true
             }
-          );
-        }
-      });
-    }
+          }),
+          () => {
+            this._goToNextPage();
+          }
+        );
+      }
+    });
   };
 
   render() {
