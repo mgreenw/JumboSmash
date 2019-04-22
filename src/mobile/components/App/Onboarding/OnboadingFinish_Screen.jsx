@@ -21,7 +21,7 @@ type NavigationProps = {
 type ReduxProps = {
   createUserInProgress: boolean,
   createUserSuccess: ?boolean,
-  isLive: boolean
+  allFeaturesLive: boolean
 };
 type DispatchProps = {
   createUser: (fields: ProfileFields, settings: UserSettings) => void
@@ -38,7 +38,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
     createUserInProgress: reduxState.inProgress.createUser,
     createUserSuccess: reduxState.response.createUserSuccess,
-    isLive: launchDateStatus !== null ? !launchDateStatus.wallIsUp : false
+    allFeaturesLive:
+      launchDateStatus !== null ? !launchDateStatus.wallIsUp : false
   };
 }
 
@@ -84,7 +85,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { isLive } = this.props;
+    const { allFeaturesLive } = this.props;
     const { createUserInProgress, navigation } = this.props;
     const body = (
       <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
@@ -100,7 +101,7 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
         title="JumboSmash"
         lastScreen
         loading={createUserInProgress}
-        buttonText={isLive ? 'Start Swiping' : 'Start the Countdown'}
+        buttonText={allFeaturesLive ? 'Start Swiping' : 'Start the Countdown'}
       />
     );
   }
