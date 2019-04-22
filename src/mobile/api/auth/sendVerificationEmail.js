@@ -24,6 +24,8 @@ const SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT =
   'SEND_VERIFICATION_EMAIL__EMAIL_NOT_STUDENT';
 const SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL =
   'SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL';
+const SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS =
+  'SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILs';
 
 // Helpful for debugging, easier than having a conditional type based on an enum
 const NO_EMAIL = 'NO EMAIL FOR THIS RESPONSE CODE';
@@ -121,6 +123,15 @@ export default function sendVerificationEmail(
           };
         }
         throw new Error(response);
+      }
+      case SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS: {
+        return {
+          statusCode: 'TOO_MANY_EMAILS',
+          responseEmail: NO_EMAIL,
+          requestEmail: request.email,
+          classYear: NO_CLASS_YEAR,
+          utln: NO_UTLN
+        };
       }
       default:
         throw new Error(response);

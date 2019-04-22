@@ -96,12 +96,7 @@ class SplashScreen extends React.Component<Props, State> {
       const { statusCode } = response;
       switch (statusCode) {
         case 'SUCCESS': {
-          this._onSuccess(
-            response.requestEmail,
-            response.responseEmail,
-            response.utln,
-            false
-          );
+          this._onTooManyEmails();
           break;
         }
         case 'ALREADY_SENT': {
@@ -128,6 +123,10 @@ class SplashScreen extends React.Component<Props, State> {
         }
         case 'NOT_TUFTS_EMAIL': {
           this._onNotTuftsEmail();
+          break;
+        }
+        case 'TOO_MANY_EMAILS': {
+          this._onTooManyEmails();
           break;
         }
         default: {
@@ -184,6 +183,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigation } = this.props;
+    navigation.navigate(routes.AuthHelp, {});
+  };
+
+  _onTooManyEmails = () => {
+    const { navigation } = this.props;
+    this._utlnInputError('Too many emails sent');
     navigation.navigate(routes.AuthHelp, {});
   };
 
