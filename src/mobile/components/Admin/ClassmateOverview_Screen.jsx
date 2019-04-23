@@ -6,11 +6,12 @@ import { connect } from 'react-redux';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type DispatchProps = {};
@@ -35,10 +36,18 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
+  _onBack = () => {
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
+  };
+
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Overview" leftIconName="back" />
+        <GEMHeader
+          title="Overview"
+          leftIcon={{ name: 'back', onPress: this._onBack }}
+        />
         <View style={{ flex: 1 }}>
           <ImageBackground
             source={wavesFull}

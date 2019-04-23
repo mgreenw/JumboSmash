@@ -8,11 +8,12 @@ import { Button } from 'react-native-elements';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type DispatchProps = {};
@@ -37,11 +38,19 @@ class ClassmateListScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
+  _onBack = () => {
+    const { navigation } = this.props;
+    NavigationService.enterApp();
+  };
+
   render() {
     const { navigation } = this.props;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Classmates" leftIconName="back" />
+        <GEMHeader
+          title="Classmates"
+          leftIcon={{ name: 'back', onPress: this._onBack }}
+        />
         <View style={{ flex: 1 }}>
           <ImageBackground
             source={wavesFull}

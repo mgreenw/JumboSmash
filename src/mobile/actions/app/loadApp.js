@@ -6,7 +6,9 @@ import getMySettings from 'mobile/api/users/GetMySettings';
 import getClientUtln from 'mobile/api/auth/getClientUtln';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import getMyPhotos from 'mobile/api/users/GetMyPhotos';
+import checkLaunchDate from 'mobile/api/meta/checkLaunchDate';
 import Sentry from 'sentry-expo';
+import type { LaunchDateStatus } from 'mobile/api/serverTypes';
 
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
@@ -18,7 +20,8 @@ export type LoadAppCompleted_Action = {
   payload: {
     onboardingCompleted: boolean,
     profile: UserProfile,
-    settings: UserSettings
+    settings: UserSettings,
+    launchDateStatus: LaunchDateStatus
   },
   meta: {}
 };
@@ -35,6 +38,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
+  launchDateStatus: LaunchDateStatus,
   photoUuids: ?(string[])
 ): LoadAppCompleted_Action {
   return {
@@ -47,7 +51,9 @@ function complete(
           birthday: '',
           displayName: '',
           postgradRegion: null, // optional field
-          freshmanDorm: null
+          freshmanDorm: null,
+          springFlingAct: null,
+          springFlingActArtist: null
         },
         photoUuids: photoUuids || [] // incase partial photo uploading in onboarding
       },
@@ -71,7 +77,8 @@ function complete(
         notificationsEnabled: false,
         expoPushToken: null,
         isAdmin: false
-      }
+      },
+      launchDateStatus
     },
     meta: {}
   };
@@ -79,29 +86,26 @@ function complete(
 
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  getMyProfile()
-    .then(profile => {
-      // if profile is null, onboarding has not been completed, though
-      // some photos may have been uploaded.
-      if (profile === null || profile === undefined) {
-        getMyPhotos().then(photoUuids => {
-          dispatch(complete(null, null, false, photoUuids));
-        });
-      } else {
-        getMySettings().then(settings => {
-          getClientUtln().then(utln => {
-            // TODO: add UserId, need it retrieved somewhere, preferably the same utln endpoint
-            Sentry.setUserContext({
-              username: utln
-            });
-            Sentry.captureMessage('User Logged In!', {
-              level: 'info'
-            });
-
-            dispatch(complete(profile, settings, true));
-          });
-        });
-      }
+  Promise.all([
+    checkLaunchDate(),
+    getMyProfile(),
+    getMyPhotos(),
+    getMySettings(),
+    getClientUtln()
+  ])
+    .then(([launchDateStatus, profile, photoIds, settings, utln]) => {
+      Sentry.setUserContext({
+        username: utln
+      });
+      dispatch(
+        complete(
+          profile,
+          settings,
+          profile !== null,
+          launchDateStatus,
+          photoIds
+        )
+      );
     })
     .catch(error => {
       dispatch(apiErrorHandler(error));

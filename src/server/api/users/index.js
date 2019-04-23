@@ -10,7 +10,7 @@ const updateMyProfile = require('./update-my-profile');
 const getProfile = require('./get-profile');
 const getMyPhotos = require('./get-my-photos');
 
-const { hasProfile } = require('../utils').middleware;
+const { hasProfile, isAfterLaunch } = require('../utils').middleware;
 
 const usersRouter = express.Router();
 
@@ -25,6 +25,10 @@ usersRouter.use(hasProfile);
 
 usersRouter.get('/me/profile', getMyProfile.handler);
 usersRouter.patch('/me/profile', updateMyProfile.handler);
+
+// POSTLAUNCH ONLY METHODS
+usersRouter.use(isAfterLaunch);
+
 usersRouter.get('/:userId(\\d+)/profile', getProfile.handler);
 
 module.exports = usersRouter;

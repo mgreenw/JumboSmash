@@ -153,6 +153,19 @@ Provide the user's Tufts email. If the user would like to resend the email becau
 
 ### OR
 
+**Condition**: Too many emails have been sent between logins.
+
+**Code** : `400 BAD REQUEST`
+
+**Content** :
+```json
+{
+    "status": "SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS"
+}
+```
+
+### OR
+
 **Condition** : If the required fields are not supplied.
 
 **Code** : `400 BAD REQUEST`

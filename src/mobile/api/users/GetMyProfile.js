@@ -10,8 +10,9 @@ const PROFILE_SETUP_INCOMPLETE = 'PROFILE_SETUP_INCOMPLETE';
 export default function getMyProfile(): Promise<?ServerProfile> {
   return apiRequest('GET', MY_PROFILE__ROUTE).then(response => {
     switch (response.status) {
-      case GET_PROFILE__SUCCESS:
+      case GET_PROFILE__SUCCESS: {
         return response.data;
+      }
 
       // on an incomplete profile, return a null UserProfile. We use this
       // to set profile to null in the Redux State

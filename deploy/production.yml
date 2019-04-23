@@ -75,7 +75,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:1.6.0
+    image: maxgreenwald/projectgem:1.9.1
     environment:
       NODE_ENV: production
     secrets:
@@ -89,9 +89,12 @@ services:
       - AWS_SECRET_ACCESS_KEY
       - GOOGLE_PRIVATE_KEY
       - SPOTIFY_CLIENT_SECRET
+      - REDIS_HOST
+      - LAUNCH_DATE
     networks:
       - traefik-net
     deploy:
+      replicas: 2
       labels:
         - traefik.backend=server
         - traefik.frontend.entryPoints=http,https
@@ -99,41 +102,7 @@ services:
         - traefik.frontend.rule=Host:server.jumbosmash.com
         - traefik.backend.loadbalancer.stickiness=true
 
-  #
-  # Prod Redis Service
-  #
 
-  redis:
-    image: redis
-    networks:
-       - traefik-net
-    deploy:
-      labels:
-        - traefik.backend=redis
-        - traefik.port=6379
-        - traefik.backend.loadbalancer.stickiness=true
-
-
-  #
-  #  Prod Deployment Service
-  #
-
-  deployment:
-    image: sperrys/deploy:node
-    environment:
-      NODE_ENV: production
-    networks:
-      - traefik-net
-    secrets:
-      - DOCKER_PASSWORD
-    volumes:
-      - /usr/local/bin/docker:/usr/bin/docker
-    deploy:
-      labels:
-        - traefik.frontend.entryPoints=http,https
-        - traefik.backend=deploy
-        - traefik.port=3004
-        - traefik.frontend.rule=Host:deploy.jumbosmash.com
 
 # https://docs.docker.com/engine/swarm/secrets/
 secrets:
@@ -164,6 +133,10 @@ secrets:
   GOOGLE_PRIVATE_KEY:
     external: true
   SPOTIFY_CLIENT_SECRET:
+    external: true
+  LAUNCH_DATE:
+    external: true
+  REDIS_HOST:
     external: true
 
 networks:

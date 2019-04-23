@@ -8,16 +8,6 @@ const api = require('./api');
 const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
 const utils = require('./utils');
-const { version } = require('./package.json');
-
-const NODE_ENV = utils.getNodeEnv();
-
-const SENTRY_ENV = ['production', 'staging', 'development'];
-Sentry.init({
-  dsn: SENTRY_ENV.includes(NODE_ENV) ? 'https://79851436560a4133a55510f62d656e6f@sentry.io/1441637' : '',
-  release: version,
-  environment: NODE_ENV,
-});
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
@@ -46,25 +36,39 @@ app.use((req, res, next) => {
     const end = new Date().getTime();
     const latency = end - start;
 
+    // Nanos represents the remaining nanos after seconds is counted.
+    // This is somewhat silly but Google requires this format
+    const seconds = Math.floor(latency / 1000);
+    const nanos = (latency - (seconds * 1000)) * 1000000;
+
     logger.info(`${req.method} ${req.originalUrl} (${latency}ms) ${body}`, {
       httpRequest: {
         status: res.statusCode,
         requestUrl: req.originalUrl,
         requestMethod: req.method,
         remoteIp: req.connection.remoteAddress,
-        latency,
-        timeout,
-        user: req.user,
-        // etc.
+        latency: { seconds, nanos },
+        userAgent: req.get('User-Agent'),
       },
+      timeout,
+      user: req.user,
     });
 
     logged = true;
   }
 
   const timeout = setTimeout(() => {
-    res.status(503).send('Too many wanderers are lost.').end();
-    logRequest(true);
+    // Send a 503 to indicate a timeout
+    if (!res.finished) {
+      res.status(503).send('Too many wanderers are lost.').end();
+    }
+
+    // If the request hasn't already been logged, log it.
+    // This is silly, but it semes to happen that requests hit this even though
+    // they already logged...maybe it's an async problem
+    if (!logged) {
+      logRequest(true);
+    }
   }, 30000);
 
   // Log all incoming api requests!

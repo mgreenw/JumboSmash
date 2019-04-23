@@ -50,6 +50,18 @@ const styles = StyleSheet.create({
   }
 });
 
+/**
+ * Order of elements:
+ * First Photo
+ * Name
+ * Bio
+ * ?Middle Photo 1
+ * ?Extended Field 1
+ * ?Extended Field 2
+ * ?Middle Photo 3
+ * ?Extended Field 3
+ * ?Last Photo
+ */
 const CardView = (props: Props) => {
   const { profile, onMinimize, onBlockReport } = props;
 
@@ -70,7 +82,8 @@ const CardView = (props: Props) => {
 
   const {
     postgradRegion: postgradLocationCode,
-    freshmanDorm: freshmanDormCode
+    freshmanDorm: freshmanDormCode,
+    springFlingActArtist
   } = profile.fields;
 
   const postgradLocation = postgradLocationCode
@@ -112,6 +125,44 @@ const CardView = (props: Props) => {
     </View>
   ) : null;
 
+  const [{ url: artistUrl = null }] = springFlingActArtist
+    ? springFlingActArtist.images.slice(-1)
+    : [{}];
+  const artistBlock = springFlingActArtist ? (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%',
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}
+      >
+        <View>
+          <Text
+            style={[
+              textStyles.body2StyleBold,
+              { textAlign: 'left', paddingBottom: 5 }
+            ]}
+          >
+            {'Spring Fling Artist'}
+          </Text>
+
+          <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+            {springFlingActArtist.name}
+          </Text>
+        </View>
+
+        {artistUrl && (
+          <Image
+            style={{ width: 60, height: 60, borderRadius: 30 }}
+            uri={artistUrl}
+            resizeMode="contain"
+          />
+        )}
+      </View>
+    </View>
+  ) : null;
+
   const freshmanDormName = freshmanDormCode
     ? dormCodeToName(freshmanDormCode)
     : null;
@@ -131,7 +182,7 @@ const CardView = (props: Props) => {
               { textAlign: 'left', paddingBottom: 5 }
             ]}
           >
-            {'1st Year Dorm'}
+            {'First Year Dorm'}
           </Text>
 
           <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
@@ -141,6 +192,73 @@ const CardView = (props: Props) => {
       </View>
     </View>
   ) : null;
+
+  const extendedProfileFields = [
+    postGradLocationBlock,
+    artistBlock,
+    freshmanDormBlock
+  ].sort((a, b) => {
+    // move null fields to end of list.
+    if (a === null && b === null) return 0;
+    if (a === null) return -1;
+    return 1;
+  });
+
+  const nameBlock = (
+    <View style={styles.titleBlock}>
+      <View>
+        <Text
+          style={[
+            textStyles.headline4StyleSwiping,
+            { textAlign: 'center', paddingVertical: 35 }
+          ]}
+        >
+          {`${profile.fields.displayName}, ${getAge(profile.fields.birthday)}`}
+        </Text>
+        <View
+          style={{
+            height: '100%',
+            position: 'absolute',
+            right: 0,
+            width: 50
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onPress={onMinimize}
+          >
+            <CustomIcon name="down" size={40} color={Colors.SunYellow} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
+  const bioBlock = (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%'
+        }}
+      >
+        <Text
+          style={[
+            textStyles.body2StyleBold,
+            { textAlign: 'left', paddingBottom: 5 }
+          ]}
+        >
+          {'About Me'}
+        </Text>
+        <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+          {profile.fields.bio}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -160,62 +278,13 @@ const CardView = (props: Props) => {
         }}
       >
         {firstPhoto}
-        <View style={styles.titleBlock}>
-          <View>
-            <Text
-              style={[
-                textStyles.headline4StyleSwiping,
-                { textAlign: 'center', paddingVertical: 35 }
-              ]}
-            >
-              {`${profile.fields.displayName}, ${getAge(
-                profile.fields.birthday
-              )}`}
-            </Text>
-            <View
-              style={{
-                height: '100%',
-                position: 'absolute',
-                right: 0,
-                width: 50
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onPress={onMinimize}
-              >
-                <CustomIcon name="down" size={40} color={Colors.SunYellow} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.profileBlock}>
-          <View
-            style={{
-              paddingHorizontal: '10.1%'
-            }}
-          >
-            <Text
-              style={[
-                textStyles.body2StyleBold,
-                { textAlign: 'left', paddingBottom: 5 }
-              ]}
-            >
-              {'About Me'}
-            </Text>
-            <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
-              {profile.fields.bio}
-            </Text>
-          </View>
-        </View>
-        {postGradLocationBlock}
-        {freshmanDormBlock}
+        {nameBlock}
+        {bioBlock}
         {middlePhoto1}
+        {extendedProfileFields[0]}
+        {extendedProfileFields[1]}
         {middlePhoto2}
+        {extendedProfileFields[2]}
         {lastPhoto}
         {onBlockReport && (
           <View style={styles.profileBlock}>

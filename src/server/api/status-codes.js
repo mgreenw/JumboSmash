@@ -21,6 +21,10 @@ exports.PROFILE_SETUP_INCOMPLETE = {
   status: 'PROFILE_SETUP_INCOMPLETE',
   code: 403,
 };
+exports.PRELAUNCH_WALL_ACTIVE = {
+  status: 'PRELAUNCH_WALL_ACTIVE',
+  code: 510,
+};
 exports.TERMINATED = {
   status: 'TERMINATED',
   code: 401,
@@ -54,6 +58,10 @@ exports.SEND_VERIFICATION_EMAIL__EMAIL_ALREADY_SENT = {
 };
 exports.SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL = {
   status: 'SEND_VERIFICATION_EMAIL__NOT_TUFTS_EMAIL',
+  code: 400,
+};
+exports.SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS = {
+  status: 'SEND_VERIFICATION_EMAIL__TOO_MANY_EMAILS',
   code: 400,
 };
 
@@ -318,6 +326,12 @@ exports.READ_MESSAGE__FAILURE = {
 // Send Feedback
 exports.SEND_FEEDBACK__SUCCESS = {
   status: 'SEND_FEEDBACK__SUCCESS',
+  code: 200,
+};
+
+// Get Launch Date
+exports.GET_LAUNCH_DATE__SUCCESS = {
+  status: 'GET_LAUNCH_DATE__SUCCESS',
   code: 200,
 };
 

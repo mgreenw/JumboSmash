@@ -11,7 +11,8 @@ exports.postVerificationCode = (
   utln: string,
   email: string,
 ) => {
-  if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
+  // Only in staging and development
+  if (NODE_ENV === 'staging' || NODE_ENV === 'development') {
     verificationCodes.send(`
       code:  *${verificationCode}*
       utln:  *${utln}*
