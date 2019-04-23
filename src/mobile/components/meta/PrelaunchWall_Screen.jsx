@@ -22,7 +22,8 @@ type NavigationProps = {
 };
 type DispatchProps = {};
 type ReduxProps = {
-  launchDate: Date
+  launchDate: Date,
+  isAdmin: boolean
 };
 type Props = NavigationProps & DispatchProps & ReduxProps;
 
@@ -34,7 +35,8 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('No launch date status on Prelaunch Wall Screen');
   }
   return {
-    launchDate: new Date(launchDateStatus.launchDate)
+    launchDate: new Date(launchDateStatus.launchDate),
+    isAdmin: !!reduxState.client && reduxState.client.settings.isAdmin
   };
 }
 
@@ -54,8 +56,14 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
     navigate(routes.ProfileEdit, {});
   };
 
+  _onAdminPress = () => {
+    const { navigation } = this.props;
+    const { navigate } = navigation;
+    navigate(routes.AdminStack, {});
+  };
+
   render() {
-    const { launchDate } = this.props;
+    const { launchDate, isAdmin } = this.props;
     return (
       <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
         <AndroidBackHandler onBackPress={() => true} />
@@ -145,10 +153,21 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
                 'Your profile is ready. In the meantime, don’t forget to tell your friends.'
               }
             </Text>
-            <SecondaryButton
-              title={'Edit Profile'}
-              onPress={this._onProfileEditPress}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+                justifyContent: 'space-around'
+              }}
+            >
+              <SecondaryButton
+                title={'Edit Profile'}
+                onPress={this._onProfileEditPress}
+              />
+              {isAdmin && (
+                <SecondaryButton title={'Admin'} onPress={this._onAdminPress} />
+              )}
+            </View>
           </View>
         </Transition>
       </SafeAreaView>

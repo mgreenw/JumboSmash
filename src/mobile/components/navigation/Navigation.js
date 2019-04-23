@@ -55,9 +55,14 @@ import OnboardingFinish from 'mobile/components/App/Onboarding/OnboadingFinish_S
 import OnboardingTermsAndConditions from 'mobile/components/App/Onboarding/OnboardingTermsAndConditions_Screen';
 import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingSettingsInfo_Screen';
 
+// Meta Screens
 import TerminatedScreen from 'mobile/components/Auth/Terminated_Screen';
 import PrelaunchWallScreen from 'mobile/components/meta/PrelaunchWall_Screen';
 import PrelaunchStartScreen from 'mobile/components/meta/PrelaunchStart_Screen';
+
+// Admin Screens
+import AdminClassmateListScreen from 'mobile/components/Admin/ClassmateList_Screen';
+import AdminClassmateOverviewScreen from 'mobile/components/Admin/ClassmateOverview_Screen';
 
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
@@ -276,6 +281,23 @@ OnboardingStack.navigationOptions = () => {
   };
 };
 
+const AdminStack = createStackNavigator(
+  {
+    [routes.AdminClassmateList]: { screen: AdminClassmateListScreen },
+    [routes.AdminClassmateOverview]: { screen: AdminClassmateOverviewScreen }
+  },
+  {
+    initialRouteName: routes.AdminClassmateList,
+    ...removeHeader
+  }
+);
+
+AdminStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 const createRootNavigator = () =>
   FluidNavigator(
     {
@@ -284,6 +306,7 @@ const createRootNavigator = () =>
       [routes.MainSwitch]: MainContentSwitch,
       [routes.AppLoading]: { screen: AppLoading },
       [routes.Terminated]: { screen: TerminatedScreen },
+      [routes.AdminStack]: AdminStack,
       [routes.Prelaunch]: PrelaunchStack
     },
     {
