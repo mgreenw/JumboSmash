@@ -1,13 +1,16 @@
 // @flow
 
 import React from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View, ImageBackground, AlertIOS } from 'react-native';
 import routes from 'mobile/components/navigation/routes';
 import { connect } from 'react-redux';
-import { Button } from 'react-native-elements';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import { ListItem } from 'react-native-elements';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import getClassmatesAction from 'mobile/actions/admin/getClassmates';
+import type { ServerClassmate } from 'mobile/api/serverTypes';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -15,19 +18,32 @@ const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.pn
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
+type DispatchProps = {
+  getClassmates: (password: string) => void
+};
 
-type DispatchProps = {};
-
-type ReduxProps = {};
+type ReduxProps = {
+  classmateMap: { [id: number]: ServerClassmate },
+  classmateIds: number[],
+  getClassmatesInProgress: boolean
+};
 
 type Props = DispatchProps & ReduxProps & NavigationProps;
 
 function mapStateToProps(state: ReduxState): ReduxProps {
-  return {};
+  return {
+    classmateMap: state.classmatesById,
+    classmateIds: state.classmateIds,
+    getClassmatesInProgress: state.inProgress.getClassmates
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
-  return {};
+  return {
+    getClassmates: (password: string) => {
+      dispatch(getClassmatesAction(password));
+    }
+  };
 }
 
 type State = {};
@@ -38,13 +54,39 @@ class ClassmateListScreen extends React.Component<Props, State> {
     this.state = {};
   }
 
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: '100%'
+        }}
+      />
+    );
+  };
+
+  _onRefresh = () => {
+    const { getClassmates } = this.props;
+    AlertIOS.prompt('Enter your password', null, text => {
+      getClassmates(text);
+    });
+  };
+
   _onBack = () => {
+    NavigationService.enterApp();
+  };
+
+  _onPress = (id: number) => {
     const { navigation } = this.props;
+    navigation.navigate(routes.AdminClassmateOverview, { id });
+  };
+
+  _onBack = () => {
     NavigationService.enterApp();
   };
 
   render() {
-    const { navigation } = this.props;
+    const { classmateIds, getClassmatesInProgress } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -56,11 +98,24 @@ class ClassmateListScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
-          <Button
-            title={'Navigate to Classmate Overview'}
-            onPress={() => {
-              navigation.navigate(routes.AdminClassmateOverview);
+          <KeyboardAwareFlatList
+            enableResetScrollToCoords={false}
+            data={classmateIds}
+            renderItem={({ item: id }: { item: number }) => {
+              return (
+                <ListItem
+                  onPress={() => {
+                    this._onPress(id);
+                  }}
+                  title={id.toString()}
+                />
+              );
             }}
+            keyExtractor={id => id.toString()}
+            ItemSeparatorComponent={this.renderSeparator}
+            ListHeaderComponent={null /* TODO: Header search bar */}
+            refreshing={getClassmatesInProgress}
+            onRefresh={this._onRefresh}
           />
         </View>
       </View>

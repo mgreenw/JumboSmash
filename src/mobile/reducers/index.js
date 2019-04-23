@@ -117,14 +117,17 @@ import type {
   ServerMatch,
   ServerMessage,
   ServerCandidate,
-  ServerReadReceipt
+  ServerReadReceipt,
+  ServerClassmate
 } from 'mobile/api/serverTypes';
+import type { GetClassmates_Action } from './admin/getClassmates';
 import type { ReadMessage_Action } from './conversations/readMessage';
 import type { NetworkChange_Action } from './offline-fork';
 import { handleNetworkChange, CONNECTION_CHANGE } from './offline-fork';
 import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
+import GetClassmatesReducer from './admin/getClassmates';
 import type {
   Artist,
   Artist_Action,
@@ -423,7 +426,7 @@ export type InProgress = {|
   reportUser: boolean,
   unmatch: boolean,
   sendFeedback: boolean,
-  checkLaunchDate: boolean,
+  getClassmates: boolean,
 
   sendMessage: { [userId: number]: { [messageUuid: string]: boolean } },
   readMessage: { [userId: number]: { [messageId: number]: boolean } },
@@ -490,6 +493,9 @@ export type ReduxState = {|
   bottomToast: BottomToast,
   topToast: TopToast,
 
+  // Classmates (ADMIN)
+  classmateIds: number[],
+  classmatesById: { [number]: ServerClassmate },
   artists: Artist_ReduxState,
   launchDate: LaunchDate_ReduxState
 |};
@@ -557,6 +563,7 @@ export type Action =
   | SendFeedbackInitiated_Action
   | SendFeedbackCompleted_Action
   | SendFeedbackFailed_Action
+  | GetClassmates_Action
   | Artist_Action
   | LaunchDate_Action;
 
@@ -597,7 +604,7 @@ export const initialState: ReduxState = {
     reportUser: false,
     unmatch: false,
     sendFeedback: false,
-    checkLaunchDate: false
+    getClassmates: false
   },
   response: {
     sendVerificationEmail: null,
@@ -642,6 +649,8 @@ export const initialState: ReduxState = {
     uuid: '0',
     code: 'INITIAL'
   },
+  classmateIds: [],
+  classmatesById: {},
   artists: Artist_DefaultReduxState,
   launchDate: LaunchDate_DefaultReduxState
 };
@@ -1962,6 +1971,17 @@ export default function rootReducer(
       return ReadMessageReducer.fail(state, action);
     }
 
+    case 'GET_CLASSMATES__INITIATED': {
+      return GetClassmatesReducer.initiate(state, action);
+    }
+
+    case 'GET_CLASSMATES__COMPLETED': {
+      return GetClassmatesReducer.complete(state, action);
+    }
+
+    case 'GET_CLASSMATES__FAILED': {
+      return GetClassmatesReducer.fail(state, action);
+    }
     case 'SEARCH_ARTISTS__INITIATED': {
       return {
         ...state,

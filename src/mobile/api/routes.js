@@ -25,6 +25,7 @@ const PHOTOS = 'photos/';
 const RELATIONSHIPS = 'relationships/';
 const CONVERSATIONS = 'conversations/';
 const META = 'meta/';
+const ADMIN = 'admin/';
 const ARTISTS = 'artists/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
@@ -33,6 +34,7 @@ const PHOTOS_ROUTE = SERVER_ROUTE + API + PHOTOS;
 const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
 const CONVERSATIONS_ROUTE = SERVER_ROUTE + API + CONVERSATIONS;
 const META_ROUTE = SERVER_ROUTE + API + META;
+const ADMIN_ROUTE = SERVER_ROUTE + API + ADMIN;
 export const ARTIST_ROUTE = SERVER_ROUTE + API + ARTISTS;
 
 // //////////////
@@ -115,6 +117,11 @@ export const READ_MESSAGE__ROUTE__GENERATOR = (
   matchUserId: number,
   messageId: number
 ) => `${CONVERSATIONS_ROUTE}${matchUserId}/messages/${messageId}`;
+
+// Admin:
+// Get Classmates
+const CLASSMATES = 'classmates/';
+export const GET_CLASSMATES_ROUTE = ADMIN_ROUTE + CLASSMATES;
 
 // Send Feedback
 const FEEDBACK = 'feedback/';

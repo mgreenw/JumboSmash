@@ -42,13 +42,17 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
+    const classmateId: ?number = navigation.getParam('id', null);
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="Overview"
+          title={`Overview for userId: ${classmateId || 'NOT FOUND'}`}
           leftIcon={{ name: 'back', onPress: this._onBack }}
         />
-        <View style={{ flex: 1 }}>
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
           <ImageBackground
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}

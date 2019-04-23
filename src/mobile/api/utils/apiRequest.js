@@ -11,23 +11,46 @@ import {
 } from '../sharedResponseCodes';
 
 type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
+
+function constructHeaders(authorizationToken: ?string, adminPassword: ?string) {
+  const baseHeaders = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
+  };
+
+  const authHeaders = authorizationToken
+    ? {
+        ...baseHeaders,
+        Authorization: authorizationToken
+      }
+    : baseHeaders;
+
+  const passwordHeaders = adminPassword
+    ? {
+        ...authHeaders,
+        'Admin-Authorization': adminPassword
+      }
+    : authHeaders;
+
+  return passwordHeaders;
+}
+
 export default function apiRequest(
   method: Method,
   route: string,
-  request: ?Object
+  request: ?Object,
+  adminPassword: ?string
 ): Promise<Object> {
-  const { token } = store.getState();
-  const auth = token || 'NO_TOKEN';
+  const { token = 'NO_TOKEN' } = store.getState();
+
+  const headers = constructHeaders(token, adminPassword);
+
   return timeout(
     30000,
     // eslint-disable-next-line no-undef
     fetch(route, {
       method,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: auth
-      },
+      headers,
       body: request && JSON.stringify(request)
     })
   )
