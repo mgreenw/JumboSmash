@@ -47,7 +47,6 @@ app.use((req, res, next) => {
     const seconds = Math.floor(latency / 1000);
     const nanos = (latency - (seconds * 1000)) * 1000000;
 
-    const requestHasBody = Object.entries(req.body).length !== 0;
     const responseStatus = res.body && res.body.status;
     logger.info(`${req.method} ${req.originalUrl} (${latency}ms)`, {
       httpRequest: {
@@ -72,6 +71,7 @@ app.use((req, res, next) => {
 
     // Log body to debug console if in development
     if (NODE_ENV === 'development') {
+      const requestHasBody = Object.entries(req.body).length !== 0;
       logger.debug(`${requestHasBody ? `\nBody: ${JSON.stringify(req.body, null, 2)}` : ''}\nResponse Status: ${responseStatus}`);
     }
 
