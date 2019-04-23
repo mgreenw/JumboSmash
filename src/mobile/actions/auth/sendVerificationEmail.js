@@ -76,7 +76,7 @@ export function sendVerificationEmailAction(
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      sendVerificationEmail_api({ email, forceResend })
+      sendVerificationEmail_api({ email: email.trim(), forceResend })
         .then(response => {
           dispatch(complete(response));
         })
