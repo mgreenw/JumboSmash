@@ -57,6 +57,7 @@ import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingS
 
 import TerminatedScreen from 'mobile/components/Auth/Terminated_Screen';
 import PrelaunchWallScreen from 'mobile/components/meta/PrelaunchWall_Screen';
+import PrelaunchStartScreen from 'mobile/components/meta/PrelaunchStart_Screen';
 
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
@@ -66,7 +67,7 @@ const removeHeader = {
   headerMode: 'none'
 };
 
-const PrelaunchStack = createStackNavigator(
+const PrelaunchWallStack = createStackNavigator(
   {
     [routes.PrelaunchWall]: { screen: PrelaunchWallScreen },
     [routes.ProfileEdit]: { screen: ProfileEdit },
@@ -76,6 +77,43 @@ const PrelaunchStack = createStackNavigator(
   },
   {
     initialRouteName: routes.PrelaunchWall,
+    ...removeHeader
+  }
+);
+
+PrelaunchWallStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
+const PrelaunchStartStack = createStackNavigator(
+  {
+    [routes.PrelaunchStart]: { screen: PrelaunchStartScreen },
+    [routes.ProfileEdit]: { screen: ProfileEdit },
+    [routes.SelectCity]: { screen: SelectCity },
+    [routes.SelectDorm]: { screen: SelectDorm },
+    [routes.SelectArtist]: { screen: SelectArtist }
+  },
+  {
+    initialRouteName: routes.PrelaunchStart,
+    ...removeHeader
+  }
+);
+
+PrelaunchStartStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
+const PrelaunchStack = FluidNavigator(
+  {
+    [routes.PrelaunchWallStack]: PrelaunchWallStack,
+    [routes.PrelaunchStartStack]: PrelaunchStartStack
+  },
+  {
+    initialRouteName: routes.PrelaunchWallStack,
     ...removeHeader
   }
 );

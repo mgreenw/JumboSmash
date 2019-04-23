@@ -105,10 +105,7 @@ function getCurrentRoute(): { routeName: string, params: Object } {
  */
 function enterApp() {
   const { launchDate } = store.getState();
-  if (!launchDate)
-    throw new Error('No launchDate in NavigationServce.enterApp()');
-  const now = new Date();
-  if (launchDate > now) {
+  if (!launchDate.status || launchDate.status.wallIsUp) {
     navigate(routes.Prelaunch);
   } else {
     navigate(routes.MainSwitch);

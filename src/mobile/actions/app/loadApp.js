@@ -8,6 +8,7 @@ import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
 import getMyPhotos from 'mobile/api/users/GetMyPhotos';
 import checkLaunchDate from 'mobile/api/meta/checkLaunchDate';
 import Sentry from 'sentry-expo';
+import type { LaunchDateStatus } from 'mobile/api/serverTypes';
 
 export type LoadAppInitiated_Action = {
   type: 'LOAD_APP__INITIATED',
@@ -20,7 +21,7 @@ export type LoadAppCompleted_Action = {
     onboardingCompleted: boolean,
     profile: UserProfile,
     settings: UserSettings,
-    launchDate: Date
+    launchDateStatus: LaunchDateStatus
   },
   meta: {}
 };
@@ -37,7 +38,7 @@ function complete(
   profile: ?UserProfile,
   settings: ?UserSettings,
   onboardingCompleted: boolean,
-  launchDate: Date,
+  launchDateStatus: LaunchDateStatus,
   photoUuids: ?(string[])
 ): LoadAppCompleted_Action {
   return {
@@ -77,7 +78,7 @@ function complete(
         expoPushToken: null,
         isAdmin: false
       },
-      launchDate
+      launchDateStatus
     },
     meta: {}
   };
@@ -92,18 +93,18 @@ export default () => (dispatch: Dispatch) => {
     getMySettings(),
     getClientUtln()
   ])
-    .then(([launchDate, profile, photoIds, settings, utln]) => {
+    .then(([launchDateStatus, profile, photoIds, settings, utln]) => {
       Sentry.setUserContext({
         username: utln
       });
-      /* 
-      Commeting this out so we don't burn through sentry limits
-      Sentry.captureMessage('User Logged In!', {
-        level: 'info'
-      }); */
-
       dispatch(
-        complete(profile, settings, profile !== null, launchDate, photoIds)
+        complete(
+          profile,
+          settings,
+          profile !== null,
+          launchDateStatus,
+          photoIds
+        )
       );
     })
     .catch(error => {

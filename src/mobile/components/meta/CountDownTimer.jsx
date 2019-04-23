@@ -22,11 +22,13 @@ type State = {
   days: number,
   hours: number,
   minutes: number,
-  seconds: number
+  seconds: number,
+  complete: boolean
 };
 
 type Props = {
-  date: Date
+  date: Date,
+  onZero: () => void
 };
 
 export default class CountDownTimer extends React.Component<Props, State> {
@@ -41,7 +43,8 @@ export default class CountDownTimer extends React.Component<Props, State> {
       days,
       hours,
       minutes,
-      seconds
+      seconds,
+      complete: false
     };
   }
 
@@ -50,19 +53,30 @@ export default class CountDownTimer extends React.Component<Props, State> {
     this.setState({ timer });
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { complete: wasComplete } = prevState;
+    const { complete: nowComplete } = this.state;
+    const { onZero } = this.props;
+    if (!wasComplete && nowComplete) {
+      onZero();
+    }
+  }
+
   componentWillUnmount() {
     const { timer } = this.state;
-
-    // See: https://medium.com/the-react-native-log/getting-eslint-right-in-react-native-bd27524cc77b
-    // Esentially this is a Browser API. This is totally safe, but non-standard in react-native untill recently (part of deprecating Mixins)
-    // $FlowFixMe
-    this.clearInterval(timer);
+    clearInterval(timer);
   }
 
   tick = () => {
     const { date } = this.props;
     const { days, hours, minutes, seconds } = timeDifference(new Date(), date);
-    this.setState({ days, hours, minutes, seconds });
+    this.setState({
+      days,
+      hours,
+      minutes,
+      seconds,
+      complete: new Date() > date
+    });
     this._pulse();
   };
 

@@ -134,6 +134,14 @@ import {
   DefaultReduxState as Artist_DefaultReduxState,
   Reducers as Artist_Reducers
 } from './artists';
+import type {
+  ReduxState as LaunchDate_ReduxState,
+  Action as LaunchDate_Action
+} from './meta/launchDate';
+import {
+  DefaultReduxState as LaunchDate_DefaultReduxState,
+  Reducers as LaunchDate_Reducers
+} from './meta/launchDate';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -436,7 +444,6 @@ export type ApiResponse = {|
 
 // TODO: seperate state into profile, meta, API responses, etc.
 export type ReduxState = {|
-  launchDate: ?Date,
   network: { isConnected: boolean },
 
   numBadges: null | number, // one of the few numbers in the app that quite frequently IS 0, so !!number is inacurate, so we don't have a maybe type.
@@ -483,7 +490,8 @@ export type ReduxState = {|
   bottomToast: BottomToast,
   topToast: TopToast,
 
-  artists: Artist_ReduxState
+  artists: Artist_ReduxState,
+  launchDate: LaunchDate_ReduxState
 |};
 
 export type Action =
@@ -549,7 +557,8 @@ export type Action =
   | SendFeedbackInitiated_Action
   | SendFeedbackCompleted_Action
   | SendFeedbackFailed_Action
-  | Artist_Action;
+  | Artist_Action
+  | LaunchDate_Action;
 
 export type GetState = () => ReduxState;
 
@@ -558,7 +567,6 @@ export type Dispatch = ReduxDispatch<Action> & Thunk<Action>;
 export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 export const initialState: ReduxState = {
-  launchDate: null,
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
   numBadges: null, // indicate we have not yet determined how many badges
   token: null,
@@ -634,7 +642,8 @@ export const initialState: ReduxState = {
     uuid: '0',
     code: 'INITIAL'
   },
-  artists: Artist_DefaultReduxState
+  artists: Artist_DefaultReduxState,
+  launchDate: LaunchDate_DefaultReduxState
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -968,7 +977,7 @@ export default function rootReducer(
         profile,
         settings,
         onboardingCompleted,
-        launchDate
+        launchDateStatus
       } = action.payload;
       return {
         ...state,
@@ -983,7 +992,12 @@ export default function rootReducer(
           loadApp: false
         },
         onboardingCompleted,
-        launchDate
+
+        // Ideally a reducer should not touch launchDate slice, but loadApp is special
+        launchDate: {
+          ...state.launchDate,
+          status: launchDateStatus
+        }
       };
     }
 
@@ -1966,6 +1980,36 @@ export default function rootReducer(
       return {
         ...state,
         artists: Artist_Reducers.Search.fail(state.artists, action)
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__INITIATED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.initiate(
+          state.launchDate,
+          action
+        )
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__COMPLETED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.complete(
+          state.launchDate,
+          action
+        )
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__FAILED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.fail(
+          state.launchDate,
+          action
+        )
       };
     }
 
