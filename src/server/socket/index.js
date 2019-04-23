@@ -7,6 +7,7 @@ import type { SocketIO } from 'socket.io';
 const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
 const config = require('config');
+const Sentry = require('@sentry/node');
 
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
 const logger = require('../logger');
@@ -76,23 +77,22 @@ class Socket {
     });
     /* eslint-enable no-param-reassign */
 
-    logger.info(`Socket listening at ${namespace}`);
-
     _io.on('connection', (socket) => {
-      logger.info(`Connection via socket: ${JSON.stringify(socket.user, null, 2)}`);
+      logger.info(`${socket.user.utln} came online`);
 
       socket.join(socket.user.id.toString(), (err) => {
         if (err) {
-          logger.error('Socket failed to join room', err);
+          logger.error(`Socket connection for user ${socket.user.id} failed to join room`, err);
         }
       });
 
       socket.on('error', (err) => {
-        logger.error('Socket Error', err);
+        logger.error('Unexpected socket error', err);
+        Sentry.captureException(err);
       });
 
       socket.on('disconnect', () => {
-        logger.info(`Socket disconnected: ${socket.user.id}`);
+        logger.info(`${socket.user.utln} went offline`);
       });
 
       socket.on('TYPING', async (otherUserId: number) => {

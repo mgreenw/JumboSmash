@@ -72,7 +72,7 @@ export default class BioInput extends BaseInput {
             placeholderTextColor={Colors.Grey80}
             placeholder={placeholder}
             onChangeText={text => {
-              const noIndents = text.replace(/(\n)( *)(\n)/, '\n');
+              const noIndents = text.replace(/(\n)( *)(\n)(\n)/, '\n\n');
               return onChangeText(noIndents);
             }}
             autoCorrect

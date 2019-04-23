@@ -6,6 +6,7 @@ import { timeout } from './timeout';
 import {
   UNAUTHORIZED,
   TERMINATED,
+  BIRTHDAY_UNDER_18,
   NETWORK_REQUEST_FAILED
 } from '../sharedResponseCodes';
 
@@ -59,6 +60,9 @@ export default function apiRequest(
         throw UNAUTHORIZED;
       }
       if (response.status === TERMINATED) {
+        if (response.data && response.data.reason === BIRTHDAY_UNDER_18) {
+          throw BIRTHDAY_UNDER_18;
+        }
         throw TERMINATED;
       }
       return response;

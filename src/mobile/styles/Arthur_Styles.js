@@ -1,6 +1,7 @@
 // @flow
 
 import { StyleSheet } from 'react-native';
+import { isAndroid } from 'mobile/utils/Platform';
 import { Colors } from './colors';
 
 // Arthur Styles is our set of standardized styles.
@@ -51,6 +52,7 @@ export const Arthur_Styles = StyleSheet.create({
     fontFamily: 'VeganStyle',
     fontSize: 45,
     padding: 15,
+    width: isAndroid() ? '100%' : null,
     textAlign: 'center'
   },
   onboardingHeader: {

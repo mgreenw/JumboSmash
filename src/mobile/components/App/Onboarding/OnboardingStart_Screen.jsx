@@ -75,8 +75,10 @@ class OnboardingStartScreen extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={
           <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
             {"Let's get your profile setup before you begin swiping."}

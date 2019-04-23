@@ -74,7 +74,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:1.6.0
+    image: maxgreenwald/projectgem:1.9.1
     environment:
       NODE_ENV: staging
     secrets:
@@ -87,28 +87,17 @@ services:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - SPOTIFY_CLIENT_SECRET
+      - REDIS_HOST
+      - LAUNCH_DATE
     networks:
       - traefik-net
     deploy:
+      replicas: 2
       labels:
         - traefik.backend=server
         - traefik.frontend.entryPoints=http,https
         - traefik.port=3000
         - traefik.frontend.rule=Host:stagingserver.jumbosmash.com
-        - traefik.backend.loadbalancer.stickiness=true
-
-  #
-  # redis service
-  #
-
-  redis:
-    image: redis
-    networks:
-       - traefik-net
-    deploy:
-      labels:
-        - traefik.backend=redis
-        - traefik.port=6379
         - traefik.backend.loadbalancer.stickiness=true
 
 
@@ -160,6 +149,10 @@ secrets:
    DOCKER_PASSWORD:
     external: true
    SPOTIFY_CLIENT_SECRET:
+    external: true
+   REDIS_HOST:
+    external: true
+   LAUNCH_DATE:
     external: true
 
 networks:

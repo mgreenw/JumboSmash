@@ -58,6 +58,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
   };
 
   render() {
+    const { navigation } = this.props;
     const body = (
       <View style={{ flex: 1, width: '100%', justifyContent: 'center' }}>
         <Text style={textStyles.body1Style}>
@@ -70,10 +71,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
               textDecorationLine: 'underline'
             }}
             onPress={() => {
-              // TODO: Make this go to the jumbosmash.com
-              WebBrowser.openBrowserAsync(
-                'https://arthur.jumbosmash.com/gender.html'
-              );
+              WebBrowser.openBrowserAsync('https://jumbosmash.com/gender.html');
             }}
           >
             {'Statement on Gender'}
@@ -87,6 +85,7 @@ export default class OnboardingSettingsInfoScreen extends React.Component<
     );
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         infoScreen
         section="settings"

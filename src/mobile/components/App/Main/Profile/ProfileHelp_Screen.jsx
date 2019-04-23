@@ -8,10 +8,15 @@ import { PrimaryButton } from 'mobile/components/shared/buttons';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import { sendSupportEmail } from 'mobile/utils/Mail';
+import type { NavigationScreenProp } from 'react-navigation';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
-type Props = {};
+type NavigationProps = {
+  navigation: NavigationScreenProp<any>
+};
+
+type Props = NavigationProps;
 
 type State = {
   showFeedbackPopup: boolean
@@ -27,7 +32,8 @@ class ProfileHelp extends React.Component<Props, State> {
   }
 
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   render() {
@@ -36,8 +42,10 @@ class ProfileHelp extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Help & Contact"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{
+            name: 'back',
+            onPress: this._onBack
+          }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground

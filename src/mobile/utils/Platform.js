@@ -14,4 +14,8 @@ const isIphoneX = () => {
   );
 };
 
-export { isIphoneX };
+const isAndroid = () => {
+  return Platform.OS === 'android';
+};
+
+export { isIphoneX, isAndroid };

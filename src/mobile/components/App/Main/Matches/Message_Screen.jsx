@@ -41,6 +41,7 @@ import { TypingAnimation } from 'react-native-typing-animation';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import formatMessage from 'mobile/utils/FormatMessage';
 import { isIphoneX } from 'mobile/utils/Platform';
+import Collapsible from 'react-native-collapsible';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -567,6 +568,11 @@ class MessagingScreen extends React.Component<Props, State> {
     });
   };
 
+  _goBack = () => {
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
+  };
+
   _hideExpandedCard = () => {
     this.setState({
       showExpandedCard: false
@@ -605,34 +611,32 @@ class MessagingScreen extends React.Component<Props, State> {
   // the internal animation must be absolutely positioned.
   _renderOtherUserTyping = ({ extraData }: { extraData: ExtraData }) => {
     const { showOtherUserTyping } = extraData;
-    if (!showOtherUserTyping) {
-      return null;
-    }
     return (
-      <View
-        style={[
-          BubbleStyles.containerLeft,
-          wrapperBase,
-          {
-            borderColor: Colors.Grey80,
-            marginLeft: 10,
-            height: 40,
-            top: -8,
-            width: 72,
-            paddingLeft: 18
-          }
-        ]}
-      >
-        <TypingAnimation
-          dotColor={Colors.Black}
-          dotMargin={7}
-          dotAmplitude={4}
-          dotSpeed={0.15}
-          dotRadius={3.5}
-          dotX={11}
-          dotY={12}
-        />
-      </View>
+      <Collapsible collapsed={!showOtherUserTyping} style={{ height: 48 }}>
+        <View
+          style={[
+            BubbleStyles.containerLeft,
+            wrapperBase,
+            {
+              borderColor: Colors.Grey80,
+              marginLeft: 10,
+              height: 40,
+              width: 72,
+              paddingLeft: 18
+            }
+          ]}
+        >
+          <TypingAnimation
+            dotColor={Colors.Black}
+            dotMargin={7}
+            dotAmplitude={4}
+            dotSpeed={0.15}
+            dotRadius={3.5}
+            dotX={11}
+            dotY={12}
+          />
+        </View>
+      </Collapsible>
     );
   };
 
@@ -784,11 +788,7 @@ class MessagingScreen extends React.Component<Props, State> {
       <BlockPopup
         visible={showBlockPopup}
         onCancel={() => this.setState({ showBlockPopup: false })}
-        onDone={() =>
-          this.setState({ showBlockPopup: false }, () =>
-            NavigationService.back()
-          )
-        }
+        onDone={() => this.setState({ showBlockPopup: false }, this._goBack)}
         displayName={displayName}
         userId={match.profile}
       />
@@ -808,7 +808,7 @@ class MessagingScreen extends React.Component<Props, State> {
         onDone={block =>
           this.setState(
             { showReportPopup: false },
-            () => block && NavigationService.back()
+            () => block && this._goBack()
           )
         }
         displayName={displayName}
@@ -827,11 +827,7 @@ class MessagingScreen extends React.Component<Props, State> {
       <UnmatchPopup
         visible={showUnmatchPopup}
         onCancel={() => this.setState({ showUnmatchPopup: false })}
-        onDone={() =>
-          this.setState({ showUnmatchPopup: false }, () =>
-            NavigationService.back()
-          )
-        }
+        onDone={() => this.setState({ showUnmatchPopup: false }, this._goBack)}
         displayName={displayName}
         matchId={match.profile}
       />
@@ -848,9 +844,13 @@ class MessagingScreen extends React.Component<Props, State> {
         <View>
           <GEMHeader
             title={profile.fields.displayName}
-            leftIconName="back"
-            rightIconName="ellipsis"
-            onRightIconPress={() => this._toggleUserActionSheet(true)}
+            rightIcon={{
+              name: 'ellipsis',
+              onPress: () => {
+                this._toggleUserActionSheet(true);
+              }
+            }}
+            leftIcon={{ name: 'back', onPress: this._goBack }}
             borderBottom
             onTitlePress={() => this._showExpandedCard()}
           />

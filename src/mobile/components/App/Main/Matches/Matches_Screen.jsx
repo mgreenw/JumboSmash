@@ -24,10 +24,11 @@ import NewMatchesList from 'mobile/components/shared/NewMatchesList';
 import Avatar from 'mobile/components/shared/Avatar';
 import type { NavigationScreenProp } from 'react-navigation';
 import routes from 'mobile/components/navigation/routes';
-import formatTime from 'mobile/utils/formattedTimeSince';
+import formatTime from 'mobile/utils/time/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 import { NavigationEvents } from 'react-navigation';
 import formatMessage from 'mobile/utils/FormatMessage';
+import NavigationService from '../../../navigation/NavigationService';
 
 const Seperator = () => {
   return (
@@ -265,7 +266,15 @@ class MessagingScreen extends React.Component<Props, State> {
             }
           }}
         />
-        <GEMHeader title="Messages" leftIconName="cards" />
+        <GEMHeader
+          title="Messages"
+          leftIcon={{
+            name: 'cards',
+            onPress: () => {
+              NavigationService.navigate(routes.Cards);
+            }
+          }}
+        />
         {matchesLoaded ? (
           <View style={{ flex: 1 }}>
             <FlatList
