@@ -2,6 +2,7 @@
 
 const express = require('express');
 const Sentry = require('@sentry/node');
+const mung = require('express-mung');
 
 const logger = require('./logger');
 const api = require('./api');
@@ -9,16 +10,21 @@ const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
 const utils = require('./utils');
 
+const NODE_ENV = utils.getNodeEnv();
+
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
 
 app.use(express.json());
 
+// This grabs the response body and puts it into the res.body field.
+app.use(mung.json((body, req, res) => {
+  res.body = body;
+  return body;
+}));
+
 // Log each incoming request
 app.use((req, res, next) => {
-  const body = Object.entries(req.body).length !== 0
-    ? JSON.stringify(req.body, null, 2)
-    : '';
   const start = new Date().getTime();
   let logged = false;
 
@@ -41,7 +47,9 @@ app.use((req, res, next) => {
     const seconds = Math.floor(latency / 1000);
     const nanos = (latency - (seconds * 1000)) * 1000000;
 
-    logger.info(`${req.method} ${req.originalUrl} (${latency}ms) ${body}`, {
+    const requestHasBody = Object.entries(req.body).length !== 0;
+    const responseStatus = res.body && res.body.status;
+    logger.info(`${req.method} ${req.originalUrl} (${latency}ms)`, {
       httpRequest: {
         status: res.statusCode,
         requestUrl: req.originalUrl,
@@ -50,9 +58,22 @@ app.use((req, res, next) => {
         latency: { seconds, nanos },
         userAgent: req.get('User-Agent'),
       },
-      timeout,
-      user: req.user,
+      request: {
+        body: req.body,
+        user: req.user,
+      },
+      response: {
+        code: res.statusCode,
+        status: responseStatus,
+        latency,
+        timeout,
+      },
     });
+
+    // Log body to debug console if in development
+    if (NODE_ENV === 'development') {
+      logger.debug(`${requestHasBody ? `\nBody: ${JSON.stringify(req.body, null, 2)}` : ''}\nResponse Status: ${responseStatus}`);
+    }
 
     logged = true;
   }
