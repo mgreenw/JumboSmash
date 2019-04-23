@@ -111,7 +111,7 @@ const confirmUpload = async (userId: number) => {
     await client.query(`
       UPDATE classmates
       SET
-        profile_status = 'updated',
+        profile_status = CASE WHEN profile_status = 'unreviewed' THEN profile_status ELSE 'updated' END,
         account_updates = account_updates || jsonb_build_array($2::jsonb)
       WHERE id = $1
     `, [userId, newPhotoUpdate]);

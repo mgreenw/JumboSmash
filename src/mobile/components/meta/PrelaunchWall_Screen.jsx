@@ -90,12 +90,21 @@ class PrelaunchWallScreen extends React.Component<Props, State> {
           }}
         >
           <Transition inline appear="top">
-            <CountDownTimer
-              date={launchDate}
-              onZero={() => {
-                NavigationService.navigate(routes.PrelaunchStartStack);
+            <View
+              style={{
+                /* because we're in a transition we need to wrap 
+                   animated components in a view that prevents overflow */
+                padding: 10,
+                margin: -10
               }}
-            />
+            >
+              <CountDownTimer
+                date={launchDate}
+                onZero={() => {
+                  NavigationService.navigate(routes.PrelaunchStartStack);
+                }}
+              />
+            </View>
           </Transition>
           <Image
             resizeMode="contain"

@@ -40,6 +40,7 @@ apiRouter.use(hasProfile);
 // Any router for which every route requires the user to have already setup
 // a profile for themselves
 apiRouter.use('/relationships', relationshipsRouter);
+apiRouter.use('/admin', adminRouter);
 
 // --> After Launch Only Routers <--
 apiRouter.use(isAfterLaunch);
@@ -47,6 +48,5 @@ apiRouter.use(isAfterLaunch);
 // We need other routes to interact with profiles and potentially relationships
 // to block other users.
 apiRouter.use('/conversations', conversationsRouter);
-apiRouter.use('/admin', adminRouter);
 
 module.exports = apiRouter;
