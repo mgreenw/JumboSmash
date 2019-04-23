@@ -54,7 +54,13 @@ export default function apiRequest(
       if (err === UNAUTHORIZED) {
         throw err;
       }
-      Sentry.captureException(err);
+      Sentry.captureException(err, {
+        extra: {
+          request,
+          route,
+          method
+        }
+      });
       throw err;
     });
 }
