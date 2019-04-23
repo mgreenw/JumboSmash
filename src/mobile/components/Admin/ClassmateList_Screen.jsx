@@ -81,6 +81,10 @@ class ClassmateListScreen extends React.Component<Props, State> {
     navigation.navigate(routes.AdminClassmateOverview, { id });
   };
 
+  _onBack = () => {
+    NavigationService.enterApp();
+  };
+
   render() {
     const { classmateIds, getClassmatesInProgress } = this.props;
     return (
