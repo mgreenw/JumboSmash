@@ -1,13 +1,14 @@
 // @flow
 
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import Popup from 'mobile/components/shared/Popup';
 import type { ReduxState, Dispatch, PopupCode } from 'mobile/reducers/index';
 import { dismissPopup as dismissPopupAction } from 'mobile/actions/popup';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
+import { SecondaryButton } from 'mobile/components/shared/buttons';
 
 type ReduxProps = {
   errorCode: ?PopupCode
@@ -36,11 +37,11 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 function messageFromCode(code: PopupCode) {
   switch (code) {
     case 'UNAUTHORIZED': {
-      return 'Your session token has expired. Please login again!';
+      return 'Looks like you were logged out. Please sign in again!';
     }
 
     case 'EXPIRED_VERIFY_CODE': {
-      return "Looks like your verification code has expired. Probably TuftsSecure's Fault. Let's try this again.";
+      return 'Looks like your verification code has expired. Probably TuftsSecure’s fault.';
     }
 
     case 'SERVER_ERROR': {
@@ -82,6 +83,15 @@ const MasterPopup = (props: Props) => {
       >
         {errorMessage}
       </Text>
+      <View
+        style={{
+          paddingTop: 15,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <SecondaryButton title={'Okay'} onPress={dismissPopup} />
+      </View>
     </Popup>
   );
 };

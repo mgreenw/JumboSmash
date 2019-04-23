@@ -2,22 +2,57 @@
 import moment from 'moment';
 
 // See server/users/utils.js
-const minBirthday = new Date('01/01/1988');
-const maxBirthday = new Date('01/01/2001');
+const oldestBirthday = new Date('01/01/1988');
 
-export function validateBirthday(birthday: string) {
-  const birthdayDate = new Date(birthday);
+type Reason = 'VALID' | 'NOT_REAL_DATE' | 'FUTURE' | 'TOO_OLD';
+type BirthdayValidation = { valid: boolean, reason: Reason };
 
-  // if this fails, this is an invalid date FORMAT
-  if (Number.isNaN(birthdayDate)) {
-    return false;
+export function validateBirthday(birthday: string): BirthdayValidation {
+  const [year, month, day] = birthday
+    .split('-')
+    .map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
+
+  // Note the "month - 1": Javascript's month is 0-indexed. Oof.
+  const birthdayDate = new Date(year, month - 1, day);
+  const now = new Date();
+
+  if (Number.isNaN(birthdayDate.getTime()) || birthdayDate.getDate() !== day) {
+    return { valid: false, reason: 'NOT_REAL_DATE' };
   }
 
-  // Check that the birthday is in a reasonable range
-  if (birthdayDate < minBirthday || birthdayDate > maxBirthday) {
-    return false;
+  if (birthdayDate < oldestBirthday) return { valid: false, reason: 'TOO_OLD' };
+  if (birthdayDate > now) return { valid: false, reason: 'FUTURE' };
+  return { valid: true, reason: 'VALID' };
+}
+
+/**
+ *
+ * @param {Reason} reason map a name error enum to an error message
+ */
+export function birthdayErrorCopy(reason: Reason): string {
+  switch (reason) {
+    case 'FUTURE': {
+      return "Oops, that's in the future!";
+    }
+
+    case 'NOT_REAL_DATE': {
+      return "Oops, that's not a real date!";
+    }
+
+    case 'TOO_OLD': {
+      return "Oops, you're not that old!";
+    }
+
+    case 'VALID': {
+      return '';
+    }
+
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (reason: empty); // ensures we have handled all cases
+      return '';
+    }
   }
-  return true;
 }
 
 export function getAge(birthday: string): number {

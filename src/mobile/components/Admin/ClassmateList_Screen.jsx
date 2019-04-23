@@ -17,6 +17,7 @@ import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import getClassmatesAction from 'mobile/actions/admin/getClassmates';
 import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
 import { Colors } from 'mobile/styles/colors';
+import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -38,7 +39,7 @@ function compareUtln(a: string, b: string) {
 }
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 type DispatchProps = {
   getClassmates: (password: string) => void
@@ -98,6 +99,10 @@ class ClassmateListScreen extends React.Component<Props, State> {
     });
   };
 
+  _onBack = () => {
+    NavigationService.enterApp();
+  };
+
   _onPress = (id: number) => {
     const { navigation } = this.props;
     navigation.navigate(routes.AdminClassmateOverview, { id });
@@ -145,18 +150,25 @@ class ClassmateListScreen extends React.Component<Props, State> {
               justifyContent: 'center'
             }}
           >
-            <Text>{hasProfile ? profileStatus :'NO PROFILE'}</Text>
+            <Text>{hasProfile ? profileStatus : 'NO PROFILE'}</Text>
           </View>
         </View>
       </TouchableHighlight>
     );
   };
 
+  _onBack = () => {
+    NavigationService.enterApp();
+  };
+
   render() {
     const { classmateIds, getClassmatesInProgress } = this.props;
     return (
       <View style={{ flex: 1 }}>
-        <GEMHeader title="Classmates" leftIconName="back" />
+        <GEMHeader
+          title="Classmates"
+          leftIcon={{ name: 'back', onPress: this._onBack }}
+        />
         <View style={{ flex: 1 }}>
           <ImageBackground
             source={wavesFull}

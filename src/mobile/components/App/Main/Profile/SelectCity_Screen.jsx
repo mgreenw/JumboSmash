@@ -237,9 +237,11 @@ class SelectCityScreen extends React.Component<Props, State> {
       <SearchBar
         containerStyle={{ backgroundColor: Colors.White }}
         inputContainerStyle={{ backgroundColor: Colors.IceBlue }}
-        placeholder="Type Here..."
+        placeholder='"Scranton"'
         lightTheme
         round
+        placeholderTextColor={Colors.Grey80}
+        inputStyle={[textStyles.body1Style, { color: Colors.Black }]}
         onChangeText={text => this.onSearchChange(text)}
         autoCorrect={false}
         value={search}
@@ -254,7 +256,8 @@ class SelectCityScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   _onPress = (code: string) => {
@@ -268,8 +271,7 @@ class SelectCityScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Post-Grad Location"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground

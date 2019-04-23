@@ -65,6 +65,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
 
   render() {
     const { profile } = this.state;
+    const { navigation } = this.props;
     const complete = profile.fields.bio !== '';
     const body = (
       <View
@@ -85,6 +86,7 @@ export default class OnboardingBioScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         section="profile"
         body={body}
         onButtonPress={this._goToNextPage}

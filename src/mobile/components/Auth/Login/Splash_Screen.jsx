@@ -130,6 +130,10 @@ class SplashScreen extends React.Component<Props, State> {
           this._onNotTuftsEmail();
           break;
         }
+        case 'TOO_MANY_EMAILS': {
+          this._onTooManyEmails();
+          break;
+        }
         default: {
           // eslint-disable-next-line no-unused-expressions
           (statusCode: empty); // ensures we have handled all cases
@@ -165,10 +169,17 @@ class SplashScreen extends React.Component<Props, State> {
   };
 
   _onNot2019 = (classYear: string) => {
-    const { navigation } = this.props;
-    navigation.navigate(routes.Not2019, {
-      classYear
-    });
+    const yearsLeft = parseInt(classYear, 10) - 19;
+    if (yearsLeft < 0) {
+      this._utlnInputError('Ya already graduated!');
+    }
+    if (yearsLeft > 0) {
+      if (yearsLeft === 1) {
+        this._utlnInputError(`Try again next year!`);
+      } else {
+        this._utlnInputError(`Try again in ${yearsLeft} years!`);
+      }
+    }
   };
 
   _onNotFound = () => {
@@ -177,6 +188,12 @@ class SplashScreen extends React.Component<Props, State> {
 
   _onHelp = () => {
     const { navigation } = this.props;
+    navigation.navigate(routes.AuthHelp, {});
+  };
+
+  _onTooManyEmails = () => {
+    const { navigation } = this.props;
+    this._utlnInputError('Too many emails sent');
     navigation.navigate(routes.AuthHelp, {});
   };
 
@@ -303,12 +320,13 @@ class SplashScreen extends React.Component<Props, State> {
                   title="Verify I'm a Senior!"
                   disabled={sendVerificationEmail_inProgress || utln === ''}
                   loading={sendVerificationEmail_inProgress}
-                  hidden={!hasHadError}
                 />
-                <TertiaryButton
-                  onPress={this._onHelp}
-                  title="Having Trouble?"
-                />
+                <Collapsible collapsed={!hasHadError}>
+                  <TertiaryButton
+                    onPress={this._onHelp}
+                    title="Having Trouble?"
+                  />
+                </Collapsible>
               </View>
             </View>
           </Transition>

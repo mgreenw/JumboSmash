@@ -5,6 +5,8 @@ import { View } from 'react-native';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { Scene } from 'mobile/reducers';
+import NavigationService from 'mobile/components/navigation/NavigationService';
+import routes from 'mobile/components/navigation/routes';
 import CardDeck from './CardDeck';
 import SceneSelector from './SceneSelector';
 
@@ -19,8 +21,18 @@ const CardsLayout = (props: Props) => {
     <View style={{ flex: 1 }}>
       <GEMHeader
         title="JumboSmash"
-        rightIconName="message"
-        leftIconName="user"
+        rightIcon={{
+          name: 'message',
+          onPress: () => {
+            NavigationService.navigate(routes.Matches);
+          }
+        }}
+        leftIcon={{
+          name: 'user',
+          onPress: () => {
+            NavigationService.navigate(routes.Profile);
+          }
+        }}
         centerComponent={sceneSelector}
       />
       <Transition inline appear="scale">

@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type ReduxProps = {
@@ -157,7 +157,8 @@ class SettingsScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   /**
@@ -209,7 +210,7 @@ class SettingsScreen extends React.Component<Props, State> {
         <GEMHeader
           title="Edit Settings"
           leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
@@ -305,9 +306,8 @@ class SettingsScreen extends React.Component<Props, State> {
                       textDecorationLine: 'underline'
                     }}
                     onPress={() => {
-                      // TODO: Make this go to the jumbosmash.com
                       WebBrowser.openBrowserAsync(
-                        'https://arthur.jumbosmash.com/gender.html'
+                        'https://jumbosmash.com/gender.html'
                       );
                     }}
                   >
@@ -403,9 +403,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 <SecondaryButton
                   title="Safety on JumboSmash"
                   onPress={() => {
-                    // Todo: Make this go to the real website
                     WebBrowser.openBrowserAsync(
-                      'https://arthur.jumbosmash.com/safety.html'
+                      'https://jumbosmash.com/safety.html'
                     );
                   }}
                   disabled={logoutInProgress}
@@ -416,9 +415,8 @@ class SettingsScreen extends React.Component<Props, State> {
                 <SecondaryButton
                   title="Terms and Conditions"
                   onPress={() => {
-                    // Todo: Make this go to the real website
                     WebBrowser.openBrowserAsync(
-                      'https://arthur.jumbosmash.com/terms.html'
+                      'https://jumbosmash.com/terms.html'
                     );
                   }}
                   disabled={logoutInProgress}

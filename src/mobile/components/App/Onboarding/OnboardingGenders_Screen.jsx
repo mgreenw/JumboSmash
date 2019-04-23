@@ -76,6 +76,7 @@ export default class OnboardingGendersScreen extends React.Component<
 
   render() {
     const { settings } = this.state;
+    const { navigation } = this.props;
     const body = (
       <View
         style={{
@@ -126,6 +127,7 @@ export default class OnboardingGendersScreen extends React.Component<
     const complete = identifySelected && lookingForSelected;
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         section="settings"
         onButtonPress={this._goToNextPage}

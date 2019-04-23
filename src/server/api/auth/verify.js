@@ -66,7 +66,7 @@ const verify = async (utln: string, code: number, expoPushToken: ?string) => {
   // Update the expiration date to ensure that the code can only be used once
   db.query(`
     UPDATE verification_codes
-    SET expiration = $1
+    SET expiration = $1, email_sends = 0
     WHERE utln = $2
   `, [new Date(), utln]);
 

@@ -7,7 +7,7 @@ const dbUtils = require('../../utils/db');
 
 let me = {};
 
-describe('GET api/admin/classmates', () => {
+describe('GET api/artists/:artistId', () => {
   // Setup
   beforeAll(async () => {
     await db.query('DELETE from classmates');
