@@ -115,10 +115,11 @@ export default function sendVerificationEmail(
       case BAD_REQUEST: {
         // Temporary logic to handle invalid request email type
         if (response.message === 'data.email should match format "email"') {
-          Sentry.withScope(scope => {
-            scope.setExtra('request', request);
-            scope.setTag('eventName', 'SendVerificationEmail BadRequest');
-            Sentry.captureException(new Error(response.message));
+          Sentry.captureException(new Error(response.message), {
+            extra: {
+              request,
+              eventName: 'SendVerificationEmail BadRequest'
+            }
           });
 
           return {
