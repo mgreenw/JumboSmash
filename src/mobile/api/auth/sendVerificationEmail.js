@@ -4,6 +4,7 @@
 // NOTE: must be kept in sync with send-verifcation-email.js
 import type { SendVerificationEmail_Response } from 'mobile/actions/auth/sendVerificationEmail';
 import { BAD_REQUEST } from 'mobile/api/sharedResponseCodes';
+import Sentry from 'sentry-expo';
 import apiRequest from '../utils/apiRequest';
 import { SEND_VERIFCATION_EMAIL__ROUTE } from '../routes';
 
@@ -114,6 +115,13 @@ export default function sendVerificationEmail(
       case BAD_REQUEST: {
         // Temporary logic to handle invalid request email type
         if (response.message === 'data.email should match format "email"') {
+          Sentry.captureException(new Error(response.message), {
+            extra: {
+              request,
+              eventName: 'SendVerificationEmail BadRequest'
+            }
+          });
+
           return {
             statusCode: 'NOT_FOUND',
             responseEmail: NO_EMAIL,
