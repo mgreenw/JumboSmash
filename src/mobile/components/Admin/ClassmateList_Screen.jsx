@@ -124,23 +124,23 @@ class ClassmateListScreen extends React.Component<Props, State> {
         <View style={{ flex: 1, flexDirection: 'row' }}>
           <View
             style={{
-              flex: 0.25,
+              flex: 0.1,
               backgroundColor: Colors.White,
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Text>{utln}</Text>
+            <Text>{id}</Text>
           </View>
           <View
             style={{
-              flex: 0.1,
+              flex: 0.25,
               backgroundColor: Colors.Grey85,
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Text>{id}</Text>
+            <Text>{utln}</Text>
           </View>
           <View
             style={{
@@ -205,24 +205,25 @@ const ColumnTitles = () => {
     >
       <View
         style={{
-          flex: 0.25,
-          backgroundColor: Colors.White,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <Text>{'UTLN'}</Text>
-      </View>
-      <View
-        style={{
           flex: 0.1,
-          backgroundColor: Colors.Grey85,
+          backgroundColor: Colors.White,
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
         <Text>{'ID'}</Text>
       </View>
+      <View
+        style={{
+          flex: 0.25,
+          backgroundColor: Colors.Grey85,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text>{'UTLN'}</Text>
+      </View>
+
       <View
         style={{
           flex: 0.65,
