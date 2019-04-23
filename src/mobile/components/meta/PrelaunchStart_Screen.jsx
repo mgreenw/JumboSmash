@@ -25,6 +25,7 @@ import type { LaunchDateStatus } from 'mobile/api/serverTypes';
 import checkLaunchDateAction from 'mobile/actions/meta/checkLaunchDate';
 import { WebBrowser } from 'expo';
 import NavigationService from '../navigation/NavigationService';
+import Sentry from 'sentry-expo';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 const ArthurUri = require('../../assets/arthurIcon.png');
@@ -91,6 +92,7 @@ class PrelaunchStartScreen extends React.Component<Props, State> {
       if (launchDateStatus.wallIsUp) {
         // This means they somehow got to this page (probably by editting the time),
         // but should not have, and are attempting to enter the app.
+        Sentry.captureMessage('Time Hacker Detected.');
         Alert.alert(
           'ERROR',
           'Time Hack Detected',
