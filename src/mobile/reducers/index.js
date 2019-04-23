@@ -109,7 +109,6 @@ import type {
   SendFeedbackCompleted_Action,
   SendFeedbackFailed_Action
 } from 'mobile/actions/app/meta/sendFeedback';
-
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
@@ -129,6 +128,23 @@ import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
 import GetClassmatesReducer from './admin/getClassmates';
+import type {
+  Artist,
+  Artist_Action,
+  ReduxState as Artist_ReduxState
+} from './artists';
+import {
+  DefaultReduxState as Artist_DefaultReduxState,
+  Reducers as Artist_Reducers
+} from './artists';
+import type {
+  ReduxState as LaunchDate_ReduxState,
+  Action as LaunchDate_Action
+} from './meta/launchDate';
+import {
+  DefaultReduxState as LaunchDate_DefaultReduxState,
+  Reducers as LaunchDate_Reducers
+} from './meta/launchDate';
 
 export type Scene = 'smash' | 'social' | 'stone';
 export const Scenes: Scene[] = ['smash', 'social', 'stone'];
@@ -200,7 +216,9 @@ export type ProfileFields = {|
   birthday: string,
   bio: string,
   postgradRegion: ?string,
-  freshmanDorm: ?string
+  freshmanDorm: ?string,
+  springFlingAct: ?string, // THIS IS THE ID WE USE TO SET IT
+  springFlingActArtist: ?Artist // THIS IS ANYTHING WE RENDER
 |};
 
 export type UserProfile = {|
@@ -431,7 +449,7 @@ export type ApiResponse = {|
 export type ReduxState = {|
   network: { isConnected: boolean },
 
-  numBadges: number,
+  numBadges: null | number, // one of the few numbers in the app that quite frequently IS 0, so !!number is inacurate, so we don't have a maybe type.
 
   // app data:
   client: ?Client,
@@ -477,7 +495,9 @@ export type ReduxState = {|
 
   // Classmates (ADMIN)
   classmateIds: number[],
-  classmatesById: { [number]: ServerClassmate }
+  classmatesById: { [number]: ServerClassmate },
+  artists: Artist_ReduxState,
+  launchDate: LaunchDate_ReduxState
 |};
 
 export type Action =
@@ -543,7 +563,9 @@ export type Action =
   | SendFeedbackInitiated_Action
   | SendFeedbackCompleted_Action
   | SendFeedbackFailed_Action
-  | GetClassmates_Action;
+  | GetClassmates_Action
+  | Artist_Action
+  | LaunchDate_Action;
 
 export type GetState = () => ReduxState;
 
@@ -553,7 +575,7 @@ export type Thunk<A> = ((Dispatch, GetState) => Promise<void> | void) => A;
 
 export const initialState: ReduxState = {
   network: { isConnected: true }, // start with an immediate call to check, we don't want to start with the offline screen.
-  numBadges: 0,
+  numBadges: null, // indicate we have not yet determined how many badges
   token: null,
   client: null,
   authLoaded: false,
@@ -628,7 +650,9 @@ export const initialState: ReduxState = {
     code: 'INITIAL'
   },
   classmateIds: [],
-  classmatesById: {}
+  classmatesById: {},
+  artists: Artist_DefaultReduxState,
+  launchDate: LaunchDate_DefaultReduxState
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -958,7 +982,12 @@ export default function rootReducer(
     }
 
     case 'LOAD_APP__COMPLETED': {
-      const { profile, settings, onboardingCompleted } = action.payload;
+      const {
+        profile,
+        settings,
+        onboardingCompleted,
+        launchDateStatus
+      } = action.payload;
       return {
         ...state,
         appLoaded: true,
@@ -971,7 +1000,13 @@ export default function rootReducer(
           ...state.inProgress,
           loadApp: false
         },
-        onboardingCompleted
+        onboardingCompleted,
+
+        // Ideally a reducer should not touch launchDate slice, but loadApp is special
+        launchDate: {
+          ...state.launchDate,
+          status: launchDateStatus
+        }
       };
     }
 
@@ -1946,6 +1981,56 @@ export default function rootReducer(
 
     case 'GET_CLASSMATES__FAILED': {
       return GetClassmatesReducer.fail(state, action);
+    }
+    case 'SEARCH_ARTISTS__INITIATED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.initiate(state.artists, action)
+      };
+    }
+
+    case 'SEARCH_ARTISTS__COMPLETED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.complete(state.artists, action)
+      };
+    }
+
+    case 'SEARCH_ARTISTS__FAILED': {
+      return {
+        ...state,
+        artists: Artist_Reducers.Search.fail(state.artists, action)
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__INITIATED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.initiate(
+          state.launchDate,
+          action
+        )
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__COMPLETED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.complete(
+          state.launchDate,
+          action
+        )
+      };
+    }
+
+    case 'CHECK_LAUNCH_DATE__FAILED': {
+      return {
+        ...state,
+        launchDate: LaunchDate_Reducers.CheckLaunchDate.fail(
+          state.launchDate,
+          action
+        )
+      };
     }
 
     default: {

@@ -11,6 +11,7 @@ import loadAppAction from 'mobile/actions/app/loadApp';
 import routes from 'mobile/components/navigation/routes';
 import { Constants } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import NavigationService from '../navigation/NavigationService';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
 
@@ -67,7 +68,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
       if (!onboardingCompleted) {
         navigation.navigate(routes.OnboardingStack);
       } else {
-        navigation.navigate(routes.MainSwitch, {});
+        NavigationService.enterApp();
       }
     }
   }

@@ -12,7 +12,8 @@ type StatusCode =
   | 'WRONG_CLASS_YEAR'
   | 'NOT_STUDENT'
   | 'NOT_FOUND'
-  | 'NOT_TUFTS_EMAIL';
+  | 'NOT_TUFTS_EMAIL'
+  | 'TOO_MANY_EMAILS';
 
 export type SendVerificationEmail_Response = {
   statusCode: StatusCode,
@@ -75,7 +76,7 @@ export function sendVerificationEmailAction(
   return function(dispatch: Dispatch) {
     dispatch(initiate());
     DevTesting.fakeLatency(() => {
-      sendVerificationEmail_api({ email, forceResend })
+      sendVerificationEmail_api({ email: email.trim(), forceResend })
         .then(response => {
           dispatch(complete(response));
         })

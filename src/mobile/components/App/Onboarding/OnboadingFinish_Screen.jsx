@@ -20,7 +20,8 @@ type NavigationProps = {
 
 type ReduxProps = {
   createUserInProgress: boolean,
-  createUserSuccess: ?boolean
+  createUserSuccess: ?boolean,
+  allFeaturesLive: boolean
 };
 type DispatchProps = {
   createUser: (fields: ProfileFields, settings: UserSettings) => void
@@ -33,9 +34,12 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  const { status: launchDateStatus } = reduxState.launchDate;
   return {
     createUserInProgress: reduxState.inProgress.createUser,
-    createUserSuccess: reduxState.response.createUserSuccess
+    createUserSuccess: reduxState.response.createUserSuccess,
+    allFeaturesLive:
+      launchDateStatus !== null ? !launchDateStatus.wallIsUp : false
   };
 }
 
@@ -81,7 +85,8 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { createUserInProgress } = this.props;
+    const { allFeaturesLive } = this.props;
+    const { createUserInProgress, navigation } = this.props;
     const body = (
       <Text style={[textStyles.headline4Style, { textAlign: 'center' }]}>
         {"You're all set. \n\nGet in losers, we’re going smashing."}
@@ -89,13 +94,14 @@ class OnboardingFinishScreen extends React.Component<Props, State> {
     );
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         section="profile"
         onButtonPress={this._saveSettingsAndProfile}
         title="JumboSmash"
         lastScreen
         loading={createUserInProgress}
-        buttonText={'Start Swiping'}
+        buttonText={allFeaturesLive ? 'Start Swiping' : 'Start the Countdown'}
       />
     );
   }

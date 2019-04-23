@@ -18,7 +18,8 @@ type State = {};
 
 class SelectDormScreen extends React.Component<Props, State> {
   _onBack = () => {
-    NavigationService.back();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   _save = (code: string) => {
@@ -51,9 +52,8 @@ class SelectDormScreen extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="1st Year Dorm"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          title="First Year Dorm"
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
@@ -72,6 +72,7 @@ class SelectDormScreen extends React.Component<Props, State> {
             )}
             keyExtractor={code => code}
             ItemSeparatorComponent={this.renderSeparator}
+            ListHeaderComponent={this.renderSeparator}
           />
         </View>
       </View>

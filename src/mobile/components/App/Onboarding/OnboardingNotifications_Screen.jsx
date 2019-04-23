@@ -54,30 +54,26 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
   };
 
   _enableNotificationsAndContinue = () => {
-    const { expoPushToken } = this.state.settings;
-    if (expoPushToken !== null) {
-      this._goToNextPage();
-    } else {
-      requestNotificationToken().then(newToken => {
-        if (newToken !== null) {
-          this.setState(
-            state => ({
-              settings: {
-                ...state.settings,
-                expoPushToken: newToken,
-                notificationsEnabled: true
-              }
-            }),
-            () => {
-              this._goToNextPage();
+    requestNotificationToken().then(newToken => {
+      if (newToken !== null) {
+        this.setState(
+          state => ({
+            settings: {
+              ...state.settings,
+              expoPushToken: newToken,
+              notificationsEnabled: true
             }
-          );
-        }
-      });
-    }
+          }),
+          () => {
+            this._goToNextPage();
+          }
+        );
+      }
+    });
   };
 
   render() {
+    const { navigation } = this.props;
     const body = (
       <View style={{ flex: 1 }}>
         <Text
@@ -94,6 +90,7 @@ class OnboardingNotificationsScreen extends React.Component<Props, State> {
 
     return (
       <OnboardingLayout
+        navigationKey={navigation.state.key}
         body={body}
         section={'settings'}
         onButtonPress={this._enableNotificationsAndContinue}

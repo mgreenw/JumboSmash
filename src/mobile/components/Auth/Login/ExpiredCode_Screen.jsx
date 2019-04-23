@@ -13,10 +13,13 @@ import routes from 'mobile/components/navigation/routes';
 import AuthLayout from 'mobile/components/Auth/Login/Layout';
 import GEMHeader from 'mobile/components/shared/Header';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
+import { type NavigationScreenProp } from 'react-navigation';
 
-type Props = {
-  navigation: any
+type NavigationProps = {
+  navigation: NavigationScreenProp<any>
 };
+
+type Props = NavigationProps;
 
 type State = {};
 
@@ -31,8 +34,10 @@ function mapDispatchToProps(dispatch: Dispatch, ownProps: Props) {
 class ExpiredCodeScreen extends React.Component<Props, State> {
   //TODO: Resend code functionality
   render() {
+    const { navigation } = this.props;
     return (
       <AuthLayout
+        navigationKey={navigation.state.key}
         title={'Verification'}
         bodyText={
           'Oops! Looks like your verification code has expired. Probably TuftsSecure’s fault. Hit the button below to get another one. '

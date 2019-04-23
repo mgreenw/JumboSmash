@@ -22,7 +22,7 @@ const hasProfile = async (req: $Request, res: $Response, next: $Next) => {
     return next();
   } catch (err) {
     // Server error. Ensure that the 'authenticated' middleware comes before
-    // the 'onboarded' middleware
+    // the 'onboarded' middleware. This will be capture by Sentry.
     return res.status(500).json({
       status: 'SERVER_ERROR',
       version,

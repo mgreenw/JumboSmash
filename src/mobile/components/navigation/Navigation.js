@@ -34,6 +34,7 @@ import SettingsEdit from 'mobile/components/App/Main/Profile/SettingsEdit_Screen
 import ProfileHelp from 'mobile/components/App/Main/Profile/ProfileHelp_Screen';
 import SelectCity from 'mobile/components/App/Main/Profile/SelectCity_Screen';
 import SelectDorm from 'mobile/components/App/Main/Profile/SelectDorm_Screen';
+import SelectArtist from 'mobile/components/App/Main/Profile/SelectArtist_Screen';
 
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
@@ -56,6 +57,8 @@ import OnboardingSettingsInfo from 'mobile/components/App/Onboarding/OnboardingS
 
 // Meta Screens
 import TerminatedScreen from 'mobile/components/Auth/Terminated_Screen';
+import PrelaunchWallScreen from 'mobile/components/meta/PrelaunchWall_Screen';
+import PrelaunchStartScreen from 'mobile/components/meta/PrelaunchStart_Screen';
 
 // Admin Screens
 import AdminClassmateListScreen from 'mobile/components/Admin/ClassmateList_Screen';
@@ -67,6 +70,63 @@ import routes from './routes';
 
 const removeHeader = {
   headerMode: 'none'
+};
+
+const PrelaunchWallStack = createStackNavigator(
+  {
+    [routes.PrelaunchWall]: { screen: PrelaunchWallScreen },
+    [routes.ProfileEdit]: { screen: ProfileEdit },
+    [routes.SelectCity]: { screen: SelectCity },
+    [routes.SelectDorm]: { screen: SelectDorm },
+    [routes.SelectArtist]: { screen: SelectArtist }
+  },
+  {
+    initialRouteName: routes.PrelaunchWall,
+    ...removeHeader
+  }
+);
+
+PrelaunchWallStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
+const PrelaunchStartStack = createStackNavigator(
+  {
+    [routes.PrelaunchStart]: { screen: PrelaunchStartScreen },
+    [routes.ProfileEdit]: { screen: ProfileEdit },
+    [routes.SelectCity]: { screen: SelectCity },
+    [routes.SelectDorm]: { screen: SelectDorm },
+    [routes.SelectArtist]: { screen: SelectArtist }
+  },
+  {
+    initialRouteName: routes.PrelaunchStart,
+    ...removeHeader
+  }
+);
+
+PrelaunchStartStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
+const PrelaunchStack = FluidNavigator(
+  {
+    [routes.PrelaunchWallStack]: PrelaunchWallStack,
+    [routes.PrelaunchStartStack]: PrelaunchStartStack
+  },
+  {
+    initialRouteName: routes.PrelaunchWallStack,
+    ...removeHeader
+  }
+);
+
+PrelaunchStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
 };
 
 const CardsSwitch = createMaterialTopTabNavigator(
@@ -98,7 +158,8 @@ const ProfileStack = createStackNavigator(
     [routes.ProfileEdit]: { screen: ProfileEdit },
     [routes.ProfileHelp]: { screen: ProfileHelp },
     [routes.SelectCity]: { screen: SelectCity },
-    [routes.SelectDorm]: { screen: SelectDorm }
+    [routes.SelectDorm]: { screen: SelectDorm },
+    [routes.SelectArtist]: { screen: SelectArtist }
   },
   {
     initialRouteName: routes.Profile,
@@ -245,7 +306,8 @@ const createRootNavigator = () =>
       [routes.MainSwitch]: MainContentSwitch,
       [routes.AppLoading]: { screen: AppLoading },
       [routes.Terminated]: { screen: TerminatedScreen },
-      [routes.AdminStack]: AdminStack
+      [routes.AdminStack]: AdminStack,
+      [routes.Prelaunch]: PrelaunchStack
     },
     {
       initialRouteName: routes.AuthSwitch,

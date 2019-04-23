@@ -9,7 +9,7 @@ import {
   ScrollView,
   Platform,
   Text,
-  Alert
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import AddMultiPhotos from 'mobile/components/shared/photos/AddMultiPhotos';
@@ -36,14 +36,10 @@ import { validateName, nameErrorCopy } from 'mobile/utils/ValidateName';
 import TertiaryButton from 'mobile/components/shared/buttons/TertiaryButton';
 import { textStyles } from 'mobile/styles/textStyles';
 import Spacer from 'mobile/components/shared/Spacer';
-import { Constants } from 'expo';
 import routes from 'mobile/components/navigation/routes';
 import { codeToLocation as postgradCodeToLocation } from 'mobile/data/Locations';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
-
-const manifest = Constants.manifest;
-const isDev =
-  typeof manifest.packagerOpts === 'object' && manifest.packagerOpts.dev;
+import type { Artist } from 'mobile/reducers/artists';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -75,7 +71,7 @@ const styles = StyleSheet.create({
 });
 
 type NavigationProps = {
-  navigation: NavigationScreenProp<{}>
+  navigation: NavigationScreenProp<any>
 };
 
 type ReduxProps = {
@@ -145,7 +141,8 @@ class ProfileEditScreen extends React.Component<Props, State> {
   _onBack = () => {
     const valid = this._validateInputs();
     if (valid) {
-      NavigationService.back();
+      const { navigation } = this.props;
+      NavigationService.back(navigation.state.key);
     }
   };
 
@@ -191,6 +188,7 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const { editedProfileFields, errorMessageName } = this.state;
     const { postgradRegion: postgradLocationCode } = editedProfileFields;
     const { freshmanDorm: freshmanDormCode } = editedProfileFields;
+    const { springFlingActArtist } = editedProfileFields;
     const freshmanDorm = freshmanDormCode
       ? dormCodeToName(freshmanDormCode)
       : null;
@@ -200,12 +198,13 @@ class ProfileEditScreen extends React.Component<Props, State> {
     const postgradLocationName = postgradLocation
       ? postgradLocation.name
       : null;
+    const artistName = springFlingActArtist ? springFlingActArtist.name : null;
+
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Edit Profile"
-          leftIconName="back"
-          onLeftIconPress={this._onBack}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
@@ -244,54 +243,42 @@ class ProfileEditScreen extends React.Component<Props, State> {
               </View>
             </View>
             <View style={styles.profileBlock}>
-              <PopupInput
-                title={'Post-Grad Location'}
-                value={postgradLocationName}
-                placeholder={'No Selected Location'}
-                onChange={() => {
-                  NavigationService.navigate(routes.SelectCity, {
-                    onSave: newPostgradRegion => {
-                      this.setState(state => ({
-                        editedProfileFields: {
-                          ...state.editedProfileFields,
-                          postgradRegion: newPostgradRegion
-                        }
-                      }));
-                    }
-                  });
+              <ExtendedProfileInputs
+                location={{
+                  value: postgradLocationName,
+                  onSave: newPostgradRegion => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        postgradRegion: newPostgradRegion
+                      }
+                    }));
+                  }
+                }}
+                dorm={{
+                  value: freshmanDorm,
+                  onSave: newFreshmanDorm => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        freshmanDorm: newFreshmanDorm
+                      }
+                    }));
+                  }
+                }}
+                artist={{
+                  value: artistName,
+                  onSave: (id: null | string, artist: null | Artist) => {
+                    this.setState(state => ({
+                      editedProfileFields: {
+                        ...state.editedProfileFields,
+                        springFlingAct: id,
+                        springFlingActArtist: artist
+                      }
+                    }));
+                  }
                 }}
               />
-              <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-              <PopupInput
-                title={'1st Year Dorm'}
-                value={freshmanDorm}
-                placeholder={'No Selected Dorm'}
-                onChange={() => {
-                  NavigationService.navigate(routes.SelectDorm, {
-                    onSave: newFreshmanDorm => {
-                      this.setState(state => ({
-                        editedProfileFields: {
-                          ...state.editedProfileFields,
-                          freshmanDorm: newFreshmanDorm
-                        }
-                      }));
-                    }
-                  });
-                }}
-              />
-              {isDev && (
-                <View>
-                  <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
-                  <PopupInput
-                    title={'Dream Spring Fling Artist'}
-                    value={null}
-                    placeholder={'No Selected Artist'}
-                    onChange={() => {
-                      Alert.alert('not yet implemented');
-                    }}
-                  />
-                </View>
-              )}
             </View>
           </PlatformSpecificScrollView>
         </View>
@@ -299,6 +286,62 @@ class ProfileEditScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const ExtendedProfileInputs = ({
+  location,
+  dorm,
+  artist
+}: {
+  location: {
+    value: ?string,
+    onSave: (newPostgradRegion: string) => void
+  },
+  dorm: {
+    value: ?string,
+    onSave: (newDorm: string) => void
+  },
+  artist: {
+    value: ?string,
+    onSave: (id: null | string, artist: null | Artist) => void
+  }
+}) => {
+  return (
+    <View>
+      <PopupInput
+        title={'Post-Grad Location'}
+        value={location.value}
+        placeholder={'Add Location'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectCity, {
+            onSave: location.onSave
+          });
+        }}
+      />
+      <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+      <PopupInput
+        title={'First Year Dorm'}
+        value={dorm.value}
+        placeholder={'Add Dorm'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectDorm, {
+            onSave: dorm.onSave
+          });
+        }}
+      />
+      <Spacer style={{ marginTop: 16, marginBottom: 8 }} />
+      <PopupInput
+        title={'Dream Spring Fling Artist'}
+        value={artist.value}
+        placeholder={'Add Artist'}
+        onChange={() => {
+          NavigationService.navigate(routes.SelectArtist, {
+            onSave: artist.onSave
+          });
+        }}
+      />
+    </View>
+  );
+};
 
 type PopupInputProps = {
   title: string,
@@ -309,30 +352,30 @@ type PopupInputProps = {
 const PopupInput = (props: PopupInputProps) => {
   const { title, placeholder, onChange, value } = props;
   return (
-    <View>
-      <Text style={textStyles.body2Style}>{title}</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          marginTop: 5
-        }}
-      >
-        <Text
-          adjustsFontSizeToFit
-          style={[
-            textStyles.headline6Style,
-            { color: value ? Colors.Black : Colors.BlueyGrey }
-          ]}
+    <TouchableOpacity onPress={onChange}>
+      <View>
+        <Text style={textStyles.body2Style}>{title}</Text>
+        <View
+          onPress={onChange}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            marginTop: 5
+          }}
         >
-          {value || placeholder}
-        </Text>
-        <View style={{ bottom: 4 }}>
-          <TertiaryButton title={'change'} onPress={onChange} />
+          <Text
+            adjustsFontSizeToFit
+            style={[
+              textStyles.headline6Style,
+              { color: value ? Colors.Black : Colors.BlueyGrey }
+            ]}
+          >
+            {value || placeholder}
+          </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

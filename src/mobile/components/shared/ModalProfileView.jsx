@@ -1,11 +1,12 @@
 // @flow
 
 import React from 'react';
-import { View, TouchableHighlight, ScrollView, StatusBar } from 'react-native';
+import { View, TouchableHighlight, StatusBar } from 'react-native';
 import type { UserProfile } from 'mobile/reducers/index';
 import Modal from 'react-native-modal';
 import CardView from 'mobile/components/shared/CardView';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import DismissableScrollView from './DismissableScrollView';
 
 type Props = {
   isVisible: boolean,
@@ -33,11 +34,10 @@ export default (props: Props) => {
     <Modal
       isVisible={isVisible}
       swipeDirection={'down'}
-      onSwipeComplete={onSwipeComplete}
       style={{ padding: 0, margin: 0 }}
       propagateSwipe
     >
-      <ScrollView>
+      <DismissableScrollView onSwipeComplete={onSwipeComplete}>
         <TouchableHighlight>
           <View>
             <StatusBar hidden />
@@ -50,7 +50,7 @@ export default (props: Props) => {
             )}
           </View>
         </TouchableHighlight>
-      </ScrollView>
+      </DismissableScrollView>
       <AndroidBackHandler
         onBackPress={() => {
           onMinimize();

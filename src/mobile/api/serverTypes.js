@@ -1,6 +1,7 @@
 // @flow
 
 import type { Scene } from 'mobile/reducers/';
+import type { Artist } from 'mobile/reducers/artists';
 
 // Internally, we want to represent a lot of nested data pretty differently, using normalizer.
 // Here we keep track of how the server represents the data we pass back so our parsers operate
@@ -12,7 +13,9 @@ export type ServerProfile = {|
     bio: string,
     birthday: string,
     postgradRegion: ?string,
-    freshmanDorm: ?string
+    freshmanDorm: ?string,
+    springFlingAct: ?string, // The Id
+    springFlingActArtist: ?Artist // The hack -- the artist blob
   |},
   photoUuids: string[]
 |};
@@ -152,4 +155,11 @@ export type ServerClassmate = {
   },
   isAdmin: boolean,
   blockedRequestingAdmin: boolean
+};
+
+// Prelaunch:
+export type LaunchDateStatus = {
+  launchDate: string,
+  currentDate: string,
+  wallIsUp: boolean
 };

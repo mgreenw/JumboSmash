@@ -26,6 +26,7 @@ const RELATIONSHIPS = 'relationships/';
 const CONVERSATIONS = 'conversations/';
 const META = 'meta/';
 const ADMIN = 'admin/';
+const ARTISTS = 'artists/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
@@ -34,6 +35,7 @@ const RELATIONSHIPS_ROUTE = SERVER_ROUTE + API + RELATIONSHIPS;
 const CONVERSATIONS_ROUTE = SERVER_ROUTE + API + CONVERSATIONS;
 const META_ROUTE = SERVER_ROUTE + API + META;
 const ADMIN_ROUTE = SERVER_ROUTE + API + ADMIN;
+export const ARTIST_ROUTE = SERVER_ROUTE + API + ARTISTS;
 
 // //////////////
 // AUTH ROUTES:
@@ -124,3 +126,6 @@ export const GET_CLASSMATES_ROUTE = ADMIN_ROUTE + CLASSMATES;
 // Send Feedback
 const FEEDBACK = 'feedback/';
 export const SEND_FEEDBACK__ROUTE = META_ROUTE + FEEDBACK;
+
+const LAUNCH_DATE = 'launch-date/';
+export const GET_LAUNCH_DATE__ROUTE = META_ROUTE + LAUNCH_DATE;
