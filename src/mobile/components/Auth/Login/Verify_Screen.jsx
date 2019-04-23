@@ -16,6 +16,7 @@ import type { Login_Response } from 'mobile/actions/auth/login';
 import { Transition } from 'react-navigation-fluid-transitions';
 import GEMHeader from 'mobile/components/shared/Header';
 import { summonPopup as summonPopupAction } from 'mobile/actions/popup';
+import type { NavigationScreenProp } from 'react-navigation';
 import NavigationService from '../../navigation/NavigationService';
 
 const NUM_DIGITS = 6;
@@ -30,7 +31,7 @@ type reduxProps = {
   login_response: ?Login_Response
 };
 type navigationProps = {
-  navigation: any
+  navigation: NavigationScreenProp<any>
 };
 type dispatchProps = {
   login: (utln: string, code: string) => void,
@@ -148,6 +149,11 @@ class SplashScreen extends React.Component<Props, State> {
     this.setState({ code: text, errorMessageCode: '' });
   };
 
+  _onBack = () => {
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
+  };
+
   render() {
     const { navigation, login_inProgress } = this.props;
     const { code, errorMessageCode } = this.state;
@@ -164,7 +170,7 @@ class SplashScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title={'Verification'}
-          leftIconName={'back'}
+          leftIcon={{ name: 'back', onPress: this._onBack }}
           loading={isLoading}
         />
         <KeyboardView waves={1}>
