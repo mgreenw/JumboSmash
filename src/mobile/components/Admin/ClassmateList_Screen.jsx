@@ -15,6 +15,12 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
+function compareUtln(a: string, b: string) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
@@ -31,9 +37,13 @@ type ReduxProps = {
 type Props = DispatchProps & ReduxProps & NavigationProps;
 
 function mapStateToProps(state: ReduxState): ReduxProps {
+  const { classmatesById: classmateMap, classmateIds: unsortedIds } = state;
+  const classmateIds = unsortedIds.sort((a, b) =>
+    compareUtln(classmateMap[a].utln, classmateMap[b].utln)
+  );
   return {
-    classmateMap: state.classmatesById,
-    classmateIds: state.classmateIds,
+    classmateMap,
+    classmateIds,
     getClassmatesInProgress: state.inProgress.getClassmates
   };
 }
@@ -81,6 +91,21 @@ class ClassmateListScreen extends React.Component<Props, State> {
     navigation.navigate(routes.AdminClassmateOverview, { id });
   };
 
+  _renderClassmateListItem = (id: number) => {
+    const { classmateMap } = this.props;
+    // This can fail if classmatesById in reduxState gets out of whack,
+    // but this is AdminTooling so we don't have to handle it nicely.
+    const classmate: ServerClassmate = classmateMap[id];
+    return (
+      <ListItem
+        onPress={() => {
+          this._onPress(id);
+        }}
+        title={classmate.utln}
+      />
+    );
+  };
+
   _onBack = () => {
     NavigationService.enterApp();
   };
@@ -102,14 +127,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             enableResetScrollToCoords={false}
             data={classmateIds}
             renderItem={({ item: id }: { item: number }) => {
-              return (
-                <ListItem
-                  onPress={() => {
-                    this._onPress(id);
-                  }}
-                  title={id.toString()}
-                />
-              );
+              return this._renderClassmateListItem(id);
             }}
             keyExtractor={id => id.toString()}
             ItemSeparatorComponent={this.renderSeparator}
