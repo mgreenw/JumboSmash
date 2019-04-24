@@ -12,7 +12,7 @@ import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch, UserProfile } from 'mobile/reducers/index';
 import NavigationService from 'mobile/components/navigation/NavigationService';
-import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
+import type { ServerClassmate } from 'mobile/api/serverTypes';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import Avatar from 'mobile/components/shared/Avatar';
 
