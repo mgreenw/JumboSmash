@@ -209,7 +209,6 @@ class SettingsScreen extends React.Component<Props, State> {
       <View style={{ flex: 1 }}>
         <GEMHeader
           title="Edit Settings"
-          leftIconName="back"
           leftIcon={{ name: 'back', onPress: this._onBack }}
         />
         <View style={{ flex: 1 }}>

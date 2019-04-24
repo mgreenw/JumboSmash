@@ -66,7 +66,6 @@ export class OnboardingLayout extends React.Component<Props, State> {
                   onPress: this._onBack
                 }
           }
-          leftIconName={firstScreen ? undefined : 'back'}
           title={section === 'settings' ? 'Settings' : 'Profile Setup'}
           loading={loading}
         />
