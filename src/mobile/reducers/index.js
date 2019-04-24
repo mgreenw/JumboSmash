@@ -133,6 +133,8 @@ import ReadMessageReducer from './conversations/readMessage';
 import LogoutReducer from './auth/logout';
 import SendVerificationEmailReducer from './auth/sendVerificationEmail';
 import GetClassmatesReducer from './admin/getClassmates';
+import ReviewProfileReducer from './admin/reviewProfile';
+import type { ReviewProfile_Action } from './admin/reviewProfile';
 import type {
   Artist,
   Artist_Action,
@@ -439,7 +441,9 @@ export type InProgress = {|
   // map of userID's to conversation fetches in progress
   getConversation: { [userId: number]: boolean },
 
-  getProfile: { [userId: number]: boolean }
+  getProfile: { [userId: number]: boolean },
+
+  reviewProfile: { [userId: number]: boolean }
 |};
 
 export type ApiResponse = {|
@@ -575,7 +579,8 @@ export type Action =
   | LaunchDate_Action
   | GetProfileInitiated_Action
   | GetProfileCompleted_Action
-  | GetProfileFailed_Action;
+  | GetProfileFailed_Action
+  | ReviewProfile_Action;
 
 export type GetState = () => ReduxState;
 
@@ -615,7 +620,8 @@ export const initialState: ReduxState = {
     unmatch: false,
     sendFeedback: false,
     getClassmates: false,
-    getProfile: {}
+    getProfile: {},
+    reviewProfile: {}
   },
   response: {
     sendVerificationEmail: null,
@@ -2093,6 +2099,18 @@ export default function rootReducer(
           }
         }
       };
+    }
+
+    case 'REVIEW_PROFILE__INITIATED': {
+      return ReviewProfileReducer.initiate(state, action);
+    }
+
+    case 'REVIEW_PROFILE__COMPLETED': {
+      return ReviewProfileReducer.complete(state, action);
+    }
+
+    case 'REVIEW_PROFILE__FAILED': {
+      return ReviewProfileReducer.fail(state, action);
     }
 
     default: {
