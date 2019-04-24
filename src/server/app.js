@@ -82,6 +82,7 @@ app.use((req, res, next) => {
 });
 
 // Define all routes here.
+app.get('/ping', (req, res) => res.status(200).send("Connection successful. Go 'Bos.").end());
 app.use('/api', api);
 app.use(notFound);
 
