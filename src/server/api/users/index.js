@@ -26,9 +26,9 @@ usersRouter.use(hasProfile);
 usersRouter.get('/me/profile', getMyProfile.handler);
 usersRouter.patch('/me/profile', updateMyProfile.handler);
 
+usersRouter.get('/:userId(\\d+)/profile', getProfile.handler);
+
 // POSTLAUNCH ONLY METHODS
 usersRouter.use(isAfterLaunch);
-
-usersRouter.get('/:userId(\\d+)/profile', getProfile.handler);
 
 module.exports = usersRouter;
