@@ -61,6 +61,9 @@ const MY = 'me/';
 const PROFILE = 'profile/';
 export const MY_PROFILE__ROUTE = USERS_ROUTE + MY + PROFILE;
 
+export const GET_PROFILE__ROUTE__GENERATOR = (userId: number) =>
+  `${USERS_ROUTE}${userId}/${PROFILE}`;
+
 const SETTINGS = 'settings/';
 export const MY_SETTINGS__ROUTE = USERS_ROUTE + MY + SETTINGS;
 
