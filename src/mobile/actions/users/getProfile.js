@@ -69,7 +69,6 @@ export default (userId: number) => (dispatch: Dispatch) => {
       dispatch(complete(userId, profile));
     })
     .catch(error => {
-      console.log(error);
       dispatch(apiErrorHandler(error));
       dispatch(fail(userId));
     });
