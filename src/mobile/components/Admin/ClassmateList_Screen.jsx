@@ -1,19 +1,36 @@
 // @flow
 
 import React from 'react';
-import { View, ImageBackground, AlertIOS } from 'react-native';
+import {
+  View,
+  ImageBackground,
+  AlertIOS,
+  TouchableHighlight,
+  Text
+} from 'react-native';
 import routes from 'mobile/components/navigation/routes';
 import { connect } from 'react-redux';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
-import { ListItem } from 'react-native-elements';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import getClassmatesAction from 'mobile/actions/admin/getClassmates';
-import type { ServerClassmate } from 'mobile/api/serverTypes';
+import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
+import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+
+const PROFILE_STATUS_COLORS = {
+  unreviewed: 'red',
+  updated: 'yellow',
+  reviewed: Colors.White
+};
+
+function profileStatusColor(status: ProfileStatus, hasProfile: boolean) {
+  if (hasProfile) return PROFILE_STATUS_COLORS[status];
+  return Colors.IceBlue;
+}
 
 function compareUtln(a: string, b: string) {
   if (a < b) return -1;
@@ -96,13 +113,47 @@ class ClassmateListScreen extends React.Component<Props, State> {
     // This can fail if classmatesById in reduxState gets out of whack,
     // but this is AdminTooling so we don't have to handle it nicely.
     const classmate: ServerClassmate = classmateMap[id];
+    const { utln, hasProfile, profileStatus } = classmate;
     return (
-      <ListItem
+      <TouchableHighlight
         onPress={() => {
           this._onPress(id);
         }}
-        title={classmate.utln}
-      />
+        style={{ minHeight: 50 }}
+      >
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View
+            style={{
+              flex: 0.1,
+              backgroundColor: Colors.White,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text>{id}</Text>
+          </View>
+          <View
+            style={{
+              flex: 0.25,
+              backgroundColor: Colors.Grey85,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text>{utln}</Text>
+          </View>
+          <View
+            style={{
+              flex: 0.65,
+              backgroundColor: profileStatusColor(profileStatus, hasProfile),
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text>{hasProfile ? profileStatus : 'NO PROFILE'}</Text>
+          </View>
+        </View>
+      </TouchableHighlight>
     );
   };
 
@@ -123,6 +174,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
+          <ColumnTitles />
           <KeyboardAwareFlatList
             enableResetScrollToCoords={false}
             data={classmateIds}
@@ -140,6 +192,51 @@ class ClassmateListScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const ColumnTitles = () => {
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 40,
+        flexDirection: 'row',
+        marginVertical: 2
+      }}
+    >
+      <View
+        style={{
+          flex: 0.1,
+          backgroundColor: Colors.White,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text>{'ID'}</Text>
+      </View>
+      <View
+        style={{
+          flex: 0.25,
+          backgroundColor: Colors.Grey85,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text>{'UTLN'}</Text>
+      </View>
+
+      <View
+        style={{
+          flex: 0.65,
+          backgroundColor: Colors.White,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text>{'Profile Status'}</Text>
+      </View>
+    </View>
+  );
+};
 
 export default connect(
   mapStateToProps,
