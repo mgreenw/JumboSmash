@@ -1,6 +1,7 @@
 {
   "preReleaseId": "beta",
   "git": {
+    "changelog": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE] -- .",
     "tagName": "server-${version}",
     "tagAnnotation": "Server ${version} release",
     "commitMessage": "Release server ${version}"
