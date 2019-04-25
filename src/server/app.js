@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(mung.json((body, req, res) => {
   res.body = body;
   return body;
-}));
+}, { mungError: true }));
 
 // Log each incoming request
 app.use((req, res, next) => {
