@@ -125,8 +125,11 @@ const CardView = (props: Props) => {
     </View>
   ) : null;
 
+  // Don't trust spotify's return! if the array is empty let the url be null.
   const [{ url: artistUrl = null }] =
-    springFlingActArtist && springFlingActArtist.images.length > 0
+    springFlingActArtist &&
+    springFlingActArtist.images &&
+    springFlingActArtist.images.length > 0
       ? springFlingActArtist.images.slice(-1)
       : [{}];
   const artistBlock = springFlingActArtist ? (
