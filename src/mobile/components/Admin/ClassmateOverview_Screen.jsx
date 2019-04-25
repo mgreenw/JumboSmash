@@ -24,7 +24,11 @@ import Avatar from 'mobile/components/shared/Avatar';
 import { Colors } from 'mobile/styles/colors';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import { textStyles } from 'mobile/styles/textStyles';
-import { SecondaryButton } from 'mobile/components/shared/buttons';
+import {
+  SecondaryButton,
+  AdminButtonPositive,
+  AdminButtonNegative
+} from 'mobile/components/shared/buttons';
 import Spacer from 'mobile/components/shared/Spacer';
 import { profileStatusColor } from './ClassmateList_Screen';
 
@@ -45,6 +49,7 @@ type DispatchProps = {
 
 type ReduxProps = {
   getProfile_inProgress: boolean,
+  reviewProfile_inProgress: boolean,
   profile: null | UserProfile,
   classmate: ServerClassmate
 };
@@ -54,8 +59,10 @@ type Props = DispatchProps & ReduxProps & NavigationProps;
 function mapStateToProps(state: ReduxState, ownProps: Props): ReduxProps {
   const userId: number = ownProps.navigation.getParam('id', null);
   const getProfile_inProgress = state.inProgress.getProfile[userId];
+  const reviewProfile_inProgress = state.inProgress.reviewProfile[userId];
   return {
     getProfile_inProgress,
+    reviewProfile_inProgress,
     profile: getProfile_inProgress ? null : state.profiles[userId],
     classmate: state.classmatesById[userId]
   };
@@ -105,6 +112,75 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
     });
   };
 
+  _acceptProfile = () => {
+    const { classmate, reviewProfile } = this.props;
+    const { utln, id, capabilities } = classmate;
+    AlertIOS.prompt(
+      `Accept Profile for ${utln}?`,
+      'Enter passsword to confirm. This will enable BOTH Can-Be-Swiped-On AND Can-Be-Active-In-Scene.s',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: `Accept Profile`,
+          onPress: password => {
+            reviewProfile(
+              password,
+              id,
+              {
+                ...capabilities,
+                canBeSwipedOn: true,
+                canBeActiveInScenes: true
+              },
+              'INITAL_REVIEW'
+            );
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  };
+
+  _rejectProfile = () => {
+    const { classmate, reviewProfile } = this.props;
+    const { utln, id, capabilities } = classmate;
+    AlertIOS.prompt(
+      `Reject Profile for ${utln}?`,
+      'Enter passsword to confirm. This will disable ONLY Can-Be-Swiped-On.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: `Reject Profile`,
+          onPress: password => {
+            AlertIOS.prompt(
+              'Reason for rejecting?',
+              '>5 characters',
+              reason => {
+                reviewProfile(
+                  password,
+                  id,
+                  {
+                    ...capabilities,
+                    canBeSwipedOn: false
+                  },
+                  reason
+                );
+              }
+            );
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  };
+
   _confirmReview = (
     selectedCapability: 'canBeSwipedOn' | 'canBeActiveInScenes',
     enableValue: boolean
@@ -148,11 +224,50 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { profile, getProfile_inProgress, classmate } = this.props;
+    const {
+      profile,
+      getProfile_inProgress,
+      reviewProfile_inProgress,
+      classmate
+    } = this.props;
     const { utln, hasProfile, profileStatus } = classmate;
     const { showExpandedCard } = this.state;
     const reviewStatus = hasProfile ? profileStatus : 'NO PROFILE';
     const reviewStatusColor = profileStatusColor(profileStatus, hasProfile);
+    const unreviewed = reviewStatus === 'unreviewed';
+
+    const unreviewedBody = (
+      <View>
+        <Text style={[textStyles.body1StyleSemibold, { paddingLeft: 10 }]}>
+          Please Accept or Reject this Profile:
+        </Text>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-around',
+            paddingVertical: 10
+          }}
+        >
+          <AdminButtonPositive
+            title={'Accept Profile'}
+            disabled={reviewProfile_inProgress}
+            loading={reviewProfile_inProgress}
+            onPress={this._acceptProfile}
+          />
+          <AdminButtonNegative
+            title={'Reject Profile'}
+            disabled={reviewProfile_inProgress}
+            loading={reviewProfile_inProgress}
+            onPress={this._rejectProfile}
+          />
+        </View>
+
+        <Spacer style={{ marginBottom: 8 }} />
+      </View>
+    );
+
     return (
       <View style={{ flex: 1, backgroundColor: Colors.White }}>
         <GEMHeader
@@ -224,6 +339,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
               <ActivityIndicator />
             ) : (
               <View style={{ width: '100%' }}>
+                {unreviewed && unreviewedBody}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -236,6 +352,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                 >
                   <Text style={textStyles.body1Style}>Can Be Swiped On</Text>
                   <Switch
+                    disabled={unreviewed || reviewProfile_inProgress}
                     value={classmate.capabilities.canBeSwipedOn}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
@@ -258,6 +375,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                     Can Be Active In Scenes
                   </Text>
                   <Switch
+                    disabled={unreviewed || reviewProfile_inProgress}
                     value={classmate.capabilities.canBeActiveInScenes}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
