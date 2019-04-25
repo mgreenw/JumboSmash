@@ -63,7 +63,8 @@ export default (props: Props) => {
           borderRadius: 20,
           shadowOffset: { width: 1, height: 2 },
           shadowColor: 'black',
-          shadowOpacity: 0.2
+          shadowOpacity: 0.2,
+          elevation: 1
         }}
       >
         <Text style={{ fontSize: 28 }}>
