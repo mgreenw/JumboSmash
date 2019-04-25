@@ -76,7 +76,8 @@ function complete(
         },
         notificationsEnabled: false,
         expoPushToken: null,
-        isAdmin: false
+        isAdmin: false,
+        canBeActiveInScenes: false
       },
       launchDateStatus
     },

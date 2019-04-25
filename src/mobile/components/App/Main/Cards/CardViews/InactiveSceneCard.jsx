@@ -40,6 +40,7 @@ type DispatchProps = {
 
 type ReduxProps = {
   sceneEnabled: boolean,
+  canBeActiveInScenes: boolean,
   enableSceneInProgress: boolean
 };
 
@@ -52,7 +53,8 @@ function mapStateToProps(reduxState: ReduxState, ownProps: Props): ReduxProps {
   }
   return {
     sceneEnabled: reduxState.client.settings.activeScenes[scene],
-    enableSceneInProgress: reduxState.inProgress.saveSettings
+    enableSceneInProgress: reduxState.inProgress.saveSettings,
+    canBeActiveInScenes: reduxState.client.settings.canBeActiveInScenes
   };
 }
 
@@ -84,7 +86,8 @@ class InactiveSceneCard extends React.Component<Props> {
       enableScene,
       sceneEnabled,
       enableSceneInProgress,
-      dismissCard
+      dismissCard,
+      canBeActiveInScenes
     } = this.props;
     const sceneData = SCENE_META_DATA[scene];
 
@@ -146,16 +149,26 @@ class InactiveSceneCard extends React.Component<Props> {
           onPress={sceneEnabled ? dismissCard : enableScene}
           title={sceneEnabled ? 'Start Swiping' : `Enable ${sceneData.display}`}
           loading={enableSceneInProgress}
-          disabled={enableSceneInProgress}
+          disabled={enableSceneInProgress || !canBeActiveInScenes}
         />
         <View
           style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
         >
           {!sceneEnabled && (
-            <Text style={[textStyles.subtitle1Style, { textAlign: 'center' }]}>
-              {`You won’t be shown in ${
-                sceneData.display
-              } unless you enable it. You can always turn it off in settings.`}
+            <Text
+              style={[
+                textStyles.subtitle1Style,
+                {
+                  textAlign: 'center',
+                  color: canBeActiveInScenes ? Colors.Black : Colors.Grapefruit
+                }
+              ]}
+            >
+              {canBeActiveInScenes
+                ? `You won’t be shown in ${
+                    sceneData.display
+                  } unless you enable it. You can always turn it off in settings.`
+                : 'Your account is currently locked. Please check your email for more information.'}
             </Text>
           )}
         </View>
