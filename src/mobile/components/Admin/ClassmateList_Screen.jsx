@@ -181,7 +181,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             <CustomIcon
               name={'attention'}
               size={26}
-              color={hasIssues ? Colors.Grapefruit : 'transparent'}
+              color={hasIssues ? 'red' : 'transparent'}
             />
           </View>
         </View>

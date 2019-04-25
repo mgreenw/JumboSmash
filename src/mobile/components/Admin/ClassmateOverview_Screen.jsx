@@ -30,6 +30,7 @@ import {
   AdminButtonNegative
 } from 'mobile/components/shared/buttons';
 import Spacer from 'mobile/components/shared/Spacer';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { profileStatusColor } from './ClassmateList_Screen';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -230,11 +231,18 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
       reviewProfile_inProgress,
       classmate
     } = this.props;
+    const { isTerminated, capabilities } = classmate;
     const { utln, hasProfile, profileStatus } = classmate;
     const { showExpandedCard } = this.state;
     const reviewStatus = hasProfile ? profileStatus : 'NO PROFILE';
     const reviewStatusColor = profileStatusColor(profileStatus, hasProfile);
     const unreviewed = reviewStatus === 'unreviewed';
+
+    const hasIssues =
+      (!capabilities.canBeSwipedOn &&
+        (profileStatus === 'update' || profileStatus === 'reviewed')) ||
+      !capabilities.canBeActiveInScenes ||
+      isTerminated;
 
     const unreviewedBody = (
       <View>
@@ -268,6 +276,14 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
       </View>
     );
 
+    const issuesIcon = (
+      <CustomIcon
+        name={'attention'}
+        size={50}
+        color={hasIssues ? 'red' : 'transparent'}
+      />
+    );
+
     return (
       <View style={{ flex: 1, backgroundColor: Colors.White }}>
         <GEMHeader
@@ -285,22 +301,34 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
               zIndex: -1
             }}
           />
-          <TouchableOpacity
-            style={{ paddingTop: '5.5%' }}
-            onPress={this._showExpandedCard}
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly'
+            }}
           >
-            {profile !== null && hasProfile ? (
-              <Avatar size="Large" photoUuid={profile.photoUuids[0]} border />
-            ) : (
-              <Image
-                style={{ width: 135, height: 135 }}
-                source={{
-                  uri:
-                    'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
-                }}
-              />
-            )}
-          </TouchableOpacity>
+            {issuesIcon}
+            <TouchableOpacity
+              style={{ paddingTop: '5.5%' }}
+              onPress={this._showExpandedCard}
+            >
+              {profile !== null && hasProfile ? (
+                <Avatar size="Large" photoUuid={profile.photoUuids[0]} border />
+              ) : (
+                <Image
+                  style={{ width: 135, height: 135 }}
+                  source={{
+                    uri:
+                      'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+            {issuesIcon}
+          </View>
+
           <Text
             style={[textStyles.headline6Style, { paddingVertical: '5.5%' }]}
           >
@@ -353,7 +381,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                   <Text style={textStyles.body1Style}>Can Be Swiped On</Text>
                   <Switch
                     disabled={unreviewed || reviewProfile_inProgress}
-                    value={classmate.capabilities.canBeSwipedOn}
+                    value={capabilities.canBeSwipedOn}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
                       this._confirmReview('canBeSwipedOn', value);
@@ -376,7 +404,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                   </Text>
                   <Switch
                     disabled={unreviewed || reviewProfile_inProgress}
-                    value={classmate.capabilities.canBeActiveInScenes}
+                    value={capabilities.canBeActiveInScenes}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
                       this._confirmReview('canBeActiveInScenes', value);
