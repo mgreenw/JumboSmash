@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
-  Clipboard
+  Clipboard,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { connect } from 'react-redux';
 import instantiateEmojiRegex from 'emoji-regex';
@@ -856,6 +858,9 @@ class MessagingScreen extends React.Component<Props, State> {
           />
         </View>
         {this._renderContent(profile)}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'android' ? 'padding' : null}
+        />
         {padBottom && <View style={{ height: 20 }} />}
         <ModalProfileView
           isVisible={showExpandedCard}
