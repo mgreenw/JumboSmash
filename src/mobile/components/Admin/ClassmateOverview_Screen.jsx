@@ -24,8 +24,13 @@ import Avatar from 'mobile/components/shared/Avatar';
 import { Colors } from 'mobile/styles/colors';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import { textStyles } from 'mobile/styles/textStyles';
-import { SecondaryButton } from 'mobile/components/shared/buttons';
+import {
+  SecondaryButton,
+  AdminButtonPositive,
+  AdminButtonNegative
+} from 'mobile/components/shared/buttons';
 import Spacer from 'mobile/components/shared/Spacer';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { profileStatusColor } from './ClassmateList_Screen';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -45,6 +50,7 @@ type DispatchProps = {
 
 type ReduxProps = {
   getProfile_inProgress: boolean,
+  reviewProfile_inProgress: boolean,
   profile: null | UserProfile,
   classmate: ServerClassmate
 };
@@ -54,8 +60,10 @@ type Props = DispatchProps & ReduxProps & NavigationProps;
 function mapStateToProps(state: ReduxState, ownProps: Props): ReduxProps {
   const userId: number = ownProps.navigation.getParam('id', null);
   const getProfile_inProgress = state.inProgress.getProfile[userId];
+  const reviewProfile_inProgress = state.inProgress.reviewProfile[userId];
   return {
     getProfile_inProgress,
+    reviewProfile_inProgress,
     profile: getProfile_inProgress ? null : state.profiles[userId],
     classmate: state.classmatesById[userId]
   };
@@ -105,6 +113,75 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
     });
   };
 
+  _acceptProfile = () => {
+    const { classmate, reviewProfile } = this.props;
+    const { utln, id, capabilities } = classmate;
+    AlertIOS.prompt(
+      `Accept Profile for ${utln}?`,
+      'Enter passsword to confirm. This will enable BOTH Can-Be-Swiped-On AND Can-Be-Active-In-Scenes.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: `Accept Profile`,
+          onPress: password => {
+            reviewProfile(
+              password,
+              id,
+              {
+                ...capabilities,
+                canBeSwipedOn: true,
+                canBeActiveInScenes: true
+              },
+              'INITAL_REVIEW'
+            );
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  };
+
+  _rejectProfile = () => {
+    const { classmate, reviewProfile } = this.props;
+    const { utln, id, capabilities } = classmate;
+    AlertIOS.prompt(
+      `Reject Profile for ${utln}?`,
+      'Enter passsword to confirm. This will disable ONLY Can-Be-Swiped-On.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: `Reject Profile`,
+          onPress: password => {
+            AlertIOS.prompt(
+              'Reason for rejecting?',
+              '>5 characters',
+              reason => {
+                reviewProfile(
+                  password,
+                  id,
+                  {
+                    ...capabilities,
+                    canBeSwipedOn: false
+                  },
+                  reason
+                );
+              }
+            );
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  };
+
   _confirmReview = (
     selectedCapability: 'canBeSwipedOn' | 'canBeActiveInScenes',
     enableValue: boolean
@@ -148,11 +225,65 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { profile, getProfile_inProgress, classmate } = this.props;
+    const {
+      profile,
+      getProfile_inProgress,
+      reviewProfile_inProgress,
+      classmate
+    } = this.props;
+    const { isTerminated, capabilities } = classmate;
     const { utln, hasProfile, profileStatus } = classmate;
     const { showExpandedCard } = this.state;
     const reviewStatus = hasProfile ? profileStatus : 'NO PROFILE';
     const reviewStatusColor = profileStatusColor(profileStatus, hasProfile);
+    const unreviewed = reviewStatus === 'unreviewed';
+
+    const hasIssues =
+      (!capabilities.canBeSwipedOn &&
+        (profileStatus === 'update' || profileStatus === 'reviewed')) ||
+      !capabilities.canBeActiveInScenes ||
+      isTerminated;
+
+    const unreviewedBody = (
+      <View>
+        <Text style={[textStyles.body1StyleSemibold, { paddingLeft: 10 }]}>
+          Please Accept or Reject this Profile:
+        </Text>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-around',
+            paddingVertical: 10
+          }}
+        >
+          <AdminButtonPositive
+            title={'Accept Profile'}
+            disabled={reviewProfile_inProgress}
+            loading={reviewProfile_inProgress}
+            onPress={this._acceptProfile}
+          />
+          <AdminButtonNegative
+            title={'Reject Profile'}
+            disabled={reviewProfile_inProgress}
+            loading={reviewProfile_inProgress}
+            onPress={this._rejectProfile}
+          />
+        </View>
+
+        <Spacer style={{ marginBottom: 8 }} />
+      </View>
+    );
+
+    const issuesIcon = (
+      <CustomIcon
+        name={'attention'}
+        size={50}
+        color={hasIssues ? 'red' : 'transparent'}
+      />
+    );
+
     return (
       <View style={{ flex: 1, backgroundColor: Colors.White }}>
         <GEMHeader
@@ -170,22 +301,34 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
               zIndex: -1
             }}
           />
-          <TouchableOpacity
-            style={{ paddingTop: '5.5%' }}
-            onPress={this._showExpandedCard}
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-evenly'
+            }}
           >
-            {profile !== null && hasProfile ? (
-              <Avatar size="Large" photoUuid={profile.photoUuids[0]} border />
-            ) : (
-              <Image
-                style={{ width: 135, height: 135 }}
-                source={{
-                  uri:
-                    'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
-                }}
-              />
-            )}
-          </TouchableOpacity>
+            {issuesIcon}
+            <TouchableOpacity
+              style={{ paddingTop: '5.5%' }}
+              onPress={this._showExpandedCard}
+            >
+              {profile !== null && hasProfile ? (
+                <Avatar size="Large" photoUuid={profile.photoUuids[0]} border />
+              ) : (
+                <Image
+                  style={{ width: 135, height: 135 }}
+                  source={{
+                    uri:
+                      'https://president.tufts.edu/wp-content/uploads/PresMonaco_Sept2011.jpg'
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+            {issuesIcon}
+          </View>
+
           <Text
             style={[textStyles.headline6Style, { paddingVertical: '5.5%' }]}
           >
@@ -224,6 +367,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
               <ActivityIndicator />
             ) : (
               <View style={{ width: '100%' }}>
+                {unreviewed && unreviewedBody}
                 <View
                   style={{
                     flexDirection: 'row',
@@ -236,7 +380,8 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                 >
                   <Text style={textStyles.body1Style}>Can Be Swiped On</Text>
                   <Switch
-                    value={classmate.capabilities.canBeSwipedOn}
+                    disabled={unreviewed || reviewProfile_inProgress}
+                    value={capabilities.canBeSwipedOn}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
                       this._confirmReview('canBeSwipedOn', value);
@@ -258,7 +403,8 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
                     Can Be Active In Scenes
                   </Text>
                   <Switch
-                    value={classmate.capabilities.canBeActiveInScenes}
+                    disabled={unreviewed || reviewProfile_inProgress}
+                    value={capabilities.canBeActiveInScenes}
                     trackColor={{ true: Colors.AquaMarine }}
                     onValueChange={value => {
                       this._confirmReview('canBeActiveInScenes', value);
