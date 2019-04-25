@@ -15,6 +15,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import getClassmatesAction from 'mobile/actions/admin/getClassmates';
+import getProfileAction from 'mobile/actions/users/getProfile';
 import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
 import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -42,7 +43,8 @@ type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
 type DispatchProps = {
-  getClassmates: (password: string) => void
+  getClassmates: (password: string) => void,
+  getProfile: (userId: number) => void
 };
 
 type ReduxProps = {
@@ -69,6 +71,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     getClassmates: (password: string) => {
       dispatch(getClassmatesAction(password));
+    },
+    getProfile: (userId: number) => {
+      dispatch(getProfileAction(userId));
     }
   };
 }
@@ -104,7 +109,8 @@ class ClassmateListScreen extends React.Component<Props, State> {
   };
 
   _onPress = (id: number) => {
-    const { navigation } = this.props;
+    const { navigation, getProfile } = this.props;
+    getProfile(id);
     navigation.navigate(routes.AdminClassmateOverview, { id });
   };
 

@@ -109,6 +109,11 @@ import type {
   SendFeedbackCompleted_Action,
   SendFeedbackFailed_Action
 } from 'mobile/actions/app/meta/sendFeedback';
+import type {
+  GetProfileInitiated_Action,
+  GetProfileCompleted_Action,
+  GetProfileFailed_Action
+} from 'mobile/actions/users/getProfile';
 import { normalize, schema } from 'normalizr';
 
 import { isFSA } from 'mobile/utils/fluxStandardAction';
@@ -432,7 +437,9 @@ export type InProgress = {|
   readMessage: { [userId: number]: { [messageId: number]: boolean } },
 
   // map of userID's to conversation fetches in progress
-  getConversation: { [userId: number]: boolean }
+  getConversation: { [userId: number]: boolean },
+
+  getProfile: { [userId: number]: boolean }
 |};
 
 export type ApiResponse = {|
@@ -565,7 +572,10 @@ export type Action =
   | SendFeedbackFailed_Action
   | GetClassmates_Action
   | Artist_Action
-  | LaunchDate_Action;
+  | LaunchDate_Action
+  | GetProfileInitiated_Action
+  | GetProfileCompleted_Action
+  | GetProfileFailed_Action;
 
 export type GetState = () => ReduxState;
 
@@ -604,7 +614,8 @@ export const initialState: ReduxState = {
     reportUser: false,
     unmatch: false,
     sendFeedback: false,
-    getClassmates: false
+    getClassmates: false,
+    getProfile: {}
   },
   response: {
     sendVerificationEmail: null,
@@ -2030,6 +2041,57 @@ export default function rootReducer(
           state.launchDate,
           action
         )
+      };
+    }
+
+    case 'GET_PROFILE__INITIATED': {
+      const { userId } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getProfile: {
+            ...state.inProgress.getProfile,
+            [userId]: true
+          }
+        }
+      };
+    }
+
+    case 'GET_PROFILE__COMPLETED': {
+      const { userId, profile: serverProflie } = action.payload;
+
+      // These two types, UserProfile and ServerProfile,
+      //  are the same, so we can coherce like this.
+      const profile: UserProfile = serverProflie;
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getProfile: {
+            ...state.inProgress.getProfile,
+            [userId]: false
+          }
+        },
+        profiles: {
+          ...state.profiles,
+          [userId]: profile
+        }
+      };
+    }
+
+    case 'GET_PROFILE__FAILED': {
+      const { userId } = action.payload;
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          getProfile: {
+            ...state.inProgress.getProfile,
+            [userId]: false
+          }
+        }
       };
     }
 
