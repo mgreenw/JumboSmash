@@ -77,4 +77,29 @@ const SecondaryButton = CreateStyledButton({
   titleDisabled: Arthur_Styles.buttonTitleSecondaryDisabled
 });
 
-export { PrimaryButton, SecondaryButton };
+const AdminButtonPositive = CreateStyledButton({
+  containerActive: {
+    ...Arthur_Styles.buttonPrimaryActive,
+    backgroundColor: 'green'
+  },
+  containerDisabled: Arthur_Styles.buttonPrimaryDisabled,
+  titleActive: { ...Arthur_Styles.buttonTitlePrimaryActive, color: 'white' },
+  titleDisabled: Arthur_Styles.buttonTitlePrimaryDisabled
+});
+
+const AdminButtonNegative = CreateStyledButton({
+  containerActive: {
+    ...Arthur_Styles.buttonPrimaryActive,
+    backgroundColor: 'red'
+  },
+  containerDisabled: Arthur_Styles.buttonPrimaryDisabled,
+  titleActive: { ...Arthur_Styles.buttonTitlePrimaryActive, color: 'white' },
+  titleDisabled: Arthur_Styles.buttonTitlePrimaryDisabled
+});
+
+export {
+  PrimaryButton,
+  SecondaryButton,
+  AdminButtonPositive,
+  AdminButtonNegative
+};

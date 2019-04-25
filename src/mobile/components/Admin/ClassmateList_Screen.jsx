@@ -19,6 +19,7 @@ import getProfileAction from 'mobile/actions/users/getProfile';
 import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
 import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -119,7 +120,18 @@ class ClassmateListScreen extends React.Component<Props, State> {
     // This can fail if classmatesById in reduxState gets out of whack,
     // but this is AdminTooling so we don't have to handle it nicely.
     const classmate: ServerClassmate = classmateMap[id];
-    const { utln, hasProfile, profileStatus } = classmate;
+    const {
+      utln,
+      hasProfile,
+      profileStatus,
+      capabilities,
+      isTerminated
+    } = classmate;
+    const hasIssues =
+      (!capabilities.canBeSwipedOn &&
+        (profileStatus === 'update' || profileStatus === 'reviewed')) ||
+      !capabilities.canBeActiveInScenes ||
+      isTerminated;
     return (
       <TouchableHighlight
         onPress={() => {
@@ -157,6 +169,20 @@ class ClassmateListScreen extends React.Component<Props, State> {
             }}
           >
             <Text>{hasProfile ? profileStatus : 'NO PROFILE'}</Text>
+          </View>
+          <View
+            style={{
+              width: 60,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: Colors.Grey85
+            }}
+          >
+            <CustomIcon
+              name={'attention'}
+              size={26}
+              color={hasIssues ? 'red' : 'transparent'}
+            />
           </View>
         </View>
       </TouchableHighlight>
@@ -239,6 +265,16 @@ const ColumnTitles = () => {
         }}
       >
         <Text>{'Profile Status'}</Text>
+      </View>
+      <View
+        style={{
+          width: 60,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: Colors.Grey85
+        }}
+      >
+        <Text>Issues</Text>
       </View>
     </View>
   );
