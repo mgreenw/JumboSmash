@@ -21,7 +21,8 @@
     "get-2019-members": "babel-node ./scripts/get-2019-members.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
