@@ -1,0 +1,19 @@
+{
+  "name": "jumbosmash-website",
+  "version": "1.0.0",
+  "description": "JumboSmash 2019",
+  "engines": {
+    "node": "^8.15.0"
+  },
+  "scripts": {
+    "release": "release-it",
+    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/node": "^7.0.0",
+    "release-it": "^10.2.0"
+  }
+}
