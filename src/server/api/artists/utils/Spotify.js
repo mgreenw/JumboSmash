@@ -82,7 +82,7 @@ async function get(resource: string): Promise<any> {
   try {
     const response = await axios({
       method: 'GET',
-      url: `https://api.spotify.com/v1/${resource}`,
+      url: `https://api.spotify.com/v1/${encodeURI(resource)}`,
       headers: {
         Authorization: token,
       },

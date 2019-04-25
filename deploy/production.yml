@@ -34,7 +34,7 @@ services:
   #
 
   website:
-    image: sperrys/website:f73ed8fb77dd488e9a5332b83dc2b071506c2a63
+    image: sperrys/website:b9c7721dc6c21891154441852e099667de996f90
     networks:
       - traefik-net
     deploy:
@@ -75,7 +75,7 @@ services:
   #
 
   server:
-    image: maxgreenwald/projectgem:1.11.0
+    image: maxgreenwald/projectgem:1.11.2
     environment:
       NODE_ENV: production
     secrets:

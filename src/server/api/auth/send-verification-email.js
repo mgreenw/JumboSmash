@@ -140,7 +140,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   }
 
   // Check that the student is in A&S or E
-  if (!_.includes(['A&S', 'E'], memberInfo.college)) {
+  if (!_.includes(['A&S', 'E', 'SMFA AT TUFTS'], memberInfo.college)) {
     return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__EMAIL_NOT_UNDERGRAD).data({
       college: memberInfo.college,
       classYear: memberInfo.classYear,
