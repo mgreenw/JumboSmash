@@ -5,16 +5,20 @@ import {
   TouchableOpacity,
   View,
   ImageBackground,
-  ActivityIndicator
+  ActivityIndicator,
+  Text,
+  SafeAreaView
 } from 'react-native';
 import { connect } from 'react-redux';
 import GEMHeader from 'mobile/components/shared/Header';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch, UserProfile } from 'mobile/reducers/index';
 import NavigationService from 'mobile/components/navigation/NavigationService';
-import type { ServerClassmate } from 'mobile/api/serverTypes';
+import type { ServerClassmate, Capabilities } from 'mobile/api/serverTypes';
 import ModalProfileView from 'mobile/components/shared/ModalProfileView';
+import reviewProfileAction from 'mobile/actions/admin/reviewProfile';
 import Avatar from 'mobile/components/shared/Avatar';
+import { Colors } from 'mobile/styles/colors';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -22,7 +26,14 @@ type NavigationProps = {
   navigation: NavigationScreenProp<any>
 };
 
-type DispatchProps = {};
+type DispatchProps = {
+  reviewProfile: (
+    password: string,
+    userId: number,
+    updatedCapabilities: Capabilities,
+    comment: string
+  ) => void
+};
 
 type ReduxProps = {
   getProfile_inProgress: boolean,
@@ -43,7 +54,18 @@ function mapStateToProps(state: ReduxState, ownProps: Props): ReduxProps {
 }
 
 function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
-  return {};
+  return {
+    reviewProfile: (
+      password: string,
+      userId: number,
+      updatedCapabilities: Capabilities,
+      comment: string
+    ) => {
+      dispatch(
+        reviewProfileAction(password, userId, updatedCapabilities, comment)
+      );
+    }
+  };
 }
 
 type State = {
@@ -77,9 +99,10 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
 
   render() {
     const { profile, getProfile_inProgress, classmate } = this.props;
+    const { utln, hasProfile, profileStatus } = classmate;
     const { showExpandedCard } = this.state;
     return (
-      <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <GEMHeader
           title={classmate.utln}
           leftIcon={{ name: 'back', onPress: this._onBack }}
@@ -91,13 +114,35 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
             alignItems: 'center'
           }}
         >
-          {getProfile_inProgress || profile === null ? (
-            <ActivityIndicator />
-          ) : (
+          {getProfile_inProgress && <ActivityIndicator />}
+          {!getProfile_inProgress && profile !== null && hasProfile && (
             <TouchableOpacity onPress={this._showExpandedCard}>
               <Avatar size="Large" photoUuid={profile.photoUuids[0]} border />
             </TouchableOpacity>
           )}
+          {!getProfile_inProgress && (
+            <View
+              style={{
+                backgroundColor: Colors.White,
+                width: '100%',
+                paddingHorizontal: 30,
+                alignItems: 'center',
+                paddingTop: 25,
+                paddingBottom: 35,
+                shadowColor: '#6F6F6F',
+                shadowOpacity: 0.57,
+                shadowRadius: 2,
+                shadowOffset: {
+                  height: 2,
+                  width: 1
+                },
+                borderRadius: 10
+              }}
+            >
+              <Text>test</Text>
+            </View>
+          )}
+
           <ImageBackground
             source={wavesFull}
             style={{
@@ -121,7 +166,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
             profile={profile}
           />
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 }
