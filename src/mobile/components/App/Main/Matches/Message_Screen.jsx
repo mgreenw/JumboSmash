@@ -830,6 +830,7 @@ class MessagingScreen extends React.Component<Props, State> {
         onDone={() => this.setState({ showUnmatchPopup: false }, this._goBack)}
         displayName={displayName}
         matchId={match.profile}
+        match={match}
       />
     );
   }
