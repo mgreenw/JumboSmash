@@ -126,6 +126,10 @@ export const READ_MESSAGE__ROUTE__GENERATOR = (
 const CLASSMATES = 'classmates/';
 export const GET_CLASSMATES_ROUTE = ADMIN_ROUTE + CLASSMATES;
 
+const REVIEW = 'review/';
+export const REVIEW_PROFILE__ROUTE__GENERATOR = (userId: number) =>
+  `${ADMIN_ROUTE + CLASSMATES + userId}/${REVIEW}`;
+
 // Send Feedback
 const FEEDBACK = 'feedback/';
 export const SEND_FEEDBACK__ROUTE = META_ROUTE + FEEDBACK;
