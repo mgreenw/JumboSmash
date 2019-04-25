@@ -1,0 +1,19 @@
+{
+  "preReleaseId": "beta",
+  "git": {
+    "changelog": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE] -- .",
+    "tagName": "koh-${version}",
+    "tagAnnotation": "Koh ${version} release",
+    "commitMessage": "Release Koh ${version}"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Koh - ${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "scripts": {
+    "beforeBump": "npm run bump-deploy-version ${version} && git add --all && git commit -m \"Bump Koh deploy files to ${version}\""
+  }
+}
