@@ -118,7 +118,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
     const { utln, id, capabilities } = classmate;
     AlertIOS.prompt(
       `Accept Profile for ${utln}?`,
-      'Enter passsword to confirm. This will enable BOTH Can-Be-Swiped-On AND Can-Be-Active-In-Scene.s',
+      'Enter passsword to confirm. This will enable BOTH Can-Be-Swiped-On AND Can-Be-Active-In-Scenes.',
       [
         {
           text: 'Cancel',
