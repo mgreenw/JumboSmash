@@ -3,7 +3,7 @@
  *  Author: Max Greenwald
  *  Date: 10/20/18
  *
- *  Bump the staging.yml and prod.yml files to match the current server version!
+ *  Bump the staging.yml and prod.yml files to match the current koh version!
  *
  */
 
@@ -11,18 +11,18 @@
 const fs = require('fs');
 const semver = require('semver');
 
-const serverRegex = /kohthefacestealer\/koh:([0-9.]+(-beta.[0-9])*)/;
+const kohRegex = /kohthefacestealer\/koh:([0-9.]+(-beta.[0-9])*)/;
 
 function updateDeployFile(path, version) {
   let env = fs.readFileSync(path, 'utf8');
 
-  const oldVersion = semver.parse(env.match(serverRegex)[1]);
+  const oldVersion = semver.parse(env.match(kohRegex)[1]);
   if (!semver.gt(version, oldVersion)) {
-    console.log(`The new server version ${version.toString()} for ${path} must be higher than the old version ${oldVersion.toString()}`);
+    console.log(`The new koh version ${version.toString()} for ${path} must be higher than the old version ${oldVersion.toString()}`);
     process.exit(1);
   }
 
-  env = env.replace(serverRegex, `kohthefacestealer/koh:${version.toString()}`);
+  env = env.replace(kohRegex, `kohthefacestealer/koh:${version.toString()}`);
   fs.writeFileSync(path, env, 'utf8');
 }
 
