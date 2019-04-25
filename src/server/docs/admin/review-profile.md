@@ -64,9 +64,15 @@ Provide the normal `Authorization` token in the request header. Additionally, in
 
 ```json
 {
-	"canBeSwipedOn": false,
+    "updatedCapabilites": {
+    	"canBeSwipedOn": false,
 	"canBeActiveInScenes": true,
-	"comment": "Test review"
+    },
+    "previousCapabilities": {
+        "canBeSwipedOn": false,
+	"canBeActiveInScenes": false,
+    },
+    "comment": "Test review"
 }
 ```
 
