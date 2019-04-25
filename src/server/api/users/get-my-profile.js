@@ -10,7 +10,6 @@ const apiUtils = require('../utils');
  *
  */
 const getMyProfile = async (userId: number) => {
-  throw new Error('oops');
   return getProfile(userId);
 };
 
