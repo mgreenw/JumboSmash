@@ -25,10 +25,10 @@ const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.pn
 const PROFILE_STATUS_COLORS = {
   unreviewed: 'red',
   updated: 'yellow',
-  reviewed: Colors.White
+  reviewed: 'green'
 };
 
-function profileStatusColor(status: ProfileStatus, hasProfile: boolean) {
+export function profileStatusColor(status: ProfileStatus, hasProfile: boolean) {
   if (hasProfile) return PROFILE_STATUS_COLORS[status];
   return Colors.IceBlue;
 }

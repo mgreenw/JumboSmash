@@ -10,9 +10,9 @@ export default function getClassmates(
   password: string,
   userId: number,
   request: {
-    updatedCapabilites: Capabilities,
+    updatedCapabilities: Capabilities,
     previousCapabilities: Capabilities,
-    comment: string
+    comment: ?string
   }
 ): Promise<ServerClassmate> {
   const route = REVIEW_PROFILE__ROUTE__GENERATOR(userId);

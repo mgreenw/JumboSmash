@@ -65,8 +65,8 @@ function fail(userId: number): ReviewProfileFailed_Action {
 export default (
   password: string,
   userId: number,
-  updatedCapabilites: Capabilities,
-  comment: string
+  updatedCapabilities: Capabilities,
+  comment: ?string
 ) => (dispatch: Dispatch, getState: GetState) => {
   // This is to ensure that we don't override someone elses' updates to a profile,
   // by adding what the client 'thinks' the current classmate's capabilities are.
@@ -79,7 +79,7 @@ export default (
 
   dispatch(initiate(userId));
   reviewProfileApi(password, userId, {
-    updatedCapabilites,
+    updatedCapabilities,
     previousCapabilities,
     comment
   })
