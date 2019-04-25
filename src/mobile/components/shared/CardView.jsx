@@ -125,9 +125,10 @@ const CardView = (props: Props) => {
     </View>
   ) : null;
 
-  const [{ url: artistUrl = null }] = springFlingActArtist
-    ? springFlingActArtist.images.slice(-1)
-    : [{}];
+  const [{ url: artistUrl = null }] =
+    springFlingActArtist && springFlingActArtist.images.length > 0
+      ? springFlingActArtist.images.slice(-1)
+      : [{}];
   const artistBlock = springFlingActArtist ? (
     <View style={styles.profileBlock}>
       <View
