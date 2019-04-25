@@ -215,7 +215,8 @@ export type UserSettings = {
   activeScenes: ActiveScenes,
   notificationsEnabled: boolean,
   expoPushToken: ?string,
-  isAdmin: boolean
+  isAdmin: boolean,
+  canBeActiveInScenes: boolean
 };
 
 export type ProfileFields = {|

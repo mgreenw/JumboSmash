@@ -34,6 +34,24 @@ import type {
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
+const AccountLock = () => (
+  <Text
+    style={[
+      textStyles.body2Style,
+      {
+        textAlign: 'left',
+        color: Colors.Grapefruit,
+        paddingTop: 10,
+        paddingLeft: 10
+      }
+    ]}
+  >
+    {
+      'Your account is currently locked. Please check your email for more information.'
+    }
+  </Text>
+);
+
 const styles = StyleSheet.create({
   settingsBlock: {
     backgroundColor: Colors.White,
@@ -204,6 +222,7 @@ class SettingsScreen extends React.Component<Props, State> {
 
   render() {
     const { editedSettings } = this.state;
+    const { canBeActiveInScenes } = editedSettings;
     const { logoutInProgress, logout } = this.props;
     return (
       <View style={{ flex: 1 }}>
@@ -245,17 +264,18 @@ class SettingsScreen extends React.Component<Props, State> {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  paddingBottom: 15,
                   paddingLeft: 10
                 }}
               >
                 <Text style={textStyles.body1Style}>Show me on Social</Text>
                 <Switch
+                  disabled={!canBeActiveInScenes}
                   value={editedSettings.activeScenes.social}
                   trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSocialSwitchChange}
                 />
               </View>
+              {!canBeActiveInScenes && <AccountLock />}
             </View>
             <View style={[styles.settingsBlock]}>
               <View style={{ paddingHorizontal: 10 }}>
@@ -278,13 +298,13 @@ class SettingsScreen extends React.Component<Props, State> {
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'space-between',
-                  paddingBottom: 20,
                   alignItems: 'center',
                   paddingLeft: 10
                 }}
               >
                 <Text style={textStyles.body1Style}>Show me on Smash</Text>
                 <Switch
+                  disabled={!canBeActiveInScenes}
                   value={editedSettings.activeScenes.smash}
                   trackColor={{ true: Colors.AquaMarine }}
                   onValueChange={this._onSmashSwitchChange}
@@ -344,6 +364,7 @@ class SettingsScreen extends React.Component<Props, State> {
                   plural
                 />
               </Collapsible>
+              {!canBeActiveInScenes && <AccountLock />}
             </View>
 
             <View style={[styles.settingsBlock]}>
@@ -368,7 +389,6 @@ class SettingsScreen extends React.Component<Props, State> {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  paddingBottom: 15,
                   paddingLeft: 10
                 }}
               >
