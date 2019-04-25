@@ -1,12 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Animated, Easing, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import type AnimatedValue from 'react-native/Libraries/Animated/src/nodes/AnimatedValue';
 import type { Scene } from 'mobile/reducers';
 import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
-import { NavigationEvents } from 'react-navigation';
 
 type Props = {
   scene: Scene
@@ -34,17 +33,7 @@ export default class SceneSelector extends Component<Props> {
     );
   }
 
-  animate = (value: AnimatedValue) => {
-    Animated.timing(this.selectedSceneHorizontalPosition, {
-      toValue: value,
-      duration: 100,
-      easing: Easing.cubic,
-      useNativeDriver: true
-    }).start();
-  };
-
   toggleItem = (index: number) => {
-    this.animate(index / SCENES.length);
     // TOOD: make this better for when we have stone.
     // for now, an easy hack to switch to the other scene.
     NavigationService.navigateToCards(SCENES[index].value);
@@ -54,13 +43,26 @@ export default class SceneSelector extends Component<Props> {
 
   render() {
     const { scene: currentScene } = this.props;
+    const iconWidth = WIDTH / SCENES.length;
     const renderedScenes = SCENES.map((scene, index) => (
       <View
         key={scene.value}
         style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
       >
         <TouchableOpacity
-          style={{ alignItems: 'center' }}
+          style={{
+            alignItems: 'center',
+            height: iconWidth,
+            width: iconWidth,
+            alignContent: 'center',
+            justifyContent: 'center',
+            borderRadius: 25,
+            borderWidth: 2,
+            backgroundColor:
+              scene.value === currentScene ? Colors.White : 'transparent',
+            borderColor:
+              scene.value === currentScene ? Colors.AquaMarine : 'transparent'
+          }}
           onPress={() => this.toggleItem(index)}
         >
           <Text
@@ -84,11 +86,6 @@ export default class SceneSelector extends Component<Props> {
           height: WIDTH / SCENES.length
         }}
       >
-        <NavigationEvents
-          onDidBlur={() => {
-            this.animate(sceneIndex(currentScene) / SCENES.length);
-          }}
-        />
         <View
           style={{
             flex: 1,
@@ -98,29 +95,6 @@ export default class SceneSelector extends Component<Props> {
             borderWidth: 0
           }}
         >
-          <Animated.View
-            style={[
-              {
-                position: 'absolute',
-                height: '100%',
-                backgroundColor: 'white',
-                width: WIDTH / SCENES.length,
-                transform: [
-                  {
-                    translateX: this.selectedSceneHorizontalPosition.interpolate(
-                      {
-                        inputRange: [0, 1],
-                        outputRange: [0, WIDTH]
-                      }
-                    )
-                  }
-                ],
-                borderRadius: 25,
-                borderWidth: 2,
-                borderColor: Colors.AquaMarine
-              }
-            ]}
-          />
           {renderedScenes}
         </View>
       </View>
