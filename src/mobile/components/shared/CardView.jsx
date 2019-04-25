@@ -65,8 +65,24 @@ const styles = StyleSheet.create({
 const CardView = (props: Props) => {
   const { profile, onMinimize, onBlockReport } = props;
 
-  const photos = profile.photoUuids.map(photoUuid => (
+  const photos = profile.photoUuids.map((photoUuid, index) => (
     <View style={styles.photoBlock} key={photoUuid}>
+      {index === 0 && (
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            zIndex: 2,
+            padding: 15 /* use this instead of position so we get a hitslop box */,
+            right: 0,
+            top: 0,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          onPress={onMinimize}
+        >
+          <CustomIcon name="delete-filled" size={30} color={Colors.Black} />
+        </TouchableOpacity>
+      )}
       <Image
         style={{ width, height: width }}
         uri={GET_PHOTO__ROUTE + photoUuid}
@@ -215,25 +231,6 @@ const CardView = (props: Props) => {
         >
           {`${profile.fields.displayName}, ${getAge(profile.fields.birthday)}`}
         </Text>
-        <View
-          style={{
-            height: '100%',
-            position: 'absolute',
-            right: 0,
-            width: 50
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            onPress={onMinimize}
-          >
-            <CustomIcon name="down" size={40} color={Colors.SunYellow} />
-          </TouchableOpacity>
-        </View>
       </View>
     </View>
   );
