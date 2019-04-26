@@ -24,7 +24,7 @@ import { CityIconsMap } from 'mobile/assets/icons/locations/';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
-const VerifiedAqua = require('../../assets/icons/VerifiedAqua.png');
+const VerifyAquaCheck = require('../../assets/icons/VerifiedAquaCheck.png');
 
 type Props = {
   profile: UserProfile,
@@ -233,7 +233,7 @@ const CardView = (props: Props) => {
       >
         <ReactNativeImage
           style={{ width: 25, height: 25 }}
-          source={VerifiedAqua}
+          source={VerifyAquaCheck}
         />
         <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
           {'JumboSmash Team Member'}
