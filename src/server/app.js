@@ -9,6 +9,7 @@ const api = require('./api');
 const { notFound } = require('./api/utils');
 const codes = require('./api/status-codes');
 const utils = require('./utils');
+const { startup, startupComplete } = require('./startup');
 
 const NODE_ENV = utils.getNodeEnv();
 
@@ -100,6 +101,12 @@ app.use((req, res, next) => {
     logRequest();
   });
   next();
+});
+
+// This will ensure migrations have run before the requests are served
+app.use((req, res, next) => {
+  if (startupComplete) return next();
+  return startup.then(next).catch(next);
 });
 
 // Define all routes here.

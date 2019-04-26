@@ -6,7 +6,6 @@ import type { SocketIO } from 'socket.io';
 
 const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
-const config = require('config');
 const Sentry = require('@sentry/node');
 
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
@@ -14,10 +13,14 @@ const logger = require('../logger');
 const { getUser, AuthenticationError } = require('../api/auth/utils');
 const appUtils = require('../utils');
 const { canAccessUserData } = require('../api/utils');
+const redis = require('../redis');
 
 const NODE_ENV = appUtils.getNodeEnv();
 
 const namespace = '/socket';
+
+const pubClient = redis.newClient();
+const subClient = redis.newClient();
 
 class Socket {
   _io: ?SocketIO;
@@ -38,7 +41,7 @@ class Socket {
       path: namespace,
       transports: ['websocket', 'polling'], // Only enable polling as a backup
     });
-    _io.adapter(redisAdapter(config.get('redis')));
+    _io.adapter(redisAdapter({ pubClient, subClient }));
 
     /* eslint-disable no-param-reassign */
     _io.use(async (socket, next) => {
@@ -158,6 +161,14 @@ class Socket {
         });
       });
     });
+  }
+
+  async close() {
+    await Promise.all([
+      new Promise(resolve => this.io.close(resolve)),
+      pubClient.quit(),
+      subClient.quit(),
+    ]);
   }
 }
 

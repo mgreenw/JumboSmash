@@ -6,6 +6,7 @@ const Sentry = require('@sentry/node');
 
 const checkReceipts = require('./check-receipts');
 const logger = require('../logger');
+const { startup } = require('../startup');
 
 const notificationReceiptQueue = new Queue('notification receipts', {
   redis: config.get('redis'),
@@ -21,6 +22,8 @@ notificationReceiptQueue.on('failed', (job, error) => {
   Sentry.captureException(error);
 });
 
-notificationReceiptQueue.process(checkReceipts);
+startup.then(() => {
+  notificationReceiptQueue.process(checkReceipts);
+});
 
 module.exports = notificationReceiptQueue;

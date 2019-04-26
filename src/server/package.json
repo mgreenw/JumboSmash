@@ -1,6 +1,6 @@
 {
   "name": "jumbosmash-server",
-  "version": "1.11.2",
+  "version": "1.12.0-beta.0",
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.15.0",
@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
+    "dev:nocheck": "NODE_ENV=development babel-node server.js",
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
     "migrate": "node-pg-migrate -m ./db/migrations",
@@ -46,7 +47,7 @@
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
-    "node-pg-migrate": "^3.13.0",
+    "node-pg-migrate": "^3.18.1",
     "pg": "^7.6.0",
     "request": "^2.88.0",
     "semver": "^5.6.0",
@@ -62,6 +63,7 @@
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/register": "^7.4.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
