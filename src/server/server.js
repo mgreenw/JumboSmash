@@ -1,5 +1,6 @@
 // @flow
 
+require('@babel/register');
 const Sentry = require('@sentry/node');
 
 const utils = require('./utils');
