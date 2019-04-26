@@ -8,7 +8,6 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import routes from 'mobile/components/navigation/routes';
 import store from 'mobile/store';
 import type { ReduxState } from 'mobile/reducers';
-import Sentry from 'sentry-expo';
 
 /**
  *  https://docs.expo.io/versions/latest/guides/push-notifications/
@@ -41,9 +40,6 @@ function handler(notification: Notification) {
 
   // If ANY of those are not true, then we are NOT in the main app.
   if (!client || !token || !authLoaded || !appLoaded || !onboardingCompleted) {
-    Sentry.captureMessage('Notification opened, but not in main app', {
-      level: 'info'
-    });
     return;
   }
 
