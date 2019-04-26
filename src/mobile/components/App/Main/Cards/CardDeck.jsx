@@ -302,9 +302,14 @@ class cardDeck extends React.Component<Props, State> {
         );
       }
       case 'PROFILE': {
-        const { profileMap } = this.props;
+        const { profileMap, clientProfile } = this.props;
         const profile = profileMap[card.profileId];
-        return <PreviewCard profile={profile} />;
+        return (
+          <PreviewCard
+            profile={profile}
+            clientProfileFields={clientProfile ? clientProfile.fields : null}
+          />
+        );
       }
       default: {
         // eslint-disable-next-line no-unused-expressions
