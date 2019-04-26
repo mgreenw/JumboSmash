@@ -50,7 +50,7 @@ services:
   #
 
   koh:
-    image: kohthefacestealer/koh:0.0.6
+    image: kohthefacestealer/koh:1.0.0
     networks:
       - traefik-net
     environment:
