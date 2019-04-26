@@ -15,6 +15,7 @@ const NODE_ENV = utils.getNodeEnv();
 
 const app = express();
 app.use(Sentry.Handlers.requestHandler());
+
 app.use(express.json());
 
 // This grabs the response body and puts it into the res.body field.

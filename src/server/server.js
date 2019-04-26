@@ -38,19 +38,24 @@ startup.then(() => {
   socket.init(server);
 });
 
-
+// Close the server gracefully.
 function closeServer(reason) {
-  logger.debug('Closing server...', reason);
+  // 1. Close the socket
+  logger.info(`Closing server...${reason}`);
   socket.close().then(() => {
-    logger.debug('Closed all socket connections.');
+    logger.info('Closed all socket connections.');
+
+    // 2. Close the server
     server.close(() => {
-      logger.debug('Closed server.');
+      logger.info('Closed server.');
+
+      // 3. Close redis, db, and expo
       Promise.all([
         redis.shared.quit(),
         new Promise(resolve => db.end(resolve)),
         expo.close(),
       ]).then(() => {
-        logger.debug('Successfully exited Redis, Database, and Expo.');
+        logger.info('Successfully exited Redis, Database, and Expo.');
       });
     });
   });

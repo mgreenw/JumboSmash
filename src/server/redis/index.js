@@ -7,8 +7,6 @@ const redisConfig = config.get('redis');
 
 const shared = new Redis(redisConfig);
 
-
-
 shared.defineCommand('readMessage', {
   numberOfKeys: 1,
   lua: `
