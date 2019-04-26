@@ -137,7 +137,8 @@ function profileSelectQuery(
       'postgradRegion', ${tableName}postgrad_region,
       'freshmanDorm', ${tableName}freshman_dorm,
       'springFlingAct', ${tableName}spring_fling_act,
-      'springFlingActArtist', ${tableName}spring_fling_act_artist
+      'springFlingActArtist', ${tableName}spring_fling_act_artist,
+      'isTeamMember', ${tableName}is_team_member
     )
   `;
 
