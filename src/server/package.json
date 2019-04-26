@@ -47,7 +47,7 @@
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
-    "node-pg-migrate": "^3.13.0",
+    "node-pg-migrate": "^3.18.1",
     "pg": "^7.6.0",
     "request": "^2.88.0",
     "semver": "^5.6.0",

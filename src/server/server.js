@@ -2,6 +2,7 @@
 
 require('@babel/register');
 const Sentry = require('@sentry/node');
+const { startup } = require('./startup');
 
 const utils = require('./utils');
 const { version } = require('./package.json');
@@ -33,7 +34,11 @@ const server = app.listen(3000, () => {
   logger.info('Listening on port 3000!');
 });
 
-socket.init(server);
+// Only start the socket once startup is complete
+startup.then(() => {
+  socket.init(server);
+});
+
 
 function closeServer(reason) {
   logger.debug('Closing server...', reason);
