@@ -8,4 +8,5 @@ module.exports = {
   sendNotifications,
   checkReceipts,
   notificationReceiptQueue,
+  close: () => { return notificationReceiptQueue.close(); },
 };

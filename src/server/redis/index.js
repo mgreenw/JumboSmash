@@ -7,6 +7,8 @@ const redisConfig = config.get('redis');
 
 const shared = new Redis(redisConfig);
 
+
+
 shared.defineCommand('readMessage', {
   numberOfKeys: 1,
   lua: `
@@ -56,9 +58,14 @@ function unreadConversationsKey(userId: number | string) {
   return `${prefix}:unread-conversations userId:${userId}`;
 }
 
+function newClient() {
+  return new Redis(redisConfig);
+}
+
 
 module.exports = {
   shared,
   prefix,
   unreadConversationsKey,
+  newClient,
 };

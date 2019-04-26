@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "export NODE_ENV=development;npm run check-env --silent && nodemon --exec babel-node server.js",
+    "dev:nocheck": "NODE_ENV=development babel-node server.js",
     "staging": "export NODE_ENV=staging;npm run check-env --silent && node server.js",
     "prod": "export NODE_ENV=production;npm run check-env --silent && node server.js",
     "migrate": "node-pg-migrate -m ./db/migrations",
@@ -62,6 +63,7 @@
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
+    "@babel/register": "^7.4.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
