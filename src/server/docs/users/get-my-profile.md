@@ -40,7 +40,8 @@ Provide the normal `Authorization` token in the request header.
             "bio": "hehe",
             "postgradRegion": "na.us.ma.7",
             "freshmanDorm": "Haskell",
-            "springFlingAct": "A real group"
+            "springFlingAct": "A real group",
+            "isTeamMember": false
         },
         "photoUuids": [
             "aad898e5-f5fb-458a-a415-b85182e6b564"
