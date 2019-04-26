@@ -616,6 +616,7 @@ class cardDeck extends React.Component<Props, State> {
             animate={showGif && getCandidatesInProgress}
             noCandidates={allSwiped && noCandidates}
             getCandidatesInProgress={getCandidatesInProgress}
+            scene={scene}
           />
         </View>
         {noCandidates && (
