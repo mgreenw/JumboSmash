@@ -11,6 +11,8 @@ import loadAppAction from 'mobile/actions/app/loadApp';
 import routes from 'mobile/components/navigation/routes';
 import { Constants } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
+import { textStyles } from 'mobile/styles/textStyles';
 import NavigationService from '../navigation/NavigationService';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
@@ -31,7 +33,9 @@ type dispatchProps = {
 
 type Props = reduxProps & navigationProps & dispatchProps;
 
-type State = {};
+type State = {
+  failedToLoadApp: boolean
+};
 
 function mapStateToProps(reduxState: ReduxState): reduxProps {
   return {
@@ -50,6 +54,13 @@ function mapDispatchToProps(dispatch: Dispatch): dispatchProps {
 }
 
 class AppLoadingScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      failedToLoadApp: false
+    };
+  }
+
   componentDidMount() {
     const { loadApp } = this.props;
     loadApp();
@@ -64,16 +75,27 @@ class AppLoadingScreen extends React.Component<Props, State> {
     } = this.props;
     // loadAuth_inProgress WILL always change, whereas utln / token may be the same (null),
     // so we use it for determining if the load occured.
-    if (appLoaded && prevProps.loadAppInProgress !== loadAppInProgress) {
-      if (!onboardingCompleted) {
-        navigation.navigate(routes.OnboardingStack);
+    if (
+      prevProps.loadAppInProgress !== loadAppInProgress &&
+      !loadAppInProgress
+    ) {
+      if (appLoaded) {
+        if (!onboardingCompleted) {
+          navigation.navigate(routes.OnboardingStack);
+        } else {
+          NavigationService.enterApp();
+        }
       } else {
-        NavigationService.enterApp();
+        this.setState({
+          failedToLoadApp: true
+        });
       }
     }
   }
 
   render() {
+    const { failedToLoadApp } = this.state;
+    const { loadApp, loadAppInProgress } = this.props;
     return (
       <View style={Arthur_Styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
@@ -101,16 +123,46 @@ class AppLoadingScreen extends React.Component<Props, State> {
               paddingRight: 60
             }}
           >
-            <ProgressBar
-              progress={0.3}
-              height={10}
-              unfilledColor={Colors.IceBlue}
-              borderWidth={0}
-              color={Colors.Grapefruit}
-              indeterminate
-              borderRadius={6}
-              width={null}
-            />
+            {failedToLoadApp ? (
+              <View
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    {
+                      textAlign: 'center',
+                      color: Colors.Black,
+                      padding: 15
+                    }
+                  ]}
+                >
+                  Oops! Could not connect to server.
+                </Text>
+                <PrimaryButton
+                  title={'Try Again'}
+                  onPress={loadApp}
+                  disabled={loadAppInProgress}
+                  loading={loadAppInProgress}
+                />
+              </View>
+            ) : (
+              <ProgressBar
+                progress={0.3}
+                height={10}
+                unfilledColor={Colors.IceBlue}
+                borderWidth={0}
+                color={Colors.Grapefruit}
+                indeterminate
+                borderRadius={6}
+                width={null}
+                useNativeDriver
+              />
+            )}
           </View>
           <Text style={[{ textAlign: 'center' }]}>
             {`Version ${Constants.manifest.version}`}

@@ -18,6 +18,7 @@ import type {
 } from 'mobile/actions/auth/loadAuth';
 import type {
   LoadAppCompleted_Action,
+  LoadAppFailed_Action,
   LoadAppInitiated_Action
 } from 'mobile/actions/app/loadApp';
 import type {
@@ -521,6 +522,7 @@ export type Action =
   | LoadAuthCompleted_Action
   | LoadAppInitiated_Action
   | LoadAppCompleted_Action
+  | LoadAppFailed_Action
   | CreateUserInitiated_Action
   | CreateUserCompleted_Action
   | CreateUserFailed_Action
@@ -995,6 +997,17 @@ export default function rootReducer(
         inProgress: {
           ...state.inProgress,
           loadApp: true
+        }
+      };
+    }
+
+    case 'LOAD_APP__FAILED': {
+      return {
+        ...state,
+        appLoaded: false,
+        inProgress: {
+          ...state.inProgress,
+          loadApp: false
         }
       };
     }
