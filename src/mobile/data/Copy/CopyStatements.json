@@ -25,5 +25,34 @@
     "COMP 40 Nightmares",
     "Add me on LinkedIn",
     "Stealing Dewick cereal"
-  ]
+  ],
+  "newMessage": {
+    "smash": [
+      "Late night Espressos run? ;)",
+      "Pair-program into love",
+      "Do it on the Prez Lawn",
+      "Show me how you burlesque ",
+      "Join my TDC dance? ;)",
+      "Rekindle the Pre-O flame",
+      "Takes TWO to Tango",
+      "Let’s get raunchy in the Reading Room",
+      "Tisch & Chill",
+      "Let’s Smash",
+      "Frisky at Formal",
+      "Meet-up at Tisch?",
+      "Are we a FIT?",
+      "Date night at Carm?",
+      "Kosher Deli & Chill?",
+      "Kiss me under Bowen so I know it’s real"
+    ],
+    "social": [
+      "Which class did we have together?",
+      "EC5 or Bio 13?",
+      "Favorite brunch spot?",
+      "What’s your Rez drink of choice?",
+      "Espressos mac n cheese bites, anyone?",
+      "What was your yakarma?"
+    ],
+    "stone": ["Tisch roof?"]
+  }
 }
