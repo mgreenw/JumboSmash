@@ -1,6 +1,5 @@
 // @flow
 
-require('@babel/register');
 const Sentry = require('@sentry/node');
 const { startup } = require('./startup');
 
