@@ -52,9 +52,8 @@ async function validateProfile(profile: Profile) {
     const [year, month, day] = birthday.split('-').map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
 
     // Note the "month - 1": Javascript's month is 0-indexed. Oof.
-    const birthdayDate = new Date(year, month - 1, day);
+    const birthdayDate = new Date(birthday);
     const now = new Date();
-
 
     if (
       // This ensures that the given birthdayDate is not an "Invalid Date"
@@ -65,7 +64,7 @@ async function validateProfile(profile: Profile) {
       // The final check below ensures that the Date that javascript coalesces the given birthday
       // to is actually on the same day as the given birthday. Also duh.
       // https://medium.com/@esganzerla/simple-date-validation-with-javascript-caea0f71883c
-      || birthdayDate.getDate() !== day
+      || birthdayDate.getUTCDate() !== day
     ) {
       throw profileErrorMessages.BIRTHDAY_NOT_VALID;
     }

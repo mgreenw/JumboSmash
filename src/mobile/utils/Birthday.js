@@ -8,15 +8,18 @@ type Reason = 'VALID' | 'NOT_REAL_DATE' | 'FUTURE' | 'TOO_OLD';
 type BirthdayValidation = { valid: boolean, reason: Reason };
 
 export function validateBirthday(birthday: string): BirthdayValidation {
-  const [year, month, day] = birthday
+  const [, , day] = birthday
     .split('-')
     .map(dateComponentStr => Number.parseInt(dateComponentStr, 10));
 
   // Note the "month - 1": Javascript's month is 0-indexed. Oof.
-  const birthdayDate = new Date(year, month - 1, day);
+  const birthdayDate = new Date(birthday);
   const now = new Date();
 
-  if (Number.isNaN(birthdayDate.getTime()) || birthdayDate.getDate() !== day) {
+  if (
+    Number.isNaN(birthdayDate.getTime()) ||
+    birthdayDate.getUTCDate() !== day
+  ) {
     return { valid: false, reason: 'NOT_REAL_DATE' };
   }
 
