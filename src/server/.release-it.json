@@ -13,6 +13,6 @@
     "publish": false
   },
   "scripts": {
-    "beforeBump": "npm run bump-deploy-version ${version} && git add --all && git commit -m \"Bump deploy files to ${version}\""
+    "beforeBump": "npm run bump-deploy-version ${version} && git add --all && git commit -m \"Bump server deploy files to ${version}\""
   }
 }
