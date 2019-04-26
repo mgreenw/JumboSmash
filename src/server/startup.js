@@ -18,7 +18,8 @@ async function runMigrations(options: { dryRun: boolean } = { dryRun: true }): P
   return migrations.map(({ name }) => name);
 }
 
-const msWaitBeforeMigrate = 6000;
+// 10 seconds for the other server to stop and 5 seconds of buffer for docker. And then we pray.
+const msWaitBeforeMigrate = 15000;
 let startupComplete = false;
 
 // Run the startup function as soon as possible.
