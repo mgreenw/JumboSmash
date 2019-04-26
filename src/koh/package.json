@@ -1,6 +1,6 @@
 {
   "name": "projectgem-koh",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "Koh: The Stealer of Faces",
   "engines": {
     "node": "^8.12.0",
