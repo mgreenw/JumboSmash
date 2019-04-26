@@ -226,6 +226,7 @@ export type ProfileFields = {|
   displayName: string,
   birthday: string,
   bio: string,
+  isTeamMember: boolean,
   postgradRegion: ?string,
   freshmanDorm: ?string,
   springFlingAct: ?string, // THIS IS THE ID WE USE TO SET IT

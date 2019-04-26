@@ -12,6 +12,7 @@ export type ServerProfile = {|
     displayName: string,
     bio: string,
     birthday: string,
+    isTeamMember: boolean,
     postgradRegion: ?string,
     freshmanDorm: ?string,
     springFlingAct: ?string, // The Id

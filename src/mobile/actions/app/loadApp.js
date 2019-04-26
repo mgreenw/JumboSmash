@@ -56,6 +56,7 @@ function complete(
           bio: '',
           birthday: '',
           displayName: '',
+          isTeamMember: false,
           postgradRegion: null, // optional field
           freshmanDorm: null,
           springFlingAct: null,
