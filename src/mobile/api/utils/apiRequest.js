@@ -7,7 +7,9 @@ import {
   UNAUTHORIZED,
   TERMINATED,
   BIRTHDAY_UNDER_18,
-  NETWORK_REQUEST_FAILED
+  NETWORK_REQUEST_FAILED,
+  BAD_REQUEST,
+  SERVER_ERROR
 } from '../sharedResponseCodes';
 
 type Method = 'PATCH' | 'GET' | 'POST' | 'DELETE';
@@ -64,6 +66,21 @@ export default function apiRequest(
           throw BIRTHDAY_UNDER_18;
         }
         throw TERMINATED;
+      }
+      if (response.status === BAD_REQUEST || response.status === SERVER_ERROR) {
+        Sentry.captureException(
+          new Error(
+            `The Error: ${response.status} was encountered on route: ${route}`
+          ),
+          {
+            extra: {
+              response,
+              request,
+              route,
+              method
+            }
+          }
+        );
       }
       return response;
     })
