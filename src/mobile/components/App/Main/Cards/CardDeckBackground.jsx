@@ -19,6 +19,25 @@ type ProppyProps = {
   scene: Scene
 };
 
+function noCandidatesCopy(scene: Scene) {
+  switch (scene) {
+    case 'smash': {
+      return "Someone's good\nwith their hands ;)";
+    }
+    case 'social': {
+      return "Someone's swipe-happy :)";
+    }
+    case 'stone': {
+      return "Someone's burned through their deck ;)";
+    }
+    default: {
+      // eslint-disable-next-line no-unused-expressions
+      (scene: empty); // ensures we have handled all cases
+      return '';
+    }
+  }
+}
+
 export default ({
   animate,
   noCandidates,
@@ -57,9 +76,7 @@ export default ({
               }
             ]}
           >
-            {scene === 'smash'
-              ? 'Someone’s good\nwith their hands ;)'
-              : "Someone's swipe-happy :)"}
+            {noCandidatesCopy(scene)}
           </Text>
         </View>
         <View
