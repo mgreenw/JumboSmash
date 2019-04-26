@@ -6,6 +6,7 @@ const { status, asyncHandler, validate } = require('../utils');
 const codes = require('../status-codes');
 const db = require('../../db');
 const slack = require('../../slack');
+const expo = require('../../expo');
 const { classmateSelect } = require('./utils');
 const { constructAccountUpdate } = require('../users/utils');
 const { scenes } = require('../relationships/utils');
@@ -55,6 +56,11 @@ export type Capabilities = {
 
 const activeScenesQuery = canBeActiveInScenes => scenes.map(scene => `active_${scene} = CASE WHEN ${canBeActiveInScenes} THEN active_${scene} ELSE false END`).join(',');
 
+const AT_PARTY = 'AT_PARTY';
+const PARTY_POPPER = String.fromCodePoint(0x1F389);
+const SMASH = String.fromCodePoint(0x1F351);
+const SOCIAL = String.fromCodePoint(0x1F418);
+const body = `${PARTY_POPPER}${SOCIAL}${SMASH}${PARTY_POPPER}`;
 
 /**
  * @api {post} /admin/classmates/:userId/review
@@ -138,6 +144,21 @@ const reviewProfile = async (
     slack.postAdminUpdate(adminUserId, adminUtln, `
       Profile Reviewed\n\nUser: ${utln}\nReview: ${'```'}${JSON.stringify(review, null, 2)}${'```'}
     `.trim());
+  }
+
+  // If the user is at the party, send them a push notification!
+  if (comment === AT_PARTY) {
+    expo.sendNotifications(
+      [{
+        userId,
+        sound: 'default',
+        title: 'Welcome to the Party!',
+        body,
+        data: {
+          type: AT_PARTY,
+        },
+      }],
+    );
   }
 
   // If "negative", alert slack.
