@@ -41,7 +41,15 @@ const Cities = Object.keys(LOCATIONS.Cities).map(
   code => LOCATIONS.Cities[code]
 );
 
-const AlphabeticalLocations = alphabetizeLocations([...States, ...Cities]);
+const Countries = Object.keys(LOCATIONS.Countries).map(
+  code => LOCATIONS.Countries[code]
+);
+
+const AlphabeticalLocations = alphabetizeLocations([
+  ...States,
+  ...Cities,
+  ...Countries
+]);
 const PrioritizedAlphabeticalLocations = prioritizeLocations(
   [...AlphabeticalLocations],
   LOCATIONS.Priority
