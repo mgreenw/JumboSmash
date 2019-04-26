@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import type { ReduxState, Dispatch } from 'mobile/reducers/index';
+import type { ReduxState, Dispatch, Match } from 'mobile/reducers/index';
 import UnmatchAction from 'mobile/actions/app/unmatch';
 import Popup from 'mobile/components/shared/Popup';
 import Layout from 'mobile/components/shared/Popup_Layout';
@@ -12,6 +12,7 @@ type ProppyProps = {
   visible: boolean,
   displayName: string,
   matchId: number,
+  match: Match,
   onCancel: () => void,
   onDone: () => void
 };
@@ -76,12 +77,32 @@ class UnmatchPopup extends React.Component<Props, State> {
     return <InProgress message={'Unmatching...'} />;
   }
 
+  _renderScenesText() {
+    const { match } = this.props;
+    const { scenes } = match;
+    let matchScenes = [];
+    if (scenes.smash) {
+      matchScenes = [...matchScenes, 'JumboSmash'];
+    }
+    if (scenes.social) {
+      matchScenes = [...matchScenes, 'JumboSocial'];
+    }
+    if (scenes.stone) {
+      matchScenes = [...matchScenes, 'JumboStone'];
+    }
+
+    const length = matchScenes.length;
+    return matchScenes.reduce((acc, elem, index) => {
+      return acc + (index + 1 !== length ? ', ' : ' and ') + elem;
+    });
+  }
+
   _renderConfirm() {
     const { onCancel, displayName } = this.props;
     return (
       <Layout
         title={'Are you sure?'}
-        subtitle={`This will unmatch you and ${displayName} in JumboSmash and JumboSocial.`}
+        subtitle={`This will unmatch you and ${displayName} in ${this._renderScenesText()}.`}
         primaryButtonText={'Unmatch'}
         primaryButtonDisabled={false}
         primaryButtonLoading={false}
