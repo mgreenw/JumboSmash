@@ -44,7 +44,8 @@ import type {
 } from 'mobile/actions/app/uploadPhoto';
 import type {
   DeletePhotoInitiated_Action,
-  DeletePhotoCompleted_Action
+  DeletePhotoCompleted_Action,
+  DeletePhotoFailed_Action
 } from 'mobile/actions/app/deletePhoto';
 import type {
   SaveSettingsInitiated_Action,
@@ -165,6 +166,7 @@ export type BottomToastCode =
   | 'SAVE_PROFILE__SUCCESS'
   | 'SAVE_PROFILE__FAILURE'
   | 'UPLOAD_PHOTO_FAILURE'
+  | 'DELETE_PHOTO_FAILURE'
   | 'UNMATCH_FAILURE';
 export type BottomToast = {
   uuid: string,
@@ -539,6 +541,7 @@ export type Action =
   | UploadPhotoFailed_Action
   | DeletePhotoCompleted_Action
   | DeletePhotoInitiated_Action
+  | DeletePhotoFailed_Action
   | SaveSettingsInitiated_Action
   | SaveSettingsCompleted_Action
   | SaveSettingsFailed_Action
@@ -1202,6 +1205,21 @@ export default function rootReducer(
           ...state.inProgress,
           deletePhoto: true
         }
+      };
+    }
+
+    case 'DELETE_PHOTO__FAILED': {
+      const bottomToast = {
+        uuid: uuidv4(),
+        code: 'DELETE_PHOTO_FAILURE'
+      };
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          deletePhoto: false
+        },
+        bottomToast
       };
     }
 
