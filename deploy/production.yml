@@ -99,7 +99,7 @@ services:
       update_config:
         failure_action: rollback
         order: start-first
-        monitor: 10s
+        monitor: 20s
         delay: 0s
       labels:
         - traefik.backend=server
