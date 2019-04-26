@@ -16,7 +16,7 @@ type Props = {
   profile: UserProfile
 };
 
-function matchingExtendedFields(
+function inCommonExtendedFields(
   fields1: ProfileFields,
   fields2: ProfileFields
 ) {
@@ -53,16 +53,18 @@ function matchingExtendedFields(
     if (postgradLocation) {
       const { name, code } = postgradLocation;
       if (
+        // these are Idk, On the Road, Somewhere, Everywhere.
         code !== 'xx.xx.01' &&
         code !== 'xx.yy.01' &&
         code !== 'xx.xx' &&
         code !== 'xx.yy'
       )
+        // If Boston, have special copy
         return {
           hasMatchingExtendedField: true,
           text: (
             <Text>
-              {'Also moving to '}
+              {code === 'na.us.ma.7' ? 'Also staying in' : 'Also moving to '}
               <Text style={textStyles.body2StyleBold}>{name}</Text>
             </Text>
           )
@@ -74,11 +76,12 @@ function matchingExtendedFields(
     // Exceptions: don't show for off campus:
     const dormName = dormcodeToName(dorm1);
     if (dorm1 !== 'OffCampus' && !!dormName) {
+      // If it has a number, it's an address, so say "at" vs "in"
       return {
         hasMatchingExtendedField: true,
         text: (
           <Text>
-            {'Also lived at '}
+            {/\d/.test(dormName) ? 'Also lived at' : 'Also lived in '}
             <Text style={textStyles.body2StyleBold}>{dormName}</Text>
           </Text>
         )
@@ -101,7 +104,7 @@ export default (props: Props) => {
     hasMatchingExtendedField = false,
     text: matchingFieldsText = ''
   } = clientProfileFields
-    ? matchingExtendedFields(clientProfileFields, profile.fields)
+    ? inCommonExtendedFields(clientProfileFields, profile.fields)
     : {};
 
   return (
