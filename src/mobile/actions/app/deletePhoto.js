@@ -17,6 +17,12 @@ export type DeletePhotoCompleted_Action = {
   meta: {}
 };
 
+export type DeletePhotoFailed_Action = {
+  type: 'DELETE_PHOTO__FAILED',
+  payload: {},
+  meta: {}
+};
+
 function initiate(): DeletePhotoInitiated_Action {
   return {
     type: 'DELETE_PHOTO__INITIATED',
@@ -34,6 +40,15 @@ function complete(photoUuids: Array<string>): DeletePhotoCompleted_Action {
     meta: {}
   };
 }
+
+function fail(): DeletePhotoFailed_Action {
+  return {
+    type: 'DELETE_PHOTO__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
 export default (photoUuid: string) => (dispatch: Dispatch) => {
   dispatch(initiate());
   deletePhotoApi(photoUuid)
@@ -41,6 +56,7 @@ export default (photoUuid: string) => (dispatch: Dispatch) => {
       dispatch(complete(newPhotoIds));
     })
     .catch(error => {
+      dispatch(fail());
       dispatch(apiErrorHandler(error));
     });
 };

@@ -44,15 +44,19 @@ function messageFromCode(code: BottomToastCode): string {
     }
 
     case 'SAVE_PROFILE__FAILURE': {
-      return 'Profile save failed. Try again.';
+      return 'Failed to save profile. Please try again.';
     }
 
     case 'UPLOAD_PHOTO_FAILURE': {
-      return 'Failed to upload photo.';
+      return 'Failed to upload photo. Please try again.';
     }
 
     case 'UNMATCH_FAILURE': {
-      return 'Failed to unmatch. Try again';
+      return 'Failed to unmatch. Please try again.';
+    }
+
+    case 'DELETE_PHOTO_FAILURE': {
+      return 'Failed to upload photo. Please try again.';
     }
 
     default: {
