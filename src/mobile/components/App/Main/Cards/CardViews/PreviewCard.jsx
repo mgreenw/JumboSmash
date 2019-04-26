@@ -64,7 +64,7 @@ function inCommonExtendedFields(
           hasMatchingExtendedField: true,
           text: (
             <Text>
-              {code === 'na.us.ma.7' ? 'Also staying in' : 'Also moving to '}
+              {code === 'na.us.ma.7' ? 'Also staying in ' : 'Also moving to '}
               <Text style={textStyles.body2StyleBold}>{name}</Text>
             </Text>
           )
@@ -81,7 +81,7 @@ function inCommonExtendedFields(
         hasMatchingExtendedField: true,
         text: (
           <Text>
-            {/\d/.test(dormName) ? 'Also lived at' : 'Also lived in '}
+            {/\d/.test(dormName) ? 'Also lived at ' : 'Also lived in '}
             <Text style={textStyles.body2StyleBold}>{dormName}</Text>
           </Text>
         )
