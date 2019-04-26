@@ -24,7 +24,7 @@ import { CityIconsMap } from 'mobile/assets/icons/locations/';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
-const VerifiedNoCheckAqua = require('../../assets/icons/VerifiedNoCheckAqua.png');
+const VerifiedAqua = require('../../assets/icons/VerifiedAqua.png');
 
 type Props = {
   profile: UserProfile,
@@ -231,20 +231,13 @@ const CardView = (props: Props) => {
           justifyContent: 'space-between'
         }}
       >
-        <View>
-          <Text
-            style={[
-              textStyles.body2StyleBold,
-              { textAlign: 'left', paddingBottom: 5 }
-            ]}
-          >
-            {'JumboSmash team member'}
-          </Text>
-
-          <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
-            {'JumboSmash Team Member'}
-          </Text>
-        </View>
+        <ReactNativeImage
+          style={{ width: 25, height: 25 }}
+          source={VerifiedAqua}
+        />
+        <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+          {'JumboSmash Team Member'}
+        </Text>
       </View>
     </View>
   ) : null;

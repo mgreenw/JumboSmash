@@ -31,7 +31,7 @@ const ArthurLoadingFrame1 = require('../../assets/arthurLoadingFrame1.png');
 const Waves1 = require('../../assets/waves/waves1/waves.png');
 const WavesFullScreen = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 const WavesFullScreen2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
-const VerifiedNoCheckAqua = require('../../assets/icons/VerifiedNoCheckAqua.png');
+const VerifiedAqua = require('../../assets/icons/VerifiedAqua.png');
 
 type ReduxProps = {
   token: ?string,
@@ -195,7 +195,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       WavesFullScreen2,
       ArthurLoadingFrame1,
       ArthurLoadingGif,
-      VerifiedNoCheckAqua,
+      VerifiedAqua,
       ...CityIconsList
     ];
 
