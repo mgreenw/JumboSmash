@@ -94,13 +94,11 @@ services:
     stop_grace_period: 10s
     deploy:
       replicas: 2
-      deploy:
-        replicas: 2
-        update_config:
-          failure_action: rollback
-          order: start-first
-          monitor: 10s
-          delay: 0s
+      update_config:
+        failure_action: rollback
+        order: start-first
+        monitor: 10s
+        delay: 0s
       labels:
         - traefik.backend=server
         - traefik.frontend.entryPoints=http,https
