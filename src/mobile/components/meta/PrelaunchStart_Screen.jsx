@@ -24,8 +24,9 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import type { LaunchDateStatus } from 'mobile/api/serverTypes';
 import checkLaunchDateAction from 'mobile/actions/meta/checkLaunchDate';
 import { WebBrowser } from 'expo';
-import NavigationService from '../navigation/NavigationService';
 import Sentry from 'sentry-expo';
+import * as Animatable from 'react-native-animatable';
+import NavigationService from '../navigation/NavigationService';
 
 const wavesFull2 = require('../../assets/waves/wavesFullScreen/wavesFullScreen2.png');
 const ArthurUri = require('../../assets/arthurIcon.png');
@@ -206,13 +207,18 @@ class PrelaunchStartScreen extends React.Component<Props, State> {
             >
               {'Ready to Swipe?'}
             </Text>
-            <View style={{ paddingBottom: 15 }}>
+            <Animatable.View
+              animation="pulse"
+              easing="ease-out"
+              iterationCount="infinite"
+              style={{ paddingBottom: 15 }}
+            >
               <PrimaryButton
-                title={"Roll 'Bos"}
+                title={'Dive In'}
                 onPress={this._onStartPress}
                 loading={checkLaunchDateInProgress}
               />
-            </View>
+            </Animatable.View>
             <SecondaryButton
               title={'Edit Profile'}
               onPress={this._onProfileEditPress}
