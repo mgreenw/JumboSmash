@@ -28,7 +28,7 @@ function noCandidatesCopy(scene: Scene) {
       return "Someone's swipe-happy :)";
     }
     case 'stone': {
-      return "Someone's burned through their deck ;)";
+      return "Someone's burned through their stash ;)";
     }
     default: {
       // eslint-disable-next-line no-unused-expressions
