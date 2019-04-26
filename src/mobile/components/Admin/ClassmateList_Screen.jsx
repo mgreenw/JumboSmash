@@ -20,6 +20,8 @@ import type { ServerClassmate, ProfileStatus } from 'mobile/api/serverTypes';
 import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { SearchBar } from 'react-native-elements';
+import { textStyles } from 'mobile/styles/textStyles';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -79,13 +81,53 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   };
 }
 
-type State = {};
+type State = { search: string, classmateIds: number[] };
 
 class ClassmateListScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      search: '',
+      classmateIds: props.classmateIds
+    };
   }
+
+  _renderHeader = () => {
+    const { search } = this.state;
+    return (
+      <SearchBar
+        containerStyle={{ backgroundColor: Colors.White }}
+        inputContainerStyle={{ backgroundColor: Colors.IceBlue }}
+        placeholder="jjaffe01"
+        lightTheme
+        round
+        placeholderTextColor={Colors.Grey80}
+        inputStyle={[textStyles.body1Style, { color: Colors.Black }]}
+        onChangeText={text => this._onSearchChange(text)}
+        autoCorrect={false}
+        value={search}
+      />
+    );
+  };
+
+  _onSearchChange = (search: string) => {
+    // Show the search immediately
+    this.setState({
+      search
+    });
+
+    const upperCaseSearch = search.toUpperCase();
+
+    const { classmateIds, classmateMap } = this.props;
+    const newClassmateIds = classmateIds.filter(id => {
+      const { utln } = classmateMap[id];
+      return utln.toUpperCase().indexOf(upperCaseSearch) > -1;
+    });
+
+    this.setState({
+      classmateIds: newClassmateIds
+    });
+  };
 
   renderSeparator = () => {
     return (
@@ -194,7 +236,8 @@ class ClassmateListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { classmateIds, getClassmatesInProgress } = this.props;
+    const { getClassmatesInProgress } = this.props;
+    const { classmateIds } = this.state;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -206,6 +249,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
+          {this._renderHeader()}
           <ColumnTitles />
           <KeyboardAwareFlatList
             enableResetScrollToCoords={false}
