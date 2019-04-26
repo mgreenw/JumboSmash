@@ -3,6 +3,7 @@
 import React from 'react';
 import { View, Image, Dimensions, Text } from 'react-native';
 import { textStyles } from 'mobile/styles/textStyles';
+import type { Scene } from 'mobile/reducers';
 
 const ArthurLoadingGif = require('../../../../assets/arthurLoading.gif');
 const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png');
@@ -14,13 +15,15 @@ const ArthurLoadingFrame1 = require('../../../../assets/arthurLoadingFrame1.png'
 type ProppyProps = {
   animate: boolean,
   noCandidates: boolean,
-  getCandidatesInProgress: boolean
+  getCandidatesInProgress: boolean,
+  scene: Scene
 };
 
 export default ({
   animate,
   noCandidates,
-  getCandidatesInProgress
+  getCandidatesInProgress,
+  scene
 }: ProppyProps) => {
   const { width: windowWidth } = Dimensions.get('window');
   return (
@@ -54,7 +57,9 @@ export default ({
               }
             ]}
           >
-            {'Someone’s good\nwith their hands ;)'}
+            {scene === 'smash'
+              ? 'Someone’s good\nwith their hands ;)'
+              : "Someone's swipe-happy :)"}
           </Text>
         </View>
         <View
