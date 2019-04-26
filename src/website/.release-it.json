@@ -1,0 +1,19 @@
+{
+  "preReleaseId": "beta",
+  "git": {
+    "changelog": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE] -- .",
+    "tagName": "website-${version}",
+    "tagAnnotation": "Website ${version} release",
+    "commitMessage": "Release website ${version}"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Website - ${version}"
+  },
+  "npm": {
+    "publish": false
+  },
+  "scripts": {
+    "beforeBump": "npm run bump-deploy-version ${version} && git add --all && git commit -m \"Bump website deploy files to ${version}\""
+  }
+}
