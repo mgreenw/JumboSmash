@@ -24,6 +24,7 @@ import { CityIconsMap } from 'mobile/assets/icons/locations/';
 import { codeToName as dormCodeToName } from 'mobile/data/Dorms/';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+const VerifiedNoCheckAqua = require('../../assets/icons/VerifiedNoCheckAqua.png');
 
 type Props = {
   profile: UserProfile,
@@ -106,7 +107,8 @@ const CardView = (props: Props) => {
   const {
     postgradRegion: postgradLocationCode,
     freshmanDorm: freshmanDormCode,
-    springFlingActArtist
+    springFlingActArtist,
+    isTeamMember
   } = profile.fields;
 
   const postgradLocation = postgradLocationCode
@@ -220,7 +222,35 @@ const CardView = (props: Props) => {
     </View>
   ) : null;
 
+  const teamMemberBlock = isTeamMember ? (
+    <View style={styles.profileBlock}>
+      <View
+        style={{
+          paddingHorizontal: '10.1%',
+          flexDirection: 'row',
+          justifyContent: 'space-between'
+        }}
+      >
+        <View>
+          <Text
+            style={[
+              textStyles.body2StyleBold,
+              { textAlign: 'left', paddingBottom: 5 }
+            ]}
+          >
+            {'JumboSmash team member'}
+          </Text>
+
+          <Text style={[textStyles.headline6Style, { textAlign: 'left' }]}>
+            {'JumboSmash Team Member'}
+          </Text>
+        </View>
+      </View>
+    </View>
+  ) : null;
+
   const extendedProfileFields = [
+    teamMemberBlock,
     postGradLocationBlock,
     artistBlock,
     freshmanDormBlock
@@ -293,6 +323,7 @@ const CardView = (props: Props) => {
         {extendedProfileFields[1]}
         {middlePhoto2}
         {extendedProfileFields[2]}
+        {extendedProfileFields[3]}
         {lastPhoto}
         {onBlockReport && (
           <View style={styles.profileBlock}>
