@@ -26,6 +26,12 @@ export type LoadAppCompleted_Action = {
   meta: {}
 };
 
+export type LoadAppFailed_Action = {
+  type: 'LOAD_APP__FAILED',
+  payload: {},
+  meta: {}
+};
+
 function initiate(): LoadAppInitiated_Action {
   return {
     type: 'LOAD_APP__INITIATED',
@@ -85,6 +91,14 @@ function complete(
   };
 }
 
+function fail(): LoadAppFailed_Action {
+  return {
+    type: 'LOAD_APP__FAILED',
+    payload: {},
+    meta: {}
+  };
+}
+
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   Promise.all([
@@ -109,6 +123,7 @@ export default () => (dispatch: Dispatch) => {
       );
     })
     .catch(error => {
+      dispatch(fail());
       dispatch(apiErrorHandler(error));
     });
 };

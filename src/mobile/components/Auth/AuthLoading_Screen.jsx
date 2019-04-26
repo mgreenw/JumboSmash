@@ -17,6 +17,7 @@ import { CityIconsList } from 'mobile/assets/icons/locations/';
 import { randomLoadingStatement } from 'mobile/data/Copy';
 import { textStyles } from 'mobile/styles/textStyles';
 import * as Animatable from 'react-native-animatable';
+import { PrimaryButton } from 'mobile/components/shared/buttons';
 import NavigationService from '../navigation/NavigationService';
 
 // pre fonts for the inital text:
@@ -52,7 +53,8 @@ type DispatchProps = {
 type Props = ReduxProps & NavigationProps & DispatchProps;
 type State = {
   isReady: boolean,
-  loadingStatement: string
+  loadingStatement: string,
+  failedToLoadApp: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
@@ -110,6 +112,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      failedToLoadApp: false,
       isReady: false,
       loadingStatement: randomLoadingStatement()
     };
@@ -141,11 +144,20 @@ class AuthLoadingScreen extends React.Component<Props, State> {
       }
     }
 
-    if (appLoaded && prevProps.loadAppInProgress !== loadAppInProgress) {
-      if (!onboardingCompleted) {
-        navigation.navigate(routes.OnboardingStack);
+    if (
+      prevProps.loadAppInProgress !== loadAppInProgress &&
+      !loadAppInProgress
+    ) {
+      if (appLoaded) {
+        if (!onboardingCompleted) {
+          navigation.navigate(routes.OnboardingStack);
+        } else {
+          NavigationService.enterApp();
+        }
       } else {
-        NavigationService.enterApp();
+        this.setState({
+          failedToLoadApp: true
+        });
       }
     }
   }
@@ -206,7 +218,8 @@ class AuthLoadingScreen extends React.Component<Props, State> {
   animLoadingTextView: any;
 
   render() {
-    const { isReady, loadingStatement } = this.state;
+    const { isReady, loadingStatement, failedToLoadApp } = this.state;
+    const { loadApp, loadAppInProgress, appLoaded } = this.props;
     if (!isReady) {
       return (
         <AppLoading
@@ -256,30 +269,61 @@ class AuthLoadingScreen extends React.Component<Props, State> {
               paddingRight: 60
             }}
           >
-            <ProgressBar
-              progress={0.3}
-              height={10}
-              unfilledColor={Colors.IceBlue}
-              borderWidth={0}
-              color={Colors.Grapefruit}
-              indeterminate
-              borderRadius={6}
-              width={null}
-              useNativeDriver
-            />
-            <Animatable.View ref={this.handleViewRef} useNativeDriver>
-              <Text
-                style={[
-                  textStyles.body1Style,
-                  {
-                    textAlign: 'center',
-                    color: Colors.Black,
-                    padding: 15
-                  }
-                ]}
+            {!appLoaded && failedToLoadApp ? (
+              <View
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
-                {loadingStatement}
-              </Text>
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    {
+                      textAlign: 'center',
+                      color: Colors.Black,
+                      padding: 15
+                    }
+                  ]}
+                >
+                  Oops! Could not connect to server.
+                </Text>
+                <PrimaryButton
+                  title={'Try Again'}
+                  onPress={loadApp}
+                  disabled={loadAppInProgress}
+                  loading={loadAppInProgress}
+                />
+              </View>
+            ) : (
+              <ProgressBar
+                progress={0.3}
+                height={10}
+                unfilledColor={Colors.IceBlue}
+                borderWidth={0}
+                color={Colors.Grapefruit}
+                indeterminate
+                borderRadius={6}
+                width={null}
+                useNativeDriver
+              />
+            )}
+            <Animatable.View ref={this.handleViewRef} useNativeDriver>
+              {!failedToLoadApp && (
+                <Text
+                  style={[
+                    textStyles.body1Style,
+                    {
+                      textAlign: 'center',
+                      color: Colors.Black,
+                      padding: 15
+                    }
+                  ]}
+                >
+                  {loadingStatement}
+                </Text>
+              )}
             </Animatable.View>
           </View>
           <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
