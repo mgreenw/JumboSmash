@@ -44,6 +44,7 @@ import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import formatMessage from 'mobile/utils/FormatMessage';
 import { isIphoneX } from 'mobile/utils/Platform';
 import Collapsible from 'react-native-collapsible';
+import { randomNewMessageStatement } from 'mobile/data/Copy';
 import BlockPopup from './BlockPopup';
 import ReportPopup from './ReportPopup';
 import UnmatchPopup from './UnmatchPopup';
@@ -143,7 +144,8 @@ type State = {|
   showReportPopup: boolean,
   showUnmatchPopup: boolean,
   showExpandedCard: boolean,
-  mostRecentlyReadMessageId: ?number
+  mostRecentlyReadMessageId: ?number,
+  newMessageGenesisCopy: string
 |};
 
 const wrapperBase = {
@@ -339,6 +341,14 @@ class MessagingScreen extends React.Component<Props, State> {
       throw new Error('Match null or undefined in Messaging Screen');
     }
 
+    // Prioritize stone then smash then social.
+    const { scenes } = match;
+    let matchScene = 'social';
+    if (scenes.smash) matchScene = 'smash';
+    if (scenes.stone) matchScene = 'stone';
+
+    const newMessageGenesisCopy = randomNewMessageStatement(matchScene);
+
     this.state = {
       match,
       nextTyping: null,
@@ -351,7 +361,8 @@ class MessagingScreen extends React.Component<Props, State> {
       showReportPopup: false,
       showUnmatchPopup: false,
       showExpandedCard: false,
-      mostRecentlyReadMessageId: null
+      mostRecentlyReadMessageId: null,
+      newMessageGenesisCopy
     };
     Socket.subscribeToTyping(match.userId, () => {
       const date = new Date();
@@ -582,6 +593,7 @@ class MessagingScreen extends React.Component<Props, State> {
   };
 
   _renderGenesis = (profile: UserProfile, shouldRenderGenesisText: boolean) => {
+    const { newMessageGenesisCopy } = this.state;
     return (
       <View style={{ flex: 1, alignItems: 'center', paddingTop: 54 }}>
         <TouchableOpacity
@@ -602,7 +614,7 @@ class MessagingScreen extends React.Component<Props, State> {
               }
             ]}
           >
-            {'Late-night Espresso’s run? ;)'}
+            {newMessageGenesisCopy}
           </Text>
         )}
       </View>
