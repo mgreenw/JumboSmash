@@ -6,7 +6,6 @@ import type { SocketIO } from 'socket.io';
 
 const initSocket = require('socket.io');
 const redisAdapter = require('socket.io-redis');
-const config = require('config');
 const Sentry = require('@sentry/node');
 
 const { UNAUTHORIZED, SERVER_ERROR } = require('../api/status-codes');
