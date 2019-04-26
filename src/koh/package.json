@@ -1,6 +1,6 @@
 {
   "name": "projectgem-koh",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "Koh: The Stealer of Faces",
   "engines": {
     "node": "^8.12.0",
@@ -21,7 +21,8 @@
     "get-2019-members": "babel-node ./scripts/get-2019-members.js",
     "reset-db": "npm run drop-all-tables && npm run migrate up",
     "lint": "eslint .",
-    "lint:watch": "nodemon --exec eslint -- ."
+    "lint:watch": "nodemon --exec eslint -- .",
+    "bump-deploy-version": "babel-node ./scripts/bump-deploy-versions.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -32,6 +33,7 @@
     "lodash": "^4.17.11",
     "node-pg-migrate": "^3.13.0",
     "pg": "^7.6.0",
+    "release-it": "^10.4.4",
     "request": "^2.88.0",
     "semver": "^5.6.0"
   },
