@@ -9,7 +9,6 @@ module.exports = `
     'canBeSwipedOn', can_be_swiped_on,
     'canBeActiveInScenes', can_be_active_in_scenes
   ) AS "capabilities",
-  account_updates AS "accountUpdates",
   profile_status AS "profileStatus",
   COALESCE((SELECT TRUE FROM profiles where user_id = classmates.id), false) AS "hasProfile",
   json_build_object(

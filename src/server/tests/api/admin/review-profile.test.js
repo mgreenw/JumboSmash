@@ -282,13 +282,18 @@ describe('POST api/admin/classmates/:userId/review', () => {
     expect(res.body.data.classmate.id).toBe(other.id);
     expect(res.body.data.classmate.capabilities.canBeSwipedOn).toBeTruthy();
     expect(res.body.data.classmate.capabilities.canBeActiveInScenes).toBeTruthy();
-    expect(res.body.data.classmate.accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
+
+    const accountUpdatesResult = await db.query(`
+      SELECT account_updates AS "accountUpdates" FROM classmates WHERE id = $1
+    `, [other.id]);
+    const [{ accountUpdates }] = accountUpdatesResult.rows;
+    expect(accountUpdates[0].update.type).toBe('PROFILE_REVIEW');
 
     expect(
-      res.body.data.classmate.accountUpdates[0].update.capabilities.canBeSwipedOn,
+      accountUpdates[0].update.capabilities.canBeSwipedOn,
     ).toBeTruthy();
     expect(
-      res.body.data.classmate.accountUpdates[0].update.capabilities.canBeActiveInScenes,
+      accountUpdates[0].update.capabilities.canBeActiveInScenes,
     ).toBeTruthy();
   });
 
