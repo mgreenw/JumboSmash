@@ -101,6 +101,10 @@ const getSceneCandidates = async (
         (critic.want_he AND candidate.use_he) OR
         (critic.want_she AND candidate.use_she) OR
         (critic.want_they AND candidate.use_they)
+      ) AND (
+        (candidate.want_he AND critic.use_he) OR
+        (candidate.want_she AND critic.use_she) OR
+        (candidate.want_they AND critic.use_they)
       )` : ''}
     ORDER BY RANDOM()
     LIMIT 20
