@@ -146,7 +146,7 @@ export type ServerClassmate = {
   email: string,
   isTerminated: boolean,
   capabilities: Capabilities,
-  accountUpdates: AccountUpdateMeta[],
+  // accountUpdates: AccountUpdateMeta[], Removing for efficiency. Will renable after server changes.
   profileStatus: ProfileStatus,
   hasProfile: boolean,
   activeScenes: {

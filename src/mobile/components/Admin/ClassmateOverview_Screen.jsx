@@ -27,8 +27,8 @@ import { textStyles } from 'mobile/styles/textStyles';
 import {
   SecondaryButton,
   AdminButtonPositive,
-  AdminButtonNegative,
-  PrimaryButton
+  AdminButtonNegative
+  // PrimaryButton
 } from 'mobile/components/shared/buttons';
 import Spacer from 'mobile/components/shared/Spacer';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
@@ -255,7 +255,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
       classmate
     } = this.props;
     const { isTerminated, capabilities } = classmate;
-    const { utln, hasProfile, profileStatus, accountUpdates } = classmate;
+    const { utln, hasProfile, profileStatus /* accountUpdates */ } = classmate;
     const { showExpandedCard } = this.state;
     const reviewStatus = hasProfile ? profileStatus : 'NO PROFILE';
     const reviewStatusColor = profileStatusColor(profileStatus, hasProfile);
@@ -268,37 +268,37 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
       !capabilities.canBeActiveInScenes ||
       isTerminated;
 
-    const atParty =
-      accountUpdates.find(
-        ({ update }) => update.comment && update.comment === AT_PARTY
-      ) || false;
+    // const atParty =
+    //   accountUpdates.find(
+    //     ({ update }) => update.comment && update.comment === AT_PARTY
+    //   ) || false;
 
-    const partyBody = (
-      <View
-        style={{
-          padding: 10,
-          marginBottom: 10,
-          borderRadius: 10,
-          borderColor: 'black',
-          borderWidth: 1
-        }}
-      >
-        <Text
-          style={[
-            textStyles.body1StyleSemibold,
-            { textAlign: 'center', paddingBottom: 10 }
-          ]}
-        >
-          {atParty ? "Fuckin' Lit" : 'Mark At Party?'}
-        </Text>
-        <PrimaryButton
-          disabled={atParty}
-          title={atParty ? '🎉 🎉  🎉 🎉 🎉  🎉 🎉' : 'Get Lit'}
-          onPress={this._onAtParty}
-          loading={reviewProfile_inProgress}
-        />
-      </View>
-    );
+    // const partyBody = (
+    //   <View
+    //     style={{
+    //       padding: 10,
+    //       marginBottom: 10,
+    //       borderRadius: 10,
+    //       borderColor: 'black',
+    //       borderWidth: 1
+    //     }}
+    //   >
+    //     <Text
+    //       style={[
+    //         textStyles.body1StyleSemibold,
+    //         { textAlign: 'center', paddingBottom: 10 }
+    //       ]}
+    //     >
+    //       {atParty ? "Fuckin' Lit" : 'Mark At Party?'}
+    //     </Text>
+    //     <PrimaryButton
+    //       disabled={atParty}
+    //       title={atParty ? '🎉 🎉  🎉 🎉 🎉  🎉 🎉' : 'Get Lit'}
+    //       onPress={this._onAtParty}
+    //       loading={reviewProfile_inProgress}
+    //     />
+    //   </View>
+    // );
 
     const unreviewedBody = (
       <View>
@@ -424,7 +424,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
             ) : (
               <View style={{ width: '100%' }}>
                 {unreviewed && unreviewedBody}
-                {!unreviewed && partyBody}
+                {null /* !unreviewed && partyBody */}
                 <View
                   style={{
                     flexDirection: 'row',
