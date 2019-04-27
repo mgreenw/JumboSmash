@@ -45,7 +45,6 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "isTerminated": false,
                 "canBeSwipedOn": false,
                 "canBeActiveInScenes": true,
-                "accountUpdates": [],
                 "profileStatus": "unreviewed",
                 "hasProfile": false,
                 "activeScenes": {
@@ -63,7 +62,6 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "isTerminated": false,
                 "canBeSwipedOn": false,
                 "canBeActiveInScenes": true,
-                "accountUpdates": [],
                 "profileStatus": "unreviewed",
                 "hasProfile": true,
                 "activeScenes": {
@@ -81,20 +79,6 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "isTerminated": false,
                 "canBeSwipedOn": false,
                 "canBeActiveInScenes": true,
-                "accountUpdates": [
-                    {
-                        "update": {
-                            "type": "PROFILE_UPDATE",
-                            "changedFields": [
-                                [
-                                    "spring_fling_act",
-                                    "e"
-                                ]
-                            ]
-                        },
-                        "timestamp": "2019-04-14T23:30:08.175Z"
-                    }
-                ],
                 "profileStatus": "updated",
                 "hasProfile": true,
                 "activeScenes": {
@@ -112,47 +96,6 @@ Provide the normal `Authorization` token in the request header. Additionally, in
                 "isTerminated": true,
                 "canBeSwipedOn": false,
                 "canBeActiveInScenes": true,
-                "accountUpdates": [
-                    {
-                        "update": {
-                            "type": "PROFILE_REVIEW",
-                            "comment": "Test review",
-                            "reviewer": {
-                                "id": 2469,
-                                "utln": "jjaffe01"
-                            },
-                            "canBeSwipedOn": false,
-                            "canBeActiveInScenes": true
-                        },
-                        "timestamp": "2019-04-14T23:38:59.878Z"
-                    },
-                    {
-                        "update": {
-                            "type": "PROFILE_REVIEW",
-                            "comment": "Test review",
-                            "reviewer": {
-                                "id": 2469,
-                                "utln": "jjaffe01"
-                            },
-                            "canBeSwipedOn": false,
-                            "canBeActiveInScenes": true
-                        },
-                        "timestamp": "2019-04-14T23:39:47.492Z"
-                    },
-                    {
-                        "update": {
-                            "type": "PROFILE_REVIEW",
-                            "comment": "Test review",
-                            "reviewer": {
-                                "id": 2469,
-                                "utln": "jjaffe01"
-                            },
-                            "canBeSwipedOn": false,
-                            "canBeActiveInScenes": true
-                        },
-                        "timestamp": "2019-04-14T23:44:45.463Z"
-                    }
-                ],
                 "profileStatus": "reviewed",
                 "hasProfile": true,
                 "activeScenes": {
