@@ -88,14 +88,16 @@ async function validateProfile(profile: Profile) {
 // fields and generate a template string for the fields for a postgres update
 // This is a helper method that can be reused to allow for optional fields
 // to be updated with ease
-function getFieldTemplates(definedFields: Array<[string, any]>) {
+function getFieldTemplates(definedFields: Array<[string, any]>, tableAlias: string = '') {
   // Get an array of the fields themselves
   const fields = _.map(definedFields, field => _.nth(field, 1));
+
+  const tableName = tableAlias === '' ? '' : `${tableAlias}.`;
 
   // Get all the fields with their respective template strings. fieldTemplates
   // is a string like 'display_name = $1, birthday = $2, bio = $3'
   const templateString = _.join(
-    _.map(definedFields, (field, i) => `${_.nth(field, 0)} = $${i + 1}`),
+    _.map(definedFields, (field, i) => `${tableName}${_.nth(field, 0)} = $${i + 1}`),
     ', ',
   );
 
@@ -243,6 +245,24 @@ function constructAccountUpdate(
   };
 }
 
+// Deep object difference
+/**
+ * Deep diff between two object, using lodash
+ * @param  {Object} object Object compared
+ * @param  {Object} base   Object to compare with
+ * @return {Object}        Return a new object who represent the diff
+ */
+function objectDifference(object: Object, base: Object) {
+  return _.transform(object, (result: Object, value, key) => {
+    if (!_.isEqual(value, base[key])) {
+      /* eslint-disable-next-line no-param-reassign */
+      result[key] = (_.isObject(value) && _.isObject(base[key]))
+        ? objectDifference(value, base[key])
+        : value;
+    }
+  });
+}
+
 module.exports = {
   validateProfile,
   profileErrorMessages,
@@ -250,4 +270,5 @@ module.exports = {
   profileSelectQuery,
   settingsSelectQuery,
   constructAccountUpdate,
+  objectDifference,
 };
