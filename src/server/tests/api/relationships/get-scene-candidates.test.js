@@ -283,38 +283,61 @@ describe('GET api/relationships/candidates/:scene', () => {
   });
 
   it('should reset the candidates if the "reset-candidates" query param is supplied', async () => {
-    await dbUtils.createRelationship(me.id, activeSmash[activeSmash.length - 3].id, false);
+    // Start fresh
+    await db.query('DELETE FROM classmates');
+    me = await dbUtils.createUser('me01', true);
+    const other1 = await dbUtils.createUser('other01', true);
+    const other2 = await dbUtils.createUser('other02', true);
+    await dbUtils.setCanBeSwipedOn(other1.id, true);
+    await dbUtils.setCanBeSwipedOn(other2.id, true);
+    await dbUtils.createRelationship(me.id, other1.id, false);
+    await dbUtils.updateSettings(me.id, meSettings);
+    await dbUtils.updateSettings(other1.id, meSettings);
+    await dbUtils.updateSettings(other2.id, meSettings);
 
     // Should be 2 before resetting
     let res = await request(app)
       .get('/api/relationships/candidates/smash')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
-    expect(res.body.data.length).toBe(2);
+    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__SUCCESS.status);
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].userId).toBe(other2.id);
 
-    // Should be 3 after resetting
+    // Should be 2 after resetting
     res = await request(app)
       .get('/api/relationships/candidates/smash?reset-candidates')
       .set('Authorization', me.token)
       .set('Accept', 'application/json');
-    expect(res.body.data.length).toBe(3);
+    expect(res.body.data.length).toBe(2);
+    expect(res.body.status).toBe(codes.GET_SCENE_CANDIDATES__SUCCESS.status);
+    // Because the order is random, we just need to check that we can find both
+    const candidates = [other1.id, other2.id];
+    expect(_.filter(res.body.data, obj => candidates.includes(obj.userId)).length).toBe(2);
   });
 
   it('should not show a user that cannot be swiped on', async () => {
+    // Start fresh
+    await db.query('DELETE FROM classmates');
     const invisibleUser = await dbUtils.createUser('ttttt01', true);
+    const visibleUser = await dbUtils.createUser('tttt01', true);
+    await dbUtils.setCanBeSwipedOn(visibleUser.id, true);
     await dbUtils.updateSettings(invisibleUser.id, meSettings);
+    await dbUtils.updateSettings(visibleUser.id, meSettings);
+
     let res = await request(app)
       .get('/api/relationships/candidates/smash')
-      .set('Authorization', me.token)
+      .set('Authorization', visibleUser.token)
       .set('Accept', 'application/json');
-    expect(res.body.data.length).toBe(3);
+    expect(res.body.data.length).toBe(0);
 
     await dbUtils.setCanBeSwipedOn(invisibleUser.id, true);
 
     res = await request(app)
       .get('/api/relationships/candidates/smash')
-      .set('Authorization', me.token)
+      .set('Authorization', visibleUser.token)
       .set('Accept', 'application/json');
-    expect(res.body.data.length).toBe(4);
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].userId).toBe(invisibleUser.id);
   });
 });
