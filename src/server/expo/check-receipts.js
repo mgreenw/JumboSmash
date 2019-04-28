@@ -32,7 +32,7 @@ const receiptCheckPeriod = oneMinute * 15; // 15 Minutes
 
 async function checkReceipts() {
   // Get the all notifications sent more than 15 minutes ago
-  logger.debug(`Beginning receipt check for notifications that were sent ${receiptCheckPeriod / oneMinute} ago`);
+  logger.debug(`Beginning receipt check for notifications that were sent ${receiptCheckPeriod / oneMinute} minutes ago`);
   const results = (await db.query(`
     SELECT id, ticket_id AS "ticketId", user_id AS "userId", status
     FROM notifications
