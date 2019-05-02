@@ -24,6 +24,7 @@ notificationReceiptQueue.on('failed', (job, error) => {
 
 startup.then(() => {
   notificationReceiptQueue.process(checkReceipts);
+  notificationReceiptQueue.add(null, { repeat: { cron: '*/10 * * * *' } });
 });
 
 module.exports = notificationReceiptQueue;

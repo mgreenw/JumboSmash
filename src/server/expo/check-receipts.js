@@ -27,16 +27,20 @@ type Notification = {
   errorDetails: string,
 };
 
-async function checkReceipts(job: { data: string[] }) {
-  // Get the notifications in question from the database
-  logger.debug(`Beginning receipt check for ${job.data.length} notifications`);
+const oneMinute = 60000;
+const receiptCheckPeriod = oneMinute * 15; // 15 Minutes
+
+async function checkReceipts() {
+  // Get the all notifications sent more than 15 minutes ago
+  logger.debug(`Beginning receipt check for notifications that were sent ${receiptCheckPeriod / oneMinute} minutes ago`);
   const results = (await db.query(`
     SELECT id, ticket_id AS "ticketId", user_id AS "userId", status
     FROM notifications
     WHERE
-      ticket_id = ANY ($1)
-      AND status = 'pending'
-  `, [job.data])).rows;
+      status = 'pending'
+      AND sent_timestamp < (NOW() - INTERVAL '${receiptCheckPeriod} milliseconds')
+    LIMIT 1000
+  `)).rows;
 
   // Generate an object mapping from ticketId to notification
   const notifications: {[ticketId: string]: Notification } = {};
@@ -58,6 +62,7 @@ async function checkReceipts(job: { data: string[] }) {
       notifications[ticketId].message = receipt.message;
       if (receipt.details && receipt.details.error) {
         notifications[ticketId].errorDetails = receipt.details.error;
+        logger.debug(`Failed to send push notification ${JSON.stringify(notifications[ticketId], null, 2)}`);
         Sentry.withScope((scope) => {
           scope.setExtra('notification', notifications[ticketId]);
           Sentry.captureMessage('Failed to send push notification');

@@ -6,7 +6,6 @@ const Sentry = require('@sentry/node');
 
 const db = require('../db');
 const logger = require('../logger');
-const notificationReceiptQueue = require('./receipt-queue');
 const getBadgeCount = require('./get-badge-count');
 
 const expo = new Expo();
@@ -111,9 +110,8 @@ async function sendNotifications(notifications: Notification[]) {
 
         // Queue this set of notifications for receipt retrieval
         const ticketIds = chunk.map(notification => notification[1].ticketId);
-        notificationReceiptQueue.add(ticketIds, { delay: 600000 }); // Delay by 15 minutes
 
-        logger.debug(`Successfully sent ${chunk.length} push notification${chunk.length > 1 ? 's' : ''}`);
+        logger.debug(`Successfully sent ${ticketIds.length} push notification${chunk.length > 1 ? 's' : ''}`);
       } catch (error) {
         logger.error('Failed to send notifications chunk', error);
         logger.error(chunk);
