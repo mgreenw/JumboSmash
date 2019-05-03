@@ -148,7 +148,8 @@ class ClassmateListScreen extends React.Component<Props, State> {
   };
 
   _onBack = () => {
-    NavigationService.enterApp();
+    const { navigation } = this.props;
+    NavigationService.back(navigation.state.key);
   };
 
   _onPress = (id: number) => {
@@ -229,10 +230,6 @@ class ClassmateListScreen extends React.Component<Props, State> {
         </View>
       </TouchableHighlight>
     );
-  };
-
-  _onBack = () => {
-    NavigationService.enterApp();
   };
 
   render() {
