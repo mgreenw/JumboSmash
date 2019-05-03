@@ -25,7 +25,12 @@ const sceneTimestampList = utils.scenes.map((scene) => {
  * @api {get} /api/relationships/matches
  *
  */
-const getMatches = async (userId: number) => {
+const getMatches = async (userId: number, canBeActiveInScenes: boolean = true) => {
+  // If the user's profile is locked, return an empty array.
+  if (!canBeActiveInScenes) {
+    return apiUtils.status(codes.GET_MATCHES__SUCCESS).data([]);
+  }
+
   // NOTES:
   // 1) We are selecting the user's profile as well as the scenes that the
   //    requesting user and the other user are matched on. We use a CASE statement
@@ -44,6 +49,7 @@ const getMatches = async (userId: number) => {
       ${utils.matchQuery}
         AND me_critic.candidate_user_id = they_critic.critic_user_id
         AND NOT them.terminated
+        AND them.can_be_active_in_scenes
         AND (me_critic.blocked IS NOT true AND they_critic.blocked IS NOT TRUE)
         AND
           (${matchedScenesChecks.join(' OR ')})
@@ -77,7 +83,7 @@ const getMatches = async (userId: number) => {
 
 const handler = [
   apiUtils.asyncHandler(async (req: $Request) => {
-    return getMatches(req.user.id);
+    return getMatches(req.user.id, req.user.canBeActiveInScenes);
   }),
 ];
 
