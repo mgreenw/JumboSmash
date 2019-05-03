@@ -29,7 +29,8 @@ type cardButtonProps = {
   icon: IconName,
   loading: boolean
 };
-class CardButton extends React.PureComponent<cardButtonProps> {
+
+export class CardButton extends React.PureComponent<cardButtonProps> {
   render() {
     const { onPress, icon, title, loading } = this.props;
     return (
@@ -235,7 +236,8 @@ class ProfileScreen extends React.Component<Props, State> {
                 height: -1,
                 width: 1
               },
-              borderRadius: 10
+              borderTopRightRadius: 10,
+              borderTopLeftRadius: 10
             }}
             elevation={5}
           >

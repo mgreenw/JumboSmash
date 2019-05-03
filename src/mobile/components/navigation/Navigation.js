@@ -63,6 +63,7 @@ import PrelaunchStartScreen from 'mobile/components/meta/PrelaunchStart_Screen';
 // Admin Screens
 import AdminClassmateListScreen from 'mobile/components/Admin/ClassmateList_Screen';
 import AdminClassmateOverviewScreen from 'mobile/components/Admin/ClassmateOverview_Screen';
+import AdminHomeScreen from 'mobile/components/Admin/Home_Screen';
 
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
@@ -283,11 +284,12 @@ OnboardingStack.navigationOptions = () => {
 
 const AdminStack = createStackNavigator(
   {
+    [routes.AdminHome]: { screen: AdminHomeScreen },
     [routes.AdminClassmateList]: { screen: AdminClassmateListScreen },
     [routes.AdminClassmateOverview]: { screen: AdminClassmateOverviewScreen }
   },
   {
-    initialRouteName: routes.AdminClassmateList,
+    initialRouteName: routes.AdminHome,
     ...removeHeader
   }
 );
