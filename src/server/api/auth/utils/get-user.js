@@ -29,7 +29,8 @@ function getUser(token: string, adminPassword: ?string = null): Promise<any> {
             u.expo_push_token AS "expoPushToken",
             (u.admin_password IS NOT NULL AND u.admin_password = $1) AS "isAdmin",
             u.terminated AS "terminated",
-            u.termination_reason AS "terminationReason"
+            u.termination_reason AS "terminationReason",
+            u.can_be_active_in_scenes AS "canBeActiveInScenes"
           FROM classmates u
           LEFT JOIN profiles p ON p.user_id = u.id
           WHERE u.id = $2
