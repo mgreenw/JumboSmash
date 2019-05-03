@@ -161,7 +161,10 @@ class ClassmateListScreen extends React.Component<Props, State> {
     const { classmateIds, classmateMap } = this.props;
     const newClassmateIds = classmateIds.filter(id => {
       const { utln } = classmateMap[id];
-      return utln.toUpperCase().indexOf(upperCaseSearch) > -1;
+      return (
+        utln.toUpperCase().indexOf(upperCaseSearch) > -1 ||
+        id.toString().indexOf(upperCaseSearch) > -1
+      );
     });
 
     this.setState({
