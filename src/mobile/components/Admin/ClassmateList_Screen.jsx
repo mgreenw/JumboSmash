@@ -36,9 +36,35 @@ export function profileStatusColor(status: ProfileStatus, hasProfile: boolean) {
   return Colors.IceBlue;
 }
 
-function compareUtln(a: string, b: string) {
+function compareUtln(a: string, b: string): -1 | 0 | 1 {
   if (a < b) return -1;
   if (a > b) return 1;
+  return 0;
+}
+
+function comparePriority(c1: ServerClassmate, c2: ServerClassmate): -1 | 0 | 1 {
+  const { hasProfile: hasProfile1, profileStatus: profileStatus1 } = c1;
+  const { hasProfile: hasProfile2, profileStatus: profileStatus2 } = c2;
+
+  // no profiles go last
+  if (!hasProfile1 && !hasProfile2) return 0;
+  if (!hasProfile1) return 1;
+  if (!hasProfile2) return -1;
+
+  // if same stay in place
+  if (profileStatus1 === profileStatus2) return 0;
+
+  // order: unreviewed -> updated -> reviewed
+  if (profileStatus1 === 'unreviewed') return -1;
+  if (profileStatus2 === 'unreviewed') return 1;
+
+  if (profileStatus1 === 'updated') return -1;
+  if (profileStatus2 === 'updated') return 1;
+
+  if (profileStatus1 === 'reviewed') return -1;
+  if (profileStatus2 === 'reviewed') return 1;
+
+  // for flow
   return 0;
 }
 
@@ -60,9 +86,9 @@ type Props = DispatchProps & ReduxProps & NavigationProps;
 
 function mapStateToProps(state: ReduxState): ReduxProps {
   const { classmatesById: classmateMap, classmateIds: unsortedIds } = state;
-  const classmateIds = unsortedIds.sort((a, b) =>
-    compareUtln(classmateMap[a].utln, classmateMap[b].utln)
-  );
+  const classmateIds = unsortedIds
+    .sort((a, b) => compareUtln(classmateMap[a].utln, classmateMap[b].utln))
+    .sort((a, b) => comparePriority(classmateMap[a], classmateMap[b]));
   return {
     classmateMap,
     classmateIds,
