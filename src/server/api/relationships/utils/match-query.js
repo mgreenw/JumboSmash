@@ -57,7 +57,7 @@ const query = `
         'sender', most_recent_message.sender
       )
     END AS "mostRecentMessage",
-    user_messages_agg.new_match AS "newMatch"
+    COALESCE(user_messages_agg.new_match, true) AS "newMatch"
   FROM relationships me_critic
   JOIN relationships they_critic
     ON they_critic.candidate_user_id = $1
