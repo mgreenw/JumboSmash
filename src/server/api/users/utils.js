@@ -88,14 +88,16 @@ async function validateProfile(profile: Profile) {
 // fields and generate a template string for the fields for a postgres update
 // This is a helper method that can be reused to allow for optional fields
 // to be updated with ease
-function getFieldTemplates(definedFields: Array<[string, any]>) {
+function getFieldTemplates(definedFields: Array<[string, any]>, tableAlias: string = '') {
   // Get an array of the fields themselves
   const fields = _.map(definedFields, field => _.nth(field, 1));
+
+  const tableName = tableAlias === '' ? '' : `${tableAlias}.`;
 
   // Get all the fields with their respective template strings. fieldTemplates
   // is a string like 'display_name = $1, birthday = $2, bio = $3'
   const templateString = _.join(
-    _.map(definedFields, (field, i) => `${_.nth(field, 0)} = $${i + 1}`),
+    _.map(definedFields, (field, i) => `${tableName}${_.nth(field, 0)} = $${i + 1}`),
     ', ',
   );
 
@@ -219,7 +221,8 @@ type AccountTermination = {
 
 type ProfileFieldsUpdate = {
   type: 'PROFILE_FIELDS_UPDATE',
-  changedFields: Profile,
+  // eslint-disable-next-line
+  changedFields: $Shape<Profile>,
 };
 
 type ProfileNewPhoto = {

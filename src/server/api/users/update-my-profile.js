@@ -100,15 +100,17 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   // for a consistant ordering
   const definedFields = _.toPairs(_.omitBy(allFields, _.isUndefined));
 
-  let result;
+  let updatedProfile;
+  let oldProfile;
 
   // If there is nothing to update, success!
   if (definedFields.length === 0) {
-    result = await db.query(`
+    const result = await db.query(`
       SELECT ${definedSelect}
       FROM profiles
       WHERE user_id = $1
     `, [userId]);
+    [updatedProfile] = result.rows;
   } else {
     // Generates a template and fields for a postgres query
     const template = getFieldTemplates(definedFields);
@@ -117,20 +119,34 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     // length as the parameter templates. It is ok to construct the string like
     // this because none of the values in the construction come from user input
     const userParamIndex = template.fields.length + 1;
-    result = await db.query(`
-      UPDATE profiles
+    const result = await db.query(`
+      UPDATE profiles new_profile
       SET ${template.templateString}
-      WHERE user_id = $${userParamIndex}
-      RETURNING ${profileSelectQuery(`${userParamIndex}`)}
+      FROM profiles old_profile
+      WHERE
+        new_profile.user_id = old_profile.user_id
+        AND new_profile.user_id = $${userParamIndex}
+      RETURNING
+        ${profileSelectQuery(`${userParamIndex}`, { buildJSON: true, tableAlias: 'new_profile' })} AS "updatedProfile",
+        ${profileSelectQuery(`${userParamIndex}`, { buildJSON: true, tableAlias: 'old_profile' })} AS "oldProfile"
     `, [...template.fields, userId]);
+    [{ updatedProfile, oldProfile }] = result.rows;
 
     // Mark the profile as needing review ONLY IF display name or bio are updated
-    const updatedFields = Object.keys(definedFields);
-    const requireReview = updatedFields.includes('bio') || updatedFields.includes('display_name');
+    const { bio: oldBio, displayName: oldName } = oldProfile.fields;
+    const { bio: newBio, displayName: newName } = updatedProfile.fields;
+
+    // Check if a review should be required
+    const bioUpdated = oldBio !== newBio;
+    const nameUpdated = oldName !== newName;
+    const requireReview = bioUpdated || nameUpdated;
 
     const profileUpdated = constructAccountUpdate({
       type: 'PROFILE_FIELDS_UPDATE',
-      changedFields: definedFields,
+      changedFields: {
+        bio: bioUpdated ? newBio : undefined,
+        displayName: nameUpdated ? newName : undefined,
+      },
     });
 
     await db.query(`
@@ -143,7 +159,7 @@ const updateMyProfile = async (userId: number, profile: Object) => {
   }
 
   // If there is an id returned, success!
-  return apiUtils.status(codes.UPDATE_PROFILE__SUCCESS).data(result.rows[0]);
+  return apiUtils.status(codes.UPDATE_PROFILE__SUCCESS).data(updatedProfile);
 };
 
 const handler = [
