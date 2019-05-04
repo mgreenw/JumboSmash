@@ -221,7 +221,8 @@ type AccountTermination = {
 
 type ProfileFieldsUpdate = {
   type: 'PROFILE_FIELDS_UPDATE',
-  changedFields: Profile,
+  // eslint-disable-next-line
+  changedFields: $Shape<Profile>,
 };
 
 type ProfileNewPhoto = {
@@ -245,24 +246,6 @@ function constructAccountUpdate(
   };
 }
 
-// Deep object difference
-/**
- * Deep diff between two object, using lodash
- * @param  {Object} object Object compared
- * @param  {Object} base   Object to compare with
- * @return {Object}        Return a new object who represent the diff
- */
-function objectDifference(object: Object, base: Object) {
-  return _.transform(object, (result: Object, value, key) => {
-    if (!_.isEqual(value, base[key])) {
-      /* eslint-disable-next-line no-param-reassign */
-      result[key] = (_.isObject(value) && _.isObject(base[key]))
-        ? objectDifference(value, base[key])
-        : value;
-    }
-  });
-}
-
 module.exports = {
   validateProfile,
   profileErrorMessages,
@@ -270,5 +253,4 @@ module.exports = {
   profileSelectQuery,
   settingsSelectQuery,
   constructAccountUpdate,
-  objectDifference,
 };

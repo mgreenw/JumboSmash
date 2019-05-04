@@ -11,7 +11,6 @@ const {
   constructAccountUpdate,
   getFieldTemplates,
   profileErrorMessages,
-  objectDifference,
 } = require('./utils');
 
 const apiUtils = require('../utils');
@@ -134,12 +133,20 @@ const updateMyProfile = async (userId: number, profile: Object) => {
     [{ updatedProfile, oldProfile }] = result.rows;
 
     // Mark the profile as needing review ONLY IF display name or bio are updated
-    const updatedFields = objectDifference(updatedProfile.fields, oldProfile.fields);
-    const requireReview = 'bio' in updatedFields || 'displayName' in updatedFields;
+    const { bio: oldBio, displayName: oldName } = oldProfile.fields;
+    const { bio: newBio, displayName: newName } = updatedProfile.fields;
+
+    // Check if a review should be required
+    const bioUpdated = oldBio !== newBio;
+    const nameUpdated = oldName !== newName;
+    const requireReview = bioUpdated || nameUpdated;
 
     const profileUpdated = constructAccountUpdate({
       type: 'PROFILE_FIELDS_UPDATE',
-      changedFields: updatedFields,
+      changedFields: {
+        bio: bioUpdated ? newBio : undefined,
+        displayName: nameUpdated ? newName : undefined,
+      },
     });
 
     await db.query(`
