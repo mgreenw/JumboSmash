@@ -1,6 +1,6 @@
 {
   "name": "jumbosmash-server",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "JumboSmash 2019",
   "engines": {
     "node": "^8.15.0",
