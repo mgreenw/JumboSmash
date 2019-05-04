@@ -15,17 +15,6 @@ const matchedScenesSelect = utilScenes.map((scene) => {
     END`;
 });
 
-/*
-    CASE WHEN most_recent_message.message_id IS NULL
-    THEN NULL
-    ELSE json_build_object(
-      'messageId', most_recent_message.message_id,
-      'content', most_recent_message.content,
-      'timestamp', most_recent_message.timestamp,
-      'sender', most_recent_message.sender
-    ) END AS "mostRecentMessage"
-*/
-
 const query = `
   WITH user_messages AS (
     SELECT

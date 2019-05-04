@@ -44,7 +44,8 @@ const getMatches = async (userId: number, canBeActiveInScenes: boolean = true) =
   // 3) We filter out all blocked users (if either person blocked the other)
   //    and also ensure that there exists at least one scene where both
   //    users liked the other (which means they have a match).
-  const q = `
+  const [matchesResult, unreadConversationUserIds] = await Promise.all([
+    db.query(`
       ${utils.matchQuery}
         AND me_critic.candidate_user_id = they_critic.critic_user_id
         AND NOT them.terminated
@@ -55,10 +56,7 @@ const getMatches = async (userId: number, canBeActiveInScenes: boolean = true) =
       ORDER BY
         most_recent_message.timestamp DESC NULLS FIRST,
         GREATEST(${sceneTimestampList.join(',')}) DESC
-    `;
-    console.log(q);
-  const [matchesResult, unreadConversationUserIds] = await Promise.all([
-    db.query(q, [userId]),
+    `, [userId]),
     redis.shared.hkeys(redis.unreadConversationsKey(userId)),
   ]);
 
