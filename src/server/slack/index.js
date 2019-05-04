@@ -71,7 +71,7 @@ exports.postServerUpdate = (
   }
 };
 
-const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
+const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
 exports.postAdminUpdate = (
   adminUserId: number,
   adminUtln: string,
