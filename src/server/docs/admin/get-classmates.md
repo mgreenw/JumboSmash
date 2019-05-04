@@ -10,7 +10,7 @@ Gets all the classmates in the app. This includes terminated users and users tha
 
 **Admin required** : YES
 
-**Permissions required** : Any user with a profile
+**Permissions required** : Any admin with a profile
 
 **Request Headers**
 

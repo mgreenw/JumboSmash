@@ -24,7 +24,7 @@ const getClassmates = async (classmateId: number, adminUserId: number) => {
     return status(codes.GET_CLASSMATE__NOT_FOUND).noData();
   }
 
-  return status(codes.GET_CLASSMATES__SUCCESS).data({
+  return status(codes.GET_CLASSMATE__SUCCESS).data({
     classmate: classmateResult.rows[0],
   });
 };
