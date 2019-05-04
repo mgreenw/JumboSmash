@@ -16,21 +16,48 @@ const matchedScenesSelect = utilScenes.map((scene) => {
 });
 
 const query = `
+  WITH user_messages AS (
+    SELECT
+      CASE
+        WHEN sender_user_id = $1 THEN receiver_user_id
+        ELSE sender_user_id
+      END AS other_user_id,
+      CASE
+        WHEN from_system IS true THEN 'system'
+        WHEN sender_user_id = $1 THEN 'client'
+        ELSE 'match'
+      END AS sender,
+      id,
+      timestamp,
+      content,
+      from_system
+    FROM messages
+    WHERE sender_user_id = $1 OR receiver_user_id = $1
+  ), user_messages_agg AS (
+    SELECT every(from_system) AS new_match, other_user_id
+    FROM user_messages
+    GROUP by other_user_id
+  ), most_recent_messages AS (
+    SELECT DISTINCT ON (other_user_id) *
+    FROM user_messages
+    ORDER BY other_user_id, timestamp DESC
+  )
   SELECT
-    NOT exists (SELECT id FROM messages WHERE they_profile.user_id in (sender_user_id, receiver_user_id) AND $1 in (sender_user_id, receiver_user_id) AND NOT from_system) AS "newMatch",
     they_profile.user_id as "userId",
     ${profileSelectQuery('they_profile.user_id', { tableAlias: 'they_profile', buildJSON: true })} AS profile,
     json_object(ARRAY[${scenes}], ARRAY[
       ${matchedScenesSelect.join(',')}
     ]::text[]) AS scenes,
-    CASE WHEN most_recent_message.message_id IS NULL
-    THEN NULL
-    ELSE json_build_object(
-      'messageId', most_recent_message.message_id,
-      'content', most_recent_message.content,
-      'timestamp', most_recent_message.timestamp,
-      'sender', most_recent_message.sender
-    ) END AS "mostRecentMessage"
+    CASE
+      WHEN most_recent_message.id IS NULL THEN NULL
+      ELSE json_build_object(
+        'messageId', most_recent_message.id,
+        'content', most_recent_message.content,
+        'timestamp', most_recent_message.timestamp,
+        'sender', most_recent_message.sender
+      )
+    END AS "mostRecentMessage",
+    COALESCE(user_messages_agg.new_match, true) AS "newMatch"
   FROM relationships me_critic
   JOIN relationships they_critic
     ON they_critic.candidate_user_id = $1
@@ -39,22 +66,8 @@ const query = `
     ON they_profile.user_id = me_critic.candidate_user_id
   JOIN classmates them
     ON they_profile.user_id = them.id
-  LEFT JOIN LATERAL (
-    SELECT
-        id AS message_id,
-        content,
-        timestamp,
-        CASE
-          WHEN from_system IS true THEN 'system'
-          WHEN sender_user_id = $1 THEN 'client'
-          ELSE 'match'
-        END AS sender,
-        CASE WHEN sender_user_id = $1 THEN receiver_user_id ELSE sender_user_id END AS other_user_id
-     FROM   messages m
-     WHERE  they_profile.user_id in (m.sender_user_id, m.receiver_user_id) AND $1 in (m.sender_user_id, m.receiver_user_id)
-     ORDER  BY m.timestamp DESC
-     LIMIT  1
-  ) most_recent_message ON most_recent_message.other_user_id = they_profile.user_id
+  LEFT JOIN most_recent_messages most_recent_message ON most_recent_message.other_user_id = they_profile.user_id
+  LEFT JOIN user_messages_agg ON user_messages_agg.other_user_id = they_profile.user_id
   WHERE
     me_critic.critic_user_id = $1
 `;
