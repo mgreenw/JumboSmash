@@ -344,6 +344,17 @@ exports.GET_CLASSMATES__SUCCESS = {
   code: 200,
 };
 
+// Get Classmate
+exports.GET_CLASSMATE__SUCCESS = {
+  status: 'GET_CLASSMATE__SUCCESS',
+  code: 200,
+};
+exports.GET_CLASSMATE__NOT_FOUND = {
+  status: 'GET_CLASSMATE__NOT_FOUND',
+  code: 404,
+};
+
+
 // Terminate User
 exports.TERMINATE_USER__SUCCESS = {
   status: 'TERMINATE_USER__SUCCESS',
