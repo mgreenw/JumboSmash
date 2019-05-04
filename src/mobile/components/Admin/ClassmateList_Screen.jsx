@@ -92,6 +92,20 @@ class ClassmateListScreen extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { getClassmatesInProgress, classmateIds } = this.props;
+    if (
+      !getClassmatesInProgress &&
+      getClassmatesInProgress !== prevProps.getClassmatesInProgress
+    ) {
+      // Note: if someone has a search this will show EVERY classmate not the results.
+      // Not best behavior, but fine for now.
+      this.setState({
+        classmateIds
+      });
+    }
+  }
+
   _renderHeader = () => {
     const { search } = this.state;
     return (
