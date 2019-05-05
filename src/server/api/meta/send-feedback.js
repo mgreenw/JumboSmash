@@ -34,7 +34,7 @@ const sendFeedback = async (
   reasonCode: string,
 ) => {
   // Post the message and return
-  slack.postFeedback(userId, message, reasonCode);
+  await slack.postFeedback(userId, message, reasonCode);
   return status(SEND_FEEDBACK__SUCCESS).noData();
 };
 

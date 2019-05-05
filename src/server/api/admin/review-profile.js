@@ -141,7 +141,7 @@ const reviewProfile = async (
   // If the review is "negative", alert slack. There will be lots of positive rewiews
   // so we don't want to overload slack.
   if (isNegativeReview) {
-    slack.postAdminUpdate(adminUserId, adminUtln, `
+    await slack.postAdminUpdate(adminUserId, adminUtln, `
       Profile Reviewed\n\nUser: ${utln}\nReview: ${'```'}${JSON.stringify(review, null, 2)}${'```'}
     `.trim());
   }
