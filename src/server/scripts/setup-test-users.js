@@ -127,23 +127,26 @@ async function main() {
 
   console.log(JSON.stringify(testers, null, 2));
   console.log(`You are about to insert ${testers.length} test users:`);
-  console.log('HEADS UP: you should delete these users from the database before running this script.');
+  console.log('HEADS UP: you MUST delete these users from the database before running this script.');
   const proceed = await askQuestion('Proceed (y/n)? ');
   if (proceed !== 'y') exit();
 
   // 2. Insert the test users if they do not already exist.
   // NOTE: testers should not have push tokens
-  for (const tester of testers) {
+  let currIndex = 1;
+  // eslint-disable-next-line no-plusplus
+  const params = testers.map(() => `($${currIndex++}, $${currIndex++}, null, false, false, false, false, false, false, false)`).join(',');
+  try {
     await db.query(`
       INSERT INTO users
-        (utln, email, expo_push_token)
-        VALUES ($1, $2, null)
-      ON CONFLICT (utln)
-        DO UPDATE
-          SET expo_push_token = null
-      RETURNING id
-    `, [tester.utln, tester.email]);
+        (utln, email, expo_push_token, notifications_enabled, use_he, use_she, use_they, want_he, want_she, want_they)
+        VALUES ${params}
+    `, _.flatten(testers.map(tester => [tester.utln, tester.email])));
+  } catch (error) {
+    console.log("Oops. You probably didn't delete the test users from the database.");
+    exit();
   }
+
 
   // 2. Create relationships between all the users
   for (const tester of testers) {
