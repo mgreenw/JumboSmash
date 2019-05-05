@@ -35,20 +35,33 @@ async function generateUserInfoSection(title: string, userId: number) {
     },
     {
       type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `*${title}*
-
-*id*: ${user.id}
-*UTLN*: ${user.utln}
-*Email*: ${user.email}
-
-*Display Name*: ${user.displayName}
-*Birthday*: ${user.birthday}
-*Bio*: ${user.bio}
-
-`.trim(),
-      },
+      text: 'User Info',
+      fields: [
+        {
+          type: 'mrkdwn',
+          text: `*id*:\n${user.id}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*UTLN*:\n${user.utln}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Email*:\n${user.email}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Display Name*:\n${user.displayName}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Birthday*:\n${user.birthday}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Bio*:\n${user.bio}`,
+        },
+      ],
     },
     {
       type: 'context',
