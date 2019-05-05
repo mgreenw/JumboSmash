@@ -133,8 +133,6 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
           text: `Accept Profile`,
           onPress: () => {
             requestPassword().then(password => {
-              // password is gaurenteed to be non null here.
-              if (password === null) return;
               reviewProfile(
                 password,
                 id,
@@ -169,8 +167,6 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
           text: `Reject Profile`,
           onPress: () => {
             requestPassword().then(password => {
-              // password is gaurenteed to be non null here.
-              if (password === null) return;
               AlertIOS.prompt(
                 'Reason for rejecting?',
                 '>5 characters',

@@ -55,11 +55,13 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    requestPassword(false).then(password => {
-      this.setState({
-        storedPassword: password
-      });
-    });
+    requestPassword(false)
+      .then(password => {
+        this.setState({
+          storedPassword: password
+        });
+      })
+      .catch(); // means we have no password, keep it null.
   }
 
   _onBack = () => {

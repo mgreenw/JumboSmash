@@ -30,7 +30,7 @@ async function requestFingerPrintPassword(): Promise<string> {
 
 export default async function requestPasswordAsync(
   promptIfNotSaved: boolean = true
-): Promise<null | string> {
+): Promise<string> {
   try {
     const pass = await requestFingerPrintPassword();
     return pass;
@@ -39,6 +39,6 @@ export default async function requestPasswordAsync(
       const pass = await promptPassword('Could not retrieve stored password.');
       return pass;
     }
-    return null;
+    throw new Error('PASSWORD_NOT_SET');
   }
 }
