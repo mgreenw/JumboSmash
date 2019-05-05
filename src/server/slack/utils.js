@@ -1,3 +1,64 @@
+// @flow
+
+const db = require('../db');
+
+async function generateUserInfoSection(title: string, userId: number) {
+  const [reportedUser] = (await db.query(`
+    SELECT
+      id,
+      utln,
+      email,
+      display_name AS "displayName",
+      birthday,
+      bio,
+      json_build_object(
+        'smash', active_smash,
+        'social', active_social,
+        'stone', active_stone
+      ) AS "activeScenes"
+    FROM classmates
+    JOIN profiles on profiles.user_id = classmates.id
+    WHERE id = $1
+  `, [userId])).rows;
+
+  if (!reportedUser) {
+    throw new Error(`Could not find profile for user ${userId}`);
+  }
+
+  const activeScenes = Object.entries(reportedUser.activeScenes)
+    .filter(([, active]) => active)
+    .map(([scene]) => scene);
+
+  return [
+    {
+      type: 'divider',
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*${title}*
+
+*id*: ${reportedUser.id}
+*UTLN*: ${reportedUser.utln}
+*Display Name*: ${reportedUser.displayName}
+*Email*: ${reportedUser.email}
+`.trim(),
+      },
+    },
+    {
+      type: 'context',
+      elements: [
+        {
+          type: 'plain_text',
+          emoji: true,
+          text: `Active Scenes: ${activeScenes.length === 0 ? 'None' : activeScenes.join(', ')}`,
+        },
+      ],
+    },
+  ];
+}
+
 const GOOD = '#339900';
 const WARNING = '#ffcc00';
 const DANGER = '#cc3300';
@@ -15,4 +76,5 @@ module.exports = {
     LOBSTER,
     GEM,
   },
+  generateUserInfoSection,
 };

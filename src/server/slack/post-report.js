@@ -4,8 +4,7 @@
 
 const { IncomingWebhook } = require('@slack/client');
 const NODE_ENV = require('../utils').getNodeEnv();
-const { colors } = require('./utils');
-const db = require('../db');
+const { colors, generateUserInfoSection } = require('./utils');
 
 const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
 
@@ -17,65 +16,7 @@ async function postReport(
   block: boolean,
 ): Promise<void> {
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
-    let extraUserInfo = [];
-
-    // Only add on extra info about the user if it is a report
-    if (!block) {
-      const [reportedUser] = (await db.query(`
-        SELECT
-          id,
-          utln,
-          email,
-          display_name AS "displayName",
-          birthday,
-          bio,
-          json_build_object(
-            'smash', active_smash,
-            'social', active_social,
-            'stone', active_stone
-          ) AS "activeScenes"
-        FROM classmates
-        JOIN profiles on profiles.user_id = classmates.id
-        WHERE id = $1
-      `, [reportedUserId])).rows;
-
-      if (!reportedUser) {
-        throw new Error(`Could not find profile for user ${reportedUserId}`);
-      }
-
-      const activeScenes = Object.entries(reportedUser.activeScenes)
-        .filter(([, active]) => active)
-        .map(([scene]) => scene);
-
-      extraUserInfo = [
-        {
-          type: 'divider',
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*${block ? 'Blocked' : 'Reported'} User*
-
-    *id*: ${reportedUser.id}
-    *UTLN*: ${reportedUser.utln}
-    *Display Name*: ${reportedUser.displayName}
-    *Email*: ${reportedUser.email}
-    `.trim(),
-          },
-        },
-        {
-          type: 'context',
-          elements: [
-            {
-              type: 'plain_text',
-              emoji: true,
-              text: `Active Scenes: ${activeScenes.length === 0 ? 'None' : activeScenes.join(', ')}`,
-            },
-          ],
-        },
-      ];
-    }
+    const extraUserInfo = block ? [] : await generateUserInfoSection(`${block ? 'Blocked' : 'Reported'} User`, reportedUserId);
 
     const report = {
       text: block ? 'A user was blocked.' : 'A user report was filed.',

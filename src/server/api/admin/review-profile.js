@@ -97,8 +97,6 @@ const reviewProfile = async (
     return status(codes.REVIEW_PROFILE__NOT_FOUND).noData();
   }
 
-  const [{ utln }] = userProfileResult.rows;
-
   // NOTE: A terminated user can be reviewed. This may be useful in "too young" terminations.
   // There is no negative impact here - reviewing a terminated user does not affect anything else.
   const review = constructAccountUpdate({
@@ -141,9 +139,24 @@ const reviewProfile = async (
   // If the review is "negative", alert slack. There will be lots of positive rewiews
   // so we don't want to overload slack.
   if (isNegativeReview) {
-    await slack.postAdminUpdate(adminUserId, adminUtln, `
-      Profile Reviewed\n\nUser: ${utln}\nReview: ${'```'}${JSON.stringify(review, null, 2)}${'```'}
-    `.trim());
+    await slack.postAdminUpdate(adminUserId, adminUtln, 'Review Profile', [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `
+Previously:
+*Can Be Swiped On:* ${previousCapabilities.canBeSwipedOn.toString()}
+*Can Be Active In Scenes:* ${previousCapabilities.canBeActiveInScenes.toString()}
+
+Now:
+*Can Be Swiped On:* ${updatedCapabilities.canBeSwipedOn.toString()}
+*Can Be Active In Scenes:* ${updatedCapabilities.canBeActiveInScenes.toString()}
+*Comment:* ${comment || ''}
+          `.trim(),
+        },
+      },
+    ]);
   }
 
   // If the user is at the party, send them a push notification!
