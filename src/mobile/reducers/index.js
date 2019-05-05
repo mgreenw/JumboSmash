@@ -1714,6 +1714,28 @@ export default function rootReducer(
       const { entities } = normalizeMatches([match]);
       const { matches = {} } = entities;
 
+      // There's a special quirk here for when a new match occurs on a previous match WITH a message--
+      // they will still be in the 'messaged' list. Ideally we would have formed GET_MATCHES out of a
+      // bunch of UPDATE_MATCH, and this would be an UPDATE_MATCH. However, as a quick fix for a bug,
+      // we ensure here to populate the messages map with the new message.
+
+      const { byId = {}, inOrderIds = [], outOfOrderIds = [] } =
+        state.confirmedConversations[userId] || {};
+
+      const { mostRecentMessage } = match;
+
+      const newConfirmedConversation = {
+        byId: {
+          ...byId,
+          // Not a great way to do this.
+          // This is technically a ServerMessage, not a Message.
+          // We don't care because the difference does not matter to a confirmedMessage.
+          [mostRecentMessage.messageId]: mostRecentMessage
+        },
+        inOrderIds,
+        outOfOrderIds
+      };
+
       return {
         ...state,
         topToast: {
@@ -1726,6 +1748,10 @@ export default function rootReducer(
         matchesById: {
           ...state.matchesById,
           ...matches
+        },
+        confirmedConversations: {
+          ...state.confirmedConversations,
+          [userId]: newConfirmedConversation
         }
       };
     }
