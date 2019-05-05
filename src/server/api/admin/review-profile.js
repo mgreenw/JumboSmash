@@ -62,6 +62,9 @@ const SMASH = String.fromCodePoint(0x1F351);
 const SOCIAL = String.fromCodePoint(0x1F418);
 const body = `${PARTY_POPPER}${SOCIAL}${SMASH}${PARTY_POPPER}`;
 
+const CHECK = String.fromCodePoint(0x2705);
+const XMARK = String.fromCodePoint(0x274C);
+
 /**
  * @api {post} /admin/classmates/:userId/review
  *
@@ -145,18 +148,13 @@ const reviewProfile = async (
         text: {
           type: 'mrkdwn',
           text: `
-Previously:
-*Can Be Swiped On:* ${previousCapabilities.canBeSwipedOn.toString()}
-*Can Be Active In Scenes:* ${previousCapabilities.canBeActiveInScenes.toString()}
-
-Now:
-*Can Be Swiped On:* ${updatedCapabilities.canBeSwipedOn.toString()}
-*Can Be Active In Scenes:* ${updatedCapabilities.canBeActiveInScenes.toString()}
+*Can Be Swiped On:* ${updatedCapabilities.canBeSwipedOn ? CHECK : XMARK}
+*Can Be Active In Scenes:* ${updatedCapabilities.canBeActiveInScenes ? CHECK : XMARK}
 *Comment:* ${comment || ''}
           `.trim(),
         },
       },
-    ]);
+    ], userId);
   }
 
   // If the user is at the party, send them a push notification!

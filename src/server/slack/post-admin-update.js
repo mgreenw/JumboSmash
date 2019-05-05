@@ -4,7 +4,9 @@ const { IncomingWebhook } = require('@slack/client');
 const NODE_ENV = require('../utils').getNodeEnv();
 const { colors, generateUserInfoSection } = require('./utils');
 
-const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
+const old = 'https://hooks.slack.com/services/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';
+const t = 'https://hooks.slack.com/services/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';
+const admin = new IncomingWebhook(t);
 
 type AdminUpdate = 'Terminate User' | 'Review Profile';
 async function postAdminUpdate(
@@ -58,11 +60,11 @@ async function postAdminUpdate(
                 },
               ],
             },
-            ...userInfo,
             {
               type: 'divider',
             },
             ...action,
+            ...userInfo,
           ],
         },
       ],

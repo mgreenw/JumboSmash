@@ -3,7 +3,7 @@
 const db = require('../db');
 
 async function generateUserInfoSection(title: string, userId: number) {
-  const [reportedUser] = (await db.query(`
+  const [user] = (await db.query(`
     SELECT
       id,
       utln,
@@ -21,11 +21,11 @@ async function generateUserInfoSection(title: string, userId: number) {
     WHERE id = $1
   `, [userId])).rows;
 
-  if (!reportedUser) {
+  if (!user) {
     throw new Error(`Could not find profile for user ${userId}`);
   }
 
-  const activeScenes = Object.entries(reportedUser.activeScenes)
+  const activeScenes = Object.entries(user.activeScenes)
     .filter(([, active]) => active)
     .map(([scene]) => scene);
 
@@ -39,10 +39,14 @@ async function generateUserInfoSection(title: string, userId: number) {
         type: 'mrkdwn',
         text: `*${title}*
 
-*id*: ${reportedUser.id}
-*UTLN*: ${reportedUser.utln}
-*Display Name*: ${reportedUser.displayName}
-*Email*: ${reportedUser.email}
+*id*: ${user.id}
+*UTLN*: ${user.utln}
+*Email*: ${user.email}
+
+*Display Name*: ${user.displayName}
+*Birthday*: ${user.birthday}
+*Bio*: ${user.bio}
+
 `.trim(),
       },
     },

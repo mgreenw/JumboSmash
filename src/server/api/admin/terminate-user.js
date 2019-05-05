@@ -63,8 +63,16 @@ const terminateUser = async (
   const [{ alreadyTerminated, ...classmate }] = terminatedResults.rows;
 
   // Update to slack. Include if the user is already terminated.
-  const addendum = alreadyTerminated ? '\n*Note: The user was already terminated. Weird.*\n' : '';
-  await slack.postAdminUpdate(adminUserId, adminUtln, 'Terminate User', []);
+  const addendum = alreadyTerminated ? '\n*Note:* The user was already terminated. Weird.' : '';
+  await slack.postAdminUpdate(adminUserId, adminUtln, 'Terminate User', [
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*Reason*: ${reason}${addendum}`,
+      },
+    },
+  ], userId);
 
   // If already terminated, return that it wasn't normal...
   if (alreadyTerminated) {
