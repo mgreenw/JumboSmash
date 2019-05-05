@@ -54,8 +54,7 @@ async function generateUserInfoSection(title: string, userId: number) {
       type: 'context',
       elements: [
         {
-          type: 'plain_text',
-          emoji: true,
+          type: 'mrkdwn',
           text: `Active Scenes: ${activeScenes.length === 0 ? 'None' : activeScenes.join(', ')}`,
         },
       ],

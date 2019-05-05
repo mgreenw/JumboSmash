@@ -4,7 +4,7 @@ const { IncomingWebhook } = require('@slack/client');
 const NODE_ENV = require('../utils').getNodeEnv();
 const { colors, generateUserInfoSection } = require('./utils');
 
-const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
+const admin = new IncomingWebhook('https://hooks.slack.com/services/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');
 
 type AdminUpdate = 'Terminate User' | 'Review Profile';
 async function postAdminUpdate(
@@ -15,12 +15,12 @@ async function postAdminUpdate(
   userId?: number,
 ) {
   if (NODE_ENV === 'production' || NODE_ENV === 'development') {
-    const color = (() => {
+    const [text, color] = (() => {
       switch (type) {
         case 'Terminate User':
-          return colors.DANGER;
+          return ['terminated a user.', colors.DANGER];
         case 'Review Profile':
-          return colors.WARNING;
+          return ['reviewed a profile.', colors.WARNING];
         default:
           return colors.GEM;
       }
@@ -32,7 +32,7 @@ async function postAdminUpdate(
     }
 
     const update = {
-      text: 'An admin performed a new action.',
+      text: `An admin ${text}`,
       attachments: [
         {
           color,
