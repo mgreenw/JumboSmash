@@ -1,13 +1,7 @@
 // @flow
 
 import React from 'react';
-import {
-  View,
-  ImageBackground,
-  AlertIOS,
-  TouchableHighlight,
-  Text
-} from 'react-native';
+import { View, ImageBackground, TouchableHighlight, Text } from 'react-native';
 import routes from 'mobile/components/navigation/routes';
 import { connect } from 'react-redux';
 import GEMHeader from 'mobile/components/shared/Header';
@@ -22,6 +16,7 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import { SearchBar } from 'react-native-elements';
 import { textStyles } from 'mobile/styles/textStyles';
+import { requestPassword } from 'mobile/utils/passwords';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -186,9 +181,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
 
   _onRefresh = () => {
     const { getClassmates } = this.props;
-    AlertIOS.prompt('Enter your password', null, text => {
-      getClassmates(text);
-    });
+    requestPassword().then(getClassmates);
   };
 
   _onBack = () => {

@@ -49,6 +49,11 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
     navigation.navigate(routes.AdminClassmateList);
   };
 
+  _onAdminSettingsPress = () => {
+    const { navigation } = this.props;
+    navigation.navigate(routes.AdminSettings);
+  };
+
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: Colors.White }}>
@@ -67,7 +72,7 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
           }}
         />
         <SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
-          <View style={{ flex: 2 }} />
+          <View style={{ flex: 0.5 }} />
           <View
             style={{
               flex: 1,
@@ -90,6 +95,12 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
               title={'Classmate List'}
               onPress={this._onClassmatesListPress}
               icon={'menu'}
+              loading={false}
+            />
+            <CardButton
+              title={'Admin Settings'}
+              onPress={this._onAdminSettingsPress}
+              icon={'gear'}
               loading={false}
             />
             <CardButton
