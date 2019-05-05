@@ -6,6 +6,7 @@ const { IncomingWebhook } = require('@slack/client');
 const db = require('../db');
 const NODE_ENV = require('../utils').getNodeEnv();
 const { colors, generateUserInfoSection } = require('./utils');
+
 const route = NODE_ENV === 'develpoment'
   ? 'https://hooks.slack.com/services/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'
   : 'https://hooks.slack.com/services/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';
