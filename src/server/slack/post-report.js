@@ -6,8 +6,11 @@ const { IncomingWebhook } = require('@slack/client');
 const db = require('../db');
 const NODE_ENV = require('../utils').getNodeEnv();
 const { colors, generateUserInfoSection } = require('./utils');
-// 'https://hooks.slack.com/services/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'
-const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
+const route = NODE_ENV === 'develpoment'
+  ? 'https://hooks.slack.com/services/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'
+  : 'https://hooks.slack.com/services/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';
+
+const reporting = new IncomingWebhook(route);
 
 async function postReport(
   reportingUserId: number,
