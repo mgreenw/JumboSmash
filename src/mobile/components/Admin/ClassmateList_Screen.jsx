@@ -87,6 +87,7 @@ type Props = DispatchProps & ReduxProps & NavigationProps;
 function mapStateToProps(state: ReduxState): ReduxProps {
   const { classmatesById: classmateMap, classmateIds: unsortedIds } = state;
   const classmateIds = unsortedIds
+    .filter(a => !classmateMap[a].isTerminated)
     .sort((a, b) => compareUtln(classmateMap[a].utln, classmateMap[b].utln))
     .sort((a, b) => comparePriority(classmateMap[a], classmateMap[b]));
   return {
@@ -217,7 +218,7 @@ class ClassmateListScreen extends React.Component<Props, State> {
       (!capabilities.canBeSwipedOn &&
         (profileStatus === 'update' || profileStatus === 'reviewed')) ||
       !capabilities.canBeActiveInScenes ||
-      isTerminated;
+      isTerminated; // isTerminated should be filtered out, this is kinda legacy.
     return (
       <TouchableHighlight
         onPress={() => {
