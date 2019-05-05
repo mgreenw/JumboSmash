@@ -41,11 +41,8 @@ const testers: Tester[] = [
         scenes: ['social'],
         messagesFromMatch: ['Hey! This is a test message'],
       },
-      {
-        utln: 'tester2',
-        scenes: ['smash', 'social'],
-        messagesFromMatch: [],
-      },
+      // Note: the relationship with tester2 is defined in tester 2
+      // so we must not define it twice
     ],
   },
   {
