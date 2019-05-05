@@ -32,6 +32,7 @@ import {
 } from 'mobile/components/shared/buttons';
 import Spacer from 'mobile/components/shared/Spacer';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { requestPassword } from 'mobile/utils/passwords';
 import { profileStatusColor } from './ClassmateList_Screen';
 
 const wavesFull = require('../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -119,9 +120,9 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   _acceptProfile = () => {
     const { classmate, reviewProfile } = this.props;
     const { utln, id, capabilities } = classmate;
-    AlertIOS.prompt(
+    AlertIOS.alert(
       `Accept Profile for ${utln}?`,
-      'Enter passsword to confirm. This will enable BOTH Can-Be-Swiped-On AND Can-Be-Active-In-Scenes.',
+      `This will enable BOTH Can Be Swiped On AND Can Be Active In Scenes.`,
       [
         {
           text: 'Cancel',
@@ -130,17 +131,21 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
         },
         {
           text: `Accept Profile`,
-          onPress: password => {
-            reviewProfile(
-              password,
-              id,
-              {
-                ...capabilities,
-                canBeSwipedOn: true,
-                canBeActiveInScenes: true
-              },
-              'INITAL_REVIEW'
-            );
+          onPress: () => {
+            requestPassword().then(password => {
+              // password is gaurenteed to be non null here.
+              if (password === null) return;
+              reviewProfile(
+                password,
+                id,
+                {
+                  ...capabilities,
+                  canBeSwipedOn: true,
+                  canBeActiveInScenes: true
+                },
+                'INITAL_REVIEW'
+              );
+            });
           },
           style: 'destructive'
         }
@@ -151,9 +156,9 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
   _rejectProfile = () => {
     const { classmate, reviewProfile } = this.props;
     const { utln, id, capabilities } = classmate;
-    AlertIOS.prompt(
+    AlertIOS.alert(
       `Reject Profile for ${utln}?`,
-      'Enter passsword to confirm. This will disable ONLY Can-Be-Swiped-On.',
+      'This will disable ONLY Can Be Swiped On.',
       [
         {
           text: 'Cancel',
@@ -162,22 +167,26 @@ class ClassmateOverviewScreen extends React.Component<Props, State> {
         },
         {
           text: `Reject Profile`,
-          onPress: password => {
-            AlertIOS.prompt(
-              'Reason for rejecting?',
-              '>5 characters',
-              reason => {
-                reviewProfile(
-                  password,
-                  id,
-                  {
-                    ...capabilities,
-                    canBeSwipedOn: false
-                  },
-                  reason
-                );
-              }
-            );
+          onPress: () => {
+            requestPassword().then(password => {
+              // password is gaurenteed to be non null here.
+              if (password === null) return;
+              AlertIOS.prompt(
+                'Reason for rejecting?',
+                '>5 characters',
+                reason => {
+                  reviewProfile(
+                    password,
+                    id,
+                    {
+                      ...capabilities,
+                      canBeSwipedOn: false
+                    },
+                    reason
+                  );
+                }
+              );
+            });
           },
           style: 'destructive'
         }
