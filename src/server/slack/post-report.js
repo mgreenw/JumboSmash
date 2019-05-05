@@ -23,11 +23,11 @@ async function postReport(
       fields: [
         {
           type: 'mrkdwn',
-          text: `*id*: ${reportedUserId}`,
+          text: `*Id*: ${reportedUserId}`,
         },
         {
           type: 'mrkdwn',
-          text: `*UTLN:* ${utln}`,
+          text: `*Utln:* ${utln}`,
         },
       ],
     }] : await generateUserInfoSection(`${block ? 'Blocked' : 'Reported'} User`, reportedUserId);

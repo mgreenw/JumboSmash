@@ -35,11 +35,11 @@ async function generateUserInfoSection(title: string, userId: number) {
       fields: [
         {
           type: 'mrkdwn',
-          text: `*id*: ${user.id}`,
+          text: `*Id*: ${user.id}`,
         },
         {
           type: 'mrkdwn',
-          text: `*UTLN*: ${user.utln}`,
+          text: `*Utln*: ${user.utln}`,
         },
         {
           type: 'mrkdwn',
