@@ -1,9 +1,10 @@
 // @flow
 const { IncomingWebhook } = require('@slack/client');
 
-const utils = require('../utils');
+const NODE_ENV = require('../utils').getNodeEnv();
+const { colors } = require('./utils');
 
-const NODE_ENV = utils.getNodeEnv();
+exports.postReport = require('./post-report');
 
 const verificationCodes = new IncomingWebhook('https://hooks.slack.com/services/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');
 exports.postVerificationCode = (
@@ -13,34 +14,40 @@ exports.postVerificationCode = (
 ) => {
   // Only in staging and development
   if (NODE_ENV === 'staging' || NODE_ENV === 'development') {
-    verificationCodes.send(`
-      code:  *${verificationCode}*
-      utln:  *${utln}*
-      email: *${email}*
-      env:   *${NODE_ENV}*
-    `);
+    verificationCodes.send({
+      text: `Code: ${verificationCode}`,
+      attachments: [
+        {
+          color: colors.WAVE,
+          blocks: [
+            {
+              type: 'section',
+              fields: [
+                {
+                  type: 'mrkdwn',
+                  text: `*Environment:*\n${NODE_ENV}`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `*UTLN:*\n${utln}`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `*Email:*\n${email}`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `*Code:*\n${verificationCode}`,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
   }
 };
 
-const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
-exports.postReport = (
-  reportingUserId: number,
-  reportedUserId: number,
-  message: string,
-  block: boolean,
-) => {
-  // TODO: Send an email as a backup in case slack fails to send the report.
-  if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
-    reporting.send(`
-A new report was filed. ${block ? 'The reporting user has requested to block the reported user.' : ''}
-
-Reporting User: *${reportingUserId}*
-Reported User: *${reportedUserId}*
-Environment:   *${NODE_ENV}*
-
-${'```'}${message}${'```'}`);
-  }
-};
 
 const feedback = new IncomingWebhook('https://hooks.slack.com/services/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');
 exports.postFeedback = (
