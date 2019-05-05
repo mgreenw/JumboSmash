@@ -51,6 +51,9 @@ async function postAdminUpdate(
               ],
             },
             ...action,
+            {
+              type: 'divider',
+            },
             ...userInfo,
           ],
         },

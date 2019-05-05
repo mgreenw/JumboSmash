@@ -31,35 +31,31 @@ async function generateUserInfoSection(title: string, userId: number) {
 
   return [
     {
-      type: 'divider',
-    },
-    {
       type: 'section',
-      text: 'User Info',
       fields: [
         {
           type: 'mrkdwn',
-          text: `*id*:\n${user.id}`,
+          text: `*id*: ${user.id}`,
         },
         {
           type: 'mrkdwn',
-          text: `*UTLN*:\n${user.utln}`,
+          text: `*UTLN*: ${user.utln}`,
         },
         {
           type: 'mrkdwn',
-          text: `*Email*:\n${user.email}`,
+          text: `*Email*: ${user.email}`,
         },
         {
           type: 'mrkdwn',
-          text: `*Display Name*:\n${user.displayName}`,
+          text: `*Display Name*: ${user.displayName}`,
         },
         {
           type: 'mrkdwn',
-          text: `*Birthday*:\n${user.birthday}`,
+          text: `*Birthday*: ${user.birthday.toDateString()}`,
         },
         {
           type: 'mrkdwn',
-          text: `*Bio*:\n${user.bio}`,
+          text: `*Bio*: ${user.bio}`,
         },
       ],
     },

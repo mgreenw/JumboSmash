@@ -3,10 +3,11 @@
 // NOTE: This file is horrendous and ugy. I'm sorry about that.
 
 const { IncomingWebhook } = require('@slack/client');
+const db = require('../db');
 const NODE_ENV = require('../utils').getNodeEnv();
 const { colors, generateUserInfoSection } = require('./utils');
-
-const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
+// 'https://hooks.slack.com/services/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'
+const reporting = new IncomingWebhook('https://hooks.slack.com/services/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');
 
 async function postReport(
   reportingUserId: number,
@@ -16,7 +17,20 @@ async function postReport(
   block: boolean,
 ): Promise<void> {
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
-    const extraUserInfo = block ? [] : await generateUserInfoSection(`${block ? 'Blocked' : 'Reported'} User`, reportedUserId);
+    const [{ utln }] = (await db.query('SELECT utln FROM classmates WHERE id = $1', [reportedUserId])).rows;
+    const extraUserInfo = block ? [{
+      type: 'section',
+      fields: [
+        {
+          type: 'mrkdwn',
+          text: `*id*: ${reportedUserId}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*UTLN:* ${utln}`,
+        },
+      ],
+    }] : await generateUserInfoSection(`${block ? 'Blocked' : 'Reported'} User`, reportedUserId);
 
     const report = {
       text: block ? 'A user was blocked.' : 'A user report was filed.',
@@ -25,44 +39,35 @@ async function postReport(
           color: block ? colors.WARNING : colors.DANGER,
           blocks: [
             {
+              type: 'context',
+              elements: [
+                {
+                  type: 'mrkdwn',
+                  text: `${block ? 'Blocked' : 'Reported'} by *User Id ${reportingUserId}* in \`${NODE_ENV}\``,
+                },
+              ],
+            },
+            {
               type: 'section',
               fields: [
                 {
                   type: 'mrkdwn',
-                  text: `*Environment:*\n\`${NODE_ENV}\``,
+                  text: `*Reasons*: ${reason}`,
                 },
                 {
                   type: 'mrkdwn',
-                  text: `*Type:*\n${block ? 'Block' : 'Report'}`,
-                },
-                {
-                  type: 'mrkdwn',
-                  text: `*Reasons:*\n${reason}`,
-                },
-                {
-                  type: 'mrkdwn',
-                  text: `*${block ? 'Blocking' : 'Reporting'} User:*\n${reportedUserId}`,
+                  text: `*Message:* ${message}`,
                 },
               ],
+            },
+            {
+              type: 'divider',
             },
             ...extraUserInfo,
           ],
         },
       ],
     };
-
-    // This pushes on extra context if it is a block vs report.
-    if (!block) {
-      report.attachments[0].blocks[0].fields.push({
-        type: 'mrkdwn',
-        text: `*Message:*\n${message}`,
-      });
-    } else {
-      report.attachments[0].blocks[0].fields.push({
-        type: 'mrkdwn',
-        text: `*Blocked User Id:*\n${reportedUserId}`,
-      });
-    }
 
     await reporting.send(report);
   }
