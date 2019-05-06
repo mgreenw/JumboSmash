@@ -187,7 +187,7 @@ const sendVerificationEmail = async (email: string, forceResend: boolean) => {
   });
 
   logger.debug(`Verification Code: ${verificationCode}`);
-  slack.postVerificationCode(verificationCode, memberInfo.utln, memberInfo.email);
+  await slack.postVerificationCode(verificationCode, memberInfo.utln, memberInfo.email);
 
   // Send a success response to the client
   return apiUtils.status(codes.SEND_VERIFICATION_EMAIL__SUCCESS).data({

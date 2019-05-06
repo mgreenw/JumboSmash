@@ -62,6 +62,9 @@ const SMASH = String.fromCodePoint(0x1F351);
 const SOCIAL = String.fromCodePoint(0x1F418);
 const body = `${PARTY_POPPER}${SOCIAL}${SMASH}${PARTY_POPPER}`;
 
+const CHECK = String.fromCodePoint(0x2705);
+const XMARK = String.fromCodePoint(0x274C);
+
 /**
  * @api {post} /admin/classmates/:userId/review
  *
@@ -96,8 +99,6 @@ const reviewProfile = async (
   if (userProfileResult.rowCount === 0) {
     return status(codes.REVIEW_PROFILE__NOT_FOUND).noData();
   }
-
-  const [{ utln }] = userProfileResult.rows;
 
   // NOTE: A terminated user can be reviewed. This may be useful in "too young" terminations.
   // There is no negative impact here - reviewing a terminated user does not affect anything else.
@@ -141,9 +142,19 @@ const reviewProfile = async (
   // If the review is "negative", alert slack. There will be lots of positive rewiews
   // so we don't want to overload slack.
   if (isNegativeReview) {
-    slack.postAdminUpdate(adminUserId, adminUtln, `
-      Profile Reviewed\n\nUser: ${utln}\nReview: ${'```'}${JSON.stringify(review, null, 2)}${'```'}
-    `.trim());
+    await slack.postAdminUpdate(adminUserId, adminUtln, 'Review Profile', [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `
+*Can Be Swiped On:* ${updatedCapabilities.canBeSwipedOn ? CHECK : XMARK}
+*Can Be Active In Scenes:* ${updatedCapabilities.canBeActiveInScenes ? CHECK : XMARK}
+*Comment:* ${comment || ''}
+          `.trim(),
+        },
+      },
+    ], userId);
   }
 
   // If the user is at the party, send them a push notification!

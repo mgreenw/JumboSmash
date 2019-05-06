@@ -62,18 +62,8 @@ const report = async (
     return status(REPORT__USER_NOT_FOUND).noData();
   }
 
-  const [{ email, utln }] = reportedUserResult.rows;
-
-  // We add some context to the message body
-  const revisedMessage = `
-Reported User Email: ${email}
-Reported User UTLN: ${utln}
-Reason Code: ${reasonCode}
-Message:
-${message}`;
-
   // Post the message and return
-  slack.postReport(reportingUserId, reportedUserId, revisedMessage, block);
+  await slack.postReport(reportingUserId, reportedUserId, message, reasonCode, block);
 
   if (block) {
     await db.query(`
