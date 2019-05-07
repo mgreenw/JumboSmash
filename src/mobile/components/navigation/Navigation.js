@@ -142,7 +142,7 @@ const CardsSwitch = createMaterialTopTabNavigator(
     swipeEnabled: false,
     initialRouteName: routes.SmashCards,
     animationEnabled: false,
-    order: [routes.SocialCards, routes.SmashCards],
+    order: [routes.SocialCards, routes.SmashCards, routes.StoneCards],
     // $FlowFixMe -- this is a hack but we want our own tab bar
     tabBarComponent: null,
     lazy: false // render all at once,
