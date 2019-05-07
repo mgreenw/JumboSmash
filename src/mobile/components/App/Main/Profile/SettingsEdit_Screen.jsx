@@ -311,6 +311,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 />
               </View>
               <Collapsible collapsed={!editedSettings.activeScenes.smash}>
+                <View style={{ height: 8 }} />
                 <Spacer />
                 <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
                   {'Gender Preferences'}
@@ -418,7 +419,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
               </View>
               <Spacer />
-              <View style={{ paddingBottom: 20 }}>
+              <View style={{ paddingBottom: 20, paddingTop: 10 }}>
                 <SecondaryButton
                   title="Safety on JumboSmash"
                   onPress={() => {
