@@ -34,9 +34,8 @@ function navigateToCards(scene: Scene) {
     }
 
     case 'stone': {
-      throw new Error(
-        'called navigateToCards with scene `stone`, but stone not yet implemented'
-      );
+      navigate(routes.StoneCards);
+      break;
     }
     default: {
       // eslint-disable-next-line no-unused-expressions
