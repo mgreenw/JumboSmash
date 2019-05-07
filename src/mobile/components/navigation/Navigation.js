@@ -39,6 +39,7 @@ import SelectArtist from 'mobile/components/App/Main/Profile/SelectArtist_Screen
 // Cards
 import SmashCards from 'mobile/components/App/Main/Cards/SmashCards_Screen';
 import SocialCards from 'mobile/components/App/Main/Cards/SocialCards_Screen';
+import StoneCards from 'mobile/components/App/Main/Cards/StoneCards_Screen';
 
 // Messages & Matches
 import Matches from 'mobile/components/App/Main/Matches/Matches_Screen';
@@ -134,7 +135,8 @@ PrelaunchStack.navigationOptions = () => {
 const CardsSwitch = createMaterialTopTabNavigator(
   {
     [routes.SmashCards]: { screen: SmashCards },
-    [routes.SocialCards]: { screen: SocialCards }
+    [routes.SocialCards]: { screen: SocialCards },
+    [routes.StoneCards]: { screen: StoneCards }
   },
   {
     swipeEnabled: false,
