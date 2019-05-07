@@ -1,8 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Animated, Text, TouchableOpacity, View } from 'react-native';
-import type AnimatedValue from 'react-native/Libraries/Animated/src/nodes/AnimatedValue';
+import { Text, TouchableOpacity, View } from 'react-native';
 import type { Scene } from 'mobile/reducers';
 import { Colors } from 'mobile/styles/colors';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -16,26 +15,10 @@ const SCENE_ORDER: Scene[] = ['social', 'smash', 'stone'];
 const NUM_SCENES = SCENE_ORDER.length;
 const ICON_WIDTH = 40;
 
-function sceneIndex(scene: Scene) {
-  const index = SCENE_ORDER.indexOf(scene);
-  if (index > -1) return index;
-  return 1; // if something goes wrong with props, default to smash.
-}
-
 export default class SceneSelector extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    const startIndex = sceneIndex(props.scene);
-    this.selectedSceneHorizontalPosition = new Animated.Value(
-      startIndex / NUM_SCENES
-    );
-  }
-
-  toggleItem = (index: number) => {
+  _onIconPress = (index: number) => {
     NavigationService.navigateToCards(SCENE_ORDER[index]);
   };
-
-  selectedSceneHorizontalPosition: AnimatedValue;
 
   render() {
     const { scene: currentScene } = this.props;
@@ -58,7 +41,7 @@ export default class SceneSelector extends Component<Props> {
             borderColor:
               scene === currentScene ? Colors.AquaMarine : 'transparent'
           }}
-          onPress={() => this.toggleItem(index)}
+          onPress={() => this._onIconPress(index)}
         >
           <Text
             style={{
