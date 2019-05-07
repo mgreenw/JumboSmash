@@ -16,6 +16,7 @@ const Spacer = (props: Props) => {
     <View style={{ width: '100%', alignItems: 'center' }}>
       <View
         style={{
+          marginTop: 4,
           paddingTop: 8,
           marginBottom: 4,
           borderTopWidth: 1,
