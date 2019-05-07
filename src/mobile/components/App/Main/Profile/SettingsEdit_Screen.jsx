@@ -33,6 +33,8 @@ import type {
   NavigationScreenProp,
   NavigationEventSubscription
 } from 'react-navigation';
+import { sceneToEmoji } from 'mobile/utils/emojis';
+import { subYears, isAfter } from 'date-fns';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -54,6 +56,22 @@ const AccountLock = () => (
   </Text>
 );
 
+const AgeLock = () => (
+  <Text
+    style={[
+      textStyles.body2Style,
+      {
+        textAlign: 'left',
+        color: Colors.Grapefruit,
+        paddingTop: 10,
+        paddingLeft: 10
+      }
+    ]}
+  >
+    {'You must be at least 21 years old to use this feature.'}
+  </Text>
+);
+
 const styles = StyleSheet.create({
   settingsBlock: {
     backgroundColor: Colors.White,
@@ -71,6 +89,7 @@ type NavigationProps = {
 
 type ReduxProps = {
   settings: UserSettings,
+  is21: boolean,
   logoutInProgress: boolean,
   logoutSuccess: ?boolean
 };
@@ -87,13 +106,24 @@ type State = {
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
+  // Bluryface check
+  const twentyOneYearsAgo = subYears(new Date(), 21);
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
+  const is21 = isAfter(
+    twentyOneYearsAgo,
+    new Date(reduxState.client.profile.fields.birthday)
+  );
+  if (!reduxState.client) {
+    throw new Error('Redux Client is null in Settings Edit after date ');
+  }
+
   return {
     logoutInProgress: reduxState.inProgress.logout,
     settings: reduxState.client.settings,
-    logoutSuccess: reduxState.response.logoutSuccess
+    logoutSuccess: reduxState.response.logoutSuccess,
+    is21
   };
 }
 
@@ -176,6 +206,18 @@ class SettingsScreen extends React.Component<Props, State> {
     }));
   };
 
+  _onStoneSwitchChange = (stone: boolean) => {
+    this.setState(state => ({
+      editedSettings: {
+        ...state.editedSettings,
+        activeScenes: {
+          ...state.editedSettings.activeScenes,
+          stone
+        }
+      }
+    }));
+  };
+
   _onBack = () => {
     const { navigation } = this.props;
     NavigationService.back(navigation.state.key);
@@ -225,7 +267,7 @@ class SettingsScreen extends React.Component<Props, State> {
   render() {
     const { editedSettings } = this.state;
     const { canBeActiveInScenes } = editedSettings;
-    const { logoutInProgress, logout } = this.props;
+    const { logoutInProgress, logout, is21 } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -252,7 +294,7 @@ class SettingsScreen extends React.Component<Props, State> {
                     { textAlign: 'center', paddingBottom: 5 }
                   ]}
                 >
-                  {'JumboSocial 🐘'}
+                  {`JumboSocial ${sceneToEmoji('social')}`}
                 </Text>
                 <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
                   {
@@ -287,7 +329,7 @@ class SettingsScreen extends React.Component<Props, State> {
                     { textAlign: 'center', paddingBottom: 5 }
                   ]}
                 >
-                  {'JumboSmash 🍑'}
+                  {`JumboSmash ${sceneToEmoji('smash')}`}
                 </Text>
                 <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
                   {
@@ -367,6 +409,43 @@ class SettingsScreen extends React.Component<Props, State> {
                   plural
                 />
               </Collapsible>
+              {!canBeActiveInScenes && <AccountLock />}
+            </View>
+
+            <View style={styles.settingsBlock}>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text
+                  style={[
+                    textStyles.headline5Style,
+                    { textAlign: 'center', paddingBottom: 5 }
+                  ]}
+                >
+                  {`JumboStone ${sceneToEmoji('stone')}`}
+                </Text>
+                <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
+                  {
+                    'JumboStone is where you can match with people for studying geology.'
+                  }
+                </Text>
+              </View>
+              <Spacer />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingLeft: 10
+                }}
+              >
+                <Text style={textStyles.body1Style}>Show me on Stone</Text>
+                <Switch
+                  disabled={!canBeActiveInScenes || !is21}
+                  value={editedSettings.activeScenes.stone}
+                  trackColor={{ true: Colors.AquaMarine }}
+                  onValueChange={this._onStoneSwitchChange}
+                />
+              </View>
+              {canBeActiveInScenes && !is21 && <AgeLock />}
               {!canBeActiveInScenes && <AccountLock />}
             </View>
 
