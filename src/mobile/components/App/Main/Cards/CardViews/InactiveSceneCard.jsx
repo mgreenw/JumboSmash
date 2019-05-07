@@ -16,7 +16,7 @@ const SCENE_DESCRIPTIONS: { [scene: Scene]: string } = {
   social:
     'This is where you can match with people for hanging out - from study buddies to a night out on the town.',
   stone:
-    'This is where you can match with people to get blazed out of your mind'
+    'This is where you can match with people to study geology'
 };
 
 type ProppyProps = {
