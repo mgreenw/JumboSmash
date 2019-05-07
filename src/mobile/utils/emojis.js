@@ -7,6 +7,11 @@ const emojis = {
   stone: String.fromCodePoint(0x1f343)
 };
 
+/**
+ *
+ * @param {Scene} scene
+ * @returns {string} emoji
+ */
 function sceneToEmoji(scene: Scene) {
   switch (scene) {
     case 'social': {
