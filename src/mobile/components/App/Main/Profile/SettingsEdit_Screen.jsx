@@ -109,7 +109,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
   if (!reduxState.client) {
     throw new Error('Redux Client is null in Settings Edit');
   }
-  const is21 = !isAfter(
+  const is21 = isAfter(
     twentyOneYearsAgo,
     new Date(reduxState.client.profile.fields.birthday)
   );
