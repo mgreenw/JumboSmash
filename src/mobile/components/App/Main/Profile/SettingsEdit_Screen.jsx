@@ -23,7 +23,9 @@ import NavigationService from 'mobile/components/navigation/NavigationService';
 import { textStyles } from 'mobile/styles/textStyles';
 import saveSettingsAction from 'mobile/actions/app/saveSettings';
 import Collapsible from 'react-native-collapsible';
-import { Constants, WebBrowser } from 'expo';
+import {WebBrowser } from 'expo';
+import formattedVersionInfo from 'mobile/utils/versionInfo';
+
 import requestNotificationToken from 'mobile/utils/requestNotificationToken';
 import Spacer from 'mobile/components/shared/Spacer';
 import type {
@@ -453,7 +455,7 @@ class SettingsScreen extends React.Component<Props, State> {
               </View>
               <Spacer />
               <Text style={[{ textAlign: 'center' }, textStyles.body2Style]}>
-                {`Version ${Constants.manifest.version}`}
+              {formattedVersionInfo()}
               </Text>
             </View>
           </KeyboardAwareScrollView>

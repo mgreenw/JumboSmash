@@ -9,10 +9,10 @@ import { Colors } from 'mobile/styles/colors';
 import ProgressBar from 'react-native-progress/Bar';
 import loadAppAction from 'mobile/actions/app/loadApp';
 import routes from 'mobile/components/navigation/routes';
-import { Constants } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
 import { textStyles } from 'mobile/styles/textStyles';
+import formattedVersionInfo from 'mobile/utils/versionInfo';
 import NavigationService from '../navigation/NavigationService';
 
 const ArthurIcon = require('../../assets/arthurIcon.png');
@@ -165,7 +165,7 @@ class AppLoadingScreen extends React.Component<Props, State> {
             )}
           </View>
           <Text style={[{ textAlign: 'center' }]}>
-            {`Version ${Constants.manifest.version}`}
+            {formattedVersionInfo()}
           </Text>
         </SafeAreaView>
         <AndroidBackHandler onBackPress={() => true} />

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Image, View, Text, SafeAreaView } from 'react-native';
-import { Font, Asset, Constants, SplashScreen, AppLoading } from 'expo';
+import { Font, Asset, SplashScreen, AppLoading } from 'expo';
 import { connect } from 'react-redux';
 import loadAuthAction from 'mobile/actions/auth/loadAuth';
 import type { ReduxState, Dispatch } from 'mobile/reducers/index';
@@ -18,6 +18,7 @@ import { randomLoadingStatement } from 'mobile/data/Copy';
 import { textStyles } from 'mobile/styles/textStyles';
 import * as Animatable from 'react-native-animatable';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
+import formattedVersionInfo from 'mobile/utils/versionInfo';
 import NavigationService from '../navigation/NavigationService';
 
 // pre fonts for the inital text:
@@ -329,7 +330,7 @@ class AuthLoadingScreen extends React.Component<Props, State> {
             </Animatable.View>
           </View>
           <Text style={[textStyles.body1Style, { textAlign: 'center' }]}>
-            {`Version ${Constants.manifest.version}`}
+            {formattedVersionInfo()}
           </Text>
         </SafeAreaView>
         <AndroidBackHandler onBackPress={() => true} />
