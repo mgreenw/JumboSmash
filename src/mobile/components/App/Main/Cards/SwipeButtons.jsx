@@ -5,6 +5,7 @@ import { View, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { LinearGradient } from 'expo';
 import { Colors } from 'mobile/styles/colors';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { isIphoneX } from 'mobile/utils/Platform';
 
 const { width } = Dimensions.get('window');
 
@@ -47,6 +48,8 @@ export default (props: Props) => {
     outputRange: outPutRangeRight
   });
 
+  const paddingBottom = isIphoneX() ? 25 : null;
+
   return (
     <LinearGradient
       colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.7)', 'white']}
@@ -62,6 +65,7 @@ export default (props: Props) => {
       <View
         style={{
           marginBottom: 30,
+          paddingBottom,
           marginHorizontal: width / 4,
           display: 'flex',
           flexDirection: 'row',
