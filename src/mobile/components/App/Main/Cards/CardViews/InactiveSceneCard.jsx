@@ -134,33 +134,53 @@ class InactiveSceneCard extends React.Component<Props> {
             {sceneName}
           </Text>
         </View>
-        <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-        >
+        <View style={{ flex: 2 }}>
           <View
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 50,
-              borderWidth: 3,
-              borderColor: Colors.Grapefruit,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
-            <Text style={{ fontSize: 69 }}>{icon}</Text>
+            {sceneEnabled && scene === 'stone' ? (
+              <View>
+                <Text style={textStyles.headline5StyleDemibold}>
+                  {'By Swiping in Stone, you agree not to use JumboSmash to:'}
+                </Text>
+                <Text style={textStyles.headline5Style}>
+                  {'- buy, sell, or distribute marijuana'}
+                </Text>
+                <Text style={textStyles.headline5Style}>
+                  {'- use marijuana on the Tufts campus'}
+                </Text>
+              </View>
+            ) : (
+              <View
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  borderWidth: 3,
+                  borderColor: Colors.Grapefruit,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Text style={{ fontSize: 69 }}>{icon}</Text>
+              </View>
+            )}
           </View>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-start',
-            alignItems: 'center'
-          }}
-        >
-          <Text style={[textStyles.headline6Style, { textAlign: 'center' }]}>
-            {description}
-          </Text>
+          {sceneEnabled && scene === 'stone' ? null : (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'flex-start',
+                alignItems: 'center'
+              }}
+            >
+              <Text
+                style={[textStyles.headline6Style, { textAlign: 'center' }]}
+              >
+                {description}
+              </Text>
+            </View>
+          )}
         </View>
         <PrimaryButton
           onPress={sceneEnabled ? dismissCard : enableScene}
