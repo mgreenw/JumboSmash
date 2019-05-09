@@ -28,6 +28,7 @@ import formatTime from 'mobile/utils/time/formattedTimeSince';
 import { Colors } from 'mobile/styles/colors';
 import { NavigationEvents } from 'react-navigation';
 import formatMessage from 'mobile/utils/FormatMessage';
+import { sceneToEmoji } from 'mobile/utils/emojis';
 import NavigationService from '../../../navigation/NavigationService';
 
 const Seperator = () => {
@@ -148,11 +149,14 @@ class MessagingScreen extends React.Component<Props, State> {
       conversationMap[userId].byId[match.mostRecentMessage];
     const formattedTime = formatTime(mostRecentMessage.timestamp);
     let matchScenes = '';
-    if (match.scenes.smash) {
-      matchScenes += '🍑';
-    }
     if (match.scenes.social) {
-      matchScenes += '🐘';
+      matchScenes += sceneToEmoji('social');
+    }
+    if (match.scenes.smash) {
+      matchScenes += sceneToEmoji('smash');
+    }
+    if (match.scenes.stone) {
+      matchScenes += sceneToEmoji('stone');
     }
 
     return (
