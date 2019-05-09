@@ -140,13 +140,15 @@ class InactiveSceneCard extends React.Component<Props> {
           >
             {sceneEnabled && scene === 'stone' ? (
               <View>
-                <Text style={textStyles.headline5StyleDemibold}>
+                <Text
+                  style={[textStyles.headline5StyleDemibold, { fontSize: 20 }]}
+                >
                   {'By Swiping in Stone, you agree not to use JumboSmash to:'}
                 </Text>
-                <Text style={textStyles.headline5Style}>
+                <Text style={[textStyles.headline5Style, { fontSize: 20 }]}>
                   {'- buy, sell, or distribute marijuana'}
                 </Text>
-                <Text style={textStyles.headline5Style}>
+                <Text style={[textStyles.headline5Style, { fontSize: 20 }]}>
                   {'- use marijuana on the Tufts campus'}
                 </Text>
               </View>
