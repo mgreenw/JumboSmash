@@ -424,7 +424,7 @@ class SettingsScreen extends React.Component<Props, State> {
                 </Text>
                 <Text style={[textStyles.body2Style, { paddingBottom: 12 }]}>
                   {
-                    'JumboStone is where you can match with people for studying geology.'
+                    'JumboStone is where you can match with people to get lit in the truest sense.'
                   }
                 </Text>
               </View>
