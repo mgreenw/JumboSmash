@@ -44,7 +44,7 @@ export default () => (
     </P>
     <H>Eligibility</H>
     <P>
-      {`You must be at least 18 years of age to create a profile on JumboSmash and use the Service. By creating an account and using the Service, you represent and warrant that: \n
+      {`You must be at least 18 years of age to create a profile on JumboSmash and use the Service, and you must be at least 21 years of age to use JumboStone. By creating an account and using the Service, you represent and warrant that: \n
 • You are enrolled at an approved University in your final year,\n
 • You can form a binding contract with JumboSmash,\n
 • You will comply with this Agreement and all applicable local, state, national and international laws, rules and regulations, and \n
@@ -226,6 +226,33 @@ export default () => (
       SHALL APPLY EVEN IF YOUR REMEDIES UNDER THIS AGREEMENT FAIL WITH RESPECT
       TO THEIR ESSENTIAL PURPOSE.
     </P>
+    <H>Marijuana Clause</H>
+    <P>
+      JumboSmash does not advocate, encourage, or endorse the use, sale,
+      growing, manufacturing, distribution, possession, or facilitation of the
+      use of marijuana. Additionally, JumboSmash abides by and would like to
+      remind its users of the marijuana policies of its approved universities,
+      reproduced below:
+    </P>
+    <P>Tufts Marijuana Policy</P>
+    <P>
+      Tufts prohibits the use, sale, growing, manufacturing, distribution,
+      possession, or facilitation of the use of marijuana, products containing
+      tetrahydrocannabinol (THC, the primary active ingredient of marijuana),
+      and products that contain other substances designed to create a similar
+      effect as marijuana or THC upon the user. This prohibition applies on
+      campus, in fraternities or sororities, and as part of any Tufts-sponsored
+      activities off campus. Tufts prohibits the selling and distribution of
+      marijuana, regardless of location or age. Tufts prohibits driving while
+      under the influence of marijuana, regardless of location or age.
+    </P>
+    <P>
+      By using the Service, you agree to follow the marijuana policy of your
+      respective approved university while on said university's campus, and
+      acknowledge that violation of this policy will result in the termination
+      of your account.
+    </P>
+
     <H>Termination Clause</H>
     <P>
       We may terminate your access to the App, without cause or notice, which
