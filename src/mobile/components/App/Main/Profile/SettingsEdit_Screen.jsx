@@ -426,6 +426,9 @@ class SettingsScreen extends React.Component<Props, State> {
                   {
                     'JumboStone is where you can match with people to get lit in the truest sense.'
                   }
+                  {
+                    '\n\nBy swiping in Stone, you agree not to use JumboSmash to buy, sell, or distribute marijuana or use marijuana on the Tufts campus.'
+                  }
                 </Text>
               </View>
               <Spacer />
