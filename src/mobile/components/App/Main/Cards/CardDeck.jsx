@@ -25,6 +25,7 @@ import ModalProfileView from 'mobile/components/shared/ModalProfileView';
 import ModalMatchOverlay from 'mobile/components/shared/ModalMatchOverlay';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import NavigationService from 'mobile/components/navigation/NavigationService';
+import { isIphoneX } from 'mobile/utils/Platform';
 import PreviewCard from './CardViews/PreviewCard';
 import InactiveSceneCard from './CardViews/InactiveSceneCard';
 import SwipeButtons, { SWIPE_BUTTON_HEIGHT } from './SwipeButtons';
@@ -552,6 +553,10 @@ class cardDeck extends React.Component<Props, State> {
     // This is the default for the swiper
     const HorizontalSwipeThreshold = width / 4;
 
+    // A hack to fix a common UI problem in a non-breaking way.
+    // Keep in sync with the SwipeButtons.jsx margin differences.
+    const marginBottom = isIphoneX() ? 100 : 60;
+
     const renderSwiper = (
       <Swiper
         ref={swiper => {
@@ -574,7 +579,9 @@ class cardDeck extends React.Component<Props, State> {
         cardVerticalMargin={0}
         cardHorizontalMargin={0}
         stackSeparation={0}
-        marginBottom={60 /* TODO: MAKE THIS EXACT SAME AS THE HEADER */}
+        marginBottom={
+          marginBottom /* TODO: MAKE THIS EXACT SAME AS THE HEADER */
+        }
         stackScale={10}
         useViewOverflow={Platform.OS === 'ios'}
         onTapCard={this._onTapCard}
