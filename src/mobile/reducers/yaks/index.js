@@ -37,7 +37,8 @@ const DefaultReduxState: ReduxState = {
     get: false,
     vote: {},
     post: false
-  }
+  },
+  report: false
 };
 
 const Reducers = {
