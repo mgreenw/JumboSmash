@@ -20,6 +20,8 @@ import voteYakAction from 'mobile/actions/yaks/voteYak';
 import { connect } from 'react-redux';
 import { Colors } from 'mobile/styles/colors';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
+import ActionSheet from 'mobile/components/shared/ActionSheet';
+import ReportPopup from 'mobile/components/App/Main/Matches/ReportPopup';
 import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -50,7 +52,10 @@ type State = {
    * Default to false when no refresh occuring.
    */
   refreshManuallyTriggered: boolean,
-  sortBy: SortOption
+  sortBy: SortOption,
+  showActionSheet: boolean,
+  showReportPopup: boolean,
+  selectedYakId: null | number
 };
 
 function mapStateToProps({ yaks }: ReduxState): ReduxProps {
@@ -89,6 +94,9 @@ class YakListScreen extends React.Component<Props, State> {
     this.state = {
       yaksLoaded: false,
       refreshManuallyTriggered: false,
+      showActionSheet: false,
+      showReportPopup: false,
+      selectedYakId: null,
       sortBy: 'score'
     };
   }
@@ -138,7 +146,7 @@ class YakListScreen extends React.Component<Props, State> {
   };
 
   _onPress = (id: number) => {
-    console.log('pressed: ', id);
+    this._toggleActionSheet(true, id);
   };
 
   /**
@@ -148,6 +156,61 @@ class YakListScreen extends React.Component<Props, State> {
     const { getYaks } = this.props;
     this.setState({ refreshManuallyTriggered: true }, getYaks);
   };
+
+  _toggleActionSheet = (showActionSheet: boolean, selectedYakId?: number) => {
+    this.setState({
+      showActionSheet,
+      selectedYakId: selectedYakId || null
+    });
+  };
+
+  _renderActionSheet() {
+    const { showActionSheet } = this.state;
+    const CancelAction = () => {
+      this._toggleActionSheet(false);
+    };
+    const options = [
+      {
+        text: 'Report',
+        onPress: () => {
+          this.setState({
+            showActionSheet: false,
+            showReportPopup: true
+          });
+        },
+        textStyle: {
+          color: Colors.Grapefruit
+        }
+      }
+    ];
+    return (
+      <ActionSheet
+        visible={showActionSheet}
+        options={options}
+        cancel={{
+          text: 'Cancel',
+          onPress: CancelAction
+        }}
+      />
+    );
+  }
+
+  _renderReportPopup() {
+    const { showReportPopup, selectedYakId } = this.state;
+    if (showReportPopup && selectedYakId === null)
+      throw new Error('Yak Id is null in report');
+
+    return (
+      <ReportPopup
+        visible={showReportPopup}
+        onCancel={() => this.setState({ showReportPopup: false })}
+        onDone={() => {}}
+        displayName={'this JumboYak'}
+        userId={selectedYakId}
+        yak
+      />
+    );
+  }
 
   render() {
     const { refreshManuallyTriggered, yaksLoaded, sortBy } = this.state;
@@ -234,6 +297,8 @@ class YakListScreen extends React.Component<Props, State> {
             ListHeaderComponent={Header}
           />
         </View>
+        {this._renderActionSheet()}
+        {this._renderReportPopup()}
       </View>
     );
   }
