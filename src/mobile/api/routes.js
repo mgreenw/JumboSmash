@@ -27,7 +27,7 @@ const CONVERSATIONS = 'conversations/';
 const META = 'meta/';
 const ADMIN = 'admin/';
 const ARTISTS = 'artists/';
-const YACKS = 'yaks/';
+const YAKS = 'yaks/';
 
 const AUTH_ROUTE = SERVER_ROUTE + API + AUTH;
 const USERS_ROUTE = SERVER_ROUTE + API + USERS;
@@ -37,7 +37,7 @@ const CONVERSATIONS_ROUTE = SERVER_ROUTE + API + CONVERSATIONS;
 const META_ROUTE = SERVER_ROUTE + API + META;
 const ADMIN_ROUTE = SERVER_ROUTE + API + ADMIN;
 export const ARTIST_ROUTE = SERVER_ROUTE + API + ARTISTS;
-const YAK_ROUTE = SERVER_ROUTE + API + YACKS;
+const YAK_ROUTE = SERVER_ROUTE + API + YAKS;
 
 // //////////////
 // AUTH ROUTES:
@@ -140,4 +140,4 @@ const LAUNCH_DATE = 'launch-date/';
 export const GET_LAUNCH_DATE__ROUTE = META_ROUTE + LAUNCH_DATE;
 
 // Yacks:
-export const GET_YACKS__ROUTE = YAK_ROUTE;
+export const GET_YAKS__ROUTE = YAK_ROUTE;
