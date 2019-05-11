@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text, TouchableHighlight, TouchableOpacity } from 'react-native';
 import type { Yak } from 'mobile/api/serverTypes';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
@@ -11,11 +11,12 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type Props = {
   yak: Yak,
-  onPress: () => void
+  onPress: () => void,
+  onVote: (liked: boolean) => void
 };
 
 const YakComponent = (props: Props) => {
-  const { yak, onPress } = props;
+  const { yak, onPress, onVote } = props;
   const formattedTime = formatTime(yak.timestamp);
   return (
     <TouchableHighlight
@@ -64,9 +65,21 @@ const YakComponent = (props: Props) => {
             paddingLeft: 10
           }}
         >
-          <CustomIcon name={'up-open'} size={26} color={Colors.Grey80} />
+          <TouchableOpacity
+            onPress={() => {
+              onVote(true);
+            }}
+          >
+            <CustomIcon name={'up-open'} size={26} color={Colors.Grey80} />
+          </TouchableOpacity>
           <Text style={textStyles.headline5StyleDemibold}>{yak.score}</Text>
-          <CustomIcon name={'down-open'} size={26} color={Colors.Grey80} />
+          <TouchableOpacity
+            onPress={() => {
+              onVote(false);
+            }}
+          >
+            <CustomIcon name={'down-open'} size={26} color={Colors.Grey80} />
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableHighlight>

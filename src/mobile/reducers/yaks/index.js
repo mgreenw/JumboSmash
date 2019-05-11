@@ -1,12 +1,15 @@
 // @flow
-import type { Yak, YakVote } from 'mobile/api/serverTypes';
+import type { Yak } from 'mobile/api/serverTypes';
 import Get from './get';
+import Vote from './vote';
+import type { VoteYak_Action } from './vote';
 import type { GetYaks_Action } from './get';
 
-export type Yak_Action = GetYaks_Action;
+export type Yak_Action = GetYaks_Action | VoteYak_Action;
 
 export type inProgress = {|
-  get: boolean
+  get: boolean,
+  vote: { [id: number]: boolean }
 |};
 
 export type ReduxState = {|
@@ -21,12 +24,14 @@ const DefaultReduxState: ReduxState = {
   currentYakIds: [],
   clientYakIds: [],
   inProgress: {
-    get: false
+    get: false,
+    vote: {}
   }
 };
 
 const Reducers = {
-  Get
+  Get,
+  Vote
 };
 
 export { DefaultReduxState, Reducers };
