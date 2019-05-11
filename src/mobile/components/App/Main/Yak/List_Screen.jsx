@@ -7,7 +7,7 @@ import {
   ImageBackground,
   ActivityIndicator,
   RefreshControl,
-  Text
+  Switch
 } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -17,6 +17,8 @@ import type { ReduxState, Dispatch } from 'mobile/reducers';
 import type { Yak } from 'mobile/api/serverTypes';
 import getYaksAction from 'mobile/actions/yaks/getYaks';
 import { connect } from 'react-redux';
+import { Colors } from 'mobile/styles/colors';
+import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
@@ -31,10 +33,12 @@ type DispatchProps = {
 
 type ReduxProps = {
   getYaksInProgress: boolean,
-  currentYakIds: number[],
+  currentYakIds: { byTime: number[], byScore: number[] },
   clientYakIds: number[],
   yakMap: { [id: number]: Yak }
 };
+
+type SortOption = 'score' | 'time';
 
 type Props = NavigationProps & DispatchProps & ReduxProps;
 type State = {
@@ -44,15 +48,24 @@ type State = {
    * If false, then we don't show the animation (causing the load to occur in the background).
    * Default to false when no refresh occuring.
    */
-  refreshManuallyTriggered: boolean
+  refreshManuallyTriggered: boolean,
+  sortBy: SortOption
 };
 
 function mapStateToProps({ yaks }: ReduxState): ReduxProps {
   const { inProgress, byId, currentYakIds, clientYakIds } = yaks;
-  console.log('yax redux state', yaks);
   return {
     getYaksInProgress: inProgress.get,
-    currentYakIds,
+    currentYakIds: {
+      byTime: currentYakIds.slice().reverse(),
+      byScore: currentYakIds.slice().sort((a, b) => {
+        const { score: scoreA } = byId[a];
+        const { score: scoreB } = byId[b];
+        if (scoreA > scoreB) return -1;
+        if (scoreA < scoreB) return 1;
+        return 0;
+      })
+    },
     clientYakIds,
     yakMap: byId
   };
@@ -72,7 +85,8 @@ class YackListScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       yaksLoaded: false,
-      refreshManuallyTriggered: false
+      refreshManuallyTriggered: false,
+      sortBy: 'score'
     };
   }
 
@@ -104,14 +118,17 @@ class YackListScreen extends React.Component<Props, State> {
     );
   };
 
-  _renderYak = () => {
-    return (
-      <View style={{ height: 50, width: '100%', backgroundColor: 'red' }}>
-        {' '}
-        <Text>yo</Text>
-{' '}
-      </View>
-    );
+  _renderYak = (id: number) => {
+    const { yakMap } = this.props;
+    const yak = yakMap[id];
+    return yak ? (
+      <YakComponent
+        yak={yak}
+        onPress={() => {
+          this._onPress(id);
+        }}
+      />
+    ) : null;
   };
 
   _onPress = (id: number) => {
@@ -127,7 +144,7 @@ class YackListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { refreshManuallyTriggered, yaksLoaded } = this.state;
+    const { refreshManuallyTriggered, yaksLoaded, sortBy } = this.state;
     const { currentYakIds } = this.props;
     if (!yaksLoaded) {
       return (
@@ -147,6 +164,25 @@ class YackListScreen extends React.Component<Props, State> {
         refreshing={refreshManuallyTriggered}
         onRefresh={this._onRefresh}
       />
+    );
+
+    const Header = (
+      <View
+        style={{
+          width: '100%',
+          padding: 20,
+          backgroundColor: Colors.White,
+          marginTop: 1,
+          marginBottom: 1
+        }}
+      >
+        <Switch
+          value={sortBy === 'score'}
+          onValueChange={isScore => {
+            this.setState({ sortBy: isScore ? 'score' : 'time' });
+          }}
+        />
+      </View>
     );
     return (
       <View style={{ flex: 1 }}>
@@ -171,16 +207,18 @@ class YackListScreen extends React.Component<Props, State> {
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
           <FlatList
-            data={currentYakIds}
+            data={
+              sortBy === 'time' ? currentYakIds.byTime : currentYakIds.byScore
+            }
             renderItem={({ item: id }) => {
-              this._renderYak(id);
+              return this._renderYak(id);
             }}
             keyExtractor={code => {
               return code.toString();
             }}
             ItemSeparatorComponent={this._renderSeparator}
-            ListHeaderComponent={this._renderSeparator}
             refreshControl={refreshComponent}
+            ListHeaderComponent={Header}
           />
         </View>
       </View>
