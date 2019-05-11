@@ -67,6 +67,7 @@ const YakComponent = (props: Props) => {
           }}
         >
           <TouchableOpacity
+            style={{ padding: 5, margin: -5 }}
             onPress={() => {
               if (clientVote !== true) {
                 onVote(true);
@@ -93,6 +94,7 @@ const YakComponent = (props: Props) => {
             {yak.score}
           </Text>
           <TouchableOpacity
+            style={{ padding: 5, margin: -5 }}
             onPress={() => {
               if (clientVote !== false) {
                 onVote(false);
@@ -102,7 +104,7 @@ const YakComponent = (props: Props) => {
             <CustomIcon
               name={'down-open'}
               size={26}
-              color={clientVote === false ? Colors.Black : Colors.Grey80}
+              color={clientVote === false ? Colors.Grapefruit : Colors.Grey80}
             />
           </TouchableOpacity>
         </View>
