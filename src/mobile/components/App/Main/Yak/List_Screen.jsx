@@ -16,6 +16,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers';
 import type { Yak } from 'mobile/api/serverTypes';
 import getYaksAction from 'mobile/actions/yaks/getYaks';
+import voteYakAction from 'mobile/actions/yaks/voteYak';
 import { connect } from 'react-redux';
 import { Colors } from 'mobile/styles/colors';
 import YakComponent from './Yak';
@@ -28,13 +29,13 @@ type NavigationProps = {
 };
 
 type DispatchProps = {
-  getYaks: () => void
+  getYaks: () => void,
+  voteYak: (id: number, liked: boolean) => void
 };
 
 type ReduxProps = {
   getYaksInProgress: boolean,
   currentYakIds: { byTime: number[], byScore: number[] },
-  clientYakIds: number[],
   yakMap: { [id: number]: Yak }
 };
 
@@ -53,7 +54,7 @@ type State = {
 };
 
 function mapStateToProps({ yaks }: ReduxState): ReduxProps {
-  const { inProgress, byId, currentYakIds, clientYakIds } = yaks;
+  const { inProgress, byId, currentYakIds } = yaks;
   return {
     getYaksInProgress: inProgress.get,
     currentYakIds: {
@@ -66,7 +67,6 @@ function mapStateToProps({ yaks }: ReduxState): ReduxProps {
         return 0;
       })
     },
-    clientYakIds,
     yakMap: byId
   };
 }
@@ -75,6 +75,9 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
   return {
     getYaks: () => {
       dispatch(getYaksAction());
+    },
+    voteYak: (id: number, liked: boolean) => {
+      dispatch(voteYakAction(id, liked));
     }
   };
 }
@@ -119,13 +122,16 @@ class YakListScreen extends React.Component<Props, State> {
   };
 
   _renderYak = (id: number) => {
-    const { yakMap } = this.props;
+    const { yakMap, voteYak } = this.props;
     const yak = yakMap[id];
     return yak ? (
       <YakComponent
         yak={yak}
         onPress={() => {
           this._onPress(id);
+        }}
+        onVote={liked => {
+          voteYak(id, liked);
         }}
       />
     ) : null;

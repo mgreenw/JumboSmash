@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { View, Text, TouchableHighlight, TouchableOpacity } from 'react-native';
 import type { Yak } from 'mobile/api/serverTypes';
 import { textStyles } from 'mobile/styles/textStyles';
 import { Colors } from 'mobile/styles/colors';
@@ -11,12 +11,14 @@ import CustomIcon from 'mobile/assets/icons/CustomIcon';
 
 type Props = {
   yak: Yak,
-  onPress: () => void
+  onPress: () => void,
+  onVote: (liked: boolean) => void
 };
 
 const YakComponent = (props: Props) => {
-  const { yak, onPress } = props;
-  const formattedTime = formatTime(yak.timestamp);
+  const { yak, onPress, onVote } = props;
+  const { clientVote, timestamp, content } = yak;
+  const formattedTime = formatTime(timestamp);
   return (
     <TouchableHighlight
       onPress={onPress}
@@ -36,7 +38,7 @@ const YakComponent = (props: Props) => {
           }}
         >
           <View style={{ flex: 1, paddingTop: 8 }}>
-            <Text style={textStyles.headline6Style}>{yak.content}</Text>
+            <Text style={textStyles.headline6Style}>{content}</Text>
           </View>
           <View
             style={{
@@ -64,9 +66,47 @@ const YakComponent = (props: Props) => {
             paddingLeft: 10
           }}
         >
-          <CustomIcon name={'up-open'} size={26} color={Colors.Grey80} />
-          <Text style={textStyles.headline5StyleDemibold}>{yak.score}</Text>
-          <CustomIcon name={'down-open'} size={26} color={Colors.Grey80} />
+          <TouchableOpacity
+            style={{ padding: 5, margin: -5 }}
+            onPress={() => {
+              if (clientVote !== true) {
+                onVote(true);
+              }
+            }}
+          >
+            <CustomIcon
+              name={'up-open'}
+              size={26}
+              color={clientVote === true ? Colors.Grapefruit : Colors.Grey80}
+            />
+          </TouchableOpacity>
+          <Text
+            style={[
+              textStyles.headline5StyleDemibold,
+              {
+                color:
+                  clientVote === null || clientVote === undefined
+                    ? Colors.Black
+                    : Colors.Grapefruit
+              }
+            ]}
+          >
+            {yak.score}
+          </Text>
+          <TouchableOpacity
+            style={{ padding: 5, margin: -5 }}
+            onPress={() => {
+              if (clientVote !== false) {
+                onVote(false);
+              }
+            }}
+          >
+            <CustomIcon
+              name={'down-open'}
+              size={26}
+              color={clientVote === false ? Colors.Grapefruit : Colors.Grey80}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableHighlight>

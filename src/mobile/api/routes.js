@@ -141,3 +141,5 @@ export const GET_LAUNCH_DATE__ROUTE = META_ROUTE + LAUNCH_DATE;
 
 // Yaks:
 export const GET_YAKS__ROUTE = YAK_ROUTE;
+export const VOTE_YAK__ROUTE__GENERATOR = (yakId: number) =>
+  `${YAK_ROUTE + yakId}`;

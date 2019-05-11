@@ -170,14 +170,8 @@ export type LaunchDateStatus = {
 export type Yak = {
   id: number,
   content: string,
-  userId: number,
+  postedByClient: boolean,
+  clientVote: null | boolean,
   timestamp: string,
   score: number
-};
-
-export type YakVote = {
-  id: number,
-  yakId: number,
-  liked: boolean,
-  updatedTimestamp: string
 };

@@ -2201,6 +2201,27 @@ export default function rootReducer(
       };
     }
 
+    case 'VOTE_YAK__INITIATED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Vote.initiate(state.yaks, action)
+      };
+    }
+
+    case 'VOTE_YAK__COMPLETED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Vote.complete(state.yaks, action)
+      };
+    }
+
+    case 'VOTE_YAK__FAILED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Vote.fail(state.yaks, action)
+      };
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (action: empty); // ensures we have handled all cases
