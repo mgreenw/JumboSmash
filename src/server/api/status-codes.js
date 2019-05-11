@@ -422,3 +422,13 @@ exports.GET_MY_YAKS__SUCCESS = {
   status: 'GET_MY_YAKS__SUCCESS',
   code: 200,
 };
+
+// Report Yak
+exports.REPORT_YAK__SUCCESS = {
+  status: 'REPORT_YAK__SUCCESS',
+  code: 201,
+};
+exports.REPORT_YAK__YAK_NOT_FOUND = {
+  status: 'REPORT_YAK__YAK_NOT_FOUND',
+  code: 404,
+};
