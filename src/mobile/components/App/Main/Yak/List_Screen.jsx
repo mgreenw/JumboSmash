@@ -8,6 +8,7 @@ import routes from 'mobile/components/navigation/routes';
 
 type Props = {};
 
+/* eslint-disable-next-line no-unused-vars */
 const YackListScreen = (props: Props) => {
   return (
     <View style={{ flex: 1 }}>
