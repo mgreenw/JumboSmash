@@ -83,7 +83,7 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
 }
 
 /* eslint-disable-next-line no-unused-vars */
-class YackListScreen extends React.Component<Props, State> {
+class YakListScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -235,4 +235,4 @@ class YackListScreen extends React.Component<Props, State> {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(YackListScreen);
+)(YakListScreen);

@@ -199,11 +199,11 @@ MatchesStack.navigationOptions = () => {
 
 const YakStack = createStackNavigator(
   {
-    [routes.YackList]: { screen: YakListScreen },
-    [routes.YackNew]: { screen: YakNewScreen }
+    [routes.YakList]: { screen: YakListScreen },
+    [routes.YakNew]: { screen: YakNewScreen }
   },
   {
-    initialRouteName: routes.YackList,
+    initialRouteName: routes.YakList,
     ...removeHeader
   }
 );
