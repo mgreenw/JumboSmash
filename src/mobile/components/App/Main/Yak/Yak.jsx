@@ -17,7 +17,8 @@ type Props = {
 
 const YakComponent = (props: Props) => {
   const { yak, onPress, onVote } = props;
-  const formattedTime = formatTime(yak.timestamp);
+  const { clientVote, timestamp, content } = yak;
+  const formattedTime = formatTime(timestamp);
   return (
     <TouchableHighlight
       onPress={onPress}
@@ -37,7 +38,7 @@ const YakComponent = (props: Props) => {
           }}
         >
           <View style={{ flex: 1, paddingTop: 8 }}>
-            <Text style={textStyles.headline6Style}>{yak.content}</Text>
+            <Text style={textStyles.headline6Style}>{content}</Text>
           </View>
           <View
             style={{
@@ -67,18 +68,42 @@ const YakComponent = (props: Props) => {
         >
           <TouchableOpacity
             onPress={() => {
-              onVote(true);
+              if (clientVote !== true) {
+                onVote(true);
+              }
             }}
           >
-            <CustomIcon name={'up-open'} size={26} color={Colors.Grey80} />
+            <CustomIcon
+              name={'up-open'}
+              size={26}
+              color={clientVote === true ? Colors.Grapefruit : Colors.Grey80}
+            />
           </TouchableOpacity>
-          <Text style={textStyles.headline5StyleDemibold}>{yak.score}</Text>
+          <Text
+            style={[
+              textStyles.headline5StyleDemibold,
+              {
+                color:
+                  clientVote === null || clientVote === undefined
+                    ? Colors.Black
+                    : Colors.Grapefruit
+              }
+            ]}
+          >
+            {yak.score}
+          </Text>
           <TouchableOpacity
             onPress={() => {
-              onVote(false);
+              if (clientVote !== false) {
+                onVote(false);
+              }
             }}
           >
-            <CustomIcon name={'down-open'} size={26} color={Colors.Grey80} />
+            <CustomIcon
+              name={'down-open'}
+              size={26}
+              color={clientVote === false ? Colors.Black : Colors.Grey80}
+            />
           </TouchableOpacity>
         </View>
       </View>

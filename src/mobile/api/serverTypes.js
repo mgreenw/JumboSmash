@@ -171,7 +171,7 @@ export type Yak = {
   id: number,
   content: string,
   postedByClient: boolean,
-  likedByClient: boolean,
+  clientVote: null | boolean,
   timestamp: string,
   score: number
 };
