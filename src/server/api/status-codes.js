@@ -411,7 +411,7 @@ exports.POST_YAK__TOO_MANY_YAKS = {
   code: 400,
 };
 
-// Vote on Yhak
+// Vote on Yak
 exports.VOTE_ON_YAK__SUCCESS = {
   status: 'VOTE_ON_YAK__SUCCESS',
   code: 200,
