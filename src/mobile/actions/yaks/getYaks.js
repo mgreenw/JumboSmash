@@ -2,7 +2,7 @@
 import type { Dispatch } from 'mobile/reducers';
 import type { Yak } from 'mobile/api/serverTypes';
 import { apiErrorHandler } from 'mobile/actions/apiErrorHandler';
-import getYacks from 'mobile/api/yaks/getYacks';
+import getYaks from 'mobile/api/yaks/getYaks';
 
 export type GetYaksInitiated_Action = {
   type: 'GET_YAKS__INITIATED',
@@ -46,9 +46,9 @@ function fail(): GetYaksFailed_Action {
 
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
-  getYacks()
-    .then(({ artists }) => {
-      dispatch(complete(artists));
+  getYaks()
+    .then(({ yaks }) => {
+      dispatch(complete(yaks));
     })
     .catch(error => {
       dispatch(fail());

@@ -3,13 +3,13 @@ import type { Yak } from 'mobile/api/serverTypes';
 import apiRequest from '../utils/apiRequest';
 import { GET_YACKS__ROUTE } from '../routes';
 
-const GET_YACKS__SUCCESS = 'GET_YACKS__SUCCESS';
+const GET_YAKS__SUCCESS = 'GET_YAKS__SUCCESS';
 
-export default function getYack(): Promise<{ artists: Yak[] }> {
+export default function getYaks(): Promise<{ yaks: Yak[] }> {
   return apiRequest('GET', GET_YACKS__ROUTE).then(response => {
     switch (response.status) {
-      case GET_YACKS__SUCCESS: {
-        return response.data.yaks;
+      case GET_YAKS__SUCCESS: {
+        return response.data;
       }
       default:
         throw new Error(response);

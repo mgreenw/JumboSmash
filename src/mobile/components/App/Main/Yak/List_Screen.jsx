@@ -3,10 +3,10 @@
 import React from 'react';
 import {
   View,
-  Text,
   FlatList,
   ImageBackground,
-  ActivityIndicator
+  ActivityIndicator,
+  RefreshControl
 } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -49,6 +49,7 @@ type State = {
 
 function mapStateToProps({ yaks }: ReduxState): ReduxProps {
   const { inProgress, byId, currentYakIds, clientYakIds } = yaks;
+  console.log('yax redux state', yaks);
   return {
     getYaksInProgress: inProgress.get,
     currentYakIds,
@@ -117,6 +118,7 @@ class YackListScreen extends React.Component<Props, State> {
 
   render() {
     const { refreshManuallyTriggered, yaksLoaded } = this.state;
+    const { currentYakIds } = this.props;
     if (!yaksLoaded) {
       return (
         <View
@@ -130,6 +132,12 @@ class YackListScreen extends React.Component<Props, State> {
         </View>
       );
     }
+    const refreshComponent = (
+      <RefreshControl
+        refreshing={refreshManuallyTriggered}
+        onRefresh={this._onRefresh}
+      />
+    );
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -146,7 +154,6 @@ class YackListScreen extends React.Component<Props, State> {
               NavigationService.navigate(routes.Profile);
             }
           }}
-          centerComponent={<Text>JumboYak</Text>}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
@@ -154,7 +161,7 @@ class YackListScreen extends React.Component<Props, State> {
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
           <FlatList
-            data={[0, 1, 2, 3, 4, 5]}
+            data={currentYakIds}
             renderItem={({ item: id }) => (
               <ListItem
                 onPress={() => {
@@ -168,7 +175,7 @@ class YackListScreen extends React.Component<Props, State> {
             }}
             ItemSeparatorComponent={this._renderSeparator}
             ListHeaderComponent={this._renderSeparator}
-            refreshing={refreshManuallyTriggered}
+            refreshControl={refreshComponent}
           />
         </View>
       </View>
