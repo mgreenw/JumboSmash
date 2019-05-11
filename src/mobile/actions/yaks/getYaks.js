@@ -47,8 +47,8 @@ function fail(): GetYaksFailed_Action {
 export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   getYacks()
-    .then(({ artists }) => {
-      dispatch(complete(artists));
+    .then(({ yaks }) => {
+      dispatch(complete(yaks));
     })
     .catch(error => {
       dispatch(fail());
