@@ -18,7 +18,7 @@ const getYaks = async (userId: number) => {
       score,
       content,
       timestamp,
-      user_id = $1 AS '
+      user_id = $1 AS "fromClient"
     FROM yaks
     WHERE timestamp > NOW() - INTERVAL '24 HOURS'
     ORDER BY timestamp
