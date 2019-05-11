@@ -36,11 +36,10 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
     // Next add the vote to yak_votes
     // Finally, return the yak
     const yak = (await db.query(`
-      WITH yak AS (
-        UPDATE yaks
-        SET score = score + CASE WHEN $3 THEN 1 ELSE 0 END
-        WHERE id = $2
-        RETURNING ${yakSelect}
+      WITH previous_vote AS (
+        SELECT liked
+        FROM yak_votes
+        WHERE user_id = $1 AND yak_id = $2
       ),
       yak_vote AS (
         INSERT INTO yak_votes
@@ -48,8 +47,19 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
         VALUES ($1, $2, $3, NOW())
         ON CONFLICT (user_id, yak_id) DO UPDATE
         SET liked = $3, updated_timestamp = NOW()
+        RETURNING CASE
+          WHEN ((SELECT liked FROM previous_vote) IS NULL AND $3) THEN 1
+          WHEN (SELECT liked FROM previous_vote) = $3 THEN 0
+          WHEN $3 THEN 1
+          ELSE -1
+        END AS score_update
+      ), yak AS (
+        UPDATE yaks
+        SET score = score + (SELECT score_update FROM yak_vote)
+        WHERE id = $2
+        RETURNING ${yakSelect}
       )
-      SELECT * from yak
+      SELECT * FROM yak
     `, [voterUserId, yakId, liked])).rows[0];
     return status(codes.VOTE_ON_YAK__SUCCESS).data({ yak });
   } catch (error) {
