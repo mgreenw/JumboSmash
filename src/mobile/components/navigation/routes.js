@@ -63,10 +63,10 @@ const PRELAUNCH__SELECT_CITY = 'PRELAUNCH__SELECT_CITY';
 const PRELAUNCH___SELECT_DORM = 'PRELAUNCH___SELECT_DORM';
 const PRELAUNCH__SELECT_ARTIST = 'PRELAUNCH__SELECT_ARTIST';
 
-const YACK = 'Yak';
-const YACK_STACK = 'YACK_STACK';
-const YACK_LIST = 'YACK_LIST';
-const YACK_NEW = 'YACK_NEW';
+const YAK = 'Yak';
+const YAK_STACK = 'YAK_STACK';
+const YAK_LIST = 'YAK_LIST';
+const YAK_NEW = 'YAK_NEW';
 
 const routes = {
   Profile: PROFILE_ROUTE,
@@ -121,10 +121,10 @@ const routes = {
   Prelaunch_SelectCity: PRELAUNCH__SELECT_CITY,
   Prelaunch_SelectDorm: PRELAUNCH___SELECT_DORM,
   Prelaunch_SelectArtist: PRELAUNCH__SELECT_ARTIST,
-  Yak: YACK,
-  YakStack: YACK_STACK,
-  YackList: YACK_LIST,
-  YackNew: YACK_NEW
+  Yak: YAK,
+  YakStack: YAK_STACK,
+  YakList: YAK_LIST,
+  YakNew: YAK_NEW
 };
 
 export default routes;
