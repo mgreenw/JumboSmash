@@ -17,8 +17,14 @@ type Props = {
 
 const YakComponent = (props: Props) => {
   const { yak, onPress, onVote } = props;
-  const { clientVote, timestamp, content } = yak;
+  const { clientVote, timestamp, content, score } = yak;
   const formattedTime = formatTime(timestamp);
+  const scoreFontSize = (() => {
+    if (score >= 1000) return 16;
+    if (score >= 100) return 18;
+    if (score >= 10) return 20;
+    return 22;
+  })();
   return (
     <TouchableHighlight
       onPress={onPress}
@@ -63,7 +69,8 @@ const YakComponent = (props: Props) => {
           style={{
             justifyContent: 'center',
             alignItems: 'center',
-            paddingLeft: 10
+            paddingLeft: 10,
+            minWidth: 50
           }}
         >
           <TouchableOpacity
@@ -84,14 +91,16 @@ const YakComponent = (props: Props) => {
             style={[
               textStyles.headline5StyleDemibold,
               {
+                top: 2,
                 color:
                   clientVote === null || clientVote === undefined
                     ? Colors.Black
-                    : Colors.Grapefruit
+                    : Colors.Grapefruit,
+                fontSize: scoreFontSize
               }
             ]}
           >
-            {yak.score}
+            {score}
           </Text>
           <TouchableOpacity
             style={{ padding: 5, margin: -5 }}

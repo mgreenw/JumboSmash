@@ -20,20 +20,17 @@ import voteYakAction from 'mobile/actions/yaks/voteYak';
 import { connect } from 'react-redux';
 import { Colors } from 'mobile/styles/colors';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
-import postYakAction from 'mobile/actions/yaks/postYak';
 import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
 
 type NavigationProps = {
-  /* eslint-disable-next-line react/no-unused-prop-types */
   navigation: NavigationScreenProp<any>
 };
 
 type DispatchProps = {
   getYaks: () => void,
-  voteYak: (id: number, liked: boolean) => void,
-  postYak: () => void
+  voteYak: (id: number, liked: boolean) => void
 };
 
 type ReduxProps = {
@@ -81,9 +78,6 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
     },
     voteYak: (id: number, liked: boolean) => {
       dispatch(voteYakAction(id, liked));
-    },
-    postYak: () => {
-      dispatch(postYakAction(`foo bar${Math.floor(Math.random() * 100)}`));
     }
   };
 }
@@ -157,7 +151,7 @@ class YakListScreen extends React.Component<Props, State> {
 
   render() {
     const { refreshManuallyTriggered, yaksLoaded, sortBy } = this.state;
-    const { currentYakIds, postYak } = this.props;
+    const { currentYakIds, navigation } = this.props;
     if (!yaksLoaded) {
       return (
         <View
@@ -198,7 +192,7 @@ class YakListScreen extends React.Component<Props, State> {
         <PrimaryButton
           title={'New Yak'}
           onPress={() => {
-            postYak();
+            navigation.navigate(routes.YakNew);
           }}
         />
       </View>

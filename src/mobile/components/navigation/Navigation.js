@@ -204,6 +204,7 @@ const YakStack = createStackNavigator(
   },
   {
     initialRouteName: routes.YakList,
+    mode: 'modal',
     ...removeHeader
   }
 );
