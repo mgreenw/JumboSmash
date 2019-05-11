@@ -31,6 +31,10 @@ Provide the normal `Authorization` token in the request header.
 {
     "status": "GET_MY_YAKS__SUCCESS",
     "data": {
+        "yakPostAvailability": {
+            "yaksRemaining": 3,
+            "nextPostTimestamp": null
+        },
         "yaks": [
             {
                 "id": 15,
