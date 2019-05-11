@@ -44,7 +44,7 @@ async function postYakReport(
                 {
                   type: 'mrkdwn',
                   text: `*Yak Text*: ${content}`,
-                }
+                },
                 {
                   type: 'mrkdwn',
                   text: `*Reasons*: ${reason}`,
