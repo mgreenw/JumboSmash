@@ -13,7 +13,7 @@ const utils = require('./utils');
 
 const yakSelect = utils.yakSelect('$1', {
   yakTableAlias: 'yak',
-  yakVotesTableAlias: 'yak_votes',
+  yakVotesTableAlias: 'yak_vote',
   buildJSON: false,
 });
 
@@ -51,7 +51,7 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
         VALUES ($1, $2, $3, NOW())
         ON CONFLICT (user_id, yak_id) DO UPDATE
         SET liked = $3, updated_timestamp = NOW()
-        RETURNING CASE
+        RETURNING *, CASE
           WHEN ((SELECT liked FROM previous_vote) IS NULL AND $3) THEN 1
           WHEN (SELECT liked FROM previous_vote) = $3 THEN 0
           WHEN $3 THEN 1
@@ -65,7 +65,7 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
       )
       SELECT ${yakSelect}
       FROM yak
-      LEFT JOIN yak_votes ON yak_votes.yak_id = yak.id
+      LEFT JOIN yak_vote ON yak_vote.yak_id = yak.id
     `, [voterUserId, yakId, liked])).rows[0];
     return status(codes.VOTE_ON_YAK__SUCCESS).data({ yak });
   } catch (error) {
