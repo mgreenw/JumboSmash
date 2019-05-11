@@ -6,12 +6,12 @@ import {
   FlatList,
   ImageBackground,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  Text
 } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/components/navigation/NavigationService';
 import routes from 'mobile/components/navigation/routes';
-import { ListItem } from 'react-native-elements';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ReduxState, Dispatch } from 'mobile/reducers';
 import type { Yak } from 'mobile/api/serverTypes';
@@ -104,6 +104,16 @@ class YackListScreen extends React.Component<Props, State> {
     );
   };
 
+  _renderYak = () => {
+    return (
+      <View style={{ height: 50, width: '100%', backgroundColor: 'red' }}>
+        {' '}
+        <Text>yo</Text>
+{' '}
+      </View>
+    );
+  };
+
   _onPress = (id: number) => {
     console.log('pressed: ', id);
   };
@@ -162,14 +172,9 @@ class YackListScreen extends React.Component<Props, State> {
           />
           <FlatList
             data={currentYakIds}
-            renderItem={({ item: id }) => (
-              <ListItem
-                onPress={() => {
-                  this._onPress(id);
-                }}
-                title={`yak_id: ${id}`}
-              />
-            )}
+            renderItem={({ item: id }) => {
+              this._renderYak(id);
+            }}
             keyExtractor={code => {
               return code.toString();
             }}
