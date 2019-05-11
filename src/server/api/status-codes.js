@@ -406,6 +406,10 @@ exports.POST_YAK__SUCCESS = {
   status: 'POST_YAK__SUCCESS',
   code: 201,
 };
+exports.POST_YAK__TOO_MANY_YAKS = {
+  status: 'POST_YAK__TOO_MANY_YAKS',
+  code: 400,
+};
 
 // Vote on Yak
 exports.VOTE_ON_YAK__SUCCESS = {

@@ -13,6 +13,8 @@ const utils = require('./utils');
 
 const yakSelect = utils.yakSelect('$1');
 
+const YAKS_PER_DAY = 3;
+
 /* eslint-disable */
 const schema = {
   "type": "object",
@@ -32,7 +34,24 @@ const schema = {
  * @api {post} /api/yaks
  *
  */
-const sendYak = async (senderUserId: number, content: string) => {
+const postYak = async (senderUserId: number, content: string) => {
+  // Check that there are only yaks per day
+  const [{ yaksInLast24Hours, nextPostTimestamp }] = (await db.query(`
+    SELECT
+      count(id) AS "yaksInLast24Hours",
+      MIN(timestamp) AS "nextPostTimestamp"
+    FROM yaks
+    WHERE
+      user_id = $1
+      AND timestamp > NOW() - INTERVAL '24 HOURS'
+  `, [senderUserId])).rows;
+
+  if (yaksInLast24Hours >= YAKS_PER_DAY) {
+    return status(codes.POST_YAK__TOO_MANY_YAKS).data({
+      nextPostTimestamp,
+    });
+  }
+
   // If this fails it should be a server error.
   const yak = (await db.query(`
     WITH yak AS (
@@ -48,17 +67,20 @@ const sendYak = async (senderUserId: number, content: string) => {
     SELECT * from yak
   `, [senderUserId, content])).rows[0];
 
-  return status(codes.POST_YAK__SUCCESS).data({ yak });
+  return status(codes.POST_YAK__SUCCESS).data({
+    yak,
+    remainingYaks: YAKS_PER_DAY - yaksInLast24Hours - 1,
+  });
 };
 
 const handler = [
   validate(schema),
   asyncHandler(async (req: $Request) => {
-    return sendYak(req.user.id, req.body.content);
+    return postYak(req.user.id, req.body.content);
   }),
 ];
 
 module.exports = {
   handler,
-  apply: sendYak,
+  apply: postYak,
 };
