@@ -1,14 +1,15 @@
 // @flow
 
 const DefaultYakOptions = {
-  tableAlias: '',
+  yakTableAlias: '',
+  yakVotesTableAlias: '',
   buildJSON: false,
 };
 
 /*
 This function defines the select statement for a yak
 It allows some options:
-  tableAlias: the name of the alias for the table in the query. Example: 'yak'
+  yakTableAlias: the name of the alias for the table in the query. Example: 'yak'
   buildJSON: instead of returning the fields directly, this builds the yak
              into a JSON object which can then be named and returned as desired.
 */
@@ -21,27 +22,30 @@ function yakSelect(
     ...DefaultYakOptions,
     ...options,
   };
-  const tableName = opts.tableAlias === '' ? '' : `${opts.tableAlias}.`;
+  const yakTableName = opts.yakTableAlias === '' ? '' : `${opts.yakTableAlias}.`;
+  const yakVotesTableName = opts.yakVotesTableAlias === '' ? '' : `${opts.yakVotesTableAlias}.`;
 
   // Return json or regular select depending on options
   if (opts.buildJSON) {
     return `
       json_build_object(
-        'id', ${tableName}id,
-        'score', ${tableName}score,
-        'content', ${tableName}content,
-        'timestamp', ${tableName}timestamp,
-        'fromClient', ${tableName}user_id = $1
+        'id', ${yakTableName}id,
+        'score', ${yakTableName}score,
+        'content', ${yakTableName}content,
+        'timestamp', ${yakTableName}timestamp,
+        'postedByClient', ${yakTableName}user_id = $1,
+        'clientVote', ${yakVotesTableName}liked
       )
     `;
   }
 
   return `
-    ${tableName}id,
-    ${tableName}score,
-    ${tableName}content,
-    ${tableName}timestamp,
-    ${tableName}user_id = $1 AS "fromClient"
+      ${yakTableName}id,
+      ${yakTableName}score,
+      ${yakTableName}content,
+      ${yakTableName}timestamp,
+      ${yakTableName}user_id = $1 AS "postedByClient",
+      ${yakVotesTableName}liked AS "clientVote"
   `;
 }
 
