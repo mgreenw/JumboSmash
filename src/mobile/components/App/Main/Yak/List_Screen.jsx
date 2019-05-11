@@ -7,7 +7,6 @@ import {
   ImageBackground,
   ActivityIndicator,
   RefreshControl,
-  Switch,
   Text,
   TouchableOpacity
 } from 'react-native';
