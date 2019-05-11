@@ -36,9 +36,9 @@ const DefaultReduxState: ReduxState = {
   inProgress: {
     get: false,
     vote: {},
-    post: false
-  },
-  report: false
+    post: false,
+    report: false
+  }
 };
 
 const Reducers = {
