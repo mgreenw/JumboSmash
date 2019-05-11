@@ -49,3 +49,9 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 * [Send Feedback](meta/send-feedback.md) : `POST /api/meta/feedback`
 * [Report User](meta/report-user.md) : `POST /api/meta/report`
 
+### Yaks
+* [Get Yaks](yaks/get-yaks.md): `GET /api/yaks`
+* [Post Yak](yaks/post-yak.md): `POST /api/yaks`
+* [Get My Yaks](yaks/get-my-yaks.md): `GET /api/yaks/me`
+* [Vote On Yak](yaks/vote-on-yak.md): `PATCH /api/yaks/:id`
+* [Report Yak](yaks/report-yak.md): `POST /api/yaks/:id/report`
