@@ -11,7 +11,11 @@ const {
 } = require('../utils');
 const utils = require('./utils');
 
-const yakSelect = utils.yakSelect('$1');
+const yakSelect = utils.yakSelect('$1', {
+  yakTableAlias: 'yak',
+  yakVotesTableAlias: 'yak_votes',
+  buildJSON: false,
+});
 
 /* eslint-disable */
 const schema = {
@@ -57,9 +61,11 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
         UPDATE yaks
         SET score = score + (SELECT score_update FROM yak_vote)
         WHERE id = $2
-        RETURNING ${yakSelect}
+        RETURNING *
       )
-      SELECT * FROM yak
+      SELECT ${yakSelect}
+      FROM yak
+      LEFT JOIN yak_votes ON yak_votes.yak_id = yak.id
     `, [voterUserId, yakId, liked])).rows[0];
     return status(codes.VOTE_ON_YAK__SUCCESS).data({ yak });
   } catch (error) {

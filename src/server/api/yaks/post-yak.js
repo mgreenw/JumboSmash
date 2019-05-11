@@ -11,7 +11,11 @@ const {
 } = require('../utils');
 const utils = require('./utils');
 
-const yakSelect = utils.yakSelect('$1');
+const yakSelect = utils.yakSelect('$1', {
+  yakTableAlias: 'yak',
+  yakVotesTableAlias: 'vote',
+  buildJSON: false,
+});
 
 const YAKS_PER_DAY = 3;
 
@@ -58,13 +62,16 @@ const postYak = async (senderUserId: number, content: string) => {
       INSERT INTO yaks
       (user_id, content, timestamp, score)
       VALUES ($1, $2, NOW(), 1)
-      RETURNING ${yakSelect}
+      RETURNING *
     ), vote AS (
       INSERT INTO yak_votes
       (user_id, yak_id, liked)
       VALUES ($1, (SELECT id FROM yak), true)
+      RETURNING *
     )
-    SELECT * from yak
+    SELECT ${yakSelect}
+    FROM yak
+    LEFT JOIN vote ON vote.yak_id = yak.id
   `, [senderUserId, content])).rows[0];
 
   return status(codes.POST_YAK__SUCCESS).data({
