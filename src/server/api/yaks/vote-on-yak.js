@@ -51,12 +51,13 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
         VALUES ($1, $2, $3, NOW())
         ON CONFLICT (user_id, yak_id) DO UPDATE
         SET liked = $3, updated_timestamp = NOW()
-        RETURNING *, CASE
-          WHEN ((SELECT liked FROM previous_vote) IS NULL AND $3) THEN 1
-          WHEN (SELECT liked FROM previous_vote) = $3 THEN 0
-          WHEN $3 THEN 1
-          ELSE -1
-        END AS score_update
+        RETURNING
+          *,
+          CASE
+            WHEN (SELECT liked FROM previous_vote) = $3 THEN 0
+            WHEN (SELECT liked FROM previous_vote) IS NULL THEN CASE WHEN $3 THEN 1 ELSE -1 END
+            ELSE CASE WHEN liked THEN 2 ELSE -2 END
+          END AS score_update
       ), yak AS (
         UPDATE yaks
         SET score = score + (SELECT score_update FROM yak_vote)
