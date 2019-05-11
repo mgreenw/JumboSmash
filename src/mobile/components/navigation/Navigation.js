@@ -67,6 +67,9 @@ import AdminClassmateOverviewScreen from 'mobile/components/Admin/ClassmateOverv
 import AdminHomeScreen from 'mobile/components/Admin/Home_Screen';
 import AdminSettingsScreen from 'mobile/components/Admin/Settings_Screen';
 
+import YakNewScreen from 'mobile/components/App/Main/Yak/New_Screen';
+import YakListScreen from 'mobile/components/App/Main/Yak/List_Screen';
+
 import routes from './routes';
 // This file should just set up navigation, so all actual content is in /
 // Define what views / tabs / stacks the navigator will use
@@ -194,18 +197,36 @@ MatchesStack.navigationOptions = () => {
   };
 };
 
+const YakStack = createStackNavigator(
+  {
+    [routes.YackList]: { screen: YakListScreen },
+    [routes.YackNew]: { screen: YakNewScreen }
+  },
+  {
+    initialRouteName: routes.YackList,
+    ...removeHeader
+  }
+);
+
+MatchesStack.navigationOptions = () => {
+  return {
+    gesturesEnabled: false
+  };
+};
+
 // This is a switch because we are difining our own interface between
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createMaterialTopTabNavigator(
   {
     [routes.Cards]: CardsSwitch,
     [routes.Profile]: ProfileStack,
-    [routes.Matches]: MatchesStack
+    [routes.Matches]: MatchesStack,
+    [routes.Yak]: YakStack
   },
   {
     initialRouteName: routes.Cards,
     animationEnabled: true,
-    order: [routes.Profile, routes.Cards, routes.Matches],
+    order: [routes.Profile, routes.Yak, routes.Cards, routes.Matches],
 
     // $FlowFixMe -- this is a hack but we want our own tab bar
     tabBarComponent: null,
