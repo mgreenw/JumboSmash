@@ -21,7 +21,7 @@ Provide the normal `Authorization` token in the request header.
 
 **Request body fields**
 
-Provide the message content and a unique uuid (v4) for the message that is generated client-side.
+Provide the yak content.
 
 * `content`
   * Type: `string`
