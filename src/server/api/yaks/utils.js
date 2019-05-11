@@ -1,25 +1,24 @@
 // @flow
 
-const DefaultProfileOptions = {
+const DefaultYakOptions = {
   tableAlias: '',
   buildJSON: false,
 };
 
 /*
-This function defines the select statement for the profile fields.
+This function defines the select statement for a yak
 It allows some options:
-  tableAlias: the name of the alias for the table in the query. Example: 'they_profile'
-  buildJSON: instead of returning teh fields directly, this builds the entire profile
+  tableAlias: the name of the alias for the table in the query. Example: 'yak'
+  buildJSON: instead of returning the fields directly, this builds the yak
              into a JSON object which can then be named and returned as desired.
-             See "get-scene-candidates.js" for an example of this
 */
 function yakSelect(
   requesterUserIdQueryParam: string, /* The query paramater for the id of the requesting user
                           e.g: $1 or user_id */
-  options: typeof DefaultProfileOptions = DefaultProfileOptions, // See options above
+  options: typeof DefaultYakOptions = DefaultYakOptions, // See options above
 ) {
   const opts = {
-    ...DefaultProfileOptions,
+    ...DefaultYakOptions,
     ...options,
   };
   const tableName = opts.tableAlias === '' ? '' : `${opts.tableAlias}.`;

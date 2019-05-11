@@ -13,8 +13,11 @@ const utils = require('./utils');
 
 const yakSelect = utils.yakSelect('$1');
 
+<<<<<<< HEAD
 const YAKS_PER_DAY = 3;
 
+=======
+>>>>>>> master
 /* eslint-disable */
 const schema = {
   "type": "object",
@@ -82,5 +85,9 @@ const handler = [
 
 module.exports = {
   handler,
+<<<<<<< HEAD
   apply: postYak,
+=======
+  apply: sendYak,
+>>>>>>> master
 };

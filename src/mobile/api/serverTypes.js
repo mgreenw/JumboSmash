@@ -133,6 +133,7 @@ type AccountUpdate =
   | ProfileFieldsUpdate
   | ProfileNewPhoto;
 
+/* eslint-disable-next-line no-unused-vars */
 type AccountUpdateMeta = {
   timestamp: string,
   update: AccountUpdate
@@ -163,4 +164,20 @@ export type LaunchDateStatus = {
   launchDate: string,
   currentDate: string,
   wallIsUp: boolean
+};
+
+// Yak
+export type Yak = {
+  id: number,
+  content: string,
+  userId: number,
+  timestamp: string,
+  score: number
+};
+
+export type YakVote = {
+  id: number,
+  yakId: number,
+  liked: boolean,
+  updatedTimestamp: string
 };

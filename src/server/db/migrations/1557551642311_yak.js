@@ -33,7 +33,7 @@ exports.up = (pgm) => {
     },
     yak_id: {
       type: 'integer',
-      references: 'classmates',
+      references: 'yaks',
       notNull: true,
     },
     liked: {
