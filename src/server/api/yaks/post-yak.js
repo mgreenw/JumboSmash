@@ -3,7 +3,6 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
-const logger = require('../../logger');
 const codes = require('../status-codes');
 const {
   status,
