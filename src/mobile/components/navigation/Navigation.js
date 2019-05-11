@@ -218,9 +218,13 @@ MatchesStack.navigationOptions = () => {
 // the pages. (NOT tabs, but headerbar navigation!)
 const MainContentSwitch = createMaterialTopTabNavigator(
   {
+    // $FlowFixMe
     [routes.Cards]: CardsSwitch,
+    // $FlowFixMe
     [routes.Profile]: ProfileStack,
+    // $FlowFixMe
     [routes.Matches]: MatchesStack,
+    // $FlowFixMe
     [routes.Yak]: YakStack
   },
   {

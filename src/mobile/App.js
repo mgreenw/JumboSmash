@@ -27,6 +27,7 @@ type State = {
 };
 
 // Enable if you want to test sentry locally!
+// $FlowFixMe
 Sentry.enableInExpoDevelopment = false;
 
 Sentry.config(

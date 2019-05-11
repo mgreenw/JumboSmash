@@ -146,6 +146,11 @@ import {
   DefaultReduxState as Artist_DefaultReduxState,
   Reducers as Artist_Reducers
 } from './artists';
+import type { Yak_Action, ReduxState as Yak_ReduxState } from './yaks';
+import {
+  DefaultReduxState as Yak_DefaultReduxState,
+  Reducers as Yak_Reducers
+} from './yaks';
 import type {
   ReduxState as LaunchDate_ReduxState,
   Action as LaunchDate_Action
@@ -513,7 +518,8 @@ export type ReduxState = {|
   classmateIds: number[],
   classmatesById: { [number]: ServerClassmate },
   artists: Artist_ReduxState,
-  launchDate: LaunchDate_ReduxState
+  launchDate: LaunchDate_ReduxState,
+  yaks: Yak_ReduxState
 |};
 
 export type Action =
@@ -587,7 +593,8 @@ export type Action =
   | GetProfileInitiated_Action
   | GetProfileCompleted_Action
   | GetProfileFailed_Action
-  | ReviewProfile_Action;
+  | ReviewProfile_Action
+  | Yak_Action;
 
 export type GetState = () => ReduxState;
 
@@ -676,7 +683,8 @@ export const initialState: ReduxState = {
   classmateIds: [],
   classmatesById: {},
   artists: Artist_DefaultReduxState,
-  launchDate: LaunchDate_DefaultReduxState
+  launchDate: LaunchDate_DefaultReduxState,
+  yaks: Yak_DefaultReduxState
 };
 
 // To deal with flow not liking typing generics at run time...
@@ -2169,7 +2177,28 @@ export default function rootReducer(
     }
 
     case 'REVIEW_PROFILE__FAILED': {
-      return ReviewProfileReducer.fail(state, action);
+      return ReviewProfileReducer.fail(state.yaks, action);
+    }
+
+    case 'GET_YAKS__INITIATED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Get.initiate(state.yaks, action)
+      };
+    }
+
+    case 'GET_YAKS__COMPLETED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Get.complete(state.yaks, action)
+      };
+    }
+
+    case 'GET_YAKS__FAILED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Get.fail(state, action)
+      };
     }
 
     default: {
