@@ -1,5 +1,6 @@
 // @flow
 
+import { Alert } from 'react-native';
 import type { Dispatch, GetState } from 'mobile/reducers';
 import type { ServerClassmate, Capabilities } from 'mobile/api/serverTypes';
 import reviewProfileApi from 'mobile/api/admin/reviewProfile';
@@ -68,6 +69,15 @@ export default (
   updatedCapabilities: Capabilities,
   comment: ?string
 ) => (dispatch: Dispatch, getState: GetState) => {
+  if (
+    (!updatedCapabilities.canBeActiveInScenes ||
+      !updatedCapabilities.canBeSwipedOn) &&
+    (!comment || comment.length < 5)
+  ) {
+    Alert.alert('Your comment must be at least 5 characters');
+    return;
+  }
+
   // This is to ensure that we don't override someone elses' updates to a profile,
   // by adding what the client 'thinks' the current classmate's capabilities are.
   // If there is a mismatch (someone else has reviewed in this time) then the update fails.
