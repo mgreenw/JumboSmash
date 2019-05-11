@@ -28,9 +28,9 @@ const CardsLayout = (props: Props) => {
           }
         }}
         leftIcon={{
-          name: 'user',
+          name: 'trash',
           onPress: () => {
-            NavigationService.navigate(routes.Profile);
+            NavigationService.navigate(routes.Yak);
           }
         }}
         centerComponent={sceneSelector}
