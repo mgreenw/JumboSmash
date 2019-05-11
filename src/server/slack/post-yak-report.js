@@ -20,7 +20,7 @@ async function postYakReport(
   reason: string,
 ): Promise<void> {
   if (NODE_ENV !== 'travis' && NODE_ENV !== 'test') {
-    const [{ yakSenderUserId, content }] = (await db.query('SELECT user_id, content AS "yakSenderUserId" FROM yaks WHERE id = $1', [yakId])).rows;
+    const [{ yakSenderUserId, content }] = (await db.query('SELECT content, user_id AS "yakSenderUserId" FROM yaks WHERE id = $1', [yakId])).rows;
     const extraUserInfo = await generateUserInfoSection('Yak Poster', yakSenderUserId);
 
     const report = {
@@ -43,15 +43,15 @@ async function postYakReport(
               fields: [
                 {
                   type: 'mrkdwn',
-                  text: `*Yak Text*: ${content}`,
-                },
-                {
-                  type: 'mrkdwn',
                   text: `*Reasons*: ${reason}`,
                 },
                 {
                   type: 'mrkdwn',
                   text: `*Message:* ${message}`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `*Yak Text*: ${content}`,
                 },
               ],
             },
