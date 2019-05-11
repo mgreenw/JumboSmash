@@ -2177,7 +2177,7 @@ export default function rootReducer(
     }
 
     case 'REVIEW_PROFILE__FAILED': {
-      return ReviewProfileReducer.fail(state.yaks, action);
+      return ReviewProfileReducer.fail(state, action);
     }
 
     case 'GET_YAKS__INITIATED': {
@@ -2197,7 +2197,7 @@ export default function rootReducer(
     case 'GET_YAKS__FAILED': {
       return {
         ...state,
-        yaks: Yak_Reducers.Get.fail(state, action)
+        yaks: Yak_Reducers.Get.fail(state.yaks, action)
       };
     }
 
