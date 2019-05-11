@@ -179,9 +179,9 @@ class ProfileScreen extends React.Component<Props, State> {
         <GEMHeader
           title="Profile"
           rightIcon={{
-            name: 'cards',
+            name: 'trash',
             onPress: () => {
-              NavigationService.navigate(routes.Cards);
+              NavigationService.navigate(routes.Yak);
             }
           }}
           leftIcon={{
