@@ -21,7 +21,10 @@ type ProppyProps = {
   displayName: string,
   userId: number,
   onCancel: () => void,
-  onDone: (block: boolean) => void
+  onDone: (block: boolean) => void,
+
+  // HACK HACK HACK YAK YAK YAK
+  yak?: boolean
 };
 
 type ReduxProps = {
@@ -94,13 +97,21 @@ const REPORT_REASONS = [
   { text: 'Spam or scam', code: 'SPAM' }
 ];
 
+const YAK_REPORT_REASONS = [
+  { text: 'Made me uncomfortable', code: 'UNCOMFORTABLE' },
+  { text: 'Abusive or threatening', code: 'ABUSIVE' },
+  { text: 'Inappropriate content', code: 'INAPPROPRIATE' },
+  { text: 'Spam or scam', code: 'SPAM' }
+];
+
 class ReportPopup extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const reasons = props.yak === true ? YAK_REPORT_REASONS : REPORT_REASONS;
 
     this.state = {
       step: 1,
-      selectedReasons: REPORT_REASONS.map(reason => {
+      selectedReasons: reasons.map(reason => {
         return {
           reason,
           selected: false
