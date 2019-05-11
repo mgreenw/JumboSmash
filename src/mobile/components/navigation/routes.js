@@ -123,8 +123,8 @@ const routes = {
   Prelaunch_SelectArtist: PRELAUNCH__SELECT_ARTIST,
   Yak: YAK,
   YakStack: YAK_STACK,
-  YackList: YAK_LIST,
-  YackNew: YAK_NEW
+  YakList: YAK_LIST,
+  YakNew: YAK_NEW
 };
 
 export default routes;

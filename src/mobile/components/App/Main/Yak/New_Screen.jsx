@@ -9,7 +9,7 @@ import routes from 'mobile/components/navigation/routes';
 type Props = {};
 
 /* eslint-disable-next-line no-unused-vars */
-const YackListScreen = (props: Props) => {
+const YakListScreen = (props: Props) => {
   return (
     <View style={{ flex: 1 }}>
       <GEMHeader
@@ -35,4 +35,4 @@ const YackListScreen = (props: Props) => {
   );
 };
 
-export default YackListScreen;
+export default YakListScreen;
