@@ -204,7 +204,7 @@ class YakListScreen extends React.Component<Props, State> {
       <ReportPopup
         visible={showReportPopup}
         onCancel={() => this.setState({ showReportPopup: false })}
-        onDone={() => {}}
+        onDone={() => this.setState({ showReportPopup: false })}
         displayName={'this JumboYak'}
         userId={selectedYakId}
         yak
