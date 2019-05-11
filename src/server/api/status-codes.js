@@ -416,3 +416,9 @@ exports.VOTE_ON_YAK__YAK_NOT_FOUND = {
   status: 'VOTE_ON_YAK__YAK_NOT_FOUND',
   code: 404,
 };
+
+// Get My Yaks
+exports.GET_MY_YAKS__SUCCESS = {
+  status: 'GET_MY_YAKS__SUCCESS',
+  code: 200,
+};
