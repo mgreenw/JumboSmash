@@ -3,7 +3,6 @@
 import type { $Request } from 'express';
 
 const db = require('../../db');
-const redis = require('../../redis');
 const apiUtils = require('../utils');
 const codes = require('../status-codes');
 
