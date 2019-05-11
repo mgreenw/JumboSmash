@@ -400,3 +400,9 @@ exports.GET_YAKS__SUCCESS = {
   status: 'GET_YAKS__SUCCESS',
   code: 200,
 };
+
+// Post Yak
+exports.POST_YAK__SUCCESS = {
+  status: 'POST_YAK__SUCCESS',
+  code: 201,
+};
