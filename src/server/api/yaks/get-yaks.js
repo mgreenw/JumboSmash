@@ -11,9 +11,21 @@ const codes = require('../status-codes');
  * @api {get} /api/yaks
  *
  */
-const getYaks = async () => {
+const getYaks = async (userId: number) => {
+  const yaks = (await db.query(`
+    SELECT
+      id,
+      score,
+      content,
+      timestamp,
+      user_id = $1 AS '
+    FROM yaks
+    WHERE timestamp > NOW() - INTERVAL '24 HOURS'
+    ORDER BY timestamp
+  `, [userId])).rows;
+
   return apiUtils.status(codes.GET_YAKS__SUCCESS).data({
-    yaks: [],
+    yaks,
   });
 };
 
