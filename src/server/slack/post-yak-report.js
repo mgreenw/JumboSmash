@@ -11,7 +11,7 @@ const route = NODE_ENV === 'development'
   ? 'https://hooks.slack.com/services/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'
   : 'https://hooks.slack.com/services/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';
 
-const yakReport = new IncomingWebhook(route);
+const yakReportWebhook = new IncomingWebhook(route);
 
 async function postYakReport(
   reportingUserId: number,
@@ -64,7 +64,7 @@ async function postYakReport(
       ],
     };
 
-    await yakReport.send(report);
+    await yakReportWebhook.send(report);
   }
 }
 

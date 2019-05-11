@@ -14,7 +14,8 @@ const schema = {
   "properties": {
     "message": {
       "type": "string",
-      "description": "The message sent by the reporting user about the reported user"
+      "description": "The message sent by the reporting user about the reported user",
+      "maxLength": 2500,
     },
     "reasonCode": {
       "type": "string",
