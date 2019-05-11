@@ -10,6 +10,7 @@ const conversationsRouter = require('./conversations');
 const metaRouter = require('./meta');
 const adminRouter = require('./admin');
 const artistsRouter = require('./artists');
+const yaksRouter = require('./yaks');
 
 const { authenticated, hasProfile, isAfterLaunch } = require('./utils').middleware;
 
@@ -48,5 +49,6 @@ apiRouter.use(isAfterLaunch);
 // We need other routes to interact with profiles and potentially relationships
 // to block other users.
 apiRouter.use('/conversations', conversationsRouter);
+apiRouter.use('/yaks', yaksRouter);
 
 module.exports = apiRouter;

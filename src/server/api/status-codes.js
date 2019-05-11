@@ -393,3 +393,10 @@ exports.GET_ARTIST__NOT_FOUND = {
   status: 'GET_ARTIST__NOT_FOUND',
   code: 404,
 };
+
+// YAKS
+// Get Yaks
+exports.GET_YAKS__SUCCESS = {
+  status: 'GET_YAKS__SUCCESS',
+  code: 200,
+};
