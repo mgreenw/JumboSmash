@@ -2243,6 +2243,27 @@ export default function rootReducer(
       };
     }
 
+    case 'REPORT_YAK__INITIATED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Report.initiate(state.yaks, action)
+      };
+    }
+
+    case 'REPORT_YAK__COMPLETED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Report.complete(state.yaks, action)
+      };
+    }
+
+    case 'REPORT_YAK__FAILED': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Report.fail(state.yaks, action)
+      };
+    }
+
     default: {
       // eslint-disable-next-line no-unused-expressions
       (action: empty); // ensures we have handled all cases

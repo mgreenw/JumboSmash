@@ -12,6 +12,7 @@ import BioInput from 'mobile/components/shared/BioInput';
 import Layout from 'mobile/components/shared/Popup_Layout';
 import InProgress from 'mobile/components/shared/InProgress';
 import ReportAction from 'mobile/actions/app/reportUser';
+import YakReportAction from 'mobile/actions/yaks/reportYak';
 import BlockAction from 'mobile/actions/app/blockUser';
 import ReasonSelector from './ReasonSelector';
 import type { SelectedReason } from './ReasonSelector';
@@ -31,7 +32,8 @@ type ReduxProps = {
   report_inProgress: boolean,
   reportUserSuccess: ?boolean,
   block_inProgress: boolean,
-  blockUserSuccess: ?boolean
+  blockUserSuccess: ?boolean,
+  reportYak_InProgress: boolean
 };
 
 type DispatchProps = {
@@ -42,6 +44,11 @@ type DispatchProps = {
   ) => void,
   blockUser: (
     userId: number,
+    reportMessage: string,
+    reasonCodes: string[]
+  ) => void,
+  reportYak: (
+    yakId: number,
     reportMessage: string,
     reasonCodes: string[]
   ) => void
@@ -63,6 +70,7 @@ function mapStateToProps(reduxState: ReduxState): ReduxProps {
     throw new Error('client is null in report popup');
   }
   return {
+    reportYak_InProgress: reduxState.yaks.inProgress.report,
     report_inProgress: reduxState.inProgress.reportUser,
     reportUserSuccess: reduxState.response.reportUserSuccess,
     block_inProgress: reduxState.inProgress.blockUser,
@@ -85,6 +93,13 @@ function mapDispatchToProps(dispatch: Dispatch): DispatchProps {
       reasonCodes: string[]
     ) => {
       dispatch(BlockAction(userId, reportMessage, reasonCodes));
+    },
+    reportYak: (
+      yakId: number,
+      reportMessage: string,
+      reasonCodes: string[]
+    ) => {
+      dispatch(YakReportAction(yakId, reportMessage, reasonCodes));
     }
   };
 }
@@ -125,11 +140,24 @@ class ReportPopup extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { report_inProgress, block_inProgress } = this.props;
-    if (report_inProgress && !nextProps.report_inProgress) {
+    const {
+      report_inProgress,
+      reportYak_InProgress,
+      block_inProgress
+    } = this.props;
+    if (
+      (report_inProgress && !nextProps.report_inProgress) ||
+      (reportYak_InProgress && !nextProps.reportYak_InProgress)
+    ) {
       this.setState({ fakeReportLoading: true }, () => {
         // The timeout is so the progress bar doesn't look jumpy
         setTimeout(() => {
+          if (reportYak_InProgress) {
+            this.setState({
+              step: 3,
+              fakeReportLoading: false
+            });
+          }
           if (nextProps.reportUserSuccess) {
             this.setState({ step: 3, fakeReportLoading: false });
           } else {
@@ -161,11 +189,15 @@ class ReportPopup extends React.Component<Props, State> {
 
   _onReport = () => {
     const { reportMessage, selectedReasons } = this.state;
-    const { userId, reportUser } = this.props;
+    const { userId, reportUser, yak, reportYak } = this.props;
     const selectedReasonCodes = selectedReasons
       .filter(r => r.selected)
       .map(r => r.reason.code);
-    reportUser(userId, reportMessage, selectedReasonCodes);
+    if (yak === true) {
+      reportYak(userId, reportMessage, selectedReasonCodes);
+    } else {
+      reportUser(userId, reportMessage, selectedReasonCodes);
+    }
   };
 
   _onBlock = () => {
@@ -252,8 +284,8 @@ class ReportPopup extends React.Component<Props, State> {
   }
 
   _renderReportConfirm() {
-    const { displayName, onDone } = this.props;
-    const { block } = this.state;
+    const { displayName, onDone, yak } = this.props;
+    const { block, selectedReasons } = this.state;
     const body = (
       <View style={{ marginTop: 20 }}>
         {block && (
@@ -284,16 +316,34 @@ class ReportPopup extends React.Component<Props, State> {
       </View>
     );
 
+    const baseSubtitle = 'Thanks for letting the team know.';
+    const userReportSubtitle = `${baseSubtitle} If you’d also like to block ${displayName}, you can do so below.`;
     return (
       <Layout
         title={'Report'}
-        subtitle={`Thanks for letting the team know. If you’d also like to block ${displayName}, you can do so below.`}
+        subtitle={yak ? baseSubtitle : userReportSubtitle}
         body={body}
         primaryButtonText={'Done'}
         primaryButtonDisabled={false}
         primaryButtonLoading={false}
-        onPrimaryButtonPress={() => onDone(block)}
-        secondaryButtonText={!block ? `Block ${displayName}` : undefined}
+        onPrimaryButtonPress={() =>
+          this.setState(
+            {
+              reportMessage: '',
+              step: 1,
+              selectedReasons: selectedReasons.map(r => ({
+                ...r,
+                selected: false
+              }))
+            },
+            () => {
+              onDone(block);
+            }
+          )
+        }
+        secondaryButtonText={
+          !block && !yak ? `Block ${displayName}` : undefined
+        }
         secondaryButtonDisabled={false}
         secondaryButtonLoading={false}
         onSecondaryButtonPress={this._onBlock}
@@ -304,9 +354,14 @@ class ReportPopup extends React.Component<Props, State> {
 
   render() {
     const { step, fakeReportLoading, fakeBlockLoading } = this.state;
-    const { visible, report_inProgress, block_inProgress } = this.props;
+    const {
+      visible,
+      report_inProgress,
+      block_inProgress,
+      reportYak_InProgress
+    } = this.props;
     let renderedContent;
-    if (report_inProgress || fakeReportLoading) {
+    if (report_inProgress || fakeReportLoading || reportYak_InProgress) {
       renderedContent = this._renderReportLoading();
     } else if (block_inProgress || fakeBlockLoading) {
       renderedContent = this._renderBlockLoading();

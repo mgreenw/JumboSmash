@@ -144,3 +144,5 @@ export const GET_YAKS__ROUTE = YAK_ROUTE;
 export const POST_YAK__ROUTE = YAK_ROUTE;
 export const VOTE_YAK__ROUTE__GENERATOR = (yakId: number) =>
   `${YAK_ROUTE + yakId}`;
+export const REPORT_YAK__ROUTE__GENERATOR = (yakId: number) =>
+  `${YAK_ROUTE + yakId}/report`;

@@ -1,5 +1,7 @@
 // @flow
 
+const _ = require('lodash');
+
 const DefaultYakOptions = {
   yakTableAlias: '',
   yakVotesTableAlias: '',
@@ -49,6 +51,46 @@ function yakSelect(
   `;
 }
 
+type YakPostAvailibality = {
+  yaksRemaining: number,
+  nextPostTimestamp: Date | null,
+};
+
+const YAKS_PER_DAY = 3;
+const ONE_DAY_MS = 86400000;
+
+// NOTE: Yaks must be sorted ASC by timestamp and must only be from last 24 hours
+function getYakPostAvailability(yaks: { timestamp: Date }[]): YakPostAvailibality {
+  // Ensure they are sorted and filtered by last day
+  const oneDayAgo = new Date().getTime() - ONE_DAY_MS;
+  const pastDayYaks = _.sortBy(
+    yaks.filter(yak => yak.timestamp.getTime() > oneDayAgo),
+    yak => yak.timestamp,
+  );
+
+  // If none, allow full yaks per day
+  if (pastDayYaks.length === 0) {
+    return {
+      yaksRemaining: YAKS_PER_DAY,
+      nextPostTimestamp: null,
+    };
+  }
+
+  // Calculate and return yaksRemaining and nextYakTimestamp
+  // If somehow there are more than YAK_PER_DAY, this handles that safely.
+  const nextPostIndex = Math.max(pastDayYaks.length - YAKS_PER_DAY, 0);
+  const nextPostTimestamp = new Date(
+    pastDayYaks[nextPostIndex].timestamp.getTime() + ONE_DAY_MS,
+  );
+  const yaksRemaining = Math.max(YAKS_PER_DAY - pastDayYaks.length, 0);
+
+  return {
+    yaksRemaining,
+    nextPostTimestamp,
+  };
+}
+
 module.exports = {
   yakSelect,
+  getYakPostAvailability,
 };

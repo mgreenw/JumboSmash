@@ -17,8 +17,6 @@ const yakSelect = utils.yakSelect('$1', {
   buildJSON: false,
 });
 
-const YAKS_PER_DAY = 3;
-
 /* eslint-disable */
 const schema = {
   "type": "object",
@@ -40,24 +38,25 @@ const schema = {
  */
 const postYak = async (senderUserId: number, content: string) => {
   // Check that there are only yaks per day
-  const [{ yaksInLast24Hours, nextPostTimestamp }] = (await db.query(`
-    SELECT
-      count(id) AS "yaksInLast24Hours",
-      MIN(timestamp) AS "nextPostTimestamp"
+  const yaksInPast24Hours = (await db.query(`
+    SELECT timestamp
     FROM yaks
     WHERE
       user_id = $1
       AND timestamp > NOW() - INTERVAL '24 HOURS'
+    ORDER BY timestamp
   `, [senderUserId])).rows;
 
-  if (yaksInLast24Hours >= YAKS_PER_DAY) {
+  // Generate yak post availibility. If they cannot post, don't allow it.
+  const yakPostAvailability = utils.getYakPostAvailability(yaksInPast24Hours);
+  if (yakPostAvailability.yaksRemaining <= 0) {
     return status(codes.POST_YAK__TOO_MANY_YAKS).data({
-      nextPostTimestamp,
+      yakPostAvailability,
     });
   }
 
   // If this fails it should be a server error.
-  const yak = (await db.query(`
+  const [yak] = (await db.query(`
     WITH yak AS (
       INSERT INTO yaks
       (user_id, content, timestamp, score)
@@ -72,11 +71,13 @@ const postYak = async (senderUserId: number, content: string) => {
     SELECT ${yakSelect}
     FROM yak
     LEFT JOIN vote ON vote.yak_id = yak.id
-  `, [senderUserId, content])).rows[0];
+  `, [senderUserId, content])).rows;
+
+  const updatedYakPostAvailability = utils.getYakPostAvailability([...yaksInPast24Hours, yak]);
 
   return status(codes.POST_YAK__SUCCESS).data({
+    yakPostAvailability: updatedYakPostAvailability,
     yak,
-    remainingYaks: YAKS_PER_DAY - yaksInLast24Hours - 1,
   });
 };
 
