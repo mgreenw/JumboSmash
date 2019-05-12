@@ -114,4 +114,10 @@ describe('POST api/yaks', () => {
     expect(res.body.status).toBe(codes.POST_YAK__TOO_MANY_YAKS.status);
     expect(res.body.data.yakPostAvailability.yaksRemaining).toBe(0);
   });
+
+  it('should get 3 yaks total', async () => {
+    const res = await getYaks(other);
+    expect(res.body.status).toBe(codes.GET_YAKS__SUCCESS.status);
+    expect(res.body.data.yaks.length).toBe(3);
+  });
 });
