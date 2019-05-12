@@ -20,13 +20,53 @@ import getYaksAction from 'mobile/actions/yaks/getYaks';
 import voteYakAction from 'mobile/actions/yaks/voteYak';
 import { connect } from 'react-redux';
 import { Colors } from 'mobile/styles/colors';
-import { PrimaryButton } from 'mobile/components/shared/buttons';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import ReportPopup from 'mobile/components/App/Main/Matches/ReportPopup';
 import { textStyles } from 'mobile/styles/textStyles';
+import * as Animatable from 'react-native-animatable';
+import CustomIcon from 'mobile/assets/icons/CustomIcon';
 import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
+
+const NEW_ICON_HEIGHT = 65;
+const NEW_ICON_PADDING = 30;
+
+type SortButtonProps = {
+  position: 'left' | 'right',
+  active: boolean,
+  onPress: () => void,
+  title: string
+};
+const SortButton = ({ position, active, onPress, title }: SortButtonProps) => {
+  return (
+    <TouchableOpacity
+      style={{
+        borderWidth: 1,
+        borderColor: Colors.AquaMarine,
+        width: '25%',
+        paddingVertical: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: position === 'left' ? 10 : 0,
+        borderTopLeftRadius: position === 'left' ? 10 : 0,
+        borderBottomRightRadius: position === 'right' ? 10 : 0,
+        borderTopRightRadius: position === 'right' ? 10 : 0,
+        backgroundColor: active ? Colors.AquaMarine : undefined
+      }}
+      onPress={onPress}
+    >
+      <Text
+        style={[
+          active ? textStyles.body1StyleSemibold : textStyles.body1Style,
+          { color: active ? Colors.White : Colors.AquaMarine }
+        ]}
+      >
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -124,7 +164,7 @@ class YakListScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          height: 1,
+          height: 3,
           width: '100%'
         }}
       />
@@ -214,6 +254,8 @@ class YakListScreen extends React.Component<Props, State> {
     );
   }
 
+  flatListRef: FlatList;
+
   render() {
     const { refreshManuallyTriggered, yaksLoaded, sortBy } = this.state;
     const { currentYakIds, navigation } = this.props;
@@ -242,67 +284,33 @@ class YakListScreen extends React.Component<Props, State> {
         style={{
           width: '100%',
           backgroundColor: Colors.White,
-          marginTop: 1,
-          marginBottom: 1,
+          marginTop: 3,
+          marginBottom: 3,
           flexDirection: 'row',
           justifyContent: 'center',
           padding: 10
         }}
       >
-        <TouchableOpacity
-          style={{
-            borderWidth: 1,
-            borderColor: Colors.AquaMarine,
-            width: '25%',
-            paddingVertical: 4,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderBottomLeftRadius: 10,
-            borderTopLeftRadius: 10,
-            backgroundColor: sortBy === 'time' ? Colors.AquaMarine : undefined
-          }}
+        <SortButton
+          position={'left'}
+          active={sortBy === 'time'}
           onPress={() => {
-            this.setState({ sortBy: 'time' });
+            this.setState({ sortBy: 'time' }, () => {
+              this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+            });
           }}
-        >
-          <Text
-            style={[
-              sortBy === 'time'
-                ? textStyles.body1StyleSemibold
-                : textStyles.body1Style,
-              { color: sortBy === 'time' ? Colors.White : Colors.AquaMarine }
-            ]}
-          >
-            New
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            borderWidth: 1,
-            borderColor: Colors.AquaMarine,
-            width: '25%',
-            paddingVertical: 4,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderBottomRightRadius: 10,
-            borderTopRightRadius: 10,
-            backgroundColor: sortBy === 'score' ? Colors.AquaMarine : undefined
-          }}
+          title={'New'}
+        />
+        <SortButton
+          position={'right'}
+          active={sortBy === 'score'}
           onPress={() => {
-            this.setState({ sortBy: 'score' });
+            this.setState({ sortBy: 'score' }, () => {
+              this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
+            });
           }}
-        >
-          <Text
-            style={[
-              sortBy === 'score'
-                ? textStyles.body1StyleSemibold
-                : textStyles.body1Style,
-              { color: sortBy === 'score' ? Colors.White : Colors.AquaMarine }
-            ]}
-          >
-            Hot
-          </Text>
-        </TouchableOpacity>
+          title={'Top'}
+        />
       </View>
     );
 
@@ -311,6 +319,9 @@ class YakListScreen extends React.Component<Props, State> {
         {'Jumbo'}
         <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
       </Text>
+    );
+    const Footer = (
+      <View style={{ height: NEW_ICON_HEIGHT + NEW_ICON_PADDING * 2 }} />
     );
     return (
       <View style={{ flex: 1 }}>
@@ -337,22 +348,28 @@ class YakListScreen extends React.Component<Props, State> {
           />
           {Header}
           <FlatList
+            ref={ref => {
+              this.flatListRef = ref;
+            }}
             data={
               sortBy === 'time' ? currentYakIds.byTime : currentYakIds.byScore
             }
             renderItem={({ item: id }) => {
               return this._renderYak(id);
             }}
-            keyExtractor={code => {
-              return code.toString();
+            keyExtractor={id => {
+              return `${id}`;
             }}
             ItemSeparatorComponent={this._renderSeparator}
             refreshControl={refreshComponent}
+            ListFooterComponent={Footer}
           />
           <View
             style={{
-              flexDirection: 'row',
-              padding: 20,
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              padding: NEW_ICON_PADDING,
               justifyContent: 'center',
               elevation: 1,
               shadowColor: Colors.Black,
@@ -364,12 +381,33 @@ class YakListScreen extends React.Component<Props, State> {
               }
             }}
           >
-            <PrimaryButton
-              title={'New Yak'}
-              onPress={() => {
-                navigation.navigate(routes.YakNew);
-              }}
-            />
+            <Animatable.View
+              animation="swing"
+              easing="ease-out"
+              iterationCount="infinite"
+              iterationDelay={10000}
+              delay={10000}
+            >
+              <View
+                style={{
+                  width: NEW_ICON_HEIGHT,
+                  height: NEW_ICON_HEIGHT,
+                  backgroundColor: Colors.Grapefruit,
+                  borderRadius: NEW_ICON_HEIGHT,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <CustomIcon
+                  name={'pencil'}
+                  color={Colors.White}
+                  size={30}
+                  onPress={() => {
+                    navigation.navigate(routes.YakNew);
+                  }}
+                />
+              </View>
+            </Animatable.View>
           </View>
         </View>
         {this._renderActionSheet()}
