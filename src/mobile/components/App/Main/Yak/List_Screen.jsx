@@ -7,8 +7,8 @@ import {
   ImageBackground,
   ActivityIndicator,
   RefreshControl,
-  Switch,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -241,25 +241,68 @@ class YakListScreen extends React.Component<Props, State> {
       <View
         style={{
           width: '100%',
-          padding: 20,
           backgroundColor: Colors.White,
           marginTop: 1,
           marginBottom: 1,
-          flexDirection: 'row'
+          flexDirection: 'row',
+          justifyContent: 'center',
+          padding: 10
         }}
       >
-        <Switch
-          value={sortBy === 'score'}
-          onValueChange={isScore => {
-            this.setState({ sortBy: isScore ? 'score' : 'time' });
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: Colors.AquaMarine,
+            width: '25%',
+            paddingVertical: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottomLeftRadius: 10,
+            borderTopLeftRadius: 10,
+            backgroundColor: sortBy === 'time' ? Colors.AquaMarine : undefined
           }}
-        />
-        <PrimaryButton
-          title={'New Yak'}
           onPress={() => {
-            navigation.navigate(routes.YakNew);
+            this.setState({ sortBy: 'time' });
           }}
-        />
+        >
+          <Text
+            style={[
+              sortBy === 'time'
+                ? textStyles.body1StyleSemibold
+                : textStyles.body1Style,
+              { color: sortBy === 'time' ? Colors.White : Colors.AquaMarine }
+            ]}
+          >
+            New
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: Colors.AquaMarine,
+            width: '25%',
+            paddingVertical: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderBottomRightRadius: 10,
+            borderTopRightRadius: 10,
+            backgroundColor: sortBy === 'score' ? Colors.AquaMarine : undefined
+          }}
+          onPress={() => {
+            this.setState({ sortBy: 'score' });
+          }}
+        >
+          <Text
+            style={[
+              sortBy === 'score'
+                ? textStyles.body1StyleSemibold
+                : textStyles.body1Style,
+              { color: sortBy === 'score' ? Colors.White : Colors.AquaMarine }
+            ]}
+          >
+            Hot
+          </Text>
+        </TouchableOpacity>
       </View>
     );
 
@@ -292,6 +335,7 @@ class YakListScreen extends React.Component<Props, State> {
             source={wavesFull}
             style={{ width: '100%', height: '100%', position: 'absolute' }}
           />
+          {Header}
           <FlatList
             data={
               sortBy === 'time' ? currentYakIds.byTime : currentYakIds.byScore
@@ -304,8 +348,29 @@ class YakListScreen extends React.Component<Props, State> {
             }}
             ItemSeparatorComponent={this._renderSeparator}
             refreshControl={refreshComponent}
-            ListHeaderComponent={Header}
           />
+          <View
+            style={{
+              flexDirection: 'row',
+              padding: 20,
+              justifyContent: 'center',
+              elevation: 1,
+              shadowColor: Colors.Black,
+              shadowOpacity: 0.57,
+              shadowRadius: 2,
+              shadowOffset: {
+                height: 2,
+                width: 1
+              }
+            }}
+          >
+            <PrimaryButton
+              title={'New Yak'}
+              onPress={() => {
+                navigation.navigate(routes.YakNew);
+              }}
+            />
+          </View>
         </View>
         {this._renderActionSheet()}
         {this._renderReportPopup()}
