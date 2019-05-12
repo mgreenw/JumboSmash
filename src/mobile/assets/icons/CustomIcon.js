@@ -3,7 +3,8 @@
 import { createIconSetFromFontello } from '@expo/vector-icons';
 import fontelloConfig from './config.json';
 
-export default createIconSetFromFontello(fontelloConfig, 'gemicons');
+const font = createIconSetFromFontello(fontelloConfig, 'gemicons');
+export default font;
 
 // add more from fontello as needed. See "demo.html" of the fontello
 // config if you need to figure out the names.

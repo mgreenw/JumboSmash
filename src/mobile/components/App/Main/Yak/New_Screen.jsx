@@ -81,16 +81,24 @@ class YakNewScreen extends React.Component<Props, State> {
     const { content } = this.state;
     const loading = postInProgress;
 
+    const TitleComponent = (
+      <Text style={textStyles.headline5Style}>
+        {'New Jumbo'}
+        <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
+      </Text>
+    );
+
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
-          title="New Yak"
+          title="New JumboYak"
           leftIcon={{
             name: 'delete-filled',
             onPress: () => {
               this._onBack();
             }
           }}
+          centerComponent={TitleComponent}
           loading={loading}
         />
         <KeyboardView waves={1}>
@@ -107,7 +115,7 @@ class YakNewScreen extends React.Component<Props, State> {
               <Text
                 style={[textStyles.headline5Style, { paddingVertical: '5.1%' }]}
               >
-                {`Yaks Remaining: foo`}
+                {`GIVE US CONTENT`}
               </Text>
               <View
                 style={{ flex: 2, justifyContent: 'center', width: '100%' }}
@@ -120,7 +128,7 @@ class YakNewScreen extends React.Component<Props, State> {
                   }}
                 >
                   <BioInput
-                    placeholder="yak o'clock"
+                    placeholder="YAK YAK YAK"
                     onChangeText={this._onChangeContent}
                     value={content}
                     maxLength={150}

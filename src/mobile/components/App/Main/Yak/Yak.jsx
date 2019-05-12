@@ -15,6 +15,27 @@ type Props = {
   onVote: (liked: boolean) => void
 };
 
+type VoteButtonProps = {
+  direction: 'up' | 'down',
+  active: boolean,
+  onPress: () => void
+};
+
+const VoteButton = ({ direction, active, onPress }: VoteButtonProps) => {
+  return (
+    <TouchableOpacity
+      style={{ padding: 5, margin: -5 }}
+      onPress={active ? null : onPress}
+    >
+      <CustomIcon
+        name={direction === 'up' ? 'up-open' : 'down-open'}
+        size={20}
+        color={active ? Colors.AquaMarine : Colors.Grey80}
+      />
+    </TouchableOpacity>
+  );
+};
+
 const YakComponent = (props: Props) => {
   const { yak, onPress, onVote } = props;
   const { clientVote, timestamp, content, score } = yak;
@@ -32,7 +53,8 @@ const YakComponent = (props: Props) => {
       style={{
         width: '100%',
         backgroundColor: Colors.White,
-        paddingHorizontal: '5.1%'
+        paddingHorizontal: '5.1%',
+        paddingVertical: 4
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -44,20 +66,21 @@ const YakComponent = (props: Props) => {
           }}
         >
           <View style={{ flex: 1, paddingTop: 8 }}>
-            <Text style={textStyles.headline6Style}>{content}</Text>
+            <Text style={textStyles.body1Style}>{content}</Text>
           </View>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
+              paddingTop: 8,
               paddingBottom: 4
             }}
           >
-            <Icon name={'access-time'} size={14} color={Colors.AquaMarine} />
+            <Icon name={'access-time'} size={14} color={Colors.Black} />
             <Text
               style={[
                 textStyles.body2Style,
-                { color: Colors.AquaMarine, paddingLeft: 2 }
+                { color: Colors.Black, paddingLeft: 2 }
               ]}
             >
               {formattedTime}
@@ -73,49 +96,37 @@ const YakComponent = (props: Props) => {
             minWidth: 50
           }}
         >
-          <TouchableOpacity
-            style={{ padding: 5, margin: -5 }}
+          <VoteButton
+            direction={'up'}
+            active={clientVote === true}
             onPress={() => {
-              if (clientVote !== true) {
-                onVote(true);
-              }
+              onVote(true);
             }}
-          >
-            <CustomIcon
-              name={'up-open'}
-              size={26}
-              color={clientVote === true ? Colors.Grapefruit : Colors.Grey80}
-            />
-          </TouchableOpacity>
+          />
+
           <Text
             style={[
-              textStyles.headline5StyleDemibold,
+              textStyles.headline5Style,
               {
                 top: 2,
                 color:
                   clientVote === null || clientVote === undefined
                     ? Colors.Black
-                    : Colors.Grapefruit,
-                fontSize: scoreFontSize
+                    : Colors.AquaMarine,
+                fontSize: scoreFontSize,
+                lineHeight: 24
               }
             ]}
           >
             {score}
           </Text>
-          <TouchableOpacity
-            style={{ padding: 5, margin: -5 }}
+          <VoteButton
+            direction={'down'}
+            active={clientVote === false}
             onPress={() => {
-              if (clientVote !== false) {
-                onVote(false);
-              }
+              onVote(false);
             }}
-          >
-            <CustomIcon
-              name={'down-open'}
-              size={26}
-              color={clientVote === false ? Colors.Grapefruit : Colors.Grey80}
-            />
-          </TouchableOpacity>
+          />
         </View>
       </View>
     </TouchableHighlight>
