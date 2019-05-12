@@ -70,7 +70,9 @@ const postYak = async (senderUserId: number, content: string) => {
     )
     SELECT ${yakSelect}
     FROM yak
-    LEFT JOIN vote ON vote.yak_id = yak.id
+    LEFT JOIN vote
+      ON vote.yak_id = yak.id
+      AND vote.user_id = $1
   `, [senderUserId, content])).rows;
 
   const updatedYakPostAvailability = utils.getYakPostAvailability([...yaksInPast24Hours, yak]);
