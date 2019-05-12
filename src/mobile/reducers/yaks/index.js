@@ -3,16 +3,23 @@ import type { Yak } from 'mobile/api/serverTypes';
 import Get from './get';
 import Vote from './vote';
 import Post from './post';
+import Report from './report';
 import type { VoteYak_Action } from './vote';
 import type { GetYaks_Action } from './get';
 import type { PostYak_Action } from './post';
+import type { ReportYak_Action } from './report';
 
-export type Yak_Action = GetYaks_Action | VoteYak_Action | PostYak_Action;
+export type Yak_Action =
+  | GetYaks_Action
+  | VoteYak_Action
+  | PostYak_Action
+  | ReportYak_Action;
 
 export type inProgress = {|
   get: boolean,
   vote: { [id: number]: boolean },
-  post: boolean
+  post: boolean,
+  report: boolean // invariant: only one at a time.
 |};
 
 export type ReduxState = {|
@@ -29,14 +36,16 @@ const DefaultReduxState: ReduxState = {
   inProgress: {
     get: false,
     vote: {},
-    post: false
+    post: false,
+    report: false
   }
 };
 
 const Reducers = {
   Get,
   Vote,
-  Post
+  Post,
+  Report
 };
 
 export { DefaultReduxState, Reducers };
