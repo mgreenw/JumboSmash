@@ -66,7 +66,9 @@ const voteOnYak = async (voterUserId: number, yakId: number, liked: boolean) => 
       )
       SELECT ${yakSelect}
       FROM yak
-      LEFT JOIN yak_vote ON yak_vote.yak_id = yak.id
+      LEFT JOIN yak_vote
+        ON yak_vote.yak_id = yak.id
+        AND yak_vote.user_id = $1
     `, [voterUserId, yakId, liked])).rows[0];
     return status(codes.VOTE_ON_YAK__SUCCESS).data({ yak });
   } catch (error) {

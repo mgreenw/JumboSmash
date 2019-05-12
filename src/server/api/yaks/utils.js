@@ -56,33 +56,33 @@ type YakPostAvailibality = {
   nextPostTimestamp: Date | null,
 };
 
-const YAKS_PER_DAY = 3;
-const ONE_DAY_MS = 86400000;
+const YAKS_PER_HOUR = 3;
+const ONE_HOUR_MS = 3600000;
 
 // NOTE: Yaks must be sorted ASC by timestamp and must only be from last 24 hours
 function getYakPostAvailability(yaks: { timestamp: Date }[]): YakPostAvailibality {
   // Ensure they are sorted and filtered by last day
-  const oneDayAgo = new Date().getTime() - ONE_DAY_MS;
+  const oneHourAgo = new Date().getTime() - ONE_HOUR_MS;
   const pastDayYaks = _.sortBy(
-    yaks.filter(yak => yak.timestamp.getTime() > oneDayAgo),
+    yaks.filter(yak => yak.timestamp.getTime() > oneHourAgo),
     yak => yak.timestamp,
   );
 
   // If none, allow full yaks per day
   if (pastDayYaks.length === 0) {
     return {
-      yaksRemaining: YAKS_PER_DAY,
+      yaksRemaining: YAKS_PER_HOUR,
       nextPostTimestamp: null,
     };
   }
 
   // Calculate and return yaksRemaining and nextYakTimestamp
   // If somehow there are more than YAK_PER_DAY, this handles that safely.
-  const nextPostIndex = Math.max(pastDayYaks.length - YAKS_PER_DAY, 0);
+  const nextPostIndex = Math.max(pastDayYaks.length - YAKS_PER_HOUR, 0);
   const nextPostTimestamp = new Date(
-    pastDayYaks[nextPostIndex].timestamp.getTime() + ONE_DAY_MS,
+    pastDayYaks[nextPostIndex].timestamp.getTime() + ONE_HOUR_MS,
   );
-  const yaksRemaining = Math.max(YAKS_PER_DAY - pastDayYaks.length, 0);
+  const yaksRemaining = Math.max(YAKS_PER_HOUR - pastDayYaks.length, 0);
 
   return {
     yaksRemaining,

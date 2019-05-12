@@ -24,7 +24,7 @@ const schema = {
     "content": {
       "description": "The yak to send!",
       "type": "string",
-      "minLength": 5,
+      "minLength": 1,
       "maxLength": 300,
     },
   },
@@ -37,13 +37,20 @@ const schema = {
  *
  */
 const postYak = async (senderUserId: number, content: string) => {
+  // Ensure the content is not empty
+  if (content.trim().length === 0) {
+    return status(codes.BAD_REQUEST).data({
+      message: 'Content must have content.',
+    });
+  }
+
   // Check that there are only yaks per day
   const yaksInPast24Hours = (await db.query(`
     SELECT timestamp
     FROM yaks
     WHERE
       user_id = $1
-      AND timestamp > NOW() - INTERVAL '24 HOURS'
+      AND timestamp > NOW() - INTERVAL '1 HOURS'
     ORDER BY timestamp
   `, [senderUserId])).rows;
 
@@ -70,7 +77,9 @@ const postYak = async (senderUserId: number, content: string) => {
     )
     SELECT ${yakSelect}
     FROM yak
-    LEFT JOIN vote ON vote.yak_id = yak.id
+    LEFT JOIN vote
+      ON vote.yak_id = yak.id
+      AND vote.user_id = $1
   `, [senderUserId, content])).rows;
 
   const updatedYakPostAvailability = utils.getYakPostAvailability([...yaksInPast24Hours, yak]);

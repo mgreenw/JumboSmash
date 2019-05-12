@@ -21,7 +21,9 @@ const getMyYaks = async (userId: number) => {
   const yaks = (await db.query(`
     SELECT ${yakSelect}
     FROM yaks
-    LEFT JOIN yak_votes ON yak_votes.yak_id = yaks.id
+    LEFT JOIN yak_votes
+      ON yak_votes.yak_id = yaks.id
+      AND yak_votes.user_id = $1
     WHERE yaks.user_id = $1
     ORDER BY yaks.timestamp
   `, [userId])).rows;
