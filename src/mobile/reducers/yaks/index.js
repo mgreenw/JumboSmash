@@ -26,7 +26,8 @@ export type ReduxState = {|
   inProgress: inProgress,
   byId: { [id: number]: Yak },
   currentYakIds: number[],
-  clientYakIds: number[]
+  clientYakIds: number[],
+  nextPostTimestamp: null | string
 |};
 
 const DefaultReduxState: ReduxState = {
@@ -38,7 +39,8 @@ const DefaultReduxState: ReduxState = {
     vote: {},
     post: false,
     report: false
-  }
+  },
+  nextPostTimestamp: null
 };
 
 const Reducers = {

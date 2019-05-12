@@ -11,7 +11,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import BioInput from 'mobile/components/shared/BioInput';
 import KeyboardView from 'mobile/components/shared/KeyboardView';
 import { textStyles } from 'mobile/styles/textStyles';
-import { PrimaryButton } from 'mobile/components/shared/buttons';
+import {
+  PrimaryButton,
+  SecondaryButton
+} from 'mobile/components/shared/buttons';
+import Popup from 'mobile/components/shared/Popup';
+import { Colors } from 'mobile/styles/colors';
+import formatTime from 'mobile/utils/time/formattedTimeSince';
 
 type NavigationProps = {
   navigation: NavigationScreenProp<any>
@@ -20,17 +26,20 @@ type DispatchProps = {
   postYak: (content: string) => void
 };
 type ReduxProps = {
-  postInProgress: boolean
+  postInProgress: boolean,
+  nextPostTimestamp: null | string
 };
 type Props = ReduxProps & DispatchProps & NavigationProps;
 
 type State = {
-  content: string
+  content: string,
+  showPopup: boolean
 };
 
 function mapStateToProps(reduxState: ReduxState): ReduxProps {
   return {
-    postInProgress: reduxState.yaks.inProgress.post
+    postInProgress: reduxState.yaks.inProgress.post,
+    nextPostTimestamp: reduxState.yaks.nextPostTimestamp
   };
 }
 
@@ -46,15 +55,22 @@ class YakNewScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      content: ''
+      content: '',
+      showPopup: false
     };
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { postInProgress } = this.props;
+    const { postInProgress, nextPostTimestamp } = this.props;
     // TODO: consider error handling -- if post fails this still goes back!
     if (!postInProgress && prevProps.postInProgress) {
-      this._onBack();
+      if (nextPostTimestamp !== null) {
+        this.setState({
+          showPopup: true
+        });
+      } else {
+        this._onBack();
+      }
     }
   }
 
@@ -76,9 +92,15 @@ class YakNewScreen extends React.Component<Props, State> {
     postYak(content);
   };
 
+  _dismissPopup = () => {
+    this.setState({
+      showPopup: false
+    });
+  };
+
   render() {
-    const { postInProgress } = this.props;
-    const { content } = this.state;
+    const { postInProgress, nextPostTimestamp } = this.props;
+    const { content, showPopup } = this.state;
     const loading = postInProgress;
 
     const TitleComponent = (
@@ -87,6 +109,12 @@ class YakNewScreen extends React.Component<Props, State> {
         <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
       </Text>
     );
+
+    // nextPostTimestamp should not be null whenever this is used, but just in case.
+    const timeLeftTillNextPost =
+      nextPostTimestamp !== null
+        ? formatTime(nextPostTimestamp, true)
+        : '1 minute';
 
     return (
       <View style={{ flex: 1 }}>
@@ -147,6 +175,41 @@ class YakNewScreen extends React.Component<Props, State> {
             </View>
           </View>
         </KeyboardView>
+        <Popup visible={showPopup} onTouchOutside={() => {}}>
+          <Text
+            style={[
+              textStyles.headline4Style,
+              {
+                color: Colors.Grapefruit,
+                textAlign: 'center'
+              }
+            ]}
+          >
+            {'👀'}
+          </Text>
+          <Text
+            style={[
+              textStyles.headline6Style,
+              {
+                color: Colors.Black,
+                textAlign: 'center'
+              }
+            ]}
+          >
+            {"You've posted a lot of Jumbo"}
+            <Text styles={textStyles.headline6StyleDemiBold}>Yaks</Text>
+            {` recently. Try again in ${timeLeftTillNextPost}.`}
+          </Text>
+          <View
+            style={{
+              paddingTop: 15,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <SecondaryButton title={'Okay'} onPress={this._dismissPopup} />
+          </View>
+        </Popup>
       </View>
     );
   }
