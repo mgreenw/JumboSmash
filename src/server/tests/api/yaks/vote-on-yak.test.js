@@ -17,14 +17,6 @@ async function postYak(user, content) {
   return res;
 }
 
-async function getYaks(user) {
-  const res = await request(app)
-    .get('/api/yaks')
-    .set('Authorization', user.token)
-    .set('Accept', 'application/json');
-  return res;
-}
-
 async function voteOnYak(user, yakId, vote) {
   const res = await request(app)
     .patch(`/api/yaks/${yakId}`)
