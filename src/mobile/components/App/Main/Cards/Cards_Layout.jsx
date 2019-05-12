@@ -28,7 +28,7 @@ const CardsLayout = (props: Props) => {
           }
         }}
         leftIcon={{
-          name: 'trash',
+          name: 'yak',
           onPress: () => {
             NavigationService.navigate(routes.Yak);
           }
