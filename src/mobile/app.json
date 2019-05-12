@@ -1,6 +1,6 @@
 {
   "expo": {
-    "sdkVersion": "32.0.0",
+    "sdkVersion": "32.1.0",
     "orientation": "portrait",
     "privacy": "unlisted",
     "name": "JumboSmash",
@@ -15,7 +15,7 @@
     },
     "android": {
       "package": "com.jumbosmash.mobile",
-      "versionCode": 14,
+      "versionCode": 15,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "ios": {
