@@ -1,5 +1,4 @@
 const request = require('supertest');
-const uuidv4 = require('uuid/v4');
 
 const codes = require('../../../api/status-codes');
 const app = require('../../../app');
