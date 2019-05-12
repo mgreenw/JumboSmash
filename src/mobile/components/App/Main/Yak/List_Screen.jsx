@@ -357,8 +357,8 @@ class YakListScreen extends React.Component<Props, State> {
             renderItem={({ item: id }) => {
               return this._renderYak(id);
             }}
-            keyExtractor={code => {
-              return code.toString();
+            keyExtractor={id => {
+              return `${id}`;
             }}
             ItemSeparatorComponent={this._renderSeparator}
             refreshControl={refreshComponent}

@@ -48,6 +48,8 @@ export default () => (dispatch: Dispatch) => {
   dispatch(initiate());
   getYaks()
     .then(({ yaks }) => {
+      const ids = yaks.map(a => a.id);
+      console.log({ ids });
       dispatch(complete(yaks));
     })
     .catch(error => {
