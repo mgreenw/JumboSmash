@@ -7,7 +7,8 @@ import {
   ImageBackground,
   ActivityIndicator,
   RefreshControl,
-  Switch
+  Switch,
+  Text
 } from 'react-native';
 import GEMHeader from 'mobile/components/shared/Header';
 import NavigationService from 'mobile/components/navigation/NavigationService';
@@ -22,6 +23,7 @@ import { Colors } from 'mobile/styles/colors';
 import { PrimaryButton } from 'mobile/components/shared/buttons';
 import ActionSheet from 'mobile/components/shared/ActionSheet';
 import ReportPopup from 'mobile/components/App/Main/Matches/ReportPopup';
+import { textStyles } from 'mobile/styles/textStyles';
 import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -260,6 +262,13 @@ class YakListScreen extends React.Component<Props, State> {
         />
       </View>
     );
+
+    const TitleComponent = (
+      <Text style={textStyles.headline5Style}>
+        {'Jumbo'}
+        <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
+      </Text>
+    );
     return (
       <View style={{ flex: 1 }}>
         <GEMHeader
@@ -276,6 +285,7 @@ class YakListScreen extends React.Component<Props, State> {
               NavigationService.navigate(routes.Profile);
             }
           }}
+          centerComponent={TitleComponent}
         />
         <View style={{ flex: 1 }}>
           <ImageBackground
