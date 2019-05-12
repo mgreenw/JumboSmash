@@ -82,8 +82,26 @@ const updateMySettings = async (
   activeScenes: Object,
   expoPushToken: ?string,
   notificationsEnabled: boolean,
+  userBirthday: Date | null,
 ) => {
-// Get all fields from the request body. If the value is not in the request,
+  // If the user is going active in stone, check that they are at least 21.
+  // NOTE: This does not protect the endpoint if the user does not have a profile setup.
+  // This is OK because this would be a violation of our TNC and is not possible to get
+  // to from the app.
+  if (activeScenes.stone && userBirthday !== null) {
+    const year = userBirthday.getFullYear();
+    const month = userBirthday.getMonth();
+    const day = userBirthday.getDate();
+
+    const twentyFirstBirthday = new Date(year + 21, month, day);
+    if (twentyFirstBirthday > new Date()) {
+      return apiUtils.status(codes.BAD_REQUEST).data({
+        message: 'Must be 21 to be Active in Stone.',
+      });
+    }
+  }
+
+  // Get all fields from the request body. If the value is not in the request,
   // it will be undefined. The key in this object is the name of the postgres
   // field that relates to this value
   const allFields = {
@@ -162,6 +180,7 @@ const handler = [
       req.body.activeScenes || {},
       req.body.expoPushToken,
       req.body.notificationsEnabled,
+      req.user.birthday,
     );
   }),
 ];
