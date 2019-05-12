@@ -26,7 +26,12 @@ const getMyYaks = async (userId: number) => {
     ORDER BY yaks.timestamp
   `, [userId])).rows;
 
-  return apiUtils.status(codes.GET_MY_YAKS__SUCCESS).data({ yaks });
+  const yakPostAvailability = utils.getYakPostAvailability(yaks);
+
+  return apiUtils.status(codes.GET_MY_YAKS__SUCCESS).data({
+    yaks,
+    yakPostAvailability,
+  });
 };
 
 const handler = [

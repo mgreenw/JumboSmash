@@ -48,15 +48,18 @@ Provide the yak content.
 {
     "status": "POST_YAK__SUCCESS",
     "data": {
+        "yakPostAvailability": {
+            "yaksRemaining": 2,
+            "nextPostTimestamp": "2019-05-12T19:30:23.171Z"
+        },
         "yak": {
-            "id": 16,
+            "id": 29,
             "score": 1,
             "content": "test-yak",
-            "timestamp": "2019-05-11T17:59:18.862Z",
+            "timestamp": "2019-05-11T19:30:23.171Z",
             "postedByClient": true,
             "clientVote": true
-        },
-        "remainingYaks": 1
+        }
     },
     "version": "2.3.2"
 }
@@ -74,7 +77,10 @@ Provide the yak content.
 {
     "status": "POST_YAK__TOO_MANY_YAKS",
     "data": {
-        "nextPostTimestamp": "2019-05-11T17:48:01.882Z"
+        "yakPostAvailability": {
+            "yaksRemaining": 0,
+            "nextPostTimestamp": "2019-05-12T19:30:23.171Z"
+        }
     },
     "version": "2.3.2"
 }
