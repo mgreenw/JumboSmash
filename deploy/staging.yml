@@ -33,7 +33,7 @@ services:
   #
 
   arthur:
-    image: sperrys/website:1.0.3
+    image: sperrys/website:2.0.0
     networks:
       - traefik-net
     deploy:
