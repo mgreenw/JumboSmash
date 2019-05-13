@@ -6,10 +6,16 @@ function fullTimeFormat(type: 'day' | 'hour' | 'minute', count: number) {
   return count > 1 ? `${count} ${format}s` : format;
 }
 
-export default function(timestamp: string | Date, fullTime?: boolean = false) {
-  const oldDate = new Date(timestamp);
+export default function(
+  timestamp: string | Date,
+  future?: boolean = false,
+  fullTime?: boolean = false
+) {
+  const compareDate = new Date(timestamp);
   const nowDate = new Date();
-  const { days, hours, minutes } = timeDifference(oldDate, nowDate);
+  const { days, hours, minutes } = future
+    ? timeDifference(nowDate, compareDate)
+    : timeDifference(compareDate, nowDate);
   if (days > 0) {
     if (fullTime) return fullTimeFormat('day', days);
     return `${days}d`;

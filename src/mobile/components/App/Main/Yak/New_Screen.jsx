@@ -113,7 +113,7 @@ class YakNewScreen extends React.Component<Props, State> {
     // nextPostTimestamp should not be null whenever this is used, but just in case.
     const timeLeftTillNextPost =
       nextPostTimestamp !== null
-        ? formatTime(nextPostTimestamp, true)
+        ? formatTime(nextPostTimestamp, true, true)
         : '1 minute';
 
     return (
