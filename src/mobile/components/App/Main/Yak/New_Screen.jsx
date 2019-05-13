@@ -134,17 +134,13 @@ class YakNewScreen extends React.Component<Props, State> {
             <View
               style={{
                 flex: 2,
+                paddingTop: 20,
                 paddingHorizontal: '10.1%',
                 width: '100%',
                 alignItems: 'center',
                 justifyContent: 'top'
               }}
             >
-              <Text
-                style={[textStyles.headline5Style, { paddingVertical: '5.1%' }]}
-              >
-                {`GIVE US CONTENT`}
-              </Text>
               <View
                 style={{ flex: 2, justifyContent: 'center', width: '100%' }}
               >
@@ -156,7 +152,7 @@ class YakNewScreen extends React.Component<Props, State> {
                   }}
                 >
                   <BioInput
-                    placeholder="YAK YAK YAK"
+                    placeholder="Yaks eat grass"
                     onChangeText={this._onChangeContent}
                     value={content}
                     maxLength={150}
