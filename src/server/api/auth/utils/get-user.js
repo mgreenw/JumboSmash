@@ -24,6 +24,7 @@ function getUser(token: string, adminPassword: ?string = null): Promise<any> {
           SELECT
             u.id,
             COALESCE(p.user_id, 0)::boolean AS "hasProfile",
+            p.birthday AS birthday,
             u.utln,
             u.token_uuid AS "tokenUUID",
             u.expo_push_token AS "expoPushToken",
