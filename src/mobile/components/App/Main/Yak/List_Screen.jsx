@@ -318,7 +318,7 @@ class YakListScreen extends React.Component<Props, State> {
               this.flatListRef.scrollToOffset({ animated: true, offset: 0 });
             });
           }}
-          title={'Top'}
+          title={'Hot'}
         />
       </View>
     );
