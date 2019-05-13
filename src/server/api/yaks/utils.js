@@ -57,7 +57,7 @@ type YakPostAvailibality = {
 };
 
 const YAKS_PER_HOUR = 3;
-const ONE_HOUR_MS = 3600000;
+const ONE_HOUR_MS = 3900000; // One hour and 5 minutes
 
 // NOTE: Yaks must be sorted ASC by timestamp and must only be from last 24 hours
 function getYakPostAvailability(yaks: { timestamp: Date }[]): YakPostAvailibality {

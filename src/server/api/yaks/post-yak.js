@@ -50,7 +50,7 @@ const postYak = async (senderUserId: number, content: string) => {
     FROM yaks
     WHERE
       user_id = $1
-      AND timestamp > NOW() - INTERVAL '1 HOURS'
+      AND timestamp > NOW() - INTERVAL '65 MINUTES'
     ORDER BY timestamp
   `, [senderUserId])).rows;
 
