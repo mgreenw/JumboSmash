@@ -25,6 +25,7 @@ import ReportPopup from 'mobile/components/App/Main/Matches/ReportPopup';
 import { textStyles } from 'mobile/styles/textStyles';
 import * as Animatable from 'react-native-animatable';
 import CustomIcon from 'mobile/assets/icons/CustomIcon';
+import { NavigationEvents } from 'react-navigation';
 import YakComponent from './Yak';
 
 const wavesFull = require('../../../../assets/waves/wavesFullScreen/wavesFullScreen.png');
@@ -258,7 +259,12 @@ class YakListScreen extends React.Component<Props, State> {
 
   render() {
     const { refreshManuallyTriggered, yaksLoaded, sortBy } = this.state;
-    const { currentYakIds, navigation } = this.props;
+    const {
+      currentYakIds,
+      navigation,
+      getYaksInProgress,
+      getYaks
+    } = this.props;
     if (!yaksLoaded) {
       return (
         <View
@@ -325,6 +331,15 @@ class YakListScreen extends React.Component<Props, State> {
     );
     return (
       <View style={{ flex: 1 }}>
+        <NavigationEvents
+          onWillFocus={() => {
+            // onWillFocus calls this during the transition state from previous screen.
+            if (!getYaksInProgress) {
+              getYaks();
+            }
+          }}
+        />
+
         <GEMHeader
           title="JumboYak"
           rightIcon={{
