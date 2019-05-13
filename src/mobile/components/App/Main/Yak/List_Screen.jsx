@@ -102,11 +102,14 @@ type State = {
 
 function mapStateToProps({ yaks }: ReduxState): ReduxProps {
   const { inProgress, byId, currentYakIds } = yaks;
+  const currentYakIdsGreaterThan5 = currentYakIds.filter(
+    id => byId[id].score > -5
+  );
   return {
     getYaksInProgress: inProgress.get,
     currentYakIds: {
-      byTime: currentYakIds.slice().reverse(),
-      byScore: currentYakIds.slice().sort((a, b) => {
+      byTime: currentYakIdsGreaterThan5.slice().reverse(),
+      byScore: currentYakIdsGreaterThan5.slice().sort((a, b) => {
         const { score: scoreA } = byId[a];
         const { score: scoreB } = byId[b];
         if (scoreA > scoreB) return -1;
