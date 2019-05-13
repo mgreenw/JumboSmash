@@ -15,7 +15,7 @@ export default function formattedVersionInfo(): string {
   const version = getVersion();
   const releaseChannel = getReleaseChannel();
   const versionInfo = `Version ${version}`;
-  if (releaseChannel === 'production') {
+  if (releaseChannel.indexOf('prod') !== -1) {
     return versionInfo;
   }
   return `${versionInfo} (${releaseChannel})`;
