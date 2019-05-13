@@ -106,6 +106,14 @@ const textStyles = StyleSheet.create({
     letterSpacing: 0,
     color: colors.Black
   },
+  headline6StyleDemibold: {
+    fontFamily: 'AvenirNext_DemiBold',
+    fontSize: 20,
+    // fontWeight: 'normal',
+    // fontStyle: 'normal',
+    letterSpacing: 0,
+    color: colors.Black
+  },
   body1StyleSemibold: {
     fontFamily: 'SourceSansPro_DemiBold',
     fontSize: 18,

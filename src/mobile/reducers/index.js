@@ -2243,6 +2243,13 @@ export default function rootReducer(
       };
     }
 
+    case 'POST_YAK__FAILED_TOO_MANY': {
+      return {
+        ...state,
+        yaks: Yak_Reducers.Post.fail_TOO_MANY_POSTS(state.yaks, action)
+      };
+    }
+
     case 'REPORT_YAK__INITIATED': {
       return {
         ...state,

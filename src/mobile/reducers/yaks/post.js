@@ -3,7 +3,8 @@
 import type {
   PostYakInitiated_Action,
   PostYakCompleted_Action,
-  PostYakFailed_Action
+  PostYakFailed_Action,
+  PostYakFailed_TOO_MANY_POSTS_action
 } from 'mobile/actions/yaks/postYak';
 import type { ReduxState, inProgress } from './index';
 
@@ -24,7 +25,8 @@ function initiate(
 ): ReduxState {
   return {
     ...state,
-    inProgress: updateInProgress(state, true)
+    inProgress: updateInProgress(state, true),
+    nextPostTimestamp: null
   };
 }
 
@@ -50,6 +52,18 @@ function complete(
   };
 }
 
+function fail_TOO_MANY_POSTS(
+  state: ReduxState,
+  action: PostYakFailed_TOO_MANY_POSTS_action
+) {
+  const { nextTimeStamp } = action.payload;
+  return {
+    ...state,
+    inProgress: updateInProgress(state, false),
+    nextPostTimestamp: nextTimeStamp
+  };
+}
+
 function fail(
   state: ReduxState,
   /* eslint-disable-next-line no-unused-vars */
@@ -64,6 +78,7 @@ function fail(
 export type PostYak_Action =
   | PostYakInitiated_Action
   | PostYakCompleted_Action
-  | PostYakFailed_Action;
+  | PostYakFailed_Action
+  | PostYakFailed_TOO_MANY_POSTS_action;
 
-export default { initiate, complete, fail };
+export default { initiate, complete, fail, fail_TOO_MANY_POSTS };
