@@ -26,9 +26,7 @@ const getYaks = async (userId: number) => {
     LEFT JOIN yak_votes
       ON yak_votes.yak_id = yaks.id
       AND yak_votes.user_id = $1
-    WHERE
-      timestamp > NOW() - INTERVAL '24 HOURS'
-      AND score >= $2
+    WHERE score > $2
     ORDER BY timestamp
   `, [userId, MIN_SCORE])).rows;
 
