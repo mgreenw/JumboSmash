@@ -70,18 +70,6 @@ describe('GET api/yaks', () => {
     expect(res.body.data.yaks.length).toBe(2);
   });
 
-  it('should not return yaks posted over 24 hours ago', async () => {
-    await db.query(`
-      INSERT INTO yaks
-      (user_id, content, score, timestamp)
-      VALUES ($1, 'Test', 1, NOW() - INTERVAL '25 hours')
-    `, [me.id]);
-
-    const res = await getYaks(me);
-    expect(res.body.status).toBe(codes.GET_YAKS__SUCCESS.status);
-    expect(res.body.data.yaks.length).toBe(2);
-  });
-
   it('should mark if the client set the yak', async () => {
     await postYak(me, 'Test Yak 3');
     const res = await getYaks(me);
