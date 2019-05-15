@@ -81,7 +81,8 @@ type DispatchProps = {
 type ReduxProps = {
   getYaksInProgress: boolean,
   currentYakIds: { byTime: number[], byScore: number[] },
-  yakMap: { [id: number]: Yak }
+  yakMap: { [id: number]: Yak },
+  canBeActiveInScenes: boolean
 };
 
 type SortOption = 'score' | 'time';
@@ -101,11 +102,14 @@ type State = {
   selectedYakId: null | number
 };
 
-function mapStateToProps({ yaks }: ReduxState): ReduxProps {
+function mapStateToProps({ yaks, client }: ReduxState): ReduxProps {
   const { inProgress, byId, currentYakIds } = yaks;
   const currentYakIdsGreaterThan5 = currentYakIds.filter(
     id => byId[id].score > -5
   );
+  if (!client) {
+    throw new Error('Redux Client is null in Yak List');
+  }
   return {
     getYaksInProgress: inProgress.get,
     currentYakIds: {
@@ -118,7 +122,8 @@ function mapStateToProps({ yaks }: ReduxState): ReduxProps {
         return 0;
       })
     },
-    yakMap: byId
+    yakMap: byId,
+    canBeActiveInScenes: client.settings.canBeActiveInScenes
   };
 }
 
@@ -266,26 +271,66 @@ class YakListScreen extends React.Component<Props, State> {
       currentYakIds,
       navigation,
       getYaksInProgress,
-      getYaks
+      getYaks,
+      canBeActiveInScenes
     } = this.props;
-    if (!yaksLoaded) {
-      return (
-        <View
-          style={{
-            flex: 1,
-            alignContent: 'center',
-            justifyContent: 'center'
-          }}
+
+    const lockedAccountCopy =
+      'Your account is currently locked. Please check your email for more information.';
+
+    const LockedBody = (
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: '10.1%',
+          alignContent: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <Text style={[textStyles.headline3Style, { textAlign: 'center' }]}>
+          {'👀'}
+        </Text>
+        <Text
+          style={[
+            textStyles.subtitle1Style,
+            {
+              textAlign: 'center',
+              color: Colors.Grapefruit
+            }
+          ]}
         >
-          <ActivityIndicator />
-        </View>
-      );
-    }
+          {lockedAccountCopy}
+        </Text>
+      </View>
+    );
+
+    const LoadingBody = (
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+
     const refreshComponent = (
       <RefreshControl
         refreshing={refreshManuallyTriggered}
         onRefresh={this._onRefresh}
       />
+    );
+
+    const TitleComponent = (
+      <Text style={textStyles.headline5Style}>
+        {'Jumbo'}
+        <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
+      </Text>
+    );
+    const Footer = (
+      <View style={{ height: NEW_ICON_HEIGHT + NEW_ICON_PADDING * 2 }} />
     );
 
     const Header = (
@@ -323,14 +368,76 @@ class YakListScreen extends React.Component<Props, State> {
       </View>
     );
 
-    const TitleComponent = (
-      <Text style={textStyles.headline5Style}>
-        {'Jumbo'}
-        <Text style={textStyles.headline5StyleDemibold}>{'Yak'}</Text>
-      </Text>
-    );
-    const Footer = (
-      <View style={{ height: NEW_ICON_HEIGHT + NEW_ICON_PADDING * 2 }} />
+    const Body = (
+      <View style={{ flex: 1 }}>
+        <ImageBackground
+          source={wavesFull}
+          style={{ width: '100%', height: '100%', position: 'absolute' }}
+        />
+        {Header}
+        <FlatList
+          ref={ref => {
+            this.flatListRef = ref;
+          }}
+          data={
+            sortBy === 'time' ? currentYakIds.byTime : currentYakIds.byScore
+          }
+          renderItem={({ item: id }) => {
+            return this._renderYak(id);
+          }}
+          keyExtractor={id => {
+            return `${id}`;
+          }}
+          ItemSeparatorComponent={this._renderSeparator}
+          refreshControl={refreshComponent}
+          ListFooterComponent={Footer}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            padding: NEW_ICON_PADDING,
+            justifyContent: 'center',
+            elevation: 1,
+            shadowColor: Colors.Black,
+            shadowOpacity: 0.57,
+            shadowRadius: 2,
+            shadowOffset: {
+              height: 2,
+              width: 1
+            }
+          }}
+        >
+          <Animatable.View
+            animation="swing"
+            easing="ease-out"
+            iterationCount="infinite"
+            iterationDelay={10000}
+            delay={10000}
+          >
+            <View
+              style={{
+                width: NEW_ICON_HEIGHT,
+                height: NEW_ICON_HEIGHT,
+                backgroundColor: Colors.Grapefruit,
+                borderRadius: NEW_ICON_HEIGHT,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <CustomIcon
+                name={'pencil'}
+                color={Colors.White}
+                size={30}
+                onPress={() => {
+                  navigation.navigate(routes.YakNew);
+                }}
+              />
+            </View>
+          </Animatable.View>
+        </View>
+      </View>
     );
     return (
       <View style={{ flex: 1 }}>
@@ -359,75 +466,9 @@ class YakListScreen extends React.Component<Props, State> {
           }}
           centerComponent={TitleComponent}
         />
-        <View style={{ flex: 1 }}>
-          <ImageBackground
-            source={wavesFull}
-            style={{ width: '100%', height: '100%', position: 'absolute' }}
-          />
-          {Header}
-          <FlatList
-            ref={ref => {
-              this.flatListRef = ref;
-            }}
-            data={
-              sortBy === 'time' ? currentYakIds.byTime : currentYakIds.byScore
-            }
-            renderItem={({ item: id }) => {
-              return this._renderYak(id);
-            }}
-            keyExtractor={id => {
-              return `${id}`;
-            }}
-            ItemSeparatorComponent={this._renderSeparator}
-            refreshControl={refreshComponent}
-            ListFooterComponent={Footer}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              right: 0,
-              bottom: 0,
-              padding: NEW_ICON_PADDING,
-              justifyContent: 'center',
-              elevation: 1,
-              shadowColor: Colors.Black,
-              shadowOpacity: 0.57,
-              shadowRadius: 2,
-              shadowOffset: {
-                height: 2,
-                width: 1
-              }
-            }}
-          >
-            <Animatable.View
-              animation="swing"
-              easing="ease-out"
-              iterationCount="infinite"
-              iterationDelay={10000}
-              delay={10000}
-            >
-              <View
-                style={{
-                  width: NEW_ICON_HEIGHT,
-                  height: NEW_ICON_HEIGHT,
-                  backgroundColor: Colors.Grapefruit,
-                  borderRadius: NEW_ICON_HEIGHT,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <CustomIcon
-                  name={'pencil'}
-                  color={Colors.White}
-                  size={30}
-                  onPress={() => {
-                    navigation.navigate(routes.YakNew);
-                  }}
-                />
-              </View>
-            </Animatable.View>
-          </View>
-        </View>
+        {!yaksLoaded && LoadingBody}
+        {yaksLoaded && !canBeActiveInScenes && LockedBody}
+        {yaksLoaded && canBeActiveInScenes && Body}
         {this._renderActionSheet()}
         {this._renderReportPopup()}
       </View>
