@@ -46,7 +46,7 @@
     "express-mung": "^0.5.1",
     "ioredis": "^4.9.0",
     "jsonwebtoken": "^8.3.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "node-pg-migrate": "^3.18.1",
     "pg": "^7.6.0",
     "request": "^2.88.0",
