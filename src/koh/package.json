@@ -30,7 +30,7 @@
     "email-addresses": "^3.0.3",
     "express": "^4.16.4",
     "ldapjs": "^1.0.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "node-pg-migrate": "^3.13.0",
     "pg": "^7.6.0",
     "release-it": "^10.4.4",
