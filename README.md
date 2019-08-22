@@ -1,4 +1,10 @@
-# Project GEM [![Build Status](https://travis-ci.com/mgreenw/ProjectGEM.svg?token=Gqw9uK7j5g8prgyHD4xx&branch=master)](https://travis-ci.com/mgreenw/ProjectGEM)
+# JumboSmash 2019
+
+## Story
+
+Every year, a group of seniors at Tufts University builds a dating app from scratch for the outgoing class to be used only during the final few weeks of school. This is the 2019 incarnation of JumboSmash that was live from April 26 - May 19.
+
+## Team
 **Project Lead**: Jacob Jaffe
 
 **Server**: Max Greenwald, Spencer Perry
@@ -11,11 +17,10 @@
 
 **Operations/Marketing**: Sophie Martin
 
+## Documentation
 
-# Getting Started
-
-## Mobile
+### Mobile
 Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Mobile-setup) for Mobile Setup
 
-## Server Setup
-Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Server-setup) for Server Setup
+### Server
+Check out our [wiki documentation](https://github.com/mgreenw/ProjectGEM/wiki/Server-setup) for Server Setup. Server API docs can be found [here](https://github.com/mgreenw/JumboSmash/tree/master/src/server/docs).
