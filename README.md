@@ -4,6 +4,8 @@
 
 Every year, a group of seniors at Tufts University builds a dating app from scratch for the outgoing class to be used only during the final few weeks of school. This is the 2019 incarnation of JumboSmash that was live from April 26 - May 19.
 
+<img src="src/website/images/ArthurLogo.png" width="40%">
+
 ## Team
 **Project Lead**: Jacob Jaffe
 
