@@ -2,7 +2,7 @@
   "name": "jumbosmash",
   "version": "2019.0.0-alpha-1",
   "description": "JumboSmash 2019!!",
-  "license": "AGPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later (with additional restrictions)",
   "scripts": {
     "flow": "flow"
   },

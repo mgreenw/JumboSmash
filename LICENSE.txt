@@ -623,6 +623,13 @@ copy of the Program in return for a fee.
   to build everything from scratch, and we hope you will have the same
   experience.
 
+  19. Designs, Assets, and Stylesheet Usage
+
+  You may not propegate, modify, sell, send, or otherwise use the images,
+  assets, designs, or stylesheets included with this project. This includes,
+  but is not limited to: all image files (.png, .jpg, etc) and all style sheets
+  (.css) and all design guides.
+
                      END OF TERMS AND CONDITIONS
 
             How to Apply These Terms to Your New Programs
