@@ -625,7 +625,7 @@ copy of the Program in return for a fee.
 
   19. Designs, Assets, and Stylesheet Usage
 
-  You may not propegate, modify, sell, send, or otherwise use the images,
+  You may not propagate, modify, sell, send, or otherwise use the images,
   assets, designs, or stylesheets included with this project. This includes,
   but is not limited to: all image files (.png, .jpg, etc) and all style sheets
   (.css) and all design guides.
