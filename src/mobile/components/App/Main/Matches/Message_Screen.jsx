@@ -401,7 +401,10 @@ class MessagingScreen extends React.Component<Props, State> {
       // If read message fails then no retries will occur untill component is remounted, or a new message comes in.
       // However, both of those happen a lot! and can be triggered by revisiting the screen, so all safe for now.
       this.setState({
-        mostRecentlyReadMessageId: newId
+        mostRecentlyReadMessageId: newId,
+
+        // on recieving a message, hide the isTyping!
+        showOtherUserTyping: false
       });
       readMessage(match.userId, newId);
     }
@@ -472,6 +475,13 @@ class MessagingScreen extends React.Component<Props, State> {
     const { sendMessage } = this.props;
     const { match } = this.state;
     sendMessage(match.userId, message);
+    const now = new Date();
+
+    // They stop showing typing when recieving a new message, so send a new one soon!
+    const halfSecondFromNow = new Date(now.getTime() + 500);
+    this.setState({
+      nextTyping: halfSecondFromNow
+    });
   };
 
   _onInputTextChanged = text => {
