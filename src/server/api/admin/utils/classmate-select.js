@@ -17,5 +17,9 @@ module.exports = `
     'stone', active_stone
   ) AS "activeScenes",
   admin_password IS NOT NULL AS "isAdmin",
-  COALESCE((SELECT blocked FROM relationships WHERE critic_user_id = id AND candidate_user_id = $1), false) AS "blockedRequestingAdmin"
+  COALESCE((SELECT blocked FROM relationships WHERE critic_user_id = id AND candidate_user_id = $1), false) AS "blockedRequestingAdmin",
+  json_build_object(
+    'notificationsEnabled', notifications_enabled,
+    'hasToken', expo_push_token IS NOT NULL
+  ) AS "notificationInfo"
 `;

@@ -13,6 +13,7 @@ Note: See the docs for the socket communication protocol [here](socket/README.md
 
 ### Admin
 * [Get Classmates](admin/get-classmates.md): `GET /api/admin/classmates`
+* [Get Classmate](admin/get-classmate.md): `GET /api/admin/classmates/:id`
 * [Ban User](admin/ban-user.md): `POST /api/admin/ban/:userId`
 
 ### Authentication
